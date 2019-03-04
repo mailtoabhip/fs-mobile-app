@@ -31,9 +31,10 @@ abstract class BasePrefs(
   /**
    * Clear all preferences
    */
-  protected fun clearPrefs() = editor.clear().apply()
+  fun clearPrefs() = editor.clear().apply()
 }
 
 enum class PrefNames(val prefName: String) {
-  GlobalPrefs("global_prefs")
+  GlobalPrefs("global_prefs"),
+  UserPrefs("user_prefs")
 }

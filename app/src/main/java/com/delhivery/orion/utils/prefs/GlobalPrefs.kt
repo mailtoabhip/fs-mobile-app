@@ -15,8 +15,11 @@ class GlobalPrefs @Inject constructor(@ApplicationContext private val context: C
   var isLocationPermissionRequested: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsLocationPermissionRequested, value).apply()
     get() = prefs.getBoolean(PrefKeys.IsLocationPermissionRequested, false)
-}
 
-internal object PrefKeys {
-  const val IsLocationPermissionRequested = "is_location_permission_requested"
+  /**
+   * Pref keys
+   */
+  internal object PrefKeys {
+    const val IsLocationPermissionRequested = "is_location_permission_requested"
+  }
 }

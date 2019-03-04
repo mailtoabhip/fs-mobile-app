@@ -1,9 +1,7 @@
 package com.delhivery.orion.repository
 
-
 import com.delhivery.orion.database.AppDatabase
-import com.delhivery.orion.database.entity.User
-import io.reactivex.Single
+import com.delhivery.orion.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,28 +11,15 @@ import javax.inject.Singleton
  *
  */
 @Singleton
-class UserRepository @Inject constructor(private val appDatabase: AppDatabase) : BaseRepository() {
+class UserRepository @Inject constructor(
+  private val appDatabase: AppDatabase,
+  private val userPrefs: UserPrefs
+) : BaseRepository() {
 
-    fun testRepo() {
-        //test function for injection
-    }
+  /**
+   *
+   */
+  fun handleJWTToken(jwtToken: String) {
 
-    /**
-     * Add User
-     */
-    fun addUser(user: User): Single<Boolean> {
-        return Single.create<Boolean> {
-            try {
-                appDatabase.userDao().insertUser(user)
-                it.onSuccess(true)
-            } catch (e: Exception) {
-                it.onError(e)
-            }
-        }
-    }
-
-    /**
-     * Get all users from db
-     */
-    fun getAllUsers(): Single<List<User>> = appDatabase.userDao().getAllUsers()
+  }
 }

@@ -20,27 +20,17 @@
       tools:ignore="GoogleAppIndexingWarning">
 
     <activity android:name=".ui.splash.SplashActivity">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
-
-    <activity android:name=".ui.auth.AuthenticationActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
 
+    <activity android:name=".ui.auth.AuthenticationActivity"/>
+
     <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
-    <activity android:name=".ui.selectroute.SelectRouteActivity">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
+    <activity android:name=".ui.selectroute.SelectRouteActivity"/>
   </application>
 
 </manifest>

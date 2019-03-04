@@ -7,6 +7,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivitySplashBinding
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.base.BaseActivity
+import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
@@ -68,8 +69,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   }
 
   private fun postAnimate() {
-    /* todo based on auth token */
-    navigationUtils.navigate(AuthenticationActivity::class.java, finishAfter = true)
+    if (viewModel.authState()) {
+      navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, finishAfter = true)
+    } else {
+      navigationUtils.navigate(AuthenticationActivity::class.java, finishAfter = true)
+    }
   }
 }
 
