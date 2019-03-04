@@ -6,6 +6,8 @@
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.READ_SMS"/>
+  <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
   <application
       android:name=".KotlinApp"
@@ -18,13 +20,18 @@
       tools:ignore="GoogleAppIndexingWarning">
 
     <activity android:name=".ui.splash.SplashActivity">
-      <intent-filter>
-      <action android:name="android.intent.action.MAIN"/>
-      <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
     </activity>
 
-    <activity android:name=".ui.auth.AuthenticationActivity"/>
+    <activity android:name=".ui.auth.AuthenticationActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
 
     <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
@@ -34,7 +41,6 @@
       <!--<category android:name="android.intent.category.LAUNCHER"/>-->
       <!--</intent-filter>-->
     </activity>
-
   </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.ui.custom.DelhiveryOTPViewEditText
+import com.github.florent37.kotlin.pleaseanimate.please
 
 /**
  * Show error vibration with error state for [DelhiveryOTPViewEditText]
@@ -51,16 +52,27 @@ fun View.errorVibrate(start: Boolean = true) = resources.getDimension(R.dimen.di
 fun View.fadeAnim(
   infinite: Boolean = true,
   start: Boolean = true
-) =
-  ObjectAnimator.ofFloat(this, "alpha", 1f, 0f, 1f)
-      .apply {
-        duration = 1500
-        if (infinite) {
-          repeatMode = ValueAnimator.RESTART
-          repeatCount = ValueAnimator.INFINITE
-        }
-        interpolator = FastOutSlowInInterpolator()
-        if (start) {
-          start()
-        }
+) = ObjectAnimator.ofFloat(this, "alpha", 1f, 0f, 1f)
+    .apply {
+      duration = 1500
+      if (infinite) {
+        repeatMode = ValueAnimator.RESTART
+        repeatCount = ValueAnimator.INFINITE
       }
+      interpolator = FastOutSlowInInterpolator()
+      addListener(object : AnimatorListener {
+        override fun onAnimationRepeat(animation: Animator?) {}
+
+        override fun onAnimationEnd(animation: Animator?) {}
+
+        override fun onAnimationCancel(animation: Animator?) {
+          /* reset view alpha to 1 */
+          please { animate(this@fadeAnim) toBe { visible() } }.start()
+        }
+
+        override fun onAnimationStart(animation: Animator?) {}
+      })
+      if (start) {
+        start()
+      }
+    }

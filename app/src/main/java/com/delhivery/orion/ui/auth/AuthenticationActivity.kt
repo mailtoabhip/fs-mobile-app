@@ -1,9 +1,14 @@
 package com.delhivery.orion.ui.auth
 
+import android.Manifest
 import android.arch.lifecycle.Observer
+import android.content.IntentFilter
 import android.os.Bundle
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivityAuthenticationBinding
+import com.delhivery.orion.receiver.OTPReceiver
+import com.delhivery.orion.receiver.OTPReceiverInterface
+import com.delhivery.orion.receiver.OTP_INTENT_FILTER
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.orion.ui.auth.AuthenticationUIError.None
@@ -17,16 +22,20 @@ import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.utils.extensions.actionDone
 import com.delhivery.orion.utils.extensions.errorVibrate
 import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
+import com.delhivery.orion.utils.extensions.onBackground
+import com.delhivery.orion.utils.extensions.plusAssign
 import com.delhivery.orion.utils.extensions.raisedFocus
 
 class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
-    DelhiveryOTPViewInterface {
-
+    DelhiveryOTPViewInterface, OTPReceiverInterface {
   override fun getViewModelClass() = AuthenticationViewModel::class.java
 
   override fun layoutId() = R.layout.activity_authentication
 
   override fun requireConnection() = true
+
+  /* OTP receiver */
+  private val otpReceiver by lazy { OTPReceiver(this) }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -37,58 +46,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* observe and update ui state */
-    viewModel.stateLiveData.observe(this, Observer {
-      it?.let { state ->
-        binding.state = state
-        when (state) {
-          PhoneNo -> {
-            //hide keyboard
-            uiUtils.toggleKeyboard()
-          }
-          OTP -> {
-            uiUtils.hideDelhiveryProgress()
-            //show keyboard and clear otp
-            uiUtils.toggleKeyboard(false)
-            binding.otpView.clear(focusedIndex = 0, animate = false)
-          }
-          LoginProgress -> {
-            //hide keyboard show progress view
-            uiUtils.toggleKeyboard()
-            uiUtils.showDelhiveryProgress(
-                title = "Logging you in..",
-                message = "This usually takes few seconds to load. please be patient.",
-                proTip = "Some tip regarding how to bid, or whats to be considered while bidding. "
-            )
-          }
-          /* Login success, move to next activity */
-          LoginSuccess -> {
-            uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, finishAfter = true)
-          }
-        }
-      }
-    })
+    viewModel.stateLiveData.observe(this, StateObserver())
 
     /* obvserve errors and update ui */
-    viewModel.errorLiveData.observe(this, Observer {
-      it?.let { error ->
-        /* show error message in snackbar if not null || empty */
-        if (error.second.isNotNullOrEmpty()) {
-          uiUtils.showSnackbar(error.second!!)
-        }
-        /* handle each error state */
-        when (error.first) {
-          InvalidPhoneNo -> {   //Invalid phone number functionality
-            binding.editPhoneNo.errorVibrate()
-          }
-          InvalidOTP -> {   //Invalid OTP clear fields
-            binding.otpView.clear()
-          }
-          None -> {/* nothing */
-          }
-        }
-      }
-    })
+    viewModel.errorLiveData.observe(this, ErrorObserver())
 
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
@@ -117,5 +78,100 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun otpSubmitted(otp: CharArray) {
     viewModel.verifyOTP(otp)
+  }
+
+  /**
+   * Request sms read permission for otp
+   */
+  private fun readSMSOTP() {
+    compositeDisposable += requestPermission(Manifest.permission.READ_SMS)
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+            registerReceiver(otpReceiver, IntentFilter(OTP_INTENT_FILTER))
+          } else {
+            /* read permission error */
+          }
+        }
+  }
+
+  override fun otpFound(otp: String) {
+    otpSubmitted(otp.toCharArray())
+  }
+
+  /**
+   * [AuthenticationUIState] observer
+   */
+  inner class StateObserver : Observer<AuthenticationUIState> {
+    override fun onChanged(it: AuthenticationUIState?) {
+      it?.let { state ->
+        binding.state = state
+        when (state) {
+          PhoneNo -> {
+            //hide keyboard
+            uiUtils.toggleKeyboard()
+          }
+          OTP -> {
+            /* read sms per */
+            readSMSOTP()
+
+            uiUtils.hideDelhiveryProgress()
+            //show keyboard and clear otp
+            uiUtils.toggleKeyboard(false)
+            binding.otpView.clear(focusedIndex = 0, animate = false)
+
+            /* show masked phone no */
+            viewModel.phoneNo.let {
+              if (it.length > 2) {
+                binding.textOtpSentToPhoneNo.text =
+                    getString(R.string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
+              }
+            }
+          }
+          LoginProgress -> {
+            /* un register otp reader */
+            unregisterReceiver(otpReceiver)
+
+            //hide keyboard show progress view
+            uiUtils.toggleKeyboard()
+            uiUtils.showDelhiveryProgress(
+                title = "Logging you in..",
+                message = "This usually takes few seconds to load. please be patient.",
+                proTip = "Some tip regarding how to bid, or whats to be considered while bidding. "
+            )
+          }
+          /* Login success, move to next activity */
+          LoginSuccess -> {
+            uiUtils.hideDelhiveryProgress()
+            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, finishAfter = true)
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * [AuthenticationUIError] observer
+   */
+  inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>> {
+    override fun onChanged(it: Pair<AuthenticationUIError, String?>?) {
+      it?.let { error ->
+        /* show error message in snackbar if not null || empty */
+        if (error.second.isNotNullOrEmpty()) {
+          uiUtils.showSnackbar(error.second!!)
+        }
+        /* handle each error state */
+        when (error.first) {
+          InvalidPhoneNo -> {   //Invalid phone number functionality
+            binding.editPhoneNo.errorVibrate()
+          }
+          InvalidOTP -> {   //Invalid OTP clear fields
+            binding.otpView.clear()
+          }
+          None -> {/* nothing */
+          }
+        }
+      }
+    }
   }
 }

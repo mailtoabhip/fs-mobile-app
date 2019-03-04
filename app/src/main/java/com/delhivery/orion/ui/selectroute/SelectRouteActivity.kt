@@ -54,7 +54,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
               .firstOrNull()
           Single.just(Pair(_loc, geoAddr))
         },
-        Single.timer(1000, MILLISECONDS),
+        Single.timer(2000, MILLISECONDS),
         BiFunction<Pair<Location, Address?>, Long, Pair<Location, Address?>> { t1, _ -> t1 })
         .onBackground()
         .doFinally { /* location animation ends */ gpsAnim.cancel() }

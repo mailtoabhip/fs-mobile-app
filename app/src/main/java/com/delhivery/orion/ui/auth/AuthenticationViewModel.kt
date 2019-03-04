@@ -29,7 +29,6 @@ class AuthenticationViewModel @Inject constructor(private val authenticationRepo
 
   /* binding vars */
   var phoneNo: String = ""
-  var phoneNoMasked: String = ""
 
   /**
    * Send OTP
@@ -47,8 +46,6 @@ class AuthenticationViewModel @Inject constructor(private val authenticationRepo
         .progress()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            if (phoneNo.isNotEmpty())
-              phoneNoMasked = phoneNo.substring(phoneNo.length - 2)
             OTP
           } else {
             phoneNo = ""
