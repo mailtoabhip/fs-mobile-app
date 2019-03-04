@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <import type="com.delhivery.orion.ui.auth.AuthenticationUIState"/>
+    <variable
+        name="viewModel"
+        type="com.delhivery.orion.ui.auth.AuthenticationViewModel"
+        />
+    <variable
+        name="state"
+        type="com.delhivery.orion.ui.auth.AuthenticationUIState"
+        />
+  </data>
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/white"
+      android:orientation="vertical"
+      >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <!-- Phone no container -->
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingBottom="24dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="24dp"
+          android:paddingTop="24dp"
+          android:visibility="gone"
+          bind:visibility="@{ state == AuthenticationUIState.PhoneNo }"
+          >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="6sp"
+            android:text="@string/label_phone_number"
+            android:textColor="#de000000"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            />
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical|start"
+            android:orientation="horizontal"
+            >
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif-medium"
+              android:lineSpacingExtra="8sp"
+              android:text="@string/label_isd_code"
+              android:textColor="#de000000"
+              android:textSize="20sp"
+              android:textStyle="normal"
+              />
+
+          <com.delhivery.orion.ui.custom.DelhiveryOTPViewEditText
+              android:id="@+id/edit_phone_no"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="16dp"
+              android:layout_marginEnd="8dp"
+              android:layout_marginStart="10dp"
+              android:layout_marginTop="16dp"
+              android:background="@drawable/bg_login_edit"
+              android:digits="1234567890"
+              android:imeOptions="actionDone"
+              android:inputType="phone"
+              android:maxLength="10"
+              android:paddingEnd="8dp"
+              android:paddingStart="8dp"
+              android:text="@={ viewModel.phoneNo }"
+              android:textColor="#de000000"
+              android:textSize="20sp"
+              />
+        </android.support.v7.widget.LinearLayoutCompat>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="24dp"
+            android:onClick="@{ () -> viewModel.sendOTP() }"
+            android:text="@string/action_send_otp"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
+            style="@style/ActionButton"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="4sp"
+            android:text="@string/msg_send_otp_auth"
+            android:textColor="#99000000"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="6sp"
+            android:text="@string/msg_contact_terms_auth"
+            android:textColor="#99000000"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            />
+      </android.support.v7.widget.LinearLayoutCompat>
+
+      <!-- OTP authentication container -->
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingBottom="24dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="24dp"
+          android:paddingTop="24dp"
+          bind:visibility="@{ state == AuthenticationUIState.OTP }"
+          >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="6sp"
+            android:text="@string/label_otp"
+            android:textColor="#de000000"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            />
+
+        <com.delhivery.orion.ui.custom.DelhiveryOTPView
+            android:id="@+id/otp_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="4sp"
+            android:text="@{ @string/msg_otp_sent_to_phone_no(viewModel.phoneNoMasked) }"
+            android:textColor="#99000000"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            tools:text="We have send the otp to your phone number ending with (32)"
+            />
+
+      </android.support.v7.widget.LinearLayoutCompat>
+    </FrameLayout>
+
+  </android.support.v7.widget.LinearLayoutCompat>
+</layout>

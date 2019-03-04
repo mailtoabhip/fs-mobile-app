@@ -1,0 +1,48 @@
+package com.delhivery.orion.injection.module
+
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import com.delhivery.orion.injection.scope.ViewModelScope
+import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
+import com.delhivery.orion.ui.splash.SplashViewModel
+import com.delhivery.orion.utils.ViewModelFactory
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoMap
+
+/**
+ * View Model Factory Module
+ *
+ * Each ViewModel should be declared here as bind<#view_model>
+ * else [IllegalArgumentException] will be thrown with "Unknown model class $modelClass"
+ */
+@Module
+abstract class ViewModelFactoryModule {
+  /**
+   * Sample ViewModel, should be removed before moving to production
+   */
+  @Binds
+  @IntoMap
+  @ViewModelScope(SplashViewModel::class)
+  abstract fun bindSplashViewModel(splashViewModel: SplashViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AuthenticationViewModel::class)
+  abstract fun bindAuthenticationViewModel(authenticationViewModel: AuthenticationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectRouteWelcomeViewModel::class)
+  abstract fun bindSelectRouteWelcomeViewModel(selectRouteWelcomeViewModel: SelectRouteWelcomeViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectRouteViewModel::class)
+  abstract fun bindSelectRouteViewModel(selectRouteViewModel: SelectRouteViewModel): ViewModel
+
+  @Binds
+  internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+}

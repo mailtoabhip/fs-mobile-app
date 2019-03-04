@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="title"
+        type="String"
+        />
+    <variable
+        name="message"
+        type="String"
+        />
+    <variable
+        name="tip"
+        type="String"
+        />
+  </data>
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorPrimary"
+      android:paddingBottom="32dp"
+      android:paddingEnd="48dp"
+      android:paddingStart="48dp"
+      >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+
+      <com.delhivery.orion.ui.custom.DelhiveryProgressView
+          android:id="@+id/progress"
+          android:layout_width="80dp"
+          android:layout_height="80dp"
+          android:layout_marginBottom="24dp"
+          />
+
+      <TextView
+          android:id="@+id/text_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="24dp"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center_horizontal"
+          android:lineSpacingExtra="8sp"
+          android:text="@{ title }"
+          android:textColor="#de000000"
+          android:textSize="20sp"
+          android:textStyle="normal"
+          tools:text="Logging you in.."
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:fontFamily="sans-serif"
+          android:gravity="center_horizontal"
+          android:lineSpacingExtra="5sp"
+          android:text="@{ message }"
+          android:textColor="#de000000"
+          android:textSize="14sp"
+          android:textStyle="normal"
+          tools:text="This usually takes few seconds to load. please be patient."
+          />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="4sp"
+        android:text="@{ @string/msg_loading_pro_tip(tip) }"
+        android:textColor="#99000000"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        tools:text="Pro tip:\nSome tip regarding how to bid, or whats to be considered while bidding. "
+        />
+  </FrameLayout>
+</layout>

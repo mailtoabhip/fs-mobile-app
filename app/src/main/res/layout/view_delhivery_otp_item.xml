@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+  <com.delhivery.orion.ui.custom.DelhiveryOTPViewEditText
+      android:id="@+id/edit_otp"
+      android:layout_width="36dp"
+      android:layout_height="wrap_content"
+      android:layout_margin="6dp"
+      android:background="@drawable/bg_login_edit"
+      android:digits="1234567890"
+      android:gravity="center"
+      android:hint="@string/hint_otp_digit"
+      android:imeOptions="actionNext"
+      android:inputType="phone"
+      android:maxLength="1"
+      android:textColor="#de000000"
+      android:textSize="20sp"
+      app:state_error="false"
+      />
+</layout>

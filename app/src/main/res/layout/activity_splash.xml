@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.orion.ui.splash.SplashViewModel"
+        />
+  </data>
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#181818"
+      >
+
+    <View
+        android:id="@+id/center_dot"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/img_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_orion_logo"
+        />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/img_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:alpha="0"
+        app:srcCompat="@drawable/ic_orion_text"
+        />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_delhivery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="38dp"
+        android:alpha="0"
+        android:fontFamily="sans-serif"
+        android:letterSpacing="0.04"
+        android:text="@string/label_powered_by_delhivery"
+        android:textColor="#59ffffff"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        />
+
+    <View
+        android:id="@+id/view_center_reveal"
+        android:layout_width="1500dp"
+        android:layout_height="1500dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_circle_delhivery_red"
+        android:scaleX="0"
+        android:scaleY="0"
+        />
+  </FrameLayout>
+</layout>

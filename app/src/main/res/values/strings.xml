@@ -1,0 +1,53 @@
+<resources>
+  <string name="app_name">Orion</string>
+
+  <!-- Title (title_) -->
+  <string name="title_dialog_location_setting_disabled">Enable location</string>
+  <string name="title_dialog_location_permission_disabled">Permissions</string>
+
+  <!--Messages (msg_)-->
+  <string name="msg_hello_world">Message Hello World</string>
+  <string name="msg_user_added">User added successfully</string>
+  <string name="msg_dialog_location_setting_disabled">Your location is set to &lt;b>“off”&lt;/b>. Please enable location to use the app&lt;br>&lt;br></string>
+  <string name="msg_dialog_location_permission_disabled">Allow &lt;b>ORION app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
+  <string name="msg_send_otp_auth">Please use the registered number if are already an ORION partner</string>
+  <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
+  <string name="msg_otp_sent_to_phone_no">We have send the otp to your phone number ending with %1$s</string>
+  <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
+  <string name="msg_select_route_welcome_user">Welcome\n%s</string>
+  <string name="msg_glad_to_onboard">Glad too see you onboarded with Orion</string>
+  <string name="msg_select_route_pref_to_load">We would need your route preferences to fetch the best possible load requests for you.</string>
+
+  <!--Hints (hint_)-->
+  <string name="hint_hello_world">Hint Hello World</string>
+  <string name="hint_name">Name</string>
+  <string name="hint_dob">Date of Birth</string>
+  <string name="hint_otp_digit"></string>
+
+  <!--Actions (action_)-->
+  <string name="action_hello_world">Action Hello World</string>
+  <string name="action_add_user">Add User</string>
+  <string name="action_get_users">Get all users</string>
+  <string name="action_send_otp">Send OTP</string>
+  <string name="action_select_routes">Select Routes</string>
+  <string name="action_skip_select_routes">Skip, I’ll select later</string>
+
+  <!--Label (label_)-->
+  <string name="label_hello_world">Label Hello World</string>
+  <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
+  <string name="label_otp">Enter OTP</string>
+  <string name="label_powered_by_delhivery">Powerd by Delhivery pvt ltd</string>
+  <string name="label_phone_number">Phone number</string>
+  <string name="label_isd_code">+91</string>
+
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
+  <string name="label_origin_city">Origin city</string>
+  <string name="hint_enter_city_name">Enter city name</string>
+  <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
+  <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
+
+</resources>
