@@ -10,4 +10,8 @@
   <!-- delhivery progress view -->
   <dimen name="delhivery_progress_view_rotation_ball_radius">6dp</dimen>
   <dimen name="delhivery_progress_view_orbit_thickness">2dp</dimen>
+
+  <!-- delhivery view pager indicator -->
+  <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
+  <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
 </resources>

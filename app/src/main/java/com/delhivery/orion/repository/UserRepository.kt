@@ -1,5 +1,6 @@
 package com.delhivery.orion.repository
 
+import com.auth0.android.jwt.JWT
 import com.delhivery.orion.database.AppDatabase
 import com.delhivery.orion.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -17,9 +18,8 @@ class UserRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
-   *
+   * User full name
    */
-  fun handleJWTToken(jwtToken: String) {
-
-  }
+  fun username() =
+    JWT(userPrefs.jwtToken!!).claims.let { "${it["first_name"]?.asString()} ${it["last_name"]?.asString()}" }
 }

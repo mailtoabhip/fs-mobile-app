@@ -18,8 +18,12 @@ import javax.inject.Singleton
 class AuthenticationRepository @Inject constructor(
   private val umsService: UMSService,
   private val userPrefs: UserPrefs
-) :
-    BaseRepository() {
+) : BaseRepository() {
+
+  init {
+    /* Update JWT token from prefs to Network Interceptor */
+    DelhiveryNetworkInterceptor.instance.updateJWT(userPrefs.jwtToken)
+  }
 
   /**
    * Send otp to phone number and return if success and error message

@@ -2,6 +2,7 @@ package com.delhivery.orion.injection.component
 
 import com.delhivery.orion.injection.module.NetworkModule
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
@@ -25,6 +26,8 @@ interface ViewModelInjector {
   fun inject(selectRouteWelcomeViewModel: SelectRouteWelcomeViewModel)
 
   fun inject(selectRouteViewModel: SelectRouteViewModel)
+
+  fun inject(onboardingViewModel: OnboardingViewModel)
 
   @Component.Builder
   interface Builder {

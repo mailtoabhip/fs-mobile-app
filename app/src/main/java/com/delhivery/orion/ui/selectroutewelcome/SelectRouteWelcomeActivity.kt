@@ -33,7 +33,7 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
     /* skip button functionality - todo */
 
     /* animate and open bottom view */
-    binding.arcView.animateOpen { /*end action start animtion chain*/ animate() }
+    binding.arcView.animate { /*end action start animtion chain*/ animate() }
   }
 
   private fun animate() {

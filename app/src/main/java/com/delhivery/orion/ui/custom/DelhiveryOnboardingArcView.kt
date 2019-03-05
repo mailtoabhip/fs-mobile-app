@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
+import com.delhivery.orion.ui.custom.AnimationType.RevealOpen
 
 class DelhiveryOnboardingArcView(
   context: Context,
@@ -18,7 +19,6 @@ class DelhiveryOnboardingArcView(
 
   /* arc color */
   private val ArcColor = Color.WHITE
-  private val HeightArcFactor = 1.5f
 
   /* arc radius for animation */
   private var arcRadius = 0f
@@ -32,7 +32,6 @@ class DelhiveryOnboardingArcView(
 
   override fun onDraw(canvas: Canvas?) {
     canvas?.apply {
-      //      val radius = height * 1.5f
       canvas.drawCircle(width / 2f, height * HeightArcFactor, arcRadius, arcPaint)
     }
   }
@@ -40,11 +39,12 @@ class DelhiveryOnboardingArcView(
   /**
    * Animate open/ center reveal
    */
-  fun animateOpen(
+  fun animate(
+    type: AnimationType = RevealOpen,
     startDelay: Long = 300,
     endAction: () -> Unit
   ) {
-    ValueAnimator.ofFloat(0.5f, HeightArcFactor)
+    ValueAnimator.ofFloat(*type.values)
         .apply {
           duration = 300
           interpolator = FastOutSlowInInterpolator()
@@ -71,4 +71,14 @@ class DelhiveryOnboardingArcView(
           start()
         }
   }
+}
+
+/* arc height animation factor */
+private const val HeightArcFactor = 1.5f
+
+/* Arc animation type */
+enum class AnimationType(vararg val values: Float) {
+  RevealOpen(0.5f, HeightArcFactor),
+  RevealCloseOpen(HeightArcFactor, 0.5f, HeightArcFactor),
+  RevealClose(HeightArcFactor, 0.5f)
 }

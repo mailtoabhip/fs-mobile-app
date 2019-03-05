@@ -49,5 +49,6 @@
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
   <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
+  <string name="action_skip">SKIP</string>
 
 </resources>

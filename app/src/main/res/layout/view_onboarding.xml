@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="title"
+        type="String"
+        />
+
+    <variable
+        name="message"
+        type="String"
+        />
+  </data>
+  <android.support.v7.widget.LinearLayoutCompat
+      android:id="@+id/container_text"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:padding="28dp"
+      >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="8sp"
+        android:text="@{ title }"
+        android:textColor="#de000000"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        tools:text="Welcome to Orion!"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="5sp"
+        android:text="@{ message }"
+        android:textColor="#99000000"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        tools:text="Glad to see that you have taken the right step towards the digitising logistics. We ensure you the best possible loads across the country."
+        />
+
+  </android.support.v7.widget.LinearLayoutCompat>
+</layout>

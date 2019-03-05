@@ -5,6 +5,7 @@ import android.content.Context
 import com.delhivery.orion.injection.qualifier.ActivityContext
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.auth.AuthenticationActivity
+import com.delhivery.orion.ui.onboarding.OnboardingActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
@@ -35,6 +36,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSelectRouteActivityModule::class])
   internal abstract fun bindSelectRouteActivity(): SelectRouteActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsOnboardingActivityModule::class])
+  internal abstract fun bindOnboardingActivity(): OnboardingActivity
 }
 
 /**
@@ -55,6 +60,9 @@ internal abstract class AbsSelectRouteWelcomeActivityModule : ActivityModule<Sel
 
 @Module
 internal abstract class AbsSelectRouteActivityModule : ActivityModule<SelectRouteActivity>()
+
+@Module
+internal abstract class AbsOnboardingActivityModule : ActivityModule<OnboardingActivity>()
 
 /**
  * Activity Binds Module

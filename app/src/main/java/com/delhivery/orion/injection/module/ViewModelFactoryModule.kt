@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.delhivery.orion.injection.scope.ViewModelScope
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
@@ -42,6 +43,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SelectRouteViewModel::class)
   abstract fun bindSelectRouteViewModel(selectRouteViewModel: SelectRouteViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(OnboardingViewModel::class)
+  abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
