@@ -15,6 +15,20 @@ fun String?.isNotNullOrEmpty(): Boolean = this != null && isNotEmpty()
  * @return Boolean for not
  */
 operator fun Any?.not() = when (this) {
-    is Boolean -> this == false
-    else -> this == null
+  is Boolean -> this == false
+  else -> this == null
+}
+
+/**
+ * Any variable safe comparison
+ *
+ * @return Boolean
+ */
+fun Any?.safeEquals(another: Any?): Boolean {
+  if (this != null && another != null) {
+    return this == another
+  } else if (this == null && another == null) {
+    return true
+  }
+  return false
 }

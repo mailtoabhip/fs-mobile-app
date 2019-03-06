@@ -5,4 +5,5 @@
   <color name="colorAccent">#181818</color>
 
   <color name="colorDelhiveryRed">#ED4136</color>
+  <color name="colorBackground">#f2f2f2</color>
 </resources>

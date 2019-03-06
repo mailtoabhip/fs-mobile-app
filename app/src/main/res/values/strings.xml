@@ -39,6 +39,7 @@
   <string name="label_powered_by_delhivery">Powerd by Delhivery pvt ltd</string>
   <string name="label_phone_number">Phone number</string>
   <string name="label_isd_code">+91</string>
+  <string name="label_live_load_requests">Live load requests (%1$d)</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -50,5 +51,8 @@
   <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
   <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
   <string name="action_skip">SKIP</string>
+  <string name="label_my_bids">My Bids</string>
+  <string name="label_confirmed_bids">Confirmed Bids</string>
+  <string name="hint_search_load">Search load</string>
 
 </resources>
