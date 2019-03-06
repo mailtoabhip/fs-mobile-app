@@ -5,7 +5,11 @@ import android.arch.lifecycle.ViewModelProvider
 import com.delhivery.orion.injection.scope.ViewModelScope
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
+import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
+import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
+import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
@@ -60,6 +64,26 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
   abstract fun bindHomeBidsViewModel(homeBidsViewModel: HomeBidsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeTripsViewModel::class)
+  abstract fun bindHomeTripsViewModel(homeTripsViewModel: HomeTripsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomePaymentViewModel::class)
+  abstract fun bindHomePaymentViewModel(homePaymentViewModel: HomePaymentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeAlertsViewModel::class)
+  abstract fun bindHomeAlertsViewModel(homeAlertsViewModel: HomeAlertsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeProfileViewModel::class)
+  abstract fun bindHomeProfileViewModel(homeProfileViewModel: HomeProfileViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

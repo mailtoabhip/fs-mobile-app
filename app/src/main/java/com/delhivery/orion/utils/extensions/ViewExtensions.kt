@@ -2,6 +2,8 @@ package com.delhivery.orion.utils.extensions
 
 import android.app.Activity
 import android.support.v4.view.ViewCompat
+import android.support.v4.view.ViewPager
+import android.support.v4.view.ViewPager.OnPageChangeListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -66,4 +68,24 @@ fun EditText.actionDone(
       false
     }
   }
+}
+
+/**
+ * Attach page selected to view pager
+ */
+fun ViewPager.onPageSelected(action: (pos: Int) -> Unit) = apply {
+  addOnPageChangeListener(object : OnPageChangeListener {
+    override fun onPageScrollStateChanged(p0: Int) {}
+
+    override fun onPageScrolled(
+      p0: Int,
+      p1: Float,
+      p2: Int
+    ) {
+    }
+
+    override fun onPageSelected(p0: Int) {
+      action(p0)
+    }
+  })
 }

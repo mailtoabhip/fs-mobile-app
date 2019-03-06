@@ -30,4 +30,15 @@
     <item name="android:textCursorDrawable">@null</item>
   </style>
 
+  <!-- Bottom navigation View(Inactive) -->
+  <style name="BottomNavigationView.Inactive" parent="@style/TextAppearance.AppCompat.Caption">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textStyle">normal</item>
+  </style>
+
+  <!-- Bottom navigation View(Active) -->
+  <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textStyle">bold</item>
+  </style>
 </resources>

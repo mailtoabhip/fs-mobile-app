@@ -6,7 +6,7 @@ import com.delhivery.orion.injection.qualifier.ActivityContext
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.home.HomeActivity
-import com.delhivery.orion.ui.home.HomeFragmentsBindingModule
+import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.orion.ui.onboarding.OnboardingActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity

@@ -54,5 +54,10 @@
   <string name="label_my_bids">My Bids</string>
   <string name="label_confirmed_bids">Confirmed Bids</string>
   <string name="hint_search_load">Search load</string>
+  <string name="label_nav_bids">Bids</string>
+  <string name="label_nav_trips">Trips</string>
+  <string name="label_nav_alerts">Alerts</string>
+  <string name="label_nav_payment">Payment</string>
+  <string name="label_nav_profile">Profile</string>
 
 </resources>

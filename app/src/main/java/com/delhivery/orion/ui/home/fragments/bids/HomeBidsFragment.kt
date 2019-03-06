@@ -10,6 +10,12 @@ import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 
 class HomeBidsFragment : BaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     ItemClickListener<BaseHomeBidsRVAdapterItem<*>> {
+
+  companion object {
+    /* singleton instance */
+    val _instance: HomeBidsFragment by lazy { HomeBidsFragment() }
+  }
+
   override fun getViewModelClass() = HomeBidsViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_home_bids

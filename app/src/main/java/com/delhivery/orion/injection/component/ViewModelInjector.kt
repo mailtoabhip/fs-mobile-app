@@ -3,7 +3,11 @@ package com.delhivery.orion.injection.component
 import com.delhivery.orion.injection.module.NetworkModule
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
+import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
+import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
+import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
@@ -34,6 +38,14 @@ interface ViewModelInjector {
   fun inject(homeViewModel: HomeViewModel)
 
   fun inject(homeBidsViewModel: HomeBidsViewModel)
+
+  fun inject(homeTripsViewModel: HomeTripsViewModel)
+
+  fun inject(homePaymentViewModel: HomePaymentViewModel)
+
+  fun inject(homeAlertsViewModel: HomeAlertsViewModel)
+
+  fun inject(homeProfileViewModel: HomeProfileViewModel)
 
   @Component.Builder
   interface Builder {
