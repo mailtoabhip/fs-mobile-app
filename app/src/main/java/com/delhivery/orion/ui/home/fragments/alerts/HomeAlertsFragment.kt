@@ -2,9 +2,9 @@ package com.delhivery.orion.ui.home.fragments.alerts
 
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeAlertsBinding
-import com.delhivery.orion.ui.base.BaseFragment
+import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 
-class HomeAlertsFragment : BaseFragment<FragmentHomeAlertsBinding, HomeAlertsViewModel>() {
+class HomeAlertsFragment : HomeBaseFragment<FragmentHomeAlertsBinding, HomeAlertsViewModel>() {
   companion object {
     /* singleton instance */
     val _instance: HomeAlertsFragment by lazy { HomeAlertsFragment() }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <android.support.constraint.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_search_bar_dark"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_search_load"
+        android:paddingStart="52dp"
+        android:textColorHint="#59000000"
+        android:textSize="16sp"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
+  </android.support.constraint.ConstraintLayout>
+</layout>

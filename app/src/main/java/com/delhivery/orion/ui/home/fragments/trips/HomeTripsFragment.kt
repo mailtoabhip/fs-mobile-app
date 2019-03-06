@@ -2,9 +2,9 @@ package com.delhivery.orion.ui.home.fragments.trips
 
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
-import com.delhivery.orion.ui.base.BaseFragment
+import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 
-class HomeTripsFragment : BaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>() {
+class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>() {
   companion object {
     /* singleton instance */
     val _instance: HomeTripsFragment by lazy { HomeTripsFragment() }

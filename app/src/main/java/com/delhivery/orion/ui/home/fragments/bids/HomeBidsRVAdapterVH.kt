@@ -2,6 +2,7 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import android.databinding.ViewDataBinding
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
+import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
@@ -31,5 +32,15 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsSearchItemBinding, HomeBidsSearchItem>(binding) {
   override fun bind(item: HomeBidsSearchItem) {
     binding.loadRequests = item.data.loadRequests
+  }
+}
+
+/**
+ * Bid request item view holder
+ */
+internal class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(binding) {
+  override fun bind(item: HomeBidsRequestItem) {
+    binding.request = item.data
   }
 }

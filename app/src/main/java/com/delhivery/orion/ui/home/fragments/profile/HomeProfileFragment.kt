@@ -2,9 +2,9 @@ package com.delhivery.orion.ui.home.fragments.profile
 
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeProfileBinding
-import com.delhivery.orion.ui.base.BaseFragment
+import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 
-class HomeProfileFragment : BaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>() {
+class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>() {
 
   companion object {
     /* singleton instance */

@@ -38,7 +38,7 @@
         android:paddingStart="52dp"
         android:textColorHint="#59000000"
         android:textSize="16sp"
-        bind:shadow="@{ @dimen/size_4dp }"
+        bind:shadow="@{ @dimen/size_2dp }"
         />
   </android.support.v7.widget.LinearLayoutCompat>
 </layout>

@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.delhivery.orion.BR
+import com.delhivery.orion.utils.UiUtils
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -26,6 +27,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : ViewModel> : DaggerFragmen
   lateinit var viewModel: VM
 
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+  @Inject lateinit var uiUtils: UiUtils
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

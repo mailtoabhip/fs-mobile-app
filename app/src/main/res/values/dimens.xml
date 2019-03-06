@@ -13,7 +13,7 @@
   <dimen name="edit_text_raise_focus_z">2dp</dimen>
   <dimen name="action_btn_elevation">2dp</dimen>
   <dimen name="distance_otp_vibrate">8dp</dimen>
-  <dimen name="toolbar_elevation">2dp</dimen>
+  <dimen name="toolbar_elevation">4dp</dimen>
 
   <!-- delhivery progress view -->
   <dimen name="delhivery_progress_view_rotation_ball_radius">6dp</dimen>

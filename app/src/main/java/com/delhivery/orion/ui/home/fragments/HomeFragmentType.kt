@@ -19,7 +19,7 @@ enum class HomeFragmentType(
 ) {
   BidsFragment(R.id.nav_bids, 0, HomeBidsFragment._instance, "Bids & Requests"),
   TripsFragment(R.id.nav_trips, 1, HomeTripsFragment._instance, "Ongoing Trips"),
-  PaymentFragment(R.id.nav_payments, 2, HomePaymentFragment._instance, "Payments"),
+  PaymentFragment(R.id.nav_payments, 2, HomePaymentFragment._instance, "Payment"),
   AlertFragment(R.id.nav_alerts, 3, HomeAlertsFragment._instance, "Alerts"),
   ProfileFragment(R.id.nav_profile, 4, HomeProfileFragment._instance, "Profile");
 
