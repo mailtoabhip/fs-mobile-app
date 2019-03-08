@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
   <data>
@@ -37,6 +38,16 @@
         android:textColorHint="#59000000"
         android:textSize="16sp"
         bind:shadow="@{ @dimen/size_4dp }"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_sort_white"
         />
   </FrameLayout>
 </layout>

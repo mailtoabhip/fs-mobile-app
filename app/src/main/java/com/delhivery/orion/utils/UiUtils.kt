@@ -2,6 +2,7 @@ package com.delhivery.orion.utils
 
 import android.content.Context
 import android.support.annotation.StringRes
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.LayoutDelhiveryProgressBinding
+import com.delhivery.orion.databinding.LayoutFabCardMenuBinding
 import com.delhivery.orion.databinding.LayoutProgressBinding
 import com.delhivery.orion.injection.scope.ActivityScope
+import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuInterface
+import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -185,6 +189,43 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
         true -> imm.hideSoftInputFromWindow(it, 0)
         false -> imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
       }
+    }
+  }
+
+  /**
+   * Show fab card menu
+   */
+  fun fabCardMenu(
+    fab: FloatingActionButton,
+    items: List<DelhiveryFabCardMenuItem>,
+    itemSelected: (DelhiveryFabCardMenuItem) -> Unit
+  ) {
+    val parent = (fab.parent as ViewGroup)
+    val cardMenuBinding =
+      LayoutFabCardMenuBinding.inflate(LayoutInflater.from(activity), parent, false)
+    parent.addView(cardMenuBinding.root)
+
+    /* setup overlay */
+    cardMenuBinding.viewOverlay.setOnClickListener {
+      cardMenuBinding.fabMenu.animateClose {
+        parent.removeView(cardMenuBinding.root)
+      }
+    }
+
+    /* set fab menu */
+    cardMenuBinding.fabMenu.apply {
+      this.anchorView = fab
+      setMenuItems(items)
+      /* menu interface - close + pass action */
+      menuInterface = object : DelhiveryFabCardMenuInterface {
+        override fun onItemSelected(item: DelhiveryFabCardMenuItem) {
+          cardMenuBinding.fabMenu.animateClose {
+            parent.removeView(cardMenuBinding.root)
+            itemSelected(item)
+          }
+        }
+      }
+      post { cardMenuBinding.fabMenu.animateOpen() }
     }
   }
 }

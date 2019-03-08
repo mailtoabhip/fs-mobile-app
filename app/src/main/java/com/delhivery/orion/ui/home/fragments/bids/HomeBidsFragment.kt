@@ -2,15 +2,16 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
-import android.util.Log
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
@@ -34,12 +35,6 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     HomeBidsRVAdapter(this)
   }
 
-  override fun onPause() {
-    super.onPause()
-    binding.rvBids.smoothScrollToPosition(0)
-    Log.d("harish", "onPause")
-  }
-
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -54,6 +49,13 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
 
     adapter.setItems(getDummyData())
+
+    /* Use this logic to create our own menu as per  */
+    binding.fabSort.setOnClickListener { fab ->
+      uiUtils.fabCardMenu(fab as FloatingActionButton, HomeBidsFabCardMenuItems) {
+        onFabMenuItemSelected(it)
+      }
+    }
   }
 
   private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
@@ -65,9 +67,16 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   }
 
   override fun onItemClicked(item: BaseHomeBidsRVAdapterItem<*>) {
-
+    /* Literally most useless function here, remove it asap */
   }
 
+  private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {
+    /* todo - handle sorting here */
+  }
+
+  /**
+   * Home bids rv adapter scroll listener for search bar animation related stuff
+   */
   inner class HomeBidsRVAdapterScrollListener(
     private val stickyView: View,
     private val elevation: Float = 12f
@@ -122,7 +131,11 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         View.GONE
       }
       if (stickyView.visibility != viewVisibility) {
-
+        if (stickyView.visibility == View.GONE) {
+          binding.fabSort.hide()
+        } else {
+          binding.fabSort.show()
+        }
         uiUtils.toggleKeyboard()
         stickyView.visibility = viewVisibility
       }
