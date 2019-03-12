@@ -14,7 +14,7 @@
   </data>
   <TextView
       android:id="@+id/text_menu_item"
-      android:layout_width="wrap_content"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:alpha="@{ isTitle ? 0.54f : 1f }"
       android:background="#fff"
@@ -24,6 +24,8 @@
       android:foreground="?attr/selectableItemBackgroundBorderless"
       android:maxLines="1"
       android:paddingBottom="12dp"
+      android:paddingEnd="16dp"
+      android:paddingStart="40dp"
       android:paddingTop="12dp"
       android:text="@{ text }"
       android:textColor="@color/colorAccent"

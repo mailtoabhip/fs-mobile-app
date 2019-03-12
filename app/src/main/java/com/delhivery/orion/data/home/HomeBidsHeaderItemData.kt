@@ -10,4 +10,8 @@ data class HomeBidsHeaderItemData(
 }
 
 /* unique key for diff */
-private const val HomeBidsHeaderItemDataKey = "header"
+const val HomeBidsHeaderItemDataKey = "header"
+
+/* actions */
+const val HomeBidsHeaderAction_MyBids = "my_bids"
+const val HomeBidsHeaderAction_ConfirmedBids = "confirmed_bids"

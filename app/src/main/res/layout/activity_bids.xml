@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.orion.ui.bids.BidsViewModel"
+        />
+  </data>
+  <android.support.constraint.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:orientation="vertical"
+      >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+  </android.support.constraint.ConstraintLayout>
+</layout>

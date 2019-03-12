@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.widget.LinearLayoutCompat
 import android.util.AttributeSet
@@ -49,6 +50,8 @@ class DelhiveryFabCardMenu(
     }
   }
 
+  private val cardBg by lazy { ResourcesCompat.getDrawable(resources, R.drawable.bg_card, null) }
+
   /**
    * Add Menu items
    */
@@ -62,8 +65,11 @@ class DelhiveryFabCardMenu(
       /* set binding params */
       itemBinding.isTitle = item.id == FabMenuCardMenuTitleItem
       itemBinding.text = item.text
-      itemBinding.root.setOnClickListener { menuInterface?.onItemSelected(item) }
-
+      if (item.id != FabMenuCardMenuTitleItem) {
+        itemBinding.root.setOnClickListener {
+          it.postDelayed({ menuInterface?.onItemSelected(item) }, 300)
+        }
+      }
       addView(itemBinding.root, index)
     }
     invalidate()
@@ -116,6 +122,11 @@ class DelhiveryFabCardMenu(
    * Change all views visiblity
    */
   private fun viewsVisiblity(visibility: Int) {
+    background = if (visibility == View.VISIBLE) {
+      cardBg
+    } else {
+      null
+    }
     for (i in 0 until childCount) {
       getChildAt(i).visibility = visibility
     }

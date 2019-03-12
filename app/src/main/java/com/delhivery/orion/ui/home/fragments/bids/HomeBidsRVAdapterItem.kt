@@ -4,14 +4,17 @@ import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.home.HomeBidsHeaderItemData
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsSearchItemData
+import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
 enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Header(0),
   Search(1),
-  Request(2);
+  Request(2),
+  Warning(3);
 
   companion object {
     /**
@@ -48,3 +51,9 @@ class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(0
  */
 class HomeBidsRequestItem(data: HomeBidsRequestItemData = HomeBidsRequestItemData()) :
     BaseHomeBidsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Warning/action item
+ */
+class HomeBidsWarningItem(data: HomeBidsWarningItemData) :
+    BaseHomeBidsRVAdapterItem<HomeBidsWarningItemData>(Warning, data)

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.delhivery.orion.injection.scope.ViewModelScope
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
@@ -30,6 +31,7 @@ abstract class ViewModelFactoryModule {
   /**
    * Sample ViewModel, should be removed before moving to production
    */
+  /* Onboarding */
   @Binds
   @IntoMap
   @ViewModelScope(SplashViewModel::class)
@@ -55,11 +57,13 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(OnboardingViewModel::class)
   abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
 
+  /* Home */
   @Binds
   @IntoMap
   @ViewModelScope(HomeViewModel::class)
   abstract fun bindHomeViewModel(homeViewModel: HomeViewModel): ViewModel
 
+  /* Home fragments */
   @Binds
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
@@ -84,6 +88,12 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeProfileViewModel::class)
   abstract fun bindHomeProfileViewModel(homeProfileViewModel: HomeProfileViewModel): ViewModel
+
+  /* Bids */
+  @Binds
+  @IntoMap
+  @ViewModelScope(BidsViewModel::class)
+  abstract fun bindBidsViewModel(bidsViewModel: BidsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

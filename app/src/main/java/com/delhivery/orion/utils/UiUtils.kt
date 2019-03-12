@@ -207,6 +207,8 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
 
     /* setup overlay */
     cardMenuBinding.viewOverlay.setOnClickListener {
+      cardMenuBinding.viewOverlay.animate()
+          .alpha(0f)
       cardMenuBinding.fabMenu.animateClose {
         parent.removeView(cardMenuBinding.root)
       }
@@ -225,7 +227,11 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
           }
         }
       }
-      post { cardMenuBinding.fabMenu.animateOpen() }
+      post {
+        cardMenuBinding.viewOverlay.animate()
+            .alpha(1f)
+        cardMenuBinding.fabMenu.animateOpen()
+      }
     }
   }
 }

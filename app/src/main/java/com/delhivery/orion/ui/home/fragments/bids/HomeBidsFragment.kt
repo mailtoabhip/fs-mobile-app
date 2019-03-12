@@ -9,13 +9,20 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
+import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
+import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
+import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
+import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.bids.BidType.ActiveBid
+import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
+import com.delhivery.orion.ui.bids.userBidsIntent
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
-    ItemClickListener<BaseHomeBidsRVAdapterItem<*>> {
+    HomeBidsRVAdapterInterface {
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -61,13 +68,34 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem())
+    add(
+        2, HomeBidsWarningItem(
+        HomeBidsWarningItemData(
+            "No Routes selected", "Please select your route preference to see the load requests",
+            "Select routes", HomeBidsWarningAction_SelectRoutes
+        )
+    )
+    )
     for (i in 0..50) {
       add(HomeBidsRequestItem())
     }
   }
 
-  override fun onItemClicked(item: BaseHomeBidsRVAdapterItem<*>) {
-    /* Literally most useless function here, remove it asap */
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeBidsRVAdapterItem<*>
+  ) {
+    // handle actions here
+    when (actionId) {
+      HomeBidsHeaderAction_MyBids -> context?.let { startActivity(userBidsIntent(it, ActiveBid)) }
+      HomeBidsHeaderAction_ConfirmedBids -> context?.let {
+        startActivity(userBidsIntent(it, ConfirmedBid))
+      }
+      HomeBidsWarningAction_SelectRoutes -> {
+      }
+      HomeBidsWarningAction_EditRoutePrefs -> {
+      }
+    }
   }
 
   private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {

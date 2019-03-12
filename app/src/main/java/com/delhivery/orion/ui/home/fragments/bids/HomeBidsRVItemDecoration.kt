@@ -11,6 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeBidsStickySearchItemBinding
 
+/**
+ * Useless for now, **DO NOT DELETE** calculations will be required
+ */
 class HomeBidsRVItemDecoration : ItemDecoration() {
 
   private val HeaderOffset = 0

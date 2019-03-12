@@ -2,6 +2,7 @@ package com.delhivery.orion.injection.component
 
 import com.delhivery.orion.injection.module.NetworkModule
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
@@ -25,6 +26,7 @@ interface ViewModelInjector {
   /**
    * Injects required dependencies into the specified
    */
+  /* onboarding */
   fun inject(splashViewModel: SplashViewModel)
 
   fun inject(authenticationViewModel: AuthenticationViewModel)
@@ -35,6 +37,7 @@ interface ViewModelInjector {
 
   fun inject(onboardingViewModel: OnboardingViewModel)
 
+  /* Home */
   fun inject(homeViewModel: HomeViewModel)
 
   fun inject(homeBidsViewModel: HomeBidsViewModel)
@@ -46,6 +49,9 @@ interface ViewModelInjector {
   fun inject(homeAlertsViewModel: HomeAlertsViewModel)
 
   fun inject(homeProfileViewModel: HomeProfileViewModel)
+
+  /* Bids */
+  fun inject(bidsViewModel: BidsViewModel)
 
   @Component.Builder
   interface Builder {
