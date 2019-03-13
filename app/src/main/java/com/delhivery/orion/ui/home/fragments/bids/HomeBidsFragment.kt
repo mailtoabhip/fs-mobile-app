@@ -52,7 +52,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     binding.rvBids.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeBidsFragment.adapter
-      addOnScrollListener(HomeBidsRVAdapterScrollListener(binding.editStickySearch))
+      addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
     }
 
     adapter.setItems(getDummyData())
@@ -103,9 +103,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   }
 
   /**
-   * Home bids rv adapter scroll listener for search bar animation related stuff
+   * Home bids rv scroll listener for search bar animation related stuff
    */
-  inner class HomeBidsRVAdapterScrollListener(
+  inner class HomeBidsRVScrollListener(
     private val stickyView: View,
     private val elevation: Float = 12f
   ) : OnScrollListener() {

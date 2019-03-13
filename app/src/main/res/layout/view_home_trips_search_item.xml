@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:focusableInTouchMode="true"
+      >
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_search_bar_light"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_search_trips"
+        android:paddingStart="52dp"
+        android:textColorHint="#59000000"
+        android:textSize="16sp"
+        bind:shadow="@{ @dimen/size_2dp }"
+        />
+
+  </FrameLayout>
+</layout>

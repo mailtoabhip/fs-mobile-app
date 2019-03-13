@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
     >
   <data>
+    <import type="com.delhivery.orion.ui.bids.BidType"/>
     <variable
         name="viewModel"
         type="com.delhivery.orion.ui.bids.BidsViewModel"
         />
   </data>
-  <android.support.constraint.ConstraintLayout
+  <android.support.v7.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
@@ -21,7 +23,24 @@
         android:layout_height="@dimen/height_toolbar"
         android:background="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/size_4dp }"
         />
 
-  </android.support.constraint.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+      <android.support.design.widget.FloatingActionButton
+          android:id="@+id/fab_filter"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="end|bottom"
+          android:layout_margin="16dp"
+          app:fabSize="mini"
+          app:srcCompat="@drawable/ic_filters_white"
+          bind:visibility="@{ viewModel.bidType == BidType.ActiveBid || viewModel.bidType == BidType.LostBid }"
+          />
+    </FrameLayout>
+
+  </android.support.v7.widget.LinearLayoutCompat>
 </layout>
