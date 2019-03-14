@@ -2,6 +2,7 @@ package com.delhivery.orion.injection.component
 
 import com.delhivery.orion.injection.module.NetworkModule
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.biddetails.BidDetailsViewModel
 import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
@@ -52,6 +53,8 @@ interface ViewModelInjector {
 
   /* Bids */
   fun inject(bidsViewModel: BidsViewModel)
+
+  fun inject(bidDetailsViewModel: BidDetailsViewModel)
 
   @Component.Builder
   interface Builder {

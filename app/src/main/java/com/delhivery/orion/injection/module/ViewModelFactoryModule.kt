@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.delhivery.orion.injection.scope.ViewModelScope
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
+import com.delhivery.orion.ui.biddetails.BidDetailsViewModel
 import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
@@ -94,6 +95,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BidsViewModel::class)
   abstract fun bindBidsViewModel(bidsViewModel: BidsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BidDetailsViewModel::class)
+  abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

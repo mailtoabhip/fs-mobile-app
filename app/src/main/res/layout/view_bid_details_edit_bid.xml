@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="bidsRecieved"
+        type="Integer"
+        />
+  </data>
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      >
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:background="@drawable/bg_bid_details_action"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        bind:shadow="@{ @dimen/size_2dp }"
+        >
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="38dp"
+          app:srcCompat="@drawable/ic_place_bid"
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:fontFamily="sans-serif-medium"
+          android:letterSpacing="0.01"
+          android:lineSpacingExtra="2sp"
+          android:shadowColor="#3b000000"
+          android:shadowDy="2"
+          android:shadowRadius="16"
+          android:text="@{ @string/msg_bids_received_till_now(bidsRecieved) }"
+          android:textColor="#ffffff"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          tools:text="23 bids recieved till now"
+          />
+
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:background="@drawable/bg_bottom_rounded_corner_black"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="4sp"
+            android:text="You have bid: ₹ 21500.00"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="8sp"
+            android:text="(₹ 2400.00 less than target price)"
+            android:textColor="#99ffffff"
+            android:textSize="10sp"
+            android:textStyle="normal"
+            />
+      </android.support.v7.widget.LinearLayoutCompat>
+    </android.support.v7.widget.LinearLayoutCompat>
+    <!---->
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_10dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        bind:shadow="@{ @dimen/size_2dp }"
+        >
+
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_16dp"
+          android:layout_weight="1"
+          android:fontFamily="sans-serif"
+          android:letterSpacing="0.01"
+          android:lineSpacingExtra="6sp"
+          android:text="@string/msg_ensure_truck_statuses_are_updated"
+          android:textColor="#8a000000"
+          android:textSize="12sp"
+          android:textStyle="normal"
+          />
+
+      <View
+          android:layout_width="@dimen/size_24dp"
+          android:layout_height="@dimen/size_2dp"
+          />
+
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/btn_edit_bid"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/size_8dp"
+          android:layout_marginEnd="@dimen/size_16dp"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:layout_weight="1"
+          android:background="@drawable/bg_bid_details_action_btn"
+          android:fontFamily="sans-serif-medium"
+          android:foreground="?attr/selectableItemBackgroundBorderless"
+          android:letterSpacing="0.04"
+          android:paddingEnd="36dp"
+          android:paddingStart="36dp"
+          android:text="@string/action_edit_bid"
+          android:textColor="@color/colorAccent"
+          android:textSize="14sp"
+          />
+    </android.support.v7.widget.LinearLayoutCompat>
+  </android.support.v7.widget.LinearLayoutCompat>
+</layout>

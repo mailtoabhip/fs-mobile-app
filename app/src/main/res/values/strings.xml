@@ -17,12 +17,21 @@
   <string name="msg_select_route_welcome_user">Welcome\n%s</string>
   <string name="msg_glad_to_onboard">Glad too see you onboarded with Orion</string>
   <string name="msg_select_route_pref_to_load">We would need your route preferences to fetch the best possible load requests for you.</string>
+  <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
+  <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
+  <string name="msg_be_first_to_bid">Be the first to Bid</string>
+  <string name="msg_no_bids_received">No bids recieved yet.</string>
+  <string name="msg_bids_received_till_now">%1$d bids recieved till now</string>
+  <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
   <string name="hint_name">Name</string>
   <string name="hint_dob">Date of Birth</string>
   <string name="hint_otp_digit"></string>
+  <string name="hint_enter_city_name">Enter city name</string>
+  <string name="hint_search_load">Search load</string>
+  <string name="hint_search_trips">Vehicle / Driver / destination</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -31,6 +40,9 @@
   <string name="action_send_otp">Send OTP</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
+  <string name="action_skip">SKIP</string>
+  <string name="action_search">Search</string>
+  <string name="action_place_bid">Place Bid</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -40,26 +52,29 @@
   <string name="label_phone_number">Phone number</string>
   <string name="label_isd_code">+91</string>
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
+  <string name="label_inr">₹ %1$d</string>
+  <string name="label_my_bids">My Bids</string>
+  <string name="label_confirmed_bids">Confirmed Bids</string>
+  <string name="label_nav_bids">Bids</string>
+  <string name="label_nav_trips">Trips</string>
+  <string name="label_nav_alerts">Alerts</string>
+  <string name="label_nav_payment">Payment</string>
+  <string name="label_nav_profile">Profile</string>
+  <string name="label_from">From</string>
+  <string name="label_to">To</string>
+  <string name="label_target_price">Target price</string>
+  <string name="label_origin_city">Origin city</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
   <string name="error_name_required">Please enter name</string>
   <string name="error_dob_required">Please enter Date of birth</string>
   <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="label_origin_city">Origin city</string>
-  <string name="hint_enter_city_name">Enter city name</string>
-  <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
-  <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
-  <string name="action_skip">SKIP</string>
-  <string name="label_my_bids">My Bids</string>
-  <string name="label_confirmed_bids">Confirmed Bids</string>
-  <string name="hint_search_load">Search load</string>
-  <string name="label_nav_bids">Bids</string>
-  <string name="label_nav_trips">Trips</string>
-  <string name="label_nav_alerts">Alerts</string>
-  <string name="label_nav_payment">Payment</string>
-  <string name="label_nav_profile">Profile</string>
-  <string name="action_search">Search</string>
-  <string name="hint_search_trips">Vehicle / Driver / destination</string>
+  <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
+  <string name="action_edit_bid">Edit Bid</string>
+  <string name="label_pickup_location">Pickup location</string>
+  <string name="label_awaiting_truck_details">Awaiting Truck details</string>
+  <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
+  <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
 
 </resources>

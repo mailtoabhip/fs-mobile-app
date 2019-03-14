@@ -5,6 +5,7 @@ import android.content.Context
 import com.delhivery.orion.injection.qualifier.ActivityContext
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.auth.AuthenticationActivity
+import com.delhivery.orion.ui.biddetails.BidDetailsActivity
 import com.delhivery.orion.ui.bids.BidsActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
@@ -53,6 +54,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidsActivityModule::class])
   internal abstract fun bindBidsActivity(): BidsActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
+  internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
 }
 
 /**
@@ -82,6 +87,9 @@ internal abstract class AbsHomeActivityModule : ActivityModule<HomeActivity>()
 
 @Module
 internal abstract class AbsBidsActivityModule : ActivityModule<BidsActivity>()
+
+@Module
+internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
 
 /**
  * Activity Binds Module

@@ -42,6 +42,8 @@
     </activity>
 
     <activity android:name=".ui.bids.BidsActivity"/>
+
+    <activity android:name=".ui.biddetails.BidDetailsActivity"/>
   </application>
 
 </manifest>

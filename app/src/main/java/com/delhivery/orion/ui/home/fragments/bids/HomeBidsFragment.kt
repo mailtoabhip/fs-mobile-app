@@ -11,10 +11,12 @@ import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
+import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
-import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
+import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
 import com.delhivery.orion.ui.bids.userBidsIntent
@@ -68,16 +70,16 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem())
-    add(
-        2, HomeBidsWarningItem(
-        HomeBidsWarningItemData(
-            "No Routes selected", "Please select your route preference to see the load requests",
-            "Select routes", HomeBidsWarningAction_SelectRoutes
-        )
-    )
-    )
+//    add(
+//        2, HomeBidsWarningItem(
+//        HomeBidsWarningItemData(
+//            "No Routes selected", "Please select your route preference to see the load requests",
+//            "Select routes", HomeBidsWarningAction_SelectRoutes
+//        )
+//    )
+//    )
     for (i in 0..50) {
-      add(HomeBidsRequestItem())
+      add(HomeBidsRequestItem(HomeBidsRequestItemData(i * 5000)))
     }
   }
 
@@ -95,6 +97,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
       HomeBidsWarningAction_EditRoutePrefs -> {
       }
+      HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
     }
   }
 
