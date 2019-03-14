@@ -1,6 +1,5 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
-import android.arch.lifecycle.MutableLiveData
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
@@ -11,13 +10,15 @@ import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
+import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
+import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     ItemClickListener<BaseHomeTripsRVAdapterItem<*>> {
 
-  init {
-    toolbarElevationLiveData = MutableLiveData()
-  }
+//  init {
+//    toolbarElevationLiveData = MutableLiveData()
+//  }
 
   companion object {
     /* singleton instance */
@@ -53,6 +54,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         /* handle filter type here */
       }
     }
+
+    /* no trips, start bidding button */
+    binding.btnStartBidding.setOnClickListener { action(NavigateHomeFragmentAction(BidsFragment)) }
   }
 
   private fun getDummyData() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {

@@ -76,5 +76,8 @@
   <string name="label_awaiting_truck_details">Awaiting Truck details</string>
   <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
   <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
+  <string name="label_no_trips_yet">No trips yet !</string>
+  <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
+  <string name="action_start_bidding">Start Bidding</string>
 
 </resources>
