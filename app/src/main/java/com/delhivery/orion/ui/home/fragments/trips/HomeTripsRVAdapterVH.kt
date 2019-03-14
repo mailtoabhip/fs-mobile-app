@@ -1,8 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import android.databinding.ViewDataBinding
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
+import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
@@ -29,10 +28,9 @@ internal class HomeTripsSearchItemVH(binding: ViewHomeTripsSearchItemBinding) :
 /**
  * Trip item view holder
  */
-internal class HomeTripsItemVH(binding: ViewHomeBidsRequestItemBinding) :
-    BaseHomeTripsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeTripsItem>(binding) {
+internal class HomeTripsItemVH(binding: ViewHomeTripsDetailsItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsDetailsItemBinding, HomeTripsItem>(binding) {
   override fun bind(item: HomeTripsItem) {
-    /* todo fix this with trips item instead of placeholder from bids */
-    binding.request = HomeBidsRequestItemData()
+//    binding.request = HomeBidsRequestItemData()
   }
 }

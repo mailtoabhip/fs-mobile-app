@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+  <android.support.v7.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_4dp"
+      android:layout_marginStart="@dimen/size_4dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="2dp"
+      >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:padding="@dimen/size_16dp"
+        >
+
+      <TextView
+          android:id="@+id/text_truck_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="8sp"
+          android:text="GA3SGR3241(32ft)"
+          android:textColor="#de000000"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          />
+
+      <TextView
+          android:id="@+id/text_trip_status"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="10sp"
+          android:text="Load picked up"
+          android:textColor="#29a8e0"
+          android:textSize="14sp"
+          android:textStyle="normal"
+          app:layout_constraintEnd_toEndOf="parent"
+          />
+
+      <TextView
+          android:id="@+id/text_driver_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="Suresh raj (+91 9823222123)"
+          android:textColor="#99000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+          />
+
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/img_forward"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_24dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_driver_details"
+          app:srcCompat="@drawable/ic_arrow_forward_black"
+          />
+
+      <TextView
+          android:id="@+id/text_source_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="Panjim"
+          android:textColor="#de000000"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          />
+
+      <TextView
+          android:id="@+id/text_source_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="GOA"
+          android:textColor="#99000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:fontFamily="sans-serif"
+          android:text="Andheri East"
+          android:textColor="#de000000"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toEndOf="@id/img_forward"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="Mumbai"
+          android:textColor="#99000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="@id/text_destination_city"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          />
+    </android.support.constraint.ConstraintLayout>
+  </android.support.v7.widget.CardView>
+</layout>

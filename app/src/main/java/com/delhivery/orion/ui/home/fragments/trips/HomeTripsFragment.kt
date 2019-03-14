@@ -57,7 +57,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   private fun getDummyData() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsSearchItem())
-    for (i in 0..50) {
+    for (i in 0..5) {
       add(HomeTripsItem())
     }
   }

@@ -3,7 +3,7 @@ package com.delhivery.orion.ui.home.fragments.trips
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
+import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
@@ -23,15 +23,13 @@ class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTrips
     viewType: Int
   ) = when (HomeTripsRVAdapterItemType.byTypeId(viewType)) {
     Search -> ViewHomeTripsSearchItemBinding.inflate(inflater, parent, false)
-
-    /* todo - remove placeholder */
-    TripItem -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
+    TripItem -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
+    else -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeTripsSearchItemBinding -> HomeTripsSearchItemVH(binding)
-    else -> HomeTripsItemVH(binding as ViewHomeBidsRequestItemBinding)
+    else -> HomeTripsItemVH(binding as ViewHomeTripsDetailsItemBinding)
   }
 
   override fun bindVH(
