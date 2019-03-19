@@ -1,12 +1,18 @@
 package com.delhivery.orion.utils.extensions
 
 import android.app.Activity
+import android.support.annotation.ArrayRes
 import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
+import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import com.delhivery.orion.R
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
@@ -88,4 +94,39 @@ fun ViewPager.onPageSelected(action: (pos: Int) -> Unit) = apply {
       action(p0)
     }
   })
+}
+
+/**
+ * Setup simple array adapter
+ */
+fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> Unit) {
+  ArrayAdapter.createFromResource(this.context, resId, android.R.layout.simple_spinner_item)
+      .also {
+        it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onNothingSelected(p0: AdapterView<*>?) {
+            selected(-1, null)
+          }
+
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            selected(p2, getItemAtPosition(p2).toString())
+          }
+        }
+        adapter = it
+      }
+}
+
+/**
+ * Set view visibility
+ */
+fun View.visible(visible: Boolean) = apply {
+  visibility = when (visible) {
+    true -> View.VISIBLE
+    false -> View.GONE
+  }
 }

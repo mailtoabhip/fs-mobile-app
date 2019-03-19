@@ -11,6 +11,7 @@ import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.orion.ui.onboarding.OnboardingViewModel
+import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
@@ -55,6 +56,8 @@ interface ViewModelInjector {
   fun inject(bidsViewModel: BidsViewModel)
 
   fun inject(bidDetailsViewModel: BidDetailsViewModel)
+
+  fun inject(searchLoadViewModel: SearchLoadViewModel)
 
   @Component.Builder
   interface Builder {

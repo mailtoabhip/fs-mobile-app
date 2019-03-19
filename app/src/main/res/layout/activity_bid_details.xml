@@ -12,7 +12,7 @@
   <android.support.v7.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="#f2f2f2"
+      android:background="@color/colorBackground"
       android:orientation="vertical"
       >
 

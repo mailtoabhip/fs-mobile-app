@@ -3,4 +3,11 @@
   <declare-styleable name="DelhiveryOTPViewEditText">
     <attr format="boolean" name="state_error"/>
   </declare-styleable>
+
+  <declare-styleable name="DelhiveryOnboardingArcView">
+    <attr format="enum" name="direction">
+      <enum name="top" value="0"/>
+      <enum name="bottom" value="1"/>
+    </attr>
+  </declare-styleable>
 </resources>

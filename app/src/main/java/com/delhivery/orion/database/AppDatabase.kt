@@ -2,7 +2,9 @@ package com.delhivery.orion.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import com.delhivery.orion.database.dao.SearchHistoryDao
 import com.delhivery.orion.database.dao.UserDao
+import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.database.entity.User
 
 /**
@@ -10,7 +12,9 @@ import com.delhivery.orion.database.entity.User
  * also update version, incase any updates to entities
  *
  */
-@Database(entities = [(User::class)], version = 1)
+@Database(entities = [User::class, SearchLoadHistoryEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+  abstract fun userDao(): UserDao
+
+  abstract fun searchHistoryDao(): SearchHistoryDao
 }

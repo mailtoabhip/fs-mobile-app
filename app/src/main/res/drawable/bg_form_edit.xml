@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_focused="true">
+    <layer-list>
+      <item android:bottom="0dp" android:gravity="bottom">
+        <shape>
+          <size android:height="2dp"/>
+          <solid android:color="@color/colorAccent"/>
+          <padding android:bottom="@dimen/size_8dp" android:left="@dimen/size_4dp" android:right="@dimen/size_4dp" android:top="@dimen/size_8dp"/>
+        </shape>
+      </item>
+    </layer-list>
+  </item>
+  <item android:state_pressed="true">
+    <layer-list>
+      <item android:bottom="0dp" android:gravity="bottom">
+        <shape>
+          <size android:height="2dp"/>
+          <solid android:color="@color/colorAccent"/>
+          <padding android:bottom="@dimen/size_8dp" android:left="@dimen/size_4dp" android:right="@dimen/size_4dp" android:top="@dimen/size_8dp"/>
+        </shape>
+      </item>
+    </layer-list>
+  </item>
+  <item>
+    <layer-list>
+      <item android:bottom="1dp" android:gravity="bottom">
+        <shape>
+          <size android:height="1dp"/>
+          <solid android:color="#1e000000"/>
+          <padding android:bottom="@dimen/size_8dp" android:left="@dimen/size_4dp" android:right="@dimen/size_4dp" android:top="@dimen/size_8dp"/>
+        </shape>
+      </item>
+    </layer-list>
+  </item>
+</selector>

@@ -13,6 +13,7 @@ import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.orion.ui.onboarding.OnboardingViewModel
+import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
@@ -100,6 +101,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BidDetailsViewModel::class)
   abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchLoadViewModel::class)
+  abstract fun bindSearchLoadViewModel(searchLoadViewModel: SearchLoadViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -4,6 +4,7 @@
   <!-- Title (title_) -->
   <string name="title_dialog_location_setting_disabled">Enable location</string>
   <string name="title_dialog_location_permission_disabled">Permissions</string>
+  <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -23,6 +24,10 @@
   <string name="msg_no_bids_received">No bids recieved yet.</string>
   <string name="msg_bids_received_till_now">%1$d bids recieved till now</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
+  <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
+  <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
+  <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
+
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -43,6 +48,7 @@
   <string name="action_skip">SKIP</string>
   <string name="action_search">Search</string>
   <string name="action_place_bid">Place Bid</string>
+  <string name="action_start_bidding">Start Bidding</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -64,20 +70,28 @@
   <string name="label_to">To</string>
   <string name="label_target_price">Target price</string>
   <string name="label_origin_city">Origin city</string>
+  <string name="label_pickup_location">Pickup location</string>
+  <string name="label_awaiting_truck_details">Awaiting Truck details</string>
+  <string name="label_no_trips_yet">No trips yet !</string>
+  <string name="label_destination_city">Destination city</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
   <string name="error_name_required">Please enter name</string>
   <string name="error_dob_required">Please enter Date of birth</string>
   <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
   <string name="action_edit_bid">Edit Bid</string>
-  <string name="label_pickup_location">Pickup location</string>
-  <string name="label_awaiting_truck_details">Awaiting Truck details</string>
-  <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
-  <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
-  <string name="label_no_trips_yet">No trips yet !</string>
-  <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
-  <string name="action_start_bidding">Start Bidding</string>
+  <string name="label_your_recent_search">Your recent searches</string>
 
+  <string-array name="array_truck_type">
+    <!--<item>Truck type</item>-->
+    <item>Closed</item>
+    <item>Open</item>
+  </string-array>
+
+  <string-array name="array_truck_size">
+    <!--<item>Size</item>-->
+    <item>32ft</item>
+    <item>64ft</item>
+  </string-array>
 </resources>

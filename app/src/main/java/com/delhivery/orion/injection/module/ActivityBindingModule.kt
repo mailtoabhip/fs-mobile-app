@@ -10,6 +10,7 @@ import com.delhivery.orion.ui.bids.BidsActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.orion.ui.onboarding.OnboardingActivity
+import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
@@ -58,6 +59,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
   internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchLoadActivityModule::class])
+  internal abstract fun bindSearchLoadActivity(): SearchLoadActivity
 }
 
 /**
@@ -90,6 +95,9 @@ internal abstract class AbsBidsActivityModule : ActivityModule<BidsActivity>()
 
 @Module
 internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
+
+@Module
+internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadActivity>()
 
 /**
  * Activity Binds Module
