@@ -14,6 +14,8 @@ import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.searchload.SearchLoadViewModel
+import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
+import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
@@ -102,10 +104,21 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(BidDetailsViewModel::class)
   abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
 
+  /* Search load */
   @Binds
   @IntoMap
   @ViewModelScope(SearchLoadViewModel::class)
   abstract fun bindSearchLoadViewModel(searchLoadViewModel: SearchLoadViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchLoadFragmentViewModel::class)
+  abstract fun bindSearchLoadFragmentViewModel(searchLoadFragmentViewModel: SearchLoadFragmentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchResultsViewModel::class)
+  abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

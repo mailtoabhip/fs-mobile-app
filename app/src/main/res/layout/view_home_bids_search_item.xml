@@ -11,7 +11,8 @@
   <android.support.v7.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:focusableInTouchMode="true"
+      android:clickable="true"
+      android:focusable="true"
       android:orientation="vertical"
       >
 
@@ -20,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:clickable="false"
+        android:focusable="false"
         android:fontFamily="sans-serif-medium"
         android:lineSpacingExtra="8sp"
         android:text="@{ @string/label_live_load_requests(loadRequests) }"
@@ -28,11 +31,13 @@
         android:textStyle="normal"
         />
 
-    <android.support.v7.widget.AppCompatEditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:background="@drawable/bg_search_bar_light"
+        android:clickable="false"
+        android:focusable="false"
         android:gravity="center_vertical"
         android:hint="@string/hint_search_load"
         android:paddingStart="52dp"

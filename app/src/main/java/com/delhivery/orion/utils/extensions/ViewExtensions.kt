@@ -130,3 +130,13 @@ fun View.visible(visible: Boolean) = apply {
     false -> View.GONE
   }
 }
+
+/**
+ * View center X
+ */
+fun View.centerX() = left + (width / 2f)
+
+/**
+ * View center Y
+ */
+fun View.centerY() = top + (height / 2f)

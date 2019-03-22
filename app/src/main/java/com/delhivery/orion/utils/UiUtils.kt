@@ -16,6 +16,7 @@ import com.delhivery.orion.databinding.LayoutProgressBinding
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuInterface
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
+import com.github.florent37.kotlin.pleaseanimate.please
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -117,6 +118,13 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
       delhiveryProgressBinding.tip = proTip
 
       delhiveryProgressBinding.progress.startAnim()
+
+      please {
+        setDuration(200)
+        animate(delhiveryProgressBinding.root) toBe {
+          visible()
+        }
+      }.start()
     }
   }
 
@@ -125,8 +133,15 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
    */
   fun hideDelhiveryProgress() {
     activity.runOnUiThread {
-      delhiveryProgressBinding.progress.stopAnim()
-      activityRoot.removeView(delhiveryProgressBinding.root)
+      please {
+        animate(delhiveryProgressBinding.root) toBe {
+          invisible()
+        }
+      }.withEndAction {
+        delhiveryProgressBinding.progress.stopAnim()
+        activityRoot.removeView(delhiveryProgressBinding.root)
+      }
+          .start()
     }
   }
 
@@ -203,6 +218,7 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
     val parent = (fab.parent as ViewGroup)
     val cardMenuBinding =
       LayoutFabCardMenuBinding.inflate(LayoutInflater.from(activity), parent, false)
+
     parent.addView(cardMenuBinding.root)
 
     /* setup overlay */

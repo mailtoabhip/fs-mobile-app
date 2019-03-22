@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewCompat
@@ -13,6 +14,7 @@ import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
@@ -22,6 +24,7 @@ import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
 import com.delhivery.orion.ui.bids.userBidsIntent
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
+import com.delhivery.orion.ui.searchload.SearchLoadActivity
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -65,6 +68,13 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         onFabMenuItemSelected(it)
       }
     }
+
+    /* start search on click */
+    binding.editStickySearch.setOnClickListener {
+      handleAction(
+          HomeBidsSearchAction_Search, HomeBidsSearchItem()
+      )
+    }
   }
 
   private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
@@ -98,6 +108,11 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsWarningAction_EditRoutePrefs -> {
       }
       HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
+      HomeBidsSearchAction_Search -> context?.let {
+        startActivity(
+            Intent(it, SearchLoadActivity::class.java)
+        )
+      }
     }
   }
 

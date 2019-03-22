@@ -39,7 +39,6 @@ import javax.inject.Inject
  */
 abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerAppCompatActivity(),
     LifecycleObserver {
-
   /* override in init if required for specific activity */
   protected var StatusBarColor = Color.parseColor("#F9F9F9")
 

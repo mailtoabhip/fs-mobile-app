@@ -10,3 +10,6 @@ data class HomeBidsSearchItemData(
 
 /* unique key for diff */
 private const val HomeBidsSearchItemDataKey = "search"
+
+/* action id */
+const val HomeBidsSearchAction_Search = "search"

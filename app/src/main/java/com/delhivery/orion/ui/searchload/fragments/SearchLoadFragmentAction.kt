@@ -1,0 +1,38 @@
+package com.delhivery.orion.ui.searchload.fragments
+
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentActionType.Search
+
+/**
+ * Search load fragment actions type
+ */
+enum class SearchLoadFragmentActionType {
+  Progress,
+  Search
+}
+
+/**
+ * Search load fragment action base class
+ */
+abstract class BaseSearchLoadFragmentAction(val type: SearchLoadFragmentActionType)
+
+/**
+ * Show/hide inline - progress
+ */
+class ProgressSearchLoadAction(
+  val show: Boolean,
+  val title: String = "Searching loads",
+  val message: String = "This usually takes few seconds to load. please be patient.",
+  val protip: String = "Some tip regarding how to bid, or whats to be considered while bidding."
+) : BaseSearchLoadFragmentAction(
+    SearchLoadFragmentActionType.Progress
+)
+
+/**
+ * Search Load action
+ */
+class SearchLoadAction(
+  val originCity: String,
+  val destinationCity: String,
+  val truckType: String,
+  val truckSize: String
+) : BaseSearchLoadFragmentAction(Search)

@@ -46,7 +46,6 @@ class DelhiveryFabCardMenu(
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
       color = Color.WHITE
       style = Paint.Style.FILL
-      setShadowLayer(30f, 0f, 0f, Color.BLACK)
     }
   }
 

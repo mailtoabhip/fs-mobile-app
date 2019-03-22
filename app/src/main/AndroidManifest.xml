@@ -21,10 +21,10 @@
       tools:ignore="GoogleAppIndexingWarning">
 
     <activity android:name=".ui.splash.SplashActivity">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
     </activity>
 
     <activity android:name=".ui.auth.AuthenticationActivity"/>
@@ -47,10 +47,10 @@
     <activity android:name=".ui.biddetails.BidDetailsActivity"/>
 
     <activity android:name=".ui.searchload.SearchLoadActivity">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
     </activity>
   </application>
 

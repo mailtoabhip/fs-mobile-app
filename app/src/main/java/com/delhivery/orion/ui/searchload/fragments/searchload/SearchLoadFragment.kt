@@ -1,0 +1,157 @@
+package com.delhivery.orion.ui.searchload.fragments.searchload
+
+import android.arch.lifecycle.Observer
+import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import com.delhivery.orion.R
+import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
+import com.delhivery.orion.databinding.FragmentSearchLoadBinding
+import com.delhivery.orion.databinding.ViewSearchLoadHistoryItemBinding
+import com.delhivery.orion.ui.custom.AnimationType.RevealOpen
+import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadAction
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
+import com.delhivery.orion.utils.extensions.setup
+import com.delhivery.orion.utils.extensions.visible
+import com.github.florent37.kotlin.pleaseanimate.please
+
+class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, SearchLoadFragmentViewModel>() {
+
+  companion object {
+    /* singleton instance */
+    val _instance: SearchLoadFragment by lazy { SearchLoadFragment() }
+  }
+
+  override fun getViewModelClass() = SearchLoadFragmentViewModel::class.java
+
+  override fun layoutId() = R.layout.fragment_search_load
+
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+
+    /* animate open */
+    binding.arcView.animate(RevealOpen) {
+      please {
+        animate(binding.containerHistory) toBe {
+          visible()
+        }
+        animate(binding.textHistoryTitle) toBe {
+          visible()
+        }
+        animate(binding.containerSearchLoadHeaderForm) toBe {
+          visible()
+        }
+      }.setStartDelay(200)
+          .start()
+
+      setupSearchScreen()
+    }
+  }
+
+  private fun setupSearchScreen() {
+    /* truck type */
+    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
+
+    }
+
+    /* truck size */
+    binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
+
+    }
+
+    /* submit */
+    binding.btnAction.setOnClickListener {
+      searchLoad()
+    }
+
+    /* reverse origin/destination cities */
+    binding.imgForward.setOnClickListener {
+      please {
+        animate(it) toBe {
+          toBeRotated(180f)
+        }
+      }.thenCouldYou {
+        please {
+          animate(it) toBe {
+            originalRotation()
+          }
+        }.withEndAction {
+          val _origin = binding.editOriginCity.text.toString()
+          binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
+          binding.editDestinationCity.setText(_origin)
+        }
+            .setStartDelay(300)
+            .start()
+      }
+          .start()
+    }
+
+    /* init */
+    initObservers()
+  }
+
+  /**
+   * Search load as per user selections
+   */
+  private fun searchLoad(saveToHistory: Boolean = true) {
+    uiUtils.toggleKeyboard(true)
+    /* form data */
+    val origin = binding.editOriginCity.text.toString()
+    val destination = binding.editDestinationCity.text.toString()
+    val type = binding.spinnerTruckType.selectedItem.toString()
+    val size = binding.spinnerTruckSize.selectedItem.toString()
+
+    /* save to history if needed */
+    if (saveToHistory) {
+      viewModel.saveToHistory(origin, destination, type, size)
+    }
+    /* searching progress */
+    action(ProgressSearchLoadAction(true))
+
+    /* delay and search for better UX */
+    Handler().postDelayed({
+      action(SearchLoadAction(origin, destination, type, size))
+    }, 200)
+  }
+
+  /**
+   * init observers
+   */
+  private fun initObservers() {
+    /* observe live data for search history */
+    viewModel.searchLoadHistoryLiveData()
+        .observe(this, SearchLoadHistoryObserver())
+  }
+
+  /**
+   * Search load history observer
+   */
+  inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity>> {
+    override fun onChanged(t: List<SearchLoadHistoryEntity>?) {
+      t?.let { items ->
+        binding.containerHistory.removeAllViews()
+        items.forEachIndexed { index, item ->
+          val itemBinding = historyItemBinding()
+          itemBinding.data = item
+          itemBinding.root.setOnClickListener {
+            searchLoad(false)
+          }
+          binding.containerHistory.addView(itemBinding.root, index)
+        }
+      }
+      /* title as per search results */
+      binding.textHistoryTitle.visible(t != null && t.isNotEmpty())
+    }
+  }
+
+  /**
+   * Create new history item binding
+   */
+  private fun historyItemBinding() = ViewSearchLoadHistoryItemBinding.inflate(
+      layoutInflater, binding.containerHistory, false
+  )
+}

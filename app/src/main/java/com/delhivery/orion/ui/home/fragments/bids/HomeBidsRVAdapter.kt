@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
+import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.SearchSpinner
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
 class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
@@ -30,6 +32,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     Search -> ViewHomeBidsSearchItemBinding.inflate(inflater, parent, false)
     Request -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
     Warning -> ViewHomeBidsWarningItemBinding.inflate(inflater, parent, false)
+    SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -38,6 +41,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     is ViewHomeBidsSearchItemBinding -> HomeBidsSearchItemVH(binding)
     is ViewHomeBidsRequestItemBinding -> HomeBidsRequestItemVH(binding)
     is ViewHomeBidsWarningItemBinding -> HomeBidsWarningItemVH(binding)
+    is ViewHomeBidsSearchSpinnerItemBinding -> HomeBidsSearchSpinnerItemVH(binding)
     else -> HomeBidsRequestItemVH(binding as ViewHomeBidsRequestItemBinding)
   }
 

@@ -1,16 +1,18 @@
 package com.delhivery.orion.ui.searchload
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import com.delhivery.orion.R
-import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.databinding.ActivitySearchLoadBinding
-import com.delhivery.orion.databinding.ViewSearchLoadHistoryItemBinding
 import com.delhivery.orion.ui.base.BaseActivity
-import com.delhivery.orion.ui.custom.AnimationType.RevealOpen
-import com.delhivery.orion.utils.extensions.setup
-import com.delhivery.orion.utils.extensions.visible
-import com.github.florent37.kotlin.pleaseanimate.please
+import com.delhivery.orion.ui.searchload.fragments.BaseSearchLoadFragmentAction
+import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadAction
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentActionType.Progress
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentActionType.Search
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentType
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
+import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
+import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsFragment
 
 class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadViewModel>() {
   override fun getViewModelClass() = SearchLoadViewModel::class.java
@@ -18,6 +20,9 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
   override fun layoutId() = R.layout.activity_search_load
 
   override fun requireConnection() = true
+
+  /* current Fragment type */
+  private var currentFragmentType: SearchLoadFragmentType? = null
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -27,97 +32,64 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     title = "Search Load"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    binding.arcView.animate(RevealOpen) {
-      setupSearchScreen()
-    }
-
-    /* init */
-    initObservers()
+    /* start with load fragment */
+    navigate(LoadFragment)
   }
 
   /**
-   * init observers
+   * Navigate to [SearchLoadFragmentType] fragment
    */
-  private fun initObservers() {
-    /* observe live data for search history */
-    viewModel.searchLoadHistoryLiveData()
-        .observe(this, SearchLoadHistoryObserver())
-  }
-
-  private fun setupSearchScreen() {
-    /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
-
-    }
-
-    /* truck size */
-    binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
-
-    }
-
-    /* submit */
-    binding.btnAction.setOnClickListener {
-      searchLoad()
-    }
-
-    /* reverse origin/destination cities */
-    binding.imgForward.setOnClickListener {
-      please {
-        animate(it) toBe {
-          toBeRotated(180f)
-        }
-      }.thenCouldYou {
-        please {
-          animate(it) toBe {
-            originalRotation()
+  private fun navigate(fragmentType: SearchLoadFragmentType) {
+    if (currentFragmentType == fragmentType) return
+    supportFragmentManager.beginTransaction()
+        .apply {
+          val _fragment = supportFragmentManager.findFragmentByTag(SearchLoadFragmentTag)
+          if (_fragment == null) {
+            add(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
+          } else {
+            replace(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
           }
-        }.withEndAction {
-          val _origin = binding.editOriginCity.text.toString()
-          binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
-          binding.editDestinationCity.setText(_origin)
+          currentFragmentType = fragmentType
         }
-            .setStartDelay(300)
-            .start()
+        .commitNow()
+    title = currentFragmentType?.title
+  }
+
+  /**
+   * Fragment action observer
+   */
+  fun fragmentAction(action: BaseSearchLoadFragmentAction) {
+    when (action.type) {
+      /* shoe/hide progress */
+      Progress -> {
+        (action as ProgressSearchLoadAction).apply {
+          if (show) {
+            uiUtils.showDelhiveryProgress(action.title, action.message, action.protip)
+          } else {
+            uiUtils.hideDelhiveryProgress()
+          }
+        }
       }
-          .start()
-    }
-  }
-
-  /**
-   * Search load as per user selections
-   */
-  private fun searchLoad(saveToHistory: Boolean = true) {
-    uiUtils.toggleKeyboard(true)
-    viewModel.searchLoad(
-        binding.editOriginCity.text.toString(), binding.editDestinationCity.text.toString(),
-        binding.spinnerTruckType.selectedItem.toString(),
-        binding.spinnerTruckSize.selectedItem.toString(),
-        saveToHistory
-    )
-  }
-
-  /**
-   * Search load history observer
-   */
-  inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity>> {
-    override fun onChanged(t: List<SearchLoadHistoryEntity>?) {
-      t?.let { items ->
-        binding.containerHistory.removeAllViews()
-        items.forEachIndexed { index, item ->
-          val itemBinding = ViewSearchLoadHistoryItemBinding.inflate(
-              layoutInflater, binding.containerHistory, false
+      Search -> {
+        (action as SearchLoadAction).apply {
+          /* navigate to search results fragment */
+          navigate(ResultsFragment)
+          /* search query */
+          (ResultsFragment.fragment as SearchResultsFragment).search(
+              originCity, destinationCity, truckType, truckSize, false
           )
-          itemBinding.data = item
-          itemBinding.root.setOnClickListener {
-            //            searchLoad(false)
-            viewModel.deleteSearchResult(item)
-          }
-          binding.containerHistory.addView(itemBinding.root, index)
         }
       }
-      /* title as per search results */
-      binding.textHistoryTitle.visible(t != null && t.isNotEmpty())
     }
+  }
 
+  override fun onBackPressed() {
+    when (currentFragmentType) {
+      ResultsFragment -> navigate(LoadFragment)
+      else -> super.onBackPressed()
+    }
   }
 }
+
+/* Search load fragment tag */
+private const val SearchLoadFragmentTag = "search_load_fragment_tag"

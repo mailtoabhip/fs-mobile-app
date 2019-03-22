@@ -12,6 +12,9 @@ import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import io.reactivex.Single
+import io.reactivex.functions.BiFunction
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
 class AuthenticationViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepository) :
@@ -64,7 +67,10 @@ class AuthenticationViewModel @Inject constructor(private val authenticationRepo
     /* set state to login progress and verify otp */
     state = LoginProgress
     val _otp = otp.joinToString("")
-    compositeDisposable += authenticationRepository.verifyOTP(phoneNo, _otp)
+    compositeDisposable += Single.zip(
+        authenticationRepository.verifyOTP(phoneNo, _otp),
+        Single.timer(1000, MILLISECONDS), //add delay for animation
+        BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String>> { t1, _ -> t1 })
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
