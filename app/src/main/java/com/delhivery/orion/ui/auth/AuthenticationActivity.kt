@@ -63,6 +63,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     /* Initiate state */
     viewModel.state = PhoneNo
+
+    /* request sms receive permission */
+    receiveSMSPermission {}
   }
 
   override fun onBackPressed() {
@@ -81,15 +84,16 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   }
 
   /**
-   * Request sms read permission for otp
+   * Read receive permission
    */
-  private fun readSMSOTP() {
-    compositeDisposable += requestPermission(Manifest.permission.READ_SMS)
+  private fun receiveSMSPermission(action: (granted: Boolean) -> Unit) {
+    compositeDisposable += requestPermission(Manifest.permission.RECEIVE_SMS)
         .onBackground()
         .subscribe { granted, error ->
           if (error == null && granted) {
-            registerReceiver(otpReceiver, IntentFilter(OTP_INTENT_FILTER))
+            action(granted)
           } else {
+            action(false)
             /* read permission error */
           }
         }
@@ -113,7 +117,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           OTP -> {
             /* read sms per */
-            readSMSOTP()
+            receiveSMSPermission {
+              if (it) {
+                registerReceiver(otpReceiver, IntentFilter(OTP_INTENT_FILTER))
+              }
+            }
 
             uiUtils.hideDelhiveryProgress()
             //show keyboard and clear otp
@@ -133,7 +141,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             unregisterReceiver(otpReceiver)
 
             //hide keyboard show progress view
-            uiUtils.toggleKeyboard()
             uiUtils.showDelhiveryProgress(
                 title = "Logging you in..",
                 message = "This usually takes few seconds to load. please be patient.",

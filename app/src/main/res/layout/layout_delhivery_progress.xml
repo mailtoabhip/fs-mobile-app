@@ -19,7 +19,6 @@
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:alpha="0"
       android:background="@color/colorPrimary"
       android:paddingBottom="32dp"
       android:paddingEnd="48dp"
