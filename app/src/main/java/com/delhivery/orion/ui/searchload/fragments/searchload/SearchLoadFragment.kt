@@ -140,6 +140,10 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           itemBinding.root.setOnClickListener {
             searchLoad(false)
           }
+          itemBinding.root.setOnLongClickListener {
+            viewModel.deleteSearchResult(item)
+            true
+          }
           binding.containerHistory.addView(itemBinding.root, index)
         }
       }

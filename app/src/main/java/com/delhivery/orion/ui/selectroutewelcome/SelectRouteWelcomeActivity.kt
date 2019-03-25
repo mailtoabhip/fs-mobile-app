@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
+import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.utils.LocationFlowState
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -30,7 +31,10 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
       }
     }
 
-    /* skip button functionality - todo */
+    /* skip button functionality */
+    binding.textSkip.setOnClickListener {
+      navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
+    }
 
     /* animate and open bottom view */
     binding.arcView.animate { /*end action start animtion chain*/ animate() }

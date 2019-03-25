@@ -38,7 +38,7 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
     actionId: String,
     item: IT,
     _interface: HomeBidsRVAdapterInterface
-  ) = postDelayed({ _interface.handleAction(actionId, item) }, 200)
+  ) = post { _interface.handleAction(actionId, item) }
 }
 
 /**
@@ -66,8 +66,8 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.root.clickToAction(HomeBidsSearchAction_Search, item, _interface)
     binding.loadRequests = item.data.loadRequests
+    binding.editSearch.clickToAction(HomeBidsSearchAction_Search, item, _interface)
   }
 }
 
