@@ -18,6 +18,7 @@ import com.delhivery.orion.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.orion.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.custom.DelhiveryOTPViewInterface
+import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.utils.extensions.actionDone
 import com.delhivery.orion.utils.extensions.errorVibrate
@@ -150,7 +151,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* Login success, move to next activity */
           LoginSuccess -> {
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, finishAfter = true)
+            navigationUtils.navigate(SelectRouteActivity::class.java, finishAfter = true)
           }
         }
       }

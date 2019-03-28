@@ -1,24 +1,25 @@
 package com.delhivery.orion.ui.selectroute
 
-import android.arch.lifecycle.Observer
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import com.delhivery.orion.R
+import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.databinding.ActivitySelectRouteBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
-import com.delhivery.orion.ui.selectroute.SelectRouteUIState.OriginCity
+import com.delhivery.orion.ui.selectroute.fragments.BaseSelectRouteFragmentAction
+import com.delhivery.orion.ui.selectroute.fragments.DestinationSelectedAction
+import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.AddMoreRoutes
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.OriginSelected
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.DestinationFragment
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.OriginCityFragment
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteListFragment
+import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
+import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListFragment
 import com.delhivery.orion.utils.LocationFlowState
-import com.delhivery.orion.utils.LocationFlowState.PermissionGranted
-import com.delhivery.orion.utils.extensions.fadeAnim
-import com.delhivery.orion.utils.extensions.not
-import com.delhivery.orion.utils.extensions.onBackground
-import com.delhivery.orion.utils.extensions.plusAssign
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import java.util.Locale
-import java.util.concurrent.TimeUnit.MILLISECONDS
 
 class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, SelectRouteViewModel>() {
   override fun getViewModelClass() = SelectRouteViewModel::class.java
@@ -26,6 +27,12 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   override fun layoutId() = R.layout.activity_select_route
 
   override fun requireConnection() = true
+
+  /* current Fragment type */
+  private var currentFragmentType: SelectRouteFragmentType? = null
+
+  /* current route model */
+  private var currentRoute: RouteModel? = null
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -35,71 +42,84 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     title = ""
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    /* observe state live data and update ui */
-    viewModel.stateLiveData.observe(this, UIStateObserver())
-
-    /* use location as current city */
-    binding.containerGpsOriginCity.setOnClickListener { locationAsOrigin() }
-
-    /* start with origin city flow */
-    viewModel.state = OriginCity
-  }
-
-  private fun getLocation() {
-    val gpsAnim = binding.imgGps.fadeAnim(true, true)
-    compositeDisposable += Single.zip(locationUtils.getLocation()
-        .flatMap { _loc ->
-          val geoAddr = Geocoder(this, Locale.getDefault())
-              .getFromLocation(_loc.latitude, _loc.longitude, 1)
-              .firstOrNull()
-          Single.just(Pair(_loc, geoAddr))
-        },
-        Single.timer(2000, MILLISECONDS),
-        BiFunction<Pair<Location, Address?>, Long, Pair<Location, Address?>> { t1, _ -> t1 })
-        .onBackground()
-        .doFinally { /* location animation ends */ gpsAnim.cancel() }
-        .subscribe { locAddr, error ->
-          binding.textOriginCityName.text = if (!error) {
-            "${locAddr.second?.locality}, ${locAddr.second?.adminArea}"
-          } else {
-            "Location Error :("
-          }
-        }
+    /* start with origin city fragment */
+    navigate(OriginCityFragment)
   }
 
   /**
-   * Use location as origin, check for permission flow as well
+   * Navigate to [SelectRouteFragmentType] _fragment
    */
-  private fun locationAsOrigin() {
-    onLocationButtonClicked()
-  }
-
-  override fun updateLocationFlowState(flowState: LocationFlowState) {
-    binding.textOriginCityName.text = if (flowState == PermissionGranted) {
-      getLocation()
-      "Loading..."
-    } else {
-      "No Location :("
-    }
-  }
-
-  /* UI State observer */
-  inner class UIStateObserver : Observer<SelectRouteUIState> {
-    override fun onChanged(_state: SelectRouteUIState?) {
-      binding.state = _state
-      _state?.let { state ->
-        when (state) {
-          OriginCity -> {
-            uiUtils.toggleKeyboard()
-            binding.editOriginCity.setText("")
-            binding.editOriginCity.clearFocus()
-            updateLocationFlowState()
+  private fun navigate(
+    fragmentType: SelectRouteFragmentType,
+    args: Any? = null
+  ) {
+    if (currentFragmentType == fragmentType) return
+    supportFragmentManager.beginTransaction()
+        .apply {
+          val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
+          if (_fragment == null) {
+            add(R.id.container, fragmentType.fragment, SelectRouteFragmentTag)
+          } else {
+            replace(R.id.container, fragmentType.fragment, SelectRouteFragmentTag)
           }
-          else -> {
-
-          }
+          currentFragmentType = fragmentType
         }
+        .commitNow()
+  }
+
+  /**
+   * Fragment action observer
+   */
+  fun fragmentAction(action: BaseSelectRouteFragmentAction) {
+    when (action.type) {
+      OriginSelected -> {
+        (action as OriginSelectedAction).apply {
+          currentRoute = RouteModel(origin, nearByLocations)
+          navigate(DestinationFragment)
+        }
+      }
+      DestinationsAdded -> {
+        (action as DestinationSelectedAction).apply {
+          currentRoute?.destinations = destinations
+          viewModel.routes.add(currentRoute!!)
+          currentRoute = null
+          //navigate to routes fragment
+          navigate(RouteListFragment)
+        }
+      }
+      AddMoreRoutes -> {
+        navigate(OriginCityFragment)
+      }
+      LoadRequests -> {
+        //go to home
       }
     }
   }
+
+  override fun updateLocationFlowState(flowState: LocationFlowState) {
+//    //handling if needed here
+  }
+
+  override fun onAttachFragment(fragment: Fragment?) {
+    super.onAttachFragment(fragment)
+    when (fragment) {
+      is SelectRouteDestinationFragment -> {
+        fragment.originCity = currentRoute?.origin
+      }
+      is SelectRouteListFragment -> {
+        fragment.routes = viewModel.routes
+      }
+    }
+  }
+
+  override fun onBackPressed() {
+    if (currentFragmentType?.prevFragment() != null) {
+      navigate(currentFragmentType!!.prevFragment()!!)
+    } else {
+      super.onBackPressed()
+    }
+  }
 }
+
+/* Search load fragment tag */
+private const val SelectRouteFragmentTag = "select_route_fragment_tag"

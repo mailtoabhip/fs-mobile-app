@@ -140,7 +140,6 @@ class DelhiveryFabCardMenu(
   ) {
     ValueAnimator.ofFloat(*values)
         .apply {
-          duration = 500
           interpolator = FastOutSlowInInterpolator()
           addListener(object : AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {

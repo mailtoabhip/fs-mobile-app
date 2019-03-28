@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -25,6 +26,7 @@ import com.delhivery.orion.utils.prefs.GlobalPrefs
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.exceptions.Exceptions
+import java.util.Locale
 import javax.inject.Inject
 
 @SuppressLint("LogNotTimber")
@@ -103,6 +105,16 @@ class LocationUtils @Inject constructor(
           }
           return@flatMap requestLocationUpdateOnce()
         }
+  }
+
+  /**
+   * Get current location and address
+   */
+  fun getLocationAddress() = getLocation().flatMap { _loc ->
+    val geoAddr = Geocoder(activity, Locale.getDefault())
+        .getFromLocation(_loc.latitude, _loc.longitude, 1)
+        .firstOrNull()
+    Single.just(Pair(_loc, geoAddr))
   }
 
   /**

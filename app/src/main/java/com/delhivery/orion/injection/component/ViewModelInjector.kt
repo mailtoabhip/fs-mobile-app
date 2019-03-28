@@ -15,6 +15,9 @@ import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
+import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
+import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
 import dagger.Component
@@ -35,11 +38,18 @@ interface ViewModelInjector {
 
   fun inject(authenticationViewModel: AuthenticationViewModel)
 
+  fun inject(onboardingViewModel: OnboardingViewModel)
+
+  /* select route */
   fun inject(selectRouteWelcomeViewModel: SelectRouteWelcomeViewModel)
 
   fun inject(selectRouteViewModel: SelectRouteViewModel)
 
-  fun inject(onboardingViewModel: OnboardingViewModel)
+  fun inject(selectRouteOriginCityViewModel: SelectRouteOriginCityViewModel)
+
+  fun inject(selectRouteDestinationViewModel: SelectRouteDestinationViewModel)
+
+  fun inject(selectRouteListViewModel: SelectRouteListViewModel)
 
   /* Home */
   fun inject(homeViewModel: HomeViewModel)

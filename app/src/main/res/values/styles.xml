@@ -19,7 +19,7 @@
   </style>
 
   <!-- Form input field -->
-  <style name="FormInputField" parent="Base.V7.Widget.AppCompat.EditText">
+  <style name="FormInputField" parent="SearchEditText">
     <item name="colorControlNormal">#1e000000</item>
     <item name="colorControlActivated">@color/colorAccent</item>
     <item name="colorControlHighlight">@color/colorAccent</item>

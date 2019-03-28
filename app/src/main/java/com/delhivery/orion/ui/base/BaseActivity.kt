@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
 import com.delhivery.orion.BR
 import com.delhivery.orion.network.ConnectionLiveData
@@ -39,6 +40,10 @@ import javax.inject.Inject
  */
 abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerAppCompatActivity(),
     LifecycleObserver {
+  init {
+    AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+  }
+
   /* override in init if required for specific activity */
   protected var StatusBarColor = Color.parseColor("#F9F9F9")
 

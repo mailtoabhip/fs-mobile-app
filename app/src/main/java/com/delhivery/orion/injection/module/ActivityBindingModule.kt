@@ -13,6 +13,7 @@ import com.delhivery.orion.ui.onboarding.OnboardingActivity
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
 import dagger.Binds
@@ -40,7 +41,9 @@ abstract class ActivityBindingModule {
   internal abstract fun bindSelectRouteWelcomeActivity(): SelectRouteWelcomeActivity
 
   @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsSelectRouteActivityModule::class])
+  @ContributesAndroidInjector(
+      modules = [AbsSelectRouteActivityModule::class, SelectRouteFragmentsBindingModule::class]
+  )
   internal abstract fun bindSelectRouteActivity(): SelectRouteActivity
 
   @ActivityScope

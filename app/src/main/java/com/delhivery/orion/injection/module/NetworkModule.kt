@@ -1,6 +1,8 @@
 package com.delhivery.orion.injection.module
 
 import android.content.Context
+import com.delhivery.orion.api.BidService
+import com.delhivery.orion.api.OrionDataService
 import com.delhivery.orion.api.UMSService
 import com.delhivery.orion.config.UrlConfig
 import com.delhivery.orion.injection.qualifier.ApplicationContext
@@ -85,4 +87,24 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ): UMSService = getRetrofit(gson, okHttpClient, UrlConfig.UMS).create(UMSService::class.java)
+
+  /**
+   * Bid service
+   */
+  @Provides
+  @Singleton
+  fun provideBidService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(BidService::class.java)
+
+  /**
+   * Provide [OrionDataService]
+   */
+  @Provides
+  @Singleton
+  fun provideOrionDataService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.OrionData).create(OrionDataService::class.java)
 }

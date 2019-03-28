@@ -1,5 +1,6 @@
 package com.delhivery.orion.network
 
+import android.util.Log
 import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -30,6 +31,8 @@ class DelhiveryNetworkInterceptor private constructor() : Interceptor {
     chain.request().newBuilder().let { builder: Request.Builder ->
       if (jwtToken.isNotNullOrEmpty()) {
         builder.addHeader("Authorization", "Bearer $jwtToken")
+      } else {
+        Log.d("DelhiveryInterceptor", "intercept:: no jwt token")
       }
       /* request for json response */
       builder.addHeader("Accept", "application/json")

@@ -74,6 +74,7 @@
   <string name="label_awaiting_truck_details">Awaiting Truck details</string>
   <string name="label_no_trips_yet">No trips yet !</string>
   <string name="label_destination_city">Destination city</string>
+  <string name="label_from_state">From %1$s</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -82,6 +83,17 @@
   <string name="error_location_permission_denied">Location Permission Denied</string>
   <string name="action_edit_bid">Edit Bid</string>
   <string name="label_your_recent_search">Your recent searches</string>
+  <string name="title_add_nearby_locations">Add nearby locations ?</string>
+  <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
+  <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
+  <string name="action_confirm">Confirm</string>
+  <string name="label_destination_states">Destination States</string>
+  <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
+  <string name="action_confirm_route">Confirm Route</string>
+  <string name="action_select_all_states">Select all states</string>
+  <string name="label_routes_added">Routes added</string>
+  <string name="action_add_more_route">Add more routes</string>
+  <string name="action_go_to_load_requests">GO to load requests</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

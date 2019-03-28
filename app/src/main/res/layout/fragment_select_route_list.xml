@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+
+  </data>
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:focusableInTouchMode="true"
+      android:paddingTop="24dp"
+      >
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="6sp"
+        android:text="@string/label_routes_added"
+        android:textColor="#de000000"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/container_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        bind:shadow="@{ @dimen/size_4dp }"
+        >
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/btn_action"
+          android:layout_width="match_parent"
+          android:layout_marginBottom="@dimen/size_16dp"
+          android:layout_marginEnd="@dimen/size_24dp"
+          android:layout_marginStart="@dimen/size_24dp"
+          android:layout_marginTop="@dimen/size_16dp"
+          android:text="@string/action_go_to_load_requests"
+          style="@style/ActionButton"
+          />
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/container_bottom"
+        android:layout_below="@id/text_title"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:fillViewport="true"
+        >
+      <android.support.v7.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          >
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/container_routes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_add_more_route"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/colorPrimary"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="@dimen/size_8dp"
+            >
+          <android.support.v7.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:paddingBottom="@dimen/size_20dp"
+              android:paddingStart="@dimen/size_16dp"
+              android:paddingTop="@dimen/size_20dp"
+              >
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_add_black_24dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_18dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/action_add_more_route"
+                android:textColor="#de000000"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                />
+
+          </android.support.v7.widget.LinearLayoutCompat>
+        </android.support.v7.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+      </android.support.v7.widget.LinearLayoutCompat>
+    </ScrollView>
+  </RelativeLayout>
+</layout>

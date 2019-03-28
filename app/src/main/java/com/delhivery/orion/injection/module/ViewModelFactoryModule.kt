@@ -17,6 +17,9 @@ import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
+import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
+import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
 import com.delhivery.orion.utils.ViewModelFactory
@@ -48,6 +51,12 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
+  @ViewModelScope(OnboardingViewModel::class)
+  abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
+
+  /* Select route */
+  @Binds
+  @IntoMap
   @ViewModelScope(SelectRouteWelcomeViewModel::class)
   abstract fun bindSelectRouteWelcomeViewModel(selectRouteWelcomeViewModel: SelectRouteWelcomeViewModel): ViewModel
 
@@ -58,8 +67,18 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(OnboardingViewModel::class)
-  abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
+  @ViewModelScope(SelectRouteOriginCityViewModel::class)
+  abstract fun bindSelectRouteOriginCityViewModel(selectRouteOriginCityViewModel: SelectRouteOriginCityViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectRouteDestinationViewModel::class)
+  abstract fun bindSelectRouteDestinationViewModel(selectRouteDestinationViewModel: SelectRouteDestinationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectRouteListViewModel::class)
+  abstract fun bindSelectRouteListViewModel(selectRouteListViewModel: SelectRouteListViewModel): ViewModel
 
   /* Home */
   @Binds
