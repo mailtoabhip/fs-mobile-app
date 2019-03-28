@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.searchload.fragments
 
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentActionType.Search
 
 /**
@@ -31,8 +32,8 @@ class ProgressSearchLoadAction(
  * Search Load action
  */
 class SearchLoadAction(
-  val originCity: String,
-  val destinationCity: String,
+  val originCity: CityModel,
+  val destinationCity: CityModel,
   val truckType: String,
   val truckSize: String
 ) : BaseSearchLoadFragmentAction(Search)

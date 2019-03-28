@@ -6,6 +6,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.databinding.ActivitySelectRouteBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
+import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.selectroute.fragments.BaseSelectRouteFragmentAction
 import com.delhivery.orion.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
@@ -91,7 +92,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         navigate(OriginCityFragment)
       }
       LoadRequests -> {
-        //go to home
+        navigationUtils.navigate(HomeActivity::class.java, true)
       }
     }
   }

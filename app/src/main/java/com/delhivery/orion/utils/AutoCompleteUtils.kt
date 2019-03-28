@@ -68,6 +68,8 @@ class AutoCompleteUtils @Inject constructor(
               editText.setAdapter(adapter)
               editText.setOnItemClickListener { _, _, i, _ ->
                 action(cities[i])
+                disposable?.dispose()
+                editText.dismissDropDown()
               }
             }
           }

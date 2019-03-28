@@ -55,8 +55,8 @@
 
     <View
         android:id="@+id/view_center_reveal"
-        android:layout_width="1500dp"
-        android:layout_height="1500dp"
+        android:layout_width="960dp"
+        android:layout_height="960dp"
         android:layout_gravity="center"
         android:background="@drawable/bg_circle_delhivery_red"
         android:scaleX="0"

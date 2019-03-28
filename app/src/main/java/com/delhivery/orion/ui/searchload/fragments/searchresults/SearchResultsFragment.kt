@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
@@ -72,8 +73,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    * Search with query params
    */
   fun search(
-    origin: String,
-    destination: String,
+    origin: CityModel,
+    destination: CityModel,
     type: String,
     size: String,
     progress: Boolean = true
@@ -81,6 +82,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true))
+    binding.origin = origin
+    binding.destination = destination
     viewModel.searchLoad(origin, destination, type, size)
   }
 

@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.searchload.fragments.searchresults
 
 import android.arch.lifecycle.MutableLiveData
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
@@ -22,8 +23,8 @@ class SearchResultsViewModel @Inject constructor() : BaseViewModel() {
    * Search load api
    */
   fun searchLoad(
-    origin: String,
-    destination: String,
+    origin: CityModel,
+    destination: CityModel,
     type: String,
     size: String
   ) {

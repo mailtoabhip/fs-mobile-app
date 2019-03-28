@@ -13,14 +13,17 @@ import javax.inject.Singleton
 @Module
 class AppModule {
 
-    /**
-     * Provide Application Context, when [ApplicationContext] annotation is marked
-     */
-    @Provides
-    @ApplicationContext
-    fun provideAppContext(app: KotlinApp): Context = app.applicationContext
+  /**
+   * Provide Application Context, when [ApplicationContext] annotation is marked
+   */
+  @Provides
+  @ApplicationContext
+  fun provideAppContext(app: KotlinApp): Context = app.applicationContext
 
-    @Provides
-    @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase = Room.databaseBuilder(context, AppDatabase::class.java, Config.AppDatabaseName).build()
+  @Provides
+  @Singleton
+  fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+    Room.databaseBuilder(
+        context, AppDatabase::class.java, Config.AppDatabaseName
+    ).fallbackToDestructiveMigration().build()
 }

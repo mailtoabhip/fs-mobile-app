@@ -26,21 +26,11 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".ui.auth.AuthenticationActivity">
-      <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
+    <activity android:name=".ui.auth.AuthenticationActivity"/>
 
     <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
-    <activity android:name=".ui.selectroute.SelectRouteActivity">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
+    <activity android:name=".ui.selectroute.SelectRouteActivity"/>
 
     <activity android:name=".ui.onboarding.OnboardingActivity"/>
 
@@ -50,12 +40,7 @@
 
     <activity android:name=".ui.biddetails.BidDetailsActivity"/>
 
-    <activity android:name=".ui.searchload.SearchLoadActivity">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
+    <activity android:name=".ui.searchload.SearchLoadActivity"/>
   </application>
 
 </manifest>

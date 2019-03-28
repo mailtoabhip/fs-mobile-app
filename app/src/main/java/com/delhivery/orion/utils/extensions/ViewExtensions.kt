@@ -140,3 +140,8 @@ fun View.centerX() = left + (width / 2f)
  * View center Y
  */
 fun View.centerY() = top + (height / 2f)
+
+fun View.focusClick() = apply {
+  requestFocus()
+  post { performClick() }
+}

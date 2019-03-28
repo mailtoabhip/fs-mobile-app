@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.searchload.fragments.searchload
 
 import android.util.Log
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.database.AppDatabase
 import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.ui.base.BaseViewModel
@@ -20,8 +21,8 @@ class SearchLoadFragmentViewModel @Inject constructor(private val appDB: AppData
    * Save to history
    */
   fun saveToHistory(
-    originCity: String,
-    destinationCity: String,
+    originCity: CityModel,
+    destinationCity: CityModel,
     type: String,
     size: String
   ) {

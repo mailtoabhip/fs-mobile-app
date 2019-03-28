@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.databinding.FragmentSearchLoadBinding
 import com.delhivery.orion.databinding.ViewSearchLoadHistoryItemBinding
@@ -12,9 +13,12 @@ import com.delhivery.orion.ui.custom.AnimationType.RevealOpen
 import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
+import com.delhivery.orion.utils.AutoCompleteUtils
+import com.delhivery.orion.utils.extensions.focusClick
 import com.delhivery.orion.utils.extensions.setup
 import com.delhivery.orion.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
+import javax.inject.Inject
 
 class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, SearchLoadFragmentViewModel>() {
 
@@ -26,6 +30,11 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   override fun getViewModelClass() = SearchLoadFragmentViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_search_load
+
+  @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+
+  private var origin: CityModel? = null
+  private var destination: CityModel? = null
 
   override fun onViewCreated(
     view: View,
@@ -53,6 +62,17 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   }
 
   private fun setupSearchScreen() {
+    autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
+      origin = it
+      binding.editDestinationCity.requestFocus()
+    }
+
+    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
+      destination = it
+      uiUtils.toggleKeyboard()
+      binding.spinnerTruckType.focusClick()
+    }
+
     /* truck type */
     binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
 
@@ -60,7 +80,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* truck size */
     binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
-
     }
 
     /* submit */
@@ -97,11 +116,16 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   /**
    * Search load as per user selections
    */
-  private fun searchLoad(saveToHistory: Boolean = true) {
+  private fun searchLoad(
+    saveToHistory: Boolean = true,
+    origin: CityModel? = this@SearchLoadFragment.origin,
+    destination: CityModel? = this@SearchLoadFragment.destination
+  ) {
     uiUtils.toggleKeyboard(true)
+
+    if (origin == null || destination == null) return
+
     /* form data */
-    val origin = binding.editOriginCity.text.toString()
-    val destination = binding.editDestinationCity.text.toString()
     val type = binding.spinnerTruckType.selectedItem.toString()
     val size = binding.spinnerTruckSize.selectedItem.toString()
 
@@ -117,6 +141,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       action(SearchLoadAction(origin, destination, type, size))
     }, 200)
   }
+
+  private fun validate() = origin != null && destination != null
 
   /**
    * init observers
@@ -138,7 +164,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false)
+            searchLoad(false, item.originCity, item.destinationCity)
           }
           itemBinding.root.setOnLongClickListener {
             viewModel.deleteSearchResult(item)
