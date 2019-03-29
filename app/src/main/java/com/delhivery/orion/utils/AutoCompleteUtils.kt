@@ -1,10 +1,7 @@
 package com.delhivery.orion.utils
 
-import android.R.layout
-import android.widget.ArrayAdapter
 import com.delhivery.orion.api.OrionDataService
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.names
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.custom.DelhiveryCityAutoEditText
 import com.delhivery.orion.utils.extensions.not
@@ -63,13 +60,9 @@ class AutoCompleteUtils @Inject constructor(
         .subscribe { _res, _err ->
           if (!_err && _res != null) {
             _res.responseData?.let { cities ->
-              val adapter =
-                ArrayAdapter<String>(activity, layout.simple_dropdown_item_1line, cities.names())
-              editText.setAdapter(adapter)
-              editText.setOnItemClickListener { _, _, i, _ ->
-                action(cities[i])
+              editText.setItems(cities) {
                 disposable?.dispose()
-                editText.dismissDropDown()
+                action(it)
               }
             }
           }

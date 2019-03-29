@@ -3,26 +3,37 @@ package com.delhivery.orion.ui.custom
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.AppCompatAutoCompleteTextView
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ArrayAdapter
 import com.delhivery.orion.R
+import com.delhivery.orion.data.CityModel
+import com.delhivery.orion.data.names
 
 class DelhiveryCityAutoEditText(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatAutoCompleteTextView(context, attrs) {
 
-  val RightGap = context.resources.getDimension(R.dimen.size_12dp)
-  val DotsGap = context.resources.getDimension(R.dimen.size_6dp)
-  val DotRadius = context.resources.getDimension(R.dimen.size_2dp)
-  val MaxTransY = context.resources.getDimension(R.dimen.size_8dp)
+  private val RightGap = context.resources.getDimension(R.dimen.size_12dp)
+  private val DotsGap = context.resources.getDimension(R.dimen.size_6dp)
+  private val DotRadius = context.resources.getDimension(R.dimen.size_2dp)
+  private val MaxTransY = context.resources.getDimension(R.dimen.size_4dp)
 
-  val paint by lazy {
+  private val paint by lazy {
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
       color = ResourcesCompat.getColor(resources, R.color.colorAccent, null)
+      alpha = 100
+    }
+  }
+
+  private val errorPaint by lazy {
+    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+      color = Color.RED
       alpha = 100
     }
   }
@@ -31,6 +42,7 @@ class DelhiveryCityAutoEditText(
   private var factor = 0.0f
 
   private var progress = false
+  private var error = false
 
   override fun onDraw(canvas: Canvas?) {
     super.onDraw(canvas)
@@ -48,6 +60,10 @@ class DelhiveryCityAutoEditText(
           }
           drawCircle(cx, cy, DotRadius, paint)
         }
+      }
+    } else if (error && hasFocus()) {
+      canvas?.apply {
+        drawCircle(width - RightGap - DotRadius, height / 2f, DotRadius, errorPaint)
       }
     }
   }
@@ -76,6 +92,27 @@ class DelhiveryCityAutoEditText(
           }
           start()
         }
+  }
+
+  fun setItems(
+    cities: List<CityModel>,
+    selected: (CityModel) -> Unit
+  ) {
+    progress(false)
+    val adapter =
+      ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
+    setAdapter(adapter)
+    setOnItemClickListener { _, _, i, _ ->
+      selected(cities[i])
+      dismissDropDown()
+    }
+    if (cities.isEmpty()) {
+      error = true
+      dismissDropDown()
+    } else {
+      error = false
+    }
+    invalidate()
   }
 }
 

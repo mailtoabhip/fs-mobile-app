@@ -32,6 +32,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
    * Splash animation chain
    */
   private fun animate() {
+    val isAuthenticated = viewModel.authState()
     please(1500, OvershootInterpolator()) {
       animate(binding.imgLogo) toBe {
         toBeRotated(360f)
@@ -57,7 +58,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             scale(1f, 1f)
           }
         }.withEndAction {
-          postAnimate()
+          postAnimate(isAuthenticated)
         }
             .start()
       }
@@ -68,8 +69,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         .start()
   }
 
-  private fun postAnimate() {
-    if (viewModel.authState()) {
+  private fun postAnimate(isAuthenticated: Boolean) {
+    if (isAuthenticated) {
       navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
     } else {
       navigationUtils.navigate(AuthenticationActivity::class.java, finishAfter = true)

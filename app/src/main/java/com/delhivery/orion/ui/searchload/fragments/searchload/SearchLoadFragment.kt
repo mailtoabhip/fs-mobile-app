@@ -14,7 +14,6 @@ import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.orion.utils.AutoCompleteUtils
-import com.delhivery.orion.utils.extensions.focusClick
 import com.delhivery.orion.utils.extensions.setup
 import com.delhivery.orion.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -70,7 +69,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
       destination = it
       uiUtils.toggleKeyboard()
-      binding.spinnerTruckType.focusClick()
     }
 
     /* truck type */

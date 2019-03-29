@@ -99,6 +99,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   inner class SearchResultsObserver : Observer<List<BaseHomeBidsRVAdapterItem<*>>> {
     override fun onChanged(t: List<BaseHomeBidsRVAdapterItem<*>>?) {
+      binding.rv.scrollToPosition(0)
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
