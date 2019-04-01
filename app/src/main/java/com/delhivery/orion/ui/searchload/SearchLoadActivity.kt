@@ -41,17 +41,20 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
    */
   private fun navigate(fragmentType: SearchLoadFragmentType) {
     if (currentFragmentType == fragmentType) return
-    supportFragmentManager.beginTransaction()
-        .apply {
-          val _fragment = supportFragmentManager.findFragmentByTag(SearchLoadFragmentTag)
-          if (_fragment == null) {
-            add(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
-          } else {
-            replace(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
-          }
-          currentFragmentType = fragmentType
-        }
-        .commitNow()
+//    supportFragmentManager.beginTransaction()
+//        .apply {
+//          val _fragment = supportFragmentManager.findFragmentByTag(SearchLoadFragmentTag)
+//          if (_fragment == null) {
+//            add(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
+//          } else {
+//            replace(R.id.container, fragmentType.fragment, SearchLoadFragmentTag)
+//          }
+//          currentFragmentType = fragmentType
+//        }
+//        .commitNow()
+    navigationUtils.addReplaceFragment(
+        R.id.container, fragmentType.fragment, SearchLoadFragmentTag
+    )
     title = currentFragmentType?.title
   }
 

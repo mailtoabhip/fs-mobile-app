@@ -7,7 +7,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivitySplashBinding
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.base.BaseActivity
-import com.delhivery.orion.ui.home.HomeActivity
+import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
@@ -71,7 +71,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   private fun postAnimate(isAuthenticated: Boolean) {
     if (isAuthenticated) {
-      navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
+      navigationUtils.navigate(SelectRouteActivity::class.java, finishAfter = true)
     } else {
       navigationUtils.navigate(AuthenticationActivity::class.java, finishAfter = true)
     }

@@ -65,22 +65,6 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver, Observable {
     doOnSubscribe { showProgress() }
         .doFinally { showProgress(false) }
 
-  /**
-   * Handle response and based on [BaseResponse.isSuccess] flag,
-   * response is passed or exception is thrown
-   *
-   */
-  protected fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
-    map {
-      if (it.isSuccess) {
-        return@map it.responseData
-      } else {
-        throw APIException(
-            it.errorBody?.errorCode() ?: -1, it.errorBody?.errorMessage ?: "Unknown error"
-        )
-      }
-    }
-
   override fun addOnPropertyChangedCallback(
     callback: Observable.OnPropertyChangedCallback
   ) {

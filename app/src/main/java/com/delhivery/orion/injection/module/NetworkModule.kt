@@ -2,7 +2,7 @@ package com.delhivery.orion.injection.module
 
 import android.content.Context
 import com.delhivery.orion.api.BidService
-import com.delhivery.orion.api.OrionDataService
+import com.delhivery.orion.api.UserService
 import com.delhivery.orion.api.UMSService
 import com.delhivery.orion.config.UrlConfig
 import com.delhivery.orion.injection.qualifier.ApplicationContext
@@ -99,12 +99,12 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(BidService::class.java)
 
   /**
-   * Provide [OrionDataService]
+   * Provide [UserService]
    */
   @Provides
   @Singleton
   fun provideOrionDataService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.OrionData).create(OrionDataService::class.java)
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.UserService).create(UserService::class.java)
 }

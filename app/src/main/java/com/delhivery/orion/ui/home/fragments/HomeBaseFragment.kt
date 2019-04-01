@@ -1,13 +1,13 @@
 package com.delhivery.orion.ui.home.fragments
 
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.databinding.ViewDataBinding
 import com.delhivery.orion.R
 import com.delhivery.orion.ui.base.BaseFragment
+import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.home.HomeActivity
 
-abstract class HomeBaseFragment<B : ViewDataBinding, VM : ViewModel> : BaseFragment<B, VM>() {
+abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<B, VM>() {
 
   /* toolbar elevation Live Data */
   var toolbarElevationLiveData: MutableLiveData<Float>? = null

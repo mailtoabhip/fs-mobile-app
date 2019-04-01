@@ -1,7 +1,7 @@
 package com.delhivery.orion.ui.base
 
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
@@ -21,7 +21,7 @@ import javax.inject.Inject
  * Created by Harish on 26/03/18.
  */
 
-abstract class BaseFragment<B : ViewDataBinding, VM : ViewModel> : DaggerFragment(),
+abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFragment(),
     LifecycleOwner {
   protected lateinit var binding: B
   lateinit var viewModel: VM
@@ -46,6 +46,31 @@ abstract class BaseFragment<B : ViewDataBinding, VM : ViewModel> : DaggerFragmen
     binding = DataBindingUtil.inflate(inflater, layoutId(), container, false)
     binding.setVariable(BR.viewModel, viewModel)
     return binding.root
+  }
+
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+
+    /* Observe on toast live data and show toast */
+    viewModel.toastLiveData.observe(this, Observer {
+      it?.let { uiUtils.showToast(it) }
+    })
+
+    /* Observe on snackbar live data and show snackbar */
+    viewModel.snackbarLiveData.observe(this, Observer {
+      it?.let { uiUtils.showSnackbar(it) }
+    })
+
+    /* Observe on progress live data and show/hide progress */
+    viewModel.progressLiveData.observe(this, Observer {
+      when (it) {
+        true -> uiUtils.showProgress()
+        else -> uiUtils.hideProgress()
+      }
+    })
   }
 
   abstract fun getViewModelClass(): Class<VM>

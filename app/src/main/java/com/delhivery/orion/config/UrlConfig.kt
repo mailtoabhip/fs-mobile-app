@@ -17,7 +17,7 @@ enum class UrlConfig(
       "https://sbx6ojnl19.execute-api.ap-southeast-1.amazonaws.com/dev/",
       "https://sbx6ojnl19.execute-api.ap-southeast-1.amazonaws.com/dev/"
   ),
-  OrionData(
+  UserService(
       "https://orion-user-api-dev.delhivery.com/",
       "https://orion-user-api-dev.delhivery.com/"
   );

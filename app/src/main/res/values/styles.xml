@@ -20,6 +20,7 @@
 
   <!-- Form input field -->
   <style name="FormInputField" parent="SearchEditText">
+    <item name="android:background">@drawable/bg_form_edit</item>
     <item name="colorControlNormal">#1e000000</item>
     <item name="colorControlActivated">@color/colorAccent</item>
     <item name="colorControlHighlight">@color/colorAccent</item>

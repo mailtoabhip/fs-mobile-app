@@ -51,21 +51,12 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
    * Navigate to [SelectRouteFragmentType] _fragment
    */
   private fun navigate(
-    fragmentType: SelectRouteFragmentType,
-    args: Any? = null
+    fragmentType: SelectRouteFragmentType
   ) {
     if (currentFragmentType == fragmentType) return
-    supportFragmentManager.beginTransaction()
-        .apply {
-          val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
-          if (_fragment == null) {
-            add(R.id.container, fragmentType.fragment, SelectRouteFragmentTag)
-          } else {
-            replace(R.id.container, fragmentType.fragment, SelectRouteFragmentTag)
-          }
-          currentFragmentType = fragmentType
-        }
-        .commitNow()
+    navigationUtils.addReplaceFragment(
+        R.id.container, fragmentType.fragment, SelectRouteFragmentTag
+    )
   }
 
   /**
@@ -81,8 +72,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       DestinationsAdded -> {
         (action as DestinationSelectedAction).apply {
-          currentRoute?.destinations = destinations
-          viewModel.routes.add(currentRoute!!)
+          currentRoute?.destinations = destinations.toMutableList()
+          viewModel.routes.addAll(currentRoute!!.expandNearByLocations())
           currentRoute = null
           //navigate to routes fragment
           navigate(RouteListFragment)

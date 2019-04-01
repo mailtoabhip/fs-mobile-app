@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
+import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
+import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
@@ -33,6 +35,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private val _adapter by lazy {
     HomeBidsRVAdapter(this)
   }
+  private val _scrollListener by lazy {
+    SearchResultsRVScrollListener()
+  }
 
   override fun onViewCreated(
     view: View,
@@ -46,7 +51,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.rv.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = _adapter
-      addOnScrollListener(SearchResultsRVScrollListener())
+      addOnScrollListener(_scrollListener)
       LinearSnapHelper().attachToRecyclerView(this)
     }
 
@@ -91,7 +96,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     actionId: String,
     item: BaseHomeBidsRVAdapterItem<*>
   ) {
-    // todo - go to details page
+    when (actionId) {
+      HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
+    }
   }
 
   /**
@@ -99,7 +106,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   inner class SearchResultsObserver : Observer<List<BaseHomeBidsRVAdapterItem<*>>> {
     override fun onChanged(t: List<BaseHomeBidsRVAdapterItem<*>>?) {
-      binding.rv.scrollToPosition(0)
+      resetSpinnerContainer()
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
@@ -108,6 +115,19 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       } else {
         _adapter.setItems(t)
       }
+    }
+  }
+
+  /**
+   * Reset spinner container
+   */
+  private fun resetSpinnerContainer() {
+    binding.apply {
+      _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
+      _scrollListener.coordinateView(spinnerTruckSize, viewHiddenIndicator, 0f)
+      viewHiddenIndicator.alpha = 0f
+      rv.scrollToPosition(0)
+      containerSpinner.translationY = 0f
     }
   }
 
@@ -121,33 +141,34 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
+      binding.apply {
+        val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
+        val pos = layoutManager.findFirstVisibleItemPosition()
+        val visibleHeight = viewHiddenIndicator.height * 3f
+        val maxTranslationY = visibleHeight - containerSpinner.height
 
-      val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
-      val pos = layoutManager.findFirstVisibleItemPosition()
-      val visibleHeight = binding.viewHiddenIndicator.height * 3f
-      val maxTranslationY = visibleHeight - binding.containerSpinner.height
+        containerSpinner.translationY = if (pos >= 1) {
+          viewHiddenIndicator.alpha = 1f
 
-      binding.containerSpinner.translationY = if (pos >= 1) {
-        binding.viewHiddenIndicator.alpha = 1f
-
-        updateVisibility(binding.spinnerTruckType, View.INVISIBLE)
-        updateVisibility(binding.spinnerTruckSize, View.INVISIBLE)
-        maxTranslationY
-      } else {
-        val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
-        val childTop = childView.top * 1f
-        val factor = Math.min(childTop / maxTranslationY, 1f)
-        binding.viewHiddenIndicator.alpha = factor
-        coordinateView(binding.spinnerTruckType, binding.viewHiddenIndicator, factor)
-        coordinateView(binding.spinnerTruckSize, binding.viewHiddenIndicator, factor)
-        Math.max(maxTranslationY, childTop)
+          updateVisibility(spinnerTruckType, View.INVISIBLE)
+          updateVisibility(spinnerTruckSize, View.INVISIBLE)
+          maxTranslationY
+        } else {
+          val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
+          val childTop = childView.top * 1f
+          val factor = Math.min(childTop / maxTranslationY, 1f)
+          viewHiddenIndicator.alpha = factor
+          coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
+          coordinateView(spinnerTruckSize, viewHiddenIndicator, factor)
+          Math.max(maxTranslationY, childTop)
+        }
       }
     }
 
     /**
      * Coordinate [view] with [target] as per factor
      */
-    private fun coordinateView(
+    fun coordinateView(
       view: View,
       target: View,
       factor: Float
