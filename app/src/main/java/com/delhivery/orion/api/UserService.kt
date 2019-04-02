@@ -3,6 +3,7 @@ package com.delhivery.orion.api
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.data.RouteMappingModel
+import com.delhivery.orion.data.UserModel
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,6 +24,14 @@ interface UserService {
   fun nearByLocations(
     @Path("cityId") cityId: String
   ): Single<BaseResponse<List<CityModel>>>
+
+  /**
+   * Get user details
+   */
+  @GET("users/supplypartners/{user_id}")
+  fun userDetails(
+    @Path("user_id") userId: String
+  ): Single<BaseResponse<UserModel>>
 
   /**
    * Get user route preferences

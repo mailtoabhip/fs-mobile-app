@@ -7,5 +7,6 @@ enum class AuthenticationUIState {
   PhoneNo,
   OTP,
   LoginProgress,
-  LoginSuccess
+  SelectRoute,
+  LoadRequest
 }

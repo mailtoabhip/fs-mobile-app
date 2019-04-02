@@ -2,10 +2,11 @@ package com.delhivery.orion.repository
 
 import com.auth0.android.jwt.JWT
 import com.delhivery.orion.api.UserService
-import com.delhivery.orion.data.toRoutes
+import com.delhivery.orion.data.UserModel
 import com.delhivery.orion.database.AppDatabase
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.prefs.UserPrefs
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +22,14 @@ class UserRepository @Inject constructor(
   private val userService: UserService
 ) : BaseRepository() {
 
+  /* JWT token */
+  private val jwt by lazy {
+    JWT(userPrefs.jwtToken!!)
+  }
+
+  /* user model cache */
+  private var user: UserModel? = null
+
   /**
    * User full name
    */
@@ -30,11 +39,20 @@ class UserRepository @Inject constructor(
   /**
    * Get user selected routes
    */
-  fun userRoutes() =
-    userService.userRoutes("")
-        .convertResponse()
-        .map {
-          it.toRoutes()
-        }
+  fun userRoutes(cache: Boolean = true) = if (!cache || user == null) {
+    getUser()
+  } else {
+    Single.just(user!!)
+  }.map { it.routes }
 
+  /**
+   * Get user
+   */
+  fun getUser(cache: Boolean = true) = if (!cache || user == null) {
+    userService.userDetails("ums::user::30a8a924-522b-11e9-b316-0227a8987d6e")//jwt.id!!)
+        .convertResponse()
+        .doOnSuccess { user = it }
+  } else {
+    Single.just(user)
+  }
 }

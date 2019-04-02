@@ -5,4 +5,5 @@ import javax.inject.Inject
 
 class HomeBidsViewModel @Inject constructor() : BaseViewModel() {
 
+
 }

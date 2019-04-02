@@ -12,14 +12,14 @@ import com.delhivery.orion.receiver.OTP_INTENT_FILTER
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.orion.ui.auth.AuthenticationUIError.None
+import com.delhivery.orion.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.orion.ui.auth.AuthenticationUIState.LoginProgress
-import com.delhivery.orion.ui.auth.AuthenticationUIState.LoginSuccess
 import com.delhivery.orion.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.orion.ui.auth.AuthenticationUIState.PhoneNo
+import com.delhivery.orion.ui.auth.AuthenticationUIState.SelectRoute
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.orion.ui.selectroute.SelectRouteActivity
-import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.utils.extensions.actionDone
 import com.delhivery.orion.utils.extensions.errorVibrate
 import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
@@ -148,8 +148,13 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 proTip = "Some tip regarding how to bid, or whats to be considered while bidding. "
             )
           }
-          /* Login success, move to next activity */
-          LoginSuccess -> {
+          /* Login success, No user routes found - select route activity */
+          SelectRoute -> {
+            uiUtils.hideDelhiveryProgress()
+            navigationUtils.navigate(SelectRouteActivity::class.java, finishAfter = true)
+          }
+          /* Login success, user routes found - navigate to load requests */
+          LoadRequest -> {
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(SelectRouteActivity::class.java, finishAfter = true)
           }

@@ -2,12 +2,14 @@ package com.delhivery.orion.ui.auth
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.repository.AuthenticationRepository
+import com.delhivery.orion.repository.UserRepository
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidPhoneNo
+import com.delhivery.orion.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.orion.ui.auth.AuthenticationUIState.LoginProgress
-import com.delhivery.orion.ui.auth.AuthenticationUIState.LoginSuccess
 import com.delhivery.orion.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.orion.ui.auth.AuthenticationUIState.PhoneNo
+import com.delhivery.orion.ui.auth.AuthenticationUIState.SelectRoute
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -17,7 +19,10 @@ import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
-class AuthenticationViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepository) :
+class AuthenticationViewModel @Inject constructor(
+  private val authenticationRepository: AuthenticationRepository,
+  private val userRepository: UserRepository
+) :
     BaseViewModel() {
 
   /* states */
@@ -71,10 +76,20 @@ class AuthenticationViewModel @Inject constructor(private val authenticationRepo
         authenticationRepository.verifyOTP(phoneNo, _otp),
         Single.timer(1000, MILLISECONDS), //add delay for animation
         BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String>> { t1, _ -> t1 })
+        .flatMap { _otpRes ->
+          userRepository.getUser(false)
+              .map {
+                Triple(_otpRes.first, _otpRes.second, it)
+              }
+        }
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            LoginSuccess
+            if (_res.third.hasRoutes()) {
+              LoadRequest
+            } else {
+              SelectRoute
+            }
           } else {
             errorLiveData.postValue(Pair(InvalidOTP, _res.second))
             OTP

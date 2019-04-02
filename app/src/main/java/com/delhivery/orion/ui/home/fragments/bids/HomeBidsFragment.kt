@@ -17,6 +17,7 @@ import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
+import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
@@ -25,6 +26,8 @@ import com.delhivery.orion.ui.bids.userBidsIntent
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.selectRouteIntent
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -80,14 +83,14 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem())
-//    add(
-//        2, HomeBidsWarningItem(
-//        HomeBidsWarningItemData(
-//            "No Routes selected", "Please select your route preference to see the load requests",
-//            "Select routes", HomeBidsWarningAction_SelectRoutes
-//        )
-//    )
-//    )
+    add(
+        2, HomeBidsWarningItem(
+        HomeBidsWarningItemData(
+            "No Routes selected", "Please select your route preference to see the load requests",
+            "Select routes", HomeBidsWarningAction_SelectRoutes
+        )
+    )
+    )
     for (i in 0..50) {
       add(HomeBidsRequestItem(HomeBidsRequestItemData(i * 5000)))
     }
@@ -103,9 +106,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsHeaderAction_ConfirmedBids -> context?.let {
         startActivity(userBidsIntent(it, ConfirmedBid))
       }
-      HomeBidsWarningAction_SelectRoutes -> {
-      }
-      HomeBidsWarningAction_EditRoutePrefs -> {
+      HomeBidsWarningAction_EditRoutePrefs, HomeBidsWarningAction_SelectRoutes -> context?.let {
+        startActivity(selectRouteIntent(it, UserRoutes))
       }
       HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
       HomeBidsSearchAction_Search -> context?.let {

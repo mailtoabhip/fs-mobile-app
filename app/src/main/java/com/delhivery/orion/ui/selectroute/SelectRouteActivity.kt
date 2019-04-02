@@ -1,5 +1,8 @@
 package com.delhivery.orion.ui.selectroute
 
+import android.arch.lifecycle.Observer
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.delhivery.orion.R
@@ -7,6 +10,8 @@ import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.databinding.ActivitySelectRouteBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
 import com.delhivery.orion.ui.home.HomeActivity
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.AddNewRoute
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.fragments.BaseSelectRouteFragmentAction
 import com.delhivery.orion.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
@@ -32,8 +37,21 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   /* current Fragment type */
   private var currentFragmentType: SelectRouteFragmentType? = null
 
+  /* flow type */
+  private var flowType: SelectRouteFlowType = AddNewRoute
+
   /* current route model */
   private var currentRoute: RouteModel? = null
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    /* flow type */
+    flowType = intent?.getIntExtra(SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId)
+        ?.let {
+          SelectRouteFlowType.byTypeId(it)
+        } ?: AddNewRoute
+  }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -44,7 +62,20 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* start with origin city fragment */
-    navigate(OriginCityFragment)
+    navigate(SelectRouteFragmentType.initFragment(flowType))
+
+    /* observe routes and update route list fragment */
+    viewModel.routesLiveData.observe(this, Observer {
+      val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
+      if (_fragment is SelectRouteListFragment) {
+        _fragment.routes = it?.toMutableList() ?: mutableListOf<RouteModel>()
+        _fragment.addRoutes()
+      }
+    })
+
+    when (flowType) {
+      UserRoutes -> viewModel.fetchUserRoutes()
+    }
   }
 
   /**
@@ -54,6 +85,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     fragmentType: SelectRouteFragmentType
   ) {
     if (currentFragmentType == fragmentType) return
+    currentFragmentType = fragmentType
     navigationUtils.addReplaceFragment(
         R.id.container, fragmentType.fragment, SelectRouteFragmentTag
     )
@@ -83,7 +115,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         navigate(OriginCityFragment)
       }
       LoadRequests -> {
-        navigationUtils.navigate(HomeActivity::class.java, true)
+        when (flowType) {
+          AddNewRoute -> navigationUtils.navigate(HomeActivity::class.java, true)
+          UserRoutes -> finish()
+        }
       }
     }
   }
@@ -105,8 +140,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   }
 
   override fun onBackPressed() {
-    if (currentFragmentType?.prevFragment() != null) {
-      navigate(currentFragmentType!!.prevFragment()!!)
+    if (currentFragmentType?.prevFragment(flowType) != null) {
+      navigate(currentFragmentType!!.prevFragment(flowType)!!)
     } else {
       super.onBackPressed()
     }
@@ -115,3 +150,16 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
 /* Search load fragment tag */
 private const val SelectRouteFragmentTag = "select_route_fragment_tag"
+
+/* Flow type intent key */
+private const val SelectRouteFlowTypeIntentExtra = "select_route_flow_type"
+
+/**
+ * Select route intent for [SelectRouteFlowType]
+ */
+fun selectRouteIntent(
+  context: Context,
+  type: SelectRouteFlowType
+) = Intent(context, SelectRouteActivity::class.java).apply {
+  putExtra(SelectRouteFlowTypeIntentExtra, type.typeId)
+}

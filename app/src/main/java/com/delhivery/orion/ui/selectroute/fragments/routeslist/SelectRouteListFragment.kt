@@ -48,7 +48,7 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
   /**
    * Add routes
    */
-  private fun addRoutes() {
+  fun addRoutes() {
     binding.containerRoutes.removeAllViews()
     routes.forEach {
       val itemBinding = ViewSelectRouteItemBinding.inflate(
