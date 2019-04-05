@@ -75,7 +75,7 @@ class AuthenticationViewModel @Inject constructor(
     compositeDisposable += Single.zip(
         authenticationRepository.verifyOTP(phoneNo, _otp),
         Single.timer(1000, MILLISECONDS), //add delay for animation
-        BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String>> { t1, _ -> t1 })
+        BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
@@ -91,7 +91,7 @@ class AuthenticationViewModel @Inject constructor(
               SelectRoute
             }
           } else {
-            errorLiveData.postValue(Pair(InvalidOTP, _res.second))
+            errorLiveData.postValue(Pair(InvalidOTP, _res.second ?: "Error validating OTP"))
             OTP
           }
         }

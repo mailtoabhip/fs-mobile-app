@@ -52,7 +52,7 @@ class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(0
 /**
  * Bid request item
  */
-class HomeBidsRequestItem(data: HomeBidsRequestItemData = HomeBidsRequestItemData()) :
+class HomeBidsRequestItem(data: HomeBidsRequestItemData) :
     BaseHomeBidsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
 
 /**

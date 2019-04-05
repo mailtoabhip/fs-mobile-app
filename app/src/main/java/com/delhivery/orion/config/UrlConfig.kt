@@ -20,6 +20,10 @@ enum class UrlConfig(
   UserService(
       "https://orion-user-api-dev.delhivery.com/",
       "https://orion-user-api-dev.delhivery.com/"
+  ),
+  TransactionService(
+      "http://orion-transaction-api-dev.delhivery.com",
+      "http://orion-transaction-api-dev.delhivery.com"
   );
 
   /**

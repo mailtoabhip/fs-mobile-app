@@ -10,6 +10,7 @@ import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
@@ -55,5 +56,14 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface)
       is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface)
     }
+  }
+
+  /**
+   * Remove all transactions
+   */
+  fun removeAllTransactions() {
+    items.filter { it.type == Request }
+        .map { Pair(it, Remove) }
+        .let { operation(it) }
   }
 }

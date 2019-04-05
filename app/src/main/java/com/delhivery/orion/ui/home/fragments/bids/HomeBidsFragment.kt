@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -13,12 +14,12 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
-import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
@@ -28,6 +29,7 @@ import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.selectRouteIntent
+import com.delhivery.orion.utils.PaginationScrollListener
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -56,14 +58,31 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     super.onViewCreated(view, savedInstanceState)
 
+    viewModel.progressLiveData.observe(this, Observer {
+      it?.let { show ->
+        if (!show) {
+          binding.refreshLayout.isRefreshing = false
+        } else if (!binding.refreshLayout.isRefreshing) {
+          binding.refreshLayout.isRefreshing = true
+        }
+      }
+    })
+
+    binding.refreshLayout.setOnRefreshListener {
+      adapter.removeAllTransactions()
+      /* remove user transactions and fetch again */
+      viewModel.fetchUserTransactions(false)
+    }
+
     /* setup recycler view */
     binding.rvBids.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeBidsFragment.adapter
       addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
+      addOnScrollListener(PaginationInterface())
     }
 
-    adapter.setItems(getDummyData())
+    adapter.setItems(getStaticData())
 
     /* Use this logic to create our own menu as per  */
     binding.fabSort.setOnClickListener { fab ->
@@ -78,22 +97,33 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           HomeBidsSearchAction_Search, HomeBidsSearchItem()
       )
     }
+
+    /* observe and update adapter for transactions */
+    viewModel.transactionData.observe(this, Observer {
+      mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+        it?.forEachIndexed { i, _item ->
+          add(i, Pair(HomeBidsRequestItem(_item), Add))
+        }
+      }
+          .let { items ->
+            adapter.operation(items.toList())
+          }
+    })
+
+    viewModel.fetchUserTransactions(false)
   }
 
-  private fun getDummyData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
+  private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem())
-    add(
-        2, HomeBidsWarningItem(
-        HomeBidsWarningItemData(
-            "No Routes selected", "Please select your route preference to see the load requests",
-            "Select routes", HomeBidsWarningAction_SelectRoutes
-        )
-    )
-    )
-    for (i in 0..50) {
-      add(HomeBidsRequestItem(HomeBidsRequestItemData(i * 5000)))
-    }
+//    add(
+//        2, HomeBidsWarningItem(
+//        HomeBidsWarningItemData(
+//            "No Routes selected", "Please select your route preference to see the load requests",
+//            "Select routes", HomeBidsWarningAction_SelectRoutes
+//        )
+//    )
+//    )
   }
 
   override fun handleAction(
@@ -188,5 +218,16 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         stickyView.visibility = viewVisibility
       }
     }
+  }
+
+  /**
+   * Pagination interface
+   */
+  inner class PaginationInterface : PaginationScrollListener(10) {
+    override fun loadMore() = viewModel.fetchUserTransactions(true)
+
+    override fun hasMore() = viewModel.hasMoreData
+
+    override fun isLoading() = binding.refreshLayout.isRefreshing
   }
 }

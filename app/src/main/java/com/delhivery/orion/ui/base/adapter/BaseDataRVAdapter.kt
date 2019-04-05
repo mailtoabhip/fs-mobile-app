@@ -5,7 +5,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.data.indexById
 import com.delhivery.orion.ui.base.BaseViewHolder
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.NoOp
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.utils.extensions.safeEquals
 
 abstract class BaseDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBinding, VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) :
@@ -108,10 +114,62 @@ abstract class BaseDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBind
     return false
   }
 
+  fun operation(
+    items: List<Pair<D, DataRVAdapterOperationType>>
+  ) {
+    items.forEach {
+      operation(it.first, it.second)
+    }
+  }
+
+  fun operation(
+    item: D,
+    operationType: DataRVAdapterOperationType
+  ) {
+    when (operationType) {
+      NoOp -> {/* nothing */
+      }
+      Add -> {
+        items.add(item)
+        notifyItemInserted(items.size)
+      }
+      else -> {
+        val _itemIndex = items.indexById(item.key())
+        when (operationType) {
+          Remove -> {
+            if (_itemIndex != -1) {
+              items.removeAt(_itemIndex)
+              notifyItemRemoved(_itemIndex)
+            }
+          }
+          AddUpdate, Update -> {
+            if (_itemIndex != -1) {
+              items[_itemIndex] = item
+              notifyItemChanged(_itemIndex)
+            } else if (operationType == AddUpdate) {
+              items.add(item)
+              notifyItemInserted(items.size)
+            }
+          }
+          else -> {/* do nothing */
+          }
+        }
+      }
+    }
+  }
+
   /**
    * RV Adapter item click listener of data item [D]
    */
   interface ItemClickListener<D> {
     fun onItemClicked(item: D)
   }
+}
+
+enum class DataRVAdapterOperationType {
+  Add,
+  Remove,
+  Update,
+  AddUpdate,
+  NoOp
 }

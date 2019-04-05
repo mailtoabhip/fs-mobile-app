@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsSearchSpinnerItem
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -34,9 +33,9 @@ class SearchResultsViewModel @Inject constructor() : BaseViewModel() {
         Single.fromCallable {
           mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
             add(0, HomeBidsSearchSpinnerItem())
-            for (i in 0..20) {
-              add(i + 1, HomeBidsRequestItem())
-            }
+//            for (i in 0..20) {
+//              add(i + 1, HomeBidsRequestItem())
+//            }
           }
         },
         BiFunction<Any, List<BaseHomeBidsRVAdapterItem<*>>, List<BaseHomeBidsRVAdapterItem<*>>> { _, items -> items }
