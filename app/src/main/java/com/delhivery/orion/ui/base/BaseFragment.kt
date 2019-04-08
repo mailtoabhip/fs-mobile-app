@@ -29,6 +29,9 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
   @Inject lateinit var uiUtils: UiUtils
 
+  /* set true if inline progress */
+  protected var hasInlineProgress = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -66,9 +69,11 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
 
     /* Observe on progress live data and show/hide progress */
     viewModel.progressLiveData.observe(this, Observer {
-      when (it) {
-        true -> uiUtils.showProgress()
-        else -> uiUtils.hideProgress()
+      if (!hasInlineProgress) {
+        when (it) {
+          true -> uiUtils.showProgress()
+          else -> uiUtils.hideProgress()
+        }
       }
     })
   }

@@ -21,6 +21,7 @@ fun List<BaseKeyTypeModel<*>>.indexById(id: Any): Int {
   forEachIndexed { i, item ->
     if (item.key().safeEquals(id)) {
       itemIndex = i
+      return@forEachIndexed
     }
   }
   return itemIndex

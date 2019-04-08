@@ -11,6 +11,8 @@ interface TransactionService {
   @GET("/transactions/list/")
   fun transactions(
     @Query("offset") offset: Int,
-    @Query("status") status: String = "requested"
+    @Query("status") status: String?,
+    @Query("source") source: String? = null,
+    @Query("destination") destination: String? = null
   ): Single<BaseResponse<TransactionsResponse>>
 }

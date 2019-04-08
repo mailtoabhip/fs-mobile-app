@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
@@ -43,6 +44,7 @@
           android:textColor="#29a8e0"
           android:textSize="13sp"
           android:textStyle="normal"
+          android:visibility="gone"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           />
@@ -118,13 +120,13 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_16dp"
-          android:background="@drawable/bg_date_tomorrow"
           android:lineSpacingExtra="4sp"
-          android:text="TOMORROW 6:30 pm"
+          android:text="@{ request.requiredAt() }"
           android:textColor="#ffffff"
           android:textSize="10sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_state"
+          bind:drawableResId="@{ request.requiredAtBg() }"
           />
 
       <android.support.v7.widget.AppCompatImageView
@@ -133,7 +135,7 @@
           android:layout_height="wrap_content"
           app:layout_constraintStart_toStartOf="@+id/img_forward"
           app:layout_constraintTop_toTopOf="@id/text_truck_details"
-          app:srcCompat="@drawable/ic_closed_truck"
+          app:srcCompat="@{ request.truckTypeDrawableRes() }"
           />
 
       <TextView

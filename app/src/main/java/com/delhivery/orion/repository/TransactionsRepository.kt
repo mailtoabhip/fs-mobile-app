@@ -13,5 +13,23 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun transaction(offset: Int) = transactionService.transactions(offset).convertResponse()
+  fun transactions(
+    offset: Int,
+    status: TransactionStatus
+  ) = transactionService.transactions(offset, status.statusId).convertResponse()
+
+  /**
+   * Search transactions
+   */
+  fun searchTransactions(
+    offset: Int,
+    source: String,
+    destination: String
+  ) = transactionService.transactions(offset, null, source = source, destination = destination)
+}
+
+enum class TransactionStatus(val statusId: String) {
+  Requested("requested"),
+  TruckConfirmed("truck_confirmed"),
+  Completed("completed")
 }

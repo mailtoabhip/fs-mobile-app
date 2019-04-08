@@ -10,7 +10,9 @@ import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
@@ -64,6 +66,28 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   fun removeAllTransactions() {
     items.filter { it.type == Request }
         .map { Pair(it, Remove) }
-        .let { operation(it) }
+        .let {
+          operation(it)
+        }
+  }
+
+  /**
+   * Reset all data, remove all errors/transactions
+   */
+  fun resetStaticData() {
+    mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      add(Pair(HomeBidsHeaderItem(), Update))
+      add(Pair(HomeBidsSearchItem(), Update))
+      add(Pair(HomeBidsWarningItem_SelectRoutes, Remove))
+      add(Pair(HomeBidsWarningItem_EditRoutePrefs, Remove))
+      items.filter { it.type == Request }
+          .map { Pair(it, Remove) }
+          .let {
+            addAll(it)
+          }
+    }
+        .let {
+          operation(it)
+        }
   }
 }

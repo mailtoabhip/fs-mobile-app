@@ -49,7 +49,9 @@ class UserRepository @Inject constructor(
    * Get user
    */
   fun getUser(cache: Boolean = true) = if (!cache || user == null) {
-    userService.userDetails("ums::user::30a8a924-522b-11e9-b316-0227a8987d6e")//jwt.id!!)
+    userService.userDetails(
+        "ums::user::30a8a924-522b-11e9-b316-0227a8987d6e"
+    )//(jwt.claims["sub"]?.asString()!!)
         .convertResponse()
         .doOnSuccess { user = it }
   } else {

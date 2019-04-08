@@ -3,10 +3,13 @@ package com.delhivery.orion.utils
 import android.animation.ObjectAnimator
 import android.databinding.BindingAdapter
 import android.graphics.Typeface
+import android.support.annotation.DrawableRes
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.text.Html
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 
@@ -68,6 +71,27 @@ object BindingAdapters {
     }.let {
       textView.setTypeface(null, it)
     }
+  }
+
+  @JvmStatic
+  @BindingAdapter("app:srcCompat")
+  fun bindSrcCompat(
+    imageView: ImageView,
+    @DrawableRes resId: Int
+  ) {
+    ContextCompat.getDrawable(imageView.context, resId)
+        ?.let { drawable ->
+          imageView.setImageDrawable(drawable)
+        }
+  }
+
+  @JvmStatic
+  @BindingAdapter("bind:drawableResId")
+  fun bindDrawableResId(
+    view: View,
+    @DrawableRes resId: Int
+  ) {
+    view.setBackgroundResource(resId)
   }
 
 //    @JvmStatic

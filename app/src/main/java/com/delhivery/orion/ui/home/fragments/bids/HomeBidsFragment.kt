@@ -18,8 +18,6 @@ import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
-import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
@@ -36,6 +34,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   init {
     toolbarElevationLiveData = MutableLiveData()
+    hasInlineProgress = true
   }
 
   companion object {
@@ -69,9 +68,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     })
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.removeAllTransactions()
+      adapter.resetStaticData()
       /* remove user transactions and fetch again */
-      viewModel.fetchUserTransactions(false)
+      viewModel.fetchStaticData()
     }
 
     /* setup recycler view */
@@ -98,32 +97,18 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       )
     }
 
-    /* observe and update adapter for transactions */
-    viewModel.transactionData.observe(this, Observer {
-      mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-        it?.forEachIndexed { i, _item ->
-          add(i, Pair(HomeBidsRequestItem(_item), Add))
-        }
-      }
-          .let { items ->
-            adapter.operation(items.toList())
-          }
+    /* observe and update adapter items */
+    viewModel.staticData.observe(this, Observer {
+      it?.let { _items -> adapter.operation(_items) }
     })
 
-    viewModel.fetchUserTransactions(false)
+    /* fetch static data and start fetching transactions */
+    viewModel.fetchStaticData()
   }
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem())
-//    add(
-//        2, HomeBidsWarningItem(
-//        HomeBidsWarningItemData(
-//            "No Routes selected", "Please select your route preference to see the load requests",
-//            "Select routes", HomeBidsWarningAction_SelectRoutes
-//        )
-//    )
-//    )
   }
 
   override fun handleAction(

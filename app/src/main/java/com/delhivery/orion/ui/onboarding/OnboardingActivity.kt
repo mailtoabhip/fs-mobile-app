@@ -9,8 +9,10 @@ import com.delhivery.orion.R
 import com.delhivery.orion.config.OnboardingConfig
 import com.delhivery.orion.databinding.ActivityOnboardingBinding
 import com.delhivery.orion.databinding.ViewOnboardingBinding
+import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.custom.AnimationType.RevealOpen
+import com.delhivery.orion.ui.home.HomeActivity
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingViewModel>() {
@@ -37,6 +39,9 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
       this.adapter = this@OnboardingActivity.adapter
       binding.pagerIndicator.viewPager = this
     }
+
+    /* skip */
+    binding.textSkip.setOnClickListener { skip() }
 
     /* next page fab */
     binding.fabNext.setOnClickListener { moveNext() }
@@ -68,7 +73,11 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
   }
 
   private fun skip() {
-
+    viewModel.onboardingCompleted()
+    when (viewModel.isUserAuthenticated()) {
+      true -> HomeActivity::class
+      false -> AuthenticationActivity::class
+    }.let { navigationUtils.navigate(it.java, finishAfter = true) }
   }
 
   /**

@@ -8,6 +8,10 @@ import com.delhivery.orion.databinding.ActivitySplashBinding
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.home.HomeActivity
+import com.delhivery.orion.ui.onboarding.OnboardingActivity
+import com.delhivery.orion.ui.splash.SplashPostState.Auth
+import com.delhivery.orion.ui.splash.SplashPostState.Home
+import com.delhivery.orion.ui.splash.SplashPostState.Onboarding
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
@@ -32,7 +36,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
    * Splash animation chain
    */
   private fun animate() {
-    val isAuthenticated = viewModel.authState()
+    val isAuthenticated = viewModel.postState()
     please(1500, OvershootInterpolator()) {
       animate(binding.imgLogo) toBe {
         toBeRotated(360f)
@@ -69,11 +73,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         .start()
   }
 
-  private fun postAnimate(isAuthenticated: Boolean) {
-    if (isAuthenticated) {
-      navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
-    } else {
-      navigationUtils.navigate(AuthenticationActivity::class.java, finishAfter = true)
+  private fun postAnimate(state: SplashPostState) {
+    when (state) {
+      Onboarding -> OnboardingActivity::class
+      Auth -> AuthenticationActivity::class
+      Home -> HomeActivity::class
+    }.let {
+      navigationUtils.navigate(it.java, finishAfter = true)
     }
   }
 }
