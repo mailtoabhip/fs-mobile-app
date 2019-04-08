@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.searchload.fragments.searchresults
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSnapHelper
@@ -11,10 +12,14 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsSearchSpinnerItem
 import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.orion.utils.extensions.centerX
@@ -53,10 +58,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       adapter = _adapter
       addOnScrollListener(_scrollListener)
       LinearSnapHelper().attachToRecyclerView(this)
+      /* add first dummy item */
+      _adapter.operation(HomeBidsSearchSpinnerItem(), Add)
     }
 
-    /* observe search results */
-    viewModel.searchResults.observe(this, SearchResultsObserver())
+    /* transform observe search results */
+    Transformations.map(viewModel.searchResults) {
+      return@map mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+        /* add all transactions */
+        it.forEach { _item -> add(Pair(HomeBidsRequestItem(_item), Add)) }
+      }
+    }
+        .observe(this, SearchResultsObserver())
   }
 
   /**
@@ -104,16 +117,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   /**
    * Search results observer
    */
-  inner class SearchResultsObserver : Observer<List<BaseHomeBidsRVAdapterItem<*>>> {
-    override fun onChanged(t: List<BaseHomeBidsRVAdapterItem<*>>?) {
+  inner class SearchResultsObserver : Observer<MutableList<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
+    override fun onChanged(t: MutableList<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
       resetSpinnerContainer()
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
-      if (t == null) {
+      if (t == null) { //&& viewModel.offset == 0
         //error
       } else {
-        _adapter.setItems(t)
+        _adapter.operation(t)
       }
     }
   }

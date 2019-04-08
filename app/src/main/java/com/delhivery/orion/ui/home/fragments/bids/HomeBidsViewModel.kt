@@ -47,7 +47,7 @@ class HomeBidsViewModel @Inject constructor(
         .subscribe { _data, error ->
           if (!error) {
             _data.apply {
-              var _items =
+              val _items =
                 mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>()
 
               /* add header counts */

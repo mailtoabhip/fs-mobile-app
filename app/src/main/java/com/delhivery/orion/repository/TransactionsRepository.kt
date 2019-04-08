@@ -25,7 +25,9 @@ class TransactionsRepository @Inject constructor(
     offset: Int,
     source: String,
     destination: String
-  ) = transactionService.transactions(offset, null, source = source, destination = destination)
+  ) = transactionService.transactions(
+      offset, null, source = source, destination = destination
+  ).convertResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {
