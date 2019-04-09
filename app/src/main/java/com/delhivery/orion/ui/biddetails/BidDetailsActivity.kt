@@ -8,11 +8,14 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.ActivityBidDetailsBinding
+import com.delhivery.orion.databinding.ViewBidDetailsConfirmedBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsEditBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsLoadingBidsBinding
 import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidFirstBinding
+import com.delhivery.orion.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.orion.ui.base.BaseActivity
+import com.delhivery.orion.utils.extensions.visible
 
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
 
@@ -101,8 +104,34 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
           }
+          is BidDetailsUserBidState_ConfirmedBid -> {
+            ViewBidDetailsConfirmedBidBinding.inflate(
+                layoutInflater, binding.containerActions, false
+            )
+                .apply {
+                  textPickupLocation.text = state.pickupLocation
+                }
+          }
+          is BidDetailsUserBidState_RejectedBid -> {
+            ViewBidDetailsRejectedBidBinding.inflate(
+                layoutInflater, binding.containerActions, false
+            )
+                .apply {
+                  textAcceptedBidValue.text =
+                      getString(R.string.msg_accepted_bid_value, state.acceptedBid.bidAmount)
+                  textBidAmoutDiff.text =
+                      state.acceptedBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                  textUserHighestBid.text =
+                      getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
+                }
+          }
           else -> null
         }?.let { _binding ->
+          /* confirmed banner visibility */
+          binding.containerConfirmBid.visible(_binding is ViewBidDetailsConfirmedBidBinding)
+          /* bidding ended */
+          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
+
           binding.containerActions.apply {
             removeAllViews()
             addView(_binding.root)

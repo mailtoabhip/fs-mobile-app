@@ -1,6 +1,7 @@
 package com.delhivery.orion.data.bids
 
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.utils.extensions.safeEquals
 import com.google.gson.annotations.SerializedName
 
 data class TransactionBid(
@@ -27,5 +28,24 @@ data class TransactionBid(
     }.let { _x ->
       "(₹ ${Math.abs(_diff)} $_x than target price)"
     }
+  }
+
+  /**
+   * Get status
+   */
+  fun status() = TransactionBidStatus.byStatusKey(_status)
+}
+
+enum class TransactionBidStatus(val statusKey: String) {
+  Open("open"),
+  Rejected("rejected"),
+  Accepted("accepted");
+
+  companion object {
+    /**
+     * Status by response key
+     */
+    fun byStatusKey(_status: String) =
+      values().filter { it.statusKey.safeEquals(_status) }.firstOrNull() ?: Open
   }
 }

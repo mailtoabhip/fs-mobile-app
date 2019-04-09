@@ -39,3 +39,18 @@ data class BidDetailsUserBidState_EditBid(
 data class BidDetailsUserBidState_LoadingBids(
   val loading: Boolean = true
 ) : BidDetailsUserBidState(R.layout.view_bid_details_loading_bids)
+
+/**
+ * Confirmed bid state
+ */
+data class BidDetailsUserBidState_ConfirmedBid(
+  val pickupLocation: String
+) : BidDetailsUserBidState(R.layout.view_bid_details_confirmed_bid)
+
+/**
+ * Rejected bid state
+ */
+data class BidDetailsUserBidState_RejectedBid(
+  val acceptedBid: TransactionBid,
+  val userBid: TransactionBid
+) : BidDetailsUserBidState(R.layout.view_bid_details_rejected_bid)

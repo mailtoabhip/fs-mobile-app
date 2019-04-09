@@ -1,6 +1,9 @@
 package com.delhivery.orion.ui.biddetails
 
 import android.arch.lifecycle.MutableLiveData
+import com.delhivery.orion.data.bids.TransactionBid
+import com.delhivery.orion.data.bids.TransactionBidStatus.Accepted
+import com.delhivery.orion.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionsRepository
@@ -55,7 +58,15 @@ class BidDetailsViewModel @Inject constructor(
             val state = when {
               _bRes.third == 0 -> BidDetailsUserBidState_PlaceBidFirst()
               _bRes.first == null -> BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second)
-              else -> BidDetailsUserBidState_EditBid(_bRes.third, _bRes.second, _bRes.first!!)
+              else -> when (_bRes.first!!.status()) {
+                /* pass correct location from transaction */ Accepted -> BidDetailsUserBidState_ConfirmedBid(
+                    "Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
+                )
+                Rejected -> BidDetailsUserBidState_RejectedBid(
+                    _bRes.second.acceptedBid()!!, _bRes.first!!
+                )
+                else -> BidDetailsUserBidState_EditBid(_bRes.third, _bRes.second, _bRes.first!!)
+              }
             }
             transactionBidLiveData.postValue(state)
           } else {
@@ -96,4 +107,10 @@ class BidDetailsViewModel @Inject constructor(
           }
         }
   }
+
+  /**
+   * filter accepted Bid
+   */
+  private fun List<TransactionBid>.acceptedBid() =
+    filter { it._status == Accepted.statusKey }.firstOrNull()
 }

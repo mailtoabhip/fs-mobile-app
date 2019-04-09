@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:background="@drawable/bg_bid_details_rejected"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      bind:shadow="@{ @dimen/size_2dp }"
+      >
+
+    <View
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="@dimen/size_36dp"
+        android:alpha="0.25"
+        android:background="@drawable/bg_circle_primary"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_18dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="2sp"
+        android:text="@string/msg_you_lost_bid"
+        android:textColor="#181818"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        />
+
+    <TextView
+        android:id="@+id/text_accepted_bid_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="4sp"
+        android:textColor="#181818"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        tools:text="Accepted bid value: ₹ 28900.00"
+        />
+
+    <TextView
+        android:id="@+id/text_bid_amout_diff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_2dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="8sp"
+        android:textColor="#181818"
+        android:textSize="10sp"
+        android:textStyle="normal"
+        tools:text="(₹ 5000.00 more than target price)"
+        />
+
+    <TextView
+        android:id="@+id/text_user_highest_bid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_14dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="8sp"
+        android:textColor="#181818"
+        android:textSize="10sp"
+        android:textStyle="normal"
+        tools:text="Your highest bid: ₹ 26200.00"
+        />
+  </android.support.v7.widget.LinearLayoutCompat>
+</layout>
