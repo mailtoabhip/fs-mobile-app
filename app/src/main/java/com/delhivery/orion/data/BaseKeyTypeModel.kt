@@ -26,3 +26,11 @@ fun List<BaseKeyTypeModel<*>>.indexById(id: Any): Int {
   }
   return itemIndex
 }
+
+/**
+ * Filter by id
+ */
+fun List<BaseKeyTypeModel<*>>.itemById(id: Any) = filter {
+  it.key()
+      .safeEquals(id)
+}.firstOrNull()

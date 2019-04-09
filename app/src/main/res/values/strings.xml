@@ -77,6 +77,7 @@
   <string name="label_destination_city">Destination city</string>
   <string name="label_from_state">From %1$s</string>
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
+  <string name="label_user_bid_amount">You have bid: ₹ %1$d</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -96,6 +97,9 @@
   <string name="label_routes_added">Routes added</string>
   <string name="action_add_more_route">Add more routes</string>
   <string name="action_go_to_load_requests">GO to load requests</string>
+  <string name="label_bid_amount">Bid Amount</string>
+  <string name="hint_enter_bid_value">Enter bid value (₹)</string>
+  <string name="hint_amount">23900</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

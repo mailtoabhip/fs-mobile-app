@@ -31,6 +31,12 @@ class UserRepository @Inject constructor(
   private var user: UserModel? = null
 
   /**
+   * Current user id
+   */
+  fun userId() = "ums::user::30a8a924-522b-11e9-b316-0227a8987d6e"
+  //(jwt.claims["sub"]?.asString()!!)
+
+  /**
    * User full name
    */
   fun username() =
@@ -49,9 +55,7 @@ class UserRepository @Inject constructor(
    * Get user
    */
   fun getUser(cache: Boolean = true) = if (!cache || user == null) {
-    userService.userDetails(
-        "ums::user::30a8a924-522b-11e9-b316-0227a8987d6e"
-    )//(jwt.claims["sub"]?.asString()!!)
+    userService.userDetails(userId())
         .convertResponse()
         .doOnSuccess { user = it }
   } else {

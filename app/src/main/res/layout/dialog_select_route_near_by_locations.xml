@@ -6,7 +6,7 @@
       android:layout_height="wrap_content"
       android:background="@android:color/white"
       android:orientation="vertical"
-      android:paddingBottom="@dimen/size_16dp"
+      android:paddingBottom="@dimen/size_4dp"
       android:paddingEnd="@dimen/size_24dp"
       android:paddingStart="@dimen/size_24dp"
       android:paddingTop="@dimen/size_24dp"

@@ -5,11 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.delhivery.orion.R
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.ActivityBidDetailsBinding
+import com.delhivery.orion.databinding.ViewBidDetailsEditBidBinding
+import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidBinding
+import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.orion.ui.base.BaseActivity
 
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
+
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
   override fun layoutId() = R.layout.activity_bid_details
@@ -38,6 +43,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* setup live data observers */
     viewModel.transactionLiveData.observe(this, TransactionObserver())
+    viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
 
     /* fetch transaction details */
     viewModel.fetchTransactionDetails()
@@ -53,6 +59,59 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         title =
             "${_transaction.originCityCode} - ${_transaction.destinationCityCode} (${_transaction.requiredAt()})"
       }
+    }
+  }
+
+  /**
+   * Transaction bid details UI updation observer
+   */
+  inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
+    override fun onChanged(t: BidDetailsUserBidState?) {
+      t?.let { state ->
+        when (state) {
+          is BidDetailsUserBidState_PlaceBidFirst -> {
+            ViewBidDetailsPlaceBidFirstBinding.inflate(
+                layoutInflater, binding.containerActions, false
+            )
+                .apply {
+                  btnPlaceBid.setOnClickListener { bidDialog() }
+                }
+          }
+          is BidDetailsUserBidState_PlaceBid -> {
+            ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
+                .apply {
+                  bidsRecieved = state.bidsCount
+                  btnPlaceBid.setOnClickListener { bidDialog() }
+                }
+          }
+          is BidDetailsUserBidState_EditBid -> {
+            ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
+                .apply {
+                  bidsRecieved = state.bidsCount
+                  textUserBidAmount.text =
+                      getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
+                  textUserBidAmountDiff.text =
+                      state.userBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                  btnEditBid.setOnClickListener { bidDialog(state.userBid) }
+                }
+          }
+          else -> null
+        }?.let { _binding ->
+          binding.containerActions.apply {
+            removeAllViews()
+            addView(_binding.root)
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Create/edit bid dialog
+   */
+  private fun bidDialog(bid: TransactionBid? = null) {
+    binding.transaction?.let {
+      BidDetailsCreateEditDialog(this, it, bid, viewModel).show()
     }
   }
 }

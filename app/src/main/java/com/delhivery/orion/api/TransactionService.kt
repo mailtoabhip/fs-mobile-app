@@ -9,6 +9,9 @@ import retrofit2.http.Query
 
 interface TransactionService {
 
+  /**
+   * List all transactions
+   */
   @GET("/transactions/list/")
   fun transactions(
     @Query("offset") offset: Int,
@@ -17,6 +20,9 @@ interface TransactionService {
     @Query("destination") destination: String? = null
   ): Single<BaseResponse<TransactionsResponse>>
 
+  /**
+   * Transaction details
+   */
   @GET("/transactions/")
   fun transactionDetails(
     @Query("uuid") transactionId: String
