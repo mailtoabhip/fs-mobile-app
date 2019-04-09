@@ -32,6 +32,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorBackground"
         android:fillViewport="true"
         >
       <android.support.v7.widget.LinearLayoutCompat
@@ -285,10 +286,9 @@
             android:id="@+id/container_actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorBackground"
             android:paddingTop="@dimen/size_4dp"
-            >
-          <!--<include layout="@layout/view_bid_details_place_bid_first"/>-->
-        </FrameLayout>
+            />
       </android.support.v7.widget.LinearLayoutCompat>
     </ScrollView>
   </android.support.v7.widget.LinearLayoutCompat>

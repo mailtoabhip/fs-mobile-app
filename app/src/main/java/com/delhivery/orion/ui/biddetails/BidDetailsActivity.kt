@@ -9,6 +9,7 @@ import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.ActivityBidDetailsBinding
 import com.delhivery.orion.databinding.ViewBidDetailsEditBidBinding
+import com.delhivery.orion.databinding.ViewBidDetailsLoadingBidsBinding
 import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.orion.ui.base.BaseActivity
@@ -94,6 +95,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       state.userBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
+          }
+          is BidDetailsUserBidState_LoadingBids -> {
+            ViewBidDetailsLoadingBidsBinding.inflate(
+                layoutInflater, binding.containerActions, false
+            )
           }
           else -> null
         }?.let { _binding ->

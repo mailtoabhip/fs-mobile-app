@@ -32,3 +32,10 @@ data class BidDetailsUserBidState_EditBid(
   val bids: List<TransactionBid>,
   val userBid: TransactionBid
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
+
+/**
+ * Bids loading UI
+ */
+data class BidDetailsUserBidState_LoadingBids(
+  val loading: Boolean = true
+) : BidDetailsUserBidState(R.layout.view_bid_details_loading_bids)
