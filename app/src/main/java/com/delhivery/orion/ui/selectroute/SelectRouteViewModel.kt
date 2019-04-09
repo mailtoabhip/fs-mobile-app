@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.selectroute
 
 import android.arch.lifecycle.MutableLiveData
+import com.delhivery.orion.data.RouteMappingModel
 import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.repository.UserRepository
 import com.delhivery.orion.ui.base.BaseViewModel
@@ -31,6 +32,31 @@ class SelectRouteViewModel @Inject constructor(
             routesLiveData.postValue(routes)
           } else {
             error.printStackTrace()
+          }
+        }
+  }
+
+  /**
+   * Add Routes
+   */
+  fun addUserRoutes(
+    newRoutes: List<RouteModel>,
+    completedAction: (success: Boolean) -> Unit
+  ) {
+    val _routeMappings = mutableListOf<RouteMappingModel>().apply {
+      newRoutes.forEach { addAll(it.toMapping()) }
+    }
+    compositeDisposable += userRepository.addRoutes(_routeMappings)
+        .onBackground()
+        .progress()
+        .subscribe { _routes, error ->
+          if (!error) {
+            routes.addAll(_routes)
+            routesLiveData.postValue(routes)
+            completedAction(true)
+          } else {
+            error.printStackTrace()
+            completedAction(false)
           }
         }
   }

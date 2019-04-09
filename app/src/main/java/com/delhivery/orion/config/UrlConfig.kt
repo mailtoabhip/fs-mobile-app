@@ -14,15 +14,15 @@ enum class UrlConfig(
       "https://api-stage-ums.delhivery.com"
   ),
   BidService(
-      "https://sbx6ojnl19.execute-api.ap-southeast-1.amazonaws.com/dev/",
-      "https://sbx6ojnl19.execute-api.ap-southeast-1.amazonaws.com/dev/"
+      "https://orion-bid-api.delhivery.com",
+      "https://orion-bid-api-dev.delhivery.com"
   ),
   UserService(
-      "https://orion-user-api-dev.delhivery.com/",
+      "https://orion-user-api.delhivery.com/",
       "https://orion-user-api-dev.delhivery.com/"
   ),
   TransactionService(
-      "http://orion-transaction-api-dev.delhivery.com",
+      "http://orion-transaction-api.delhivery.com",
       "http://orion-transaction-api-dev.delhivery.com"
   );
 

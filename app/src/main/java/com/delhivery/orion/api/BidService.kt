@@ -10,7 +10,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BidService {
@@ -32,9 +31,8 @@ interface BidService {
   /**
    * Update bid amount
    */
-  @PATCH("/bids/{id}")
+  @PATCH("/bids/")
   fun updateTransactionBid(
-    @Path("id") bidId: String,
     @Body request: UpdateTransactionBidRequest
   ): Single<BaseResponse<CreateTransactionBidResponse>>
 }

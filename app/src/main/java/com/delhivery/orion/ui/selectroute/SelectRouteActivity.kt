@@ -105,10 +105,12 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       DestinationsAdded -> {
         (action as DestinationSelectedAction).apply {
           currentRoute?.destinations = destinations.toMutableList()
-          viewModel.routes.addAll(currentRoute!!.expandNearByLocations())
+          viewModel.addUserRoutes(currentRoute!!.expandNearByLocations()) { success ->
+            if (success) {
+              navigate(RouteListFragment)
+            }
+          }
           currentRoute = null
-          //navigate to routes fragment
-          navigate(RouteListFragment)
         }
       }
       AddMoreRoutes -> {

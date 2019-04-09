@@ -51,6 +51,6 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     bidId: String,
     amount: Int
-  ) = UpdateTransactionBidRequest(transactionId, amount)
-      .let { bidService.updateTransactionBid(bidId, it) }
+  ) = UpdateTransactionBidRequest(transactionId, bidId, amount, userRepository.userId())
+      .let { bidService.updateTransactionBid(it) }
 }

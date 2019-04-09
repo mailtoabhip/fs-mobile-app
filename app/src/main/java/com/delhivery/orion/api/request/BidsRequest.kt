@@ -11,6 +11,9 @@ data class CreateTransactionBidRequest(
 
 data class UpdateTransactionBidRequest(
   @SerializedName("transaction_id") val transactionId: String,
-  @SerializedName("bid_price") val bidAmount: Int
+  @SerializedName("bid_id") val bidId: String,
+  @SerializedName("bid_price") val bidAmount: Int,
+  @SerializedName("supplier_id") val supplierId: String,
+  @SerializedName("action") val action: String = "bid_update"
 )
 
