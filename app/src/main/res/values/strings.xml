@@ -76,6 +76,7 @@
   <string name="label_no_trips_yet">No trips yet !</string>
   <string name="label_destination_city">Destination city</string>
   <string name="label_from_state">From %1$s</string>
+  <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

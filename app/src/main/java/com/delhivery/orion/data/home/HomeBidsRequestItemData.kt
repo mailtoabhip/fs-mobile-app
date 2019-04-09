@@ -70,6 +70,11 @@ data class HomeBidsRequestItemData(
       1 -> R.drawable.bg_date_tomorrow
       else -> R.drawable.bg_date_others
     }
+
+  /**
+   * Get truck details/type
+   */
+  fun truckTypeDetails() = "${containerType.capitalize()} ($truckSize)"
 }
 
 /* actions */

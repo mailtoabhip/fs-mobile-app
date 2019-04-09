@@ -2,11 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
     <variable
         name="viewModel"
         type="com.delhivery.orion.ui.biddetails.BidDetailsViewModel"
+        />
+    <variable
+        name="transaction"
+        type="com.delhivery.orion.data.home.HomeBidsRequestItemData"
         />
   </data>
   <android.support.v7.widget.LinearLayoutCompat
@@ -115,11 +120,11 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:text="Panjim, Goa"
               android:textColor="#de000000"
               android:textSize="16sp"
-              android:textStyle="bold"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
+              bind:htmlText="@{ @string/label_city_state(transaction.origin, transaction.originState) }"
+              tools:text="Panjim, Goa"
               />
 
           <TextView
@@ -141,11 +146,11 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:text="Andheri east, Mumbai, Maharashtra"
               android:textColor="#de000000"
               android:textSize="16sp"
-              android:textStyle="bold"
               app:layout_constraintTop_toBottomOf="@id/text_to_label"
+              bind:htmlText="@{ @string/label_city_state(transaction.destination, transaction.destinationState) }"
+              tools:text="Andheri east, Mumbai, Maharashtra"
               />
 
           <TextView
@@ -153,12 +158,14 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_16dp"
-              android:background="@drawable/bg_date_today"
               android:lineSpacingExtra="4sp"
-              android:text="TODAY 6:30 pm"
+              android:text="@{ transaction.requiredAt() }"
               android:textColor="#ffffff"
               android:textSize="10sp"
               app:layout_constraintTop_toBottomOf="@id/text_destination"
+              bind:drawableResId="@{ transaction.requiredAtBg() }"
+              tools:background="@drawable/bg_date_today"
+              tools:text="TODAY 6:30 pm"
               />
 
           <TextView
@@ -167,13 +174,14 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:gravity="center_vertical"
-              android:text="Closed truck (32ft)"
+              android:text="@{ transaction.truckTypeDetails() }"
               android:textColor="#99000000"
               android:textSize="13sp"
               android:textStyle="normal"
               app:layout_constraintBottom_toBottomOf="@id/text_date_time"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintTop_toTopOf="@id/text_date_time"
+              tools:text="Closed truck (32ft)"
               />
 
           <android.support.v7.widget.AppCompatImageView
@@ -182,7 +190,8 @@
               android:layout_marginEnd="@dimen/size_8dp"
               app:layout_constraintEnd_toStartOf="@id/text_truck_details"
               app:layout_constraintTop_toTopOf="@id/text_truck_details"
-              app:srcCompat="@drawable/ic_closed_truck"
+              app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
+              tools:srcCompat="@drawable/ic_closed_truck"
               />
 
           <TextView
@@ -192,11 +201,12 @@
               android:layout_marginTop="@dimen/size_24dp"
               android:fontFamily="sans-serif"
               android:gravity="end"
-              android:text="Load: Pharmaceuticals"
+              android:text="@{ transaction.loadDetails() }"
               android:textColor="#99000000"
               android:textSize="16sp"
               android:textStyle="normal"
               app:layout_constraintTop_toBottomOf="@id/text_date_time"
+              tools:text="Load: Pharmaceuticals"
               />
 
           <android.support.v7.widget.AppCompatImageView
@@ -244,30 +254,31 @@
               android:fontFamily="sans-serif-medium"
               android:letterSpacing="0.01"
               android:lineSpacingExtra="-4sp"
-              android:text="₹ 23900.00"
+              android:text="@{ @string/label_inr_s(transaction.targetPrice) }"
               android:textColor="#000000"
               android:textSize="22sp"
               android:textStyle="normal"
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
+              tools:text="₹ 23900.00"
               />
         </android.support.constraint.ConstraintLayout>
 
         <!-- bidding deadline text -->
-        <TextView
-            android:id="@+id/text_bid_deadline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_4dp"
-            android:background="#29a8e0"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/size_14dp"
-            android:text="Bidding ends today at 4:00pm"
-            android:textColor="#ffffff"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            bind:shadow="@{ @dimen/size_2dp }"
-            />
+        <!--<TextView-->
+        <!--android:id="@+id/text_bid_deadline"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="@dimen/size_4dp"-->
+        <!--android:background="#29a8e0"-->
+        <!--android:fontFamily="sans-serif-medium"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:padding="@dimen/size_14dp"-->
+        <!--android:text="Bidding ends today at 4:00pm"-->
+        <!--android:textColor="#ffffff"-->
+        <!--android:textSize="16sp"-->
+        <!--android:textStyle="normal"-->
+        <!--bind:shadow="@{ @dimen/size_2dp }"-->
+        <!--/>-->
 
         <!-- actions container -->
         <FrameLayout
@@ -275,7 +286,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-          <include layout="@layout/view_bid_details_place_bid_first"/>
+          <!--<include layout="@layout/view_bid_details_place_bid_first"/>-->
         </FrameLayout>
       </android.support.v7.widget.LinearLayoutCompat>
     </ScrollView>

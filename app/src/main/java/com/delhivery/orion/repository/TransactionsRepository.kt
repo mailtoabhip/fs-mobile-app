@@ -28,6 +28,11 @@ class TransactionsRepository @Inject constructor(
   ) = transactionService.transactions(
       offset, null, source = source, destination = destination
   ).convertResponse()
+
+  /**
+   * Transaction details
+   */
+  fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {

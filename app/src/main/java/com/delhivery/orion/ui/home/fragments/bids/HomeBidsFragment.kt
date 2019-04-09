@@ -14,6 +14,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
@@ -124,7 +125,11 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsWarningAction_EditRoutePrefs, HomeBidsWarningAction_SelectRoutes -> context?.let {
         startActivity(selectRouteIntent(it, UserRoutes))
       }
-      HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
+      HomeBidsRequestAction_ViewDetails -> context?.let {
+        startActivity(
+            bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
+        )
+      }
       HomeBidsSearchAction_Search -> context?.let {
         startActivity(
             Intent(it, SearchLoadActivity::class.java)

@@ -11,6 +11,7 @@ import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -110,7 +111,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     item: BaseHomeBidsRVAdapterItem<*>
   ) {
     when (actionId) {
-      HomeBidsRequestAction_ViewDetails -> context?.let { startActivity(bidDetailsIntent(it)) }
+      HomeBidsRequestAction_ViewDetails -> context?.let {
+        startActivity(
+            bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
+        )
+      }
     }
   }
 

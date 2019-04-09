@@ -12,6 +12,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.delhivery.orion.utils.extensions.hasResource
 
 object BindingAdapters {
 
@@ -79,10 +80,12 @@ object BindingAdapters {
     imageView: ImageView,
     @DrawableRes resId: Int
   ) {
-    ContextCompat.getDrawable(imageView.context, resId)
-        ?.let { drawable ->
-          imageView.setImageDrawable(drawable)
-        }
+    if (imageView.context.hasResource(resId)) {
+      ContextCompat.getDrawable(imageView.context, resId)
+          ?.let { drawable ->
+            imageView.setImageDrawable(drawable)
+          }
+    }
   }
 
   @JvmStatic
