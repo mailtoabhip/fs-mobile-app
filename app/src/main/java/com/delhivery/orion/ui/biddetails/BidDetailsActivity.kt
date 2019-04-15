@@ -61,7 +61,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       t?.let { _transaction ->
         binding.transaction = _transaction
         title =
-            "${_transaction.originCityCode} - ${_transaction.destinationCityCode} (${_transaction.requiredAt()})"
+          "${_transaction.originCityCode} - ${_transaction.destinationCityCode} (${_transaction.requiredAt()})"
       }
     }
   }
@@ -93,9 +93,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   bidsRecieved = state.bidsCount
                   textUserBidAmount.text =
-                      getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
+                    getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
                   textUserBidAmountDiff.text =
-                      state.userBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                    state.userBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }
@@ -118,11 +118,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             )
                 .apply {
                   textAcceptedBidValue.text =
-                      getString(R.string.msg_accepted_bid_value, state.acceptedBid.bidAmount)
+                    getString(R.string.msg_accepted_bid_value, state.acceptedBid.bidAmount)
                   textBidAmoutDiff.text =
-                      state.acceptedBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                    state.acceptedBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
                   textUserHighestBid.text =
-                      getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
+                    getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
                 }
           }
           else -> null
@@ -161,5 +161,5 @@ fun bidDetailsIntent(
   _data: HomeBidsRequestItemData,
   context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, _data.uuid)
+  putExtra(TransactionIdIntentKey, _data.key())
 }

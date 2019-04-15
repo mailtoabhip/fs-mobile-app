@@ -16,7 +16,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("contract_id") val contractId: String,
   @SerializedName("client_name") val clientName: String,
   @SerializedName("destination") val destination: String,
-  @SerializedName("container_type") val containerType: String,
+  @SerializedName("container_type") val containerType: String?,
   @SerializedName("truck_axle") val truckAxle: String,
   @SerializedName("origin_state") val originState: String,
   @SerializedName("status") val status: String,
@@ -24,9 +24,10 @@ data class HomeBidsRequestItemData(
   @SerializedName("pod_required") val podRequired: Boolean,
   @SerializedName("target_price") val targetPrice: Int,
   @SerializedName("request_type") val requestType: String,
-  @SerializedName("truck_size") val truckSize: String,
+  @SerializedName("truck_size") val truckSize: String?,
   @SerializedName("client_id") val clientId: String,
-  @SerializedName("uuid") val uuid: String,
+  @SerializedName("uuid") private val uuid: String?,
+  @SerializedName("transaction_id") private val transactionId: String?,
   @SerializedName("drop_location") val dropLocation: String,
   @SerializedName("truck_type") val truckType: String,
   @SerializedName("updation_time") val updationTime: String,
@@ -35,7 +36,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("destination_city_code") val destinationCityCode: String
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = uuid
+  override fun key() = uuid ?: transactionId!!
 
   fun loadDetails() = "Load: $materialType"
 
@@ -74,7 +75,7 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = "${containerType.capitalize()} ($truckSize)"
+  fun truckTypeDetails() = "${containerType?.capitalize()} ($truckSize)"
 }
 
 /* actions */

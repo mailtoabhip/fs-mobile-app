@@ -35,4 +35,15 @@ interface BidService {
   fun updateTransactionBid(
     @Body request: UpdateTransactionBidRequest
   ): Single<BaseResponse<CreateTransactionBidResponse>>
+
+  /**
+   * Get User/supplier bids
+   */
+  @GET("bids")
+  fun userBids(
+    @Query("supplier_id") userId: String,
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int,
+    @Query("bid_status") status: String
+  ): Single<BaseResponse<TransactionBidsResponseBody>>
 }

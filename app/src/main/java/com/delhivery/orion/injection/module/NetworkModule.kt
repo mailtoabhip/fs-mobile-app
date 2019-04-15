@@ -3,6 +3,7 @@ package com.delhivery.orion.injection.module
 import android.content.Context
 import com.delhivery.orion.api.BidService
 import com.delhivery.orion.api.TransactionService
+import com.delhivery.orion.api.TripService
 import com.delhivery.orion.api.UMSService
 import com.delhivery.orion.api.UserService
 import com.delhivery.orion.config.UrlConfig
@@ -119,5 +120,17 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.TransactionService).create(
       TransactionService::class.java
+  )
+
+  /**
+   * Provide [TripService]
+   */
+  @Provides
+  @Singleton
+  fun provideTripService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.TripService).create(
+      TripService::class.java
   )
 }

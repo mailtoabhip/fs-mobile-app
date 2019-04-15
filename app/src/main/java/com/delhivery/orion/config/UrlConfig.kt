@@ -18,12 +18,16 @@ enum class UrlConfig(
       "https://orion-bid-api-dev.delhivery.com"
   ),
   UserService(
-      "https://orion-user-api.delhivery.com/",
-      "https://orion-user-api-dev.delhivery.com/"
+      "https://orion-user-api.delhivery.com",
+      "https://orion-user-api-dev.delhivery.com"
   ),
   TransactionService(
       "http://orion-transaction-api.delhivery.com",
       "http://orion-transaction-api-dev.delhivery.com"
+  ),
+  TripService(
+      "https://orion-trip-api.delhivery.com",
+      "https://orion-trip-api-dev.delhivery.com"
   );
 
   /**

@@ -15,7 +15,7 @@ interface UserService {
   /**
    * Search cities
    */
-  @GET("cities/autocomplete/{query}")
+  @GET("/cities/autocomplete/{query}")
   fun searchCities(
     @Path("query") query: String
   ): Single<BaseResponse<List<CityModel>>>
@@ -23,7 +23,7 @@ interface UserService {
   /**
    * Near by cities
    */
-  @GET("cities/suggestions/{cityId}")
+  @GET("/cities/suggestions/{cityId}")
   fun nearByLocations(
     @Path("cityId") cityId: String
   ): Single<BaseResponse<List<CityModel>>>
@@ -31,7 +31,7 @@ interface UserService {
   /**
    * Get user details
    */
-  @GET("users/supplypartners/{user_id}")
+  @GET("/users/supplypartners/{user_id}")
   fun userDetails(
     @Path("user_id") userId: String
   ): Single<BaseResponse<UserModel>>
@@ -39,7 +39,7 @@ interface UserService {
   /**
    * Get user route preferences
    */
-  @GET("users/supplypartners/lanepreferences/{user_id}")
+  @GET("/users/supplypartners/lanepreferences/{user_id}")
   fun userRoutes(
     @Path("user_id") userId: String
   ): Single<BaseResponse<List<RouteMappingModel>>>
@@ -47,7 +47,7 @@ interface UserService {
   /**
    * Update user route prefs
    */
-  @PUT("users/supplypartners/lanepreferences/{user_id}")
+  @PUT("/users/supplypartners/lanepreferences/{user_id}")
   fun updateUserRoutes(
     @Path("user_id") userId: String,
     @Body payload: UpdateUserRoutesRequest
