@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import android.arch.lifecycle.MutableLiveData
+import com.delhivery.orion.data.home.TripStatus
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -20,18 +21,23 @@ class HomeTripsViewModel @Inject constructor(
 
   var hasMoreData = true
   var offset = 0
+  var status: TripStatus? = null
 
   /**
    * Fetch user trips
    */
-  fun fetchTrips(paginate: Boolean) {
+  fun fetchTrips(
+    paginate: Boolean,
+    status: TripStatus? = null
+  ) {
     if (!paginate) {
       offset = 0
+      this.status = status
     } else if (paginate && !hasMoreData) {
       return
     }
 
-    compositeDisposable += tripsRepository.trips(offset)
+    compositeDisposable += tripsRepository.trips(offset, this.status)
         .onBackground()
         .progress()
         .subscribe { _tripsRes, error ->

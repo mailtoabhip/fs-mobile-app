@@ -8,9 +8,14 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.TripStatus.InTrasit
+import com.delhivery.orion.data.home.TripStatus.TripCompleted
+import com.delhivery.orion.data.home.TripStatus.TruckArrived
+import com.delhivery.orion.data.home.TripStatus.TruckReached
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
@@ -66,7 +71,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     /* fab menu */
     binding.fabFilter.setOnClickListener { fab ->
       uiUtils.fabCardMenu(fab as FloatingActionButton, HomeTripsFabCardMenuItems) {
-        /* handle filter type here */
+        menuItemClicked(it)
       }
     }
 
@@ -96,6 +101,22 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
 
+  }
+
+  /**
+   * Handle menu item clicked
+   */
+  private fun menuItemClicked(item: DelhiveryFabCardMenuItem) {
+    when (item.id) {
+      0 -> InTrasit
+      1 -> TripCompleted
+      2 -> TruckArrived
+      3 -> TruckReached
+      else -> null
+    }.let {
+      adapter.reset()
+      viewModel.fetchTrips(false, it)
+    }
   }
 
   /**
