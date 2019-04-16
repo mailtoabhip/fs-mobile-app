@@ -31,6 +31,6 @@ internal class HomeTripsSearchItemVH(binding: ViewHomeTripsSearchItemBinding) :
 internal class HomeTripsItemVH(binding: ViewHomeTripsDetailsItemBinding) :
     BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsDetailsItemBinding, HomeTripsItem>(binding) {
   override fun bind(item: HomeTripsItem) {
-//    binding.request = HomeBidsRequestItemData()
+    binding.trip = item.data
   }
 }

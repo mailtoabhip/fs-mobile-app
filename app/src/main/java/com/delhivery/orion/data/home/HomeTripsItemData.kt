@@ -11,14 +11,24 @@ data class HomeTripsItemData(
   @SerializedName("destination") val destination: String,
   @SerializedName("origin") val origin: String,
   @SerializedName("transaction_id") val transactionId: String,
-  @SerializedName("trip_status") val tripStatus: String,
+  @SerializedName("trip_status") private val _tripStatus: String,
   @SerializedName("vendor_id") val vendorId: String,
   @SerializedName("vendor_name") val vendorName: String,
   @SerializedName("vehicle") val vehicleDetails: TripVehicleDetails,
   @SerializedName("driver") val driverDetails: TripDriverDetails?,
   val id: String = UUID.randomUUID().toString()
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = id
+  override fun key() = transactionId
+
+  /**
+   * Formatted driver details as per UI
+   */
+  fun formattedDriverDetails() = "${driverDetails?.driverName} (${driverDetails?.driverPhoneNo})"
+
+  /**
+   * Trip Status [TripStatus]
+   */
+  fun status() = TripStatus.byKey(_tripStatus)
 }
 
 data class TripDriverDetails(
@@ -30,3 +40,27 @@ data class TripDriverDetails(
 data class TripVehicleDetails(
   @SerializedName("vehicle_number") val vehicleNo: String
 )
+
+enum class TripStatus(
+  val statusKey: String,
+  val status: String
+) {
+  TripCompleted("trip_completed", "Trip Completed"),
+  TruckUnloaded("truck_unloaded", "Truck Unloaded"),
+  TruckLoaded("truck_loaded", "Truck Loaded"),
+  TruckConfirmed("truck_confirmed", "Truck Confirmed"),
+  TruckArrived("truck_arrived", "Truck Arrived"),
+  TruckReached("truck_reached", "Truck Reached"),
+  TripCancelled("trip_cancelled", "Trip Cancelled"),
+  InTrasit("in_transit", "In Transit"),
+  Unknown("unknown", "Unknown");
+
+  companion object {
+
+    /**
+     * Get [TripStatus] from response key
+     */
+    fun byKey(statusKey: String) =
+      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull() ?: Unknown
+  }
+}
