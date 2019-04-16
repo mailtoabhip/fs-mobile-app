@@ -30,6 +30,7 @@ class DelhiveryOTPViewEditText(
       setBackgroundResource(
           if (e) R.drawable.bg_login_edit_error else R.drawable.bg_login_edit
       )
+      field = e
     }
 
   /**

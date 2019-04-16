@@ -26,8 +26,8 @@ class HomeBidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
-  /* static live data */
-  var staticData =
+  /* user bids live data */
+  var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
   var hasMoreData = true
@@ -63,10 +63,10 @@ class HomeBidsViewModel @Inject constructor(
                 fetchUserTransactions(false)
               }
               /* post to static data */
-              staticData.postValue(_items)
+              userBidsData.postValue(_items)
             }
           } else {
-            error.printStackTrace()
+            error.handle()
             showProgress(false)
           }
         }
@@ -81,9 +81,11 @@ class HomeBidsViewModel @Inject constructor(
     } else if (paginate && !hasMoreData) {
       return
     }
+    if (paginate) {
+      showProgress()
+    }
     compositeDisposable += transactionsRepository.transactions(offset, Requested)
         .onBackground()
-        .progress()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {
             offset = _tRes.offset
@@ -102,10 +104,11 @@ class HomeBidsViewModel @Inject constructor(
                 }
               }
             }
-                .let { staticData.postValue(it) }
+                .let { userBidsData.postValue(it) }
           } else {
-            error.printStackTrace()
+            error.handle()
           }
+          showProgress(false)
         }
   }
 }

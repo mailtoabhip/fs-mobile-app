@@ -7,6 +7,7 @@ import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 
@@ -42,4 +43,14 @@ class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTrips
     }
   }
 
+  /**
+   * Reset to empty state with search bar
+   */
+  fun reset() {
+    items.filter { it.type == TripItem }
+        .map { Pair(it, Remove) }
+        .let {
+          operation(it)
+        }
+  }
 }

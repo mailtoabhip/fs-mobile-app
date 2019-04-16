@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.text.Html
 import com.delhivery.orion.R
 import com.delhivery.orion.injection.scope.ActivityScope
+import com.delhivery.orion.ui.dialogs.ErrorDialog
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.Calendar
 import javax.inject.Inject
@@ -97,4 +98,17 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
 
     dialog.show()
   }
+
+  /**
+   * Show error dialog
+   *
+   * @param error Error message
+   * @param dismissTimeout Ms after dismiss dialog
+   */
+  fun showErrorDialog(
+    error: String,
+    dismissTimeout: Long = -1
+  ) = ErrorDialog(
+      activity, error, dismissTimeout
+  ).show()
 }

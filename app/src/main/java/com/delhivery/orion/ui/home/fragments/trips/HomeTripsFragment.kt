@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
@@ -8,17 +9,22 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
+import com.delhivery.orion.repository.UserTripsLoadLimit
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.orion.utils.PaginationScrollListener
+import com.delhivery.orion.utils.extensions.progressLiveData
+import com.delhivery.orion.utils.extensions.visible
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     ItemClickListener<BaseHomeTripsRVAdapterItem<*>> {
 
-//  init {
+  init {
 //    toolbarElevationLiveData = MutableLiveData()
-//  }
+    hasInlineProgress = true
+  }
 
   companion object {
     /* singleton instance */
@@ -39,14 +45,23 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
+
+    binding.refreshLayout.setOnRefreshListener {
+      adapter.reset()
+      /* remove user trips and fetch again */
+      viewModel.fetchTrips(false)
+    }
+
     /* setup recycler view */
     binding.rvTrips.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeTripsFragment.adapter
-//      addOnScrollListener(HomeTripsRVScrollListener(binding.editStickySearch))
+      addOnScrollListener(PaginationInterface())
     }
 
-    adapter.setItems(getDummyData())
+    adapter.setItems(getStaticItems())
 
     /* fab menu */
     binding.fabFilter.setOnClickListener { fab ->
@@ -57,17 +72,41 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     /* no trips, start bidding button */
     binding.btnStartBidding.setOnClickListener { action(NavigateHomeFragmentAction(BidsFragment)) }
+
+    /* observe and update adapter items */
+    viewModel.userTripsData.observe(this, Observer { _items ->
+      /* error container, if items are null */
+      binding.containerError.visible(
+          if (_items == null) {
+            true
+          } else {
+            adapter.operation(_items)
+            false
+          }
+      )
+    })
+
+    /* fetch trips initially */
+    viewModel.fetchTrips(false)
   }
 
-  private fun getDummyData() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
+  private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsSearchItem())
-    for (i in 0..5) {
-      add(HomeTripsItem())
-    }
   }
 
   override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
 
+  }
+
+  /**
+   * Pagination interface
+   */
+  inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
+    override fun loadMore() = viewModel.fetchTrips(true)
+
+    override fun hasMore() = viewModel.hasMoreData
+
+    override fun isLoading() = binding.refreshLayout.isRefreshing
   }
 
   inner class HomeTripsRVScrollListener(

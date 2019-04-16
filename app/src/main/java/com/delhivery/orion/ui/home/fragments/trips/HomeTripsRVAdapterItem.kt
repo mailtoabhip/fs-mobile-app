@@ -38,5 +38,5 @@ class HomeTripsSearchItem(data: HomeTripsSearchItemData = HomeTripsSearchItemDat
 /**
  * Trip item
  */
-class HomeTripsItem(data: HomeTripsItemData = HomeTripsItemData()) :
+class HomeTripsItem(data: HomeTripsItemData) :
     BaseHomeTripsRVAdapterItem<HomeTripsItemData>(TripItem, data)

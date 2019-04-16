@@ -29,6 +29,7 @@ import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
+import com.delhivery.orion.utils.extensions.progressLiveData
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -58,15 +59,16 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    viewModel.progressLiveData.observe(this, Observer {
-      it?.let { show ->
-        if (!show) {
-          binding.refreshLayout.isRefreshing = false
-        } else if (!binding.refreshLayout.isRefreshing) {
-          binding.refreshLayout.isRefreshing = true
-        }
-      }
-    })
+//    viewModel.progressLiveData.observe(this, Observer {
+//      it?.let { show ->
+//        if (!show) {
+//          binding.refreshLayout.isRefreshing = false
+//        } else if (!binding.refreshLayout.isRefreshing) {
+//          binding.refreshLayout.isRefreshing = true
+//        }
+//      }
+//    })
+    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
 
     binding.refreshLayout.setOnRefreshListener {
       adapter.resetStaticData()
@@ -99,7 +101,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
 
     /* observe and update adapter items */
-    viewModel.staticData.observe(this, Observer {
+    viewModel.userBidsData.observe(this, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
 

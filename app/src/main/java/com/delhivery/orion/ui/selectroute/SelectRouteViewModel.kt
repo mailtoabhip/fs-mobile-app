@@ -31,7 +31,7 @@ class SelectRouteViewModel @Inject constructor(
             routes.addAll(_user.userRoutes())
             routesLiveData.postValue(routes)
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }
@@ -55,7 +55,7 @@ class SelectRouteViewModel @Inject constructor(
             routesLiveData.postValue(routes)
             completedAction(true)
           } else {
-            error.printStackTrace()
+            error.handle()
             completedAction(false)
           }
         }

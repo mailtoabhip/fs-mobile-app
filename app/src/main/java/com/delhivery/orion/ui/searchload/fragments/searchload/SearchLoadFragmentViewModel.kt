@@ -35,7 +35,7 @@ class SearchLoadFragmentViewModel @Inject constructor(private val appDB: AppData
           if (!error) {
             Log.d("harish", "search entry stored $res")
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }
@@ -50,7 +50,7 @@ class SearchLoadFragmentViewModel @Inject constructor(private val appDB: AppData
           if (!error) {
             Log.d("harish", "entry deleted: $res")
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }

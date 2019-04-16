@@ -1,7 +1,5 @@
 package com.delhivery.orion.utils.extensions
 
-import com.delhivery.orion.api.response.BaseResponse
-import com.delhivery.orion.exception.APIException
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -44,17 +42,10 @@ fun CompositeDisposable.disposeAndClear() {
 }
 
 /**
- * Handle response and based on [BaseResponse.isSuccess] flag,
- * response is passed or exception is thrown
- *
+ * Safe dispose
  */
-fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
-  map {
-    if (it.isSuccess) {
-      return@map it.responseData
-    } else {
-      throw APIException(
-          it.errorBody?.errorCode() ?: -1, it.errorBody?.errorMessage ?: "Unknown error"
-      )
-    }
+fun Disposable?.safeDispose() {
+  if (this != null && !isDisposed) {
+    dispose()
   }
+}

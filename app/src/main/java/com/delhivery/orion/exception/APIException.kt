@@ -8,4 +8,7 @@ package com.delhivery.orion.exception
  * @param errorCode Server error code
  * @param errorMessage Server error message
  */
-class APIException(val errorCode: Int, val errorMessage: String) : Exception(errorMessage)
+open class APIException(
+  errorCode: HttpErrorCode?,
+  errorMessage: String? = null
+) : Exception(errorCode?.errorMessage ?: errorMessage)

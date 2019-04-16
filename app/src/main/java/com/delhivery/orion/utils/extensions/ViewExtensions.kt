@@ -145,3 +145,8 @@ fun View.focusClick() = apply {
   requestFocus()
   post { performClick() }
 }
+
+/**
+ * Consume view touch events
+ */
+fun View.consumeTouch() = setOnTouchListener { _, _ -> true }

@@ -36,7 +36,7 @@ class SearchResultsViewModel @Inject constructor(
             searchResults.postValue(_tRes.transactions)
           } else {
             searchResults.postValue(null)
-            error.printStackTrace()
+            error.handle()
           }
         }
   }

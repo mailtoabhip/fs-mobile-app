@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.delhivery.orion.BR
+import com.delhivery.orion.utils.ErrorUtils
 import com.delhivery.orion.utils.UiUtils
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
@@ -28,6 +29,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
 
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
   @Inject lateinit var uiUtils: UiUtils
+  @Inject lateinit var errorUtils: ErrorUtils
 
   /* set true if inline progress */
   protected var hasInlineProgress = false
@@ -75,6 +77,11 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
           else -> uiUtils.hideProgress()
         }
       }
+    })
+
+    /* handle exception */
+    viewModel.exceptionLiveData.observe(this, Observer {
+      it?.let { throwable -> errorUtils.handle(throwable) }
     })
   }
 

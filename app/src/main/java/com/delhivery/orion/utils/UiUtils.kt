@@ -16,6 +16,7 @@ import com.delhivery.orion.databinding.LayoutProgressBinding
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuInterface
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
+import com.delhivery.orion.utils.extensions.consumeTouch
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -30,7 +31,7 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
   //Progress View binding
   private val progressBinding: LayoutProgressBinding by lazy {
     val binding = LayoutProgressBinding.inflate(LayoutInflater.from(activity), activityRoot, false)
-    binding.root.setOnTouchListener { _, _ -> true }    // <-- Consume touch events to avoid passing touch events through
+    binding.root.consumeTouch()
     binding
   }
 
@@ -38,7 +39,7 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
   private val delhiveryProgressBinding: LayoutDelhiveryProgressBinding by lazy {
     val binding =
       LayoutDelhiveryProgressBinding.inflate(LayoutInflater.from(activity), activityRoot, false)
-    binding.root.setOnTouchListener { _, _ -> true }    // <-- Consume touch events to avoid passing touch events through
+    binding.root.consumeTouch()
     binding
   }
 

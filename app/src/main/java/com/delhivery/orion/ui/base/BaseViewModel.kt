@@ -6,8 +6,6 @@ import android.arch.lifecycle.ViewModel
 import android.databinding.Observable
 import android.databinding.PropertyChangeRegistry
 import android.support.annotation.StringRes
-import com.delhivery.orion.api.response.BaseResponse
-import com.delhivery.orion.exception.APIException
 import com.delhivery.orion.utils.extensions.disposeAndClear
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -24,6 +22,7 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver, Observable {
   var toastLiveData = MutableLiveData<Int>() //Toast live data
   var snackbarLiveData = MutableLiveData<Int>() //Snackbar live data
   var progressLiveData = MutableLiveData<Boolean>() //Progress live data
+  var exceptionLiveData = MutableLiveData<Throwable>() /* Error/Exception live data */
 
   // Network connection state reference, updated by baseactivity
   var isConnected: Boolean = false
@@ -55,6 +54,11 @@ abstract class BaseViewModel : ViewModel(), LifecycleObserver, Observable {
    * @param show Show/Hide progress flag, by default show
    */
   protected fun showProgress(show: Boolean = true) = progressLiveData.postValue(show)
+
+  /**
+   * Handle throwables
+   */
+  protected fun Throwable.handle() = exceptionLiveData.postValue(this)
 
   /**
    * Handle progress on any [Single] process chain

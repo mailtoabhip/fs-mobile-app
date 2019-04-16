@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
 import com.delhivery.orion.BR
 import com.delhivery.orion.network.ConnectionLiveData
+import com.delhivery.orion.utils.ErrorUtils
 import com.delhivery.orion.utils.NavigationUtils
 import com.delhivery.orion.utils.UiUtils
 import com.delhivery.orion.utils.extensions.disposeAndClear
@@ -54,6 +55,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var connectionLiveData: ConnectionLiveData
   @Inject lateinit var uiUtils: UiUtils
   @Inject lateinit var navigationUtils: NavigationUtils
+  @Inject lateinit var errorUtils: ErrorUtils
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 
@@ -88,6 +90,11 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
         true -> uiUtils.showProgress()
         else -> uiUtils.hideProgress()
       }
+    })
+
+    /* handle exception */
+    viewModel.exceptionLiveData.observe(this, Observer {
+      it?.let { throwable -> errorUtils.handle(throwable) }
     })
 
     /* Observer network change state and show No-Internet UI, if internet is required by activity */

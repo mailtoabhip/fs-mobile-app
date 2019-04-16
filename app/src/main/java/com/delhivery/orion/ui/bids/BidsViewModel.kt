@@ -33,7 +33,7 @@ class BidsViewModel @Inject constructor(
           if (!error) {
             bidsLiveData.postValue(_bidsRes)
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }

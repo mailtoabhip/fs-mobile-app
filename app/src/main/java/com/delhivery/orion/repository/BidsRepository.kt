@@ -8,6 +8,7 @@ import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.safeEquals
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,13 +21,14 @@ class BidsRepository @Inject constructor(
   /**
    * Get user bids count, my bids and confirm bids
    */
-  fun userBidsCount() = Single.just(Pair(9, 2))
-//    Single.zip(
-//        userBids(TransactionBidStatus.Open, 0),
-//        userBids(TransactionBidStatus.Accepted, 0),
-//        BiFunction<Pair<Int, List<TransactionBid>>, Pair<Int, List<TransactionBid>>, Pair<Int, Int>> { _myBids, _cnfBids ->
-//          Pair(_myBids.first, _cnfBids.first)
-//        })
+  fun userBidsCount() =
+    Single.zip(
+        userBids(TransactionBidStatus.Open, 0),
+        userBids(TransactionBidStatus.Accepted, 0),
+        BiFunction<Pair<Int, List<TransactionBid>>, Pair<Int, List<TransactionBid>>, Pair<Int, Int>>
+        { _myBids, _cnfBids ->
+          Pair(_myBids.first, _cnfBids.first)
+        })!!
 
   /**
    * Transaction Bids along with user bid and bid count
@@ -40,7 +42,7 @@ class BidsRepository @Inject constructor(
         val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
             .firstOrNull()
         Triple(userBid, it.bids, it.totalBids)
-      }
+      }!!
 
   /**
    * Create Bid

@@ -38,7 +38,7 @@ class BidDetailsViewModel @Inject constructor(
             transactionLiveData.postValue(_tRes)
             fetchTransactionBids()
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }
@@ -70,7 +70,7 @@ class BidDetailsViewModel @Inject constructor(
             }
             transactionBidLiveData.postValue(state)
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }
@@ -86,7 +86,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error && _res.isSuccess) {
             fetchTransactionBids(_res.responseData?.message)
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }
@@ -103,7 +103,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error && _res.isSuccess) {
             fetchTransactionBids(_res.responseData?.message)
           } else {
-            error.printStackTrace()
+            error.handle()
           }
         }
   }

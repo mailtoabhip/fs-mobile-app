@@ -104,6 +104,8 @@
   <string name="msg_you_lost_bid">You lost the bid</string>
   <string name="msg_accepted_bid_value">Accepted bid value: ₹ %1$d</string>
   <string name="msg_your_highest_bid">Your highest bid: ₹  %1$d</string>
+  <string name="action_dismiss">DISMISS</string>
+  <string name="label_error">Error</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
