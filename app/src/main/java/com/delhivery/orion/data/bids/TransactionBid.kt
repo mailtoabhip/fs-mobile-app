@@ -39,7 +39,8 @@ data class TransactionBid(
 enum class TransactionBidStatus(val statusKey: String) {
   Open("open"),
   Rejected("rejected"),
-  Accepted("accepted");
+  Accepted("accepted"),
+  NA("na");
 
   companion object {
     /**

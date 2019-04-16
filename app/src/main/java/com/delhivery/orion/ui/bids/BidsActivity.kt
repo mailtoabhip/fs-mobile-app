@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.bids
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.delhivery.orion.R
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
@@ -35,7 +37,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
 
     /* get bid type from intent */
     viewModel.bidType =
-        BidType.byTypeId(intent.getIntExtra(IntentExtraBidTypeKey, BidType.Unknown.typeId))
+      BidType.byTypeId(intent.getIntExtra(IntentExtraBidTypeKey, BidType.Unknown.typeId))
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -52,6 +54,11 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
         onFabMenuItemSelected(it)
       }
     }
+
+    /* bids observer */
+    viewModel.bidsLiveData.observe(this, BidsObserver())
+
+    viewModel.fetchBids()
   }
 
   private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {
@@ -63,6 +70,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
       if (_type != viewModel.bidType) {
         viewModel.bidType = _type
         title = _type.toolbarTitle()
+        viewModel.fetchBids()
       }
     }
   }
@@ -116,6 +124,17 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
 //        return true
 //      }
 //    })
+  }
+
+  /**
+   * Bids observer
+   */
+  inner class BidsObserver : Observer<Pair<Int, List<TransactionBid>>> {
+    override fun onChanged(t: Pair<Int, List<TransactionBid>>?) {
+      t?.apply {
+        title = viewModel.bidType.toolbarTitle(first)
+      }
+    }
   }
 }
 
