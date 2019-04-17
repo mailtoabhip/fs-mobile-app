@@ -106,6 +106,10 @@
   <string name="msg_your_highest_bid">Your highest bid: ₹  %1$d</string>
   <string name="action_dismiss">DISMISS</string>
   <string name="label_error">Error</string>
+  <string name="label_vehicle">Vehicle</string>
+  <string name="label_driver">Driver</string>
+  <string name="label_contact">Contact</string>
+  <string name="label_status_history">Status history</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

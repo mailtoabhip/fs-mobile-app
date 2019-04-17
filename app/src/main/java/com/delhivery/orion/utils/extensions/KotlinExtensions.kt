@@ -32,3 +32,13 @@ fun Any?.safeEquals(another: Any?): Boolean {
   }
   return false
 }
+
+/**
+ * Safe substring for indexes
+ */
+fun String?.safeSubstring(
+  start: Int,
+  end: Int
+) = this?.apply {
+  return substring(Math.min(start, length), Math.min(end, length))
+} ?: "$this"

@@ -61,7 +61,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       t?.let { _transaction ->
         binding.transaction = _transaction
         title =
-          "${_transaction.originCityCode} - ${_transaction.destinationCityCode} (${_transaction.requiredAt()})"
+          "${_transaction.tripDisplayName()} (${_transaction.requiredAt()})"
       }
     }
   }
@@ -155,7 +155,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 private const val TransactionIdIntentKey = "transaction_id"
 
 /**
- * Bid dvetails intent
+ * Bid details intent
  */
 fun bidDetailsIntent(
   _data: HomeBidsRequestItemData,

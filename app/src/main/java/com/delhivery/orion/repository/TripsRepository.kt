@@ -1,15 +1,22 @@
 package com.delhivery.orion.repository
 
+import com.delhivery.orion.api.TransactionService
 import com.delhivery.orion.api.TripService
+import com.delhivery.orion.data.TripHistoryModel
+import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.HomeTripsItemData
 import com.delhivery.orion.data.home.TripStatus
 import com.delhivery.orion.utils.extensions.convertResponse
+import io.reactivex.Single
+import io.reactivex.functions.Function3
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TripsRepository @Inject constructor(
   private val userRepository: UserRepository,
-  private val tripsService: TripService
+  private val tripsService: TripService,
+  private val transactionService: TransactionService
 ) : BaseRepository() {
 
   /**
@@ -23,6 +30,18 @@ class TripsRepository @Inject constructor(
       status = status?.statusKey
   )
       .convertResponse()
+
+  /**
+   * Complete trip details with transaction and trip history
+   */
+  fun tripDetails(transactionId: String) = Single.zip(
+      transactionService.transactionDetails(transactionId).convertResponse(),
+      tripsService.trip(transactionId).convertResponse(),
+      tripsService.tripHistory(transactionId).convertResponse(),
+      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>, Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
+        Triple(t1, t2, t3)
+      }
+  )
 }
 
 /* User trips pagination load limit */

@@ -64,6 +64,8 @@ class ErrorDialog(
    */
   private fun dismissDialog() {
     timeoutDisposable.safeDispose()
-    dismiss()
+    if (isShowing) {
+      dismiss()
+    }
   }
 }

@@ -22,6 +22,7 @@ import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOrigin
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
+import com.delhivery.orion.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.orion.utils.ViewModelFactory
 import dagger.Binds
 import dagger.Module
@@ -138,6 +139,12 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchResultsViewModel::class)
   abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
+
+  /* Trip details */
+  @Binds
+  @IntoMap
+  @ViewModelScope(TripDetailsViewModel::class)
+  abstract fun bindTripDetailsViewModel(tripDetailsViewModel: TripDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

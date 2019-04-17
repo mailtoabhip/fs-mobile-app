@@ -16,6 +16,7 @@ import com.delhivery.orion.ui.selectroute.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
+import com.delhivery.orion.ui.tripdetails.TripDetailsActivity
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -28,47 +29,63 @@ import dagger.android.support.DaggerAppCompatActivity
  */
 @Module
 abstract class ActivityBindingModule {
+  /* Spalsh/Launch activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSplashActivityModule::class])
   internal abstract fun bindSplashActivity(): SplashActivity
 
+  /* Authentication/Login activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsAuthenticationActivityModule::class])
   internal abstract fun bindAuthenticationActivityActivity(): AuthenticationActivity
 
+  /* Select route welcome activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSelectRouteWelcomeActivityModule::class])
   internal abstract fun bindSelectRouteWelcomeActivity(): SelectRouteWelcomeActivity
 
+  /* Route selection fragments activity */
   @ActivityScope
   @ContributesAndroidInjector(
       modules = [AbsSelectRouteActivityModule::class, SelectRouteFragmentsBindingModule::class]
   )
   internal abstract fun bindSelectRouteActivity(): SelectRouteActivity
 
+  /* Onboarding view pager activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsOnboardingActivityModule::class])
   internal abstract fun bindOnboardingActivity(): OnboardingActivity
 
+  /* Home activity */
   @ActivityScope
   @ContributesAndroidInjector(
       modules = [AbsHomeActivityModule::class, HomeFragmentsBindingModule::class]
   )
   internal abstract fun bindHomeActivity(): HomeActivity
 
+  /* Active/Lost/Confirm Bids activity*/
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidsActivityModule::class])
   internal abstract fun bindBidsActivity(): BidsActivity
 
+  /* Bid Details activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
   internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
 
+  /* Search Load activity */
   @ActivityScope
   @ContributesAndroidInjector(
       modules = [AbsSearchLoadActivityModule::class, SearchLoadFragmentsBindingModule::class]
   )
   internal abstract fun bindSearchLoadActivity(): SearchLoadActivity
+
+  /* Trip details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsTripDetailsActivityModule::class]
+  )
+  internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
 }
 
 /**
@@ -104,6 +121,9 @@ internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsA
 
 @Module
 internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadActivity>()
+
+@Module
+internal abstract class AbsTripDetailsActivityModule : ActivityModule<TripDetailsActivity>()
 
 /**
  * Activity Binds Module

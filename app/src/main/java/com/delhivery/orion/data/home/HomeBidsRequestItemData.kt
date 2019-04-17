@@ -1,10 +1,11 @@
 package com.delhivery.orion.data.home
 
 import android.support.annotation.DrawableRes
-import com.delhivery.orion.R
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
+import com.delhivery.orion.utils.DrawableProviderUtils
+import com.delhivery.orion.utils.extensions.safeSubstring
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -43,41 +44,30 @@ data class HomeBidsRequestItemData(
   fun loadDetails() = "Load: $materialType"
 
   @DrawableRes
-  fun truckTypeDrawableRes() = when (containerType) {
-    "closed" -> R.drawable.ic_closed_truck
-    else -> R.drawable.ic_open_truck
-  }
+  fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
 
   /**
    * Formatted required at
    */
-  fun requiredAt(): String {
-    val requiredOn = DateUtils.parseDate(_requiredOn, DatePatterns.OrionDateFormat)
-    val _diff = DateUtils.daysDiff(requiredOn)
-    val reqDate = when (_diff) {
-      0 -> "Today"
-      1 -> "Tomorrow"
-      else -> DateUtils.formatDate(requiredOn, "dd MMM,")
-    }
-    val reqTime = DateUtils.formatDate(requiredOn, "hh:mm a")
-    return "$reqDate $reqTime"
-  }
+  fun requiredAt() = DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
    * Required at background as per designs
    */
   @DrawableRes
   fun requiredAtBg() =
-    when (DateUtils.daysDiff(DateUtils.parseDate(_requiredOn, DatePatterns.OrionDateFormat))) {
-      0 -> R.drawable.bg_date_today
-      1 -> R.drawable.bg_date_tomorrow
-      else -> R.drawable.bg_date_others
-    }
+    DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
    * Get truck details/type
    */
   fun truckTypeDetails() = "$truckDisplayName"
+
+  /**
+   * Trip display name for toolbar title
+   */
+  fun tripDisplayName() =
+    "${originState.safeSubstring(0, 3)} - ${destinationState.safeSubstring(0, 3)}".toUpperCase()
 }
 
 /* actions */

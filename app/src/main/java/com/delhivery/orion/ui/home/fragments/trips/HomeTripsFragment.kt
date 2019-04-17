@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.HomeTripsItemData
 import com.delhivery.orion.data.home.TripStatus.InTrasit
 import com.delhivery.orion.data.home.TripStatus.TripCompleted
 import com.delhivery.orion.data.home.TripStatus.TruckArrived
@@ -19,6 +20,8 @@ import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
+import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 import com.delhivery.orion.utils.extensions.visible
@@ -100,7 +103,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   }
 
   override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
-
+    when (item.type) {
+      TripItem -> {
+        context?.let { startActivity(tripDetailsIntent(item.data as HomeTripsItemData, it)) }
+      }
+      else -> {/* useless */
+      }
+    }
   }
 
   /**

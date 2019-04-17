@@ -20,6 +20,7 @@ import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOrigin
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.orion.ui.splash.SplashViewModel
+import com.delhivery.orion.ui.tripdetails.TripDetailsViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -75,6 +76,9 @@ interface ViewModelInjector {
   fun inject(searchLoadFragmentViewModel: SearchLoadFragmentViewModel)
 
   fun inject(searchResultsViewModel: SearchResultsViewModel)
+
+  /* Trip details */
+  fun inject(tripDetailsViewModel: TripDetailsViewModel)
 
   @Component.Builder
   interface Builder {
