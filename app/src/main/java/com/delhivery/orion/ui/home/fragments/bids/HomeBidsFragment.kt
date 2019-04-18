@@ -59,15 +59,6 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-//    viewModel.progressLiveData.observe(this, Observer {
-//      it?.let { show ->
-//        if (!show) {
-//          binding.refreshLayout.isRefreshing = false
-//        } else if (!binding.refreshLayout.isRefreshing) {
-//          binding.refreshLayout.isRefreshing = true
-//        }
-//      }
-//    })
     binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
 
     binding.refreshLayout.setOnRefreshListener {

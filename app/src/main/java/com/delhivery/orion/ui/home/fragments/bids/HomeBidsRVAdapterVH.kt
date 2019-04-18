@@ -74,7 +74,7 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
 /**
  * Bid request item view holder
  */
-internal class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
+class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,

@@ -39,13 +39,13 @@ abstract class BaseDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBind
     notifyDataSetChanged()
   }
 
-  override fun getItemCount() = items.size
+  override fun getItemCount() = itemsList().size
 
   override fun onBindViewHolder(
     holder: VH,
     position: Int
   ) {
-    items[position].let { item ->
+    itemsList()[position].let { item ->
       bindVH(holder, item)
       holder.binding.root.setOnClickListener { clickListener.onItemClicked(item) }
     }
@@ -59,6 +59,11 @@ abstract class BaseDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBind
   }.let {
     createVH(it)
   }
+
+  /**
+   * Items list for further expansion
+   */
+  open fun itemsList(): List<D> = items
 
   /**
    * Get VH Binding as [B]

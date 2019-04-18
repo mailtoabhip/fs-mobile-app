@@ -5,19 +5,32 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
-import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
+import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.LostBid
 import com.delhivery.orion.ui.bids.BidType.Unknown
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.utils.PaginationScrollListener
+import com.delhivery.orion.utils.extensions.progressLiveData
+import com.delhivery.orion.utils.extensions.visible
 
-class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
+class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
+    ItemClickListener<HomeBidsRequestItem> {
+
+  init {
+    hasInlineProgress = true
+  }
 
   override fun getViewModelClass() = BidsViewModel::class.java
 
@@ -27,6 +40,11 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
 
   /* search menu item ref */
   private var searchItem: MenuItem? = null
+
+  /* rv adapter */
+  private val adapter by lazy {
+    BidsRVAdapter(this)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -48,6 +66,23 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
     title = viewModel.bidType.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
+    viewModel.progressLiveData.observe(
+        this, Observer { if (it == true) searchItem?.isVisible = false })
+
+    binding.refreshLayout.setOnRefreshListener {
+      adapter.clearItems()
+      /* remove user bid transactions and fetch again */
+      viewModel.fetchBids(false)
+    }
+
+    /* setup recycler view */
+    binding.rvBids.apply {
+      layoutManager = LinearLayoutManager(this@BidsActivity)
+      adapter = this@BidsActivity.adapter
+      addOnScrollListener(PaginationInterface())
+    }
+
     /* Use this logic to create our own menu as per ui */
     binding.fabFilter.setOnClickListener { fab ->
       uiUtils.fabCardMenu(fab as FloatingActionButton, BidsFabCardMenuItems) {
@@ -55,11 +90,23 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
       }
     }
 
-    /* bids observer */
-    viewModel.bidsLiveData.observe(this, BidsObserver())
+    binding.btnStartBidding.setOnClickListener { finish() }
 
-    viewModel.fetchBids()
+    /* bids observer */
+    viewModel.bidsLiveData.observe(this, Observer {
+      title = viewModel.bidType.toolbarTitle(viewModel.total)
+      binding.containerError.visible(it == null)
+      searchItem?.isVisible = it != null
+      if (it != null) {
+        adapter.operation(it)
+      }
+    })
+
+    viewModel.fetchBids(false)
   }
+
+  override fun onItemClicked(item: HomeBidsRequestItem) =
+    startActivity(bidDetailsIntent(item.data, this))
 
   private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {
     when (item.id) {
@@ -70,7 +117,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
       if (_type != viewModel.bidType) {
         viewModel.bidType = _type
         title = _type.toolbarTitle()
-        viewModel.fetchBids()
+        viewModel.fetchBids(false)
       }
     }
   }
@@ -84,57 +131,53 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>() {
   }
 
   /**
-   * Setup zone search
+   * Setup search
    */
   private fun setupSearch(
     searchItem: MenuItem?,
     searchView: SearchView?
   ) {
     this.searchItem = searchItem
-//    searchItem?.isVisible = viewModel.inlineProgressLiveData.value == false
-//
-//    /* Search query interface */
-//    searchView?.setOnQueryTextListener(object : OnQueryTextListener {
-//      override fun onQueryTextSubmit(p0: String?): Boolean {
-//        uiUtils.toggleKeyboard()
-//        return false
-//      }
-//
-//      override fun onQueryTextChange(p0: String?): Boolean {
-//        viewModel.search(p0)
-//        return false
-//      }
-//    })
-//
-//    /* search bar expanded/collapse callbacks */
-//    searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
-//      override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
-//        binding.swipeRefresh.isEnabled = false
-//        binding.spinnerType.visible(false)
-//        menu?.setGroupVisible(R.id.mgrp_scan_type, false)
-//        return true
-//      }
-//
-//      override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
-//        viewModel.filteredResults()
-//        uiUtils.toggleKeyboard()
-//        binding.swipeRefresh.isEnabled = true
-//        binding.spinnerType.visible(true)
-//        menu?.setGroupVisible(R.id.mgrp_scan_type, true)
-//        return true
-//      }
-//    })
+    searchItem?.isVisible = !binding.refreshLayout.isRefreshing
+
+    /* Search query interface */
+    searchView?.setOnQueryTextListener(object : OnQueryTextListener {
+      override fun onQueryTextSubmit(p0: String?): Boolean {
+        uiUtils.toggleKeyboard()
+        return false
+      }
+
+      override fun onQueryTextChange(q: String?) = adapter.filter(q)
+    })
+
+    /* search bar expanded/collapse callbacks */
+    searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
+      override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+        binding.refreshLayout.isEnabled = false
+        binding.fabFilter.hide()
+        adapter.enableFilter()
+        return true
+      }
+
+      override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+        uiUtils.toggleKeyboard()
+        binding.refreshLayout.isEnabled = true
+        binding.fabFilter.show()
+        adapter.cancelFilter()
+        return true
+      }
+    })
   }
 
   /**
-   * Bids observer
+   * Pagination interface
    */
-  inner class BidsObserver : Observer<Pair<Int, List<TransactionBid>>> {
-    override fun onChanged(t: Pair<Int, List<TransactionBid>>?) {
-      t?.apply {
-        title = viewModel.bidType.toolbarTitle(first)
-      }
-    }
+  inner class PaginationInterface : PaginationScrollListener(10) {
+    override fun loadMore() = viewModel.fetchBids(true)
+
+    override fun hasMore() = viewModel.offset < viewModel.total
+
+    override fun isLoading() = binding.refreshLayout.isRefreshing
   }
 }
 

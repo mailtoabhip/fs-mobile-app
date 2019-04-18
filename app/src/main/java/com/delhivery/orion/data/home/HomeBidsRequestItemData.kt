@@ -68,6 +68,10 @@ data class HomeBidsRequestItemData(
    */
   fun tripDisplayName() =
     "${originState.safeSubstring(0, 3)} - ${destinationState.safeSubstring(0, 3)}".toUpperCase()
+
+  override fun filter(query: String) =
+    origin.contains(query, true) || destination.contains(query, true)
+        || originState.contains(query, true) || destinationState.contains(query, true)
 }
 
 /* actions */

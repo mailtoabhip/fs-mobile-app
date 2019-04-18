@@ -11,6 +11,12 @@ import com.delhivery.orion.utils.extensions.safeEquals
 abstract class BaseKeyTypeModel<KT : Any> {
   @Ignore
   abstract fun key(): KT
+
+  /**
+   * Filter model
+   */
+  @Ignore
+  open fun filter(query: String) = key().safeEquals(query)
 }
 
 /**

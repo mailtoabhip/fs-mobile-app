@@ -27,4 +27,14 @@ interface TransactionService {
   fun transactionDetails(
     @Query("uuid") transactionId: String
   ): Single<BaseResponse<HomeBidsRequestItemData>>
+
+  /**
+   * Bulk transaction ids
+   *
+   * @param transactionIds Comma separated ids
+   */
+  @GET("/transactions/list/")
+  fun bulkTransactions(
+    @Query("transaction_ids") transactionIds: String
+  ): Single<BaseResponse<TransactionsResponse>>
 }

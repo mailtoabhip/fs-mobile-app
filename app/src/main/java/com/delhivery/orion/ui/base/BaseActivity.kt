@@ -48,6 +48,9 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   /* override in init if required for specific activity */
   protected var StatusBarColor = Color.parseColor("#F9F9F9")
 
+  /* set true if inline progress */
+  protected var hasInlineProgress = false
+
   protected lateinit var binding: B
   protected lateinit var viewModel: VM
 
@@ -86,9 +89,11 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
     /* Observe on progress live data and show/hide progress */
     viewModel.progressLiveData.observe(this, Observer {
-      when (it) {
-        true -> uiUtils.showProgress()
-        else -> uiUtils.hideProgress()
+      if (!hasInlineProgress) {
+        when (it) {
+          true -> uiUtils.showProgress()
+          else -> uiUtils.hideProgress()
+        }
       }
     })
 

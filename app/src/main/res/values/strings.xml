@@ -110,6 +110,8 @@
   <string name="label_driver">Driver</string>
   <string name="label_contact">Contact</string>
   <string name="label_status_history">Status history</string>
+  <string name="label_no_bids_found">No bids found</string>
+  <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
