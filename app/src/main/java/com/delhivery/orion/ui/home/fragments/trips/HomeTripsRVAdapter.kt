@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 
 class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTripsRVAdapterItem<*>>) :
-    BaseDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
+    BaseFilterableDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
     ) {
 
@@ -42,6 +42,8 @@ class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTrips
       is HomeTripsItemVH -> holder.bind(item as HomeTripsItem)
     }
   }
+
+  override fun filterList(query: String) = items.filter { it.data.filter(query) }
 
   /**
    * Reset to empty state with search bar

@@ -41,6 +41,11 @@ data class HomeTripsItemData(
    * Trip Status [TripStatus]
    */
   fun status() = TripStatus.byKey(_tripStatus)
+
+  override fun filter(query: String) =
+    vehicleDetails.vehicleNo.contains(query, true)
+        || driverDetails?.driverName?.contains(query, true) == true
+        || destination.contains(query, true)
 }
 
 data class TripDriverDetails(

@@ -8,13 +8,16 @@
       android:focusableInTouchMode="true"
       >
 
-    <android.support.v7.widget.AppCompatEditText
+    <EditText
+        android:id="@+id/edit_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:background="@drawable/bg_search_bar_light"
+        android:descendantFocusability="beforeDescendants"
         android:gravity="center_vertical"
         android:hint="@string/hint_search_trips"
+        android:imeOptions="actionSearch"
         android:paddingStart="52dp"
         android:textColorHint="#59000000"
         android:textSize="16sp"

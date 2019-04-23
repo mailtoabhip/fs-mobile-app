@@ -33,7 +33,7 @@ class TransactionsRepository @Inject constructor(
    * Get bulk transactions using ids
    */
   fun bulkTransactions(ids: List<String>) =
-    ids.joinToString { it }.let { transactionService.bulkTransactions(it) }
+    ids.joinToString(separator = ",") { it }.let { transactionService.bulkTransactions(it) }
 
   /**
    * Transaction details

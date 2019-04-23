@@ -35,6 +35,6 @@ interface TransactionService {
    */
   @GET("/transactions/list/")
   fun bulkTransactions(
-    @Query("transaction_ids") transactionIds: String
+    @Query("transactions_ids") transactionIds: String
   ): Single<BaseResponse<TransactionsResponse>>
 }

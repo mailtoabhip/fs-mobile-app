@@ -11,11 +11,13 @@ import com.delhivery.orion.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.orion.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.orion.ui.auth.AuthenticationUIState.SelectRoute
 import com.delhivery.orion.ui.base.BaseViewModel
+import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import retrofit2.HttpException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -79,7 +81,9 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
-                Triple(_otpRes.first, _otpRes.second, it)
+                val msg =
+                  if (_otpRes.second.isNotNullOrEmpty()) _otpRes.second else "Error validating OTP"
+                Triple(_otpRes.first, msg, it)
               }
         }
         .onBackground()
@@ -91,7 +95,10 @@ class AuthenticationViewModel @Inject constructor(
               SelectRoute
             }
           } else {
-            errorLiveData.postValue(Pair(InvalidOTP, _res.second ?: "Error validating OTP"))
+            if (error is HttpException) {
+              error.handle()
+            }
+            errorLiveData.postValue(Pair(InvalidOTP, ""))
             OTP
           }
         }
