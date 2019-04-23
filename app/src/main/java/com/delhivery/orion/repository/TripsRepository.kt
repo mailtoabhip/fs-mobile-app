@@ -26,7 +26,7 @@ class TripsRepository @Inject constructor(
     offset: Int = 0,
     status: TripStatus? = null
   ) = tripsService.trips(
-      /*"0060w0000028cA4A1K"*/userRepository.userId(), limit = UserTripsLoadLimit, offset = offset,
+      "0060w0000028cA4A1K"/*userRepository.userId()*/, limit = UserTripsLoadLimit, offset = offset,
       status = status?.statusKey
   )
       .convertResponse()

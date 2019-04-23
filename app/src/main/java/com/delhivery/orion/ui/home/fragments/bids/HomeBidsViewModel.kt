@@ -43,7 +43,7 @@ class HomeBidsViewModel @Inject constructor(
           Triple(t1, t2.first, t2.second)
         })
         .onBackground()
-        .doOnSuccess { showProgress() }
+        .doOnSubscribe { showProgress() }
         .subscribe { _data, error ->
           if (!error) {
             _data.apply {

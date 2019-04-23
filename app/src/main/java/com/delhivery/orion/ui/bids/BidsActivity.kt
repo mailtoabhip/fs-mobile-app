@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.view.Menu
@@ -23,7 +24,6 @@ import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
-import com.delhivery.orion.utils.extensions.visible
 
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     ItemClickListener<HomeBidsRequestItem> {
@@ -95,7 +95,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     /* bids observer */
     viewModel.bidsLiveData.observe(this, Observer {
       title = viewModel.bidType.toolbarTitle(viewModel.total)
-      binding.containerError.visible(it == null)
+      binding.error = it == null
       searchItem?.isVisible = it != null
       if (it != null) {
         adapter.operation(it)

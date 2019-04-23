@@ -11,6 +11,7 @@ import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 class BidDetailsViewModel @Inject constructor(
@@ -80,6 +81,7 @@ class BidDetailsViewModel @Inject constructor(
     bidAmount: Int
   ) {
     compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
+        .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -97,6 +99,7 @@ class BidDetailsViewModel @Inject constructor(
     bidAmount: Int
   ) {
     compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
+        .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -114,3 +117,5 @@ class BidDetailsViewModel @Inject constructor(
   private fun List<TransactionBid>.acceptedBid() =
     filter { it._status == Accepted.statusKey }.firstOrNull()
 }
+
+private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating
