@@ -12,6 +12,7 @@ import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -61,6 +62,7 @@ class HomeBidsViewModel @Inject constructor(
               /* start fetching transactions */
               else {
                 fetchUserTransactions(false)
+                _items.add(Pair(HomeBidsProgressItem(), AddUpdate))
               }
               /* post to static data */
               userBidsData.postValue(_items)
@@ -83,7 +85,10 @@ class HomeBidsViewModel @Inject constructor(
     }
     if (paginate) {
       showProgress()
+      /* add progress if not paginating */
+      Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
+
     compositeDisposable += transactionsRepository.transactions(offset, Requested)
         .onBackground()
         .subscribe { _tRes, error ->
@@ -92,6 +97,9 @@ class HomeBidsViewModel @Inject constructor(
             hasMoreData = _tRes.offset != _tRes.total
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
+
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && _tRes.total == 0) {
                 add(Pair(HomeBidsWarningItem_EditRoutePrefs, AddUpdate))
@@ -106,6 +114,8 @@ class HomeBidsViewModel @Inject constructor(
             }
                 .let { userBidsData.postValue(it) }
           } else {
+            /* remove progress item */
+            Pair(HomeBidsProgressItem(), Remove).let { userBidsData.postValue(listOf(it)) }
             error.handle()
           }
           showProgress(false)

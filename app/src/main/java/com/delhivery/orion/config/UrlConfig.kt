@@ -1,7 +1,5 @@
 package com.delhivery.orion.config
 
-import com.delhivery.orion.BuildConfig
-
 /**
  * URL Config for all services
  */
@@ -33,5 +31,5 @@ enum class UrlConfig(
   /**
    * Get url based on logic
    */
-  fun url() = if (BuildConfig.DEBUG) dev else prod
+  fun url() = dev//if (BuildConfig.DEBUG) dev else prod
 }

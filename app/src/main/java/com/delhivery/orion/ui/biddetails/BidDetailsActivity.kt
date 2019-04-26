@@ -19,6 +19,10 @@ import com.delhivery.orion.utils.extensions.visible
 
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
 
+  init {
+    hasInlineProgress = true
+  }
+
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
   override fun layoutId() = R.layout.activity_bid_details
@@ -46,11 +50,29 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* setup live data observers */
+    viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
     viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
 
     /* fetch transaction details */
     viewModel.fetchTransactionDetails()
+  }
+
+  /**
+   * Progress observer
+   */
+  inner class ProgressObserver : Observer<Boolean> {
+    override fun onChanged(t: Boolean?) {
+      t?.let {
+        when (t) {
+          true -> uiUtils.showDelhiveryProgress(
+              "Getting details", "This usually takes few seconds to load. please be patient.",
+              "This usually takes few seconds to load. please be patient."
+          )
+          false -> uiUtils.hideDelhiveryProgress()
+        }
+      }
+    }
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -16,6 +17,7 @@ import com.delhivery.orion.data.home.TripStatus.TruckReached
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
@@ -30,7 +32,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     ItemClickListener<BaseHomeTripsRVAdapterItem<*>> {
 
   init {
-//    toolbarElevationLiveData = MutableLiveData()
+    toolbarElevationLiveData = MutableLiveData()
     hasInlineProgress = true
   }
 
@@ -67,6 +69,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeTripsFragment.adapter
       addOnScrollListener(PaginationInterface())
+      addOnScrollListener(HomeTripsRVScrollListener(binding.editStickySearch))
     }
 
     adapter.setItems(getStaticItems())
@@ -84,15 +87,19 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     /* observe and update adapter items */
     viewModel.userTripsData.observe(this, Observer { _items ->
       /* error container, if items are null */
-      binding.containerError.visible(
-          if (_items == null) {
-            true
-          } else {
-            adapter.operation(_items)
-            false
-          }
-      )
+      if (_items == null) {
+        true
+      } else {
+        adapter.operation(_items)
+        false
+      }.let {
+        binding.containerError.visible(it)
+        binding.rvTrips.visible(!it)
+      }
     })
+
+    /* attach sticky search with adapter */
+    binding.editStickySearch.attachWithAdapter(adapter)
 
     /* fetch trips initially */
     viewModel.fetchTrips(false)
@@ -140,7 +147,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   }
 
   inner class HomeTripsRVScrollListener(
-    private val stickyView: View,
+    private val stickyView: DelhiveryAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {
     /* Current toolbar elevation */
@@ -157,34 +164,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
       val pos = layoutManager.findFirstVisibleItemPosition()
       if (pos >= 1) {
-        stickyView.alpha = 1f
-//        please {
-//          animate(stickyView) {
-//            originalPosition()
-//          }
-//        }.start()
-//        if (stickyView.translationY < 0) {
-//        stickyView.animate()
-//            .translationY(0f)
-//            .start()
-//        }
+        stickyView.setRatio(0f)
         toolbarElevationLiveData!!.postValue(0f)
-      } else {
+      } else if (recyclerView.childCount > 0) {
         val searchView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
         val factor =
           (searchView.height.toFloat() - searchView.bottom.toFloat()) / searchView.height.toFloat()
-        stickyView.alpha = factor
-//        stickyView.alpha = 0f
-//        if (stickyView.translationY == 0f) {
-//        stickyView.animate()
-//            .translationY(-stickyView.height.toFloat())
-//            .start()
-//        please {
-//          animate(stickyView) {
-//            outOfScreen(Gravity.TOP)
-//          }
-//        }.start()
-//        }
+        stickyView.setRatio((1 - factor))
         toolbarElevationLiveData!!.postValue((1 - factor) * elevation)
       }
     }

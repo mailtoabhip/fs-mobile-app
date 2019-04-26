@@ -16,7 +16,7 @@ class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTrips
         _interface
     ) {
 
-  override fun getItemViewType(position: Int) = items[position].type.typeId
+  override fun getItemViewType(position: Int) = itemsList()[position].type.typeId
 
   override fun getBinding(
     inflater: LayoutInflater,
@@ -43,7 +43,8 @@ class HomeTripsRVAdapter(private val _interface: ItemClickListener<BaseHomeTrips
     }
   }
 
-  override fun filterList(query: String) = items.filter { it.data.filter(query) }
+  override fun filterList(query: String) =
+    items.filter { it.type == Search || it.data.filter(query) }
 
   /**
    * Reset to empty state with search bar

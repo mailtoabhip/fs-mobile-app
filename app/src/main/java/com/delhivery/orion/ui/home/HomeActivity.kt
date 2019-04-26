@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener
 import android.support.v4.view.ViewCompat
+import android.view.Menu
 import android.view.MenuItem
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivityHomeBinding
@@ -15,6 +16,8 @@ import com.delhivery.orion.ui.home.fragments.HomeFragmentActionType
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType
 import com.delhivery.orion.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.selectRouteIntent
 import com.delhivery.orion.utils.extensions.onPageSelected
 
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
@@ -101,4 +104,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         pos != -1
       }
+
+  override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    menuInflater.inflate(R.menu.activity_home, menu)
+    return super.onCreateOptionsMenu(menu)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
+    R.id.action_route_selection -> {
+      startActivity(selectRouteIntent(this@HomeActivity, UserRoutes))
+      true
+    }
+    else -> super.onOptionsItemSelected(item)
+  }
 }

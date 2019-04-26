@@ -2,11 +2,13 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.home.HomeBidsHeaderItemData
+import com.delhivery.orion.data.home.HomeBidsProgressItemData
 import com.delhivery.orion.data.home.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.HomeBidsSearchItemData
 import com.delhivery.orion.data.home.HomeBidsSearchSpinnerItemData
 import com.delhivery.orion.data.home.HomeBidsWarningItemData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.SearchSpinner
@@ -17,7 +19,8 @@ enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Search(1),
   Request(2),
   Warning(3),
-  SearchSpinner(4);
+  SearchSpinner(4),
+  Progress(5);
 
   companion object {
     /**
@@ -66,3 +69,9 @@ class HomeBidsWarningItem(data: HomeBidsWarningItemData) :
  */
 class HomeBidsSearchSpinnerItem(data: HomeBidsSearchSpinnerItemData = HomeBidsSearchSpinnerItemData()) :
     BaseHomeBidsRVAdapterItem<HomeBidsSearchSpinnerItemData>(SearchSpinner, data)
+
+/**
+ * Inline progress item
+ */
+class HomeBidsProgressItem(data: HomeBidsProgressItemData = HomeBidsProgressItemData()) :
+    BaseHomeBidsRVAdapterItem<HomeBidsProgressItemData>(Progress, data)

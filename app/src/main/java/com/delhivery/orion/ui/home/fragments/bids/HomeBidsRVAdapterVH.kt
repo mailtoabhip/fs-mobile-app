@@ -6,6 +6,7 @@ import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
+import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
@@ -107,6 +108,22 @@ internal class HomeBidsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinnerIte
     ) {
   override fun bind(
     item: HomeBidsSearchSpinnerItem,
+    _interface: HomeBidsRVAdapterInterface
+  ) {
+
+  }
+}
+
+/**
+ * Progress inline viewholder
+ */
+internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, HomeBidsProgressItem>(
+        binding
+    ) {
+
+  override fun bind(
+    item: HomeBidsProgressItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
 

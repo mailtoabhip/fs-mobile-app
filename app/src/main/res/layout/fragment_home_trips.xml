@@ -15,33 +15,6 @@
       android:background="@color/colorBackground"
       >
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-      <android.support.v7.widget.RecyclerView
-          android:id="@+id/rv_trips"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.v7.widget.AppCompatEditText
-        android:id="@+id/edit_sticky_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alpha="0"
-        android:background="@drawable/bg_search_bar_dark"
-        android:gravity="center_vertical"
-        android:hint="@string/hint_search_load"
-        android:paddingStart="60dp"
-        android:textColorHint="#59000000"
-        android:textSize="16sp"
-        bind:shadow="@{ @dimen/size_4dp }"
-        />
-
     <!-- No trips container -->
     <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/container_error"
@@ -99,6 +72,33 @@
           />
 
     </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <android.support.v7.widget.RecyclerView
+          android:id="@+id/rv_trips"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+        android:id="@+id/edit_sticky_search"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_search_trips"
+        android:imeOptions="actionSearch"
+        android:paddingBottom="@dimen/size_16dp"
+        android:paddingStart="60dp"
+        android:textColorHint="#59000000"
+        android:textSize="16sp"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_filter"

@@ -52,6 +52,7 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
    */
   fun cancelFilter() {
     isFiltering = false
+    filteredItems.clear()
     notifyDataSetChanged()
   }
 }

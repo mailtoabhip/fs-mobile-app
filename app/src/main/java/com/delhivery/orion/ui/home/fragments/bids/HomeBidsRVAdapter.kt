@@ -4,6 +4,7 @@ import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
+import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
@@ -14,6 +15,7 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.SearchSpinner
@@ -36,6 +38,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     Request -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
     Warning -> ViewHomeBidsWarningItemBinding.inflate(inflater, parent, false)
     SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
+    Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -45,6 +48,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     is ViewHomeBidsRequestItemBinding -> HomeBidsRequestItemVH(binding)
     is ViewHomeBidsWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewHomeBidsSearchSpinnerItemBinding -> HomeBidsSearchSpinnerItemVH(binding)
+    is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
     else -> HomeBidsRequestItemVH(binding as ViewHomeBidsRequestItemBinding)
   }
 

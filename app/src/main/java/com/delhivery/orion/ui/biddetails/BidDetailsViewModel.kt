@@ -11,6 +11,7 @@ import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
@@ -50,9 +51,7 @@ class BidDetailsViewModel @Inject constructor(
   fun fetchTransactionBids(postMessage: String? = null) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
-        .doOnSubscribe {
-          transactionBidLiveData.postValue(BidDetailsUserBidState_LoadingBids())
-        }
+        .bidsProgress()
         .subscribe { _bRes, error ->
           if (!error) {
             //determine bid state and post to live data
@@ -60,8 +59,8 @@ class BidDetailsViewModel @Inject constructor(
               _bRes.third == 0 -> BidDetailsUserBidState_PlaceBidFirst()
               _bRes.first == null -> BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second)
               else -> when (_bRes.first!!.status()) {
-                /* pass correct location from transaction */ Accepted -> BidDetailsUserBidState_ConfirmedBid(
-                    "Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
+                Accepted -> BidDetailsUserBidState_ConfirmedBid(
+                    transactionLiveData.value?.pickupLocation ?: "No Pickup Location"
                 )
                 Rejected -> BidDetailsUserBidState_RejectedBid(
                     _bRes.second.acceptedBid()!!, _bRes.first!!
@@ -83,7 +82,7 @@ class BidDetailsViewModel @Inject constructor(
     compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
-        .progress()
+        .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
             fetchTransactionBids(_res.responseData?.message)
@@ -101,7 +100,7 @@ class BidDetailsViewModel @Inject constructor(
     compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
-        .progress()
+        .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
             fetchTransactionBids(_res.responseData?.message)
@@ -116,6 +115,14 @@ class BidDetailsViewModel @Inject constructor(
    */
   private fun List<TransactionBid>.acceptedBid() =
     filter { it._status == Accepted.statusKey }.firstOrNull()
+
+  /**
+   * Emit bids fetching progress
+   */
+  private fun <T> Single<T>.bidsProgress() = doOnSubscribe {
+    if (transactionBidLiveData.value !is BidDetailsUserBidState_LoadingBids)
+      transactionBidLiveData.postValue(BidDetailsUserBidState_LoadingBids())
+  }
 }
 
 private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating
