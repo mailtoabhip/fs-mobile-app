@@ -119,6 +119,8 @@
   <string name="action_logout_from_app">Logout from the app</string>
   <string name="title_dialog_logout">Confirm Logout</string>
   <string name="msg_dialog_logout">You are signing out of ORION app.</string>
+  <string name="title_coming_soon">Coming Soon</string>
+  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
