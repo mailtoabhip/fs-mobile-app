@@ -31,6 +31,9 @@ class HomeBidsViewModel @Inject constructor(
   var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* fab visibility live data */
+  var fabVisibilityLiveData = MutableLiveData<Boolean>()
+
   var hasMoreData = true
   var offset = 0
 
@@ -57,6 +60,7 @@ class HomeBidsViewModel @Inject constructor(
               /* show no routes warning item when no routes found */
               if (first.userRoutes().isEmpty()) {
                 _items.add(Pair(HomeBidsWarningItem_SelectRoutes, AddUpdate))
+                fabVisibilityLiveData.postValue(false)
                 showProgress(false)
               }
               /* start fetching transactions */
@@ -69,6 +73,7 @@ class HomeBidsViewModel @Inject constructor(
             }
           } else {
             error.handle()
+            fabVisibilityLiveData.postValue(false)
             showProgress(false)
           }
         }
@@ -103,6 +108,7 @@ class HomeBidsViewModel @Inject constructor(
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && _tRes.total == 0) {
                 add(Pair(HomeBidsWarningItem_EditRoutePrefs, AddUpdate))
+                fabVisibilityLiveData.postValue(false)
               }
               /* post all transactions as add */
               else {
@@ -110,6 +116,7 @@ class HomeBidsViewModel @Inject constructor(
                 _tRes.transactions.forEach { _item ->
                   add(Pair(HomeBidsRequestItem(_item), Add))
                 }
+                fabVisibilityLiveData.postValue(true)
               }
             }
                 .let { userBidsData.postValue(it) }
@@ -117,6 +124,7 @@ class HomeBidsViewModel @Inject constructor(
             /* remove progress item */
             Pair(HomeBidsProgressItem(), Remove).let { userBidsData.postValue(listOf(it)) }
             error.handle()
+            fabVisibilityLiveData.postValue(false)
           }
           showProgress(false)
         }

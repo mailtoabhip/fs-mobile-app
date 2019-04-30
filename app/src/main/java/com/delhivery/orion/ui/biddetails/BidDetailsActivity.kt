@@ -82,8 +82,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     override fun onChanged(t: HomeBidsRequestItemData?) {
       t?.let { _transaction ->
         binding.transaction = _transaction
-        title =
-          "${_transaction.tripDisplayName()} (${_transaction.requiredAt()})"
+        title = _transaction.tripDisplayName()
       }
     }
   }

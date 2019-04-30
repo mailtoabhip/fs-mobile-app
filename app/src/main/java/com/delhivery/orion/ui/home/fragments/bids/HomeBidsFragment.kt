@@ -30,6 +30,7 @@ import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
+import com.delhivery.orion.utils.extensions.withMutableData
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -78,10 +79,13 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     adapter.setItems(getStaticData())
 
     /* Use this logic to create our own menu as per  */
-    binding.fabSort.setOnClickListener { fab ->
-      uiUtils.fabCardMenu(fab as FloatingActionButton, HomeBidsFabCardMenuItems) {
-        onFabMenuItemSelected(it)
+    binding.fabSort.apply {
+      setOnClickListener { fab ->
+        uiUtils.fabCardMenu(fab as FloatingActionButton, HomeBidsFabCardMenuItems) {
+          onFabMenuItemSelected(it)
+        }
       }
+      withMutableData(this@HomeBidsFragment, viewModel.fabVisibilityLiveData)
     }
 
     /* start search on click */

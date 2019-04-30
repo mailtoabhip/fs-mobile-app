@@ -1,7 +1,11 @@
 package com.delhivery.orion.utils.extensions
 
 import android.app.Activity
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.support.annotation.ArrayRes
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.view.ViewPager.OnPageChangeListener
@@ -150,3 +154,16 @@ fun View.focusClick() = apply {
  * Consume view touch events
  */
 fun View.consumeTouch() = setOnTouchListener { _, _ -> true }
+
+/**
+ * Change view visibility as per mutable live data
+ */
+fun View.withMutableData(
+  owner: LifecycleOwner,
+  data: MutableLiveData<Boolean>
+) = data.observe(owner, Observer {
+  when (this) {
+    is FloatingActionButton -> if (it == true) show() else hide()
+    else -> visible(it == true)
+  }
+})

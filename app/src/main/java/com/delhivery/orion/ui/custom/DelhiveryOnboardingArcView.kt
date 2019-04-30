@@ -7,8 +7,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RadialGradient
-import android.graphics.Shader
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
@@ -37,7 +35,7 @@ class DelhiveryOnboardingArcView(
       val typedArray =
         context.obtainStyledAttributes(a, R.styleable.DelhiveryOnboardingArcView, 0, 0)
       direction =
-          ArcDirection.byId(typedArray.getInt(R.styleable.DelhiveryOnboardingArcView_direction, 0))
+        ArcDirection.byId(typedArray.getInt(R.styleable.DelhiveryOnboardingArcView_direction, 0))
       typedArray.recycle()
     }
 
@@ -58,22 +56,10 @@ class DelhiveryOnboardingArcView(
       color = ArcColor
     }
   }
-  /* shadow paint */
-  private val shadowPaint: Paint by lazy {
-    Paint(Paint.ANTI_ALIAS_FLAG).apply {
-      color = Color.parseColor("#1e000000")
-      shader = RadialGradient(
-          width / 2f, height * direction.factor, height * HeightArcFactor, Color.TRANSPARENT,
-          Color.parseColor("#32000000"),
-          Shader.TileMode.MIRROR
-      )
-    }
-  }
 
   override fun onDraw(canvas: Canvas?) {
     canvas?.apply {
-      canvas.drawCircle(width / 2f, height * direction.factor, arcRadius, shadowPaint)
-      canvas.drawCircle(width / 2f, height * direction.factor - ShadowWidth, arcRadius, arcPaint)
+      drawCircle(width / 2f, height * direction.factor, arcRadius, arcPaint)
     }
   }
 
@@ -116,8 +102,6 @@ class DelhiveryOnboardingArcView(
 
 /* arc height animation factor */
 private const val HeightArcFactor = 2f
-
-private const val ShadowWidth = 4f
 
 /* Arc animation type */
 enum class AnimationType(vararg val values: Float) {

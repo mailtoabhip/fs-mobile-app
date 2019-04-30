@@ -2,10 +2,10 @@ package com.delhivery.orion.data.home
 
 import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.delhivery.orion.utils.DrawableProviderUtils
-import com.delhivery.orion.utils.extensions.safeSubstring
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -49,7 +49,7 @@ data class HomeBidsRequestItemData(
   /**
    * Formatted required at
    */
-  fun requiredAt() = DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)
+  fun requiredAt() = DateUtils.daysDiffWithTimeStr(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
    * Required at background as per designs
@@ -67,7 +67,9 @@ data class HomeBidsRequestItemData(
    * Trip display name for toolbar title
    */
   fun tripDisplayName() =
-    "${originState.safeSubstring(0, 3)} - ${destinationState.safeSubstring(0, 3)}".toUpperCase()
+    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
+        destinationState
+    )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)

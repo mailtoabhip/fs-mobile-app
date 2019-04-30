@@ -76,22 +76,36 @@ object DateUtils {
     return _cal[Calendar.DAY_OF_YEAR] - _now[Calendar.DAY_OF_YEAR]
   }
 
+  fun daysDiffStr(
+    date: String,
+    format: String
+  ) = daysDiffStr(parseDate(date, format))
+
   /**
    * Days diff as string
    */
   fun daysDiffStr(
+    requiredOn: Date
+  ): String {
+    val _diff = daysDiff(requiredOn)
+    return when (_diff) {
+      -1 -> "Yesterday"
+      0 -> "Today"
+      1 -> "Tomorrow"
+      else -> formatDate(requiredOn, "dd MMM")
+    }
+  }
+
+  /**
+   * Days diff as string with time
+   */
+  fun daysDiffWithTimeStr(
     date: String,
     format: String
   ): String {
     val requiredOn = parseDate(date, format)
-    val _diff = daysDiff(requiredOn)
-    val reqDate = when (_diff) {
-      0 -> "Today"
-      1 -> "Tomorrow"
-      else -> DateUtils.formatDate(requiredOn, "dd MMM,")
-    }
-    val reqTime = DateUtils.formatDate(requiredOn, "hh:mm a")
-    return "$reqDate $reqTime"
+    val reqTime = formatDate(requiredOn, "hh:mm a")
+    return "${daysDiffStr(requiredOn)}, $reqTime"
   }
 }
 

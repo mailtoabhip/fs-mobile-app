@@ -1,5 +1,6 @@
 package com.delhivery.orion.data
 
+import com.delhivery.orion.utils.extensions.safeSubstring
 import com.google.gson.annotations.SerializedName
 
 data class StateModel(
@@ -7,6 +8,18 @@ data class StateModel(
   @SerializedName("state_id") val stateId: String
 ) : BaseKeyTypeModel<String>() {
   override fun key() = stateId
+
+  companion object {
+
+    /**
+     * State id from state name
+     */
+    fun idFromName(name: String) =
+      StateModelList
+          .filter { it.state.contains(name, true) }
+          .firstOrNull()
+          ?.stateId ?: name.safeSubstring(0, 3)
+  }
 }
 
 val StateModelList = listOf<StateModel>(
