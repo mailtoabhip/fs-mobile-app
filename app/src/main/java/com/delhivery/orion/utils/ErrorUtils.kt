@@ -1,6 +1,5 @@
 package com.delhivery.orion.utils
 
-import android.content.Intent
 import com.delhivery.orion.BuildConfig
 import com.delhivery.orion.api.response.ErrorResponseBody
 import com.delhivery.orion.exception.HttpErrorCode
@@ -8,7 +7,6 @@ import com.delhivery.orion.exception.HttpErrorCode.Forbidden
 import com.delhivery.orion.exception.HttpErrorCode.Unauthorized
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.repository.AuthenticationRepository
-import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.google.gson.Gson
 import dagger.android.support.DaggerAppCompatActivity
 import retrofit2.HttpException
@@ -20,7 +18,8 @@ class ErrorUtils @Inject constructor(
   private val authRepository: AuthenticationRepository,
   private val uiUtils: UiUtils,
   private val dialogUtils: DialogUtils,
-  private val gson: Gson
+  private val gson: Gson,
+  private val navigationUtils: NavigationUtils
 ) {
 
   /**
@@ -56,7 +55,7 @@ class ErrorUtils @Inject constructor(
     }
     val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
     when (errorCode) {
-      Unauthorized, Forbidden -> tokenExpired(errorMessage)
+      Unauthorized, Forbidden -> navigationUtils.logout(errorMessage)
       else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
     }
   }
@@ -71,22 +70,9 @@ class ErrorUtils @Inject constructor(
     val errorCode = HttpErrorCode.exceptionFromCode(httpException.code())
     val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
     when (errorCode) {
-      Unauthorized, Forbidden -> tokenExpired(errorMessage)
+      Unauthorized, Forbidden -> navigationUtils.logout(errorMessage)
       else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
     }
-  }
-
-  /**
-   * Handle token expired/forbidden
-   */
-  private fun tokenExpired(message: String) {
-    authRepository.logout()
-    uiUtils.showToast(message)
-    Intent(activity, AuthenticationActivity::class.java)
-        .let {
-          activity.startActivity(it)
-        }
-    activity.finish()
   }
 }
 

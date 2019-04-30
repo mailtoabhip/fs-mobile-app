@@ -112,6 +112,13 @@
   <string name="label_status_history">Status history</string>
   <string name="label_no_bids_found">No bids found</string>
   <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
+  <string name="title_we_are_building_this_page">We are building the page</string>
+  <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
+  <string name="label_your_routes">Your Routes</string>
+  <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
+  <string name="action_logout_from_app">Logout from the app</string>
+  <string name="title_dialog_logout">Confirm Logout</string>
+  <string name="msg_dialog_logout">You are signing out of ORION app.</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

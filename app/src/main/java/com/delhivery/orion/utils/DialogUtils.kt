@@ -44,7 +44,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     @StringRes title: Int, @StringRes message: Int?,
     positiveAction: String = activity.getString(android.R.string.ok),
     negativeAction: String = activity.getString(android.R.string.cancel),
-    positiveClickListener: () -> Unit
+    positiveClickListener: (DialogInterface) -> Unit
   ) {
     val titleStr = activity.getString(title)
     val messageStr = message?.let { activity.getString(it) }
@@ -54,7 +54,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     )
     showConfirmDialog(
         activity, titleStr, messageStr, positiveAction, negativeAction,
-        DialogInterface.OnClickListener { _, _ -> positiveClickListener() }, null, actionBtnColor,
+        DialogInterface.OnClickListener { d, _ -> positiveClickListener(d) }, null, actionBtnColor,
         actionBtnColor
     )
   }
