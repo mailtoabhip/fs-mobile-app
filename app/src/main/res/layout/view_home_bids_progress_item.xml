@@ -16,162 +16,167 @@
       app:cardElevation="2dp"
       >
 
-    <android.support.constraint.ConstraintLayout
+    <com.delhivery.orion.ui.custom.DelhiveryShimmerLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false"
-        android:paddingBottom="16dp"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:paddingTop="12dp"
         >
-
-      <TextView
-          android:id="@+id/text_bids_deadline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text="Bid ends tomorrow at 4:00pm"
-          android:textColor="#29a8e0"
-          android:textSize="13sp"
-          android:textStyle="normal"
-          android:visibility="gone"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          />
-
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/img_forward"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_8dp"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_bids_deadline"
-          app:srcCompat="@drawable/ic_arrow_forward_black"
-          />
-
-      <View
-          android:id="@+id/view_source_city"
-          android:layout_width="0dp"
-          android:layout_height="0dp"
-          android:layout_marginEnd="@dimen/size_16dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintBottom_toBottomOf="@id/img_forward"
-          app:layout_constraintEnd_toStartOf="@id/img_forward"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="@id/img_forward"
-          />
-
-      <View
-          android:id="@+id/view_source_state"
-          android:layout_width="0dp"
-          android:layout_height="@dimen/size_16dp"
-          android:layout_marginEnd="@dimen/size_16dp"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toStartOf="@id/img_forward"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/view_source_city"
-          />
-
-      <View
-          android:id="@+id/view_destination_city"
-          android:layout_width="0dp"
-          android:layout_height="0dp"
-          android:layout_marginStart="@dimen/size_16dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintBottom_toBottomOf="@id/img_forward"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@id/img_forward"
-          app:layout_constraintTop_toTopOf="@id/img_forward"
-          />
-
-      <View
-          android:id="@+id/view_destination_state"
-          android:layout_width="0dp"
-          android:layout_height="@dimen/size_16dp"
-          android:layout_marginStart="@dimen/size_16dp"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@id/img_forward"
-          app:layout_constraintTop_toBottomOf="@id/view_destination_city"
-          />
-
-      <View
-          android:id="@+id/view_date_time"
-          android:layout_width="0dp"
-          android:layout_height="20dp"
-          android:layout_marginEnd="@dimen/size_36dp"
-          android:layout_marginTop="@dimen/size_16dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toEndOf="@id/view_source_city"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/view_source_state"
-          />
-
-      <View
-          android:id="@+id/view_truck_type"
-          android:layout_width="32dp"
-          android:layout_height="@dimen/size_20dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintStart_toEndOf="@+id/img_forward"
-          app:layout_constraintTop_toTopOf="@id/view_date_time"
-          />
-
-      <View
-          android:id="@+id/view_truck_details"
-          android:layout_width="0dp"
-          android:layout_height="@dimen/size_16dp"
-          android:layout_marginStart="@dimen/size_8dp"
-          android:layout_marginTop="2dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@id/view_truck_type"
-          app:layout_constraintTop_toTopOf="@id/view_truck_type"
-          />
-
-      <View
-          android:id="@+id/view_load_details"
+      <android.support.constraint.ConstraintLayout
           android:layout_width="match_parent"
-          android:layout_height="@dimen/size_16dp"
-          android:layout_marginEnd="48dp"
-          android:layout_marginTop="@dimen/size_20dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/view_truck_details"
-          />
+          android:layout_height="wrap_content"
+          android:clickable="false"
+          android:focusable="false"
+          android:paddingBottom="16dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="16dp"
+          android:paddingTop="12dp"
+          >
 
-      <View
-          android:id="@+id/view_img_sp"
-          android:layout_width="18dp"
-          android:layout_height="@dimen/size_18dp"
-          android:layout_marginTop="@dimen/size_12dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/view_load_details"
-          />
+        <TextView
+            android:id="@+id/text_bids_deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Bid ends tomorrow at 4:00pm"
+            android:textColor="#29a8e0"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-      <View
-          android:layout_width="160dp"
-          android:layout_height="@dimen/size_14dp"
-          android:layout_marginStart="@dimen/size_8dp"
-          android:layout_marginTop="@dimen/size_2dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintStart_toEndOf="@id/view_img_sp"
-          app:layout_constraintTop_toTopOf="@id/view_img_sp"
-          />
+        <View
+            android:id="@+id/img_forward"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_bids_deadline"
+            />
 
-      <View
-          android:layout_width="96dp"
-          android:layout_height="@dimen/size_18dp"
-          android:background="@color/colorShimmer"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="@id/view_img_sp"
-          />
-    </android.support.constraint.ConstraintLayout>
+        <View
+            android:id="@+id/view_source_city"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/img_forward"
+            app:layout_constraintEnd_toStartOf="@id/img_forward"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            />
+
+        <View
+            android:id="@+id/view_source_state"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toStartOf="@id/img_forward"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_source_city"
+            />
+
+        <View
+            android:id="@+id/view_destination_city"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/img_forward"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_forward"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            />
+
+        <View
+            android:id="@+id/view_destination_state"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_forward"
+            app:layout_constraintTop_toBottomOf="@id/view_destination_city"
+            />
+
+        <View
+            android:id="@+id/view_date_time"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="@dimen/size_36dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintEnd_toEndOf="@id/view_source_city"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_source_state"
+            />
+
+        <View
+            android:id="@+id/view_truck_type"
+            android:layout_width="32dp"
+            android:layout_height="@dimen/size_20dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintStart_toEndOf="@+id/img_forward"
+            app:layout_constraintTop_toTopOf="@id/view_date_time"
+            />
+
+        <View
+            android:id="@+id/view_truck_details"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/view_truck_type"
+            app:layout_constraintTop_toTopOf="@id/view_truck_type"
+            />
+
+        <View
+            android:id="@+id/view_load_details"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginTop="@dimen/size_20dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_truck_details"
+            />
+
+        <View
+            android:id="@+id/view_img_sp"
+            android:layout_width="18dp"
+            android:layout_height="@dimen/size_18dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_load_details"
+            />
+
+        <View
+            android:layout_width="160dp"
+            android:layout_height="@dimen/size_14dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintStart_toEndOf="@id/view_img_sp"
+            app:layout_constraintTop_toTopOf="@id/view_img_sp"
+            />
+
+        <View
+            android:layout_width="96dp"
+            android:layout_height="@dimen/size_18dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/view_img_sp"
+            />
+      </android.support.constraint.ConstraintLayout>
+    </com.delhivery.orion.ui.custom.DelhiveryShimmerLayout>
   </android.support.v7.widget.CardView>
 </layout>
