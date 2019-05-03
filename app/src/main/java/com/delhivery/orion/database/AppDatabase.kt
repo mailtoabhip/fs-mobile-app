@@ -12,7 +12,9 @@ import com.delhivery.orion.database.entity.User
  * also update version, incase any updates to entities
  *
  */
-@Database(entities = [User::class, SearchLoadHistoryEntity::class], version = 3)
+@Database(
+    entities = [User::class, SearchLoadHistoryEntity::class], version = 3, exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
   abstract fun userDao(): UserDao
 

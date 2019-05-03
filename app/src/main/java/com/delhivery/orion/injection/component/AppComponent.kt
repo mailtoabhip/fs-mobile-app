@@ -11,8 +11,10 @@ import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, ViewModelFactoryModule::class, AndroidSupportInjectionModule::class, ActivityBindingModule::class, NetworkModule::class])
+@Component(
+    modules = [AppModule::class, ViewModelFactoryModule::class, AndroidSupportInjectionModule::class, ActivityBindingModule::class, NetworkModule::class]
+)
 interface AppComponent : AndroidInjector<KotlinApp> {
-    @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<KotlinApp>()
+  @Component.Builder
+  abstract class Builder : AndroidInjector.Builder<KotlinApp>()
 }
