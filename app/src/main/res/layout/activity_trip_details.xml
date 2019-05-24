@@ -12,11 +12,11 @@
 
     <variable
         name="tripDetails"
-        type="com.delhivery.orion.data.home.HomeTripsItemData"
+        type="com.delhivery.orion.data.home.trips.HomeTripsItemData"
         />
     <variable
         name="transactionDetails"
-        type="com.delhivery.orion.data.home.HomeBidsRequestItemData"
+        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
         />
   </data>
   <android.support.v7.widget.LinearLayoutCompat

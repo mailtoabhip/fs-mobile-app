@@ -1,4 +1,4 @@
-package com.delhivery.orion.data.home
+package com.delhivery.orion.data.home.trips
 
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.google.gson.annotations.SerializedName

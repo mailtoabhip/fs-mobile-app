@@ -1,4 +1,4 @@
-package com.delhivery.orion.data.home
+package com.delhivery.orion.data.home.bids
 
 import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel

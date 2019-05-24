@@ -2,8 +2,8 @@ package com.delhivery.orion.ui.tripdetails
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.HomeTripsItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not

@@ -10,8 +10,8 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add

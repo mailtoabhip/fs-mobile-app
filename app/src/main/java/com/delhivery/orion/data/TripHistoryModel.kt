@@ -1,6 +1,6 @@
 package com.delhivery.orion.data
 
-import com.delhivery.orion.data.home.TripStatus
+import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.google.gson.annotations.SerializedName

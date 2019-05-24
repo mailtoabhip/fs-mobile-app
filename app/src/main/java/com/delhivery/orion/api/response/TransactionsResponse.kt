@@ -1,6 +1,6 @@
 package com.delhivery.orion.api.response
 
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.google.gson.annotations.SerializedName
 
 data class TransactionsResponse(

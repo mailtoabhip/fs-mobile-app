@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.orion.ui.home.fragments.loads.HomeLoadsViewModel"
+        />
+  </data>
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <android.support.v7.widget.RecyclerView
+          android:id="@+id/rv_bids"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/edit_sticky_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_search_bar_dark"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_search_load"
+        android:paddingStart="60dp"
+        android:textColorHint="#59000000"
+        android:textSize="16sp"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
+
+  </FrameLayout>
+</layout>

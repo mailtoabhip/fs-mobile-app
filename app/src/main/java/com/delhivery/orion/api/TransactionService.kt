@@ -2,7 +2,7 @@ package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.api.response.TransactionsResponse
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

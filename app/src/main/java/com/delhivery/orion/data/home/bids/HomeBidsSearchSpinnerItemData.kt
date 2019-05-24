@@ -1,4 +1,4 @@
-package com.delhivery.orion.data.home
+package com.delhivery.orion.data.home.bids
 
 import android.view.View
 import com.delhivery.orion.data.BaseKeyTypeModel

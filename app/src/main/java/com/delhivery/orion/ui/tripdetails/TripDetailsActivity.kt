@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.delhivery.orion.R
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.databinding.ActivityTripDetailsBinding
 import com.delhivery.orion.databinding.ViewTripHistoryItemBinding
 import com.delhivery.orion.ui.base.BaseActivity

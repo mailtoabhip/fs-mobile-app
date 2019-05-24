@@ -1,6 +1,6 @@
 package com.delhivery.orion.api.response
 
-import com.delhivery.orion.data.home.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.google.gson.annotations.SerializedName
 
 data class TripsResponse(

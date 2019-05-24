@@ -61,6 +61,7 @@
   <string name="label_inr">₹ %1$d</string>
   <string name="label_inr_s">₹ %1$s</string>
   <string name="label_my_bids">My Bids</string>
+  <string name="label_nav_load">Load</string>
   <string name="label_confirmed_bids">Confirmed Bids</string>
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>

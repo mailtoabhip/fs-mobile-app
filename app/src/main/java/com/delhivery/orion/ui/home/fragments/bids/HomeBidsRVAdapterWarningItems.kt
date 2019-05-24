@@ -1,8 +1,8 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
-import com.delhivery.orion.data.home.HomeBidsWarningAction_EditRoutePrefs
-import com.delhivery.orion.data.home.HomeBidsWarningAction_SelectRoutes
-import com.delhivery.orion.data.home.HomeBidsWarningItemData
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_SelectRoutes
+import com.delhivery.orion.data.home.bids.HomeBidsWarningItemData
 
 /**
  * Select routes warning item, when no routes are found with user lane_prefs

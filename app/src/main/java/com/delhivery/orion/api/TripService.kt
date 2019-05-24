@@ -3,7 +3,7 @@ package com.delhivery.orion.api
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.api.response.TripsResponse
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path

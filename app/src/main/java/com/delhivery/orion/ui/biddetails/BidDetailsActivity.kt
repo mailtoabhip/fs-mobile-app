@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.delhivery.orion.R
 import com.delhivery.orion.data.bids.TransactionBid
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.ActivityBidDetailsBinding
 import com.delhivery.orion.databinding.ViewBidDetailsConfirmedBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsEditBidBinding

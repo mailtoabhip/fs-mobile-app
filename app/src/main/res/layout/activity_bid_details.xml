@@ -11,7 +11,7 @@
         />
     <variable
         name="transaction"
-        type="com.delhivery.orion.data.home.HomeBidsRequestItemData"
+        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
         />
   </data>
   <android.support.v7.widget.LinearLayoutCompat

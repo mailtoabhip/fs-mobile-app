@@ -2,9 +2,9 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import android.databinding.ViewDataBinding
 import android.view.View
-import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
-import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
-import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_MyBids
+import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
@@ -54,7 +54,8 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
     binding.myBids = item.data.myBids.toString()
     binding.confirmedBids = item.data.confirmedBids.toString()
     binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
-    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
+    binding.viewConfirmedBids.clickToAction(
+        HomeBidsHeaderAction_ConfirmedBids, item, _interface)
   }
 }
 

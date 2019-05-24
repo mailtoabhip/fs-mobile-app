@@ -1,4 +1,4 @@
-package com.delhivery.orion.ui.home.fragments.bids
+package com.delhivery.orion.ui.home.fragments.loads
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.UserModel
@@ -14,6 +14,13 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsHeaderItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsSearchItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsWarningItem_EditRoutePrefs
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsWarningItem_SelectRoutes
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -21,7 +28,7 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
-class HomeBidsViewModel @Inject constructor(
+class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository
@@ -55,9 +62,13 @@ class HomeBidsViewModel @Inject constructor(
                 mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>()
 
               /* add header counts */
-              _items.add(Pair(HomeBidsHeaderItem(
-                  HomeBidsHeaderItemData(second, third)
-              ), Update))
+              _items.add(
+                  Pair(
+                      HomeBidsHeaderItem(
+                          HomeBidsHeaderItemData(second, third)
+                      ), Update
+                  )
+              )
 
               /* show no routes warning item when no routes found */
               if (first.userRoutes().isEmpty()) {
@@ -114,9 +125,13 @@ class HomeBidsViewModel @Inject constructor(
               }
               /* post all transactions as add */
               else {
-                add(Pair(HomeBidsSearchItem(
-                    HomeBidsSearchItemData(_tRes.total)
-                ), Update))
+                add(
+                    Pair(
+                        HomeBidsSearchItem(
+                            HomeBidsSearchItemData(_tRes.total)
+                        ), Update
+                    )
+                )
                 _tRes.transactions.forEach { _item ->
                   add(Pair(HomeBidsRequestItem(_item), Add))
                 }

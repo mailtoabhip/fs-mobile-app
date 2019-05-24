@@ -1,8 +1,8 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import com.delhivery.orion.data.BaseKeyTypeModel
-import com.delhivery.orion.data.home.HomeTripsItemData
-import com.delhivery.orion.data.home.HomeTripsSearchItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsSearchItemData
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 

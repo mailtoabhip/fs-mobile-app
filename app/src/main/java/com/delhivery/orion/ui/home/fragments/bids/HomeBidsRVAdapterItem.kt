@@ -1,12 +1,12 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import com.delhivery.orion.data.BaseKeyTypeModel
-import com.delhivery.orion.data.home.HomeBidsHeaderItemData
-import com.delhivery.orion.data.home.HomeBidsProgressItemData
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.HomeBidsSearchItemData
-import com.delhivery.orion.data.home.HomeBidsSearchSpinnerItemData
-import com.delhivery.orion.data.home.HomeBidsWarningItemData
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.orion.data.home.bids.HomeBidsProgressItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsSearchItemData
+import com.delhivery.orion.data.home.bids.HomeBidsSearchSpinnerItemData
+import com.delhivery.orion.data.home.bids.HomeBidsWarningItemData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
@@ -43,13 +43,19 @@ abstract class BaseHomeBidsRVAdapterItem<D : BaseKeyTypeModel<String>>(
 /**
  * Header item with my bids and confirmed bids
  */
-class HomeBidsHeaderItem(data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(0, 0)) :
+class HomeBidsHeaderItem(data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(
+    0, 0
+)
+) :
     BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
 
 /**
  * Search item with live load requests
  */
-class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(0)) :
+class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(
+    0
+)
+) :
     BaseHomeBidsRVAdapterItem<HomeBidsSearchItemData>(Search, data)
 
 /**

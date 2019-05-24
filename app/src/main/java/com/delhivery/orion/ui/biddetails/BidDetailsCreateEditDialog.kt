@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.WindowManager
 import com.delhivery.orion.data.bids.TransactionBid
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.DialogBidCreateEditBinding
 
 /**

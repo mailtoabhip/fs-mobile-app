@@ -1,7 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import android.arch.lifecycle.MutableLiveData
-import com.delhivery.orion.data.home.TripStatus
+import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType

@@ -2,7 +2,7 @@ package com.delhivery.orion.ui.searchload.fragments.searchresults
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.repository.TransactionsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not

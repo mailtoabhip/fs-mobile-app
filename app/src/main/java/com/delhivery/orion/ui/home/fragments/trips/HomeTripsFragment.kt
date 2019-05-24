@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
-import com.delhivery.orion.data.home.HomeTripsItemData
-import com.delhivery.orion.data.home.TripStatus.InTrasit
-import com.delhivery.orion.data.home.TripStatus.TripCompleted
-import com.delhivery.orion.data.home.TripStatus.TruckArrived
-import com.delhivery.orion.data.home.TripStatus.TruckReached
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.TripStatus.InTrasit
+import com.delhivery.orion.data.home.trips.TripStatus.TripCompleted
+import com.delhivery.orion.data.home.trips.TripStatus.TruckArrived
+import com.delhivery.orion.data.home.trips.TripStatus.TruckReached
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener

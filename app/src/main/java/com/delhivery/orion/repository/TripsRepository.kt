@@ -3,9 +3,9 @@ package com.delhivery.orion.repository
 import com.delhivery.orion.api.TransactionService
 import com.delhivery.orion.api.TripService
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.HomeTripsItemData
-import com.delhivery.orion.data.home.TripStatus
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.utils.extensions.convertResponse
 import io.reactivex.Single
 import io.reactivex.functions.Function3

@@ -35,20 +35,6 @@
         android:paddingTop="12dp"
         >
 
-      <TextView
-          android:id="@+id/text_bids_deadline"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text="Bid ends tomorrow at 4:00pm"
-          android:textColor="#29a8e0"
-          android:textSize="13sp"
-          android:textStyle="normal"
-          android:visibility="gone"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          />
-
       <android.support.v7.widget.AppCompatImageView
           android:id="@+id/img_forward"
           android:layout_width="wrap_content"
@@ -56,7 +42,6 @@
           android:layout_marginTop="@dimen/size_8dp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_bids_deadline"
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
@@ -65,7 +50,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif"
-          android:text="@{ request.origin }"
+          android:text="@{request.origin}"
           android:textColor="#de000000"
           android:textSize="16sp"
           android:textStyle="normal"
@@ -79,7 +64,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="@{ request.originState }"
+          android:text="@{request.originState}"
           android:textColor="#99000000"
           android:textSize="13sp"
           android:textStyle="normal"
@@ -93,7 +78,7 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="24dp"
           android:fontFamily="sans-serif"
-          android:text="@{ request.destination }"
+          android:text="@{request.destination}"
           android:textColor="#de000000"
           android:textSize="16sp"
           android:textStyle="normal"
@@ -107,7 +92,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="@{ request.destinationState }"
+          android:text="@{request.destinationState}"
           android:textColor="#99000000"
           android:textSize="13sp"
           android:textStyle="normal"
@@ -120,11 +105,12 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_16dp"
+          android:background="@drawable/bg_circle_delhivery_red"
           android:lineSpacingExtra="4sp"
-          android:text="@{ request.requiredAt() }"
+          android:text="@{request.requiredAt()}"
           android:textColor="#ffffff"
           android:textSize="10sp"
-          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_state"
           bind:drawableResId="@{ request.requiredAtBg() }"
           />
@@ -133,7 +119,7 @@
           android:id="@+id/img_truck_type"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          app:layout_constraintStart_toStartOf="@+id/img_forward"
+          app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="@id/text_truck_details"
           app:srcCompat="@{ request.truckTypeDrawableRes() }"
           />
@@ -144,7 +130,7 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/size_8dp"
           android:fontFamily="sans-serif"
-          android:text="@{ request.truckTypeDetails() }"
+          android:text="@{request.truckTypeDetails()}"
           android:textColor="#99000000"
           android:textSize="13sp"
           android:textStyle="normal"
@@ -158,7 +144,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_20dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{ request.loadDetails() }"
+          android:text="@{request.loadDetails()}"
           android:textColor="#181818"
           android:textSize="12sp"
           android:textStyle="normal"
@@ -178,34 +164,26 @@
           android:textColor="#000000"
           android:textSize="20sp"
           android:textStyle="normal"
-          app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_load_details"
+          app:layout_constraintStart_toStartOf="parent"
           tools:text="₹ 23900.00"
           />
 
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/img_supply_patner"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          app:layout_constraintBottom_toBottomOf="@id/text_amount"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="@id/text_amount"
-          app:srcCompat="@drawable/ic_supply_patner"
-          />
-
       <TextView
+          android:id="@+id/text_bids_deadline"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginStart="@dimen/size_6dp"
+          android:layout_marginEnd="8dp"
+          android:layout_marginTop="@dimen/size_18dp"
           android:fontFamily="sans-serif"
-          android:text="@{ request.clientName }"
-          android:textColor="#99000000"
+          android:text="Bid ends tomorrow at time"
+          android:textColor="#29a8e0"
           android:textSize="12sp"
           android:textStyle="normal"
-          app:layout_constraintBottom_toBottomOf="@id/text_amount"
-          app:layout_constraintStart_toEndOf="@id/img_supply_patner"
-          app:layout_constraintTop_toTopOf="@id/text_amount"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_load_details"
           />
+
     </android.support.constraint.ConstraintLayout>
   </android.support.v7.widget.CardView>
 </layout>
