@@ -49,4 +49,18 @@
     <item name="colorControlActivated">@color/colorAccent</item>
     <item name="colorControlHighlight">@color/colorAccent</item>
   </style>
+
+  <style name="view_header_background">
+    <item name="android:background">@drawable/bg_bids_header_gradient</item>
+    <item name="android:clickable">true</item>
+    <item name="android:focusable">true</item>
+    <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:orientation">vertical</item>
+    <item name="android:paddingBottom">@dimen/size_8dp</item>
+    <item name="android:paddingLeft">@dimen/size_16dp</item>
+    <item name="android:paddingTop">@dimen/size_8dp</item>
+    <item name="android:layout_marginTop">@dimen/size_16dp</item>
+    <item name="android:layout_marginBottom">@dimen/size_16dp</item>
+  </style>
 </resources>

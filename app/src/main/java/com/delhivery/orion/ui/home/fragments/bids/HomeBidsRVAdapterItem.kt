@@ -41,22 +41,24 @@ abstract class BaseHomeBidsRVAdapterItem<D : BaseKeyTypeModel<String>>(
 }
 
 /**
+ * //TODO: Add lost bid data
  * Header item with my bids and confirmed bids
  */
-class HomeBidsHeaderItem(data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(
-    0, 0
-)
+class HomeBidsHeaderItem(
+  data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(
+      0, 0
+  )
 ) :
     BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
 
 /**
  * Search item with live load requests
  */
-class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(
-    0
-)
-) :
-    BaseHomeBidsRVAdapterItem<HomeBidsSearchItemData>(Search, data)
+class HomeBidsSearchItem(
+  data: HomeBidsSearchItemData = HomeBidsSearchItemData(
+      0
+  )
+) : BaseHomeBidsRVAdapterItem<HomeBidsSearchItemData>(Search, data)
 
 /**
  * Bid request item

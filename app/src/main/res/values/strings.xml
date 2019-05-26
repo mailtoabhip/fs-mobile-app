@@ -60,9 +60,11 @@
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
   <string name="label_inr">₹ %1$d</string>
   <string name="label_inr_s">₹ %1$s</string>
+  <string name="label_active_bids">Active Bids</string>
+  <string name="label_confirmed_bids">Confirmed Bids</string>
+  <string name="label_lost_bids">Lost Bids</string>
   <string name="label_my_bids">My Bids</string>
   <string name="label_nav_load">Load</string>
-  <string name="label_confirmed_bids">Confirmed Bids</string>
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_alerts">Alerts</string>
@@ -79,6 +81,7 @@
   <string name="label_from_state">From %1$s</string>
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
   <string name="label_user_bid_amount">You have bid: ₹ %1$d</string>
+  <string name="label_bids">%1$s Bids</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

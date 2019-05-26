@@ -10,14 +10,14 @@ import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.orion.databinding.FragmentHomeBidsBinding
+import com.delhivery.orion.databinding.FragmentHomeLoadsBinding
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFabCardMenuItems as HomeBidsFabCardMenuItems1
 
-class HomeLoadsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeLoadsViewModel>(),
+class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface {
 
   init {
@@ -151,9 +151,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeLoadsVie
       }
       if (stickyView.visibility != viewVisibility) {
         if (stickyView.visibility == View.GONE) {
-          binding.fabSort.hide()
+//          binding.fabSort.hide()
         } else {
-          binding.fabSort.show()
+//          binding.fabSort.show()
         }
         uiUtils.toggleKeyboard()
         stickyView.visibility = viewVisibility

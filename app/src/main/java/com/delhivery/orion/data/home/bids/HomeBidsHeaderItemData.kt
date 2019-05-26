@@ -15,3 +15,4 @@ const val HomeBidsHeaderItemDataKey = "header"
 /* actions */
 const val HomeBidsHeaderAction_MyBids = "my_bids"
 const val HomeBidsHeaderAction_ConfirmedBids = "confirmed_bids"
+const val HomeBidsHeaderAction_LostBids = "lost_bids"

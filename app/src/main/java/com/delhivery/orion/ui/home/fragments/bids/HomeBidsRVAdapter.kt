@@ -12,6 +12,7 @@ import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
@@ -34,11 +35,12 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     viewType: Int
   ) = when (HomeBidsRVAdapterItemType.byTypeId(viewType)) {
     Header -> ViewHomeBidsHeaderItemBinding.inflate(inflater, parent, false)
-    Search -> ViewHomeBidsSearchItemBinding.inflate(inflater, parent, false)
+    Search -> ViewHomeBidsSearchItemBinding.inflate(inflater, parent,
+        false)
     Request -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
     Warning -> ViewHomeBidsWarningItemBinding.inflate(inflater, parent, false)
-    SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
+    SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -47,8 +49,8 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     is ViewHomeBidsSearchItemBinding -> HomeBidsSearchItemVH(binding)
     is ViewHomeBidsRequestItemBinding -> HomeBidsRequestItemVH(binding)
     is ViewHomeBidsWarningItemBinding -> HomeBidsWarningItemVH(binding)
-    is ViewHomeBidsSearchSpinnerItemBinding -> HomeBidsSearchSpinnerItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
+    is ViewHomeBidsSearchSpinnerItemBinding -> HomeBidsSearchSpinnerItemVH(binding)
     else -> HomeBidsRequestItemVH(binding as ViewHomeBidsRequestItemBinding)
   }
 
@@ -84,6 +86,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       add(Pair(HomeBidsSearchItem(), Update))
       add(Pair(HomeBidsWarningItem_SelectRoutes, Remove))
       add(Pair(HomeBidsWarningItem_EditRoutePrefs, Remove))
+      add(Pair(HomeBidsProgressItem(), AddUpdate))
       items.filter { it.type == Request }
           .map { Pair(it, Remove) }
           .let {

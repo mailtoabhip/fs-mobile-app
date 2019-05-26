@@ -1,8 +1,10 @@
 package com.delhivery.orion.data.home.bids
 
+import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
+import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.delhivery.orion.utils.DrawableProviderUtils
@@ -59,6 +61,13 @@ data class HomeBidsRequestItemData(
     DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
+   * Required at text color as per status
+   */
+  @ColorRes
+  fun requiredTextColor() =
+    ColorProviderUtils.getStatusColor(status)
+
+  /**
    * Get truck details/type
    */
   fun truckTypeDetails() = "$truckDisplayName"
@@ -70,6 +79,10 @@ data class HomeBidsRequestItemData(
     "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
         destinationState
     )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
+
+  fun tripPriceDifference(): String {
+    return "Calulate this price difference"
+  }
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)

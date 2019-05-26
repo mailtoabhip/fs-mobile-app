@@ -9,4 +9,17 @@
 
   <color name="colorShimmerPrimary">#f1f1f1</color>
   <color name="colorShimmerSecondary">#f3f3f3</color>
+
+  <!-- bid status colors-->
+  <color name="status_active">#29a8e0</color>
+  <color name="status_confirmed">#619f1b</color>
+  <color name="status_lost">#ff3131</color>
+
+  <!-- text colors-->
+  <color name="black">#000000</color>
+  <color name="heading_black">#de000000</color>
+  <color name="sub_heading_black">#99000000</color>
+  <color name="bid_header_bg_black">#262727</color>
+
+  <color name="white">#ffffff</color>
 </resources>

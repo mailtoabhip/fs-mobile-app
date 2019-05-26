@@ -31,14 +31,14 @@ class HomeBidsViewModel @Inject constructor(
   var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  /* fab visibility live data */
-  var fabVisibilityLiveData = MutableLiveData<Boolean>()
-
   var hasMoreData = true
   var offset = 0
 
   /**
-   * Fetch user static data
+   *
+   * Fetch user static data from [UserRepository] and
+   * bid count data from [BidsRepository]
+   *
    */
   fun fetchStaticData() {
     compositeDisposable += Single.zip(
@@ -55,34 +55,31 @@ class HomeBidsViewModel @Inject constructor(
                 mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>()
 
               /* add header counts */
-              _items.add(Pair(HomeBidsHeaderItem(
-                  HomeBidsHeaderItemData(second, third)
-              ), Update))
+              _items.add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData(second, third)), Update))
 
               /* show no routes warning item when no routes found */
               if (first.userRoutes().isEmpty()) {
                 _items.add(Pair(HomeBidsWarningItem_SelectRoutes, AddUpdate))
-                fabVisibilityLiveData.postValue(false)
                 showProgress(false)
               }
               /* start fetching transactions */
               else {
                 fetchUserTransactions(false)
-                _items.add(Pair(HomeBidsProgressItem(), AddUpdate))
               }
               /* post to static data */
               userBidsData.postValue(_items)
             }
           } else {
             error.handle()
-            fabVisibilityLiveData.postValue(false)
             showProgress(false)
           }
         }
   }
 
   /**
-   * Fetch user transactions
+   *
+   * Fetch user transactions from [TransactionsRepository]
+   *
    */
   fun fetchUserTransactions(paginate: Boolean) {
     if (!paginate) {
@@ -109,18 +106,14 @@ class HomeBidsViewModel @Inject constructor(
 
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && _tRes.total == 0) {
-                add(Pair(HomeBidsWarningItem_EditRoutePrefs, AddUpdate))
-                fabVisibilityLiveData.postValue(false)
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
               }
               /* post all transactions as add */
               else {
-                add(Pair(HomeBidsSearchItem(
-                    HomeBidsSearchItemData(_tRes.total)
-                ), Update))
+                add(Pair(HomeBidsSearchItem(HomeBidsSearchItemData(_tRes.total)), Update))
                 _tRes.transactions.forEach { _item ->
                   add(Pair(HomeBidsRequestItem(_item), Add))
                 }
-                fabVisibilityLiveData.postValue(true)
               }
             }
                 .let { userBidsData.postValue(it) }
@@ -128,7 +121,6 @@ class HomeBidsViewModel @Inject constructor(
             /* remove progress item */
             Pair(HomeBidsProgressItem(), Remove).let { userBidsData.postValue(listOf(it)) }
             error.handle()
-            fabVisibilityLiveData.postValue(false)
           }
           showProgress(false)
         }
