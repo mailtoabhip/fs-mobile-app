@@ -17,3 +17,4 @@ const val HomeBidsWarningItemDataKeyPrefix = "warning_"
 /* actions */
 const val HomeBidsWarningAction_SelectRoutes = "select_routes"
 const val HomeBidsWarningAction_EditRoutePrefs = "edit_routes_prefs"
+const val HomeBidsWarningAction_NoBids = "no_bids"

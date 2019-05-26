@@ -3,6 +3,7 @@ package com.delhivery.orion.ui.home.fragments.bids
 import android.databinding.ViewDataBinding
 import android.view.View
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_LostBids
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
@@ -53,9 +54,10 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
   ) {
     binding.myBids = item.data.myBids.toString()
     binding.confirmedBids = item.data.confirmedBids.toString()
+    binding.lostBids = "-1"
     binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
-    binding.viewConfirmedBids.clickToAction(
-        HomeBidsHeaderAction_ConfirmedBids, item, _interface)
+    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
+    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
   }
 }
 

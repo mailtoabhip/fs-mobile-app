@@ -83,13 +83,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       addOnScrollListener(PaginationInterface())
     }
 
-    /* Use this logic to create our own menu as per ui */
-    binding.fabFilter.setOnClickListener { fab ->
-      uiUtils.fabCardMenu(fab as FloatingActionButton, BidsFabCardMenuItems) {
-        onFabMenuItemSelected(it)
-      }
-    }
-
     binding.btnStartBidding.setOnClickListener { finish() }
 
     /* bids observer */
@@ -154,7 +147,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
       override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
         binding.refreshLayout.isEnabled = false
-        binding.fabFilter.hide()
         adapter.enableFilter()
         return true
       }
@@ -162,7 +154,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
         uiUtils.toggleKeyboard()
         binding.refreshLayout.isEnabled = true
-        binding.fabFilter.show()
         adapter.cancelFilter()
         return true
       }

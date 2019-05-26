@@ -9,6 +9,7 @@ import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
@@ -92,6 +93,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
   abstract fun bindHomeBidsViewModel(homeBidsViewModel: HomeBidsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeLoadsViewModel::class)
+  abstract fun bindHomeLoadsViewModel(homeLoadsViewModel: HomeLoadsViewModel): ViewModel
 
   @Binds
   @IntoMap
