@@ -87,12 +87,12 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
    */
   private fun updateLocationFlowState() {
     binding.textOriginCityName.text =
-        if (locationUtils.getLocationPermissionFlowState() == PermissionGranted) {
-          getLocation()
-          "Loading..."
-        } else {
-          "No Location :("
-        }
+      if (locationUtils.getLocationPermissionFlowState() == PermissionGranted) {
+        getLocation()
+        "Loading..."
+      } else {
+        "No Location :("
+      }
   }
 
   /**

@@ -17,8 +17,9 @@ import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
-import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
+import com.delhivery.orion.ui.selectroute.fragments.detail.SelectRouteDetailViewModel
 import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeViewModel
@@ -37,10 +38,10 @@ import dagger.multibindings.IntoMap
  */
 @Module
 abstract class ViewModelFactoryModule {
+
   /**
-   * Sample ViewModel, should be removed before moving to production
+   * Onboarding
    */
-  /* Onboarding */
   @Binds
   @IntoMap
   @ViewModelScope(SplashViewModel::class)
@@ -81,6 +82,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SelectRouteListViewModel::class)
   abstract fun bindSelectRouteListViewModel(selectRouteListViewModel: SelectRouteListViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectRouteDetailViewModel::class)
+  abstract fun bindRouteDetailViewModel(selectRouteDetailViewModel: SelectRouteDetailViewModel): ViewModel
 
   /* Home */
   @Binds

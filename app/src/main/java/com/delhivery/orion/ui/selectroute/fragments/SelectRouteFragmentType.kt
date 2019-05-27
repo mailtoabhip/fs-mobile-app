@@ -4,6 +4,7 @@ import com.delhivery.orion.ui.selectroute.SelectRouteFlowType
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.AddNewRoute
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
+import com.delhivery.orion.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityFragment
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListFragment
 
@@ -17,7 +18,8 @@ enum class SelectRouteFragmentType(
 ) {
   OriginCityFragment(0, SelectRouteOriginCityFragment._instance),
   DestinationFragment(1, SelectRouteDestinationFragment._instance),
-  RouteListFragment(2, SelectRouteListFragment._instance);
+  RouteListFragment(2, SelectRouteListFragment._instance),
+  RouteDetailFragment(3, SelectRouteDetailFragment._instance);
 
   /**
    * Previous fragment on back pressed
@@ -30,6 +32,7 @@ enum class SelectRouteFragmentType(
     UserRoutes -> when (step) {
       0 -> RouteListFragment
       1 -> OriginCityFragment
+      3 -> RouteListFragment
       else -> null
     }
   }

@@ -18,7 +18,9 @@ abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseF
   }
 
   /**
+   *
    * Post new action to activity
+   *
    */
   protected fun action(action: BaseHomeFragmentAction) {
     (activity as HomeActivity?)?.apply { fragmentAction(action) }

@@ -125,6 +125,10 @@
   <string name="msg_dialog_logout">You are signing out of ORION app.</string>
   <string name="title_coming_soon">Coming Soon</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
+  <string name="card_heading_trip_meter">Trip Meter</string>
+  <string name="card_subheading_trip_meter"><![CDATA[Trips completed & Revenue you earned working with us.]]></string>
+  <string name="title_dialog_delete_route">Delete Route ?</string>
+  <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

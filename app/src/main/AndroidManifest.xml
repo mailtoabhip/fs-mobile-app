@@ -31,7 +31,7 @@
 
     <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
-    <activity android:name=".ui.selectroute.SelectRouteActivity"/>
+    <activity android:name=".ui.selectroute.activity.SelectRouteActivity"/>
 
     <activity android:name=".ui.onboarding.OnboardingActivity"/>
 

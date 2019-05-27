@@ -4,7 +4,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.selectroute.SelectRouteViewModel"
+        type="com.delhivery.orion.ui.selectroute.activity.SelectRouteViewModel"
         />
   </data>
   <android.support.v7.widget.LinearLayoutCompat

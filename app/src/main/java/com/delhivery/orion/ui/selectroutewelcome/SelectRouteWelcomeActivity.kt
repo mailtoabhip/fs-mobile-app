@@ -6,7 +6,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
 import com.delhivery.orion.ui.home.HomeActivity
-import com.delhivery.orion.ui.selectroute.SelectRouteActivity
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.utils.LocationFlowState
 import com.github.florent37.kotlin.pleaseanimate.please
 

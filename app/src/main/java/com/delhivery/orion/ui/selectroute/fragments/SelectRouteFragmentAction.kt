@@ -6,6 +6,7 @@ import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionTyp
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.OriginSelected
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDetail
 
 /**
  * Select route fragment action type
@@ -14,7 +15,8 @@ enum class SelectRouteFragmentActionType {
   OriginSelected,
   DestinationsAdded,
   AddMoreRoutes,
-  LoadRequests
+  LoadRequests,
+  RouteDetail
 }
 
 /**
@@ -41,6 +43,13 @@ class DestinationSelectedAction(
  * Add more routes [RouteModel]
  */
 class AddMoreRoutesAction() : BaseSelectRouteFragmentAction(AddMoreRoutes)
+
+/**
+ *
+ * Navigate to route detail page
+ *
+ */
+class RouteDetailAction() : BaseSelectRouteFragmentAction(RouteDetail)
 
 /**
  * Go to load request/home

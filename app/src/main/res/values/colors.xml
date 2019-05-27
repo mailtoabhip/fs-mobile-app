@@ -5,21 +5,21 @@
   <color name="colorAccent">#181818</color>
 
   <color name="colorDelhiveryRed">#ED4136</color>
-  <color name="colorBackground">#f2f2f2</color>
+  <color name="colorBackground">#F2F2F2</color>
 
-  <color name="colorShimmerPrimary">#f1f1f1</color>
-  <color name="colorShimmerSecondary">#f3f3f3</color>
+  <color name="colorShimmerPrimary">#F1F1F1</color>
+  <color name="colorShimmerSecondary">#F3F3F3</color>
 
   <!-- bid status colors-->
-  <color name="status_active">#29a8e0</color>
-  <color name="status_confirmed">#619f1b</color>
-  <color name="status_lost">#ff3131</color>
+  <color name="status_active">#29A8E0</color>
+  <color name="status_confirmed">#619F1B</color>
+  <color name="status_lost">#FF3131</color>
 
   <!-- text colors-->
   <color name="black">#000000</color>
-  <color name="heading_black">#de000000</color>
+  <color name="heading_black">#DE000000</color>
   <color name="sub_heading_black">#99000000</color>
   <color name="bid_header_bg_black">#262727</color>
 
-  <color name="white">#ffffff</color>
+  <color name="white">#FFFFFF</color>
 </resources>

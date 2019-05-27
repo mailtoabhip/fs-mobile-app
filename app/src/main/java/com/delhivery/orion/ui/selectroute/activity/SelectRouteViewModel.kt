@@ -1,4 +1,4 @@
-package com.delhivery.orion.ui.selectroute
+package com.delhivery.orion.ui.selectroute.activity
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.RouteMappingModel
