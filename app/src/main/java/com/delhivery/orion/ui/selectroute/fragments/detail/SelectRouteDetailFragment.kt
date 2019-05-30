@@ -6,24 +6,36 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.R.string
+import com.delhivery.orion.data.RouteModel
+import com.delhivery.orion.data.StateModel
+import com.delhivery.orion.data.StateModelList
 import com.delhivery.orion.databinding.FragmentSelectRouteDetailBinding
+import com.delhivery.orion.databinding.ViewSelectRouteDestinationItemBinding
 import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteBaseFragment
 import com.delhivery.orion.utils.DialogUtils
 import javax.inject.Inject
 
 /**
- * Created by saurabh on 27,May,2019
+ * Created by saurabh
  * for Delhivery Private Limited
+ **
  *
- * <Define what the class does>
+ * Displays the selected route detail information,
+ * you can edit origin cities and destination cities
  *
+ **
  */
 class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDetailBinding, SelectRouteDetailViewModel>() {
   companion object {
     /* singleton instance */
     val _instance: SelectRouteDetailFragment by lazy { SelectRouteDetailFragment() }
   }
+
+  var currentRoute: RouteModel? = null
+
+  private var selectedStates = mutableSetOf<StateModel>()
 
   @Inject lateinit var dialogUtils: DialogUtils
 
@@ -42,7 +54,34 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    (activity as SelectRouteActivity)?.title = "Route Detail"
+    (activity as SelectRouteActivity).title = "Route Detail"
+
+    binding.route = currentRoute
+    selectedStates.clear()
+    selectedStates.addAll((currentRoute!!.destinations).toMutableSet())
+
+    addDestinations()
+  }
+
+  private fun addDestinations() {
+    StateModelList.forEach {
+      val itemBinding = ViewSelectRouteDestinationItemBinding.inflate(
+          layoutInflater, binding.containerDestination, false
+      )
+
+      itemBinding.state = it
+      itemBinding.check.isChecked = selectedStates.contains(it)
+      itemBinding.check.setOnCheckedChangeListener { _, checked ->
+        if (itemBinding.check.isPressed) {
+          if (checked) {
+            selectedStates.add(it)
+          } else {
+            selectedStates.remove(it)
+          }
+        }
+      }
+      binding.containerDestination.addView(itemBinding.root)
+    }
   }
 
   override fun onCreateOptionsMenu(
@@ -57,10 +96,10 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     when (item?.itemId) {
       R.id.nav_delete -> {
         dialogUtils.showBasicConfirmDialog(
-            R.string.title_dialog_delete_route,
-            R.string.msg_dialog_delete_route,
-            positiveAction = "Delete",
-            negativeAction = "No, Don’t Delete"
+            string.title_dialog_delete_route,
+            string.msg_dialog_delete_route,
+            positiveAction = getString(string.action_delete),
+            negativeAction = getString(string.action_no_dont_delete)
         ) {
           it.dismiss()
           viewModel.deleteRoute();

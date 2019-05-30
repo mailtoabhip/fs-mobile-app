@@ -16,6 +16,7 @@ import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.fragments.BaseSelectRouteFragmentAction
 import com.delhivery.orion.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
+import com.delhivery.orion.ui.selectroute.fragments.RouteDetailAction
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.AddMoreRoutes
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
@@ -27,6 +28,7 @@ import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.Orig
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteListFragment
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
+import com.delhivery.orion.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListFragment
 import com.delhivery.orion.utils.LocationFlowState
 
@@ -46,12 +48,15 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   /* current route model */
   private var currentRoute: RouteModel? = null
 
+  private var selectedRoute: RouteModel? = null
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     /* flow type */
     flowType = intent?.getIntExtra(
-        SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId)
+        SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId
+    )
         ?.let {
           SelectRouteFlowType.byTypeId(it)
         } ?: AddNewRoute
@@ -132,7 +137,11 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         }
       }
       RouteDetail -> {
-        navigate(RouteDetailFragment)
+        (action as RouteDetailAction).apply {
+          selectedRoute = RouteModel(origin)
+          selectedRoute?.destinations = destinations.toMutableList()
+          navigate(RouteDetailFragment)
+        }
       }
     }
   }
@@ -149,6 +158,9 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       is SelectRouteListFragment -> {
         fragment.routes = viewModel.routes
+      }
+      is SelectRouteDetailFragment -> {
+        fragment.currentRoute = selectedRoute
       }
     }
   }

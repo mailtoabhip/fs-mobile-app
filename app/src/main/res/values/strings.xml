@@ -5,6 +5,8 @@
   <string name="title_dialog_location_setting_disabled">Enable location</string>
   <string name="title_dialog_location_permission_disabled">Permissions</string>
   <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
+  <string name="title_dialog_delete_route">Delete Route ?</string>
+  <string name="title_dialog_logout">Confirm Logout</string>
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -21,13 +23,14 @@
   <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
   <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
   <string name="msg_be_first_to_bid">Be the first to Bid</string>
-  <string name="msg_no_bids_received">No bids recieved yet.</string>
-  <string name="msg_bids_received_till_now">%1$d bids recieved till now</string>
+  <string name="msg_no_bids_received">No bids received yet.</string>
+  <string name="msg_bids_received_till_now">%1$d bids received till now</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
   <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
   <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
-
+  <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
+  <string name="msg_dialog_logout">You are signing out of ORION app.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -49,6 +52,8 @@
   <string name="action_search">Search</string>
   <string name="action_place_bid">Place Bid</string>
   <string name="action_start_bidding">Start Bidding</string>
+  <string name="action_delete">Delete</string>
+  <string name="action_no_dont_delete">No, Don’t Delete</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -82,6 +87,7 @@
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
   <string name="label_user_bid_amount">You have bid: ₹ %1$d</string>
   <string name="label_bids">%1$s Bids</string>
+  <string name="label_destination_state">Destination States(%1$s)</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -121,14 +127,10 @@
   <string name="label_your_routes">Your Routes</string>
   <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
   <string name="action_logout_from_app">Logout from the app</string>
-  <string name="title_dialog_logout">Confirm Logout</string>
-  <string name="msg_dialog_logout">You are signing out of ORION app.</string>
   <string name="title_coming_soon">Coming Soon</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
   <string name="card_heading_trip_meter">Trip Meter</string>
   <string name="card_subheading_trip_meter"><![CDATA[Trips completed & Revenue you earned working with us.]]></string>
-  <string name="title_dialog_delete_route">Delete Route ?</string>
-  <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

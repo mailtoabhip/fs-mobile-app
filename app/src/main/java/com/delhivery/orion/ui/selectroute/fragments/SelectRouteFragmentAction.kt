@@ -49,7 +49,10 @@ class AddMoreRoutesAction() : BaseSelectRouteFragmentAction(AddMoreRoutes)
  * Navigate to route detail page
  *
  */
-class RouteDetailAction() : BaseSelectRouteFragmentAction(RouteDetail)
+class RouteDetailAction(
+  val origin: CityModel,
+  val destinations: List<StateModel>
+) : BaseSelectRouteFragmentAction(RouteDetail)
 
 /**
  * Go to load request/home

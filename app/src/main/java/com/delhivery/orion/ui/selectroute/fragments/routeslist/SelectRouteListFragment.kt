@@ -3,8 +3,6 @@ package com.delhivery.orion.ui.selectroute.fragments.routeslist
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutCompat
 import android.support.v7.widget.LinearLayoutCompat.LayoutParams
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.RouteModel
@@ -54,8 +52,11 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
       val itemBinding = ViewSelectRouteItemBinding.inflate(
           layoutInflater, binding.containerRoutes, false
       )
-      itemBinding.route = it
-      itemBinding.root.setOnClickListener { action(RouteDetailAction()) }
+      val routeModel: RouteModel = it
+      itemBinding.route = routeModel
+      itemBinding.root.setOnClickListener {
+        action(RouteDetailAction(routeModel.origin, routeModel.destinations.toMutableList()))
+      }
       binding.containerRoutes.addView(itemBinding.root)
     }
     /* fake view for last item shadow */

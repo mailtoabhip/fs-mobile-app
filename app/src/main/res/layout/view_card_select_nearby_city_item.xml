@@ -5,8 +5,8 @@
     >
   <data>
     <variable
-        name="state"
-        type="com.delhivery.orion.data.StateModel"
+        name="city"
+        type="com.delhivery.orion.data.CityModel"
         />
   </data>
   <android.support.v7.widget.CardView
@@ -28,7 +28,7 @@
         android:paddingBottom="@dimen/size_12dp"
         android:paddingStart="@dimen/size_16dp"
         android:paddingTop="@dimen/size_12dp"
-        android:text="@{ state.state }"
+        android:text="@{ city.city }"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
         tools:targetApi="lollipop"

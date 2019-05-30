@@ -8,12 +8,15 @@ data class RouteModel(
   var nearByLocation: List<CityModel> = listOf(),
   var destinations: MutableList<StateModel> = mutableListOf()
 ) {
-  fun destinationsCount() = "${destinations.size} States"
+  fun statesCount() = "${destinations.size} States"
+
+  fun destinationCount() = "${destinations.size}"
 
   /**
+   * TODO: have converted this to mutable set from mutable list, check while commmit if this is right
    * Source/Destination route mapping / list of [RouteMappingModel]
    */
-  fun toMapping() = mutableListOf<RouteMappingModel>().apply {
+  fun toMapping() = mutableSetOf<RouteMappingModel>().apply {
     destinations.forEach { _destination ->
       add(RouteMappingModel(origin, _destination))
     }

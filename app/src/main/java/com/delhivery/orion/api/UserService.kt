@@ -10,14 +10,15 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserService {
   /**
    * Search cities
    */
-  @GET("/cities/autocomplete/{query}")
+  @GET("/cities")
   fun searchCities(
-    @Path("query") query: String
+    @Query("city_prefix") query: String
   ): Single<BaseResponse<List<CityModel>>>
 
   /**

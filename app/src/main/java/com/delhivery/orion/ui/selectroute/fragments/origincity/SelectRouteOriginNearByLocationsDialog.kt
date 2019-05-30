@@ -3,9 +3,9 @@ package com.delhivery.orion.ui.selectroute.fragments.origincity
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.widget.CheckBox
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.databinding.DialogSelectRouteNearByLocationsBinding
+import com.delhivery.orion.databinding.ViewSelectNearbyCityItemBinding
 
 class SelectRouteOriginNearByLocationsDialog(
   context: Context,
@@ -46,16 +46,21 @@ class SelectRouteOriginNearByLocationsDialog(
   private fun addLocationChecks() {
     binding.containerCities.removeAllViews()
     locations.forEach {
-      val checkBox = CheckBox(context)
-      checkBox.text = it.city
-      checkBox.setOnCheckedChangeListener { _, checked ->
+      val itemBinding = ViewSelectNearbyCityItemBinding.inflate(
+          layoutInflater, binding.containerCities, false
+      )
+
+      itemBinding.city = it
+      selectedCities.add(it)
+      itemBinding.check.isChecked = true
+      itemBinding.check.setOnCheckedChangeListener { _, checked ->
         if (checked) {
           selectedCities.add(it)
         } else {
           selectedCities.remove(it)
         }
       }
-      binding.containerCities.addView(checkBox)
+      binding.containerCities.addView(itemBinding.root)
     }
   }
 }

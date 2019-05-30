@@ -63,7 +63,7 @@
           android:layout_height="wrap_content"
           android:layout_weight="0.75"
           android:fontFamily="sans-serif"
-          android:text="@{ route.destinationsCount() }"
+          android:text="@{ route.statesCount() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
