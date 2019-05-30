@@ -88,6 +88,10 @@
   <string name="label_user_bid_amount">You have bid: ₹ %1$d</string>
   <string name="label_bids">%1$s Bids</string>
   <string name="label_destination_state">Destination States(%1$s)</string>
+  <string name="label_advance_pending">Advance Pending</string>
+  <string name="label_in_transit">In-transit</string>
+  <string name="label_balance_pending">Balance Pending</string>
+  <string name="label_complete">Complete</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

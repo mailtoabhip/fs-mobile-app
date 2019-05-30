@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+  <data></data>
+
+  <android.support.v7.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="2dp"
+      >
+
+    <com.delhivery.orion.ui.custom.DelhiveryShimmerLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+      <android.support.constraint.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:clickable="false"
+          android:focusable="false"
+          android:paddingBottom="16dp"
+          android:paddingEnd="16dp"
+          android:paddingStart="16dp"
+          android:paddingTop="12dp"
+          >
+
+        <TextView
+            android:id="@+id/id1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textColor="#29a8e0"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <View
+            android:id="@+id/id2"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id1"
+            />
+
+        <View
+            android:id="@+id/id3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/id2"
+            app:layout_constraintEnd_toStartOf="@+id/id2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/id2"
+            />
+
+        <View
+            android:id="@+id/id4"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toStartOf="@+id/id5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id3"
+            />
+
+        <View
+            android:id="@+id/id5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/id2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/id2"
+            app:layout_constraintTop_toTopOf="@+id/id2"
+            />
+
+        <TextView
+            android:id="@+id/id6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textColor="#29a8e0"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id4"
+            />
+
+        <View
+            android:id="@+id/id7"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id6"
+            />
+
+        <View
+            android:id="@+id/id8"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/id7"
+            app:layout_constraintEnd_toStartOf="@+id/id7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/id7"
+            />
+
+        <View
+            android:id="@+id/id9"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toStartOf="@+id/id7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id8"
+            />
+
+        <View
+            android:id="@+id/id10"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:background="@color/colorShimmerPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/id7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/id7"
+            app:layout_constraintTop_toTopOf="@+id/id7"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:background="@color/colorShimmerSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/id7"
+            app:layout_constraintTop_toBottomOf="@+id/id10"
+            />
+
+      </android.support.constraint.ConstraintLayout>
+    </com.delhivery.orion.ui.custom.DelhiveryShimmerLayout>
+  </android.support.v7.widget.CardView>
+</layout>

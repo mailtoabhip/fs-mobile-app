@@ -48,6 +48,9 @@ data class HomeTripsItemData(
         || destination.contains(query, true)
 }
 
+/* actions */
+const val HomeTripsRequestAction_ViewDetails = "trip_details"
+
 data class TripDriverDetails(
   @SerializedName("name") val driverName: String?,
   @SerializedName("phone_number") val driverPhoneNo: String?,

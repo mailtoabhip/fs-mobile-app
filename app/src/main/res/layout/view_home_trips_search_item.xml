@@ -2,10 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
-  <FrameLayout
+  <android.support.v7.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:alpha="0"
       android:focusableInTouchMode="true"
       >
 
@@ -13,17 +12,15 @@
         android:id="@+id/edit_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/size_8dp"
         android:background="@drawable/bg_search_bar_light"
-        android:descendantFocusability="beforeDescendants"
         android:gravity="center_vertical"
         android:hint="@string/hint_search_trips"
-        android:imeOptions="actionSearch"
-        android:paddingStart="52dp"
-        android:textColorHint="#59000000"
-        android:textSize="16sp"
+        android:paddingStart="@dimen/size_56dp"
+        android:textColorHint="@color/color_hint"
+        android:textSize="@dimen/text_16sp"
         bind:shadow="@{ @dimen/size_2dp }"
         />
 
-  </FrameLayout>
+  </android.support.v7.widget.LinearLayoutCompat>
 </layout>

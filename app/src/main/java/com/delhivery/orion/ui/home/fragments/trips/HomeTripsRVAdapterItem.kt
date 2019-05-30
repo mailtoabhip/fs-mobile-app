@@ -1,14 +1,20 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderItemData
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsProgressItemData
 import com.delhivery.orion.data.home.trips.HomeTripsSearchItemData
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Header
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 
 enum class HomeTripsRVAdapterItemType(val typeId: Int) {
-  Search(0),
-  TripItem(1);
+  Header(0),
+  Search(1),
+  TripItem(2),
+  Progress(3);
 
   companion object {
     /**
@@ -40,3 +46,16 @@ class HomeTripsSearchItem(data: HomeTripsSearchItemData = HomeTripsSearchItemDat
  */
 class HomeTripsItem(data: HomeTripsItemData) :
     BaseHomeTripsRVAdapterItem<HomeTripsItemData>(TripItem, data)
+
+/**
+ * Inline progress item
+ */
+class HomeTripsProgressItem(data: HomeTripsProgressItemData = HomeTripsProgressItemData()) :
+    BaseHomeTripsRVAdapterItem<HomeTripsProgressItemData>(Progress, data)
+
+/**
+ * Trip header items
+ */
+class HomeTripsHeaderItem(
+  data: HomeTripsHeaderItemData = HomeTripsHeaderItemData(0, 0)
+) : BaseHomeTripsRVAdapterItem<HomeTripsHeaderItemData>(Header, data)
