@@ -44,7 +44,7 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
    */
   fun enableFilter() {
     isFiltering = true
-    notifyDataSetChanged()
+//    notifyDataSetChanged()
   }
 
   /**

@@ -101,9 +101,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         startActivity(selectRouteIntent(it, UserRoutes))
       }
       HomeBidsRequestAction_ViewDetails -> context?.let {
-        startActivity(
-            bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
-        )
+        startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, it))
       }
     }
   }

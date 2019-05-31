@@ -108,8 +108,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsHeaderItem())
-    add(1, HomeTripsSearchItem())
-    add(2, HomeTripsProgressItem())
+    add(1, HomeTripsProgressItem())
   }
 
   override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
@@ -133,7 +132,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         )
       }
       HomeTripsSearchAction_Search -> context?.let {
-        adapter.enableFilter()
+//        binding.rvTrips.scrollToPosition(1)
       }
     }
   }

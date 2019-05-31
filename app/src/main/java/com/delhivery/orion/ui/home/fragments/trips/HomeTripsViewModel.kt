@@ -52,6 +52,7 @@ class HomeTripsViewModel @Inject constructor(
             } else {
               mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                 /* remove progress item */
+                add(Pair(HomeTripsSearchItem(), Add))
                 add(Pair(HomeTripsProgressItem(), Remove))
                 /* post all trips as add */
                 _tripsRes.trips.forEach { _item ->
