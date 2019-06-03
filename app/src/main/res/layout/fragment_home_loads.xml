@@ -8,6 +8,7 @@
         type="com.delhivery.orion.ui.home.fragments.loads.HomeLoadsViewModel"
         />
   </data>
+
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"

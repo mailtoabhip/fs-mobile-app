@@ -8,11 +8,13 @@
       android:focusableInTouchMode="true"
       >
 
-    <EditText
+    <TextView
         android:id="@+id/edit_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_8dp"
+        android:layout_marginBottom="@dimen/size_12dp"
+        android:layout_marginLeft="@dimen/size_8dp"
+        android:layout_marginRight="@dimen/size_8dp"
         android:background="@drawable/bg_search_bar_light"
         android:gravity="center_vertical"
         android:hint="@string/hint_search_trips"

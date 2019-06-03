@@ -63,9 +63,8 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
    */
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      add(Pair(HomeTripsHeaderItem(), AddUpdate))
       add(Pair(HomeTripsProgressItem(), AddUpdate))
-      items.filter { it.type == TripItem || it.type == Search }
+      items.filter { it.type == TripItem }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)
@@ -74,5 +73,10 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
         .let {
           operation(it)
         }
+  }
+
+  override fun enableFilter() {
+    super.enableFilter()
+    isFiltering = true
   }
 }

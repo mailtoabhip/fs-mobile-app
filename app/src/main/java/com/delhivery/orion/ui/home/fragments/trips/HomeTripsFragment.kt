@@ -4,10 +4,12 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
+import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.data.home.trips.HomeTripsRequestAction_ViewDetails
@@ -28,6 +30,7 @@ import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 import com.delhivery.orion.utils.extensions.visible
+import com.github.florent37.kotlin.pleaseanimate.please
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     HomeTripsRVAdapterInterface {
@@ -92,13 +95,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
     })
 
-    /* start search on click */
-//    binding.editStickySearch.setOnClickListener {
-//      handleAction(
-//          HomeBidsSearchAction_Search, HomeBidsSearchItem()
-//      )
-//    }
-
     /* attach sticky search with adapter */
     binding.editStickySearch.attachWithAdapter(adapter)
 
@@ -132,12 +128,31 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         )
       }
       HomeTripsSearchAction_Search -> context?.let {
-//        binding.rvTrips.scrollToPosition(1)
+        val childView = binding.rvTrips.findViewHolderForAdapterPosition(1)!!.itemView
+        val stickyView = binding.editStickySearch
+        stickyView.visibility = View.VISIBLE
+        stickyView.translationY = childView.top.toFloat()
+        stickyView.alpha = 1f
+        binding.rvTrips.alpha = 0f
+        adapter.enableFilter()
+        please(250, FastOutLinearInInterpolator()) {
+          animate(binding.editStickySearch) {
+            topOfItsParent(marginDp = 0f)
+          }
+        }.withEndAction {
+          please(100, AccelerateDecelerateInterpolator()) {
+            stickyView.requestFocus()
+            stickyView.setRatio(0f)
+            uiUtils.toggleKeyboard(false)
+            binding.rvTrips.alpha = 1f
+          }
+        }
+            .start()
       }
     }
   }
 
-  /**
+  /**10
    * Handle menu item clicked
    */
   private fun menuItemClicked(item: DelhiveryFabCardMenuItem) {
@@ -168,8 +183,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     private val stickyView: DelhiveryAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {
-    /* Current toolbar elevation */
-    private var toolbarElevation = -1f
 
     override fun onScrolled(
       recyclerView: RecyclerView,
@@ -178,26 +191,18 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-//      val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
-//
-//      val pos = layoutManager.findFirstVisibleItemPosition()
-//      if (pos >= 1) {
-//        stickyView.setRatio(0f)
-//        toolbarElevationLiveData!!.postValue(0f)
-//      } else if (recyclerView.childCount > 0) {
-//        val searchView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
-//        val factor =
-//          (searchView.height.toFloat() - searchView.bottom.toFloat()) / searchView.height.toFloat()
-//        stickyView.setRatio((1 - factor))
-//        toolbarElevationLiveData!!.postValue((1 - factor) * elevation)
-//      }
       val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
 
       val pos = layoutManager.findFirstVisibleItemPosition()
-      val viewVisibility = if (pos >= 1) {
-        val _toolbarElevation = if (pos == 1) {
+      if (!adapter.checkFiltering()) {
+        if (pos == 0) {
+          stickyView.translationY = 0f
+          stickyView.visibility = View.GONE
+          stickyView.alpha = 0f
+          stickyView.setRatio(1f)
+        } else if (pos == 1) {
+          stickyView.visibility = View.VISIBLE
           val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
-
           val viewTopGap = childView.height - stickyView.height * 1f
           val viewTop = childView.top + viewTopGap
           if (viewTop > 0) {
@@ -206,33 +211,20 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             stickyView.translationY = viewTop
             stickyView.alpha = invFactor
             ViewCompat.setElevation(stickyView, elevation * invFactor)
-            factor * defToolbarElevation
           } else {
             stickyView.translationY = stickyView.top * 1f
             stickyView.alpha = 1f
             ViewCompat.setElevation(stickyView, elevation)
-            0f
           }
+          val factor =
+            (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+          stickyView.setRatio((1 - factor))
         } else {
+          stickyView.visibility = View.VISIBLE
           stickyView.translationY = 0f
           stickyView.alpha = 1f
-          0f
+          stickyView.setRatio(0f)
         }
-        if (_toolbarElevation != toolbarElevation) {
-          toolbarElevation = _toolbarElevation
-          toolbarElevationLiveData!!.postValue(toolbarElevation)
-        }
-        View.VISIBLE
-      } else {
-        if (toolbarElevation != defToolbarElevation) {
-          toolbarElevation = defToolbarElevation
-          toolbarElevationLiveData!!.postValue(toolbarElevation)
-        }
-        View.GONE
-      }
-      if (stickyView.visibility != viewVisibility) {
-        uiUtils.toggleKeyboard()
-        stickyView.visibility = viewVisibility
       }
     }
   }
