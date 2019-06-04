@@ -46,6 +46,8 @@
 
     <activity android:name=".ui.searchload.SearchLoadActivity"/>
 
+    <activity android:name=".ui.bids.TripsActivity"/>
+
     <activity android:name=".ui.tripdetails.TripDetailsActivity"/>
   </application>
 

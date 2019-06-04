@@ -11,21 +11,24 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_AdvancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_BalancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_Completed
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
-import com.delhivery.orion.data.home.trips.TripStatus.InTrasit
-import com.delhivery.orion.data.home.trips.TripStatus.TripCompleted
-import com.delhivery.orion.data.home.trips.TripStatus.TruckArrived
-import com.delhivery.orion.data.home.trips.TripStatus.TruckReached
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
+import com.delhivery.orion.ui.bids.TripType.AdvancePending
+import com.delhivery.orion.ui.bids.TripType.BalancePending
+import com.delhivery.orion.ui.bids.TripType.Completed
+import com.delhivery.orion.ui.bids.TripType.InTransit
+import com.delhivery.orion.ui.bids.userTripsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
-import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
@@ -107,16 +110,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     add(1, HomeTripsProgressItem())
   }
 
-  override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
-    when (item.type) {
-      TripItem -> {
-        context?.let { startActivity(tripDetailsIntent(item.data as HomeTripsItemData, it)) }
-      }
-      else -> {/* useless */
-      }
-    }
-  }
-
   override fun handleAction(
     actionId: String,
     item: BaseHomeTripsRVAdapterItem<*>
@@ -149,22 +142,18 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         }
             .start()
       }
-    }
-  }
-
-  /**10
-   * Handle menu item clicked
-   */
-  private fun menuItemClicked(item: DelhiveryFabCardMenuItem) {
-    when (item.id) {
-      0 -> InTrasit
-      1 -> TripCompleted
-      2 -> TruckArrived
-      3 -> TruckReached
-      else -> null
-    }.let {
-      adapter.resetStaticData()
-      viewModel.fetchTrips(false, it)
+      HomeTripsHeaderAction_AdvancePending -> context?.let {
+        startActivity(userTripsIntent(it, AdvancePending))
+      }
+      HomeTripsHeaderAction_BalancePending -> context?.let {
+        startActivity(userTripsIntent(it, BalancePending))
+      }
+      HomeTripsHeaderAction_InTransit -> context?.let {
+        startActivity(userTripsIntent(it, InTransit))
+      }
+      HomeTripsHeaderAction_Completed -> context?.let {
+        startActivity(userTripsIntent(it, Completed))
+      }
     }
   }
 

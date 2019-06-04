@@ -11,6 +11,7 @@ class BidsRVAdapter(clickListener: ItemClickListener<HomeBidsRequestItem>) :
     BaseFilterableDataRVAdapter<HomeBidsRequestItem, ViewHomeBidsRequestItemBinding, HomeBidsRequestItemVH>(
         clickListener
     ) {
+
   override fun getBinding(
     inflater: LayoutInflater,
     parent: ViewGroup,

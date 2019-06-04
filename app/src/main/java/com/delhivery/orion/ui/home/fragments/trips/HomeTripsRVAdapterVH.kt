@@ -2,6 +2,10 @@ package com.delhivery.orion.ui.home.fragments.trips
 
 import android.databinding.ViewDataBinding
 import android.view.View
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_AdvancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_BalancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_Completed
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
@@ -54,7 +58,7 @@ internal class HomeTripsSearchItemVH(binding: ViewHomeTripsSearchItemBinding) :
 /**
  * Trip item view holder
  */
-internal class HomeTripsItemVH(binding: ViewHomeTripsDetailsItemBinding) :
+class HomeTripsItemVH(binding: ViewHomeTripsDetailsItemBinding) :
     BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsDetailsItemBinding, HomeTripsItem>(binding) {
   override fun bind(
     item: HomeTripsItem,
@@ -89,5 +93,9 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     item: HomeTripsHeaderItem,
     _interface: HomeTripsRVAdapterInterface
   ) {
+    binding.viewAdvancePending.clickToAction(HomeTripsHeaderAction_AdvancePending, item, _interface)
+    binding.viewBalancePending.clickToAction(HomeTripsHeaderAction_BalancePending, item, _interface)
+    binding.viewInTransit.clickToAction(HomeTripsHeaderAction_InTransit, item, _interface)
+    binding.viewCompleted.clickToAction(HomeTripsHeaderAction_Completed, item, _interface)
   }
 }

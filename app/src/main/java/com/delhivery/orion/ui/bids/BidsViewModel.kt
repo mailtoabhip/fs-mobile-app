@@ -55,7 +55,6 @@ class BidsViewModel @Inject constructor(
                 .convertResponse()
           }
         }
-//    compositeDisposable += transactionsRepository.transactions(0, Requested)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
