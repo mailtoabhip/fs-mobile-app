@@ -184,6 +184,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     private val elevation: Float = 12f
   ) : OnScrollListener() {
 
+    private var toolbarElevation = -1f
+
     override fun onScrolled(
       recyclerView: RecyclerView,
       dx: Int,
@@ -192,14 +194,14 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       super.onScrolled(recyclerView, dx, dy)
 
       val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
-
       val pos = layoutManager.findFirstVisibleItemPosition()
       if (!adapter.checkFiltering()) {
-        if (pos == 0) {
+        val _toolbarElevation = if (pos == 0) {
           stickyView.translationY = 0f
           stickyView.visibility = View.GONE
           stickyView.alpha = 0f
           stickyView.setRatio(1f)
+          defToolbarElevation
         } else if (pos == 1) {
           stickyView.visibility = View.VISIBLE
           val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
@@ -219,11 +221,17 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
           val factor =
             (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
           stickyView.setRatio((1 - factor))
+          factor * defToolbarElevation
         } else {
           stickyView.visibility = View.VISIBLE
           stickyView.translationY = 0f
           stickyView.alpha = 1f
           stickyView.setRatio(0f)
+          0f
+        }
+        if (_toolbarElevation != toolbarElevation) {
+          toolbarElevation = _toolbarElevation
+          toolbarElevationLiveData!!.postValue(toolbarElevation)
         }
       }
     }

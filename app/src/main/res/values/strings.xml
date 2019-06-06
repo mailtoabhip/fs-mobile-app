@@ -70,6 +70,7 @@
   <string name="label_lost_bids">Lost Bids</string>
   <string name="label_my_bids">My Bids</string>
   <string name="label_nav_load">Load</string>
+  <string name="label_nav_date">Date</string>
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_alerts">Alerts</string>

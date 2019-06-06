@@ -4,6 +4,7 @@ import android.databinding.ViewDataBinding
 import android.view.View
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
+import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -57,11 +58,23 @@ internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsProgressItemBinding, HomeLoadsProgressItem>(
         binding
     ) {
-
   override fun bind(
     item: HomeLoadsProgressItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
+  }
 
+  /**
+   * Search item view holder
+   */
+  internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
+      BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeLoadsSearchItem>(
+          binding
+      ) {
+    override fun bind(
+      item: HomeLoadsSearchItem,
+      _interface: HomeLoadsRVAdapterInterface
+    ) {
+    }
   }
 }
