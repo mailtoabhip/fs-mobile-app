@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 
 data class StateModel(
   @SerializedName("state") val state: String,
-  @SerializedName("state_id") val stateId: String
+  @SerializedName("state_id") val stateId: String,
+  var checked: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = stateId
 

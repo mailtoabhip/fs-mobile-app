@@ -3,7 +3,7 @@
 
   <item>
     <shape android:shape="rectangle">
-      <corners android:radius="8dp"/>
+      <corners android:radius="@dimen/size_8dp"/>
       <solid
           android:color="@color/bid_header_bg_black"/>
     </shape>

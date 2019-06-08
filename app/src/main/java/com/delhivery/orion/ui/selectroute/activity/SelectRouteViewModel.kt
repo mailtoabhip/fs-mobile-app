@@ -51,6 +51,33 @@ class SelectRouteViewModel @Inject constructor(
         .progress()
         .subscribe { _routes, error ->
           if (!error) {
+            routes.clear()
+            routes.addAll(_routes)
+            routesLiveData.postValue(routes)
+            completedAction(true)
+          } else {
+            error.handle()
+            completedAction(false)
+          }
+        }
+  }
+
+  /**
+   * Update Routes
+   */
+  fun updateUserRoutes(
+    newRoutes: List<RouteModel>,
+    completedAction: (success: Boolean) -> Unit
+  ) {
+    val _routeMappings = mutableListOf<RouteMappingModel>().apply {
+      newRoutes.forEach { addAll(it.toMapping()) }
+    }
+    compositeDisposable += userRepository.updateRoutes(_routeMappings)
+        .onBackground()
+        .progress()
+        .subscribe { _routes, error ->
+          if (!error) {
+            routes.clear()
             routes.addAll(_routes)
             routesLiveData.postValue(routes)
             completedAction(true)

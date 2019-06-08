@@ -22,4 +22,5 @@ fun List<RouteMappingModel>.toRoutes(): List<RouteModel> {
     routes[it.origin.key()]!!.destinations.add(it.destination)
   }
   return routes.values.toList()
+
 }

@@ -33,9 +33,11 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     binding.apply {
       containerYourRoutes.setOnClickListener {
-        it.post { startActivity(
-            selectRouteIntent(it.context, UserRoutes)
-        ) }
+        it.post {
+          startActivity(
+              selectRouteIntent(it.context, UserRoutes)
+          )
+        }
       }
 
       containerLogout.setOnClickListener { it.post { confirmLogout() } }

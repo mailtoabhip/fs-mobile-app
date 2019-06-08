@@ -8,6 +8,7 @@
         type="com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel"
         />
   </data>
+
   <ScrollView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -19,8 +20,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingEnd="@dimen/size_24dp"
-        android:paddingStart="@dimen/size_24dp"
+        android:paddingEnd="@dimen/size_12dp"
+        android:paddingStart="@dimen/size_12dp"
         >
 
       <android.support.v7.widget.AppCompatImageView
@@ -41,7 +42,7 @@
           android:letterSpacing="0.01"
           android:lineSpacingExtra="@dimen/text_2sp"
           android:text="@string/title_we_are_building_this_page"
-          android:textColor="#181818"
+          android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
           />
@@ -69,7 +70,9 @@
           android:id="@+id/container_trip_meter"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_16dp"
+          android:layout_marginEnd="@dimen/size_12dp"
+          android:layout_marginStart="@dimen/size_12dp"
+          android:layout_marginTop="@dimen/size_28dp"
           app:cardCornerRadius="@dimen/size_8dp"
           app:cardElevation="@dimen/size_4dp"
           >
@@ -214,6 +217,8 @@
           android:id="@+id/container_your_routes"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginEnd="@dimen/size_12dp"
+          android:layout_marginStart="@dimen/size_12dp"
           android:layout_marginTop="@dimen/size_16dp"
           android:foreground="?attr/selectableItemBackgroundBorderless"
           app:cardCornerRadius="@dimen/size_8dp"
@@ -274,6 +279,8 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="@dimen/size_24dp"
+          android:layout_marginEnd="@dimen/size_12dp"
+          android:layout_marginStart="@dimen/size_12dp"
           android:layout_marginTop="@dimen/size_8dp"
           android:foreground="?attr/selectableItemBackgroundBorderless"
           app:cardCornerRadius="@dimen/size_8dp"

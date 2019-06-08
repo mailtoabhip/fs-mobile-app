@@ -1,6 +1,7 @@
 package com.delhivery.orion.data
 
 import com.google.gson.annotations.SerializedName
+import java.util.Collections
 
 /**
  * User details model
@@ -37,5 +38,9 @@ data class UserModel(
   /**
    * user routes as {routeModel}
    */
-  fun userRoutes() = routes?.toRoutes() ?: listOf()
+  fun userRoutes(): List<RouteModel> {
+    val _routes = routes?.toRoutes() ?: listOf()
+    Collections.sort(_routes, { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
+    return _routes
+  }
 }
