@@ -48,8 +48,7 @@ class HomeBidsHeaderItem(
   data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(
       0, 0
   )
-) :
-    BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
+) : BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
 
 /**
  * Search item with live load requests

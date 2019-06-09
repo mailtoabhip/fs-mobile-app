@@ -12,7 +12,7 @@ import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.orion.ui.onboarding.OnboardingActivity
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentsBindingModule
-import com.delhivery.orion.ui.selectroute.SelectRouteActivity
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity

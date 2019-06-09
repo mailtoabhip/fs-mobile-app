@@ -4,14 +4,19 @@ import android.os.Bundle
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeProfileBinding
+import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
-import com.delhivery.orion.ui.selectroute.selectRouteIntent
+import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.DialogUtils
 import com.delhivery.orion.utils.NavigationUtils
 import javax.inject.Inject
 
-class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>() {
+class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>(),
+    TitleProvider {
+
+  override val title: CharSequence
+    get() = "Profile"
 
   companion object {
     /* singleton instance */
@@ -33,7 +38,11 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     binding.apply {
       containerYourRoutes.setOnClickListener {
-        it.post { startActivity(selectRouteIntent(it.context, UserRoutes)) }
+        it.post {
+          startActivity(
+              selectRouteIntent(it.context, UserRoutes)
+          )
+        }
       }
 
       containerLogout.setOnClickListener { it.post { confirmLogout() } }

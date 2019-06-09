@@ -15,7 +15,7 @@ import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
-import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
 import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel

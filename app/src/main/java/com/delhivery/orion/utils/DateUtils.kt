@@ -105,7 +105,7 @@ object DateUtils {
   ): String {
     val requiredOn = parseDate(date, format)
     val reqTime = formatDate(requiredOn, "hh:mm a")
-    return "${daysDiffStr(requiredOn)}, $reqTime"
+    return daysDiffStr(requiredOn)
   }
 }
 

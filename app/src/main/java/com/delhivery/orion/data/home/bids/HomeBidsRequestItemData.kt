@@ -45,6 +45,8 @@ data class HomeBidsRequestItemData(
 
   fun loadDetails() = "Load: $materialType"
 
+  fun targetPrice() = "\u20B9 $targetPrice"
+
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
 

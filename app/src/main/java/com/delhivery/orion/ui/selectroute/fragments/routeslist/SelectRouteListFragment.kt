@@ -8,8 +8,9 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.databinding.FragmentSelectRouteListBinding
 import com.delhivery.orion.databinding.ViewSelectRouteItemBinding
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.AddMoreRoutesAction
-import com.delhivery.orion.ui.selectroute.fragments.LoadRequestsAction
+import com.delhivery.orion.ui.selectroute.fragments.RouteDetailAction
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteBaseFragment
 
 class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListBinding, SelectRouteListViewModel>() {
@@ -31,10 +32,7 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    /* go to load requests/home */
-    binding.btnAction.setOnClickListener {
-      action(LoadRequestsAction())
-    }
+    (activity as SelectRouteActivity)?.title = ""
 
     /* add more routes action */
     binding.cardAddMoreRoute.setOnClickListener {
@@ -54,7 +52,11 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
       val itemBinding = ViewSelectRouteItemBinding.inflate(
           layoutInflater, binding.containerRoutes, false
       )
-      itemBinding.route = it
+      val routeModel: RouteModel = it
+      itemBinding.route = routeModel
+      itemBinding.root.setOnClickListener {
+        action(RouteDetailAction(routeModel.origin, routeModel.destinations.toMutableList()))
+      }
       binding.containerRoutes.addView(itemBinding.root)
     }
     /* fake view for last item shadow */

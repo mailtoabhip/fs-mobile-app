@@ -6,6 +6,8 @@ import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -50,6 +52,9 @@ class HomeTripsViewModel @Inject constructor(
               userTripsData.postValue(null)
             } else {
               mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                /* remove progress item */
+                add(Pair(HomeTripsSearchItem(), AddUpdate))
+                add(Pair(HomeTripsProgressItem(), Remove))
                 /* post all trips as add */
                 _tripsRes.trips.forEach { _item ->
                   add(Pair(HomeTripsItem(_item), Add))

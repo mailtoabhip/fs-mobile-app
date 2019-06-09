@@ -10,3 +10,6 @@ data class HomeTripsSearchItemData(
 
 /* unique key for diff */
 private const val HomeTripsSearchItemDataKey = "search"
+
+/* action id */
+const val HomeTripsSearchAction_Search = "search"

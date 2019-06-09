@@ -12,7 +12,7 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
   private val filteredItems = mutableListOf<D>()
 
   /* Is filter mode enabled */
-  private var isFiltering = false
+ protected var isFiltering = false
 
   override fun itemsList() = when (isFiltering) {
     true -> filteredItems
@@ -42,7 +42,7 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
   /**
    * Enable filtering
    */
-  fun enableFilter() {
+  open fun enableFilter() {
     isFiltering = true
     notifyDataSetChanged()
   }
@@ -54,5 +54,9 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
     isFiltering = false
     filteredItems.clear()
     notifyDataSetChanged()
+  }
+
+  fun checkFiltering(): Boolean {
+    return isFiltering
   }
 }
