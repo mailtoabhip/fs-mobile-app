@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
+    >
+  <data>
+    <import type="com.delhivery.orion.ui.bids.TripType"/>
+    <variable
+        name="viewModel"
+        type="com.delhivery.orion.ui.bids.TripsViewModel"
+        />
+    <variable
+        name="error"
+        type="Boolean"
+        />
+  </data>
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:orientation="vertical"
+      >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <!-- No bids container -->
+      <android.support.v7.widget.LinearLayoutCompat
+          android:id="@+id/container_error"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:clickable="true"
+          android:focusable="true"
+          android:gravity="center"
+          android:orientation="vertical"
+          android:padding="@dimen/size_24dp"
+          android:visibility="gone"
+          bind:visibility="@{ error }"
+          >
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_empty_box_clr"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_36dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/text_2sp"
+            android:text="@string/label_no_bids_found"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_48dp"
+            android:layout_marginStart="@dimen/size_48dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/text_6sp"
+            android:text="@string/msg_no_bids_found"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:textStyle="normal"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_start_bidding"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/size_56dp"
+            android:text="@string/action_start_bidding"
+            style="@style/ActionButton"
+            />
+
+      </android.support.v7.widget.LinearLayoutCompat>
+
+      <android.support.v4.widget.SwipeRefreshLayout
+          android:id="@+id/refresh_layout"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_bids"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            bind:visibility="@{ !error }"
+            />
+      </android.support.v4.widget.SwipeRefreshLayout>
+
+    </FrameLayout>
+
+  </android.support.v7.widget.LinearLayoutCompat>
+</layout>

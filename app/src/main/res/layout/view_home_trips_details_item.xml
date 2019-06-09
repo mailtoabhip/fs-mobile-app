@@ -38,7 +38,7 @@
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="@dimen/text_8sp"
           android:text="@{ trip.vehicleDetails.vehicleNo }"
-          android:textColor="#de000000"
+          android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +109,6 @@
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
-          android:visibility="gone"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />
@@ -139,7 +138,6 @@
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
-          android:visibility="gone"
           app:layout_constraintStart_toStartOf="@id/text_destination_city"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />

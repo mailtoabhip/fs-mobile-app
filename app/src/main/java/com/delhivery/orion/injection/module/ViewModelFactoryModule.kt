@@ -6,6 +6,7 @@ import com.delhivery.orion.injection.scope.ViewModelScope
 import com.delhivery.orion.ui.auth.AuthenticationViewModel
 import com.delhivery.orion.ui.biddetails.BidDetailsViewModel
 import com.delhivery.orion.ui.bids.BidsViewModel
+import com.delhivery.orion.ui.bids.TripsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
@@ -130,6 +131,12 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BidsViewModel::class)
   abstract fun bindBidsViewModel(bidsViewModel: BidsViewModel): ViewModel
+
+  /* Bids */
+  @Binds
+  @IntoMap
+  @ViewModelScope(TripsViewModel::class)
+  abstract fun bindTripsViewModel(tripsViewModel: TripsViewModel): ViewModel
 
   @Binds
   @IntoMap

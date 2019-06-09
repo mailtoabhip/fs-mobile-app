@@ -7,6 +7,7 @@ import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.biddetails.BidDetailsActivity
 import com.delhivery.orion.ui.bids.BidsActivity
+import com.delhivery.orion.ui.bids.TripsActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.orion.ui.onboarding.OnboardingActivity
@@ -68,6 +69,11 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsBidsActivityModule::class])
   internal abstract fun bindBidsActivity(): BidsActivity
 
+  /* Advance/Balance/InTransit/Completed Trips activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTripsActivityModule::class])
+  internal abstract fun bindTripsActivity(): TripsActivity
+
   /* Bid Details activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
@@ -115,6 +121,9 @@ internal abstract class AbsHomeActivityModule : ActivityModule<HomeActivity>()
 
 @Module
 internal abstract class AbsBidsActivityModule : ActivityModule<BidsActivity>()
+
+@Module
+internal abstract class AbsTripsActivityModule : ActivityModule<TripsActivity>()
 
 @Module
 internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
