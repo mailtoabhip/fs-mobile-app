@@ -14,7 +14,7 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:background">@drawable/bg_action_btn</item>
     <item name="android:textColor">@android:color/white</item>
-    <item name="android:textSize">14sp</item>
+    <item name="android:textSize">@dimen/text_14sp</item>
     <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
   </style>
 
@@ -27,20 +27,20 @@
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:textColorHint">#61000000</item>
-    <item name="android:textSize">16sp</item>
-    <item name="android:textColor">#de000000</item>
+    <item name="android:textSize">@dimen/text_16sp</item>
+    <item name="android:textColor">@color/heading_black</item>
     <item name="android:textCursorDrawable">@null</item>
   </style>
 
   <!-- Bottom navigation View(Inactive) -->
   <style name="BottomNavigationView.Inactive" parent="@style/TextAppearance.AppCompat.Caption">
-    <item name="android:textSize">12sp</item>
+    <item name="android:textSize">@dimen/text_12sp</item>
     <item name="android:textStyle">normal</item>
   </style>
 
   <!-- Bottom navigation View(Active) -->
   <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
-    <item name="android:textSize">12sp</item>
+    <item name="android:textSize">@dimen/text_12sp</item>
     <item name="android:textStyle">bold</item>
   </style>
 

@@ -1,7 +1,6 @@
 package com.delhivery.orion.ui.selectroute.fragments.routeslist
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutCompat
 import android.support.v7.widget.LinearLayoutCompat.LayoutParams
 import android.view.View
 import com.delhivery.orion.R
@@ -61,9 +60,8 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
     }
     /* fake view for last item shadow */
     val dummyView = View(context)
-    val params = LinearLayoutCompat.LayoutParams(
-        LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.size_16dp)
-    )
+    val params =
+      LayoutParams(LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.size_16dp))
     binding.containerRoutes.addView(dummyView, params)
   }
 }

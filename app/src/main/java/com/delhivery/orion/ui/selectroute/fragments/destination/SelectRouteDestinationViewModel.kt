@@ -5,5 +5,4 @@ import javax.inject.Inject
 
 class SelectRouteDestinationViewModel @Inject constructor(
 
-) : BaseViewModel() {
-}
+) : BaseViewModel()
