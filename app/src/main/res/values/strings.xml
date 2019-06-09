@@ -93,6 +93,7 @@
   <string name="label_in_transit">In-transit</string>
   <string name="label_balance_pending">Balance Pending</string>
   <string name="label_complete">Complete</string>
+  <string name="Rs">\u20B9</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

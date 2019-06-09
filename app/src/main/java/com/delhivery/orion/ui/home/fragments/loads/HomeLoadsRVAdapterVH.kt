@@ -5,6 +5,7 @@ import android.view.View
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
+import com.delhivery.orion.databinding.ViewHomeLoadsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -63,18 +64,34 @@ internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding
     _interface: HomeLoadsRVAdapterInterface
   ) {
   }
+}
 
-  /**
-   * Search item view holder
-   */
-  internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
-      BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeLoadsSearchItem>(
-          binding
-      ) {
-    override fun bind(
-      item: HomeLoadsSearchItem,
-      _interface: HomeLoadsRVAdapterInterface
+/**
+ * Search item view holder
+ */
+internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeLoadsSearchItem>(
+        binding
     ) {
-    }
+  override fun bind(
+    item: HomeLoadsSearchItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+  }
+}
+
+/**
+ * Bids warning item view holder
+ */
+internal class HomeLoadsWarningItemVH(binding: ViewHomeLoadsWarningItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsWarningItemBinding, HomeLoadsWarningItem>(
+        binding
+    ) {
+  override fun bind(
+    item: HomeLoadsWarningItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    binding.data = item.data
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }

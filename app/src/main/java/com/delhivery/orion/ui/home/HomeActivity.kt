@@ -36,7 +36,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = HomeFragmentType.BidsFragment.title
+    title = "Load Requests"
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -46,7 +46,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       onPageSelected { p ->
         HomeFragmentType.pos(p)
             ?.let {
-              title = it.title
+              title = it.fragment.title
               binding.bottomNav.selectedItemId = it.menuId
               observeFragmentLiveData(p)
             }
@@ -101,4 +101,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         pos != -1
       }
+}
+
+interface TitleProvider {
+  val title: CharSequence
 }

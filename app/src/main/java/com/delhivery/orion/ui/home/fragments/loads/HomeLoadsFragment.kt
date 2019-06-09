@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
@@ -15,18 +16,29 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchAction_Search
+import com.delhivery.orion.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.FragmentHomeLoadsBinding
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFabCardMenuItems as HomeBidsFabCardMenuItems1
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
-    HomeLoadsRVAdapterInterface {
+    HomeLoadsRVAdapterInterface, TitleProvider {
+
+  override val title: CharSequence
+    get() =
+      when (viewModel.userLoadsData.value?.size) {
+        null -> "Load Request"
+        else -> "Load Request(" + viewModel.userLoadsData.value?.size + ")"
+      }
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -58,7 +70,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     binding.refreshLayout.setOnRefreshListener {
       adapter.resetStaticData()
       /* remove user transactions and fetch again */
-      viewModel.fetchStaticData()
+      viewModel.fetchUserTransactions()
     }
 
     /* setup recycler view */
@@ -77,14 +89,20 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       )
     }
 
-    //TODO: fix this after api
-    /* observe and update adapter items */
-//    viewModel.userBidsData.observe(this, Observer {
-//      it?.let { _items -> adapter.operation(_items) }
-//    })
+    viewModel.userLoadsData.observe(this, Observer {
+      this@HomeLoadsFragment.activity?.title = "Load Request(" + it?.size + ")"
+      it?.let { _items -> adapter.operation(_items) }
+    })
 
-    /* fetch static data and start fetching transactions */
-//    viewModel.fetchStaticData()
+    viewModel.routesLiveData.observe(this, Observer {
+      when (it) {
+        true -> ""
+        false -> ""
+      }
+    })
+
+    /* fetch user transactions */
+    viewModel.fetchUserTransactions()
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -95,13 +113,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {
     add(0, HomeLoadsSearchItem())
     add(1, HomeLoadsProgressItem())
-    add(2, HomeLoadsProgressItem())
-    add(3, HomeLoadsProgressItem())
-    add(4, HomeLoadsProgressItem())
-    add(5, HomeLoadsProgressItem())
-    add(6, HomeLoadsProgressItem())
-    add(7, HomeLoadsProgressItem())
-    add(8, HomeLoadsProgressItem())
   }
 
   override fun onCreateOptionsMenu(
@@ -138,11 +149,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             Intent(it, SearchLoadActivity::class.java)
         )
       }
+      HomeLoadsWarningAction_NoLoads -> context?.let {
+        startActivity(selectRouteIntent(it, UserRoutes))
+      }
     }
   }
 
   /**
-   * Home bids rv scroll listener for search bar animation related stuff
+   * Home loads rv scroll listener for search bar animation related stuff
    */
   inner class HomeBidsRVScrollListener(
     private val stickyView: DelhiveryAnimatedSearchBar,
@@ -159,7 +173,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       super.onScrolled(recyclerView, dx, dy)
 
       val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
-
       val pos = layoutManager.findFirstVisibleItemPosition()
       val _toolbarElevation = if (pos == 0) {
         val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
@@ -179,7 +192,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         val factor =
           (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
         stickyView.setRatio((1 - factor))
-        factor * defToolbarElevation
+        defToolbarElevation
       } else {
         stickyView.translationY = 0f
         stickyView.alpha = 1f
