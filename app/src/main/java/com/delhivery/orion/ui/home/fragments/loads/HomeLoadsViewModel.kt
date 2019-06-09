@@ -23,6 +23,7 @@ class HomeLoadsViewModel @Inject constructor(
   var userLoadsData =
     MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* route/lane preferene live data*/
   var routesLiveData = MutableLiveData<Boolean>()
 
   var hasMoreData = true
@@ -76,7 +77,7 @@ class HomeLoadsViewModel @Inject constructor(
   }
 
   /**
-   * Checks if user routes/lane preference
+   * Checks if user has added routes/lane preference
    */
   fun checkUserRoutes() {
     compositeDisposable += userRepository.getUser()
