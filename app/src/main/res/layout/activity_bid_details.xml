@@ -91,6 +91,8 @@
               android:textColor="@color/colorAccent"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_title_confirmed_bid"
               />
 
@@ -218,31 +220,6 @@
               tools:text="Load: Pharmaceuticals"
               />
 
-          <android.support.v7.widget.AppCompatImageView
-              android:id="@+id/img_supply_patner"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_10dp"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_load_details"
-              app:srcCompat="@drawable/ic_supply_patner"
-              />
-
-          <TextView
-              android:id="@+id/text_loading_details"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginStart="@dimen/size_6dp"
-              android:fontFamily="sans-serif"
-              android:text="@{ transaction.clientName }"
-              android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
-              app:layout_constraintBottom_toBottomOf="@id/img_supply_patner"
-              app:layout_constraintStart_toEndOf="@id/img_supply_patner"
-              app:layout_constraintTop_toTopOf="@id/img_supply_patner"
-              />
-
           <TextView
               android:id="@+id/text_target_price_label"
               android:layout_width="wrap_content"
@@ -253,7 +230,8 @@
               android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
-              app:layout_constraintTop_toBottomOf="@id/text_loading_details"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@id/text_load_details"
               />
 
           <TextView
@@ -265,9 +243,10 @@
               android:letterSpacing="0.01"
               android:lineSpacingExtra="-4sp"
               android:text="@{ @string/label_inr(transaction.targetPrice) }"
-              android:textColor="#000000"
+              android:textColor="@color/black"
               android:textSize="@dimen/text_24sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
               tools:text="₹ 23900.00"
               />

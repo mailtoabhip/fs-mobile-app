@@ -34,6 +34,5 @@ class ProgressSearchLoadAction(
 class SearchLoadAction(
   val originCity: CityModel,
   val destinationCity: CityModel,
-  val truckType: String,
-  val truckSize: String
+  val truckType: String
 ) : BaseSearchLoadFragmentAction(Search)

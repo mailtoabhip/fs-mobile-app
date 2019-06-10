@@ -4,8 +4,8 @@ import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 
-interface SearchResultsRVAdapterInterface : ItemClickListener<BaseSearchResultsRVAdapterItem<*>> {
-  override fun onItemClicked(item: BaseSearchResultsRVAdapterItem<*>) {
+interface SearchLoadsRVAdapterInterface : ItemClickListener<BaseSearchLoadsRVAdapterItem<*>> {
+  override fun onItemClicked(item: BaseSearchLoadsRVAdapterItem<*>) {
     if (item.type == Request) {
       handleAction(HomeBidsRequestAction_ViewDetails, item)
     }
@@ -16,6 +16,6 @@ interface SearchResultsRVAdapterInterface : ItemClickListener<BaseSearchResultsR
    */
   fun handleAction(
     actionId: String,
-    item: BaseSearchResultsRVAdapterItem<*>
+    item: BaseSearchLoadsRVAdapterItem<*>
   )
 }

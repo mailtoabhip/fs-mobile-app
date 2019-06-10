@@ -23,12 +23,11 @@ class SearchLoadFragmentViewModel @Inject constructor(private val appDB: AppData
   fun saveToHistory(
     originCity: CityModel,
     destinationCity: CityModel,
-    type: String,
-    size: String
+    type: String
   ) {
     compositeDisposable += Single.fromCallable {
       appDB.searchHistoryDao()
-          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, type, size))
+          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, type))
     }
         .onBackground()
         .subscribe { res, error ->

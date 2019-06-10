@@ -8,9 +8,6 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -136,29 +133,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
-  }
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    setHasOptionsMenu(true)
-    super.onActivityCreated(savedInstanceState)
-  }
-
-  override fun onCreateOptionsMenu(
-    menu: Menu?,
-    inflater: MenuInflater?
-  ) {
-    super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.menu_date_sort, menu)
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    when (item?.itemId) {
-      R.id.nav_date -> {
-        return true
-      }
-      else ->
-        return super.onOptionsItemSelected(item)
-    }
   }
 
   override fun handleAction(

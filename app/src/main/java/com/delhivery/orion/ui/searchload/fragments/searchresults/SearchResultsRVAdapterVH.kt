@@ -2,20 +2,18 @@ package com.delhivery.orion.ui.searchload.fragments.searchresults
 
 import android.databinding.ViewDataBinding
 import android.view.View
-import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
-import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
+import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
  * Base Home bids RV adapter view holder
  */
-abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseSearchResultsRVAdapterItem<*>>(binding: B) :
+abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseSearchLoadsRVAdapterItem<*>>(binding: B) :
     BaseViewHolder<B>(binding) {
   abstract fun bind(
     item: IT,
-    _interface: SearchResultsRVAdapterInterface
+    _interface: SearchLoadsRVAdapterInterface
   )
 
   /**
@@ -24,7 +22,7 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
   protected fun View.clickToAction(
     actionId: String,
     item: IT,
-    _interface: SearchResultsRVAdapterInterface
+    _interface: SearchLoadsRVAdapterInterface
   ) = setOnClickListener { action(actionId, item, _interface) }
 
   /**
@@ -33,36 +31,20 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
   protected fun View.action(
     actionId: String,
     item: IT,
-    _interface: SearchResultsRVAdapterInterface
+    _interface: SearchLoadsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item) }
-}
-
-/**
- * Search item view holder
- */
-internal class SearchResultsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
-    BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsSearchItemBinding, HomeBidsSearchItem>(
-        binding
-    ) {
-  override fun bind(
-    item: HomeBidsSearchItem,
-    _interface: SearchResultsRVAdapterInterface
-  ) {
-    binding.loadRequests = item.data.loadRequests
-    binding.editSearch.clickToAction(HomeBidsSearchAction_Search, item, _interface)
-  }
 }
 
 /**
  * Bid request item view holder
  */
-class SearchResultsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
-    BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(
+class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
+    BaseSearchResultsRVAdapterViewHolder<ViewHomeLoadsRequestItemBinding, SearchLoadsRequestItem>(
         binding
     ) {
   override fun bind(
-    item: HomeBidsRequestItem,
-    _interface: SearchResultsRVAdapterInterface
+    item: SearchLoadsRequestItem,
+    _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
   }
@@ -71,13 +53,13 @@ class SearchResultsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
 /**
  * Search load dummy header
  */
-internal class SearchResultsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinnerItemBinding) :
-    BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsSearchSpinnerItemBinding, HomeBidsSearchSpinnerItem>(
+internal class SearchLoadsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinnerItemBinding) :
+    BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsSearchSpinnerItemBinding, SearchLoadsSearchSpinnerItem>(
         binding
     ) {
   override fun bind(
-    item: HomeBidsSearchSpinnerItem,
-    _interface: SearchResultsRVAdapterInterface
+    item: SearchLoadsSearchSpinnerItem,
+    _interface: SearchLoadsRVAdapterInterface
   ) {
 
   }

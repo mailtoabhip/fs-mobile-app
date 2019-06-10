@@ -5,13 +5,11 @@ import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.orion.data.home.bids.HomeBidsProgressItemData
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.bids.HomeBidsSearchItemData
-import com.delhivery.orion.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.orion.data.home.bids.HomeBidsWarningItemData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.SearchSpinner
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
 enum class HomeBidsRVAdapterItemType(val typeId: Int) {
@@ -19,8 +17,7 @@ enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Search(1),
   Request(2),
   Warning(3),
-  SearchSpinner(4),
-  Progress(5);
+  Progress(4);
 
   companion object {
     /**
@@ -70,12 +67,6 @@ class HomeBidsRequestItem(data: HomeBidsRequestItemData) :
  */
 class HomeBidsWarningItem(data: HomeBidsWarningItemData) :
     BaseHomeBidsRVAdapterItem<HomeBidsWarningItemData>(Warning, data)
-
-/**
- * Search load screen dummy view
- */
-class HomeBidsSearchSpinnerItem(data: HomeBidsSearchSpinnerItemData = HomeBidsSearchSpinnerItemData()) :
-    BaseHomeBidsRVAdapterItem<HomeBidsSearchSpinnerItemData>(SearchSpinner, data)
 
 /**
  * Inline progress item
