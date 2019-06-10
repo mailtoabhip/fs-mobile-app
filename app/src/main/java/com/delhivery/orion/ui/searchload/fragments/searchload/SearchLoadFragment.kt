@@ -76,10 +76,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     }
 
-    /* truck size */
-    binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
-    }
-
     /* submit */
     binding.btnAction.setOnClickListener {
       searchLoad()
@@ -125,18 +121,17 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* form data */
     val type = binding.spinnerTruckType.selectedItem.toString()
-    val size = binding.spinnerTruckSize.selectedItem.toString()
 
     /* save to history if needed */
     if (saveToHistory) {
-      viewModel.saveToHistory(origin, destination, type, size)
+      viewModel.saveToHistory(origin, destination, type)
     }
     /* searching progress */
     action(ProgressSearchLoadAction(true))
 
     /* delay and search for better UX */
     Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, type, size))
+      action(SearchLoadAction(origin, destination, type))
     }, 200)
   }
 

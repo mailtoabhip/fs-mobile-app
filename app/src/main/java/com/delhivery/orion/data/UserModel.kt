@@ -33,7 +33,7 @@ data class UserModel(
   /**
    * User has selected routes or not
    */
-  fun hasRoutes() = routes != null || routes?.isEmpty() == true
+  fun hasRoutes() = routes != null && routes?.isNotEmpty() ?: false
 
   /**
    * user routes as {routeModel}

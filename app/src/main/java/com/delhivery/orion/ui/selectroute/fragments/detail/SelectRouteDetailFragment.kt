@@ -178,8 +178,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         .start()
   }
 
-  inner class DestinationsRVScrollListener(
-  ) : OnScrollListener() {
+  inner class DestinationsRVScrollListener() : OnScrollListener() {
 
     override fun onScrolled(
       recyclerView: RecyclerView,
@@ -202,6 +201,5 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         scrollDist += dy;
       }
     }
-
   }
 }

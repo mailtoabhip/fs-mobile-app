@@ -23,8 +23,7 @@ class SearchResultsViewModel @Inject constructor(
   fun searchLoad(
     origin: CityModel,
     destination: CityModel,
-    type: String,
-    size: String
+    type: String
   ) {
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(

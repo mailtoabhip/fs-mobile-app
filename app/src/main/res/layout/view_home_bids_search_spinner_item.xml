@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
+
   <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -17,34 +18,15 @@
       bind:shadow="@{ @dimen/size_4dp }"
       >
 
-    <View
-        android:id="@+id/view_spinner_center"
-        android:layout_width="0dp"
-        android:layout_height="10dp"
-        android:layout_centerHorizontal="true"
-        android:background="#00ffffff"
-        />
-
     <android.support.v7.widget.AppCompatSpinner
         android:id="@+id/spinner_truck_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_8dp"
-        android:layout_toStartOf="@id/view_spinner_center"
         android:background="@drawable/bg_search_load_spinner"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         bind:shadow="@{ @dimen/size_2dp }"
         />
 
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/spinner_truck_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_8dp"
-        android:layout_toEndOf="@id/view_spinner_center"
-        android:background="@drawable/bg_search_load_spinner"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        bind:shadow="@{ @dimen/size_2dp }"
-        />
   </RelativeLayout>
 </layout>

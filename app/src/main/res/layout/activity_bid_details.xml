@@ -60,13 +60,14 @@
               android:fontFamily="sans-serif-medium"
               android:gravity="center_horizontal"
               android:letterSpacing="0.01"
-              android:lineSpacingExtra="2sp"
+              android:lineSpacingExtra="@dimen/text_2sp"
               android:text="@string/title_confirmed_bid_details_banner"
-              android:textColor="#181818"
-              android:textSize="16sp"
+              android:textColor="@color/colorAccent"
+              android:textSize="@dimen/text_16sp"
               android:textStyle="normal"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
               />
 
           <android.support.v7.widget.AppCompatImageView
@@ -74,6 +75,7 @@
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_4dp"
               app:layout_constraintEnd_toStartOf="@id/text_title_confirmed_bid"
+              app:layout_constraintTop_toTopOf="@+id/text_title_confirmed_bid"
               app:srcCompat="@drawable/ic_check_circle_green"
               />
 
@@ -84,11 +86,13 @@
               android:fontFamily="sans-serif"
               android:gravity="center_horizontal"
               android:letterSpacing="0.01"
-              android:lineSpacingExtra="6sp"
+              android:lineSpacingExtra="@dimen/text_6sp"
               android:text="@string/msg_confirmed_bid_details_banner"
-              android:textColor="#181818"
-              android:textSize="12sp"
+              android:textColor="@color/colorAccent"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_title_confirmed_bid"
               />
 
@@ -99,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:padding="24dp"
+            android:padding="@dimen/size_24dp"
             bind:shadow="@{ @dimen/size_2dp }"
             >
 
@@ -109,9 +113,11 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:text="@string/label_from"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
               />
 
           <TextView
@@ -120,8 +126,9 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:textColor="#de000000"
-              android:textSize="16sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
               bind:htmlText="@{ @string/label_city_state(transaction.origin, transaction.originState) }"
               tools:text="Panjim, Goa"
@@ -134,9 +141,10 @@
               android:layout_marginTop="@dimen/size_16dp"
               android:fontFamily="sans-serif"
               android:text="@string/label_to"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_source"
               />
 
@@ -146,8 +154,9 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:textColor="#de000000"
-              android:textSize="16sp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_to_label"
               bind:htmlText="@{ @string/label_city_state(transaction.destination, transaction.destinationState) }"
               tools:text="Andheri east, Mumbai, Maharashtra"
@@ -158,14 +167,15 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_16dp"
-              android:lineSpacingExtra="4sp"
+              android:lineSpacingExtra="@dimen/text_4sp"
               android:text="@{ transaction.requiredAt() }"
-              android:textColor="#ffffff"
-              android:textSize="10sp"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_12sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_destination"
               bind:drawableResId="@{ transaction.requiredAtBg() }"
               tools:background="@drawable/bg_date_today"
-              tools:text="TODAY 6:30 pm"
+              tools:text="TODAY"
               />
 
           <TextView
@@ -175,8 +185,8 @@
               android:fontFamily="sans-serif"
               android:gravity="center_vertical"
               android:text="@{ transaction.truckTypeDetails() }"
-              android:textColor="#99000000"
-              android:textSize="13sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
               app:layout_constraintBottom_toBottomOf="@id/text_date_time"
               app:layout_constraintEnd_toEndOf="parent"
@@ -202,9 +212,10 @@
               android:fontFamily="sans-serif"
               android:gravity="end"
               android:text="@{ transaction.loadDetails() }"
-              android:textColor="#99000000"
-              android:textSize="16sp"
-              android:textStyle="normal"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_16sp"
+              android:textStyle="bold"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_date_time"
               tools:text="Load: Pharmaceuticals"
               />
@@ -216,9 +227,10 @@
               android:layout_marginTop="@dimen/size_32dp"
               android:fontFamily="sans-serif"
               android:text="@string/label_target_price"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_load_details"
               />
 
@@ -231,31 +243,14 @@
               android:letterSpacing="0.01"
               android:lineSpacingExtra="-4sp"
               android:text="@{ @string/label_inr(transaction.targetPrice) }"
-              android:textColor="#000000"
-              android:textSize="22sp"
+              android:textColor="@color/black"
+              android:textSize="@dimen/text_24sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
               tools:text="₹ 23900.00"
               />
         </android.support.constraint.ConstraintLayout>
-
-        <!-- bidding deadline text -->
-        <TextView
-            android:id="@+id/text_bid_deadline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_4dp"
-            android:background="#29a8e0"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/size_14dp"
-            android:text="Bidding ends today at 4:00pm"
-            android:textColor="#ffffff"
-            android:textSize="16sp"
-            android:textStyle="normal"
-            android:visibility="gone"
-            bind:shadow="@{ @dimen/size_2dp }"
-            />
 
         <!-- bidding completed text -->
         <TextView
@@ -269,7 +264,7 @@
             android:padding="@dimen/size_14dp"
             android:text="@string/label_bidding_ended"
             android:textColor="#59181818"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_16sp"
             android:textStyle="normal"
             android:visibility="gone"
             bind:shadow="@{ @dimen/size_2dp }"

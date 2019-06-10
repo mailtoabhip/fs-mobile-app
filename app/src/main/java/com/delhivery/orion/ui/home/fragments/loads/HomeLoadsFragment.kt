@@ -8,10 +8,9 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
@@ -28,6 +27,7 @@ import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
+import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFabCardMenuItems as HomeBidsFabCardMenuItems1
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -39,6 +39,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         null -> "Load Request"
         else -> "Load Request(" + viewModel.userLoadsData.value?.size + ")"
       }
+
+  private val MINIMUM = 25
+  var scrollDist = 0
+  var visible = false
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -89,6 +93,12 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       )
     }
 
+    binding.routesBanner.setOnClickListener {
+      startActivity(
+          selectRouteIntent(it.context, UserRoutes)
+      )
+    }
+
     viewModel.userLoadsData.observe(this, Observer {
       this@HomeLoadsFragment.activity?.title = "Load Request(" + it?.size + ")"
       it?.let { _items -> adapter.operation(_items) }
@@ -96,18 +106,18 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     viewModel.routesLiveData.observe(this, Observer {
       when (it) {
-        true -> ""
-        false -> ""
+        false -> binding.rvLoads.apply {
+          this@HomeLoadsFragment.visible = true
+          binding.routesBanner.visibility = View.VISIBLE
+          addOnScrollListener(BannerRVScrollListener())
+        }
+
+        true -> {
+          binding.routesBanner.visibility = View.GONE
+          this@HomeLoadsFragment.visible = false
+        }
       }
     })
-
-    /* fetch user transactions */
-    viewModel.fetchUserTransactions()
-  }
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    setHasOptionsMenu(true)
-    super.onActivityCreated(savedInstanceState)
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {
@@ -115,22 +125,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     add(1, HomeLoadsProgressItem())
   }
 
-  override fun onCreateOptionsMenu(
-    menu: Menu?,
-    inflater: MenuInflater?
-  ) {
-    super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.menu_date_sort, menu)
-  }
+  override fun onResume() {
+    super.onResume()
+    adapter.resetStaticData()
+    /* fetch user transactions */
+    viewModel.fetchUserTransactions()
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    when (item?.itemId) {
-      R.id.nav_date -> {
-        return true
-      }
-      else ->
-        return super.onOptionsItemSelected(item)
-    }
+    /* check user route/lane preferences*/
+    viewModel.checkUserRoutes()
   }
 
   override fun handleAction(
@@ -153,6 +155,30 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         startActivity(selectRouteIntent(it, UserRoutes))
       }
     }
+  }
+
+  fun hide() {
+    binding.routesBanner.animate()
+        .translationY(
+            PositionAnimExpectation.dpToPx(
+                this@HomeLoadsFragment.context!!, binding.routesBanner.height.toFloat()
+            )
+        )
+        .setInterpolator(AccelerateInterpolator(2f))
+        .setDuration(200L)
+        .start();
+  }
+
+  fun show() {
+    binding.routesBanner.animate()
+        .translationY(
+            -PositionAnimExpectation.dpToPx(
+                this@HomeLoadsFragment.context!!, 0f
+            )
+        )
+        .setInterpolator(DecelerateInterpolator(2f))
+        .setDuration(400L)
+        .start()
   }
 
   /**
@@ -202,6 +228,34 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       if (_toolbarElevation != toolbarElevation) {
         toolbarElevation = _toolbarElevation
         toolbarElevationLiveData!!.postValue(toolbarElevation)
+      }
+    }
+  }
+
+  /**
+   * Home loads rv scroll listener for banner animation related stuff
+   */
+  inner class BannerRVScrollListener() : OnScrollListener() {
+
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int
+    ) {
+      super.onScrolled(recyclerView, dx, dy)
+
+      if (visible && scrollDist > MINIMUM) {
+        hide();
+        scrollDist = 0;
+        visible = false;
+      } else if (!visible && scrollDist < -MINIMUM) {
+        show();
+        scrollDist = 0;
+        visible = true;
+      }
+
+      if ((visible && dy > 0) || (!visible && dy < 0)) {
+        scrollDist += dy;
       }
     }
   }

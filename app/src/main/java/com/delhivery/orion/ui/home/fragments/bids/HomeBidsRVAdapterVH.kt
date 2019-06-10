@@ -9,7 +9,6 @@ import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
@@ -98,21 +97,6 @@ internal class HomeBidsWarningItemVH(binding: ViewHomeBidsWarningItemBinding) :
   ) {
     binding.data = item.data
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
-  }
-}
-
-/**
- * Search load dummy header
- */
-internal class HomeBidsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinnerItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsSearchSpinnerItemBinding, HomeBidsSearchSpinnerItem>(
-        binding
-    ) {
-  override fun bind(
-    item: HomeBidsSearchSpinnerItem,
-    _interface: HomeBidsRVAdapterInterface
-  ) {
-
   }
 }
 
