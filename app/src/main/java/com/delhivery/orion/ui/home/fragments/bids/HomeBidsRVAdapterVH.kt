@@ -9,8 +9,8 @@ import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
+import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -63,14 +63,13 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
 /**
  * Search item view holder
  */
-internal class HomeBidsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsSearchItemBinding, HomeBidsSearchItem>(binding) {
+internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewHomeSearchItemBinding, HomeBidsSearchItem>(binding) {
   override fun bind(
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.loadRequests = item.data.loadRequests
-    binding.editSearch.clickToAction(HomeBidsSearchAction_Search, item, _interface)
+    binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
   }
 }
 

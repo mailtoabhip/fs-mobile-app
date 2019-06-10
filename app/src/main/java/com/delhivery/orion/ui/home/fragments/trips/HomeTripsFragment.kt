@@ -26,6 +26,7 @@ import com.delhivery.orion.ui.bids.TripType.Completed
 import com.delhivery.orion.ui.bids.TripType.InTransit
 import com.delhivery.orion.ui.bids.userTripsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
@@ -36,7 +37,7 @@ import com.delhivery.orion.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
-    HomeTripsRVAdapterInterface {
+    HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -99,7 +100,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     })
 
     /* attach sticky search with adapter */
-    binding.editStickySearch.attachWithAdapter(adapter)
+    binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch trips initially */
     viewModel.fetchTrips(false)
@@ -155,6 +156,10 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         startActivity(userTripsIntent(it, Completed))
       }
     }
+  }
+
+  override fun postElevation(elevation: Float) {
+    toolbarElevationLiveData!!.postValue(elevation)
   }
 
   /**

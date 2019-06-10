@@ -3,10 +3,10 @@ package com.delhivery.orion.ui.home.fragments.trips
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
-import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -31,13 +31,13 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
   ) = when (HomeTripsRVAdapterItemType.byTypeId(viewType)) {
     Progress -> ViewHomeTripsProgressItemBinding.inflate(inflater, parent, false)
     Header -> ViewHomeTripsHeaderItemBinding.inflate(inflater, parent, false)
-    Search -> ViewHomeTripsSearchItemBinding.inflate(inflater, parent, false)
+    Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
     TripItem -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeTripsSearchItemBinding -> HomeTripsSearchItemVH(binding)
+    is ViewHomeSearchItemBinding -> HomeTripsSearchItemVH(binding)
     is ViewHomeTripsProgressItemBinding -> HomeTripsProgressItemVH(binding)
     is ViewHomeTripsHeaderItemBinding -> HomeTripsHeaderItemVH(binding)
     else -> HomeTripsItemVH(binding as ViewHomeTripsDetailsItemBinding)

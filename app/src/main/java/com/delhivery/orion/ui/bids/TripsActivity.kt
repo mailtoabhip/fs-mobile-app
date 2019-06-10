@@ -129,7 +129,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-    menuInflater.inflate(R.menu.menu_bids_activity, menu)
+    menuInflater.inflate(R.menu.menu_search, menu)
     val searchItem = menu?.findItem(R.id.action_search)
     val searchView = searchItem?.actionView as SearchView?
     setupSearch(searchItem, searchView)

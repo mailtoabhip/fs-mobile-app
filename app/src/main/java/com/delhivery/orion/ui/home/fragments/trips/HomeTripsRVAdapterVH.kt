@@ -7,10 +7,10 @@ import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
-import com.delhivery.orion.databinding.ViewHomeTripsSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -45,8 +45,8 @@ abstract class BaseHomeTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
 /**
  * Trip Search item view holder
  */
-internal class HomeTripsSearchItemVH(binding: ViewHomeTripsSearchItemBinding) :
-    BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsSearchItemBinding, HomeTripsSearchItem>(binding) {
+internal class HomeTripsSearchItemVH(binding: ViewHomeSearchItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewHomeSearchItemBinding, HomeTripsSearchItem>(binding) {
   override fun bind(
     item: HomeTripsSearchItem,
     _interface: HomeTripsRVAdapterInterface

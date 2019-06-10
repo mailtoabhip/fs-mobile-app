@@ -3,14 +3,20 @@ package com.delhivery.orion.ui.home.fragments.bids
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_LostBids
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
@@ -19,14 +25,24 @@ import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.ConfirmedBid
 import com.delhivery.orion.ui.bids.BidType.LostBid
 import com.delhivery.orion.ui.bids.userBidsIntent
+import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
+import com.github.florent37.kotlin.pleaseanimate.please
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
-    HomeBidsRVAdapterInterface {
+    HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
+
+  override val title: CharSequence
+    get() =
+      when (viewModel.userBidsData.value?.size) {
+        null -> "My Bids"
+        else -> "My Bids(" + viewModel.userBidsData.value?.size + ")"
+      }
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -65,6 +81,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     binding.rvBids.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeBidsFragment.adapter
+      addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
@@ -72,8 +89,12 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     /* observe and update adapter items */
     viewModel.userBidsData.observe(this, Observer {
+      this@HomeBidsFragment.activity?.title = "My Bids(" + it?.size + ")"
       it?.let { _items -> adapter.operation(_items) }
     })
+
+    /* attach sticky search with adapter */
+    binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch static data and start fetching transactions */
     viewModel.fetchStaticData()
@@ -103,7 +124,34 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsRequestAction_ViewDetails -> context?.let {
         startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, it))
       }
+      HomeBidsSearchAction_Search -> context?.let {
+        val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
+        val stickyView = binding.editStickySearch
+        stickyView.visibility = View.VISIBLE
+        stickyView.translationY = childView.top.toFloat()
+        stickyView.alpha = 1f
+        binding.rvBids.alpha = 0f
+        adapter.enableFilter()
+        please(250, FastOutLinearInInterpolator()) {
+          animate(binding.editStickySearch) {
+            topOfItsParent(marginDp = 0f)
+          }
+        }.withEndAction {
+          please(100, AccelerateDecelerateInterpolator()) {
+            stickyView.requestFocus()
+            stickyView.setRatio(0f)
+            uiUtils.toggleKeyboard(false)
+            binding.rvBids.alpha = 1f
+            toolbarElevationLiveData!!.postValue(0f)
+          }
+        }
+            .start()
+      }
     }
+  }
+
+  override fun postElevation(elevation: Float) {
+    toolbarElevationLiveData!!.postValue(elevation)
   }
 
   /**
@@ -115,5 +163,63 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = binding.refreshLayout.isRefreshing
+  }
+
+  inner class HomeBidsRVScrollListener(
+    private val stickyView: DelhiveryAnimatedSearchBar,
+    private val elevation: Float = 12f
+  ) : OnScrollListener() {
+
+    private var toolbarElevation = -1f
+
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int
+    ) {
+      super.onScrolled(recyclerView, dx, dy)
+
+      val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
+      val pos = layoutManager.findFirstVisibleItemPosition()
+      if (!adapter.checkFiltering()) {
+        val _toolbarElevation = if (pos == 0) {
+          stickyView.translationY = 0f
+          stickyView.visibility = View.GONE
+          stickyView.alpha = 0f
+          stickyView.setRatio(1f)
+          defToolbarElevation
+        } else if (pos == 1) {
+          stickyView.visibility = View.VISIBLE
+          val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
+          val viewTopGap = childView.height - stickyView.height * 1f
+          val viewTop = childView.top + viewTopGap
+          if (viewTop > 0) {
+            val factor = viewTop / viewTopGap
+            val invFactor = 1f - factor
+            stickyView.translationY = viewTop
+            stickyView.alpha = invFactor
+            ViewCompat.setElevation(stickyView, elevation * invFactor)
+          } else {
+            stickyView.translationY = stickyView.top * 1f
+            stickyView.alpha = 1f
+            ViewCompat.setElevation(stickyView, elevation)
+          }
+          val factor =
+            (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+          stickyView.setRatio((1 - factor))
+          factor * defToolbarElevation
+        } else {
+          stickyView.visibility = View.VISIBLE
+          stickyView.translationY = 0f
+          stickyView.alpha = 1f
+          stickyView.setRatio(0f)
+          0f
+        }
+        if (_toolbarElevation != toolbarElevation) {
+          toolbarElevation = _toolbarElevation
+          toolbarElevationLiveData!!.postValue(toolbarElevation)
+        }
+      }
+    }
   }
 }
