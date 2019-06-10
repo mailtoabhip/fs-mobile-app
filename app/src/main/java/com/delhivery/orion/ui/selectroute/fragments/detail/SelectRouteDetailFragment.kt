@@ -87,7 +87,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     binding.rvDestinations.apply {
       layoutManager = LinearLayoutManager(this@SelectRouteDetailFragment.context)
       adapter = this@SelectRouteDetailFragment.adapter
-      addOnScrollListener(DestinationsRVScrollListener(binding.btnSave))
+      addOnScrollListener(DestinationsRVScrollListener())
     }
 
     adapter.clearItems()
@@ -179,7 +179,6 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   }
 
   inner class DestinationsRVScrollListener(
-    private val view: View
   ) : OnScrollListener() {
 
     override fun onScrolled(
