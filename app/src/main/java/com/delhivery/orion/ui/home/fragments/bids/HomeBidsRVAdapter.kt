@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
+import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
@@ -23,11 +23,11 @@ import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Sear
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
 class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
-    BaseDataRVAdapter<BaseHomeBidsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
+    BaseFilterableDataRVAdapter<BaseHomeBidsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
     ) {
 
-  override fun getItemViewType(position: Int) = items[position].type.typeId
+  override fun getItemViewType(position: Int) = itemsList()[position].type.typeId
 
   override fun getBinding(
     inflater: LayoutInflater,
@@ -35,8 +35,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     viewType: Int
   ) = when (HomeBidsRVAdapterItemType.byTypeId(viewType)) {
     Header -> ViewHomeBidsHeaderItemBinding.inflate(inflater, parent, false)
-    Search -> ViewHomeBidsSearchItemBinding.inflate(inflater, parent,
-        false)
+    Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
     Request -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
     Warning -> ViewHomeBidsWarningItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
@@ -46,7 +45,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeBidsHeaderItemBinding -> HomeBidsHeaderItemVH(binding)
-    is ViewHomeBidsSearchItemBinding -> HomeBidsSearchItemVH(binding)
+    is ViewHomeSearchItemBinding -> HomeBidsSearchItemVH(binding)
     is ViewHomeBidsRequestItemBinding -> HomeBidsRequestItemVH(binding)
     is ViewHomeBidsWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
@@ -66,6 +65,9 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     }
   }
 
+  override fun filterList(query: String) =
+    items.filter { it.type == Search || it.data.filter(query) }
+
   /**
    * Remove all transactions
    */
@@ -82,8 +84,8 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
    */
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      add(Pair(HomeBidsHeaderItem(), Update))
-      add(Pair(HomeBidsSearchItem(), Update))
+//      add(Pair(HomeBidsHeaderItem(), Update))
+//      add(Pair(HomeBidsSearchItem(), Update))
       add(Pair(HomeBidsWarningItem_SelectRoutes, Remove))
       add(Pair(HomeBidsWarningItem_EditRoutePrefs, Remove))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
@@ -96,5 +98,10 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
         .let {
           operation(it)
         }
+  }
+
+  override fun enableFilter() {
+    super.enableFilter()
+    isFiltering = true
   }
 }

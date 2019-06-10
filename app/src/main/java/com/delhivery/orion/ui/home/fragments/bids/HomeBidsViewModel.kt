@@ -14,6 +14,8 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsSearchItem
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -102,6 +104,7 @@ class HomeBidsViewModel @Inject constructor(
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
+              add(Pair(HomeBidsSearchItem(), AddUpdate))
               add(Pair(HomeBidsProgressItem(), Remove))
 
               /* edit route prefs, if fresh fetch n total == 0 */
@@ -110,7 +113,7 @@ class HomeBidsViewModel @Inject constructor(
               }
               /* post all transactions as add */
               else {
-                add(Pair(HomeBidsSearchItem(HomeBidsSearchItemData(_tRes.total)), Update))
+                add(Pair(HomeBidsSearchItem(HomeBidsSearchItemData()), Update))
                 _tRes.transactions.forEach { _item ->
                   add(Pair(HomeBidsRequestItem(_item), Add))
                 }

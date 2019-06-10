@@ -74,7 +74,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     }
 
     /* setup recycler view */
-    binding.rvBids.apply {
+    binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
       addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))

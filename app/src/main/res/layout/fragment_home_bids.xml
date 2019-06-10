@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
   <data>
     <variable
@@ -25,6 +26,20 @@
           android:layout_height="match_parent"
           />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+        android:id="@+id/edit_sticky_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_72dp"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_search_trips"
+        android:imeOptions="actionSearch"
+        android:paddingBottom="@dimen/size_16dp"
+        android:paddingStart="@dimen/size_56dp"
+        android:textColorHint="@color/color_hint"
+        android:textSize="@dimen/text_16sp"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
 
   </FrameLayout>
 </layout>
