@@ -116,7 +116,10 @@ class DelhiveryAnimatedSearchBar(
   /**
    * Attach search bar with adapter
    */
-  fun attachWithAdapter(_adapter: BaseFilterableDataRVAdapter<*, *, *>) {
+  fun attachWithAdapter(
+    _adapter: BaseFilterableDataRVAdapter<*, *, *>,
+    elevationChangeListener: ToolbarElevationChangeListener
+  ) {
     if (adapter != null) throw IllegalStateException("Already attached to one adapter: $adapter")
     this.adapter = _adapter
 
@@ -130,6 +133,7 @@ class DelhiveryAnimatedSearchBar(
         this.adapter?.enableFilter()
       } else {
         this.adapter?.cancelFilter()
+        elevationChangeListener.postElevation(resources.getDimension(R.dimen.toolbar_elevation))
         setText("")
       }
     }
@@ -138,5 +142,9 @@ class DelhiveryAnimatedSearchBar(
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
     compositeDisposable.disposeAndClear()
+  }
+
+  interface ToolbarElevationChangeListener {
+    fun postElevation(elevation: Float)
   }
 }

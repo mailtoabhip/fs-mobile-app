@@ -4,9 +4,7 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.view.Menu
@@ -116,7 +114,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-    menuInflater.inflate(R.menu.menu_bids_activity, menu)
+    menuInflater.inflate(R.menu.menu_search, menu)
     val searchItem = menu?.findItem(R.id.action_search)
     val searchView = searchItem?.actionView as SearchView?
     setupSearch(searchItem, searchView)

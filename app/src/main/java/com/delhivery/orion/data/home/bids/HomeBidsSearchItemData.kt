@@ -3,7 +3,7 @@ package com.delhivery.orion.data.home.bids
 import com.delhivery.orion.data.BaseKeyTypeModel
 
 data class HomeBidsSearchItemData(
-  val loadRequests: Int = -1
+  val showing: Boolean = true
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeBidsSearchItemDataKey
 }

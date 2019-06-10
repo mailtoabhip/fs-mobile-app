@@ -14,7 +14,9 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.utils.extensions.safeEquals
 
-abstract class BaseDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBinding,
+abstract class BaseDataRVAdapter<
+    D : BaseKeyTypeModel<out Any>,
+    B : ViewDataBinding,
     VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) : RecyclerView.Adapter<VH>() {
 
   /* List of items */
