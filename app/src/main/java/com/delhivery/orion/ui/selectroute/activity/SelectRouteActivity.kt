@@ -55,16 +55,19 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
   private var selectedRoute: RouteModel? = null
 
+  private var addRouteOnLogin: Boolean = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    addRouteOnLogin = intent?.extras?.getBoolean(SelectRouteWelcomeIntentExtra) ?: false
 
     /* flow type */
     flowType = intent?.getIntExtra(
         SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId
-    )
-        ?.let {
-          SelectRouteFlowType.byTypeId(it)
-        } ?: AddNewRoute
+    )?.let {
+      SelectRouteFlowType.byTypeId(it)
+    } ?: AddNewRoute
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -200,7 +203,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   }
 
   override fun onBackPressed() {
-    if (currentFragmentType?.prevFragment(flowType) != null) {
+    if (currentFragmentType?.prevFragment(flowType) != null && !addRouteOnLogin) {
       navigate(currentFragmentType!!.prevFragment(flowType)!!)
     } else {
       super.onBackPressed()
@@ -213,6 +216,9 @@ private const val SelectRouteFragmentTag = "select_route_fragment_tag"
 
 /* Flow type intent key */
 private const val SelectRouteFlowTypeIntentExtra = "select_route_flow_type"
+
+/* Navigate from [SelectRouteWelcomeActivity] */
+const val SelectRouteWelcomeIntentExtra = "select_route_welcome_tag"
 
 /**
  * Select route intent for [SelectRouteFlowType]

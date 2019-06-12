@@ -134,7 +134,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 binding.textOtpSentToPhoneNo.text =
-                    getString(R.string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
+                  getString(R.string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
               }
             }
           }
@@ -152,12 +152,12 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, finishAfter = true)
+            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, true)
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
+            navigationUtils.navigate(HomeActivity::class.java, true)
           }
         }
       }
