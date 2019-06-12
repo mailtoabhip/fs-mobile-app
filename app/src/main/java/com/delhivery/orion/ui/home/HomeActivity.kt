@@ -20,6 +20,8 @@ import com.delhivery.orion.utils.extensions.onPageSelected
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {
 
+  var currPos: Int = 0
+
   override fun getViewModelClass() = HomeViewModel::class.java
 
   override fun layoutId() = R.layout.activity_home
@@ -46,7 +48,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       onPageSelected { p ->
         HomeFragmentType.pos(p)
             ?.let {
-              title = it.fragment.title
+              this@HomeActivity.title = HomeFragmentType.pos(p)
+                  ?.fragment?.title
               binding.bottomNav.selectedItemId = it.menuId
               observeFragmentLiveData(p)
             }
@@ -96,6 +99,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       .let { pos ->
         binding.viewpager.apply {
           if (pos != -1 && currentItem != pos) {
+            this@HomeActivity.title = HomeFragmentType.pos(pos)
+                ?.fragment?.title
             setCurrentItem(pos, true)
           }
         }

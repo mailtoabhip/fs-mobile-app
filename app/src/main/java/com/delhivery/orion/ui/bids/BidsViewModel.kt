@@ -7,8 +7,13 @@ import com.delhivery.orion.repository.TransactionsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.bids.BidType.Unknown
+import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsWarningItem_NoBids
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -23,7 +28,7 @@ class BidsViewModel @Inject constructor(
 
   /* Bids live data */
   var bidsLiveData =
-    MutableLiveData<List<Pair<HomeBidsRequestItem, DataRVAdapterOperationType>>>()
+    MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
   /* bid type */
   var bidType: BidType = Unknown
@@ -44,7 +49,13 @@ class BidsViewModel @Inject constructor(
       return
     }
 
-    compositeDisposable += bidsRepository.userBids(bidType.status, offset)
+    if (paginate) {
+      showProgress()
+      /* add progress if not paginating */
+      Pair(HomeBidsProgressItem(), AddUpdate).let { bidsLiveData.postValue(listOf(it)) }
+    }
+
+    compositeDisposable += bidsRepository.userBidsByStatus(bidType.status, offset)
         .flatMap { _bidsRes ->
           offset += _bidsRes.second.size
           total = _bidsRes.first
@@ -59,9 +70,16 @@ class BidsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error) {
-            mutableListOf<Pair<HomeBidsRequestItem, DataRVAdapterOperationType>>().apply {
-              _res.transactions.forEach { _item ->
-                add(Pair(HomeBidsRequestItem(_item), Add))
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
+
+              if (!paginate && _res.total == 0) {
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+              } else {
+                _res.transactions.forEach { _item ->
+                  add(Pair(HomeBidsRequestItem(_item), Add))
+                }
               }
             }
                 .let {
@@ -69,7 +87,13 @@ class BidsViewModel @Inject constructor(
                 }
           } else {
             if (error is NoBidsFoundException) {
-              bidsLiveData.postValue(null)
+              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                /* remove progress item */
+                add(Pair(HomeBidsProgressItem(), Remove))
+                /* add no bids warning item */
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+              }
+                  .let { bidsLiveData.postValue(it) }
             } else {
               error.handle()
             }

@@ -17,6 +17,7 @@
         type="String"
         />
   </data>
+
   <android.support.constraint.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -52,7 +53,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{@string/label_bids(myBids)}"
+          android:text="@{myBids}"
           android:textColor="@color/white"
           android:textSize="@dimen/text_14sp"
           android:textStyle="bold"
@@ -89,7 +90,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{@string/label_bids(confirmedBids)}"
+          android:text="@{confirmedBids}"
           android:textColor="@color/white"
           android:textSize="@dimen/text_14sp"
           android:textStyle="bold"
@@ -126,7 +127,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{@string/label_bids(lostBids)}"
+          android:text="@{lostBids}"
           android:textColor="@color/white"
           android:textSize="@dimen/text_14sp"
           android:textStyle="bold"

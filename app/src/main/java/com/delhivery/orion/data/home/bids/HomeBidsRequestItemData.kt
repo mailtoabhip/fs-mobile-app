@@ -83,7 +83,7 @@ data class HomeBidsRequestItemData(
     )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
 
   fun tripPriceDifference(): String {
-    return "Calulate this price difference"
+    return "Calculate bid price difference if bid placed"
   }
 
   override fun filter(query: String) =
