@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.selectroutewelcome
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import com.delhivery.orion.R
@@ -7,10 +8,14 @@ import com.delhivery.orion.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.orion.utils.LocationFlowState
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelcomeBinding, SelectRouteWelcomeViewModel>() {
+
+  val ADD_ROUTES_RC: Int = 1234
+
   init {
     StatusBarColor = Color.parseColor("#181818")
   }
@@ -27,13 +32,17 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
     /* select route submit button */
     binding.btnSelectRoute.setOnClickListener {
       if (onLocationButtonClicked()) {
-        navigationUtils.navigate(SelectRouteActivity::class.java, finishAfter = true)
+        val bundle: Bundle = Bundle()
+        bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
+        navigationUtils.navigateForActivityResult(
+            SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
+        )
       }
     }
 
     /* skip button functionality */
     binding.textSkip.setOnClickListener {
-      navigationUtils.navigate(HomeActivity::class.java, finishAfter = true)
+      navigationUtils.navigate(HomeActivity::class.java, true)
     }
 
     /* animate and open bottom view */
@@ -62,5 +71,18 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
 
   override fun updateLocationFlowState(flowState: LocationFlowState) {
     /* not needed as of now */
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      ADD_ROUTES_RC -> navigationUtils.navigate(
+          HomeActivity::class.java, true
+      )
+    }
   }
 }
