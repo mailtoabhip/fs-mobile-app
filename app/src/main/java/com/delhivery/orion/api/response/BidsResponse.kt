@@ -13,3 +13,9 @@ data class CreateTransactionBidResponse(
   @SerializedName("id") val bidId: String,
   @SerializedName("transaction_id") val transactionId: String
 )
+
+data class BidSummaryResponse(
+  @SerializedName("confirmed_bids") val confirmedBids: Int,
+  @SerializedName("my_bids") val myBids: Int,
+  @SerializedName("lost_bids") val lostBids: Int
+)

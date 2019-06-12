@@ -3,6 +3,7 @@ package com.delhivery.orion.ui.home.fragments.bids
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
@@ -13,6 +14,7 @@ import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
@@ -64,25 +66,12 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     items.filter { it.type == Search || it.data.filter(query) }
 
   /**
-   * Remove all transactions
-   */
-  fun removeAllTransactions() {
-    items.filter { it.type == Request }
-        .map { Pair(it, Remove) }
-        .let {
-          operation(it)
-        }
-  }
-
-  /**
    * Reset all data, remove all errors/transactions
    */
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      //      add(Pair(HomeBidsHeaderItem(), Update))
-      //      add(Pair(HomeBidsSearchItem(), Update))
-      add(Pair(HomeBidsWarningItem_SelectRoutes, Remove))
-      add(Pair(HomeBidsWarningItem_EditRoutePrefs, Remove))
+      add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
+      add(Pair(HomeBidsWarningItem_NoBids, Remove))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
       items.filter { it.type == Request }
           .map { Pair(it, Remove) }

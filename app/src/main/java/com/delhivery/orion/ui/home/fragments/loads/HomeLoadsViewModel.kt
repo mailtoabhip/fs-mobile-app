@@ -26,6 +26,8 @@ class HomeLoadsViewModel @Inject constructor(
   /* route/lane preferene live data*/
   var routesLiveData = MutableLiveData<Boolean>()
 
+  var loadsCountLiveData = MutableLiveData<Int>()
+
   var hasMoreData = true
   var offset = 0
 
@@ -48,6 +50,7 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {
+            loadsCountLiveData.postValue(_tRes.total)
             offset = _tRes.offset
             hasMoreData = _tRes.offset != _tRes.total
 

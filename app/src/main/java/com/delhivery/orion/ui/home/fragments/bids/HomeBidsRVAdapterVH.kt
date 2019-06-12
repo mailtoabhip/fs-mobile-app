@@ -51,9 +51,19 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
     item: HomeBidsHeaderItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.myBids = item.data.myBids.toString()
-    binding.confirmedBids = item.data.confirmedBids.toString()
-    binding.lostBids = "-1"
+    binding.myBids = when (item.data.myBids) {
+      -1 -> ""
+      else -> item.data.myBids.toString() + " Bids"
+    }
+    binding.confirmedBids = when (item.data.confirmedBid) {
+      -1 -> ""
+      else -> item.data.confirmedBid.toString() + " Bids"
+    }
+    binding.lostBids = when (item.data.lostBids) {
+      -1 -> ""
+      else -> item.data.lostBids.toString() + " Bids"
+    }
+
     binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
     binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
     binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
@@ -107,7 +117,6 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
     BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, HomeBidsProgressItem>(
         binding
     ) {
-
   override fun bind(
     item: HomeBidsProgressItem,
     _interface: HomeBidsRVAdapterInterface

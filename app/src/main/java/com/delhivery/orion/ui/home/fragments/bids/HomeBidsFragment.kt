@@ -37,12 +37,10 @@ import com.github.florent37.kotlin.pleaseanimate.please
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
 
+  var _title: String = "My Bids"
+
   override val title: CharSequence
-    get() =
-      when (viewModel.userBidsData.value?.size) {
-        null -> "My Bids"
-        else -> "My Bids(" + viewModel.userBidsData.value?.size + ")"
-      }
+    get() = _title
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -74,7 +72,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     binding.refreshLayout.setOnRefreshListener {
       adapter.resetStaticData()
       /* remove user transactions and fetch again */
-      viewModel.fetchStaticData()
+      viewModel.fetchBids()
     }
 
     /* setup recycler view */
@@ -89,20 +87,28 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     /* observe and update adapter items */
     viewModel.userBidsData.observe(this, Observer {
-      this@HomeBidsFragment.activity?.title = "My Bids(" + it?.size + ")"
       it?.let { _items -> adapter.operation(_items) }
+    })
+
+    viewModel.bidsCountLiveData.observe(this, Observer {
+      _title = when (it) {
+        null -> "My Bids"
+        0 -> "My Bids"
+        else -> "My Bids(" + it + ")"
+      }
     })
 
     /* attach sticky search with adapter */
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch static data and start fetching transactions */
-    viewModel.fetchStaticData()
+    viewModel.fetchBids()
   }
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
-    add(1, HomeBidsProgressItem())
+    add(1, HomeBidsSearchItem())
+    add(2, HomeBidsProgressItem())
   }
 
   override fun handleAction(
@@ -158,9 +164,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true)
+    override fun loadMore() = viewModel.fetchBids(true)
 
-    override fun hasMore() = viewModel.hasMoreData
+    override fun hasMore() = viewModel.offset < viewModel.total
 
     override fun isLoading() = binding.refreshLayout.isRefreshing
   }

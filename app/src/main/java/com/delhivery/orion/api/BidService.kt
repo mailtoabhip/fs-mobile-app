@@ -3,6 +3,7 @@ package com.delhivery.orion.api
 import com.delhivery.orion.api.request.CreateTransactionBidRequest
 import com.delhivery.orion.api.request.UpdateTransactionBidRequest
 import com.delhivery.orion.api.response.BaseResponse
+import com.delhivery.orion.api.response.BidSummaryResponse
 import com.delhivery.orion.api.response.CreateTransactionBidResponse
 import com.delhivery.orion.api.response.TransactionBidsResponseBody
 import io.reactivex.Single
@@ -37,13 +38,31 @@ interface BidService {
   ): Single<BaseResponse<CreateTransactionBidResponse>>
 
   /**
-   * Get User/supplier bids
+   * Get User/supplier bids by status
    */
   @GET("bids")
-  fun userBids(
+  fun userBidsByStatus(
     @Query("supplier_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
     @Query("bid_status") status: String
   ): Single<BaseResponse<TransactionBidsResponseBody>>
+
+  /**
+   * Get all User/supplier bids
+   */
+  @GET("bids")
+  fun userAllBids(
+    @Query("supplier_id") userId: String,
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int
+  ): Single<BaseResponse<TransactionBidsResponseBody>>
+
+  /**
+   * Get User/supplier bids summary
+   */
+  @GET("/bids/summary")
+  fun userBidsSummary(
+    @Query("supplier_id") userId: String
+  ): Single<BaseResponse<BidSummaryResponse>>
 }

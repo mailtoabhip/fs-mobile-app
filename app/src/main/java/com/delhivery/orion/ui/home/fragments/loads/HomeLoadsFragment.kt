@@ -33,12 +33,10 @@ import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFabCardMenuItems as Ho
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
 
+  var _title: String = "Load Request"
+
   override val title: CharSequence
-    get() =
-      when (viewModel.userLoadsData.value?.size) {
-        null -> "Load Request"
-        else -> "Load Request(" + viewModel.userLoadsData.value?.size + ")"
-      }
+    get() = _title
 
   private val MINIMUM = 25
   var scrollDist = 0
@@ -100,8 +98,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     }
 
     viewModel.userLoadsData.observe(this, Observer {
-      this@HomeLoadsFragment.activity?.title = "Load Request(" + it?.size + ")"
       it?.let { _items -> adapter.operation(_items) }
+    })
+
+    viewModel.loadsCountLiveData.observeOnce(this, Observer {
+      _title = when (it) {
+        null -> "Load Request"
+        0 -> "Load Request"
+        else -> "Load Request(" + it + ")"
+      }
+      this@HomeLoadsFragment.activity?.title = _title
     })
 
     viewModel.routesLiveData.observe(this, Observer {
@@ -118,6 +124,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         }
       }
     })
+
+    /* fetch user transactions */
+    viewModel.fetchUserTransactions()
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {
@@ -127,10 +136,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
   override fun onResume() {
     super.onResume()
-    adapter.resetStaticData()
-    /* fetch user transactions */
-    viewModel.fetchUserTransactions()
-
     /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
   }

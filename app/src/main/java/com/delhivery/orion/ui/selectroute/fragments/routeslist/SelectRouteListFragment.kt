@@ -31,7 +31,7 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    (activity as SelectRouteActivity)?.title = ""
+    (activity as SelectRouteActivity).title = ""
 
     /* add more routes action */
     binding.cardAddMoreRoute.setOnClickListener {

@@ -1,21 +1,19 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
-import com.delhivery.orion.data.UserModel
+import com.delhivery.orion.api.response.BidSummaryResponse
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
-import com.delhivery.orion.data.home.bids.HomeBidsSearchItemData
+import com.delhivery.orion.exception.NoBidsFoundException
 import com.delhivery.orion.repository.BidsRepository
-import com.delhivery.orion.repository.TransactionStatus.Requested
 import com.delhivery.orion.repository.TransactionsRepository
-import com.delhivery.orion.repository.UserRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
-import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
-import com.delhivery.orion.ui.home.fragments.trips.HomeTripsSearchItem
+import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -25,7 +23,6 @@ import javax.inject.Inject
 
 class HomeBidsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
@@ -33,44 +30,81 @@ class HomeBidsViewModel @Inject constructor(
   var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  var hasMoreData = true
+  var bidsCountLiveData = MutableLiveData<Int>()
+
+  /* bid type */
+  lateinit var bidSummary: BidSummaryResponse
+
+  /* pagination params */
+  var total = 0
   var offset = 0
 
   /**
-   *
-   * Fetch user static data from [UserRepository] and
-   * bid count data from [BidsRepository]
-   *
+   * Fetch bids
    */
-  fun fetchStaticData() {
+  fun fetchBids(paginate: Boolean = false) {
+    if (!paginate) {
+      offset = 0
+    } else if (paginate && (total == offset)) {
+      return
+    }
+
+    if (paginate) {
+      showProgress()
+      /* add progress if not paginating */
+      Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
+    }
+
     compositeDisposable += Single.zip(
-        userRepository.getUser(), bidsRepository.userBidsCount(),
-        BiFunction<UserModel, Pair<Int, Int>, Triple<UserModel, Int, Int>> { t1, t2 ->
-          Triple(t1, t2.first, t2.second)
+        bidsRepository.userBidsSummary(), bidsRepository.userBids(offset),
+        BiFunction<BidSummaryResponse, Pair<Int, List<TransactionBid>>,
+            Pair<BidSummaryResponse, Pair<Int, List<TransactionBid>>>> { t1, t2 ->
+          Pair(t1, t2)
         })
+        .flatMap { t ->
+          offset += t.second.second.size
+          total = t.second.first
+          bidsCountLiveData.postValue(total)
+          bidSummary = t.first
+          if (!paginate && total == 0) {
+            Single.error(NoBidsFoundException())
+          } else {
+            transactionsRepository.bulkTransactions(t.second.second.map { it.transactionId })
+                .convertResponse()
+          }
+        }
         .onBackground()
-        .doOnSubscribe { showProgress() }
+        .progress()
         .subscribe { _data, error ->
           if (!error) {
-            _data.apply {
-              val _items =
-                mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>()
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
 
-              /* add header counts */
-              _items.add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData(second, third)), Update))
+              add(
+                  Pair(
+                      HomeBidsHeaderItem(
+                          HomeBidsHeaderItemData(
+                              bidSummary.myBids,
+                              bidSummary.confirmedBids,
+                              bidSummary.lostBids
+                          )
+                      ), Update
+                  )
+              )
 
-              /* show no routes warning item when no routes found */
-              if (first.userRoutes().isEmpty()) {
-                _items.add(Pair(HomeBidsWarningItem_SelectRoutes, AddUpdate))
-                showProgress(false)
+              /* edit route prefs, if fresh fetch n total == 0 */
+              if (!paginate && _data.total == 0) {
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
               }
-              /* start fetching transactions */
+              /* post all transactions as add */
               else {
-                fetchUserTransactions(false)
+                _data.transactions.forEach { _item ->
+                  add(Pair(HomeBidsRequestItem(_item), Add))
+                }
               }
-              /* post to static data */
-              userBidsData.postValue(_items)
             }
+                .let { userBidsData.postValue(it) }
           } else {
             error.handle()
             showProgress(false)
@@ -78,54 +112,4 @@ class HomeBidsViewModel @Inject constructor(
         }
   }
 
-  /**
-   *
-   * Fetch user transactions from [TransactionsRepository]
-   *
-   */
-  fun fetchUserTransactions(paginate: Boolean) {
-    if (!paginate) {
-      offset = 0
-    } else if (paginate && !hasMoreData) {
-      return
-    }
-    if (paginate) {
-      showProgress()
-      /* add progress if not paginating */
-      Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
-    }
-
-    compositeDisposable += transactionsRepository.transactions(offset, Requested)
-        .onBackground()
-        .subscribe { _tRes, error ->
-          if (!error && _tRes != null) {
-            offset = _tRes.offset
-            hasMoreData = _tRes.offset != _tRes.total
-
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomeBidsSearchItem(), AddUpdate))
-              add(Pair(HomeBidsProgressItem(), Remove))
-
-              /* edit route prefs, if fresh fetch n total == 0 */
-              if (!paginate && _tRes.total == 0) {
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              }
-              /* post all transactions as add */
-              else {
-                add(Pair(HomeBidsSearchItem(HomeBidsSearchItemData()), Update))
-                _tRes.transactions.forEach { _item ->
-                  add(Pair(HomeBidsRequestItem(_item), Add))
-                }
-              }
-            }
-                .let { userBidsData.postValue(it) }
-          } else {
-            /* remove progress item */
-            Pair(HomeBidsProgressItem(), Remove).let { userBidsData.postValue(listOf(it)) }
-            error.handle()
-          }
-          showProgress(false)
-        }
-  }
 }

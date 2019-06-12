@@ -11,20 +11,29 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_NoBids
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.bids.BidType.ActiveBid
 import com.delhivery.orion.ui.bids.BidType.LostBid
 import com.delhivery.orion.ui.bids.BidType.Unknown
 import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
-    ItemClickListener<HomeBidsRequestItem> {
+    HomeBidsRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -41,7 +50,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   /* rv adapter */
   private val adapter by lazy {
-    BidsRVAdapter(this)
+    HomeBidsRVAdapter(this)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +78,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         this, Observer { if (it == true) searchItem?.isVisible = false })
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.clearItems()
+      adapter.resetStaticData()
       /* remove user bid transactions and fetch again */
       viewModel.fetchBids(false)
     }
@@ -81,12 +90,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       addOnScrollListener(PaginationInterface())
     }
 
+    adapter.setItems(mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
+      add(0, HomeBidsProgressItem())
+    })
+
     binding.btnStartBidding.setOnClickListener { finish() }
 
     /* bids observer */
     viewModel.bidsLiveData.observe(this, Observer {
       title = viewModel.bidType.toolbarTitle(viewModel.total)
-      binding.error = it == null
       searchItem?.isVisible = it != null
       if (it != null) {
         adapter.operation(it)
@@ -96,20 +108,18 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     viewModel.fetchBids(false)
   }
 
-  override fun onItemClicked(item: HomeBidsRequestItem) =
-    startActivity(bidDetailsIntent(item.data, this))
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeBidsRVAdapterItem<*>
+  ) {
+    // handle actions here
+    when (actionId) {
+//      HomeBidsWarningAction_NoBids -> startActivity(
+//          selectRouteIntent(this, UserRoutes)
+//      )
+      HomeBidsRequestAction_ViewDetails ->
+        startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))
 
-  private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {
-    when (item.id) {
-      0 -> ActiveBid
-      1 -> LostBid
-      else -> Unknown
-    }.let { _type ->
-      if (_type != viewModel.bidType) {
-        viewModel.bidType = _type
-        title = _type.toolbarTitle()
-        viewModel.fetchBids(false)
-      }
     }
   }
 

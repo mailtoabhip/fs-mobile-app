@@ -39,6 +39,11 @@ import com.github.florent37.kotlin.pleaseanimate.please
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
 
+  var _title: String = "Ongoing Trips"
+
+  override val title: CharSequence
+    get() = _title
+
   init {
     toolbarElevationLiveData = MutableLiveData()
     hasInlineProgress = true
@@ -139,6 +144,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             stickyView.setRatio(0f)
             uiUtils.toggleKeyboard(false)
             binding.rvTrips.alpha = 1f
+            toolbarElevationLiveData!!.postValue(0f)
           }
         }
             .start()

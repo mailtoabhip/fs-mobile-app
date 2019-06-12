@@ -38,13 +38,10 @@ abstract class BaseHomeBidsRVAdapterItem<D : BaseKeyTypeModel<String>>(
 }
 
 /**
- * //TODO: Add lost bid data
  * Header item with my bids and confirmed bids
  */
 class HomeBidsHeaderItem(
-  data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(
-      0, 0
-  )
+  data: HomeBidsHeaderItemData = HomeBidsHeaderItemData()
 ) : BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
 
 /**
