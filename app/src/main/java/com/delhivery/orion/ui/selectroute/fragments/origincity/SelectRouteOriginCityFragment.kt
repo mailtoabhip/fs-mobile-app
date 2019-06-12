@@ -73,18 +73,10 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
 //        }
 //  }
 
-  /**
-   * Update location flow
-   */
-//  private fun updateLocationFlowState() {
-//    binding.textOriginCityName.text =
-//      if (locationUtils.getLocationPermissionFlowState() == PermissionGranted) {
-//        getLocation()
-//        "Loading..."
-//      } else {
-//        "No Location :("
-//      }
-//  }
+  override fun onPause() {
+    super.onPause()
+    binding.editOriginCity.setText("")
+  }
 
   /**
    * Event observer

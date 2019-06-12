@@ -52,7 +52,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   private var states = StateModelList.toMutableList()
 
   var scrollDist = 0
-  var visible = false
+  var visible = true
 
   @Inject lateinit var dialogUtils: DialogUtils
 
@@ -92,10 +92,9 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
     adapter.clearItems()
     adapter.operation(mutableListOf<Pair<StateModel, DataRVAdapterOperationType>>().apply {
-      states
-          .forEach { _item ->
-            add(Pair(_item, Add))
-          }
+      states.forEach { _item ->
+        add(Pair(_item, Add))
+      }
     })
 
     binding.btnSave.setOnClickListener {
@@ -118,13 +117,10 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     }
 
     binding.textDestinationHeading.text = "Destination States(" + selectedStates.size + ")"
-    visible = true
     adapter.updateItem(item)
 
     if (binding.btnSave.visibility == View.GONE)
       binding.btnSave.visibility = View.VISIBLE
-    else
-      show()
   }
 
   override fun onCreateOptionsMenu(
