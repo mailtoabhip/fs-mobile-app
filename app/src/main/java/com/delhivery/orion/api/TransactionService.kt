@@ -17,7 +17,8 @@ interface TransactionService {
     @Query("offset") offset: Int,
     @Query("status") status: String?,
     @Query("source") source: String? = null,
-    @Query("destination") destination: String? = null
+    @Query("destination") destination: String? = null,
+    @Query("truck_type") truckType: String? = null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

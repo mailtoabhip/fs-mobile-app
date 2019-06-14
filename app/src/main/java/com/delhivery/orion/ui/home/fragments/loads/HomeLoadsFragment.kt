@@ -79,7 +79,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
-      addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
+      addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
@@ -189,7 +189,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   /**
    * Home loads rv scroll listener for search bar animation related stuff
    */
-  inner class HomeBidsRVScrollListener(
+  inner class HomeLoadsRVScrollListener(
     private val stickyView: DelhiveryAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {

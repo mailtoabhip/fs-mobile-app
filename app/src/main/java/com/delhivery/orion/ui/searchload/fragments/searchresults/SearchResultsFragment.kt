@@ -82,7 +82,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   fun search(
     origin: CityModel,
-    destination: CityModel,
+    destination: CityModel?,
     type: String,
     progress: Boolean = true
   ) {

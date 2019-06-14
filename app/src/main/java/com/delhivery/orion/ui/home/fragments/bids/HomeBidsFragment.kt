@@ -1,15 +1,14 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
+import android.animation.ValueAnimator
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
-import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_LostBids
@@ -32,7 +31,6 @@ import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
-import com.github.florent37.kotlin.pleaseanimate.please
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -138,20 +136,23 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         stickyView.alpha = 1f
         binding.rvBids.alpha = 0f
         adapter.enableFilter()
-        please(250, FastOutLinearInInterpolator()) {
-          animate(binding.editStickySearch) {
-            topOfItsParent(marginDp = 0f)
-          }
-        }.withEndAction {
-          please(100, AccelerateDecelerateInterpolator()) {
-            stickyView.requestFocus()
-            stickyView.setRatio(0f)
-            uiUtils.toggleKeyboard(false)
+
+        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
+        valueAnimator.duration = 250
+        valueAnimator.addUpdateListener { t ->
+          val animValue = t.animatedValue as Int
+          stickyView.translationY = animValue.toFloat()
+          stickyView.setRatio((animValue.toFloat() / childView.top))
+          if (animValue.toFloat() / childView.top == 1f) {
             binding.rvBids.alpha = 1f
-            toolbarElevationLiveData!!.postValue(0f)
           }
         }
-            .start()
+        valueAnimator.start()
+        stickyView.postDelayed(Runnable {
+          stickyView.requestFocus()
+          uiUtils.toggleKeyboard(false)
+          toolbarElevationLiveData!!.postValue(0f)
+        }, 300)
       }
     }
   }

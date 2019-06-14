@@ -12,7 +12,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import com.delhivery.orion.R
 import com.delhivery.orion.R.string
-import com.delhivery.orion.data.RouteModel
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.StateModelList
 import com.delhivery.orion.databinding.FragmentSelectRouteDetailBinding

@@ -6,7 +6,7 @@
   <data>
     <variable
         name="route"
-        type="com.delhivery.orion.data.RouteModel"
+        type="com.delhivery.orion.data.home.routes.RouteModel"
         />
   </data>
 

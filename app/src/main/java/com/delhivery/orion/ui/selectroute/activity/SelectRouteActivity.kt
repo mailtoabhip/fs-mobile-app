@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.delhivery.orion.R
-import com.delhivery.orion.data.RouteModel
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.databinding.ActivitySelectRouteBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
 import com.delhivery.orion.ui.home.HomeActivity
@@ -142,8 +142,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       RouteDetail -> {
         (action as RouteDetailAction).apply {
-          selectedRoute = RouteModel(origin)
-          selectedRoute?.destinations = destinations.toMutableSet()
+          selectedRoute = RouteModel(route.origin)
+          selectedRoute?.destinations = route.destinations.toMutableSet()
           navigate(RouteDetailFragment)
         }
       }

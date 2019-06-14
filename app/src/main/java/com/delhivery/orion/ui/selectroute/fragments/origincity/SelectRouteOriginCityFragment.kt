@@ -35,9 +35,7 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
     super.onViewCreated(view, savedInstanceState)
 
     /* setup edit */
-    uiUtils.toggleKeyboard()
     binding.editOriginCity.setText("")
-    binding.editOriginCity.clearFocus()
 
     /* observe event data */
     viewModel.eventLiveData.observe(this, EventObserver())
@@ -72,6 +70,12 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
 //          }
 //        }
 //  }
+
+  override fun onResume() {
+    super.onResume()
+    binding.editOriginCity.requestFocus()
+    uiUtils.toggleKeyboard(false)
+  }
 
   override fun onPause() {
     super.onPause()

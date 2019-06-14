@@ -2,7 +2,7 @@ package com.delhivery.orion.ui.selectroute.activity
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.RouteMappingModel
-import com.delhivery.orion.data.RouteModel
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.repository.UserRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not

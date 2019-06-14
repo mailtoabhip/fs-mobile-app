@@ -24,9 +24,10 @@ class TransactionsRepository @Inject constructor(
   fun searchTransactions(
     offset: Int,
     source: String,
-    destination: String
+    destination: String?,
+    truckType: String?
   ) = transactionService.transactions(
-      offset, null, source = source, destination = destination
+      offset, null, source, destination, truckType
   ).convertResponse()
 
   /**
