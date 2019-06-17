@@ -9,6 +9,7 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.AppCompatAutoCompleteTextView
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
@@ -113,6 +114,11 @@ class DelhiveryCityAutoEditText(
       error = false
     }
     invalidate()
+  }
+
+  fun errorAnimate() {
+    val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
+    this.startAnimation(shake)
   }
 }
 

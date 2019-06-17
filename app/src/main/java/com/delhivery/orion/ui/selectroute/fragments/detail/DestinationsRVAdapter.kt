@@ -12,11 +12,11 @@ import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
  * for Delhivery Private Limited
  **
  *
- * <Define what the class does>
+ * Recycler view adapter for Destination States
  *
  **
  */
-public class DestinationsRVAdapter(private val _clickListener: ItemClickListener<StateModel>) :
+class DestinationsRVAdapter(private val _clickListener: ItemClickListener<StateModel>) :
     BaseDataRVAdapter<StateModel, ViewDataBinding,
         BaseDestinationsRVAdapterViewHolder<*, *>>(
         _clickListener

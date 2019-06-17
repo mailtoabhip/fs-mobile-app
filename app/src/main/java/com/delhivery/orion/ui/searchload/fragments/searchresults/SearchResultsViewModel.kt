@@ -22,12 +22,12 @@ class SearchResultsViewModel @Inject constructor(
    */
   fun searchLoad(
     origin: CityModel,
-    destination: CityModel,
+    destination: CityModel?,
     type: String
   ) {
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.cityId, destination.cityId
+        0, origin.cityId, destination?.cityId, type.toLowerCase()
     )
         .onBackground()
         .subscribe { _tRes, error ->

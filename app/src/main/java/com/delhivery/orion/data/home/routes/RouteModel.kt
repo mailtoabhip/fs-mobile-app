@@ -1,4 +1,9 @@
-package com.delhivery.orion.data
+package com.delhivery.orion.data.home.routes
+
+import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.data.CityModel
+import com.delhivery.orion.data.RouteMappingModel
+import com.delhivery.orion.data.StateModel
 
 /**
  * Route model
@@ -7,7 +12,10 @@ data class RouteModel(
   var origin: CityModel,
   var nearByLocation: List<CityModel> = listOf(),
   var destinations: MutableSet<StateModel> = mutableSetOf()
-) {
+) : BaseKeyTypeModel<String>() {
+
+  override fun key() = origin.city
+
   fun statesCount() = "${destinations.size} States"
 
   fun destinationCount() = "${destinations.size}"
@@ -52,3 +60,6 @@ fun List<RouteModel>.expandRoutes(): List<RouteModel> {
   }
   return routes.values.toList()
 }
+
+/* actions */
+const val RoutesAction_ViewDetails = "routes_detail"

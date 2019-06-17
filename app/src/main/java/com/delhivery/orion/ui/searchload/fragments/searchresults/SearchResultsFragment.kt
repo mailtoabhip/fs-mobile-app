@@ -53,8 +53,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       layoutManager = LinearLayoutManager(context)
       adapter = _adapter
       addOnScrollListener(_scrollListener)
-      /* add first dummy item */
-      _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     }
 
     /* transform observe search results */
@@ -71,6 +69,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    * Setup spinners
    */
   private fun setupSpinners() {
+    binding.spinnerTruckType.isEnabled = false
+    binding.spinnerTruckType.isClickable = false
     /* truck type */
     binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
 
@@ -82,10 +82,13 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   fun search(
     origin: CityModel,
-    destination: CityModel,
+    destination: CityModel?,
     type: String,
     progress: Boolean = true
   ) {
+    /* clear and add first dummy item */
+    _adapter.clearItems()
+    _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true))

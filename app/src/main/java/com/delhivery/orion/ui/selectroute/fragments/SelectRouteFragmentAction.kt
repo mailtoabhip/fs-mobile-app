@@ -1,8 +1,8 @@
 package com.delhivery.orion.ui.selectroute.fragments
 
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.RouteModel
 import com.delhivery.orion.data.StateModel
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.AddMoreRoutes
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
@@ -53,8 +53,7 @@ class AddMoreRoutesAction() : BaseSelectRouteFragmentAction(AddMoreRoutes)
  * Navigate to route detail page
  */
 class RouteDetailAction(
-  val origin: CityModel,
-  val destinations: List<StateModel>
+  val route: RouteModel
 ) : BaseSelectRouteFragmentAction(RouteDetail)
 
 /**

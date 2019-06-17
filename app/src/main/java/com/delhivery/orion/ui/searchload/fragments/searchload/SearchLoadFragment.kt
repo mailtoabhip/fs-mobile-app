@@ -60,6 +60,11 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }
   }
 
+  override fun onPause() {
+    super.onPause()
+    uiUtils.toggleKeyboard()
+  }
+
   private fun setupSearchScreen() {
     autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
       origin = it
@@ -117,14 +122,23 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   ) {
     uiUtils.toggleKeyboard(true)
 
-    if (origin == null || destination == null) return
+    if (origin == null) {
+      binding.editOriginCity.setError("Please select origin")
+      binding.editOriginCity.errorAnimate()
+      return
+    }
 
     /* form data */
     val type = binding.spinnerTruckType.selectedItem.toString()
 
     /* save to history if needed */
     if (saveToHistory) {
-      viewModel.saveToHistory(origin, destination, type)
+      viewModel.saveToHistory(
+          origin, destination ?: CityModel(
+          "", "",
+          "", "", "", ""
+      ), type
+      )
     }
     /* searching progress */
     action(ProgressSearchLoadAction(true))
@@ -135,7 +149,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }, 200)
   }
 
-  private fun validate() = origin != null && destination != null
+  private fun validate() = origin != null
 
   /**
    * init observers
