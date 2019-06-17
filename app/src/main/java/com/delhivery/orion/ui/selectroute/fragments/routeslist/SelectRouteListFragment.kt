@@ -2,7 +2,6 @@ package com.delhivery.orion.ui.selectroute.fragments.routeslist
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.routes.RouteModel
@@ -48,11 +47,6 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
     binding.rvRoutes.apply {
       layoutManager = LinearLayoutManager(this@SelectRouteListFragment.context)
       adapter = this@SelectRouteListFragment.adapter
-      ItemTouchHelper(
-          SwipeToDeleteCallback(
-              this@SelectRouteListFragment.context, this@SelectRouteListFragment.adapter
-          )
-      ).attachToRecyclerView(this)
     }
 
     adapter.operation(

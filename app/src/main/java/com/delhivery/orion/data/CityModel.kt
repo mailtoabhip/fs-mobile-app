@@ -14,6 +14,8 @@ data class CityModel(
   override fun key() = cityId
 
   fun cityName() = StringUtils.capitalize(city)
+
+  fun stateName() = StringUtils.capitalize(state ?: "")
 }
 
 /**

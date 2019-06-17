@@ -16,8 +16,8 @@ interface TransactionService {
   fun transactions(
     @Query("offset") offset: Int,
     @Query("status") status: String?,
-    @Query("source") source: String? = null,
-    @Query("destination") destination: String? = null,
+    @Query("origin_city_code") source: String? = null,
+    @Query("destination_city_code") destination: String? = null,
     @Query("truck_type") truckType: String? = null
   ): Single<BaseResponse<TransactionsResponse>>
 

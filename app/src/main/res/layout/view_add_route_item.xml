@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:paddingBottom="@dimen/size_20dp"
+        android:paddingEnd="@dimen/size_16dp"
         android:paddingStart="@dimen/size_16dp"
         android:paddingTop="@dimen/size_20dp"
         >

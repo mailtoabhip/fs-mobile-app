@@ -27,7 +27,7 @@ class SearchResultsViewModel @Inject constructor(
   ) {
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.cityId, destination?.cityId, type
+        0, origin.cityId, destination?.cityId, type.toLowerCase()
     )
         .onBackground()
         .subscribe { _tRes, error ->
