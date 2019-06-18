@@ -10,7 +10,7 @@ import com.delhivery.orion.data.home.trips.TripStatus.TruckUnloaded
  * for Delhivery Private Limited
  **
  *
- * <Define what the class does>
+ * Enum to hold various trip statuses
  *
  **
  */
@@ -32,7 +32,7 @@ enum class TripType(
 
   companion object {
     /**
-     * Get [BidType] by type id
+     * Get [TripType] by type id
      */
     fun byTypeId(typeId: Int) = values().filter { it.typeId == typeId }.firstOrNull() ?: Unknown
   }

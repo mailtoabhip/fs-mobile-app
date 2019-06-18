@@ -1,8 +1,6 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
-import com.delhivery.orion.api.response.BidSummaryResponse
-import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.orion.exception.NoBidsFoundException
 import com.delhivery.orion.repository.BidsRepository
@@ -18,7 +16,6 @@ import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 class HomeBidsViewModel @Inject constructor(
@@ -32,12 +29,38 @@ class HomeBidsViewModel @Inject constructor(
 
   var bidsCountLiveData = MutableLiveData<Int>()
 
-  /* bid type */
-  lateinit var bidSummary: BidSummaryResponse
-
   /* pagination params */
   var total = 0
   var offset = 0
+
+  /**
+   * Fetch bids summary
+   */
+  fun fetchBidsSummary() {
+    compositeDisposable += bidsRepository.userBidsSummary()
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(
+                  Pair(
+                      HomeBidsHeaderItem(
+                          HomeBidsHeaderItemData(
+                              _res.myBids,
+                              _res.confirmedBids,
+                              _res.lostBids
+                          )
+                      ), Update
+                  )
+              )
+            }
+                .let { userBidsData.postValue(it) }
+          } else {
+            error.handle()
+          }
+        }
+  }
 
   /**
    * Fetch bids
@@ -55,21 +78,15 @@ class HomeBidsViewModel @Inject constructor(
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
-    compositeDisposable += Single.zip(
-        bidsRepository.userBidsSummary(), bidsRepository.userBids(offset),
-        BiFunction<BidSummaryResponse, Pair<Int, List<TransactionBid>>,
-            Pair<BidSummaryResponse, Pair<Int, List<TransactionBid>>>> { t1, t2 ->
-          Pair(t1, t2)
-        })
+    compositeDisposable += bidsRepository.userBids(offset)
         .flatMap { t ->
-          offset += t.second.second.size
-          total = t.second.first
+          offset += t.second.size
+          total = t.first
           bidsCountLiveData.postValue(total)
-          bidSummary = t.first
           if (!paginate && total == 0) {
             Single.error(NoBidsFoundException())
           } else {
-            transactionsRepository.bulkTransactions(t.second.second.map { it.transactionId })
+            transactionsRepository.bulkTransactions(t.second.map { it.transactionId })
                 .convertResponse()
           }
         }
@@ -80,18 +97,6 @@ class HomeBidsViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeBidsProgressItem(), Remove))
-
-              add(
-                  Pair(
-                      HomeBidsHeaderItem(
-                          HomeBidsHeaderItemData(
-                              bidSummary.myBids,
-                              bidSummary.confirmedBids,
-                              bidSummary.lostBids
-                          )
-                      ), Update
-                  )
-              )
 
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && _data.total == 0) {

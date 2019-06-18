@@ -3,8 +3,10 @@ package com.delhivery.orion.data.home.trips
 import com.delhivery.orion.data.BaseKeyTypeModel
 
 data class HomeTripsHeaderItemData(
-  val myBids: Int = -1,
-  val confirmedBids: Int = -1
+  val advancePending: Int = -1,
+  val balancePending: Int = -1,
+  val inTransit: Int = -1,
+  val completed: Int = -1
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeTripsHeaderItemDataKey
 }

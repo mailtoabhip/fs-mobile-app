@@ -70,9 +70,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.resetStaticData()
       /* remove user trips and fetch again */
-      viewModel.fetchTrips(false)
+      adapter.resetStaticData()
+      fetchTripsData()
     }
 
     /* setup recycler view */
@@ -106,12 +106,18 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch trips initially */
+    fetchTripsData()
+  }
+
+  private fun fetchTripsData() {
+    viewModel.fetchTripsSummary()
     viewModel.fetchTrips(false)
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsHeaderItem())
-    add(1, HomeTripsProgressItem())
+    add(1, HomeTripsSearchItem())
+    add(2, HomeTripsProgressItem())
   }
 
   override fun handleAction(

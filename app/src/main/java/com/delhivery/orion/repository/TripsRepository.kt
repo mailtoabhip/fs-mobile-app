@@ -42,6 +42,14 @@ class TripsRepository @Inject constructor(
         Triple(t1, t2, t3)
       }
   )
+
+  /**
+   * User/supplier trip summary [BidSummaryResponse]
+   */
+  fun userTripsSummary(
+  ) = tripsService
+      .userTripsSummary(userRepository.userId())
+      .convertResponse()
 }
 
 /* User trips pagination load limit */

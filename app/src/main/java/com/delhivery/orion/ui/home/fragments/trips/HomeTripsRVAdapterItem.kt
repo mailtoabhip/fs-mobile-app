@@ -57,5 +57,5 @@ class HomeTripsProgressItem(data: HomeTripsProgressItemData = HomeTripsProgressI
  * Trip header items
  */
 class HomeTripsHeaderItem(
-  data: HomeTripsHeaderItemData = HomeTripsHeaderItemData(0, 0)
+  data: HomeTripsHeaderItemData = HomeTripsHeaderItemData()
 ) : BaseHomeTripsRVAdapterItem<HomeTripsHeaderItemData>(Header, data)

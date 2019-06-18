@@ -1,6 +1,7 @@
 package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
+import com.delhivery.orion.api.response.TripSummaryResponse
 import com.delhivery.orion.api.response.TripsResponse
 import com.delhivery.orion.data.TripHistoryModel
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
@@ -37,4 +38,12 @@ interface TripService {
   fun tripHistory(
     @Path("transactionId") transactionId: String
   ): Single<BaseResponse<List<TripHistoryModel>>>
+
+  /**
+   * Get User/supplier trips summary [TripSummaryResponse]
+   */
+  @GET("/trips/summary")
+  fun userTripsSummary(
+    @Query("supplier_id") userId: String
+  ): Single<BaseResponse<TripSummaryResponse>>
 }
