@@ -3,7 +3,7 @@ package com.delhivery.orion.ui.bids
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
+import com.delhivery.orion.databinding.ViewHomeTripsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
@@ -29,12 +29,12 @@ class TripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     viewType: Int
   ) = when (HomeTripsRVAdapterItemType.byTypeId(viewType)) {
     Progress -> ViewHomeTripsProgressItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
+    else -> ViewHomeTripsRequestItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeTripsProgressItemBinding -> HomeTripsProgressItemVH(binding)
-    else -> HomeTripsItemVH(binding as ViewHomeTripsDetailsItemBinding)
+    else -> HomeTripsItemVH(binding as ViewHomeTripsRequestItemBinding)
   }
 
   override fun bindVH(

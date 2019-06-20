@@ -5,7 +5,7 @@ import android.view.View
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.orion.databinding.ViewHomeLoadsWarningItemBinding
+import com.delhivery.orion.databinding.ViewLoadsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -83,8 +83,8 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
 /**
  * Bids warning item view holder
  */
-internal class HomeLoadsWarningItemVH(binding: ViewHomeLoadsWarningItemBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsWarningItemBinding, HomeLoadsWarningItem>(
+internal class HomeLoadsWarningItemVH(binding: ViewLoadsWarningItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewLoadsWarningItemBinding, HomeLoadsWarningItem>(
         binding
     ) {
   override fun bind(

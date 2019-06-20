@@ -1,6 +1,7 @@
 package com.delhivery.orion.data.home.trips
 
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class HomeTripsItemData(
@@ -9,7 +10,9 @@ data class HomeTripsItemData(
   @SerializedName("client_id") val clientId: String,
   @SerializedName("client_name") val clientName: String,
   @SerializedName("destination") val destination: String,
+  @SerializedName("destination_state") val destinationState: String,
   @SerializedName("origin") val origin: String,
+  @SerializedName("origin_state") val originState: String,
   @SerializedName("transaction_id") val transactionId: String,
   @SerializedName("trip_status") private val _tripStatus: String,
   @SerializedName("vendor_id") val vendorId: String,
@@ -35,7 +38,8 @@ data class HomeTripsItemData(
   /**
    * Formatted driver details as per UI
    */
-  fun formattedDriverDetails() = "${driverDetails?.driverName} (${driverDetails?.driverPhoneNo})"
+  fun formattedDriverDetails() =
+    "${StringUtils.capitalize(driverDetails?.driverName)} (${driverDetails?.driverPhoneNo})"
 
   /**
    * Trip Status [TripStatus]
@@ -46,6 +50,15 @@ data class HomeTripsItemData(
     vehicleDetails.vehicleNo.contains(query, true)
         || driverDetails?.driverName?.contains(query, true) == true
         || destination.contains(query, true)
+
+  fun originCityName() = StringUtils.capitalize(origin)
+
+  fun destinationCityName() = StringUtils.capitalize(destination)
+
+  fun originStateName() = StringUtils.capitalize(originState)
+
+  fun destinationStateName() = StringUtils.capitalize(destinationState)
+
 }
 
 /* actions */
@@ -72,7 +85,7 @@ enum class TripStatus(
   val statusKey: String,
   val status: String
 ) {
-  InTrasit("in_transit", "In Transit"),
+  In_Transit("in_transit", "In Transit"),
   TripCancelled("trip_cancelled", "Trip Cancelled"),
   TripCompleted("trip_completed", "Trip Completed"),
   TruckArrived("truck_arrived", "Truck Arrived"),

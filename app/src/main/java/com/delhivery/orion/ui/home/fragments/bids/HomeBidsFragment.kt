@@ -68,9 +68,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.resetStaticData()
       /* remove user transactions and fetch again */
-      viewModel.fetchBids()
+      adapter.resetStaticData()
+      fetchBidsData()
     }
 
     /* setup recycler view */
@@ -99,7 +99,12 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     /* attach sticky search with adapter */
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
-    /* fetch static data and start fetching transactions */
+    /* fetch bids data*/
+    fetchBidsData()
+  }
+
+  private fun fetchBidsData() {
+    viewModel.fetchBidsSummary()
     viewModel.fetchBids()
   }
 

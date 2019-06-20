@@ -20,14 +20,30 @@ class TripsRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
+   * @status set null to fetch all trips or add any single trip status
    * Get user trips
+   *
    */
   fun trips(
     offset: Int = 0,
     status: TripStatus? = null
-  ) = tripsService.trips(
-      "0060w0000028cA4A1K"/*userRepository.userId()*/, limit = UserTripsLoadLimit, offset = offset,
-      status = status?.statusKey
+  ) = tripsService.tripsForStatuses(
+      "0060w0000028cA4A1K"/*userRepository.userId()*/, UserTripsLoadLimit,
+      offset, status?.statusKey
+  )
+      .convertResponse()
+
+  /**
+   * @status set null to fetch all trips or add any comma separated trip statuses
+   * Get user trips for multiple statuses
+   *
+   */
+  fun trips(
+    offset: Int = 0,
+    statuses: String
+  ) = tripsService.tripsForStatuses(
+      "0060w0000028cA4A1K"/*userRepository.userId()*/, UserTripsLoadLimit,
+      offset, statuses
   )
       .convertResponse()
 
@@ -42,6 +58,14 @@ class TripsRepository @Inject constructor(
         Triple(t1, t2, t3)
       }
   )
+
+  /**
+   * User/supplier trip summary [BidSummaryResponse]
+   */
+  fun userTripsSummary(
+  ) = tripsService
+      .userTripsSummary(userRepository.userId())
+      .convertResponse()
 }
 
 /* User trips pagination load limit */

@@ -8,6 +8,7 @@ import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.delhivery.orion.utils.DrawableProviderUtils
+import com.delhivery.orion.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -46,6 +47,16 @@ data class HomeBidsRequestItemData(
   fun loadDetails() = "Load: $materialType"
 
   fun targetPrice() = "\u20B9 $targetPrice"
+
+  fun originCityName() = StringUtils.capitalize(origin)
+
+  fun destinationCityName() = StringUtils.capitalize(destination)
+
+  fun originStateName() = StringUtils.capitalize(originState)
+
+  fun destinationStateName() = StringUtils.capitalize(destinationState)
+
+
 
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
