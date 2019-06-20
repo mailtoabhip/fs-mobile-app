@@ -32,7 +32,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
     Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
-    Warning -> ViewTripsWarningItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewLoadsWarningItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
 
