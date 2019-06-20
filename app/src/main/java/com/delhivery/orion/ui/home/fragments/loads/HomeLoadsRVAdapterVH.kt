@@ -2,6 +2,7 @@ package com.delhivery.orion.ui.home.fragments.loads
 
 import android.databinding.ViewDataBinding
 import android.view.View
+import com.delhivery.orion.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
@@ -53,7 +54,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
 }
 
 /**
- * Progress inline viewholder
+ * Progress inline view holder
  */
 internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsProgressItemBinding, HomeLoadsProgressItem>(
@@ -93,5 +94,20 @@ internal class HomeLoadsWarningItemVH(binding: ViewHomeLoadsWarningItemBinding) 
   ) {
     binding.data = item.data
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ * Info item view holder
+ */
+internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsInfoItemBinding, HomeLoadsInfoItem>(
+        binding
+    ) {
+  override fun bind(
+    item: HomeLoadsInfoItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    binding.data = item.data
   }
 }

@@ -23,7 +23,7 @@ import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
@@ -93,7 +93,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     binding.routesBanner.setOnClickListener {
       startActivity(
-          selectRouteIntent(it.context, UserRoutes)
+          selectRouteIntent(it.context, EditRoute)
       )
     }
 
@@ -157,7 +157,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         )
       }
       HomeLoadsWarningAction_NoLoads -> context?.let {
-        startActivity(selectRouteIntent(it, UserRoutes))
+        startActivity(selectRouteIntent(it, EditRoute))
       }
     }
   }

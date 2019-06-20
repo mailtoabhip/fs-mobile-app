@@ -13,22 +13,13 @@ import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
-import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_NoBids
-import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
-import com.delhivery.orion.ui.bids.BidType.ActiveBid
-import com.delhivery.orion.ui.bids.BidType.LostBid
-import com.delhivery.orion.ui.bids.BidType.Unknown
-import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
-import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 
@@ -115,7 +106,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     // handle actions here
     when (actionId) {
 //      HomeBidsWarningAction_NoBids -> startActivity(
-//          selectRouteIntent(this, UserRoutes)
+//          selectRouteIntent(this, EditRoute)
 //      )
       HomeBidsRequestAction_ViewDetails ->
         startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))

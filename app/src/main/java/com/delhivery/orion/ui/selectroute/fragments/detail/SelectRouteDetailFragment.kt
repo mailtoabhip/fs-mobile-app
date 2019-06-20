@@ -6,26 +6,22 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import com.delhivery.orion.R
-import com.delhivery.orion.R.string
-import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.StateModelList
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.databinding.FragmentSelectRouteDetailBinding
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
-import com.delhivery.orion.ui.selectroute.fragments.RouteDeleteAction
+import com.delhivery.orion.ui.selectroute.fragments.RouteEditOriginAction
 import com.delhivery.orion.ui.selectroute.fragments.RouteUpdateAction
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteBaseFragment
-import com.delhivery.orion.utils.DialogUtils
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
-import javax.inject.Inject
 
 /**
  * Created by saurabh
@@ -54,8 +50,6 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   var scrollDist = 0
   var visible = true
 
-  @Inject lateinit var dialogUtils: DialogUtils
-
   private val adapter by lazy {
     DestinationsRVAdapter(this)
   }
@@ -77,11 +71,6 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
     states.forEach { t: StateModel ->
       t.checked = false
-      val selected = route!!.destinations.contains(t)
-      t.checked = selected
-      if (selected) {
-        selectedStates.add(t)
-      }
     }
 
     binding.rvDestinations.apply {
@@ -98,13 +87,14 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     })
 
     binding.btnSave.setOnClickListener {
-      action(RouteUpdateAction(selectedStates.toMutableList()))
+      val _route = RouteModel(route!!.origin, selectedStates.toMutableSet())
+      action(RouteUpdateAction(_route))
     }
-  }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    setHasOptionsMenu(true)
-    super.onActivityCreated(savedInstanceState)
+    binding.imgEditOrigin.setOnClickListener {
+      action(RouteEditOriginAction(route!!))
+    }
+
   }
 
   override fun onItemClicked(item: StateModel) {
@@ -131,25 +121,6 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     inflater?.inflate(R.menu.menu_delete, menu);
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    when (item?.itemId) {
-      R.id.nav_delete -> {
-        dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_delete_route,
-            string.msg_dialog_delete_route,
-            positiveAction = getString(string.action_delete),
-            negativeAction = getString(string.action_no_dont_delete)
-        ) {
-          it.dismiss()
-          action(RouteDeleteAction())
-        }
-        return true
-      }
-      else ->
-        return super.onOptionsItemSelected(item)
-    }
-  }
-
   fun hide() {
     binding.btnSave.animate()
         .translationY(
@@ -172,6 +143,26 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         .setInterpolator(DecelerateInterpolator(2f))
         .setDuration(300L)
         .start()
+  }
+
+  fun populateRoute() {
+    binding.textOriginCityName.text = route?.origin?.cityName() + ", " + route?.origin?.stateName()
+    adapter.clearItems()
+    selectedStates.clear()
+
+    states.forEach { t: StateModel ->
+      t.checked = false
+      val selected = route!!.destinations.contains(t)
+      t.checked = selected
+      if (selected) {
+        selectedStates.add(t)
+      }
+    }
+    adapter.operation(mutableListOf<Pair<StateModel, DataRVAdapterOperationType>>().apply {
+      states.forEach { _item ->
+        add(Pair(_item, Add))
+      }
+    })
   }
 
   inner class DestinationsRVScrollListener() : OnScrollListener() {

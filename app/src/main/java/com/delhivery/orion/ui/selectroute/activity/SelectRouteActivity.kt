@@ -12,22 +12,21 @@ import com.delhivery.orion.ui.base.BaseLocationActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.AddNewRoute
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.fragments.BaseSelectRouteFragmentAction
 import com.delhivery.orion.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
-import com.delhivery.orion.ui.selectroute.fragments.RouteDeleteAction
 import com.delhivery.orion.ui.selectroute.fragments.RouteDetailAction
+import com.delhivery.orion.ui.selectroute.fragments.RouteEditOriginAction
 import com.delhivery.orion.ui.selectroute.fragments.RouteUpdateAction
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.AddMoreRoutes
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.EditOrigin
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.OriginSelected
-import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDelete
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDetail
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteUpdate
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType
-import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.DestinationFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.OriginCityFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteListFragment
@@ -52,8 +51,6 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
   /* current route model */
   private var currentRoute: RouteModel? = null
-
-  private var selectedRoute: RouteModel? = null
 
   private var addRouteOnLogin: Boolean = false
 
@@ -84,15 +81,14 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     /* observe routes and update route list fragment */
     viewModel.routesLiveData.observe(this, Observer {
       val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
-      if (_fragment is SelectRouteListFragment) {
-        _fragment.routes = it?.toMutableList() ?: mutableListOf()
-        _fragment.addRoutes()
+      if (_fragment is SelectRouteDetailFragment) {
+        currentRoute = it?.get(0)
+        _fragment.route = currentRoute
+        _fragment.populateRoute()
       }
     })
 
-    when (flowType) {
-      UserRoutes -> viewModel.fetchUserRoutes()
-    }
+    if (flowType == EditRoute) viewModel.fetchUserRoutes()
   }
 
   /**
@@ -103,7 +99,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   ) {
     if (currentFragmentType == fragmentType) return
     currentFragmentType = fragmentType
-    navigationUtils.addReplaceFragment(
+    navigationUtils.replaceFragment(
         R.id.container, fragmentType.fragment,
         SelectRouteFragmentTag
     )
@@ -116,14 +112,23 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     when (action.type) {
       OriginSelected -> {
         (action as OriginSelectedAction).apply {
-          currentRoute = RouteModel(origin, nearByLocations)
-          navigate(DestinationFragment)
+          when (currentRoute) {
+            null -> currentRoute = RouteModel(origin)
+            else -> {
+              currentRoute?.origin = origin
+              viewModel.addUserRoutes(currentRoute!!.expandLocations()) { success ->
+                if (success) {
+                  navigate(RouteDetailFragment)
+                }
+              }
+            }
+          }
         }
       }
       DestinationsAdded -> {
         (action as DestinationSelectedAction).apply {
           currentRoute?.destinations = destinations.toMutableSet()
-          viewModel.addUserRoutes(currentRoute!!.expandNearByLocations()) { success ->
+          viewModel.addUserRoutes(currentRoute!!.expandLocations()) { success ->
             if (success) {
               navigate(RouteListFragment)
             }
@@ -137,46 +142,29 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       LoadRequests -> {
         when (flowType) {
           AddNewRoute -> navigationUtils.navigate(HomeActivity::class.java, true)
-          UserRoutes -> finish()
+          EditRoute -> finish()
         }
       }
       RouteDetail -> {
         (action as RouteDetailAction).apply {
-          selectedRoute = RouteModel(route.origin)
-          selectedRoute?.destinations = route.destinations.toMutableSet()
           navigate(RouteDetailFragment)
-        }
-      }
-      RouteDelete -> {
-        (action as RouteDeleteAction).apply {
-          val _routes = viewModel.routes
-              .filter { routeModel ->
-                routeModel.origin.city != selectedRoute?.origin?.city
-              }
-              .toList()
-
-          viewModel.updateUserRoutes(_routes) { success ->
-            navigate(RouteListFragment)
-            selectedRoute = null
-          }
         }
       }
       RouteUpdate -> {
         (action as RouteUpdateAction).apply {
-          val _routes = viewModel.routes
-              .filter { routeModel ->
-                routeModel.origin.city != selectedRoute?.origin?.city
-              }
-              .toMutableList()
-
-          val _route = RouteModel(selectedRoute!!.origin)
-          _route.destinations = destinations.toMutableSet()
-          _routes.add(_route)
+          val _routes = mutableListOf<RouteModel>().apply {
+            add(route)
+          }
 
           viewModel.updateUserRoutes(_routes) { success ->
-            navigate(RouteListFragment)
-            selectedRoute = null
+            finish()
           }
+        }
+      }
+      EditOrigin -> {
+        (action as RouteEditOriginAction).apply {
+          currentRoute = route
+          navigate(OriginCityFragment)
         }
       }
     }
@@ -194,10 +182,13 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       is SelectRouteListFragment -> {
         fragment.routes = viewModel.routes
-        selectedRoute = null
       }
       is SelectRouteDetailFragment -> {
-        fragment.route = selectedRoute
+        if (currentRoute != null) {
+          fragment.route = currentRoute
+        } else if (viewModel.routes.size > 0) {
+          fragment.route = viewModel.routes.get(0)
+        }
       }
     }
   }

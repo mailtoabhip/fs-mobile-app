@@ -10,7 +10,6 @@ import com.delhivery.orion.data.StateModel
  */
 data class RouteModel(
   var origin: CityModel,
-  var nearByLocation: List<CityModel> = listOf(),
   var destinations: MutableSet<StateModel> = mutableSetOf()
 ) : BaseKeyTypeModel<String>() {
 
@@ -30,36 +29,33 @@ data class RouteModel(
   }
 
   /**
-   * Expand near by loactions also to list of [RouteModel]
+   * Add origin destination to list of [RouteModel]
    */
-  fun expandNearByLocations(): List<RouteModel> = mutableListOf<RouteModel>().apply {
-    add(RouteModel(origin, destinations = destinations))
-    nearByLocation.forEach {
-      add(RouteModel(it, destinations = destinations))
-    }
+  fun expandLocations(): List<RouteModel> = mutableListOf<RouteModel>().apply {
+    add(RouteModel(origin, destinations))
   }
 }
 
 /**
  * Expand routes from nearby locations
  */
-fun List<RouteModel>.expandRoutes(): List<RouteModel> {
-  val routes = mutableMapOf<String, RouteModel>()
-  map { route ->
-    for (i in -1 until route.nearByLocation.size) {
-      when (i) {
-        -1 -> route.origin
-        else -> route.nearByLocation[i]
-      }.let { _origin ->
-        if (!routes.containsKey(_origin.key()) || routes[_origin.key()] == null) {
-          routes[_origin.key()] = RouteModel(_origin)
-        }
-        routes[_origin.key()]!!.destinations = route.destinations
-      }
-    }
-  }
-  return routes.values.toList()
-}
+//fun List<RouteModel>.expandRoutes(): List<RouteModel> {
+//  val routes = mutableMapOf<String, RouteModel>()
+//  map { route ->
+//    for (i in -1 until route.nearByLocation.size) {
+//      when (i) {
+//        -1 -> route.origin
+//        else -> route.nearByLocation[i]
+//      }.let { _origin ->
+//        if (!routes.containsKey(_origin.key()) || routes[_origin.key()] == null) {
+//          routes[_origin.key()] = RouteModel(_origin)
+//        }
+//        routes[_origin.key()]!!.destinations = route.destinations
+//      }
+//    }
+//  }
+//  return routes.values.toList()
+//}
 
 /* actions */
 const val RoutesAction_ViewDetails = "routes_detail"

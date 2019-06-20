@@ -16,6 +16,7 @@ data class CityModel(
   fun cityName() = StringUtils.capitalize(city)
 
   fun stateName() = StringUtils.capitalize(state ?: "")
+
 }
 
 /**
@@ -30,6 +31,3 @@ fun List<CityModel>.names() =
       else -> return@mapIndexed "$city, $state"
     }
   }
-
-fun capitalize(str: String?) =
-  (str?.substring(0, 1)?.toUpperCase() ?: "") + (str?.substring(1)?.toLowerCase() ?: "")

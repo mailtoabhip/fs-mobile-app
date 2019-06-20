@@ -2,9 +2,11 @@ package com.delhivery.orion.ui.home.fragments.loads
 
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.loads.HomeLoadsInfoItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsProgressItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsWarningItemData
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
@@ -14,7 +16,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Request(0),
   Progress(1),
   Search(2),
-  Warning(3);
+  Warning(3),
+  Info(4);
 
   companion object {
     /**
@@ -45,8 +48,7 @@ class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
  */
 class HomeLoadsProgressItem(
   data: HomeLoadsProgressItemData = HomeLoadsProgressItemData()
-) :
-    BaseHomeLoadsRVAdapterItem<HomeLoadsProgressItemData>(Progress, data)
+) : BaseHomeLoadsRVAdapterItem<HomeLoadsProgressItemData>(Progress, data)
 
 /**
  * Search item with live load requests
@@ -60,3 +62,10 @@ class HomeLoadsSearchItem(
  */
 class HomeLoadsWarningItem(data: HomeLoadsWarningItemData) :
     BaseHomeLoadsRVAdapterItem<HomeLoadsWarningItemData>(Warning, data)
+
+/**
+ * Inline progress item
+ */
+class HomeLoadsInfoItem(
+  data: HomeLoadsInfoItemData = HomeLoadsInfoItemData("", "")
+) : BaseHomeLoadsRVAdapterItem<HomeLoadsInfoItemData>(Info, data)

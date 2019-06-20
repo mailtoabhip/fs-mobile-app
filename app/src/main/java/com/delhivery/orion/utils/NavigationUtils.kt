@@ -91,6 +91,22 @@ class NavigationUtils @Inject constructor(
   }
 
   /**
+   * Replace fragment
+   */
+  fun replaceFragment(
+    containerId: Int,
+    fragment: BaseFragment<*, *>,
+    tag: String
+  ) {
+    activity.supportFragmentManager.apply {
+      beginTransaction().apply {
+        replace(containerId, fragment, tag)
+      }
+          .commitNow()
+    }
+  }
+
+  /**
    * Logout and navigate to login screen
    */
   fun logout(message: String) {

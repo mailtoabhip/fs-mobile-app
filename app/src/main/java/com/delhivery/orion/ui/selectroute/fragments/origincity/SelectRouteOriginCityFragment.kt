@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
 import com.delhivery.orion.R
-import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.databinding.FragmentSelectRouteOriginCityBinding
 import com.delhivery.orion.ui.selectroute.fragments.OriginSelectedAction
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteBaseFragment
@@ -12,8 +11,7 @@ import com.delhivery.orion.utils.AutoCompleteUtils
 import com.delhivery.orion.utils.LocationUtils
 import javax.inject.Inject
 
-class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRouteOriginCityBinding, SelectRouteOriginCityViewModel>(),
-    SelectRouteOriginNearByLocationsDialogInterface {
+class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRouteOriginCityBinding, SelectRouteOriginCityViewModel>() {
   companion object {
     /* singleton instance */
     val _instance: SelectRouteOriginCityFragment by lazy { SelectRouteOriginCityFragment() }
@@ -40,17 +38,11 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
     /* observe event data */
     viewModel.eventLiveData.observe(this, EventObserver())
 
-    /* use location as current city */
-//    binding.containerGpsOriginCity.setOnClickListener { updateLocationFlowState() }
-
     /* listen for  */
     autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
       uiUtils.toggleKeyboard()
-      viewModel.fetchNearByLocations(it)
+      viewModel.eventLiveData.postValue(SelectRouteOriginCitySelected(it))
     }
-
-    /* check and get location */
-//    updateLocationFlowState()
   }
 
 //  private fun getLocation() {
@@ -80,6 +72,7 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
   override fun onPause() {
     super.onPause()
     binding.editOriginCity.setText("")
+    uiUtils.toggleKeyboard(true)
   }
 
   /**
@@ -89,28 +82,15 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
     override fun onChanged(t: SelectRouteOriginCityBaseEvent?) {
       t?.let { event ->
         when (event) {
-          is SelectRouteOriginCityNearbyLocations -> {
-            nearByLocations(event.originLocation, event.locations)
-          }
           is SelectRouteOriginCityErrorEvent -> {
             uiUtils.showSnackbar(event.message)
+          }
+          is SelectRouteOriginCitySelected -> {
+            action(OriginSelectedAction(event.originLocation))
           }
         }
       }
     }
   }
 
-  private fun nearByLocations(
-    origin: CityModel,
-    locations: List<CityModel>
-  ) {
-    SelectRouteOriginNearByLocationsDialog(context!!, origin, locations, this).show()
-  }
-
-  override fun nearByLocationsSelected(
-    selectedLocation: CityModel,
-    locations: List<CityModel>
-  ) {
-    action(OriginSelectedAction(selectedLocation, locations))
-  }
 }

@@ -104,6 +104,7 @@ class DelhiveryCityAutoEditText(
       ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
     setAdapter(adapter)
     setOnItemClickListener { _, _, i, _ ->
+      setText(cities[i].cityName())
       selected(cities[i])
       dismissDropDown()
     }

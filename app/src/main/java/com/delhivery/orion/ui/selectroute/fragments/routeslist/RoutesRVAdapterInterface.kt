@@ -1,13 +1,15 @@
 package com.delhivery.orion.ui.selectroute.fragments.routeslist
 
+import com.delhivery.orion.data.home.routes.RoutesAction_AddRoute
 import com.delhivery.orion.data.home.routes.RoutesAction_ViewDetails
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
-import com.delhivery.orion.ui.selectroute.fragments.routeslist.RoutesRVAdapterItemType.Request
+import com.delhivery.orion.ui.selectroute.fragments.routeslist.RoutesRVAdapterItemType.AddAction
 
 interface RoutesRVAdapterInterface : ItemClickListener<RoutesRVAdapterItem<*>> {
   override fun onItemClicked(item: RoutesRVAdapterItem<*>) {
-    if (item.type == Request) {
-      handleAction(RoutesAction_ViewDetails, item)
+    when (item.type) {
+      AddAction -> handleAction(RoutesAction_AddRoute, item)
+      else -> handleAction(RoutesAction_ViewDetails, item)
     }
   }
 

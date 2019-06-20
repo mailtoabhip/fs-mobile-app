@@ -27,7 +27,7 @@ import com.delhivery.orion.ui.bids.userBidsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
@@ -123,7 +123,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         startActivity(userBidsIntent(it, LostBid))
       }
       HomeBidsWarningAction_EditRoutePrefs, HomeBidsWarningAction_SelectRoutes -> context?.let {
-        startActivity(selectRouteIntent(it, UserRoutes))
+        startActivity(selectRouteIntent(it, EditRoute))
       }
       HomeBidsRequestAction_ViewDetails -> context?.let {
         startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, it))

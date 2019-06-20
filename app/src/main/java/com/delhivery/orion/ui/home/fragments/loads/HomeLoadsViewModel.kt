@@ -67,6 +67,9 @@ class HomeLoadsViewModel @Inject constructor(
                 _tRes.transactions.forEach { _item ->
                   add(Pair(HomeLoadsRequestItem(_item), Add))
                 }
+                if (!hasMoreData) {
+                  add(Pair(HomeLoadsInfoItem(), Add))
+                }
               }
             }
                 .let { userLoadsData.postValue(it) }
