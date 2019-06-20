@@ -17,7 +17,11 @@ object StringUtils {
   /**
    * Return Sentence case string
    */
-  fun capitalize(string: String): String {
+  fun capitalize(string: String?): String {
+    if (string == null) {
+      return ""
+    }
+
     if (string.isEmpty()) {
       return string
     }

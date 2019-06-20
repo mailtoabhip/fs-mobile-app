@@ -8,9 +8,10 @@ import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
-import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
+import com.delhivery.orion.databinding.ViewHomeTripsRequestItemBinding
+import com.delhivery.orion.databinding.ViewTripsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -58,8 +59,8 @@ internal class HomeTripsSearchItemVH(binding: ViewHomeSearchItemBinding) :
 /**
  * Trip item view holder
  */
-class HomeTripsItemVH(binding: ViewHomeTripsDetailsItemBinding) :
-    BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsDetailsItemBinding, HomeTripsItem>(binding) {
+class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsRequestItemBinding, HomeTripsItem>(binding) {
   override fun bind(
     item: HomeTripsItem,
     _interface: HomeTripsRVAdapterInterface
@@ -97,5 +98,19 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     binding.viewBalancePending.clickToAction(HomeTripsHeaderAction_BalancePending, item, _interface)
     binding.viewInTransit.clickToAction(HomeTripsHeaderAction_InTransit, item, _interface)
     binding.viewCompleted.clickToAction(HomeTripsHeaderAction_Completed, item, _interface)
+  }
+}
+
+/**
+ * Bids warning item view holder
+ */
+internal class HomeTripsWarningItemVH(binding: ViewTripsWarningItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewTripsWarningItemBinding, HomeTripsWarningItem>(binding) {
+  override fun bind(
+    item: HomeTripsWarningItem,
+    _interface: HomeTripsRVAdapterInterface
+  ) {
+    binding.data = item.data
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }

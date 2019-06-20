@@ -2,10 +2,14 @@ package com.delhivery.orion.ui.home.fragments.trips
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.home.trips.HomeTripsHeaderItemData
+import com.delhivery.orion.data.home.trips.TripStatus
+import com.delhivery.orion.data.home.trips.TripStatus.TripCancelled
+import com.delhivery.orion.data.home.trips.TripStatus.TripCompleted
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.utils.extensions.not
@@ -65,7 +69,23 @@ class HomeTripsViewModel @Inject constructor(
       return
     }
 
-    compositeDisposable += tripsRepository.trips(offset)
+    if (paginate) {
+      showProgress()
+      /* add progress if not paginating */
+      Pair(HomeTripsProgressItem(), AddUpdate).let { userTripsData.postValue(listOf(it)) }
+    }
+
+    val statuses = mutableListOf<String>().apply {
+      add(TripStatus.In_Transit.statusKey)
+      add(TripStatus.TruckArrived.statusKey)
+      add(TripStatus.TruckConfirmed.statusKey)
+      add(TripStatus.TruckLoaded.statusKey)
+      add(TripStatus.TruckReached.statusKey)
+      add(TripStatus.TruckUnloaded.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
+    compositeDisposable += tripsRepository.trips(offset, statuses)
         .onBackground()
         .progress()
         .subscribe { _tripsRes, error ->
@@ -73,22 +93,29 @@ class HomeTripsViewModel @Inject constructor(
             offset += _tripsRes.trips.size
             hasMoreData = _tripsRes.hasNext
 
-            if (!paginate && _tripsRes.total == 0) {
-              /* show no trips error */
-              userTripsData.postValue(null)
-            } else {
-              mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* remove progress item */
-                add(Pair(HomeTripsProgressItem(), Remove))
-                /* post all trips as add */
-                _tripsRes.trips.forEach { _item ->
-                  add(Pair(HomeTripsItem(_item), Add))
-                }
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeTripsProgressItem(), Remove))
+
+              /* edit route prefs, if fresh fetch n total == 0 */
+              if (!paginate && _tripsRes.total == 0) {
+                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
+                add(Pair(HomeTripsSearchItem(), Remove))
               }
-                  .let {
-                    userTripsData.postValue(it)
-                  }
+              /* post all transactions as add */
+              else {
+                /* post all trips as add */
+                _tripsRes.trips
+                    .filter { it.status() != TripCancelled && it.status() != TripCompleted }
+                    .forEach { _item ->
+                      add(Pair(HomeTripsItem(_item), Add))
+                    }
+              }
             }
+                .let {
+                  userTripsData.postValue(it)
+
+                }
           } else {
             error.handle()
           }

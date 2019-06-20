@@ -15,7 +15,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.orion.data.home.loads.HomeLoadsWarningAction_NoLoads
+import com.delhivery.orion.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.FragmentHomeLoadsBinding
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
@@ -28,7 +28,6 @@ import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFabCardMenuItems as HomeBidsFabCardMenuItems1
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
@@ -156,7 +155,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             Intent(it, SearchLoadActivity::class.java)
         )
       }
-      HomeLoadsWarningAction_NoLoads -> context?.let {
+      HomeTripsWarningAction_NoLoads -> context?.let {
         startActivity(selectRouteIntent(it, UserRoutes))
       }
     }

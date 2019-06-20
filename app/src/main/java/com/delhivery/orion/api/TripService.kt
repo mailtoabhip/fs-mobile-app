@@ -24,6 +24,17 @@ interface TripService {
   ): Single<BaseResponse<TripsResponse>>
 
   /**
+   * List of trips
+   */
+  @GET("trips/")
+  fun tripsForStatuses(
+    @Query("supplier_id") userId: String,
+    @Query("limit") limit: Int,
+    @Query("offset") offset: Int,
+    @Query("trip_statuses") status: String? = null
+  ): Single<BaseResponse<TripsResponse>>
+
+  /**
    * Trip details
    */
   @GET("trips/{transactionId}/")

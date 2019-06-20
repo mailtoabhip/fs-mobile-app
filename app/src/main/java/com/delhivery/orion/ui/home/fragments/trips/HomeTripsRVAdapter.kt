@@ -4,9 +4,10 @@ import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
-import com.delhivery.orion.databinding.ViewHomeTripsDetailsItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
+import com.delhivery.orion.databinding.ViewHomeTripsRequestItemBinding
+import com.delhivery.orion.databinding.ViewTripsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -16,6 +17,7 @@ import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.He
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 
 class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     BaseFilterableDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
@@ -32,15 +34,17 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     Progress -> ViewHomeTripsProgressItemBinding.inflate(inflater, parent, false)
     Header -> ViewHomeTripsHeaderItemBinding.inflate(inflater, parent, false)
     Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
-    TripItem -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeTripsDetailsItemBinding.inflate(inflater, parent, false)
+    TripItem -> ViewHomeTripsRequestItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewTripsWarningItemBinding.inflate(inflater, parent, false)
+    else -> ViewHomeTripsRequestItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeSearchItemBinding -> HomeTripsSearchItemVH(binding)
     is ViewHomeTripsProgressItemBinding -> HomeTripsProgressItemVH(binding)
     is ViewHomeTripsHeaderItemBinding -> HomeTripsHeaderItemVH(binding)
-    else -> HomeTripsItemVH(binding as ViewHomeTripsDetailsItemBinding)
+    is ViewTripsWarningItemBinding -> HomeTripsWarningItemVH(binding)
+    else -> HomeTripsItemVH(binding as ViewHomeTripsRequestItemBinding)
   }
 
   override fun bindVH(
@@ -52,6 +56,7 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
       is HomeTripsItemVH -> holder.bind(item as HomeTripsItem, _interface)
       is HomeTripsProgressItemVH -> holder.bind(item as HomeTripsProgressItem, _interface)
       is HomeTripsHeaderItemVH -> holder.bind(item as HomeTripsHeaderItem, _interface)
+      is HomeTripsWarningItemVH -> holder.bind(item as HomeTripsWarningItem, _interface)
     }
   }
 
@@ -65,6 +70,7 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeTripsHeaderItem(), AddUpdate))
       add(Pair(HomeTripsProgressItem(), AddUpdate))
+      add(Pair(HomeTripsWarningItem_NoLoads, Remove))
       items.filter { it.type == TripItem }
           .map { Pair(it, Remove) }
           .let {

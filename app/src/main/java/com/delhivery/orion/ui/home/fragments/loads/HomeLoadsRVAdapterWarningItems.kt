@@ -11,8 +11,8 @@ import com.delhivery.orion.data.home.loads.HomeLoadsWarningItemData
 val HomeLoadsWarningItem_NoLoads = HomeLoadsWarningItem(
     HomeLoadsWarningItemData(
         "No Loads found",
-        "Please add more route preference to see the load requests",
-        "Add Routes", HomeLoadsWarningAction_NoLoads
+        "Please select your route preference to see the load requests",
+        "Select Routes", HomeLoadsWarningAction_NoLoads
     )
 )
 

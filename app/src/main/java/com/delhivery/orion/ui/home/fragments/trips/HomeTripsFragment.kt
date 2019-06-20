@@ -17,6 +17,7 @@ import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.orion.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
 import com.delhivery.orion.ui.bids.TripType.AdvancePending
@@ -32,7 +33,6 @@ import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
-import com.delhivery.orion.utils.extensions.visible
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -85,21 +85,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     adapter.setItems(getStaticItems())
 
-    /* no trips, start bidding button */
-    binding.btnStartBidding.setOnClickListener { action(NavigateHomeFragmentAction(BidsFragment)) }
-
     /* observe and update adapter items */
-    viewModel.userTripsData.observe(this, Observer { _items ->
-      /* error container, if items are null */
-      if (_items == null) {
-        true
-      } else {
-        adapter.operation(_items)
-        false
-      }.let {
-        binding.containerError.visible(it)
-        binding.rvTrips.visible(!it)
-      }
+    viewModel.userTripsData.observe(this, Observer {
+      it?.let { _items -> adapter.operation(_items) }
     })
 
     /* attach sticky search with adapter */
@@ -168,6 +156,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
       HomeTripsHeaderAction_Completed -> context?.let {
         startActivity(userTripsIntent(it, Completed))
+      }
+      HomeTripsWarningAction_NoLoads -> {
+        action(NavigateHomeFragmentAction(BidsFragment))
       }
     }
   }

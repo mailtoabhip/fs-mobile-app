@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
   <data>
@@ -14,63 +13,6 @@
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
       >
-
-    <!-- No trips container -->
-    <android.support.v7.widget.LinearLayoutCompat
-        android:id="@+id/container_error"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/size_24dp"
-        android:visibility="gone"
-        >
-
-      <android.support.v7.widget.AppCompatImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          app:srcCompat="@drawable/ic_empty_box_clr"
-          />
-
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_36dp"
-          android:fontFamily="sans-serif-medium"
-          android:gravity="center_horizontal"
-          android:letterSpacing="0.01"
-          android:lineSpacingExtra="@dimen/text_2sp"
-          android:text="@string/label_no_trips_yet"
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
-          />
-
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="@dimen/size_64dp"
-          android:layout_marginStart="@dimen/size_64dp"
-          android:layout_marginTop="@dimen/size_2dp"
-          android:fontFamily="sans-serif"
-          android:gravity="center_horizontal"
-          android:letterSpacing="0.01"
-          android:lineSpacingExtra="@dimen/text_6sp"
-          android:text="@string/msg_no_trips_bid_smartly"
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
-          />
-
-      <android.support.v7.widget.AppCompatButton
-          android:id="@+id/btn_start_bidding"
-          android:layout_width="match_parent"
-          android:layout_marginTop="@dimen/size_56dp"
-          android:text="@string/action_start_bidding"
-          style="@style/ActionButton"
-          />
-
-    </android.support.v7.widget.LinearLayoutCompat>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"

@@ -5,6 +5,7 @@ import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.bids.TripType.Unknown
 import com.delhivery.orion.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
@@ -50,7 +51,15 @@ class TripsViewModel @Inject constructor(
       return
     }
 
-    compositeDisposable += tripsRepository.trips(offset, trip.status)
+    if (paginate) {
+      showProgress()
+      /* add progress if not paginating */
+      Pair(HomeTripsProgressItem(), AddUpdate).let { userTripsData.postValue(listOf(it)) }
+    }
+
+    compositeDisposable += tripsRepository.trips(
+        offset,
+        trip.status.joinToString(separator = ",") { it })
         .onBackground()
         .progress()
         .subscribe { _tripsRes, error ->

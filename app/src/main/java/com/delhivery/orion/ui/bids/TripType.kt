@@ -1,8 +1,12 @@
 package com.delhivery.orion.ui.bids
 
 import com.delhivery.orion.data.home.trips.TripStatus
-import com.delhivery.orion.data.home.trips.TripStatus.InTrasit
+import com.delhivery.orion.data.home.trips.TripStatus.In_Transit
 import com.delhivery.orion.data.home.trips.TripStatus.TripCompleted
+import com.delhivery.orion.data.home.trips.TripStatus.TruckArrived
+import com.delhivery.orion.data.home.trips.TripStatus.TruckConfirmed
+import com.delhivery.orion.data.home.trips.TripStatus.TruckLoaded
+import com.delhivery.orion.data.home.trips.TripStatus.TruckReached
 import com.delhivery.orion.data.home.trips.TripStatus.TruckUnloaded
 
 /**
@@ -16,14 +20,30 @@ import com.delhivery.orion.data.home.trips.TripStatus.TruckUnloaded
  */
 enum class TripType(
   val typeId: Int,
-  val status: TripStatus,
+  val status: List<String>,
   private val title: String
 ) {
-  Unknown(-1, TripStatus.Unknown, "na (%d"),
-  AdvancePending(0, TruckUnloaded, "Advance Pending trips(%d)"),
-  InTransit(1, InTrasit, "InTransit trips (%s)"),
-  BalancePending(2, TruckUnloaded, "Balance Pending trips (%d)"),
-  Completed(3, TripCompleted, "Completed trips (%d)");
+  Unknown(-1, listOf(TripStatus.Unknown.statusKey), "na (%d"),
+  AdvancePending(
+      0,
+      listOf(TruckArrived.statusKey, TruckConfirmed.statusKey),
+      "Advance Pending trips(%d)"
+  ),
+  InTransit(
+      1,
+      listOf(TruckLoaded.statusKey, TruckReached.statusKey, In_Transit.statusKey),
+      "InTransit trips (%s)"
+  ),
+  BalancePending(
+      2,
+      listOf(TruckUnloaded.statusKey),
+      "Balance Pending trips (%d)"
+  ),
+  Completed(
+      3,
+      listOf(TripCompleted.statusKey),
+      "Completed trips (%d)"
+  );
 
   /**
    * Get toolbar title with count of items

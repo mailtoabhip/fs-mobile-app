@@ -90,7 +90,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif"
-          android:text="@{ trip.origin }"
+          android:text="@{ trip.originCityName() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
@@ -105,12 +105,13 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="GOA"
+          android:text="@{trip.originStateName()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          tools:text="GOA"
           />
 
       <TextView
@@ -119,7 +120,7 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/size_24dp"
           android:fontFamily="sans-serif"
-          android:text="@{ trip.destination }"
+          android:text="@{ trip.destinationCityName() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
@@ -134,12 +135,13 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="Mumbai"
+          android:text="@{trip.destinationStateName()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           app:layout_constraintStart_toStartOf="@id/text_destination_city"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          tools:text="Mumbai"
           />
     </android.support.constraint.ConstraintLayout>
   </android.support.v7.widget.CardView>
