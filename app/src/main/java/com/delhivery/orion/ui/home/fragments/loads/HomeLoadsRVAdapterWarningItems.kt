@@ -15,4 +15,3 @@ val HomeLoadsWarningItem_NoLoads = HomeLoadsWarningItem(
         "Add Routes", HomeLoadsWarningAction_NoLoads
     )
 )
-

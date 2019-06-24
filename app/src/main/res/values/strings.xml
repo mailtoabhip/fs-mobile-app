@@ -138,6 +138,8 @@
   <string name="card_heading_trip_meter">Trip Meter</string>
   <string name="card_subheading_trip_meter"><![CDATA[Trips completed & Revenue you earned working with us.]]></string>
   <string name="update_route">Update Route</string>
+  <string name="label_accept_price">ACCEPT PRICE</string>
+  <string name="label_place_bid">PLACE A BID</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

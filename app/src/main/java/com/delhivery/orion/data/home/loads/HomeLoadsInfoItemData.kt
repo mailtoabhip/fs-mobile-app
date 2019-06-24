@@ -13,5 +13,5 @@ data class HomeLoadsInfoItemData(
 const val HomeLoadsInfoItemDataKey = "info"
 
 /* actions */
-const val HomeLoadsInfoAction_Search = "search"
-const val HomeTripsHeaderAction_EditRoute = "edit_route"
+const val HomeLoadsInfoAction_Search = "search_info"
+const val HomeLoadsInfoAction_EditRoute = "edit_route"

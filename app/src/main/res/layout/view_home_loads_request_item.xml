@@ -9,6 +9,8 @@
         name="request"
         type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
         />
+
+    <import type="android.view.View"/>
   </data>
   <android.support.v7.widget.CardView
       android:layout_width="match_parent"
@@ -28,152 +30,287 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
-        android:paddingBottom="@dimen/size_16dp"
-        android:paddingEnd="@dimen/size_16dp"
-        android:paddingStart="@dimen/size_16dp"
-        android:paddingTop="@dimen/size_12dp"
         >
 
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/img_forward"
-          android:layout_width="wrap_content"
+      <android.support.constraint.ConstraintLayout
+          android:id="@+id/container_data"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_8dp"
-          app:layout_constraintEnd_toEndOf="parent"
+          android:clickable="false"
+          android:focusable="false"
+          android:paddingBottom="@dimen/size_8dp"
+          android:paddingEnd="@dimen/size_16dp"
+          android:paddingStart="@dimen/size_16dp"
+          android:paddingTop="@dimen/size_12dp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          app:srcCompat="@drawable/ic_arrow_forward_black"
-          />
+          >
 
-      <TextView
-          android:id="@+id/text_source_city"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text="@{request.origin}"
-          android:textColor="#de000000"
-          android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="@id/img_forward"
-          tools:text="Goa"
-          />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/img_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
+            />
 
-      <TextView
-          android:id="@+id/text_source_state"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.originState}"
-          android:textColor="#99000000"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Goa"
-          />
+        <TextView
+            android:id="@+id/text_source_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@{request.origin}"
+            android:textColor="#de000000"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            tools:text="Goa"
+            />
 
-      <TextView
-          android:id="@+id/text_destination_city"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="@dimen/size_24dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.destination}"
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toEndOf="@id/img_forward"
-          app:layout_constraintTop_toTopOf="@id/img_forward"
-          tools:text="Goa"
-          />
+        <TextView
+            android:id="@+id/text_source_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{request.originState}"
+            android:textColor="#99000000"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_source_city"
+            tools:text="Goa"
+            />
 
-      <TextView
-          android:id="@+id/text_destination_state"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.destinationState}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="@id/text_destination_city"
-          app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Goa"
-          />
+        <TextView
+            android:id="@+id/text_destination_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:fontFamily="sans-serif"
+            android:text="@{request.destination}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@id/img_forward"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            tools:text="Goa"
+            />
 
-      <TextView
-          android:id="@+id/text_date_time"
-          android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/text_destination_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{request.destinationState}"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="@id/text_destination_city"
+            app:layout_constraintTop_toBottomOf="@id/text_source_city"
+            tools:text="Goa"
+            />
+
+        <TextView
+            android:id="@+id/text_date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:lineSpacingExtra="4sp"
+            android:text="@{request.requiredAt()}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_source_state"
+            bind:drawableResId="@{ request.requiredAtBg() }"
+            tools:text="Today"
+            />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/img_truck_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_truck_details"
+            app:srcCompat="@{ request.truckTypeDrawableRes() }"
+            />
+
+        <TextView
+            android:id="@+id/text_truck_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:text="@{request.truckTypeDetails()}"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@id/img_truck_type"
+            app:layout_constraintTop_toTopOf="@id/text_date_time"
+            tools:text="Goa Gao goa goa"
+            />
+
+        <TextView
+            android:id="@+id/text_load_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@{request.loadDetails()}"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/text_12sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_date_time"
+            tools:text="Goa goa goa"
+            />
+
+        <TextView
+            android:id="@+id/text_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_14dp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="-2sp"
+            android:text="@{request.targetPrice()}"
+            android:textColor="#000000"
+            android:textSize="@dimen/text_20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            tools:text="₹ 23900.00"
+            />
+      </android.support.constraint.ConstraintLayout>
+
+      <FrameLayout
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_16dp"
-          android:lineSpacingExtra="4sp"
-          android:text="@{request.requiredAt()}"
-          android:textColor="@color/white"
-          android:textSize="@dimen/text_12sp"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_source_state"
-          bind:drawableResId="@{ request.requiredAtBg() }"
-          tools:text="Today"
-          />
-
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/img_truck_type"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="@id/text_truck_details"
-          app:srcCompat="@{ request.truckTypeDrawableRes() }"
-          />
+          app:layout_constraintTop_toBottomOf="@+id/container_data"
+          >
 
-      <TextView
-          android:id="@+id/text_truck_details"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="@dimen/size_8dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.truckTypeDetails()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toEndOf="@id/img_truck_type"
-          app:layout_constraintTop_toTopOf="@id/text_date_time"
-          tools:text="Goa Gao goa goa"
-          />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/view_bid_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bid_placed_green"
+            android:gravity="center"
+            android:paddingBottom="@dimen/size_14dp"
+            android:paddingLeft="@dimen/size_16dp"
+            android:paddingRight="@dimen/size_16dp"
+            android:paddingTop="@dimen/size_16dp"
+            android:visibility="@{ request.showing ? View.VISIBLE : View.INVISIBLE }"
+            >
 
-      <TextView
-          android:id="@+id/text_load_details"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif-medium"
-          android:text="@{request.loadDetails()}"
-          android:textColor="@color/colorAccent"
-          android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_date_time"
-          tools:text="Goa goa goa"
-          />
+          <android.support.v7.widget.AppCompatImageView
+              android:id="@+id/img_tick"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              app:srcCompat="@drawable/ic_tick"
+              />
 
-      <TextView
-          android:id="@+id/text_amount"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_14dp"
-          android:fontFamily="sans-serif-medium"
-          android:letterSpacing="0.01"
-          android:lineSpacingExtra="-2sp"
-          android:text="@{request.targetPrice()}"
-          android:textColor="#000000"
-          android:textSize="@dimen/text_20sp"
-          android:textStyle="bold"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_load_details"
-          tools:text="₹ 23900.00"
-          />
+          <TextView
+              android:id="@+id/text_bid_amount"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:maxLines="1"
+              android:text="Bid successul for 235000"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_14sp"
+              android:textStyle="bold"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              app:layout_constraintStart_toEndOf="@+id/img_tick"
+              app:layout_constraintTop_toTopOf="parent"
+              />
+
+          <TextView
+              android:id="@+id/text_edit"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingEnd="@dimen/size_8dp"
+              android:paddingStart="@dimen/size_8dp"
+              android:text="EDIT"
+              android:textColor="@color/white"
+              android:textStyle="bold"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/text_bid_amount"
+              app:layout_constraintTop_toTopOf="parent"
+              app:srcCompat="@drawable/ic_arrow_forward_black"
+              />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/container_bid_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_16dp"
+            android:visibility="@{ request.showing ? View.GONE : View.VISIBLE }"
+            >
+
+          <android.support.v7.widget.LinearLayoutCompat
+              android:id="@+id/btn_bid"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_weight="1"
+              android:background="@drawable/bg_load_place_bid_btn"
+              android:gravity="center_vertical"
+              >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="@string/label_place_bid"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                />
+
+          </android.support.v7.widget.LinearLayoutCompat>
+
+          <android.support.v7.widget.LinearLayoutCompat
+              android:id="@+id/btn_accept"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_weight="1"
+              android:background="@drawable/bg_load_action_btn"
+              >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="@string/label_accept_price"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                />
+
+          </android.support.v7.widget.LinearLayoutCompat>
+
+        </android.support.v7.widget.LinearLayoutCompat>
+      </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
   </android.support.v7.widget.CardView>

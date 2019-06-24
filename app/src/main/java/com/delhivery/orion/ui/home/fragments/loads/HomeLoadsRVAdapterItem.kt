@@ -67,5 +67,8 @@ class HomeLoadsWarningItem(data: HomeLoadsWarningItemData) :
  * Inline progress item
  */
 class HomeLoadsInfoItem(
-  data: HomeLoadsInfoItemData = HomeLoadsInfoItemData("", "")
+  data: HomeLoadsInfoItemData = HomeLoadsInfoItemData(
+      "These are all the recommended loads. To find more relevant loads Search here!!",
+      "To get more relevant loads - change your \n preferences here!!"
+  )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsInfoItemData>(Info, data)

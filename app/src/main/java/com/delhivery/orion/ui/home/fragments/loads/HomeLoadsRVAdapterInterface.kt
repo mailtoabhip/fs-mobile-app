@@ -18,4 +18,13 @@ interface HomeLoadsRVAdapterInterface : ItemClickListener<BaseHomeLoadsRVAdapter
     actionId: String,
     item: BaseHomeLoadsRVAdapterItem<*>
   )
+
+  /**
+   * Handle specific action with item position
+   */
+  fun handleAction(
+    actionId: String,
+    item: BaseHomeLoadsRVAdapterItem<*>,
+    position: Int
+  )
 }

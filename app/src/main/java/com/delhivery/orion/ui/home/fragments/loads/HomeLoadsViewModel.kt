@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
 import android.arch.lifecycle.MutableLiveData
+import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionStatus.Requested
 import com.delhivery.orion.repository.TransactionsRepository
 import com.delhivery.orion.repository.UserRepository
@@ -9,15 +10,18 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.orion.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val userRepository: UserRepository
-) : BaseViewModel() {
+  private val userRepository: UserRepository,
+  private val bidsRepository: BidsRepository
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* user bids live data */
   var userLoadsData =
@@ -25,6 +29,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* route/lane preferene live data*/
   var routesLiveData = MutableLiveData<Boolean>()
+
+  var bidsStatusLiveData = MutableLiveData<Int>()
 
   var loadsCountLiveData = MutableLiveData<Int>()
 
@@ -96,4 +102,44 @@ class HomeLoadsViewModel @Inject constructor(
           }
         }
   }
+
+  override fun createBid(
+    transactionId: String,
+    bidAmount: Int,
+    position: Int
+  ) {
+    bidsStatusLiveData.postValue(position)
+//    compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
+//        .delay(BidsUpdateDelay, SECONDS)
+//        .onBackground()
+//        .progress()
+//        .subscribe { _res, error ->
+//          if (!error && _res.isSuccess) {
+//            bidsStatusLiveData.postValue(position)
+//          } else {
+//            error.handle()
+//          }
+//        }
+  }
+
+  override fun editBid(
+    transactionId: String,
+    bidId: String,
+    bidAmount: Int,
+    position: Int
+  ) {
+    compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
+        .delay(BidsUpdateDelay, SECONDS)
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res.isSuccess) {
+            bidsStatusLiveData.postValue(position)
+          } else {
+            error.handle()
+          }
+        }
+  }
 }
+
+private const val BidsUpdateDelay = 1L

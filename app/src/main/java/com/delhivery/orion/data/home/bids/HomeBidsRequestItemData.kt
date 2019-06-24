@@ -8,6 +8,7 @@ import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.delhivery.orion.utils.DrawableProviderUtils
+import com.delhivery.orion.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -39,13 +40,22 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("destination_city_code") val destinationCityCode: String,
   @SerializedName("truck_specifications") val truckSpecs: TruckSpecifications,
-  @SerializedName("truck_display_name") val truckDisplayName: String?
+  @SerializedName("truck_display_name") val truckDisplayName: String?,
+  var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = "Load: $materialType"
+  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType)}"
 
   fun targetPrice() = "\u20B9 $targetPrice"
+
+  fun originCityName() = StringUtils.capitalize(origin)
+
+  fun destinationCityName() = StringUtils.capitalize(destination)
+
+  fun originStateName() = StringUtils.capitalize(originState)
+
+  fun destinationStateName() = StringUtils.capitalize(destinationState)
 
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
@@ -72,7 +82,11 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = "$truckDisplayName"
+  fun truckTypeDetails() = when (truckType) {
+    "open" -> "Open Truck"
+    "close" -> "Closed Truck"
+    else -> "No type"
+  }
 
   /**
    * Trip display name for toolbar title
@@ -93,6 +107,8 @@ data class HomeBidsRequestItemData(
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
+const val HomeBidsRequestAction_PlaceBid = "my_bids"
+const val HomeBidsRequestAction_Accept = "confirmed_bids"
 
 data class TruckSpecifications(
   @SerializedName("height") val height: Any?,
