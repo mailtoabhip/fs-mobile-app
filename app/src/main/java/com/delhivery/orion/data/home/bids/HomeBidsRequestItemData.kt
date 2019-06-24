@@ -40,11 +40,12 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("destination_city_code") val destinationCityCode: String,
   @SerializedName("truck_specifications") val truckSpecs: TruckSpecifications,
-  @SerializedName("truck_display_name") val truckDisplayName: String?
+  @SerializedName("truck_display_name") val truckDisplayName: String?,
+  var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = "Load: $materialType"
+  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType)}"
 
   fun targetPrice() = "\u20B9 $targetPrice"
 
@@ -55,8 +56,6 @@ data class HomeBidsRequestItemData(
   fun originStateName() = StringUtils.capitalize(originState)
 
   fun destinationStateName() = StringUtils.capitalize(destinationState)
-
-
 
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
@@ -83,7 +82,11 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = "$truckDisplayName"
+  fun truckTypeDetails() = when (truckType) {
+    "open" -> "Open Truck"
+    "close" -> "Closed Truck"
+    else -> "No type"
+  }
 
   /**
    * Trip display name for toolbar title
@@ -104,6 +107,8 @@ data class HomeBidsRequestItemData(
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
+const val HomeBidsRequestAction_PlaceBid = "my_bids"
+const val HomeBidsRequestAction_Accept = "confirmed_bids"
 
 data class TruckSpecifications(
   @SerializedName("height") val height: Any?,

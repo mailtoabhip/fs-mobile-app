@@ -77,7 +77,8 @@ class BidDetailsViewModel @Inject constructor(
 
   override fun createBid(
     transactionId: String,
-    bidAmount: Int
+    bidAmount: Int,
+    position: Int
   ) {
     compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
@@ -95,7 +96,8 @@ class BidDetailsViewModel @Inject constructor(
   override fun editBid(
     transactionId: String,
     bidId: String,
-    bidAmount: Int
+    bidAmount: Int,
+    position: Int
   ) {
     compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)

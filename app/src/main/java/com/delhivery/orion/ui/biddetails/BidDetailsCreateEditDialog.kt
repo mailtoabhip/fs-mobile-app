@@ -2,20 +2,25 @@ package com.delhivery.orion.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
+import com.delhivery.orion.R
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.DialogBidCreateEditBinding
+import javax.inject.Inject
 
 /**
  *
  */
-class BidDetailsCreateEditDialog(
+class BidDetailsCreateEditDialog @Inject constructor(
   context: Context,
   private val transaction: HomeBidsRequestItemData,
   private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
-  private val dialogInterface: BidDetailsCreateEditDialogInterface
+  private val dialogInterface: BidDetailsCreateEditDialogInterface,
+  private val position: Int = 0
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -50,27 +55,34 @@ class BidDetailsCreateEditDialog(
    * Submit amount
    */
   private fun submit() {
-    val _amount = Integer.parseInt(binding.editAmount.text.toString())
-    if (_amount > 0) {
-      if (transactionBid == null) {
-        dialogInterface.createBid(transaction.key(), _amount)
+    try {
+      val _amount = Integer.parseInt(binding.editAmount.text.toString())
+      if (_amount > 0) {
+        if (transactionBid == null) {
+          dialogInterface.createBid(transaction.key(), _amount, position)
+        } else {
+          dialogInterface.editBid(transaction.key(), transactionBid.key(), _amount, position)
+        }
+        dismiss()
       } else {
-        dialogInterface.editBid(transaction.key(), transactionBid.key(), _amount)
+        throw Exception()
       }
-      dismiss()
-    } else {
-      //todo - show error if needed
+    } catch (e: Exception) {
+      val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
+      binding.editAmount.startAnimation(shake)
     }
   }
 }
 
 interface BidDetailsCreateEditDialogInterface {
+
   /**
    * Create bid
    */
   fun createBid(
     transactionId: String,
-    bidAmount: Int
+    bidAmount: Int,
+    position: Int = -1
   )
 
   /**
@@ -79,6 +91,7 @@ interface BidDetailsCreateEditDialogInterface {
   fun editBid(
     transactionId: String,
     bidId: String,
-    bidAmount: Int
+    bidAmount: Int,
+    position: Int = -1
   )
 }

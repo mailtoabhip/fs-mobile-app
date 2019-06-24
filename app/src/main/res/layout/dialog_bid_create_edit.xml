@@ -44,10 +44,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_6dp"
         android:fontFamily="sans-serif-medium"
-        android:lineSpacingExtra="14sp"
+        android:lineSpacingExtra="@dimen/text_14sp"
         android:text="@{ route }"
-        android:textColor="#de000000"
-        android:textSize="14sp"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_14sp"
         android:textStyle="normal"
         tools:text="GA - MH (Today)"
         />
@@ -58,8 +58,8 @@
         android:layout_marginTop="@dimen/size_24dp"
         android:fontFamily="sans-serif"
         android:text="@string/label_target_price"
-        android:textColor="#99000000"
-        android:textSize="12sp"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_12sp"
         android:textStyle="normal"
         />
 
@@ -70,7 +70,7 @@
         android:letterSpacing="0.01"
         android:lineSpacingExtra="-4sp"
         android:text="@{ @string/label_inr(targetPrice) }"
-        android:textColor="#000000"
+        android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="normal"
         tools:text="₹ 23900.00"
@@ -84,7 +84,7 @@
         android:lineSpacingExtra="4sp"
         android:text="@string/hint_enter_bid_value"
         android:textColor="#61000000"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_12sp"
         android:textStyle="normal"
         />
 
@@ -96,6 +96,7 @@
         android:background="@drawable/bg_form_edit"
         android:digits="0123456789"
         android:hint="@{ String.valueOf(targetPrice) }"
+        android:imeOptions="actionDone"
         android:inputType="number"
         />
 

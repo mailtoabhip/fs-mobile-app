@@ -130,7 +130,7 @@
               android:textSize="@dimen/text_16sp"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
-              bind:htmlText="@{ @string/label_city_state(transaction.origin, transaction.originState) }"
+              bind:htmlText="@{ @string/label_city_state(transaction.originCityName(), transaction.originStateName()) }"
               tools:text="Panjim, Goa"
               />
 
@@ -158,7 +158,7 @@
               android:textSize="@dimen/text_16sp"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_to_label"
-              bind:htmlText="@{ @string/label_city_state(transaction.destination, transaction.destinationState) }"
+              bind:htmlText="@{ @string/label_city_state(transaction.destinationCityName(), transaction.destinationStateName()) }"
               tools:text="Andheri east, Mumbai, Maharashtra"
               />
 

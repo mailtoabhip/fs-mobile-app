@@ -2,7 +2,7 @@ package com.delhivery.orion.ui.selectroute.fragments
 
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.AddNewRoute
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
 import com.delhivery.orion.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityFragment
@@ -29,12 +29,8 @@ enum class SelectRouteFragmentType(
       1, 2 -> OriginCityFragment
       else -> null
     }
-    UserRoutes -> when (step) {
-      0 -> RouteListFragment
-      1 -> OriginCityFragment
-      3 -> RouteListFragment
-      else -> null
-    }
+
+    EditRoute -> null
   }
 
   companion object {
@@ -44,7 +40,7 @@ enum class SelectRouteFragmentType(
      */
     fun initFragment(type: SelectRouteFlowType) = when (type) {
       AddNewRoute -> OriginCityFragment
-      UserRoutes -> RouteListFragment
+      EditRoute -> RouteDetailFragment
     }
   }
 }

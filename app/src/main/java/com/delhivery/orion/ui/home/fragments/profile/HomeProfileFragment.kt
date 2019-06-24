@@ -6,7 +6,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.databinding.FragmentHomeProfileBinding
 import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.DialogUtils
 import com.delhivery.orion.utils.NavigationUtils
@@ -40,7 +40,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       containerYourRoutes.setOnClickListener {
         it.post {
           startActivity(
-              selectRouteIntent(it.context, UserRoutes)
+              selectRouteIntent(it.context, EditRoute)
           )
         }
       }

@@ -5,9 +5,9 @@ import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.AddMoreRoutes
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.DestinationsAdded
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.EditOrigin
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.LoadRequests
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.OriginSelected
-import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDelete
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDetail
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteUpdate
 
@@ -20,8 +20,8 @@ enum class SelectRouteFragmentActionType {
   AddMoreRoutes,
   LoadRequests,
   RouteDetail,
-  RouteDelete,
-  RouteUpdate
+  RouteUpdate,
+  EditOrigin
 }
 
 /**
@@ -33,8 +33,7 @@ abstract class BaseSelectRouteFragmentAction(val type: SelectRouteFragmentAction
  * Origin [CityModel] selected
  */
 class OriginSelectedAction(
-  val origin: CityModel,
-  val nearByLocations: List<CityModel>
+  val origin: CityModel
 ) : BaseSelectRouteFragmentAction(OriginSelected)
 
 /**
@@ -50,6 +49,7 @@ class DestinationSelectedAction(
 class AddMoreRoutesAction() : BaseSelectRouteFragmentAction(AddMoreRoutes)
 
 /**
+ * @Deprecated
  * Navigate to route detail page
  */
 class RouteDetailAction(
@@ -57,11 +57,7 @@ class RouteDetailAction(
 ) : BaseSelectRouteFragmentAction(RouteDetail)
 
 /**
- * Delete route and navigate to Route List
- */
-class RouteDeleteAction() : BaseSelectRouteFragmentAction(RouteDelete)
-
-/**
+ * @NotUsed
  * Go to load request/home
  */
 class LoadRequestsAction() : BaseSelectRouteFragmentAction(LoadRequests)
@@ -70,5 +66,12 @@ class LoadRequestsAction() : BaseSelectRouteFragmentAction(LoadRequests)
  * Update Current route
  */
 class RouteUpdateAction(
-  val destinations: List<StateModel>
+  val route: RouteModel
 ) : BaseSelectRouteFragmentAction(RouteUpdate)
+
+/**
+ * Update Current route
+ */
+class RouteEditOriginAction(
+  val route: RouteModel
+) : BaseSelectRouteFragmentAction(EditOrigin)

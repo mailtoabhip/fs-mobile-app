@@ -12,18 +12,23 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_Accept
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_EditRoute
+import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.orion.data.home.trips.HomeTripsWarningAction_NoLoads
+import com.delhivery.orion.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.FragmentHomeLoadsBinding
+import com.delhivery.orion.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
-import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.UserRoutes
+import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 import com.delhivery.orion.utils.extensions.progressLiveData
@@ -92,7 +97,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     binding.routesBanner.setOnClickListener {
       startActivity(
-          selectRouteIntent(it.context, UserRoutes)
+          selectRouteIntent(it.context, EditRoute)
       )
     }
 
@@ -124,6 +129,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     })
 
+    viewModel.bidsStatusLiveData.observe(this, Observer {
+      when {
+        it != -1 && it != null -> {
+          (adapter.itemsList()
+              .get(it).data as HomeBidsRequestItemData).showing = true
+          adapter.notifyItemChanged(it)
+        }
+      }
+    })
+
     /* fetch user transactions */
     viewModel.fetchUserTransactions()
   }
@@ -150,13 +165,32 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
         )
       }
-      HomeLoadsSearchAction_Search -> context?.let {
+      HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> context?.let {
         startActivity(
             Intent(it, SearchLoadActivity::class.java)
         )
       }
-      HomeTripsWarningAction_NoLoads -> context?.let {
-        startActivity(selectRouteIntent(it, UserRoutes))
+      HomeLoadsInfoAction_EditRoute, HomeLoadsWarningAction_NoLoads -> context?.let {
+        startActivity(selectRouteIntent(it, EditRoute))
+      }
+    }
+  }
+
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeLoadsRVAdapterItem<*>,
+    position: Int
+  ) {
+    when (actionId) {
+      HomeBidsRequestAction_PlaceBid -> {
+        (item.data as HomeBidsRequestItemData).let {
+          BidDetailsCreateEditDialog(context!!, it, null, viewModel, position).show()
+        }
+      }
+      HomeBidsRequestAction_Accept -> {
+        (item.data as HomeBidsRequestItemData).let {
+          BidDetailsCreateEditDialog(context!!, it, null, viewModel, position).show()
+        }
       }
     }
   }

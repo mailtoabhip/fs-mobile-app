@@ -32,7 +32,7 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
     /* select route submit button */
     binding.btnSelectRoute.setOnClickListener {
       if (onLocationButtonClicked()) {
-        val bundle: Bundle = Bundle()
+        val bundle = Bundle()
         bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
         navigationUtils.navigateForActivityResult(
             SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
