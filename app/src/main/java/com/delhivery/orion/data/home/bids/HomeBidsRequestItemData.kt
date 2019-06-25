@@ -4,6 +4,7 @@ import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
+import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
@@ -45,20 +46,20 @@ data class HomeBidsRequestItemData(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType)}"
+  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
   fun targetPrice() = "\u20B9 $targetPrice"
 
-  fun originCityName() = StringUtils.capitalize(origin)
+  fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
-  fun destinationCityName() = StringUtils.capitalize(destination)
+  fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
-  fun originStateName() = StringUtils.capitalize(originState)
+  fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
-  fun destinationStateName() = StringUtils.capitalize(destinationState)
+  fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
   @DrawableRes
-  fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(containerType)
+  fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
   /**
    * Formatted required at
@@ -82,11 +83,7 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = when (truckType) {
-    "open" -> "Open Truck"
-    "close" -> "Closed Truck"
-    else -> "No type"
-  }
+  fun truckTypeDetails() = truckDisplayName
 
   /**
    * Trip display name for toolbar title
@@ -100,9 +97,32 @@ data class HomeBidsRequestItemData(
     return "Calculate bid price difference if bid placed"
   }
 
+  fun status() = TransactionBidStatus
+
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
+}
+
+enum class BidStatus(
+  val statusKey: String,
+  val status: String
+) {
+  Requested("requested", "ACTIVE"),
+  TruckConfirmed("truck_confirmed", "CONFIRMED"),
+  TruckLoaded("truck_loaded", "Truck Loaded"),
+  TruckReached("truck_reached", "Truck Reached"),
+  TruckUnloaded("truck_unloaded", "Truck Unloaded"),
+  Unknown("unknown", "Unknown");
+
+  companion object {
+
+    /**
+     * Get [TripStatus] from response key
+     */
+    fun byKey(statusKey: String) =
+      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull() ?: Unknown
+  }
 }
 
 /* actions */

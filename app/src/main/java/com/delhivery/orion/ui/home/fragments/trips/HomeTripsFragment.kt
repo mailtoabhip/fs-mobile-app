@@ -32,7 +32,6 @@ import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -67,9 +66,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
-
     binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
       /* remove user trips and fetch again */
       adapter.resetStaticData()
       fetchTripsData()

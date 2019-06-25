@@ -21,10 +21,10 @@
   <color name="sub_heading_black">#99000000</color>
   <color name="bid_header_bg_black">#262727</color>
   <color name="color_hint">#59000000</color>
-
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
-  <color name="white_2">#19999999</color>
   <color name="bid_placed_green">#0fb687</color>
+  <color name="transparent_white">#19999999</color>
+  <color name="transparent_grey">#8a000000</color>
 
 </resources>

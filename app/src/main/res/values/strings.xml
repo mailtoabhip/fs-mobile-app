@@ -81,7 +81,7 @@
   <string name="label_target_price">Target price</string>
   <string name="label_origin_city">Origin city</string>
   <string name="label_pickup_location">Pickup location</string>
-  <string name="label_awaiting_truck_details">Awaiting Truck details</string>
+  <string name="label_truck_details">Truck details</string>
   <string name="label_no_trips_yet">No trips yet !</string>
   <string name="label_destination_city">Destination city</string>
   <string name="label_from_state">From %1$s</string>
@@ -126,6 +126,7 @@
   <string name="label_driver">Driver</string>
   <string name="label_contact">Contact</string>
   <string name="label_status_history">Status history</string>
+  <string name="label_payment_summary">Payment Summary</string>
   <string name="label_no_bids_found">No bids found</string>
   <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
   <string name="title_we_are_building_this_page">We are building the page</string>
@@ -140,6 +141,7 @@
   <string name="update_route">Update Route</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
+  <string name="not_available">Not available</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

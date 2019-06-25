@@ -13,6 +13,7 @@ import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_NoBids
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
@@ -21,7 +22,6 @@ import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
 
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -64,11 +64,11 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     title = viewModel.bidType.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
 
     binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
       adapter.resetStaticData()
       /* remove user bid transactions and fetch again */
       viewModel.fetchBids(false)
@@ -105,9 +105,9 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   ) {
     // handle actions here
     when (actionId) {
-//      HomeBidsWarningAction_NoBids -> startActivity(
-//          selectRouteIntent(this, EditRoute)
-//      )
+      HomeBidsWarningAction_NoBids ->
+        finish()
+
       HomeBidsRequestAction_ViewDetails ->
         startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))
 

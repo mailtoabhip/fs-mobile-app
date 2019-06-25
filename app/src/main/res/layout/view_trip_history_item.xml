@@ -21,12 +21,13 @@
       >
 
     <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/size_16dp"
-        android:layout_marginEnd="@dimen/size_16dp"
-        android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginTop="@dimen/size_12dp"
+        android:paddingBottom="@dimen/size_16dp"
+        android:paddingEnd="@dimen/size_16dp"
+        android:paddingStart="@dimen/size_16dp"
+        android:paddingTop="@dimen/size_12dp"
         >
 
       <TextView

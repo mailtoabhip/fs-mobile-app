@@ -4,7 +4,24 @@
     xmlns:bind="http://schemas.android.com/tools"
     >
 
-  <data></data>
+  <data>
+    <variable
+        name="advancePending"
+        type="String"
+        />
+    <variable
+        name="inTransit"
+        type="String"
+        />
+    <variable
+        name="balacenPending"
+        type="String"
+        />
+    <variable
+        name="completed"
+        type="String"
+        />
+  </data>
 
   <HorizontalScrollView
       android:layout_width="match_parent"
@@ -31,7 +48,7 @@
           >
 
         <TextView
-            android:id="@+id/text_advance"
+            android:id="@+id/id1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -46,10 +63,12 @@
             />
 
         <TextView
+            android:id="@+id/text_advance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
+            android:text="@{advancePending}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -70,7 +89,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_advance"
+            app:layout_constraintStart_toEndOf="@+id/id1"
             />
       </android.support.constraint.ConstraintLayout>
 
@@ -85,7 +104,7 @@
           >
 
         <TextView
-            android:id="@+id/text_transit"
+            android:id="@+id/id2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -100,16 +119,17 @@
             />
 
         <TextView
+            android:id="@+id/text_transit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
+            android:text="@{inTransit}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
             />
 
         <TextView
@@ -125,7 +145,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_transit"
+            app:layout_constraintStart_toEndOf="@+id/id2"
             />
       </android.support.constraint.ConstraintLayout>
 
@@ -140,7 +160,7 @@
           >
 
         <TextView
-            android:id="@+id/text_balance"
+            android:id="@+id/id3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -155,16 +175,17 @@
             />
 
         <TextView
+            android:id="@+id/text_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
+            android:text="@{balacenPending}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
             />
 
         <TextView
@@ -180,7 +201,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_balance"
+            app:layout_constraintStart_toEndOf="@+id/id3"
             />
       </android.support.constraint.ConstraintLayout>
 
@@ -195,7 +216,7 @@
           >
 
         <TextView
-            android:id="@+id/text_complete"
+            android:id="@+id/id4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -210,16 +231,17 @@
             />
 
         <TextView
+            android:id="@+id/text_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
+            android:text="@{completed}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
             />
 
         <TextView
@@ -235,7 +257,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_complete"
+            app:layout_constraintStart_toEndOf="@+id/id4"
             />
       </android.support.constraint.ConstraintLayout>
 

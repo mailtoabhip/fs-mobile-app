@@ -31,7 +31,7 @@ interface TripService {
     @Query("supplier_id") userId: String,
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
-    @Query("trip_statuses") status: String? = null
+    @Query("status_list") status: String? = null
   ): Single<BaseResponse<TripsResponse>>
 
   /**
@@ -53,7 +53,7 @@ interface TripService {
   /**
    * Get User/supplier trips summary [TripSummaryResponse]
    */
-  @GET("/trips/summary")
+  @GET("/trips/summary/")
   fun userTripsSummary(
     @Query("supplier_id") userId: String
   ): Single<BaseResponse<TripSummaryResponse>>

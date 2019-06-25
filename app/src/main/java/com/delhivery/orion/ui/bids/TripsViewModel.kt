@@ -11,6 +11,7 @@ import com.delhivery.orion.ui.bids.TripType.Unknown
 import com.delhivery.orion.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -68,22 +69,21 @@ class TripsViewModel @Inject constructor(
             hasMoreData = _tripsRes.hasNext
             total = _tripsRes.total
 
-            if (!paginate && _tripsRes.total == 0) {
-              /* show no trips error */
-              userTripsData.postValue(null)
-            } else {
-              mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* remove progress item */
-                add(Pair(HomeTripsProgressItem(), Remove))
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeTripsProgressItem(), Remove))
+              if (!paginate && _tripsRes.total == 0) {
+                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
+              } else {
                 /* post all trips as add */
                 _tripsRes.trips.forEach { _item ->
                   add(Pair(HomeTripsItem(_item), Add))
                 }
               }
-                  .let {
-                    userTripsData.postValue(it)
-                  }
             }
+                .let {
+                  userTripsData.postValue(it)
+                }
           } else {
             error.handle()
           }

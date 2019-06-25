@@ -26,6 +26,10 @@ enum class UrlConfig(
   TripService(
       "https://orion-trip-api.delhivery.com",
       "https://orion-trip-api-dev.delhivery.com"
+  ),
+  PaymentService(
+      "https://orion-payment-api.delhivery.com",
+      "https://orion-payment-api-dev.delhivery.com"
   );
 
   /**

@@ -17,13 +17,13 @@ object StringUtils {
   /**
    * Return Sentence case string
    */
-  fun capitalize(string: String?): String {
+  fun capitalize(string: String?): String? {
     if (string == null) {
-      return ""
+      return null
     }
 
     if (string.isEmpty()) {
-      return string
+      return null
     }
     val ch = string[0]
     return if (Character.isTitleCase(ch)) {

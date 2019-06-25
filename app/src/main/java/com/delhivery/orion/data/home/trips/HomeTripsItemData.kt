@@ -51,13 +51,13 @@ data class HomeTripsItemData(
         || driverDetails?.driverName?.contains(query, true) == true
         || destination.contains(query, true)
 
-  fun originCityName() = StringUtils.capitalize(origin)
+  fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
-  fun destinationCityName() = StringUtils.capitalize(destination)
+  fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
-  fun originStateName() = StringUtils.capitalize(originState)
+  fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
-  fun destinationStateName() = StringUtils.capitalize(destinationState)
+  fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
 }
 

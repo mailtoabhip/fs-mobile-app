@@ -31,7 +31,6 @@ import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -71,9 +70,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
-
     binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
       adapter.resetStaticData()
       /* remove user transactions and fetch again */
       viewModel.fetchUserTransactions()

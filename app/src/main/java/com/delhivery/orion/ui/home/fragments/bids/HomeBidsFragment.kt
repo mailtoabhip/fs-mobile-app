@@ -30,7 +30,6 @@ import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.orion.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -65,9 +64,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
-
     binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
       /* remove user transactions and fetch again */
       adapter.resetStaticData()
       fetchBidsData()

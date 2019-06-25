@@ -3,8 +3,6 @@ package com.delhivery.orion.ui.home.fragments.trips
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.home.trips.HomeTripsHeaderItemData
 import com.delhivery.orion.data.home.trips.TripStatus
-import com.delhivery.orion.data.home.trips.TripStatus.TripCancelled
-import com.delhivery.orion.data.home.trips.TripStatus.TripCompleted
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -106,7 +104,6 @@ class HomeTripsViewModel @Inject constructor(
               else {
                 /* post all trips as add */
                 _tripsRes.trips
-                    .filter { it.status() != TripCancelled && it.status() != TripCompleted }
                     .forEach { _item ->
                       add(Pair(HomeTripsItem(_item), Add))
                     }

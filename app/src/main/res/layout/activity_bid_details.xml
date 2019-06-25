@@ -38,6 +38,7 @@
           android:layout_height="wrap_content"
           android:orientation="vertical"
           >
+
         <!-- confirmed bid banner -->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/container_confirm_bid"
@@ -113,7 +114,7 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:text="@string/label_from"
-              android:textColor="@color/heading_black"
+              android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
               app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +127,7 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:textColor="@color/sub_heading_black"
+              android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
@@ -198,6 +199,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_8dp"
+              app:layout_constraintBottom_toBottomOf="@id/text_truck_details"
               app:layout_constraintEnd_toStartOf="@id/text_truck_details"
               app:layout_constraintTop_toTopOf="@id/text_truck_details"
               app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
@@ -212,7 +214,7 @@
               android:fontFamily="sans-serif"
               android:gravity="end"
               android:text="@{ transaction.loadDetails() }"
-              android:textColor="@color/sub_heading_black"
+              android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               android:textStyle="bold"
               app:layout_constraintStart_toStartOf="parent"

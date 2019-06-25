@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.delhivery.orion.R
+import com.delhivery.orion.R.string
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.ActivityBidDetailsBinding
@@ -15,6 +16,7 @@ import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.orion.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.orion.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.orion.ui.base.BaseActivity
+import com.delhivery.orion.utils.StringUtils
 import com.delhivery.orion.utils.extensions.visible
 
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
@@ -130,7 +132,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  textPickupLocation.text = state.pickupLocation
+                  pickUpLocation =
+                    StringUtils.capitalize(state.pickupLocation) ?: getString(string.not_available)
+                  vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
+                  driverName = StringUtils.capitalize(state.driverDetails?.driverName)
+                      ?: getString(string.not_available)
+                  driverPhone =
+                    state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
                 }
           }
           is BidDetailsUserBidState_RejectedBid -> {

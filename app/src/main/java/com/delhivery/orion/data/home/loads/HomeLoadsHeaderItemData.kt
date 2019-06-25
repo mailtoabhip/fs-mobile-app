@@ -1,4 +1,4 @@
-package com.delhivery.orion.data.home
+package com.delhivery.orion.data.home.loads
 
 import com.delhivery.orion.data.BaseKeyTypeModel
 

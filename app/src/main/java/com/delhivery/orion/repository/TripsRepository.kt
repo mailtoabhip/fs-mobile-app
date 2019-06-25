@@ -28,7 +28,7 @@ class TripsRepository @Inject constructor(
     offset: Int = 0,
     status: TripStatus? = null
   ) = tripsService.tripsForStatuses(
-      "0060w0000028cA4A1K"/*userRepository.userId()*/, UserTripsLoadLimit,
+      userRepository.userId(), UserTripsLoadLimit,
       offset, status?.statusKey
   )
       .convertResponse()
@@ -42,7 +42,7 @@ class TripsRepository @Inject constructor(
     offset: Int = 0,
     statuses: String
   ) = tripsService.tripsForStatuses(
-      "0060w0000028cA4A1K"/*userRepository.userId()*/, UserTripsLoadLimit,
+      userRepository.userId(), UserTripsLoadLimit,
       offset, statuses
   )
       .convertResponse()

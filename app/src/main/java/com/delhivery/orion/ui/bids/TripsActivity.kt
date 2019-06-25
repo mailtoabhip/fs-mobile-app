@@ -20,8 +20,6 @@ import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
-import com.delhivery.orion.utils.extensions.visible
 
 /**
  * Created by saurabh
@@ -74,12 +72,12 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     title = viewModel.trip.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.clearItems()
+      binding.refreshLayout.isRefreshing = false
+      adapter.resetStaticData()
       /* remove user bid transactions and fetch again */
       viewModel.fetchTrips(false)
     }
@@ -93,18 +91,9 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     adapter.setItems(getStaticItems())
 
-    binding.btnStartBidding.setOnClickListener { finish() }
-
-    viewModel.userTripsData.observe(this, Observer { _items ->
-      /* error container, if items are null */
-      if (_items == null) {
-        true
-      } else {
-        adapter.operation(_items)
-        false
-      }.let {
-        binding.containerError.visible(it)
-        binding.rvBids.visible(!it)
+    viewModel.userTripsData.observe(this, Observer {
+      if (it != null) {
+        adapter.operation(it)
       }
     })
 

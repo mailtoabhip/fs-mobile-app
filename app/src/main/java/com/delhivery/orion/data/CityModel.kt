@@ -13,9 +13,9 @@ data class CityModel(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = cityId
 
-  fun cityName() = StringUtils.capitalize(city)
+  fun cityName() = StringUtils.capitalize(city) ?: ""
 
-  fun stateName() = StringUtils.capitalize(state ?: "")
+  fun stateName() = StringUtils.capitalize(state) ?: ""
 
 }
 
@@ -24,8 +24,8 @@ data class CityModel(
  */
 fun List<CityModel>.names() =
   mapIndexed { _, cityModel ->
-    val city: String = StringUtils.capitalize(cityModel.city)
-    val state: String = StringUtils.capitalize(cityModel.state ?: "")
+    val city: String = StringUtils.capitalize(cityModel.city) ?: ""
+    val state: String = StringUtils.capitalize(cityModel.state) ?: ""
     when (state.length) {
       0 -> return@mapIndexed city
       else -> return@mapIndexed "$city, $state"

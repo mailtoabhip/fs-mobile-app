@@ -70,7 +70,7 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
 }
 
 /**
- * Trip Progress viewholder
+ * Trip Progress view holder
  */
 internal class HomeTripsProgressItemVH(binding: ViewHomeTripsProgressItemBinding) :
     BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsProgressItemBinding, HomeTripsProgressItem>(
@@ -84,7 +84,7 @@ internal class HomeTripsProgressItemVH(binding: ViewHomeTripsProgressItemBinding
 }
 
 /**
- * Trip header viewholder
+ * Trip header view holder
  */
 internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsHeaderItemBinding, HomeTripsHeaderItem>(
@@ -94,6 +94,23 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     item: HomeTripsHeaderItem,
     _interface: HomeTripsRVAdapterInterface
   ) {
+    binding.advancePending = when (item.data.advancePending) {
+      -1 -> ""
+      else -> item.data.advancePending.toString()
+    }
+    binding.inTransit = when (item.data.inTransit) {
+      -1 -> ""
+      else -> item.data.inTransit.toString()
+    }
+    binding.balacenPending = when (item.data.balancePending) {
+      -1 -> ""
+      else -> item.data.balancePending.toString()
+    }
+    binding.completed = when (item.data.completed) {
+      -1 -> ""
+      else -> item.data.completed.toString()
+    }
+
     binding.viewAdvancePending.clickToAction(HomeTripsHeaderAction_AdvancePending, item, _interface)
     binding.viewBalancePending.clickToAction(HomeTripsHeaderAction_BalancePending, item, _interface)
     binding.viewInTransit.clickToAction(HomeTripsHeaderAction_InTransit, item, _interface)

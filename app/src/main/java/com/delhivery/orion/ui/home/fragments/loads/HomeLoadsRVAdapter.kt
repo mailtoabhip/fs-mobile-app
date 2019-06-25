@@ -7,7 +7,7 @@ import com.delhivery.orion.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.orion.databinding.ViewHomeLoadsWarningItemBinding
+import com.delhivery.orion.databinding.ViewLoadsWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -33,7 +33,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
     Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
-    Warning -> ViewHomeLoadsWarningItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewLoadsWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
@@ -41,7 +41,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeLoadsSearchItemBinding -> HomeLoadsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
-    is ViewHomeLoadsWarningItemBinding -> HomeLoadsWarningItemVH(binding)
+    is ViewLoadsWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }

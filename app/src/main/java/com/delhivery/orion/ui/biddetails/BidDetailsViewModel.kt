@@ -5,8 +5,10 @@ import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.orion.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.trips.TripDriverDetails
 import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionsRepository
+import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 class BidDetailsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val bidsRepository: BidsRepository
+  private val bidsRepository: BidsRepository,
+  private val tripsRepository: TripsRepository
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* transaction id */
@@ -27,6 +30,8 @@ class BidDetailsViewModel @Inject constructor(
   var transactionLiveData = MutableLiveData<HomeBidsRequestItemData>()
 
   var transactionBidLiveData = MutableLiveData<BidDetailsUserBidState>()
+
+  var driverDetailLiveData = MutableLiveData<TripDriverDetails>()
 
   /**
    * Fetch transaction details
@@ -48,27 +53,50 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * Fetch transaction bids and update UI as per response
    */
-  fun fetchTransactionBids(postMessage: String? = null) {
+  private fun fetchTransactionBids(postMessage: String? = null) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
         .bidsProgress()
         .subscribe { _bRes, error ->
           if (!error) {
             //determine bid state and post to live data
-            val state = when {
-              _bRes.third == 0 -> BidDetailsUserBidState_PlaceBidFirst()
-              _bRes.first == null -> BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second)
+            when {
+              _bRes.third == 0 -> transactionBidLiveData.postValue(
+                  BidDetailsUserBidState_PlaceBidFirst()
+              )
+              _bRes.first == null -> transactionBidLiveData.postValue(
+                  BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second)
+              )
               else -> when (_bRes.first!!.status()) {
-                Accepted -> BidDetailsUserBidState_ConfirmedBid(
-                    transactionLiveData.value?.pickupLocation ?: "No Pickup Location"
+                Accepted -> fetchTripDetails()
+                Rejected -> transactionBidLiveData.postValue(
+                    BidDetailsUserBidState_RejectedBid(
+                        _bRes.second.acceptedBid()!!, _bRes.first!!
+                    )
                 )
-                Rejected -> BidDetailsUserBidState_RejectedBid(
-                    _bRes.second.acceptedBid()!!, _bRes.first!!
+                else -> transactionBidLiveData.postValue(
+                    BidDetailsUserBidState_EditBid(_bRes.third, _bRes.second, _bRes.first!!)
                 )
-                else -> BidDetailsUserBidState_EditBid(_bRes.third, _bRes.second, _bRes.first!!)
               }
             }
-            transactionBidLiveData.postValue(state)
+          } else {
+            error.handle()
+          }
+        }
+  }
+
+  private fun fetchTripDetails() {
+    compositeDisposable += tripsRepository.tripDetails(transactionId)
+        .onBackground()
+        .bidsProgress()
+        .subscribe { _res, error ->
+          if (!error) {
+            transactionBidLiveData.postValue(
+                BidDetailsUserBidState_ConfirmedBid(
+                    _res.first.pickupLocation, _res.second.driverDetails,
+                    _res.second.vehicleDetails.vehicleNo
+                )
+            )
           } else {
             error.handle()
           }
