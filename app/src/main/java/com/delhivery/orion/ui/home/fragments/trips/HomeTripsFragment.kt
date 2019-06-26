@@ -85,7 +85,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     /* observe and update adapter items */
     viewModel.userTripsData.observe(this, Observer {
-      it?.let { _items -> adapter.operation(_items) }
+      it?.let { _items ->
+        adapter.operation(_items)
+      }
     })
 
     /* attach sticky search with adapter */

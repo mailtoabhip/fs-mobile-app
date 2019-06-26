@@ -97,6 +97,16 @@ class HomeTripsViewModel @Inject constructor(
 
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && _tripsRes.total == 0) {
+                add(
+                    Pair(
+                        HomeTripsHeaderItem(
+                            HomeTripsHeaderItemData(
+                                0, 0,
+                                0, 0
+                            )
+                        ), AddUpdate
+                    )
+                )
                 add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
                 add(Pair(HomeTripsSearchItem(), Remove))
               }
