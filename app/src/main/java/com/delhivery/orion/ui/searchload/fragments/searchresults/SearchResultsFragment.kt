@@ -94,6 +94,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       action(ProgressSearchLoadAction(true))
     binding.origin = origin
     binding.destination = destination
+    val pos = when (type) {
+      "Closed" -> 0
+      else -> 1
+    }
+    binding.spinnerTruckType.setSelection(pos, true)
     viewModel.searchLoad(origin, destination, type)
   }
 

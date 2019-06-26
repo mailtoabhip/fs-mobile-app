@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.R.string
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.databinding.FragmentSearchLoadBinding
@@ -123,7 +124,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     uiUtils.toggleKeyboard(true)
 
     if (origin == null) {
-      binding.editOriginCity.setError("Please select origin")
+      binding.editOriginCity.setError(getString(string.error_search_missing_origin))
       binding.editOriginCity.errorAnimate()
       return
     }

@@ -142,6 +142,7 @@
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
   <string name="not_available">Not available</string>
+  <string name="error_search_missing_origin">Please select origin</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
