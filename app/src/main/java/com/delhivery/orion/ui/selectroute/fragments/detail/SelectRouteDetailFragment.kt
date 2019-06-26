@@ -146,7 +146,8 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   }
 
   fun populateRoute() {
-    binding.textOriginCityName.text = route?.origin?.cityName() + ", " + route?.origin?.stateName()
+    binding.textOriginCityName.text =
+      route?.origin?.cityState() ?: getString(R.string.not_available)
     adapter.clearItems()
     selectedStates.clear()
 

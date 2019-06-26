@@ -17,6 +17,20 @@ data class CityModel(
 
   fun stateName() = StringUtils.capitalize(state) ?: ""
 
+  fun cityState(): String {
+    val sb = StringBuilder().append(cityName())
+    val code = cityId.subSequence(0, 2)
+        .toString()
+    StateModelList.toMutableList()
+        .forEach { stateModel ->
+          if (stateModel.stateId.compareTo(code) == 0) {
+            sb.append(", ")
+                .append(stateModel.state)
+          }
+        }
+    return sb.toString()
+  }
+
 }
 
 /**
