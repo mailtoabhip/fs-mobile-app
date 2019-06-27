@@ -54,7 +54,8 @@ class TripsRepository @Inject constructor(
       transactionService.transactionDetails(transactionId).convertResponse(),
       tripsService.trip(transactionId).convertResponse(),
       tripsService.tripHistory(transactionId).convertResponse(),
-      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>, Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
+      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>,
+          Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
         Triple(t1, t2, t3)
       }
   )

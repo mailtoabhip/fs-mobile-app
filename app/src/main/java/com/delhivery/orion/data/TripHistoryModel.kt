@@ -1,6 +1,8 @@
 package com.delhivery.orion.data
 
+import com.delhivery.orion.data.home.trips.TripDriverDetails
 import com.delhivery.orion.data.home.trips.TripStatus
+import com.delhivery.orion.data.home.trips.TripVehicleDetails
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
 import com.google.gson.annotations.SerializedName
@@ -9,7 +11,8 @@ import java.util.concurrent.TimeUnit
 data class TripHistoryModel(
   @SerializedName("action_time") val actionTime: String,
   @SerializedName("trip_status") private val _tripStatus: String,
-  @SerializedName("user_name") val userName: String
+  @SerializedName("user_name") val userName: String,
+  @SerializedName("details") val details: TripHistoryDetail?
 ) {
   /**
    * Trip Status [TripStatus]
@@ -19,21 +22,72 @@ data class TripHistoryModel(
   /**
    * Compute epoch to action time
    */
-  fun epoch() = (System.currentTimeMillis() - DateUtils.parseDate(
-      actionTime, DatePatterns.OrionDateFormat
-  ).time).let { msDiff ->
-    val days = TimeUnit.MILLISECONDS.toDays(msDiff)
-    val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
-    val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
-    val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
-    if (days > 0) {
-      "$days day ago"
-    } else if (hours > 0) {
-      "$hours hr $mins min ago"
-    } else if (mins > 0) {
-      "$mins min $secs s ago"
-    } else {
-      "Just now"
+  fun epoch() = getEpoch(actionTime)
+
+}
+
+private fun getEpoch(actionTime: String): String {
+  return if (actionTime.isNotEmpty()) {
+    (System.currentTimeMillis() - DateUtils.parseDate(
+        actionTime, DatePatterns.OrionDateFormat
+    ).time).let { msDiff ->
+      val days = TimeUnit.MILLISECONDS.toDays(msDiff)
+      val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
+      val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
+      val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
+      if (days > 0) {
+        "$days day ago"
+      } else if (hours > 0) {
+        "$hours hr $mins min ago"
+      } else if (mins > 0) {
+        "$mins min $secs s ago"
+      } else {
+        "Just now"
+      }
     }
+  } else {
+    ""
   }
 }
+
+data class TripHistoryDetail(
+  @SerializedName("arrival_time") val arrivalTime: String,
+  @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean,
+  @SerializedName("driver") val driverDetails: TripDriverDetails,
+  @SerializedName("vehicle") val vehicleDetails: TripVehicleDetails,
+  @SerializedName("loading_advice") val loadingAdvice: String,
+  @SerializedName("current_location") val currentLocation: String,
+  @SerializedName("reached_time") val reachedTime: String,
+  @SerializedName("unloaded_time") val unloadedTime: String,
+  @SerializedName("pod_url") val podUrl: String,
+  @SerializedName("unloading_location") val unloadingLocation: String
+) {
+
+  fun getArrivalEpoch() = getEpoch(arrivalTime)
+
+  fun getReachedEpoch() = getEpoch(reachedTime)
+
+  fun getUnloadedEpoch() = getEpoch(unloadedTime)
+}
+
+data class TripHistoryItem(
+  val id: Int,
+  val heading: String,
+  val subHeading: String,
+  val actionTime: String = "",
+  val podUrl: String = "",
+  val invoiceUrl: String = ""
+)
+
+const val TruckPlaced = 1
+const val ReachedPickupPoint = 2
+const val TruckLoaded = 3
+const val InTransit = 4
+const val AdvancePending = 5
+const val AdvancePaid = 6
+const val ReachedDestination = 7
+const val AwaitingUnloading = 8
+const val TruckUnloaded = 9
+const val AwaitingPODUpload = 10
+const val PODUploaded = 11
+const val BalancePending = 12

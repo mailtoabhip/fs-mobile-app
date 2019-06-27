@@ -9,7 +9,7 @@ import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.api.response.ChargeType
 import com.delhivery.orion.api.response.PaymentResponse
-import com.delhivery.orion.data.TripHistoryModel
+import com.delhivery.orion.data.TripHistoryItem
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.databinding.ActivityTripDetailsBinding
 import com.delhivery.orion.databinding.ViewPaymentSummaryItemBinding
@@ -50,17 +50,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         title = first.tripDisplayName()
         binding.transactionDetails = first
         binding.tripDetails = second
-        populateHistory(third)
+        populateHistory(viewModel.tripHistory.toMutableList())
       }
     })
 
     binding.viewHistory.setOnClickListener {
-      populateHistory(viewModel.tripHistory)
+      populateHistory(viewModel.tripHistory.toMutableList())
     }
 
     binding.viewSummary.setOnClickListener {
       populatePaymentSummary(
-          viewModel.paymentSummary
+          viewModel.paymentSummary.toMutableList()
       )
     }
 
@@ -89,7 +89,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   /**
    * Populate trip history
    */
-  private fun populateHistory(history: List<TripHistoryModel>) {
+  private fun populateHistory(history: MutableList<TripHistoryItem>) {
     binding.viewHistory.isSelected = true
     binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewSummary.isSelected = false
@@ -112,7 +112,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   /**
    * Populate payment summary
    */
-  private fun populatePaymentSummary(paymentSummary: List<PaymentResponse>) {
+  private fun populatePaymentSummary(paymentSummary: MutableList<PaymentResponse>) {
     binding.viewSummary.isSelected = true
     binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewHistory.isSelected = false
@@ -124,6 +124,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     )
 
     var total = 0.0
+    paymentSummary.add(
+        0, PaymentResponse(
+        "", "freight",
+        0.0, binding.tripDetails?.bidDetails?.bidPrice?.toDouble() ?: 0.0,
+        "", ""
+    )
+    )
     paymentSummary.forEach { _payment ->
       if (_payment.payVendor > 0) {
         ViewPaymentSummaryItemBinding.inflate(

@@ -85,13 +85,13 @@ enum class TripStatus(
   val statusKey: String,
   val status: String
 ) {
-  In_Transit("in_transit", "In Transit"),
+  In_Transit("in_transit", "In-Transit"),
   TripCancelled("trip_cancelled", "Trip Cancelled"),
   TripCompleted("trip_completed", "Trip Completed"),
   TruckArrived("truck_arrived", "Truck Arrived"),
-  TruckConfirmed("truck_confirmed", "Truck Confirmed"),
-  TruckLoaded("truck_loaded", "Truck Loaded"),
-  TruckReached("truck_reached", "Truck Reached"),
+  TruckConfirmed("truck_confirmed", "Truck Placed"),
+  TruckLoaded("truck_loaded", "Loading Completed"),
+  TruckReached("truck_reached", "Reached Destination"),
   TruckUnloaded("truck_unloaded", "Truck Unloaded"),
   Unknown("unknown", "Unknown");
 
