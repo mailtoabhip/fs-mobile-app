@@ -9,3 +9,7 @@ data class TransactionsResponse(
   @SerializedName("offset") val offset: Int,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>
 )
+
+data class TripMeterResponse(
+  val confirmedBids: HashMap<String, String>
+)

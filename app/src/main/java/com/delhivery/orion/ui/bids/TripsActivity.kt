@@ -97,6 +97,10 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
     })
 
+    viewModel.tripsCountLiveData.observe(this, Observer {
+      title = viewModel.trip.toolbarTitle(it ?: 0)
+    })
+
     viewModel.fetchTrips(false)
   }
 

@@ -44,7 +44,7 @@ enum class TransactionBidStatus(val statusKey: String) {
 
   companion object {
     /**
-     * Status by response key
+     * Status by response keyg
      */
     fun byStatusKey(_status: String) =
       values().filter { it.statusKey.safeEquals(_status) }.firstOrNull() ?: Open

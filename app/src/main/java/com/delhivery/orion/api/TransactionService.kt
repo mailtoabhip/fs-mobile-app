@@ -2,6 +2,7 @@ package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.api.response.TransactionsResponse
+import com.delhivery.orion.api.response.TripMeterResponse
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -56,5 +57,5 @@ interface TransactionService {
   @GET("/transactions/tripmeter/{supplier_id}")
   fun transactionsTripMeter(
     @Path("supplier_id") userId: String
-  ): Single<BaseResponse<TransactionsResponse>>
+  ): Single<BaseResponse<TripMeterResponse>>
 }

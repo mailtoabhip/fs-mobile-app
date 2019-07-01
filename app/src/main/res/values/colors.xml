@@ -14,6 +14,7 @@
   <color name="status_active">#29A8E0</color>
   <color name="status_confirmed">#619F1B</color>
   <color name="status_lost">#FF3131</color>
+  <color name="pending">#d36a1b</color>
 
   <!-- text colors-->
   <color name="black">#000000</color>

@@ -2,7 +2,7 @@ package com.delhivery.orion.ui.tripdetails
 
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
-import com.delhivery.orion.api.response.PaymentResponse
+import com.delhivery.orion.api.response.TripChargesResponse
 import com.delhivery.orion.data.AdvancePaid
 import com.delhivery.orion.data.AdvancePending
 import com.delhivery.orion.data.AwaitingPODUpload
@@ -41,7 +41,7 @@ class TripDetailsViewModel @Inject constructor(
     MutableLiveData<Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>>()
 
   /* payment summary */
-  var paymentSummary = mutableListOf<PaymentResponse>()
+  var paymentSummary = mutableListOf<TripChargesResponse>()
 
   /* trip history */
   var tripHistory = mutableListOf<TripHistoryItem>()

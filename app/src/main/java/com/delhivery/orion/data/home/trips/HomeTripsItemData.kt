@@ -1,6 +1,10 @@
 package com.delhivery.orion.data.home.trips
 
+import android.support.annotation.ColorRes
+import com.delhivery.orion.api.response.TripPayment
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.ui.bids.TripType
+import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
@@ -31,7 +35,8 @@ data class HomeTripsItemData(
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("required_on") val requiredOn: String?,
   @SerializedName("unloading_location") val unloadingLocation: String?,
-  @SerializedName("user_name") val userName: String?
+  @SerializedName("user_name") val userName: String?,
+  var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
 
@@ -44,7 +49,14 @@ data class HomeTripsItemData(
   /**
    * Trip Status [TripStatus]
    */
-  fun status() = TripStatus.byKey(_tripStatus)
+  fun tripStatus() = TripType.byStatus(_tripStatus)
+
+  fun tripPayment(): String {
+    if (payment != null) {
+      return "₹ " + payment!!.effectivePrice
+    }
+    return ""
+  }
 
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
@@ -58,6 +70,13 @@ data class HomeTripsItemData(
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
+
+  /**
+   * Required at text color as per status
+   */
+  @ColorRes
+  fun requiredTextColor() =
+    ColorProviderUtils.getTripStatusColor(tripStatus().toLowerCase())
 
 }
 

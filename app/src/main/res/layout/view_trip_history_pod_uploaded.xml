@@ -81,7 +81,7 @@
           android:paddingBottom="@dimen/size_4dp"
           android:paddingStart="@dimen/size_24dp"
           android:paddingTop="@dimen/size_4dp"
-          android:text="VIEW INVOICE"
+          android:text="VIEW POD"
           android:textColor="@color/black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="bold"

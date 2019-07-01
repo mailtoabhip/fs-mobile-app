@@ -47,6 +47,8 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
       containerLogout.setOnClickListener { it.post { confirmLogout() } }
     }
+
+    viewModel.fetchTripMeter()
   }
 
   /**

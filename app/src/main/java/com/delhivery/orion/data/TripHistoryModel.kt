@@ -1,5 +1,6 @@
 package com.delhivery.orion.data
 
+import com.delhivery.orion.R
 import com.delhivery.orion.data.home.trips.TripDriverDetails
 import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.data.home.trips.TripVehicleDetails
@@ -77,7 +78,17 @@ data class TripHistoryItem(
   val actionTime: String = "",
   val podUrl: String = "",
   val invoiceUrl: String = ""
-)
+) {
+
+  fun getBackground(): Int {
+    return when (id) {
+      BalancePending, AdvancePending -> R.drawable.bg_gradient_orange
+      AwaitingUnloading, AwaitingPODUpload, InTransit -> R.drawable.bg_gradient_blue
+      BalancePaid -> R.drawable.bg_gradient_green
+      else -> R.color.white
+    }
+  }
+}
 
 const val TruckPlaced = 1
 const val ReachedPickupPoint = 2
@@ -91,3 +102,4 @@ const val TruckUnloaded = 9
 const val AwaitingPODUpload = 10
 const val PODUploaded = 11
 const val BalancePending = 12
+const val BalancePaid = 13

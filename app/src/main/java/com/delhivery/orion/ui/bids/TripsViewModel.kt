@@ -1,6 +1,8 @@
 package com.delhivery.orion.ui.bids
 
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
+import com.delhivery.orion.repository.PaymentRepository
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -11,10 +13,12 @@ import com.delhivery.orion.ui.bids.TripType.Unknown
 import com.delhivery.orion.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsSearchItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.extensions.safeEquals
 import javax.inject.Inject
 
 /**
@@ -22,16 +26,19 @@ import javax.inject.Inject
  * for Delhivery Private Limited
  **
  *
- * <Define what the class does>
+ * View model class for [TripsActivity]
  *
  **
  */
 class TripsViewModel @Inject constructor(
-  private val tripsRepository: TripsRepository
+  private val tripsRepository: TripsRepository,
+  private val payementRepository: PaymentRepository
 ) : BaseViewModel() {
   /* user trips live data */
   var userTripsData =
     MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+  var tripsCountLiveData = MutableLiveData<Int>()
 
   /* pagination params */
   var hasMoreData = true
@@ -59,27 +66,56 @@ class TripsViewModel @Inject constructor(
     }
 
     compositeDisposable += tripsRepository.trips(
-        offset,
-        trip.status.joinToString(separator = ",") { it })
+        offset, trip.status.joinToString(separator = ",") { it }
+    )
+        .flatMap { t ->
+          offset += t.trips.size
+          hasMoreData = t.hasNext
+          total = t.total
+          tripsCountLiveData.postValue(total)
+          payementRepository.bulkPaymentTransactions(t.trips)
+        }
         .onBackground()
-        .progress()
-        .subscribe { _tripsRes, error ->
+        .subscribe { _res, error ->
           if (!error) {
-            offset += _tripsRes.trips.size
-            hasMoreData = _tripsRes.hasNext
-            total = _tripsRes.total
+//            offset += _res.trips.size
+//            hasMoreData = _res.hasNext
+//            total = _res.total
+//            tripsCountLiveData.postValue(total)
 
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
-              if (!paginate && _tripsRes.total == 0) {
+              val trips = _res.first
+              val payments = _res.second
+
+              /* No trips found, if fresh fetch n total == 0 */
+              if (total == 0) {
+                add(Pair(HomeTripsSearchItem(), Remove))
                 add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
-              } else {
-                /* post all trips as add */
-                _tripsRes.trips.forEach { _item ->
-                  add(Pair(HomeTripsItem(_item), Add))
+              }
+              /* post all trips with their respective payments as add */
+              else {
+                for (trip in trips) {
+                  try {
+                    trip.payment = payments.filter { p ->
+                      p.transactionId.safeEquals(trip.transactionId)
+                    }
+                        .get(0)
+                  } catch (e: Exception) {
+                    Log.d("No payment found for: ", trip.transactionId)
+                  }
+                  add(Pair(HomeTripsItem(trip), Add))
                 }
               }
+//              if (!paginate && _res.total == 0) {
+//                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
+//              } else {
+//                /* post all trips as add */
+//                _res.trips.forEach { _item ->
+//                  add(Pair(HomeTripsItem(_item), Add))
+//                }
+//              }
             }
                 .let {
                   userTripsData.postValue(it)

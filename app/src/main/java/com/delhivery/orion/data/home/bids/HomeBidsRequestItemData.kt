@@ -5,7 +5,6 @@ import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.bids.TransactionBid
-import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
@@ -80,7 +79,7 @@ data class HomeBidsRequestItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getStatusColor(status)
+    ColorProviderUtils.getStatusColor(bidStatus().toLowerCase())
 
   /**
    * Get truck details/type
@@ -96,10 +95,10 @@ data class HomeBidsRequestItemData(
     )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
 
   fun tripPriceDifference(): String {
-    return "Calculate bid price difference if bid placed"
+    return ""
   }
 
-  fun status() = TransactionBidStatus
+  fun bidStatus() = BidStatus.byKey(status)
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)
@@ -112,8 +111,8 @@ enum class BidStatus(
   val statusKey: String,
   val status: String
 ) {
-  Requested("requested", "ACTIVE"),
-  TruckConfirmed("truck_confirmed", "CONFIRMED"),
+  Requested("requested", "Active"),
+  TruckConfirmed("truck_confirmed", "Confirmed"),
   TruckLoaded("truck_loaded", "Truck Loaded"),
   TruckReached("truck_reached", "Truck Reached"),
   TruckUnloaded("truck_unloaded", "Truck Unloaded"),
@@ -125,7 +124,7 @@ enum class BidStatus(
      * Get [TripStatus] from response key
      */
     fun byKey(statusKey: String) =
-      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull() ?: Unknown
+      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull()?.status ?: statusKey
   }
 }
 

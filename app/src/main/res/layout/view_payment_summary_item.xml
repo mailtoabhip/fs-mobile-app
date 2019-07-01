@@ -6,7 +6,7 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.orion.api.response.PaymentResponse"
+        type="com.delhivery.orion.api.response.TripChargesResponse"
         />
   </data>
 

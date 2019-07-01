@@ -2,7 +2,6 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
-import com.delhivery.orion.exception.NoBidsFoundException
 import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
@@ -16,7 +15,6 @@ import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
-import io.reactivex.Single
 import javax.inject.Inject
 
 class HomeBidsViewModel @Inject constructor(
@@ -33,6 +31,7 @@ class HomeBidsViewModel @Inject constructor(
   /* pagination params */
   var total = 0
   var offset = 0
+  var hasMoreData = true
 
   /**
    * Fetch bids summary
@@ -69,13 +68,12 @@ class HomeBidsViewModel @Inject constructor(
   fun fetchBids(paginate: Boolean = false) {
     if (!paginate) {
       offset = 0
-    } else if (paginate && (total == offset)) {
+    } else if (paginate && !hasMoreData) {
       return
     }
 
+    /* add progress if not paginating */
     if (paginate) {
-      showProgress()
-      /* add progress if not paginating */
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
@@ -87,20 +85,21 @@ class HomeBidsViewModel @Inject constructor(
 
     compositeDisposable += bidsRepository.userBids(offset, statuses)
         .flatMap { t ->
-          offset += t.second.size
           total = t.first
           bidsCountLiveData.postValue(total)
-          if (!paginate && total == 0) {
-            Single.error(NoBidsFoundException())
-          } else {
-            transactionsRepository.bulkTransactions(t.second.map { it.transactionId })
-                .convertResponse()
-          }
+//          if (!paginate && total == 0) {
+//            Single.error(NoBidsFoundException())
+//          } else {
+          transactionsRepository.bulkTransactions(t.second.map { it.transactionId })
+              .convertResponse()
+//          }
         }
         .onBackground()
-        .progress()
         .subscribe { _data, error ->
           if (!error) {
+            offset += _data.offset
+            hasMoreData = _data.hasNext
+
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeBidsProgressItem(), Remove))

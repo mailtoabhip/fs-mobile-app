@@ -21,39 +21,52 @@ import com.delhivery.orion.data.home.trips.TripStatus.TruckUnloaded
 enum class TripType(
   val typeId: Int,
   val status: List<String>,
+  val typeText: String,
   private val title: String
 ) {
-  Unknown(-1, listOf(TripStatus.Unknown.statusKey), "na (%d"),
+  Unknown(-1, listOf(TripStatus.Unknown.statusKey), "NA", "NA"),
   AdvancePending(
       0,
       listOf(TruckArrived.statusKey, TruckConfirmed.statusKey),
-      "Advance Pending trips(%d)"
+      "Advance Pending", "Advance Pending trips"
   ),
   InTransit(
       1,
       listOf(TruckLoaded.statusKey, TruckReached.statusKey, In_Transit.statusKey),
-      "InTransit trips (%s)"
+      "InTransit", "InTransit trips"
   ),
   BalancePending(
       2,
       listOf(TruckUnloaded.statusKey),
-      "Balance Pending trips (%d)"
+      "Balance Pending", "Balance Pending trips "
   ),
   Completed(
       3,
       listOf(TripCompleted.statusKey),
-      "Completed trips (%d)"
+      "Completed", "Completed trips"
   );
 
   /**
    * Get toolbar title with count of items
    */
-  fun toolbarTitle(count: Int = 0) = String.format(title, count)
+  fun toolbarTitle(count: Int = 0) = when (count) {
+    0 -> title
+    else -> "$title($count)"
+  }
 
   companion object {
     /**
      * Get [TripType] by type id
      */
     fun byTypeId(typeId: Int) = values().filter { it.typeId == typeId }.firstOrNull() ?: Unknown
+
+    fun byStatus(_status: String) = when (_status) {
+      TruckArrived.statusKey, TruckConfirmed.statusKey -> AdvancePending.typeText
+      TruckLoaded.statusKey, TruckReached.statusKey, In_Transit.statusKey -> InTransit.typeText
+      TruckUnloaded.statusKey -> BalancePending.typeText
+      TripCompleted.statusKey -> Completed.typeText
+      else -> "Unknown"
+    }
+
   }
 }

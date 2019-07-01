@@ -8,12 +8,15 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.api.response.ChargeType
-import com.delhivery.orion.api.response.PaymentResponse
+import com.delhivery.orion.api.response.TripChargesResponse
+import com.delhivery.orion.data.BalancePaid
+import com.delhivery.orion.data.PODUploaded
 import com.delhivery.orion.data.TripHistoryItem
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.databinding.ActivityTripDetailsBinding
 import com.delhivery.orion.databinding.ViewPaymentSummaryItemBinding
 import com.delhivery.orion.databinding.ViewTripHistoryItemBinding
+import com.delhivery.orion.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.orion.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.orion.ui.base.BaseActivity
 
@@ -97,23 +100,40 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
 
     binding.containerHistory.removeAllViews()
-    val iterator = history.listIterator()
-    while (iterator.hasNext()) {
-      ViewTripHistoryItemBinding.inflate(layoutInflater, binding.containerHistory, false)
-          .apply {
-            if (!iterator.hasPrevious()) {
-              container.setBackgroundResource(R.drawable.bg_trip_meter_gradient)
-            }
-            setHistory(iterator.next())
-            binding.containerHistory.addView(root)
-          }
+    var index = 0
+    history.forEach { item ->
+      when (item.id) {
+        BalancePaid -> {
+        }
+        PODUploaded -> {
+          ViewTripHistoryPodUploadedBinding.inflate(layoutInflater, binding.containerHistory, false)
+              .apply {
+                if (index == 0) {
+                  container.setBackgroundResource(item.getBackground())
+                }
+                setHistory(item)
+                binding.containerHistory.addView(root)
+              }
+        }
+        else -> {
+          ViewTripHistoryItemBinding.inflate(layoutInflater, binding.containerHistory, false)
+              .apply {
+                if (index == 0) {
+                  container.setBackgroundResource(item.getBackground())
+                }
+                setHistory(item)
+                binding.containerHistory.addView(root)
+              }
+        }
+      }
+      index++
     }
   }
 
   /**
    * Populate payment summary
    */
-  private fun populatePaymentSummary(paymentSummary: MutableList<PaymentResponse>) {
+  private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
     binding.viewSummary.isSelected = true
     binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewHistory.isSelected = false
@@ -125,14 +145,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     )
 
     var total = 0.0
-    paymentSummary.add(
-        0, PaymentResponse(
+    tripChargesSummary.add(
+        0, TripChargesResponse(
         "", "freight",
         0.0, binding.tripDetails?.bidDetails?.bidPrice?.toDouble() ?: 0.0,
         "", ""
     )
     )
-    paymentSummary.forEach { _payment ->
+    tripChargesSummary.forEach { _payment ->
       if (_payment.payVendor > 0) {
         ViewPaymentSummaryItemBinding.inflate(
             layoutInflater, paymentSummaryBinding.containerPayment, false

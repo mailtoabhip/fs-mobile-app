@@ -50,9 +50,8 @@ class HomeLoadsViewModel @Inject constructor(
     } else if (paginate && !hasMoreData) {
       return
     }
+
     if (paginate) {
-      showProgress()
-      /* add progress if not paginating */
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
@@ -61,7 +60,7 @@ class HomeLoadsViewModel @Inject constructor(
           offset += t.offset
           total = t.total
           hasMoreData = t.offset != t.total
-          loadsCountLiveData.postValue(t.total)
+          loadsCountLiveData.postValue(total)
           bidsRepository.bidsForLoads(t.transactions)
         }
         .onBackground()
@@ -85,7 +84,7 @@ class HomeLoadsViewModel @Inject constructor(
                       }
                           .get(0)
                   } catch (e: Exception) {
-                    Log.d("No Bid found for: ", load.transactionId.toString())
+                    Log.d("No Bid found for: ", load.transactionId)
                   }
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }

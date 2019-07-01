@@ -9,6 +9,8 @@
         name="request"
         type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
         />
+
+    <import type="android.support.v4.content.ContextCompat"/>
   </data>
   <android.support.v7.widget.CardView
       android:layout_width="match_parent"
@@ -160,13 +162,14 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="@{request.status}"
+          android:text="@{request.bidStatus()}"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
+          app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_amount"
-          bind:textColor="@{ request.requiredTextColor() }"
-          tools:text="status"
+          bind:textColor="@{ ContextCompat.getColor(context, request.requiredTextColor()) }"
+          tools:text="STATUS"
           tools:textColor="@color/black"
           />
     </android.support.constraint.ConstraintLayout>

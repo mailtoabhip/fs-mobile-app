@@ -1,8 +1,8 @@
 package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
-import com.delhivery.orion.api.response.PaymentResponse
-import com.delhivery.orion.api.response.TransactionsResponse
+import com.delhivery.orion.api.response.TripChargesResponse
+import com.delhivery.orion.api.response.TripPaymentsResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,7 +16,7 @@ interface PaymentService {
   @GET("charges/{transactionId}/")
   fun chargesSummary(
     @Path("transactionId") transactionId: String
-  ): Single<BaseResponse<List<PaymentResponse>>>
+  ): Single<BaseResponse<List<TripChargesResponse>>>
 
   /**
    * Bulk transaction ids
@@ -26,6 +26,6 @@ interface PaymentService {
   @GET("/payments/summary")
   fun bulkTransactions(
     @Query("transactions_ids") transactionIds: String
-  ): Single<BaseResponse<TransactionsResponse>>
+  ): Single<BaseResponse<TripPaymentsResponse>>
 
 }

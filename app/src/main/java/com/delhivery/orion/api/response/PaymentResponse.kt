@@ -3,7 +3,17 @@ package com.delhivery.orion.api.response
 import com.delhivery.orion.api.response.ChargeType.Damages
 import com.google.gson.annotations.SerializedName
 
-data class PaymentResponse(
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * Data class to handle all responses from [com.delhivery.orion.api.PaymentService]
+ *
+ **
+ */
+
+data class TripChargesResponse(
   @SerializedName("username") val username: String,
   @SerializedName("head") val head: String,
   @SerializedName("bill_client") val billClient: Double,
@@ -19,6 +29,24 @@ data class PaymentResponse(
     else -> "₹ " + String.format("%.2f", payVendor)
   }
 }
+
+data class TripPaymentsResponse(
+  @SerializedName("items") val payments: List<TripPayment>,
+  @SerializedName("total") val total: Int
+)
+
+data class TripPayment(
+  @SerializedName("effective_price") val effectivePrice: Double,
+  @SerializedName("bid_price") val bidPrice: Double,
+  @SerializedName("payments") val payments: Payments?,
+  @SerializedName("transaction_id") val transactionId: String
+)
+
+data class Payments(
+  @SerializedName("total_amount") val totalAmount: Double,
+  @SerializedName("cash_advance") val cashAdvance: Double,
+  @SerializedName("fuel_advance") val fuelAdvance: Double
+)
 
 enum class ChargeType(
   val charge_key: String,

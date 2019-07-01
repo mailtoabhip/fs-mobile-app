@@ -1,6 +1,7 @@
 package com.delhivery.orion.repository
 
 import com.delhivery.orion.api.PaymentService
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.utils.extensions.convertResponse
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,6 +23,13 @@ class PaymentRepository @Inject constructor(
   /**
    * Get bulk transactions using ids
    */
-  fun bulkTransactions(ids: List<String>) =
-    ids.joinToString(separator = ",") { it }.let { paymentService.bulkTransactions(it) }
+  fun bulkPaymentTransactions(
+    trips: List<HomeTripsItemData>
+  ) =
+    paymentService.bulkTransactions(
+        trips.map { it.transactionId }.joinToString(",") { it }
+    )
+        .convertResponse()
+        .map { Pair(trips, it.payments) }
+
 }
