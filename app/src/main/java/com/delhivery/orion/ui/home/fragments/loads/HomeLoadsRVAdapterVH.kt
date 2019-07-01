@@ -7,7 +7,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.delhivery.orion.R
-import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_Accept
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_Search
@@ -79,8 +79,13 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-    binding.btnAccept.clickToAction(HomeBidsRequestAction_Accept, item, adapterPosition, _interface)
+    binding.btnAccept.clickToAction(
+        HomeBidsRequestAction_AcceptBid, item, adapterPosition, _interface
+    )
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
+    binding.viewBidInfo.clickToAction(
+        HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
+    )
   }
 }
 

@@ -12,7 +12,7 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import com.delhivery.orion.R
-import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_Accept
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
@@ -99,6 +99,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       )
     }
 
+    viewModel.progressLiveData.observe(this, ProgressObserver())
+
     viewModel.userLoadsData.observe(this, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
@@ -128,13 +130,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     })
 
     viewModel.bidsStatusLiveData.observe(this, Observer {
-      when {
-        it != -1 && it != null -> {
-          (adapter.itemsList()
-              .get(it).data as HomeBidsRequestItemData).showing = true
-          adapter.notifyItemChanged(it)
-        }
-      }
+      uiUtils.toggleKeyboard()
+          .apply {
+            when {
+              it != null -> {
+                (adapter.itemsList()
+                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                adapter.notifyItemChanged(it.first)
+              }
+            }
+          }
     })
 
     /* fetch user transactions */
@@ -182,12 +187,12 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     when (actionId) {
       HomeBidsRequestAction_PlaceBid -> {
         (item.data as HomeBidsRequestItemData).let {
-          BidDetailsCreateEditDialog(context!!, it, null, viewModel, position).show()
+          BidDetailsCreateEditDialog(context!!, it, it.transactionBid, viewModel, position).show()
         }
       }
-      HomeBidsRequestAction_Accept -> {
+      HomeBidsRequestAction_AcceptBid -> {
         (item.data as HomeBidsRequestItemData).let {
-          BidDetailsCreateEditDialog(context!!, it, null, viewModel, position).show()
+          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
         }
       }
     }
@@ -202,7 +207,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         )
         .setInterpolator(AccelerateInterpolator(2f))
         .setDuration(200L)
-        .start();
+        .start()
   }
 
   fun show() {
@@ -215,6 +220,20 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         .setInterpolator(DecelerateInterpolator(2f))
         .setDuration(400L)
         .start()
+  }
+
+  /**
+   * Progress observer
+   */
+  inner class ProgressObserver : Observer<Boolean> {
+    override fun onChanged(t: Boolean?) {
+      t?.let {
+        when (t) {
+          true -> uiUtils.showProgress("Placing your bid, hang on!!")
+          false -> uiUtils.hideProgress()
+        }
+      }
+    }
   }
 
   /**
@@ -271,7 +290,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   /**
    * Home loads rv scroll listener for banner animation related stuff
    */
-  inner class BannerRVScrollListener() : OnScrollListener() {
+  inner class BannerRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
       recyclerView: RecyclerView,
@@ -281,17 +300,17 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       super.onScrolled(recyclerView, dx, dy)
 
       if (visible && scrollDist > MINIMUM) {
-        hide();
-        scrollDist = 0;
-        visible = false;
+        hide()
+        scrollDist = 0
+        visible = false
       } else if (!visible && scrollDist < -MINIMUM) {
-        show();
-        scrollDist = 0;
-        visible = true;
+        show()
+        scrollDist = 0
+        visible = true
       }
 
       if ((visible && dy > 0) || (!visible && dy < 0)) {
-        scrollDist += dy;
+        scrollDist += dy
       }
     }
   }

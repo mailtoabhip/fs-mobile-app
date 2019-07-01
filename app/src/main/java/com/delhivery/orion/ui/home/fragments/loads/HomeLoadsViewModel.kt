@@ -1,6 +1,8 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionStatus.Requested
 import com.delhivery.orion.repository.TransactionsRepository
@@ -14,6 +16,7 @@ import com.delhivery.orion.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.extensions.safeEquals
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
@@ -30,12 +33,13 @@ class HomeLoadsViewModel @Inject constructor(
   /* route/lane preferene live data*/
   var routesLiveData = MutableLiveData<Boolean>()
 
-  var bidsStatusLiveData = MutableLiveData<Int>()
+  var bidsStatusLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
   var loadsCountLiveData = MutableLiveData<Int>()
 
   var hasMoreData = true
   var offset = 0
+  var total = 0
 
   /**
    * Fetch user [Requested] transactions
@@ -52,27 +56,40 @@ class HomeLoadsViewModel @Inject constructor(
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
-    compositeDisposable += transactionsRepository.transactions(offset, Requested)
+    compositeDisposable += transactionsRepository.transactions(offset)
+        .flatMap { t ->
+          offset += t.offset
+          total = t.total
+          hasMoreData = t.offset != t.total
+          loadsCountLiveData.postValue(t.total)
+          bidsRepository.bidsForLoads(t.transactions)
+        }
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {
-            loadsCountLiveData.postValue(_tRes.total)
-            offset = _tRes.offset
-            hasMoreData = _tRes.offset != _tRes.total
-
             mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeLoadsProgressItem(), Remove))
 
-              /* edit route prefs, if fresh fetch n total == 0 */
-              if (!paginate && _tRes.total == 0) {
-                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
-              }
-              /* post all transactions as add */
-              else {
-                _tRes.transactions.forEach { _item ->
-                  add(Pair(HomeLoadsRequestItem(_item), Add))
+              val loads = _tRes.first
+              val bids = _tRes.second
+
+              if (total == 0) {
+                add(Pair(HomeLoadsWarningItem_NoLoads, Add))
+              } else {
+                for (load in loads.toMutableList()) {
+                  try {
+                    load.transactionBid =
+                      bids.filter { b ->
+                        b.transactionId.safeEquals(load.transactionId)
+                      }
+                          .get(0)
+                  } catch (e: Exception) {
+                    Log.d("No Bid found for: ", load.transactionId.toString())
+                  }
+                  add(Pair(HomeLoadsRequestItem(load), Add))
                 }
+
                 if (!hasMoreData) {
                   add(Pair(HomeLoadsInfoItem(), Add))
                 }
@@ -108,18 +125,21 @@ class HomeLoadsViewModel @Inject constructor(
     bidAmount: Int,
     position: Int
   ) {
-    bidsStatusLiveData.postValue(position)
-//    compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
-//        .delay(BidsUpdateDelay, SECONDS)
-//        .onBackground()
-//        .progress()
-//        .subscribe { _res, error ->
-//          if (!error && _res.isSuccess) {
-//            bidsStatusLiveData.postValue(position)
-//          } else {
-//            error.handle()
-//          }
-//        }
+    compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
+        .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+          bidsRepository.transactionBid(transactionId)
+              .progress()
+        }
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            bidsStatusLiveData.postValue(Pair(position, _res))
+          } else {
+            error.handle()
+          }
+        }
   }
 
   override fun editBid(
@@ -130,11 +150,15 @@ class HomeLoadsViewModel @Inject constructor(
   ) {
     compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+          bidsRepository.transactionBid(transactionId)
+              .progress()
+        }
         .onBackground()
         .progress()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
-            bidsStatusLiveData.postValue(position)
+          if (!error && _res != null) {
+            bidsStatusLiveData.postValue(Pair(position, _res))
           } else {
             error.handle()
           }

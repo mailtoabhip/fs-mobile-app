@@ -7,16 +7,17 @@ import javax.inject.Singleton
 
 @Singleton
 class TransactionsRepository @Inject constructor(
-  private val transactionService: TransactionService
+  private val transactionService: TransactionService,
+  private val userRepository: UserRepository
 ) : BaseRepository() {
 
   /**
    * Get user transactions
    */
-  fun transactions(
-    offset: Int,
-    status: TransactionStatus
-  ) = transactionService.transactions(offset, status.statusId).convertResponse()
+  fun transactions(offset: Int) = transactionService.loadBoardTransactions(
+      userRepository.userId(),
+      offset, UserTripsLoadLimit
+  ).convertResponse()
 
   /**
    * Search transactions
@@ -40,6 +41,8 @@ class TransactionsRepository @Inject constructor(
    * Transaction details
    */
   fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
+
+  fun transactionTripMeter() = transactionService.transactionsTripMeter(userRepository.userId())
 }
 
 enum class TransactionStatus(val statusId: String) {

@@ -11,6 +11,7 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.orion.ui.bids.BidType
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
@@ -78,7 +79,13 @@ class HomeBidsViewModel @Inject constructor(
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
-    compositeDisposable += bidsRepository.userBids(offset)
+    val statuses = mutableListOf<String>().apply {
+      add(BidType.ActiveBid.status.statusKey)
+      add(BidType.ConfirmedBid.status.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
+    compositeDisposable += bidsRepository.userBids(offset, statuses)
         .flatMap { t ->
           offset += t.second.size
           total = t.first

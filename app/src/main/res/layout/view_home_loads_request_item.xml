@@ -207,7 +207,7 @@
             android:paddingLeft="@dimen/size_16dp"
             android:paddingRight="@dimen/size_16dp"
             android:paddingTop="@dimen/size_16dp"
-            android:visibility="@{ request.showing ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
             tools:visibility="gone"
             >
 
@@ -227,6 +227,7 @@
               android:layout_height="wrap_content"
               android:layout_marginStart="@dimen/size_16dp"
               android:maxLines="1"
+              android:text="@{request.bidText()}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
@@ -263,7 +264,7 @@
             android:paddingBottom="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_16dp"
             android:paddingStart="@dimen/size_16dp"
-            android:visibility="@{ request.showing ? View.GONE : View.VISIBLE }"
+            android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
             >
 
           <android.support.v7.widget.LinearLayoutCompat

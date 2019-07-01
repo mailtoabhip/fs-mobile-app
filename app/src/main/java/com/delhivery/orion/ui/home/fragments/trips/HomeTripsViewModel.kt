@@ -58,9 +58,7 @@ class HomeTripsViewModel @Inject constructor(
   /**
    * Fetch user trips
    */
-  fun fetchTrips(
-    paginate: Boolean
-  ) {
+  fun fetchTrips(paginate: Boolean = false) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {

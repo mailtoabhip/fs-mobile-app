@@ -5,10 +5,9 @@ import com.delhivery.orion.api.request.CreateTransactionBidRequest
 import com.delhivery.orion.api.request.UpdateTransactionBidRequest
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.safeEquals
-import io.reactivex.Single
-import io.reactivex.functions.Function3
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,20 +16,6 @@ class BidsRepository @Inject constructor(
   private val userRepository: UserRepository,
   private val bidService: BidService
 ) : BaseRepository() {
-
-  /**
-   * Get user bids count, my bids and confirm bids
-   */
-  fun userBidsCount() =
-    Single.zip(
-        userBidsByStatus(TransactionBidStatus.Open, 0),
-        userBidsByStatus(TransactionBidStatus.Accepted, 0),
-        userBidsByStatus(TransactionBidStatus.Rejected, 0),
-        Function3<Pair<Int, List<TransactionBid>>, Pair<Int, List<TransactionBid>>,
-            Pair<Int, List<TransactionBid>>, Pair<Triple<Int, Int, Int>, MutableList<TransactionBid>>>
-        { _myBids, _cnfBids, _lostBids ->
-          createList(_myBids, _cnfBids, _lostBids)
-        })
 
   private fun createList(
     t1: Pair<Int, List<TransactionBid>>,
@@ -57,6 +42,26 @@ class BidsRepository @Inject constructor(
         val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
             .firstOrNull()
         Triple(userBid, it.bids, it.totalBids)
+      }!!
+
+  fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
+      .convertResponse()
+      .map {
+        val userId = userRepository.userId()
+        val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
+            .firstOrNull()
+        userBid
+      }!!
+
+  fun bidsForLoads(
+    transactions: List<HomeBidsRequestItemData>
+  ) = bidService.bidsForLoads(
+      userRepository.userId(),
+      transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+  )
+      .convertResponse()
+      .map {
+        Pair(transactions, it.bids)
       }!!
 
   /**
@@ -95,9 +100,11 @@ class BidsRepository @Inject constructor(
    * User/supplier bids by status as [Pair] of Total bids count and List of [TransactionBid]
    */
   fun userBids(
-    offset: Int
-  ) = bidService.userAllBids(
-      userRepository.userId(), offset, UserBidsLoadLimit
+    offset: Int,
+    statuses: String
+  ) = bidService.bidsForStatuses(
+      userRepository.userId(), UserBidsLoadLimit,
+      offset, statuses
   )
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }

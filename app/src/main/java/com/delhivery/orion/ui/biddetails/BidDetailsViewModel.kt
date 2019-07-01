@@ -31,8 +31,6 @@ class BidDetailsViewModel @Inject constructor(
 
   var transactionBidLiveData = MutableLiveData<BidDetailsUserBidState>()
 
-  var driverDetailLiveData = MutableLiveData<TripDriverDetails>()
-
   /**
    * Fetch transaction details
    */

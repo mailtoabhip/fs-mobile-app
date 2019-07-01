@@ -19,7 +19,7 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="true"
-      tools:ignore="GoogleAppIndexingWarning">
+      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
     <activity android:name=".ui.splash.SplashActivity">
       <intent-filter>
@@ -36,10 +36,7 @@
 
     <activity android:name=".ui.onboarding.OnboardingActivity"/>
 
-    <activity
-        android:name=".ui.home.HomeActivity"
-        android:windowSoftInputMode="stateHidden|adjustPan"
-        />
+    <activity android:name=".ui.home.HomeActivity"/>
 
     <activity android:name=".ui.bids.BidsActivity"/>
 

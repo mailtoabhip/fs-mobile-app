@@ -18,6 +18,7 @@ import com.delhivery.orion.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.orion.ui.base.BaseActivity
 
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>() {
+
   override fun getViewModelClass() = TripDetailsViewModel::class.java
 
   override fun layoutId() = R.layout.activity_trip_details

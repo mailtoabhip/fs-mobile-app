@@ -59,6 +59,26 @@ interface BidService {
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
+   * Get all user bids for loads basis transaction ids
+   */
+  @GET("bids")
+  fun bidsForLoads(
+    @Query("supplier_id") userId: String,
+    @Query("transaction_ids") transactionIds: String? = null
+  ): Single<BaseResponse<TransactionBidsResponseBody>>
+
+  /**
+   * List of trips
+   */
+  @GET("bids/")
+  fun bidsForStatuses(
+    @Query("supplier_id") userId: String,
+    @Query("limit") limit: Int,
+    @Query("offset") offset: Int,
+    @Query("bid_statuses") status: String? = null
+  ): Single<BaseResponse<TransactionBidsResponseBody>>
+
+  /**
    * Get User/supplier bids summary
    */
   @GET("/bids/summary")

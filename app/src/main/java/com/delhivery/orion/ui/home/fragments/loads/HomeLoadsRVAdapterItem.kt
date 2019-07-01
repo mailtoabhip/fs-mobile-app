@@ -1,6 +1,7 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
 import com.delhivery.orion.data.BaseKeyTypeModel
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsProgressItemData
@@ -41,6 +42,15 @@ abstract class BaseHomeLoadsRVAdapterItem<D : BaseKeyTypeModel<String>>(
  * Load request item
  */
 class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
+    BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Load request item
+ */
+class HomeLoadsBidRequestItem(
+  data: HomeBidsRequestItemData,
+  bid: List<TransactionBid>
+) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
 
 /**

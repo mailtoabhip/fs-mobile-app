@@ -4,6 +4,7 @@ import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
@@ -32,7 +33,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_size") val truckSize: String?,
   @SerializedName("client_id") val clientId: String,
   @SerializedName("uuid") private val uuid: String?,
-  @SerializedName("transaction_id") private val transactionId: String?,
+  @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("drop_location") val dropLocation: String,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("updation_time") val updationTime: String,
@@ -42,6 +43,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_city_code") val destinationCityCode: String,
   @SerializedName("truck_specifications") val truckSpecs: TruckSpecifications,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
+  var transactionBid: TransactionBid? = null,
   var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
@@ -102,6 +104,8 @@ data class HomeBidsRequestItemData(
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
+
+  fun bidText() = "Bid successfully placed for ₹ ${transactionBid?.bidAmount}"
 }
 
 enum class BidStatus(
@@ -127,8 +131,8 @@ enum class BidStatus(
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
-const val HomeBidsRequestAction_PlaceBid = "my_bids"
-const val HomeBidsRequestAction_Accept = "confirmed_bids"
+const val HomeBidsRequestAction_PlaceBid = "place_bid"
+const val HomeBidsRequestAction_AcceptBid = "accept_bid"
 
 data class TruckSpecifications(
   @SerializedName("height") val height: Any?,

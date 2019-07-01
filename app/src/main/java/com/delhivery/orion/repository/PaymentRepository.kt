@@ -18,4 +18,10 @@ class PaymentRepository @Inject constructor(
   ) = paymentService
       .chargesSummary(transactionId)
       .convertResponse()
+
+  /**
+   * Get bulk transactions using ids
+   */
+  fun bulkTransactions(ids: List<String>) =
+    ids.joinToString(separator = ",") { it }.let { paymentService.bulkTransactions(it) }
 }
