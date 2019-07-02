@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.home.fragments.profile
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
 import com.delhivery.orion.R
@@ -47,6 +48,13 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
       containerLogout.setOnClickListener { it.post { confirmLogout() } }
     }
+
+    viewModel.tripEarningLiveData.observe(this, Observer { t ->
+      if (t != null && t.size == 2) {
+        binding.lastMonth = t.get(0)
+        binding.currentMonth = t.get(1)
+      }
+    })
 
     viewModel.fetchTripMeter()
   }

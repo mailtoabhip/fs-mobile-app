@@ -11,5 +11,10 @@ data class TransactionsResponse(
 )
 
 data class TripMeterResponse(
-  val confirmedBids: HashMap<String, String>
+  val tripEarningMap: HashMap<String, MonthlyEarning>
+)
+
+data class MonthlyEarning(
+  @SerializedName("count") val count: Double,
+  @SerializedName("sum") val sum: Double
 )

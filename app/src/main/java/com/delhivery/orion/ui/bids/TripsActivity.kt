@@ -44,6 +44,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   override fun requireConnection() = true
 
+  var isLoadingData = true
+
   /* search menu item ref */
   private var searchItem: MenuItem? = null
 
@@ -99,6 +101,10 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     viewModel.tripsCountLiveData.observe(this, Observer {
       title = viewModel.trip.toolbarTitle(it ?: 0)
+    })
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
     })
 
     viewModel.fetchTrips(false)
@@ -174,7 +180,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     override fun hasMore() = viewModel.offset < viewModel.total
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 
 }

@@ -38,7 +38,11 @@ class TripsViewModel @Inject constructor(
   var userTripsData =
     MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* trips count live data */
   var tripsCountLiveData = MutableLiveData<Int>()
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
 
   /* pagination params */
   var hasMoreData = true
@@ -65,6 +69,8 @@ class TripsViewModel @Inject constructor(
       Pair(HomeTripsProgressItem(), AddUpdate).let { userTripsData.postValue(listOf(it)) }
     }
 
+    dataLoadingLiveData.postValue(true)
+
     compositeDisposable += tripsRepository.trips(
         offset, trip.status.joinToString(separator = ",") { it }
     )
@@ -78,11 +84,6 @@ class TripsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-//            offset += _res.trips.size
-//            hasMoreData = _res.hasNext
-//            total = _res.total
-//            tripsCountLiveData.postValue(total)
-
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
@@ -108,21 +109,24 @@ class TripsViewModel @Inject constructor(
                   add(Pair(HomeTripsItem(trip), Add))
                 }
               }
-//              if (!paginate && _res.total == 0) {
-//                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
-//              } else {
-//                /* post all trips as add */
-//                _res.trips.forEach { _item ->
-//                  add(Pair(HomeTripsItem(_item), Add))
-//                }
-//              }
             }
                 .let {
                   userTripsData.postValue(it)
                 }
           } else {
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeTripsProgressItem(), Remove))
+              /* remove search item */
+              add(Pair(HomeTripsSearchItem(), Remove))
+              /* TODO add refresh list item */
+            }
+                .let { userTripsData.postValue(it) }
+
             error.handle()
           }
+
+          dataLoadingLiveData.postValue(false)
         }
   }
 

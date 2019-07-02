@@ -1,6 +1,7 @@
 package com.delhivery.orion.repository
 
 import com.delhivery.orion.api.TransactionService
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.utils.extensions.convertResponse
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,15 +35,20 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get bulk transactions using ids
    */
-  fun bulkTransactions(ids: List<String>) =
-    ids.joinToString(separator = ",") { it }.let { transactionService.bulkTransactions(it) }
+  fun bulkTransactions(bids: List<TransactionBid>) =
+    bids.joinToString(
+        separator = ","
+    ) { it.transactionId }.let { transactionService.bulkTransactions(it) }
+        .convertResponse()
+        .map { Pair(bids, it) }
 
   /**
    * Transaction details
    */
   fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
 
-  fun transactionTripMeter() = transactionService.transactionsTripMeter(userRepository.userId())
+  fun transactionTripMeter() =
+    transactionService.transactionsTripMeter(userRepository.userId()).convertResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {

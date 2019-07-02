@@ -36,6 +36,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   override fun requireConnection() = true
 
+  var isLoadingData = true
+
   /* search menu item ref */
   private var searchItem: MenuItem? = null
 
@@ -94,6 +96,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       if (it != null) {
         adapter.operation(it)
       }
+    })
+
+    viewModel.bidsCountLiveData.observe(this, Observer {
+      title = viewModel.bidType.toolbarTitle(it ?: 0)
+    })
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
     })
 
     viewModel.fetchBids(false)
@@ -167,7 +177,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
     override fun hasMore() = viewModel.offset < viewModel.total
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 }
 

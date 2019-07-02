@@ -90,6 +90,10 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
     })
 
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
+    })
+
     /* attach sticky search with adapter */
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
@@ -175,7 +179,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     override fun hasMore() = viewModel.hasMoreData
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 
   inner class HomeTripsRVScrollListener(

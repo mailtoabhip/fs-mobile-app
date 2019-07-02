@@ -15,6 +15,8 @@ abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseF
   /* toolbar elevation Live Data */
   var toolbarElevationLiveData: MutableLiveData<Float>? = null
 
+  var isLoadingData = true
+
   /* elevation default value */
   protected val defToolbarElevation: Float  by lazy {
     resources.getDimension(R.dimen.toolbar_elevation)

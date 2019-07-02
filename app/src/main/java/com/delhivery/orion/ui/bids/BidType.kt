@@ -7,15 +7,18 @@ enum class BidType(
   val status: TransactionBidStatus,
   private val title: String
 ) {
-  Unknown(-1, TransactionBidStatus.NA, "na (%d"),
-  ConfirmedBid(0, TransactionBidStatus.Accepted, "Confirmed bids (%d)"),
-  ActiveBid(1, TransactionBidStatus.Open, "Active bids (%s)"),
-  LostBid(2, TransactionBidStatus.Rejected, "Lost bids (%d)");
+  Unknown(-1, TransactionBidStatus.NA, "na"),
+  ConfirmedBid(0, TransactionBidStatus.Accepted, "Confirmed bids"),
+  ActiveBid(1, TransactionBidStatus.Open, "Active bids"),
+  LostBid(2, TransactionBidStatus.Rejected, "Lost bids");
 
   /**
    * Get toolbar title with count of items
    */
-  fun toolbarTitle(count: Int = 0) = String.format(title, count)
+  fun toolbarTitle(count: Int = 0) = when (count) {
+    0 -> title
+    else -> "$title($count)"
+  }
 
   companion object {
     /**

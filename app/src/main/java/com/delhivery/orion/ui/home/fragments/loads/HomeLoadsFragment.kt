@@ -129,7 +129,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     })
 
-    viewModel.bidsStatusLiveData.observe(this, Observer {
+    viewModel.bidsActionLiveData.observe(this, Observer {
       uiUtils.toggleKeyboard()
           .apply {
             when {
@@ -140,6 +140,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
               }
             }
           }
+    })
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
     })
 
     /* fetch user transactions */
@@ -323,6 +327,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     override fun hasMore() = viewModel.hasMoreData
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 }

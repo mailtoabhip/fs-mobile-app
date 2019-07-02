@@ -95,7 +95,7 @@ data class HomeBidsRequestItemData(
     )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
 
   fun tripPriceDifference(): String {
-    return ""
+    return transactionBid?.targetPriceDiff(targetPrice) ?: ""
   }
 
   fun bidStatus() = BidStatus.byKey(status)

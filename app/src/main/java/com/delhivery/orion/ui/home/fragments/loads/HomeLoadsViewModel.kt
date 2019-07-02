@@ -20,6 +20,15 @@ import com.delhivery.orion.utils.extensions.safeEquals
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * View model class for [HomeLoadsFragment]
+ *
+ **
+ */
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
@@ -30,12 +39,17 @@ class HomeLoadsViewModel @Inject constructor(
   var userLoadsData =
     MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  /* route/lane preferene live data*/
+  /* route/lane preferene live data */
   var routesLiveData = MutableLiveData<Boolean>()
 
-  var bidsStatusLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
+  /* bid action result live data */
+  var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
+  /* loads count live data */
   var loadsCountLiveData = MutableLiveData<Int>()
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
 
   var hasMoreData = true
   var offset = 0
@@ -54,6 +68,8 @@ class HomeLoadsViewModel @Inject constructor(
     if (paginate) {
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
+
+    dataLoadingLiveData.postValue(true)
 
     compositeDisposable += transactionsRepository.transactions(offset)
         .flatMap { t ->
@@ -96,11 +112,18 @@ class HomeLoadsViewModel @Inject constructor(
             }
                 .let { userLoadsData.postValue(it) }
           } else {
+            mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeLoadsProgressItem(), Remove))
+              /* TODO add refresh list item */
+            }
+                .let { userLoadsData.postValue(it) }
             /* remove progress item */
-            Pair(HomeLoadsProgressItem(), Remove).let { userLoadsData.postValue(listOf(it)) }
             error.handle()
           }
+
           showProgress(false)
+          dataLoadingLiveData.postValue(true)
         }
   }
 
@@ -134,7 +157,7 @@ class HomeLoadsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            bidsStatusLiveData.postValue(Pair(position, _res))
+            bidsActionLiveData.postValue(Pair(position, _res))
           } else {
             error.handle()
           }
@@ -157,7 +180,7 @@ class HomeLoadsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            bidsStatusLiveData.postValue(Pair(position, _res))
+            bidsActionLiveData.postValue(Pair(position, _res))
           } else {
             error.handle()
           }

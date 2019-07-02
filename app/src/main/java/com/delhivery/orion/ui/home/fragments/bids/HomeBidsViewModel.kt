@@ -1,7 +1,9 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.orion.exception.NoBidsFoundException
 import com.delhivery.orion.repository.BidsRepository
 import com.delhivery.orion.repository.TransactionsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
@@ -11,12 +13,22 @@ import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.ui.bids.BidType
-import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.extensions.safeEquals
+import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * View model class for [HomeBidsFragment]
+ *
+ **
+ */
 class HomeBidsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository
@@ -26,7 +38,11 @@ class HomeBidsViewModel @Inject constructor(
   var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* bids count live data */
   var bidsCountLiveData = MutableLiveData<Int>()
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
 
   /* pagination params */
   var total = 0
@@ -83,43 +99,77 @@ class HomeBidsViewModel @Inject constructor(
     }
         .joinToString(separator = ",") { it }
 
+    dataLoadingLiveData.postValue(true)
+
     compositeDisposable += bidsRepository.userBids(offset, statuses)
-        .flatMap { t ->
-          total = t.first
+        .flatMap { _res ->
+          total = _res.first
           bidsCountLiveData.postValue(total)
-//          if (!paginate && total == 0) {
-//            Single.error(NoBidsFoundException())
-//          } else {
-          transactionsRepository.bulkTransactions(t.second.map { it.transactionId })
-              .convertResponse()
-//          }
+          if (!paginate && total == 0) {
+            Single.error(NoBidsFoundException())
+          } else {
+            transactionsRepository.bulkTransactions(_res.second)
+          }
         }
         .onBackground()
-        .subscribe { _data, error ->
+        .subscribe { _res, error ->
           if (!error) {
-            offset += _data.offset
-            hasMoreData = _data.hasNext
+            offset += _res.second.offset
+            hasMoreData = _res.second.hasNext
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeBidsProgressItem(), Remove))
 
               /* edit route prefs, if fresh fetch n total == 0 */
-              if (!paginate && _data.total == 0) {
+              if (!paginate && total == 0) {
                 add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
               }
-              /* post all transactions as add */
+              /* post all transactions mapped to bids as add */
               else {
-                _data.transactions.forEach { _item ->
-                  add(Pair(HomeBidsRequestItem(_item), Add))
+                val bids = _res.first
+                val transactions = _res.second.transactions
+
+                for (transaction in transactions) {
+                  try {
+                    transaction.transactionBid = bids.filter { b ->
+                      b.transactionId.safeEquals(transaction.transactionId)
+                    }
+                        .get(0)
+
+                  } catch (e: Exception) {
+                    Log.d("No Bid found for: ", transaction.transactionId)
+                  }
+                  add(Pair(HomeBidsRequestItem(transaction), Add))
                 }
               }
             }
                 .let { userBidsData.postValue(it) }
           } else {
-            error.handle()
-            showProgress(false)
+            if (error is NoBidsFoundException) {
+              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                /* remove progress item */
+                add(Pair(HomeBidsProgressItem(), Remove))
+                /* remove search item */
+                add(Pair(HomeBidsSearchItem(), Remove))
+                /* add no bids warning item */
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+              }
+                  .let { userBidsData.postValue(it) }
+            } else {
+              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                /* remove progress item */
+                add(Pair(HomeBidsProgressItem(), Remove))
+                /* remove search item */
+                add(Pair(HomeBidsSearchItem(), Remove))
+                /* TODO add refresh list item */
+              }
+                  .let { userBidsData.postValue(it) }
+              error.handle()
+            }
           }
+
+          dataLoadingLiveData.postValue(false)
         }
   }
 

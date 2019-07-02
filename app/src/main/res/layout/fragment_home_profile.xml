@@ -7,6 +7,16 @@
         name="viewModel"
         type="com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel"
         />
+
+    <variable
+        name="lastMonth"
+        type="com.delhivery.orion.api.response.MonthlyEarning"
+        />
+
+    <variable
+        name="currentMonth"
+        type="com.delhivery.orion.api.response.MonthlyEarning"
+        />
   </data>
 
   <ScrollView

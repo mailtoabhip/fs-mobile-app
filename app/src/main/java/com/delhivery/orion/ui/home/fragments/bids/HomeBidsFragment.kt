@@ -94,6 +94,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
     })
 
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
+    })
+
     /* attach sticky search with adapter */
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
@@ -172,7 +176,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     override fun hasMore() = viewModel.offset < viewModel.total
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 
   inner class HomeBidsRVScrollListener(
