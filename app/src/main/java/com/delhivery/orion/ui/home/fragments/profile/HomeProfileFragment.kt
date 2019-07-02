@@ -19,6 +19,10 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
   override val title: CharSequence
     get() = "Profile"
 
+  init {
+    hasInlineProgress = true
+  }
+
   companion object {
     /* singleton instance */
     val _instance: HomeProfileFragment by lazy { HomeProfileFragment() }

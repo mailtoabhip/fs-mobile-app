@@ -59,6 +59,8 @@ data class HomeBidsRequestItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
+  fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
+
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 

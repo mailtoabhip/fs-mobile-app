@@ -1,5 +1,7 @@
 package com.delhivery.orion.data
 
+import android.content.Context
+import android.support.v4.content.ContextCompat
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.trips.TripDriverDetails
 import com.delhivery.orion.data.home.trips.TripStatus
@@ -84,9 +86,25 @@ data class TripHistoryItem(
     return when (id) {
       BalancePending, AdvancePending -> R.drawable.bg_gradient_orange
       AwaitingUnloading, AwaitingPODUpload, InTransit -> R.drawable.bg_gradient_blue
-      BalancePaid -> R.drawable.bg_gradient_green
+      BalancePaid, PODUploaded -> R.drawable.bg_gradient_green
       else -> R.color.white
     }
+  }
+
+  fun getHeadingTextColor(
+    focused: Boolean,
+    context: Context
+  ) = when (focused) {
+    true -> ContextCompat.getColor(context, R.color.white)
+    false -> ContextCompat.getColor(context, R.color.heading_black)
+  }
+
+  fun getSubHeadingTextColor(
+    focused: Boolean,
+    context: Context
+  ) = when (focused) {
+    true -> ContextCompat.getColor(context, R.color.white)
+    false -> ContextCompat.getColor(context, R.color.sub_heading_black)
   }
 }
 

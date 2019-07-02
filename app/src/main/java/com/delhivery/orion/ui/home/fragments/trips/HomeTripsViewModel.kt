@@ -36,6 +36,9 @@ class HomeTripsViewModel @Inject constructor(
   var userTripsData =
     MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* bids count live data */
+  var tripsCountLiveData = MutableLiveData<Int>()
+
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
@@ -104,6 +107,7 @@ class HomeTripsViewModel @Inject constructor(
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
+          tripsCountLiveData.postValue(total)
           payementRepository.bulkPaymentTransactions(t.trips)
         }
         .onBackground()

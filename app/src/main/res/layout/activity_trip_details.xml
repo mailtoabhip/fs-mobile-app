@@ -139,7 +139,7 @@
               android:textSize="@dimen/text_16sp"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
-              bind:htmlText="@{ @string/label_city_state(transactionDetails.origin, transactionDetails.origin) }"
+              bind:htmlText="@{ @string/label_city_state(transactionDetails.originCityName(), transactionDetails.originStateName()) }"
               tools:text="Panjim, Goa"
               />
 
@@ -167,7 +167,7 @@
               android:textSize="@dimen/text_16sp"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_to_label"
-              bind:htmlText="@{ @string/label_city_state(transactionDetails.destination, transactionDetails.destinationState) }"
+              bind:htmlText="@{ @string/label_city_state(transactionDetails.destinationCityName(), transactionDetails.destinationStateName()) }"
               tools:text="Andheri east, Mumbai, Maharashtra"
               />
 
@@ -245,7 +245,7 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
-              android:text="@{ transactionDetails.pickupLocation }"
+              android:text="@{ transactionDetails.pickUpLocationName() }"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_14sp"
               android:textStyle="normal"

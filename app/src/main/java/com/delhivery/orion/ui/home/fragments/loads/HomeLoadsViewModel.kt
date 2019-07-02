@@ -122,7 +122,6 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
 
-          showProgress(false)
           dataLoadingLiveData.postValue(true)
         }
   }

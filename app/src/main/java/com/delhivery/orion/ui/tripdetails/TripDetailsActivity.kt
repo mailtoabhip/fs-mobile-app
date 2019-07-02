@@ -108,8 +108,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         PODUploaded -> {
           ViewTripHistoryPodUploadedBinding.inflate(layoutInflater, binding.containerHistory, false)
               .apply {
+                focusView = false
                 if (index == 0) {
-                  container.setBackgroundResource(item.getBackground())
+                  val background = item.getBackground()
+                  container.setBackgroundResource(background)
+                  focusView = background != R.color.white
                 }
                 setHistory(item)
                 binding.containerHistory.addView(root)
@@ -118,8 +121,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         else -> {
           ViewTripHistoryItemBinding.inflate(layoutInflater, binding.containerHistory, false)
               .apply {
+                focusView = false
                 if (index == 0) {
-                  container.setBackgroundResource(item.getBackground())
+                  val background = item.getBackground()
+                  container.setBackgroundResource(background)
+                  focusView = background != R.color.white
                 }
                 setHistory(item)
                 binding.containerHistory.addView(root)

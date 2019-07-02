@@ -87,8 +87,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       add(0, HomeBidsProgressItem())
     })
 
-    binding.btnStartBidding.setOnClickListener { finish() }
-
     /* bids observer */
     viewModel.bidsLiveData.observe(this, Observer {
       title = viewModel.bidType.toolbarTitle(viewModel.total)

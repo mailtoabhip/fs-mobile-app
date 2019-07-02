@@ -88,8 +88,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     viewModel.bidsCountLiveData.observe(this, Observer {
       _title = when (it) {
-        null -> "My Bids"
-        0 -> "My Bids"
+        0, null -> "My Bids"
         else -> "My Bids(" + it + ")"
       }
     })

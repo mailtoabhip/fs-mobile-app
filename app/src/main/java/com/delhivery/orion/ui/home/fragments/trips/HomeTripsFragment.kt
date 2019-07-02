@@ -90,6 +90,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
     })
 
+    viewModel.tripsCountLiveData.observe(this, Observer {
+      _title = when (it) {
+        0, null -> "Ongoing Trips"
+        else -> "Ongoing Trips(" + it + ")"
+      }
+    })
+
     viewModel.dataLoadingLiveData.observe(this, Observer {
       isLoadingData = it ?: false
     })

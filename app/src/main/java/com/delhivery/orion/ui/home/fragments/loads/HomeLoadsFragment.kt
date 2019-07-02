@@ -107,8 +107,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     viewModel.loadsCountLiveData.observeOnce(this, Observer {
       _title = when (it) {
-        null -> "Load Request"
-        0 -> "Load Request"
+        0, null -> "Load Request"
         else -> "Load Request(" + it + ")"
       }
       this@HomeLoadsFragment.activity?.title = _title
