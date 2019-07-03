@@ -25,8 +25,8 @@ data class TripChargesResponse(
   fun chargeType() = ChargeType.byTypeId(head).charge
 
   fun charges() = when (head) {
-    Damages.charge_key -> "-₹ " + String.format("%.2f", payVendor)
-    else -> "₹ " + String.format("%.2f", payVendor)
+    Damages.charge_key -> "- ₹ ${String.format("%.2f", payVendor)}"
+    else -> "₹ ${String.format("%.2f", payVendor)}"
   }
 }
 

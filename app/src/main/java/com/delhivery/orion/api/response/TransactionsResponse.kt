@@ -11,10 +11,26 @@ data class TransactionsResponse(
 )
 
 data class TripMeterResponse(
-  val tripEarningMap: HashMap<String, MonthlyEarning>
+  @SerializedName("1") val jan: MonthlyEarning? = null,
+  @SerializedName("2") val feb: MonthlyEarning? = null,
+  @SerializedName("3") val mar: MonthlyEarning? = null,
+  @SerializedName("4") val apr: MonthlyEarning? = null,
+  @SerializedName("5") val may: MonthlyEarning? = null,
+  @SerializedName("6") val jun: MonthlyEarning? = null,
+  @SerializedName("7") val jul: MonthlyEarning? = null,
+  @SerializedName("8") val aug: MonthlyEarning? = null,
+  @SerializedName("9") val sep: MonthlyEarning? = null,
+  @SerializedName("10") val oct: MonthlyEarning? = null,
+  @SerializedName("11") val nov: MonthlyEarning? = null,
+  @SerializedName("12") val dec: MonthlyEarning? = null
 )
 
 data class MonthlyEarning(
-  @SerializedName("count") val count: Double,
+  @SerializedName("count") val count: Int,
   @SerializedName("sum") val sum: Double
-)
+) {
+
+  fun count() = "$count trips"
+
+  fun sum() = "₹ $sum"
+}

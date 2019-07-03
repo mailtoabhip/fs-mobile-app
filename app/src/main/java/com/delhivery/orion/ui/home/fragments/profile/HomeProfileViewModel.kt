@@ -13,7 +13,7 @@ class HomeProfileViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository
 ) : BaseViewModel() {
 
-  var tripEarningLiveData = MutableLiveData<List<MonthlyEarning>>()
+  var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
 
   fun fetchTripMeter() {
     compositeDisposable += transactionsRepository.transactionTripMeter()
@@ -21,7 +21,23 @@ class HomeProfileViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error) {
-            tripEarningLiveData.postValue(_res.tripEarningMap.toSortedMap().values.toMutableList())
+            val earningMap = mutableMapOf<Int, MonthlyEarning?>().apply {
+              put(1, _res.jan)
+              put(2, _res.feb)
+              put(3, _res.mar)
+              put(4, _res.apr)
+              put(5, _res.may)
+              put(6, _res.jun)
+              put(7, _res.jul)
+              put(8, _res.aug)
+              put(9, _res.sep)
+              put(10, _res.oct)
+              put(11, _res.nov)
+              put(12, _res.dec)
+            }
+                .filter { it.value != null }
+                .toSortedMap()
+            tripEarningLiveData.postValue(earningMap)
           } else {
             error.handle()
           }

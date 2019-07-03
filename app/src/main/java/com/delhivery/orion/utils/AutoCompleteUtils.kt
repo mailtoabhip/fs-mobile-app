@@ -67,6 +67,6 @@ class AutoCompleteUtils @Inject constructor(
             }
           }
         }
-
   }
+
 }

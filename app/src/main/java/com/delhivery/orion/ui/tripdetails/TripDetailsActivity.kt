@@ -49,6 +49,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* observe trip details live data */
     viewModel.progressLiveData.observe(this, ProgressObserver())
+
     viewModel.tripLiveData.observe(this, Observer {
       it?.apply {
         title = first.tripDisplayName()
@@ -153,7 +154,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     var total = 0.0
     tripChargesSummary.add(
         0, TripChargesResponse(
-        "", "freight",
+        "", ChargeType.Freight.charge_key,
         0.0, binding.tripDetails?.bidDetails?.bidPrice?.toDouble() ?: 0.0,
         "", ""
     )

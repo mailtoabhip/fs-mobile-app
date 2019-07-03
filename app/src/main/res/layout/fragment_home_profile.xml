@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
     <variable
@@ -146,6 +147,7 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_4dp"
                   android:fontFamily="sans-serif"
+                  android:text="This Month"
                   android:textColor="@color/sub_heading_black"
                   android:textSize="@dimen/text_10sp"
                   android:textStyle="normal"
@@ -156,9 +158,11 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_12dp"
                   android:fontFamily="sans-serif"
+                  android:text="@{currentMonth.sum()}"
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_14sp"
-                  android:textStyle="normal"
+                  android:textStyle="bold"
+                  tools:text="₹ 345000"
                   />
 
               <TextView
@@ -166,9 +170,11 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_4dp"
                   android:fontFamily="sans-serif"
+                  android:text="@{currentMonth.count()}"
                   android:textColor="@color/sub_heading_black"
                   android:textSize="@dimen/text_12sp"
                   android:textStyle="normal"
+                  tools:text="35 trips"
                   />
 
             </android.support.v7.widget.LinearLayoutCompat>
@@ -191,6 +197,7 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_4dp"
                   android:fontFamily="sans-serif"
+                  android:text="Last Month"
                   android:textColor="@color/sub_heading_black"
                   android:textSize="@dimen/text_10sp"
                   android:textStyle="normal"
@@ -201,9 +208,11 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_12dp"
                   android:fontFamily="sans-serif"
+                  android:text="@{lastMonth.sum()}"
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_14sp"
-                  android:textStyle="normal"
+                  android:textStyle="bold"
+                  tools:text="₹ 345000"
                   />
 
               <TextView
@@ -211,9 +220,11 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_4dp"
                   android:fontFamily="sans-serif"
+                  android:text="@{lastMonth.count()}"
                   android:textColor="@color/sub_heading_black"
                   android:textSize="@dimen/text_12sp"
                   android:textStyle="normal"
+                  tools:text="34 trips"
                   />
             </android.support.v7.widget.LinearLayoutCompat>
 

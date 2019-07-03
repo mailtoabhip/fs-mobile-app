@@ -49,7 +49,7 @@ data class HomeBidsRequestItemData(
 
   fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
-  fun targetPrice() = "\u20B9 $targetPrice"
+  fun targetPrice() = "₹ $targetPrice"
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 

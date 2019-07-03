@@ -97,7 +97,7 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   TruckLoaded,
                   "Truck Loaded",
-                  "Truck is ready to start to " + history.details?.unloadingLocation ?: "",
+                  "Truck is ready to start to ${history.details?.unloadingLocation}",
                   history.epoch()
               )
           )
@@ -119,8 +119,7 @@ class TripDetailsViewModel @Inject constructor(
                   TripHistoryItem(
                       AdvancePaid,
                       "Advance Paid",
-                      "Advance payment of ₹ " + tripDetail.bidDetails?.advancePayout +
-                          " has been initiated",
+                      "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been initiated",
                       history.epoch()
                   )
               )
@@ -139,8 +138,7 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     InTransit,
                     "In-Transit",
-                    "Truck is in-transit, current location is  " + history.details?.currentLocation
-                        ?: "",
+                    "Truck is in-transit, current location is  ${history.details?.currentLocation}",
                     history.epoch()
                 )
             )

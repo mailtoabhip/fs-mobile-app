@@ -26,9 +26,9 @@ interface TransactionService {
   /**
    * List all transactions
    */
-  @GET("/transactions/loadboard/{supplier_id}")
+  @GET("/transactions/loadboard/{sp_id}")
   fun loadBoardTransactions(
-    @Path("supplier_id") userId: String,
+    @Path("sp_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int
   ): Single<BaseResponse<TransactionsResponse>>
@@ -54,8 +54,8 @@ interface TransactionService {
   /**
    * List all transactions
    */
-  @GET("/transactions/tripmeter/{supplier_id}")
+  @GET("/transactions/tripmeter/{sp_id}")
   fun transactionsTripMeter(
-    @Path("supplier_id") userId: String
+    @Path("sp_id") userId: String
   ): Single<BaseResponse<TripMeterResponse>>
 }

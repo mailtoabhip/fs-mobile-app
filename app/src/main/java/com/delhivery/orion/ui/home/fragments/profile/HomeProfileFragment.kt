@@ -55,8 +55,16 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     viewModel.tripEarningLiveData.observe(this, Observer { t ->
       if (t != null && t.size == 2) {
-        binding.lastMonth = t.get(0)
-        binding.currentMonth = t.get(1)
+        val keys = t.keys.toMutableList()
+        val key1 = keys.get(0)
+        val key2 = keys.get(1)
+        if (key1 == 1 && key2 == 12) {
+          binding.lastMonth = t.get(key2)
+          binding.currentMonth = t.get(key1)
+        } else {
+          binding.lastMonth = t.get(key1)
+          binding.currentMonth = t.get(key2)
+        }
       }
     })
 

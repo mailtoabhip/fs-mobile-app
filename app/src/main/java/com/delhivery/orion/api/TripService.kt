@@ -28,7 +28,7 @@ interface TripService {
    */
   @GET("trips/")
   fun tripsForStatuses(
-    @Query("supplier_id") userId: String,
+    @Query("vendor_id") userId: String,
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
     @Query("status_list") status: String? = null
@@ -55,6 +55,6 @@ interface TripService {
    */
   @GET("/trips/summary/")
   fun userTripsSummary(
-    @Query("supplier_id") userId: String
+    @Query("vendor_id") userId: String
   ): Single<BaseResponse<TripSummaryResponse>>
 }
