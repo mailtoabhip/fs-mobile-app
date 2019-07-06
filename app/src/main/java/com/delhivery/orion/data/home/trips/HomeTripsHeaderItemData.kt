@@ -1,12 +1,13 @@
 package com.delhivery.orion.data.home.trips
 
+import com.delhivery.orion.api.response.Summary
 import com.delhivery.orion.data.BaseKeyTypeModel
 
 data class HomeTripsHeaderItemData(
-  val advancePending: Int = -1,
-  val balancePending: Int = -1,
-  val inTransit: Int = -1,
-  val completed: Int = -1
+  val advancePending: Summary? = null,
+  val balancePending: Summary? = null,
+  val inTransit: Summary? = null,
+  val completed: Summary? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeTripsHeaderItemDataKey
 }

@@ -25,7 +25,7 @@ interface PaymentService {
    */
   @GET("/payments/summary")
   fun bulkTransactions(
-    @Query("transactions_ids") transactionIds: String
+    @Query("transaction_ids") transactionIds: String
   ): Single<BaseResponse<TripPaymentsResponse>>
 
 }

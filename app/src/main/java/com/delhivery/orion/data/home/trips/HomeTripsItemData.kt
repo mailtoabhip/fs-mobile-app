@@ -4,6 +4,9 @@ import android.support.annotation.ColorRes
 import com.delhivery.orion.api.response.TripPayment
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.ui.bids.TripType
+import com.delhivery.orion.ui.bids.TripType.AdvancePending
+import com.delhivery.orion.ui.bids.TripType.BalancePending
+import com.delhivery.orion.ui.bids.TripType.Completed
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.StringUtils
 import com.google.gson.annotations.SerializedName
@@ -52,9 +55,30 @@ data class HomeTripsItemData(
   fun tripStatus() = TripType.byStatus(_tripStatus)
 
   fun tripPayment(): String {
-    if (payment != null) {
-      return "₹ " + payment!!.effectivePrice
+    when (tripStatus()) {
+      AdvancePending -> {
+        if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
+          return "₹ ${String.format(
+              "%.2f", (bidDetails.advancePayout ?: 0.0).plus(bidDetails.fuelPayout ?: 0.0)
+          )}"
+        }
+      }
+      BalancePending -> {
+        if (payment != null && payment?.bidPrice ?: 0.0 > 0.0 && payment?.advancePayout ?: 0.0 > 0.0) {
+          val balance = payment?.bidPrice?.minus(payment?.advancePayout ?: 0.0)
+          return "₹ ${String.format("%.2f", balance)}"
+        }
+      }
+      Completed -> {
+        if (payment != null && payment?.bidPrice != null) {
+          return "₹ ${String.format(
+              "%.2f", (payment?.bidPrice ?: 0.0).plus(payment?.payments?.fuelAdvance ?: 0.0)
+          )}"
+        }
+      }
+      else -> return ""
     }
+
     return ""
   }
 
@@ -76,7 +100,7 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getTripStatusColor(tripStatus().toLowerCase())
+    ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
 
 }
 
@@ -94,10 +118,10 @@ data class TripVehicleDetails(
 )
 
 data class TripBidDetails(
-  @SerializedName("advance_payout") val advancePayout: Int?,
+  @SerializedName("advance_payout") val advancePayout: Double?,
   @SerializedName("bid_price") val bidPrice: Int?,
   @SerializedName("effective_price") val effectivePrice: Int?,
-  @SerializedName("fuel_payout") val fuelPayout: Int?
+  @SerializedName("fuel_payout") val fuelPayout: Double?
 )
 
 enum class TripStatus(

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object DateUtils {
 
@@ -41,7 +42,9 @@ object DateUtils {
     format: String
   ): String {
     return try {
-      SimpleDateFormat(format, Locale.getDefault()).format(date)
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+      dateFormatter.format(date)
     } catch (e: Exception) {
       e.printStackTrace()
       ""
@@ -61,7 +64,9 @@ object DateUtils {
     format: String
   ): Date {
     return try {
-      SimpleDateFormat(format, Locale.getDefault()).parse(date)
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+      dateFormatter.parse(date)
     } catch (e: Exception) {
       Date()
     }

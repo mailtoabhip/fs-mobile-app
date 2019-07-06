@@ -59,10 +59,10 @@ class HomeTripsViewModel @Inject constructor(
                   Pair(
                       HomeTripsHeaderItem(
                           HomeTripsHeaderItemData(
-                              _res.truckArrived + _res.truckConfirmed,
-                              _res.truckUnloaded,
-                              _res.inTransit + _res.truckLoaded + _res.truckReached,
-                              _res.tripCompleted
+                              _res.advancePending,
+                              _res.balancePending,
+                              _res.inTransit,
+                              _res.completed
                           )
                       ), Update
                   )

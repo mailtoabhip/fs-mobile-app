@@ -36,7 +36,9 @@
 
     <activity android:name=".ui.onboarding.OnboardingActivity"/>
 
-    <activity android:name=".ui.home.HomeActivity"/>
+    <activity
+        android:name=".ui.home.HomeActivity"
+        android:windowSoftInputMode="stateAlwaysHidden"/>
 
     <activity android:name=".ui.bids.BidsActivity"/>
 
@@ -47,6 +49,9 @@
     <activity android:name=".ui.bids.TripsActivity"/>
 
     <activity android:name=".ui.tripdetails.TripDetailsActivity"/>
+
+    <activity android:name=".ui.tripdetails.ImageViewActivity"/>
+
   </application>
 
 </manifest>

@@ -64,6 +64,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   override fun onPause() {
     super.onPause()
     uiUtils.toggleKeyboard()
+    autoCompleteUtils.clearDisposable()
   }
 
   private fun setupSearchScreen() {

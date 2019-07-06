@@ -190,7 +190,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     when (actionId) {
       HomeBidsRequestAction_PlaceBid -> {
         (item.data as HomeBidsRequestItemData).let {
-          BidDetailsCreateEditDialog(context!!, it, it.transactionBid, viewModel, position).show()
+          BidDetailsCreateEditDialog(
+              context!!, it, it.transactionBid, viewModel, position, uiUtils
+          ).show()
         }
       }
       HomeBidsRequestAction_AcceptBid -> {

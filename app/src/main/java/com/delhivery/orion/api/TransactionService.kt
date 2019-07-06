@@ -26,9 +26,10 @@ interface TransactionService {
   /**
    * List all transactions
    */
-  @GET("/transactions/loadboard/{sp_id}")
+  @GET("/transactions/loadboard/")
   fun loadBoardTransactions(
-    @Path("sp_id") userId: String,
+    @Query("sp_id") userId: String,
+    @Query("city_code") cityCode: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int
   ): Single<BaseResponse<TransactionsResponse>>

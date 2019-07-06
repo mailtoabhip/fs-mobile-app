@@ -69,4 +69,8 @@ class AutoCompleteUtils @Inject constructor(
         }
   }
 
+  fun clearDisposable() {
+    disposable?.dispose()
+  }
+
 }

@@ -48,6 +48,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       onPageSelected { p ->
         HomeFragmentType.pos(p)
             ?.let {
+              uiUtils.toggleKeyboard()
               this@HomeActivity.title = HomeFragmentType.pos(p)
                   ?.fragment?.title
               binding.bottomNav.selectedItemId = it.menuId
@@ -98,6 +99,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
         binding.viewpager.apply {
+          uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
             this@HomeActivity.title = HomeFragmentType.pos(pos)
                 ?.fragment?.title

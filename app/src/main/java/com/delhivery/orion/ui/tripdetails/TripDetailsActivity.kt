@@ -9,6 +9,7 @@ import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.api.response.ChargeType
 import com.delhivery.orion.api.response.TripChargesResponse
+import com.delhivery.orion.config.UrlConfig
 import com.delhivery.orion.data.BalancePaid
 import com.delhivery.orion.data.PODUploaded
 import com.delhivery.orion.data.TripHistoryItem
@@ -116,6 +117,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   focusView = background != R.color.white
                 }
                 setHistory(item)
+                textInvoice.setOnClickListener {
+                  it.post {
+                    startActivity(
+                        imageViewIntent(
+                            it.context, "${UrlConfig.TripService.url()}/${item.podUrl}", "View POD"
+                        )
+                    )
+                  }
+                }
                 binding.containerHistory.addView(root)
               }
         }

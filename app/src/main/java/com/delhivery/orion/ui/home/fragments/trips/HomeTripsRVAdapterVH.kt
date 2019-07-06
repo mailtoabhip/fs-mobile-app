@@ -95,20 +95,24 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.advancePending = when (item.data.advancePending) {
-      -1 -> ""
-      else -> item.data.advancePending.toString()
+      null -> null
+      else -> item.data.advancePending
     }
-    binding.inTransit = when (item.data.inTransit) {
-      -1 -> ""
-      else -> item.data.inTransit.toString()
-    }
+
     binding.balacenPending = when (item.data.balancePending) {
-      -1 -> ""
-      else -> item.data.balancePending.toString()
+      null -> null
+      else -> item.data.balancePending
     }
+
+    binding.inTransit = when (item.data.inTransit) {
+      null -> null
+      else -> item.data.inTransit
+    }
+
+
     binding.completed = when (item.data.completed) {
-      -1 -> ""
-      else -> item.data.completed.toString()
+      null -> null
+      else -> item.data.completed
     }
 
     binding.viewAdvancePending.clickToAction(HomeTripsHeaderAction_AdvancePending, item, _interface)

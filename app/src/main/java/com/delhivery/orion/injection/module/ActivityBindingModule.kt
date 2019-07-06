@@ -17,6 +17,7 @@ import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
+import com.delhivery.orion.ui.tripdetails.ImageViewActivity
 import com.delhivery.orion.ui.tripdetails.TripDetailsActivity
 import dagger.Binds
 import dagger.Module
@@ -92,6 +93,13 @@ abstract class ActivityBindingModule {
       modules = [AbsTripDetailsActivityModule::class]
   )
   internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
+
+  /* Trip details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsImageViewActivityModule::class]
+  )
+  internal abstract fun bindImageViewActivity(): ImageViewActivity
 }
 
 /**
@@ -133,6 +141,9 @@ internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadA
 
 @Module
 internal abstract class AbsTripDetailsActivityModule : ActivityModule<TripDetailsActivity>()
+
+@Module
+internal abstract class AbsImageViewActivityModule : ActivityModule<ImageViewActivity>()
 
 /**
  * Activity Binds Module

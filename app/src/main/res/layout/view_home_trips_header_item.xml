@@ -7,19 +7,19 @@
   <data>
     <variable
         name="advancePending"
-        type="String"
+        type="com.delhivery.orion.api.response.Summary"
         />
     <variable
         name="inTransit"
-        type="String"
+        type="com.delhivery.orion.api.response.Summary"
         />
     <variable
         name="balacenPending"
-        type="String"
+        type="com.delhivery.orion.api.response.Summary"
         />
     <variable
         name="completed"
-        type="String"
+        type="com.delhivery.orion.api.response.Summary"
         />
   </data>
 
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@{advancePending}"
+            android:text="@{advancePending.count()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -84,6 +84,7 @@
             android:layout_marginTop="4dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
+            android:text="@{advancePending.amount()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             android:textStyle="bold"
@@ -110,7 +111,7 @@
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="@dimen/text_6sp"
             android:minWidth="@dimen/size_80dp"
-            android:text="@string/label_in_transit"
+            android:text="@string/label_balance_pending"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             android:textStyle="normal"
@@ -124,7 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@{inTransit}"
+            android:text="@{balacenPending.count()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -140,6 +141,7 @@
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
+            android:text="@{balacenPending.amount()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             android:textStyle="bold"
@@ -166,7 +168,7 @@
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="@dimen/text_6sp"
             android:minWidth="@dimen/size_80dp"
-            android:text="@string/label_balance_pending"
+            android:text="@string/label_in_transit"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             android:textStyle="normal"
@@ -180,7 +182,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@{balacenPending}"
+            android:text="@{inTransit.count()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -236,7 +238,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@{completed}"
+            android:text="@{completed.count()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"

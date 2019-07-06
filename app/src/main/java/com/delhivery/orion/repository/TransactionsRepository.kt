@@ -3,20 +3,22 @@ package com.delhivery.orion.repository
 import com.delhivery.orion.api.TransactionService
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.utils.extensions.convertResponse
+import com.delhivery.orion.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TransactionsRepository @Inject constructor(
   private val transactionService: TransactionService,
-  private val userRepository: UserRepository
+  private val userRepository: UserRepository,
+  private val userPrefs: UserPrefs
 ) : BaseRepository() {
 
   /**
    * Get user transactions
    */
   fun transactions(offset: Int) = transactionService.loadBoardTransactions(
-      userRepository.userId(),
+      userRepository.userId(), userPrefs.baseCityCode ?: "",
       offset, UserTripsLoadLimit
   ).convertResponse()
 

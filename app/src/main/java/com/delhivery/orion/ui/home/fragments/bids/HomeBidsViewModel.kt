@@ -114,7 +114,7 @@ class HomeBidsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            offset += _res.second.offset
+            offset = _res.second.offset
             hasMoreData = _res.second.hasNext
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

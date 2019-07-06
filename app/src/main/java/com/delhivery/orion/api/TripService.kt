@@ -53,8 +53,8 @@ interface TripService {
   /**
    * Get User/supplier trips summary [TripSummaryResponse]
    */
-  @GET("/trips/summary/")
+  @GET("/trips/summary/{vendor_id}/")
   fun userTripsSummary(
-    @Query("vendor_id") userId: String
+    @Path("vendor_id") userId: String
   ): Single<BaseResponse<TripSummaryResponse>>
 }

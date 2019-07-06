@@ -2,6 +2,8 @@ package com.delhivery.orion.ui.searchload.fragments.searchresults
 
 import android.databinding.ViewDataBinding
 import android.view.View
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
@@ -26,6 +28,16 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
   ) = setOnClickListener { action(actionId, item, _interface) }
 
   /**
+   * Add on click listener for action with position
+   */
+  protected fun View.clickToAction(
+    actionId: String,
+    item: IT,
+    position: Int,
+    _interface: SearchLoadsRVAdapterInterface
+  ) = setOnClickListener { action(actionId, item, position, _interface) }
+
+  /**
    * Post action to UI
    */
   protected fun View.action(
@@ -33,6 +45,17 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
     item: IT,
     _interface: SearchLoadsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item) }
+
+  /**
+   * Post action to UI with position
+   */
+  protected fun View.action(
+    actionId: String,
+    item: IT,
+    position: Int,
+    _interface: SearchLoadsRVAdapterInterface
+  ) = post { _interface.handleAction(actionId, item, position) }
+
 }
 
 /**
@@ -47,6 +70,13 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+    binding.btnAccept.clickToAction(
+        HomeBidsRequestAction_AcceptBid, item, adapterPosition, _interface
+    )
+    binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
+    binding.viewBidInfo.clickToAction(
+        HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
+    )
   }
 }
 

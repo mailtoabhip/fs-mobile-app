@@ -18,4 +18,13 @@ interface SearchLoadsRVAdapterInterface : ItemClickListener<BaseSearchLoadsRVAda
     actionId: String,
     item: BaseSearchLoadsRVAdapterItem<*>
   )
+
+  /**
+   * Handle specific action with item position
+   */
+  fun handleAction(
+    actionId: String,
+    item: BaseSearchLoadsRVAdapterItem<*>,
+    position: Int
+  )
 }

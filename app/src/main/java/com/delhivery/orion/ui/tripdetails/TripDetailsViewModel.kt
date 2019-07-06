@@ -71,6 +71,16 @@ class TripDetailsViewModel @Inject constructor(
     for (history in histories) {
       when (history.status().statusKey) {
         TripStatus.TruckConfirmed.statusKey -> {
+          if (index == 0 && tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
+            tripHistory.add(
+                TripHistoryItem(
+                    AdvancePending,
+                    "Advance Pending",
+                    "₹ ${tripDetail.bidDetails?.advancePayout} will be paid once the loading is completed"
+                )
+            )
+          }
+
           tripHistory.add(
               TripHistoryItem(
                   TruckPlaced,
@@ -96,7 +106,7 @@ class TripDetailsViewModel @Inject constructor(
           tripHistory.add(
               TripHistoryItem(
                   TruckLoaded,
-                  "Truck Loaded",
+                  "Loading Completed",
                   "Truck is ready to start to ${history.details?.unloadingLocation}",
                   history.epoch()
               )
@@ -114,7 +124,7 @@ class TripDetailsViewModel @Inject constructor(
                 )
             )
 
-            if (tripDetail.bidDetails?.advancePayout ?: 0 > 0) {
+            if (tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
               tripHistory.add(
                   TripHistoryItem(
                       AdvancePaid,
@@ -146,6 +156,17 @@ class TripDetailsViewModel @Inject constructor(
         }
 
         TripStatus.TruckReached.statusKey -> {
+          if (index == 0) {
+            tripHistory.add(
+                TripHistoryItem(
+                    AwaitingUnloading,
+                    "Awaiting unloading",
+                    "POD will be uploaded once the truck is unloaded",
+                    history.details?.getReachedEpoch() ?: ""
+                )
+            )
+          }
+
           tripHistory.add(
               TripHistoryItem(
                   ReachedDestination,
@@ -154,28 +175,10 @@ class TripDetailsViewModel @Inject constructor(
                   history.details?.getReachedEpoch() ?: ""
               )
           )
-          if (index == histories.size - 1) {
-            tripHistory.add(
-                TripHistoryItem(
-                    AwaitingUnloading,
-                    "Awaiting unloading",
-                    "POD will be uploaded once the truck is unloaded"
-                )
-            )
-          }
         }
 
         TripStatus.TruckUnloaded.statusKey -> {
-          tripHistory.add(
-              TripHistoryItem(
-                  TruckUnloaded,
-                  "Truck Unloaded",
-                  "Trip has been marked complete",
-                  history.details?.getUnloadedEpoch() ?: ""
-              )
-          )
-
-          if (index == histories.size - 1) {
+          if (index == 0) {
             tripHistory.add(
                 TripHistoryItem(
                     AwaitingPODUpload,
@@ -184,10 +187,27 @@ class TripDetailsViewModel @Inject constructor(
                 )
             )
           }
+
+          tripHistory.add(
+              TripHistoryItem(
+                  TruckUnloaded,
+                  "Truck Unloaded",
+                  "Trip has been marked complete",
+                  history.details?.getUnloadedEpoch() ?: ""
+              )
+          )
         }
 
         TripStatus.TripCompleted.statusKey -> {
           if (!TextUtils.isEmpty(history.details?.podUrl)) {
+            tripHistory.add(
+                TripHistoryItem(
+                    BalancePending,
+                    "Balance pending",
+                    "Invoice will be shared post payment"
+                )
+            )
+
             tripHistory.add(
                 TripHistoryItem(
                     PODUploaded,
@@ -198,13 +218,6 @@ class TripDetailsViewModel @Inject constructor(
                 )
             )
 
-            tripHistory.add(
-                TripHistoryItem(
-                    BalancePending,
-                    "Balance pending",
-                    "Invoice will be shared post payment"
-                )
-            )
           } else {
             tripHistory.add(
                 TripHistoryItem(

@@ -19,10 +19,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.JWTToken, value).apply()
     get() = prefs.getString(PrefKeys.JWTToken, null)
 
+  /* Base City Code */
+  var baseCityCode: String?
+    set(value) = editor.putString(PrefKeys.BaseCityCode, value).apply()
+    get() = prefs.getString(PrefKeys.BaseCityCode, null)
+
   /**
    * Pref keys
    */
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
+    const val BaseCityCode = "base_city_code"
   }
 }

@@ -17,6 +17,7 @@ import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
 import com.delhivery.orion.utils.extensions.safeEquals
+import com.delhivery.orion.utils.prefs.UserPrefs
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
@@ -32,6 +33,7 @@ import javax.inject.Inject
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
+  private val userPrefs: UserPrefs,
   private val bidsRepository: BidsRepository
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
@@ -73,7 +75,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     compositeDisposable += transactionsRepository.transactions(offset)
         .flatMap { t ->
-          offset += t.offset
+          offset = t.offset
           total = t.total
           hasMoreData = t.offset != t.total
           loadsCountLiveData.postValue(total)
@@ -122,7 +124,7 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
 
-          dataLoadingLiveData.postValue(true)
+          dataLoadingLiveData.postValue(false)
         }
   }
 
@@ -134,6 +136,7 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
+            userPrefs.baseCityCode = _user.baseCityCode
             routesLiveData.postValue(_user.hasRoutes())
           } else {
             error.handle()
@@ -150,7 +153,6 @@ class HomeLoadsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)
-              .progress()
         }
         .onBackground()
         .progress()
@@ -173,7 +175,6 @@ class HomeLoadsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)
-              .progress()
         }
         .onBackground()
         .progress()

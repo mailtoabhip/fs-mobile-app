@@ -9,6 +9,7 @@ import com.delhivery.orion.R
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.DialogBidCreateEditBinding
+import com.delhivery.orion.utils.UiUtils
 import javax.inject.Inject
 
 /**
@@ -19,7 +20,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
   private val transaction: HomeBidsRequestItemData,
   private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
   private val dialogInterface: BidDetailsCreateEditDialogInterface,
-  private val position: Int = 0
+  private val position: Int = 0,
+  private val uiUtils: UiUtils? = null
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -46,7 +48,10 @@ class BidDetailsCreateEditDialog @Inject constructor(
     }
 
     /* button click listeners */
-    binding.btnConfirm.setOnClickListener { submit() }
+    binding.btnConfirm.setOnClickListener {
+      binding.editAmount.clearFocus()
+      submit()
+    }
     binding.btnCancel.setOnClickListener { dismiss() }
   }
 

@@ -15,6 +15,7 @@ import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import retrofit2.HttpException
@@ -23,7 +24,8 @@ import javax.inject.Inject
 
 class AuthenticationViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
-  private val userRepository: UserRepository
+  private val userRepository: UserRepository,
+  private val userPrefs: UserPrefs
 ) :
     BaseViewModel() {
 
@@ -81,6 +83,7 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
+                userPrefs.baseCityCode = it.baseCityCode
                 val msg =
                   if (_otpRes.second.isNotNullOrEmpty()) _otpRes.second else "Error validating OTP"
                 Triple(_otpRes.first, msg, it)

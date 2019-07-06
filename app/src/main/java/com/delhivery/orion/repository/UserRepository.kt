@@ -36,7 +36,7 @@ class UserRepository @Inject constructor(
    * Current user id
    */
   fun userId() =
-    "ums::user::30a8a924-522b-11e9-b316-0227a8987d6e"
+    "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
 //    (jwt.claims["sub"]?.asString()!!)
 
   /**

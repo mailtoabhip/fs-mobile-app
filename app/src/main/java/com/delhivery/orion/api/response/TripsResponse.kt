@@ -10,12 +10,25 @@ data class TripsResponse(
 )
 
 data class TripSummaryResponse(
-  @SerializedName("in_transit") val inTransit: Int,
-  @SerializedName("trip_cancelled") val tripCancelled: Int,
-  @SerializedName("trip_completed") val tripCompleted: Int,
-  @SerializedName("truck_arrived") val truckArrived: Int,
-  @SerializedName("truck_confirmed") val truckConfirmed: Int,
-  @SerializedName("truck_loaded") val truckLoaded: Int,
-  @SerializedName("truck_reached") val truckReached: Int,
-  @SerializedName("truck_unloaded") val truckUnloaded: Int
+  @SerializedName("advance_pending") val advancePending: Summary,
+  @SerializedName("balance_pending") val balancePending: Summary,
+  @SerializedName("completed") val completed: Summary,
+  @SerializedName("in_transit") val inTransit: Summary
 )
+
+data class Summary(
+  @SerializedName("amount") val amount: Double? = null,
+  @SerializedName("count") val count: Int? = null
+) {
+
+  fun count() = when (count) {
+    null -> ""
+    1 -> "$count trip"
+    else -> "$count trips"
+  }
+
+  fun amount() = when (amount) {
+    null -> ""
+    else -> "₹ $amount"
+  }
+}

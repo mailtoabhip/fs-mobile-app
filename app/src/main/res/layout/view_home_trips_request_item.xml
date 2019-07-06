@@ -55,7 +55,7 @@
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="10sp"
-          android:text="@{ trip.tripStatus()}"
+          android:text="@{ trip.tripStatus().typeText}"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           app:layout_constraintEnd_toEndOf="parent"

@@ -9,11 +9,14 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
 import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
@@ -54,6 +57,19 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       adapter = _adapter
       addOnScrollListener(_scrollListener)
     }
+
+    viewModel.bidsActionLiveData.observe(this, Observer {
+      uiUtils.toggleKeyboard()
+          .apply {
+            when {
+              it != null -> {
+                (_adapter.itemsList()
+                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                _adapter.notifyItemChanged(it.first)
+              }
+            }
+          }
+    })
 
     /* transform observe search results */
     Transformations.map(viewModel.searchResults) {
@@ -111,6 +127,27 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         startActivity(
             bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
         )
+      }
+    }
+  }
+
+  override fun handleAction(
+    actionId: String,
+    item: BaseSearchLoadsRVAdapterItem<*>,
+    position: Int
+  ) {
+    when (actionId) {
+      HomeBidsRequestAction_PlaceBid -> {
+        (item.data as HomeBidsRequestItemData).let {
+          BidDetailsCreateEditDialog(
+              context!!, it, it.transactionBid, viewModel, position, uiUtils
+          ).show()
+        }
+      }
+      HomeBidsRequestAction_AcceptBid -> {
+        (item.data as HomeBidsRequestItemData).let {
+          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
+        }
       }
     }
   }
