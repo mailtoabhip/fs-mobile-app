@@ -5,10 +5,12 @@ import com.delhivery.orion.data.home.trips.HomeTripsHeaderItemData
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.data.home.trips.HomeTripsProgressItemData
 import com.delhivery.orion.data.home.trips.HomeTripsSearchItemData
+import com.delhivery.orion.data.home.trips.HomeTripsTimeOutItemData
 import com.delhivery.orion.data.home.trips.HomeTripsWarningItemData
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Timeout
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 
@@ -17,7 +19,8 @@ enum class HomeTripsRVAdapterItemType(val typeId: Int) {
   Search(1),
   TripItem(2),
   Progress(3),
-  Warning(4);
+  Warning(4),
+  Timeout(5);
 
   companion object {
     /**
@@ -68,3 +71,9 @@ class HomeTripsHeaderItem(
  */
 class HomeTripsWarningItem(data: HomeTripsWarningItemData) :
     BaseHomeTripsRVAdapterItem<HomeTripsWarningItemData>(Warning, data)
+
+/**
+ * Timeout item
+ */
+class HomeTripsTimeoutItem(data: HomeTripsTimeOutItemData) :
+    BaseHomeTripsRVAdapterItem<HomeTripsTimeOutItemData>(Timeout, data)

@@ -76,7 +76,7 @@
           android:textStyle="normal"
           />
 
-      <!-- your routes container -->
+      <!-- trip meter container -->
       <android.support.v7.widget.CardView
           android:id="@+id/container_trip_meter"
           android:layout_width="match_parent"
@@ -343,5 +343,6 @@
         </android.support.v7.widget.LinearLayoutCompat>
       </android.support.v7.widget.CardView>
     </android.support.v7.widget.LinearLayoutCompat>
+
   </ScrollView>
 </layout>

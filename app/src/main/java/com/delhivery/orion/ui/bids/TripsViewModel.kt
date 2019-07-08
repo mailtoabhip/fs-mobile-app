@@ -15,6 +15,7 @@ import com.delhivery.orion.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsSearchItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -119,7 +120,8 @@ class TripsViewModel @Inject constructor(
               add(Pair(HomeTripsProgressItem(), Remove))
               /* remove search item */
               add(Pair(HomeTripsSearchItem(), Remove))
-              /* TODO add refresh list item */
+              /* add refresh list item */
+              add(Pair(HomeTripsWarningItem_TimeOut, AddUpdate))
             }
                 .let { userTripsData.postValue(it) }
 

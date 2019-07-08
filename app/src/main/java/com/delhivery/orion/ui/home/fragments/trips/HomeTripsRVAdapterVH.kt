@@ -11,7 +11,8 @@ import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeTripsRequestItemBinding
-import com.delhivery.orion.databinding.ViewTripsWarningItemBinding
+import com.delhivery.orion.databinding.ViewTimeOutItemBinding
+import com.delhivery.orion.databinding.ViewWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -125,13 +126,31 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
 /**
  * Bids warning item view holder
  */
-internal class HomeTripsWarningItemVH(binding: ViewTripsWarningItemBinding) :
-    BaseHomeTripsRVAdapterViewHolder<ViewTripsWarningItemBinding, HomeTripsWarningItem>(binding) {
+internal class HomeTripsWarningItemVH(binding: ViewWarningItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewWarningItemBinding, HomeTripsWarningItem>(binding) {
   override fun bind(
     item: HomeTripsWarningItem,
     _interface: HomeTripsRVAdapterInterface
   ) {
-    binding.data = item.data
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ * Trips timeout view holder
+ */
+internal class HomeTripsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeTripsTimeoutItem>(binding) {
+  override fun bind(
+    item: HomeTripsTimeoutItem,
+    _interface: HomeTripsRVAdapterInterface
+  ) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }

@@ -149,10 +149,10 @@ class HomeTripsViewModel @Inject constructor(
               add(Pair(HomeTripsProgressItem(), Remove))
               /* remove search item */
               add(Pair(HomeTripsSearchItem(), Remove))
-              /* TODO add refresh list item */
+              /* add refresh list item */
+              add(Pair(HomeTripsWarningItem_TimeOut, AddUpdate))
             }
                 .let { userTripsData.postValue(it) }
-            error.handle()
           }
 
           dataLoadingLiveData.postValue(false)

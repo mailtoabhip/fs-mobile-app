@@ -162,10 +162,10 @@ class HomeBidsViewModel @Inject constructor(
                 add(Pair(HomeBidsProgressItem(), Remove))
                 /* remove search item */
                 add(Pair(HomeBidsSearchItem(), Remove))
-                /* TODO add refresh list item */
+                /* add refresh list item */
+                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
               }
                   .let { userBidsData.postValue(it) }
-              error.handle()
             }
           }
 

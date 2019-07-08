@@ -5,8 +5,18 @@
     >
   <data>
     <variable
-        name="data"
-        type="com.delhivery.orion.data.home.bids.HomeBidsWarningItemData"
+        name="title"
+        type="String"
+        />
+
+    <variable
+        name="subTitle"
+        type="String"
+        />
+
+    <variable
+        name="actionLabel"
+        type="String"
         />
   </data>
 
@@ -32,11 +42,12 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
         android:letterSpacing="0.01"
-        android:lineSpacingExtra="2sp"
-        android:text="@{ data.title }"
-        android:textColor="#99000000"
+        android:lineSpacingExtra="@dimen/text_2sp"
+        android:text="@{ title }"
+        android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
         android:textStyle="normal"
+        tools:text="heading"
         />
 
     <TextView
@@ -48,12 +59,12 @@
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:letterSpacing="0.01"
-        android:lineSpacingExtra="6sp"
-        android:text="@{ data.subtitle }"
-        android:textColor="#99000000"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@{ subTitle }"
+        android:textColor="@color/sub_heading_black"
         android:textSize="@dimen/text_12sp"
         android:textStyle="normal"
-        tools:text="asdasd"
+        tools:text="sub heading"
         />
 
     <android.support.v7.widget.AppCompatButton
@@ -61,7 +72,8 @@
         android:layout_width="match_parent"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="@dimen/size_56dp"
-        android:text="@{ data.actionLabel }"
+        android:text="@{ actionLabel }"
+        tools:text="Action"
         style="@style/ActionButton"
         />
   </android.support.v7.widget.LinearLayoutCompat>

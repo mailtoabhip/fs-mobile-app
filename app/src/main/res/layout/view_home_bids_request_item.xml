@@ -162,7 +162,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
-          android:text="@{request.bidStatus()}"
+          android:text="@{request.bidStatus().status}"
           android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
           app:layout_constraintBottom_toBottomOf="parent"

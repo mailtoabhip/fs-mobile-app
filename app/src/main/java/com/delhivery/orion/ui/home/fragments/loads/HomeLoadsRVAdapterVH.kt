@@ -15,7 +15,8 @@ import com.delhivery.orion.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.orion.databinding.ViewLoadsWarningItemBinding
+import com.delhivery.orion.databinding.ViewTimeOutItemBinding
+import com.delhivery.orion.databinding.ViewWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -120,15 +121,33 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
 /**
  * Bids warning item view holder
  */
-internal class HomeLoadsWarningItemVH(binding: ViewLoadsWarningItemBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<ViewLoadsWarningItemBinding, HomeLoadsWarningItem>(
+internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewWarningItemBinding, HomeLoadsWarningItem>(
         binding
     ) {
   override fun bind(
     item: HomeLoadsWarningItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-    binding.data = item.data
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ * Loads timeout view holder
+ */
+internal class HomeLoadsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeLoadsTimeoutItem>(binding) {
+  override fun bind(
+    item: HomeLoadsTimeoutItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }

@@ -36,11 +36,14 @@ data class TransactionBid(
   fun status() = TransactionBidStatus.byStatusKey(_status)
 }
 
-enum class TransactionBidStatus(val statusKey: String) {
-  Open("open"),
-  Rejected("rejected"),
-  Accepted("accepted"),
-  NA("na");
+enum class TransactionBidStatus(
+  val statusKey: String,
+  val status: String
+) {
+  Open("open", "Active"),
+  Rejected("rejected", "Lost"),
+  Accepted("accepted", "Confirmed"),
+  NA("na", "NA");
 
   companion object {
     /**

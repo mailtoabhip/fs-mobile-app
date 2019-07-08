@@ -62,7 +62,7 @@
           app:layout_constraintTop_toTopOf="parent"
           bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
           tools:text="Load picked up"
-          tools:textColor="#29a8e0"
+          tools:textColor="@color/status_active"
           />
 
       <TextView
@@ -77,8 +77,8 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/text_trip_status"
           bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
-          tools:text="52000"
-          tools:textColor="#29a8e0"
+          tools:text=" Rs 52000"
+          tools:textColor="@color/status_active"
           />
 
       <TextView
