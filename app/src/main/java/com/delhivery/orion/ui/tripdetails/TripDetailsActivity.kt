@@ -56,6 +56,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         title = first.tripDisplayName()
         binding.transactionDetails = first
         binding.tripDetails = second
+        viewModel.bidDetail = second.bidDetails
         populateHistory(viewModel.tripHistory.toMutableList())
       }
     })
@@ -190,8 +191,40 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.textTotal.setText("₹ ${String.format("%.2f", total)}")
+    paymentSummaryBinding.total = "₹ ${String.format("%.2f", total)}"
+
+    val advance = (viewModel.bidDetail?.advancePayout ?: 0.0).plus(
+        viewModel.bidDetail?.fuelPayout ?: 0.0
+    )
+    if (advance > 0.0) {
+      paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
+      paymentSummaryBinding.advance = when (viewModel.advancePaid) {
+        true -> {
+          paymentSummaryBinding.labelAdvance.text = "Advance Paid"
+          "₹ ${String.format("%.2f", advance)}"
+        }
+        false -> {
+          paymentSummaryBinding.labelAdvance.text = "Advance Pending"
+          "₹ ${String.format("%.2f", advance)}"
+        }
+      }
+    } else {
+      paymentSummaryBinding.containerAdvance.visibility = View.GONE
+    }
+
+    val balance = total.minus(advance)
+    paymentSummaryBinding.balance = when (viewModel.balancePaid) {
+      true -> {
+        paymentSummaryBinding.labelBalance.text = "Balance Paid"
+        "₹ ${String.format("%.2f", balance)}"
+      }
+      false -> {
+        paymentSummaryBinding.labelBalance.text = "Balance Pending"
+        "₹ ${String.format("%.2f", balance)}"
+      }
+    }
     paymentSummaryBinding.containerTotal.visibility = View.VISIBLE
+
     binding.containerHistory.addView(paymentSummaryBinding.root)
   }
 }

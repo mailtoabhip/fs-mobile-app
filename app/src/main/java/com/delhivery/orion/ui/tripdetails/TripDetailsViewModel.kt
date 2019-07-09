@@ -19,6 +19,7 @@ import com.delhivery.orion.data.TruckPlaced
 import com.delhivery.orion.data.TruckUnloaded
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.TripBidDetails
 import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.repository.PaymentRepository
 import com.delhivery.orion.repository.TripsRepository
@@ -45,6 +46,12 @@ class TripDetailsViewModel @Inject constructor(
 
   /* trip history */
   var tripHistory = mutableListOf<TripHistoryItem>()
+
+  var balancePaid = false
+
+  var advancePaid = false
+
+  var bidDetail: TripBidDetails? = null
 
   /**
    * Fetch trip details
@@ -125,15 +132,29 @@ class TripDetailsViewModel @Inject constructor(
             )
 
             if (tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
-              tripHistory.add(
-                  TripHistoryItem(
-                      AdvancePaid,
-                      "Advance Paid",
-                      "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been initiated",
-                      history.epoch()
-                  )
-              )
+              if (tripDetail.advanceStatus()) {
+                advancePaid = true
+                tripHistory.add(
+                    TripHistoryItem(
+                        AdvancePaid,
+                        "Advance Paid",
+                        "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been paid",
+                        history.epoch()
+                    )
+                )
+              } else {
+                advancePaid = false
+                tripHistory.add(
+                    TripHistoryItem(
+                        AdvancePending,
+                        "Advance Pending",
+                        "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been initiated",
+                        history.epoch()
+                    )
+                )
+              }
             } else {
+              advancePaid = false
               tripHistory.add(
                   TripHistoryItem(
                       AdvancePending,
@@ -200,6 +221,7 @@ class TripDetailsViewModel @Inject constructor(
 
         TripStatus.TripCompleted.statusKey -> {
           if (!TextUtils.isEmpty(history.details?.podUrl)) {
+            balancePaid = true
             tripHistory.add(
                 TripHistoryItem(
                     BalancePending,
