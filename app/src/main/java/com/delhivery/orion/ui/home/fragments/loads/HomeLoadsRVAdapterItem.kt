@@ -1,16 +1,17 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
 import com.delhivery.orion.data.BaseKeyTypeModel
-import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsProgressItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchItemData
+import com.delhivery.orion.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsWarningItemData
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Timeout
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
 
 enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
@@ -18,7 +19,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Progress(1),
   Search(2),
   Warning(3),
-  Info(4);
+  Timeout(4),
+  Info(5);
 
   companion object {
     /**
@@ -45,15 +47,6 @@ class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
 
 /**
- * Load request item
- */
-class HomeLoadsBidRequestItem(
-  data: HomeBidsRequestItemData,
-  bid: List<TransactionBid>
-) :
-    BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
-
-/**
  * Inline progress item
  */
 class HomeLoadsProgressItem(
@@ -72,6 +65,12 @@ class HomeLoadsSearchItem(
  */
 class HomeLoadsWarningItem(data: HomeLoadsWarningItemData) :
     BaseHomeLoadsRVAdapterItem<HomeLoadsWarningItemData>(Warning, data)
+
+/**
+ * Timeout item
+ */
+class HomeLoadsTimeoutItem(data: HomeLoadsTimeOutItemData) :
+    BaseHomeLoadsRVAdapterItem<HomeLoadsTimeOutItemData>(Timeout, data)
 
 /**
  * Inline progress item

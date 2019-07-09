@@ -9,8 +9,9 @@ import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
 import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
+import com.delhivery.orion.databinding.ViewTimeOutItemBinding
+import com.delhivery.orion.databinding.ViewWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -99,13 +100,31 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
 /**
  * Bids warning item view holder
  */
-internal class HomeBidsWarningItemVH(binding: ViewHomeBidsWarningItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsWarningItemBinding, HomeBidsWarningItem>(binding) {
+internal class HomeBidsWarningItemVH(binding: ViewWarningItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewWarningItemBinding, HomeBidsWarningItem>(binding) {
   override fun bind(
     item: HomeBidsWarningItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.data = item.data
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ * Bids timeout view holder
+ */
+internal class HomeBidsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeBidsTimeoutItem>(binding) {
+  override fun bind(
+    item: HomeBidsTimeoutItem,
+    _interface: HomeBidsRVAdapterInterface
+  ) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }

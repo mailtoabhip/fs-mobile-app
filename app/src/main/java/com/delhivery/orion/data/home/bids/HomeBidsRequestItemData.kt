@@ -5,6 +5,7 @@ import android.support.annotation.DrawableRes
 import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.bids.TransactionBid
+import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
@@ -81,7 +82,7 @@ data class HomeBidsRequestItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getStatusColor(bidStatus().toLowerCase())
+    ColorProviderUtils.getStatusColor(bidStatus().status.toLowerCase())
 
   /**
    * Get truck details/type
@@ -100,7 +101,7 @@ data class HomeBidsRequestItemData(
     return transactionBid?.targetPriceDiff(targetPrice) ?: ""
   }
 
-  fun bidStatus() = BidStatus.byKey(status)
+  fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)

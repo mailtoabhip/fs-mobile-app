@@ -1,5 +1,6 @@
 package com.delhivery.orion.ui.home.fragments.loads
 
+import com.delhivery.orion.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.orion.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.orion.data.home.loads.HomeLoadsWarningItemData
 
@@ -13,5 +14,13 @@ val HomeLoadsWarningItem_NoLoads = HomeLoadsWarningItem(
         "No Loads found",
         "Please select your route preference to see the load requests",
         "Select Routes", HomeLoadsWarningAction_NoLoads
+    )
+)
+
+val HomeLoadsWarningItem_TimeOut = HomeLoadsWarningItem(
+    HomeLoadsWarningItemData(
+        "Session timed out!",
+        "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",
+        "REFRESH", HomeLoadsTimeOutAction
     )
 )

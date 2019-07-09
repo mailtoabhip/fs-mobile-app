@@ -39,6 +39,7 @@ data class HomeTripsItemData(
   @SerializedName("required_on") val requiredOn: String?,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("user_name") val userName: String?,
+  @SerializedName("advance_status") val advanceStatus: String = "failure",
   var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
@@ -94,6 +95,11 @@ data class HomeTripsItemData(
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
+
+  fun advanceStatus() = when (advanceStatus.toLowerCase()) {
+    "success" -> true
+    else -> false
+  }
 
   /**
    * Required at text color as per status

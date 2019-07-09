@@ -7,7 +7,8 @@ import com.delhivery.orion.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.orion.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.orion.databinding.ViewLoadsWarningItemBinding
+import com.delhivery.orion.databinding.ViewTimeOutItemBinding
+import com.delhivery.orion.databinding.ViewWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
@@ -17,6 +18,7 @@ import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.In
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Timeout
 import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
 
 class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
@@ -33,16 +35,18 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
     Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
-    Warning -> ViewLoadsWarningItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
+    Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeLoadsSearchItemBinding -> HomeLoadsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
-    is ViewLoadsWarningItemBinding -> HomeLoadsWarningItemVH(binding)
+    is ViewWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
+    is ViewTimeOutItemBinding -> HomeLoadsTimeOutItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -55,6 +59,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsProgressItemVH -> holder.bind(item as HomeLoadsProgressItem, _interface)
       is HomeLoadsSearchItemVH -> holder.bind(item as HomeLoadsSearchItem, _interface)
       is HomeLoadsWarningItemVH -> holder.bind(item as HomeLoadsWarningItem, _interface)
+      is HomeLoadsTimeOutItemVH -> holder.bind(item as HomeLoadsTimeoutItem, _interface)
       is HomeLoadsInfoItemVH -> holder.bind(item as HomeLoadsInfoItem, _interface)
     }
   }
@@ -65,6 +70,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsWarningItem_NoLoads, Remove))
+      add(Pair(HomeLoadsWarningItem_TimeOut, Remove))
       add(Pair(HomeLoadsInfoItem(), Remove))
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter { it.type == Request }

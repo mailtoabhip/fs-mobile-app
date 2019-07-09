@@ -15,6 +15,7 @@ import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsWarningItem_NoBids
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsWarningItem_TimeOut
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -111,17 +112,18 @@ class BidsViewModel @Inject constructor(
                   bidsLiveData.postValue(it)
                 }
           } else {
-            if (error is NoBidsFoundException) {
-              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* remove progress item */
-                add(Pair(HomeBidsProgressItem(), Remove))
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
+              if (error is NoBidsFoundException) {
                 /* add no bids warning item */
                 add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+              } else {
+                /* add api time out item */
+                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
               }
-                  .let { bidsLiveData.postValue(it) }
-            } else {
-              error.handle()
             }
+                .let { bidsLiveData.postValue(it) }
           }
 
           dataLoadingLiveData.postValue(false)
