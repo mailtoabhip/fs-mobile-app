@@ -146,27 +146,20 @@ class HomeBidsViewModel @Inject constructor(
             }
                 .let { userBidsData.postValue(it) }
           } else {
-            if (error is NoBidsFoundException) {
-              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* remove progress item */
-                add(Pair(HomeBidsProgressItem(), Remove))
-                /* remove search item */
-                add(Pair(HomeBidsSearchItem(), Remove))
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
+              /* remove search item */
+              add(Pair(HomeBidsSearchItem(), Remove))
+              if (error is NoBidsFoundException) {
                 /* add no bids warning item */
                 add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              }
-                  .let { userBidsData.postValue(it) }
-            } else {
-              mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* remove progress item */
-                add(Pair(HomeBidsProgressItem(), Remove))
-                /* remove search item */
-                add(Pair(HomeBidsSearchItem(), Remove))
-                /* add refresh list item */
+              } else {
+                /* add api time out item */
                 add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
               }
-                  .let { userBidsData.postValue(it) }
             }
+                .let { userBidsData.postValue(it) }
           }
 
           dataLoadingLiveData.postValue(false)

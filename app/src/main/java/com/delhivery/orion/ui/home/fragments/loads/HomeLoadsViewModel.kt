@@ -117,11 +117,10 @@ class HomeLoadsViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeLoadsProgressItem(), Remove))
-              /* TODO add refresh list item */
+              /* add api time out item */
+              add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
             }
                 .let { userLoadsData.postValue(it) }
-            /* remove progress item */
-            error.handle()
           }
 
           dataLoadingLiveData.postValue(false)
