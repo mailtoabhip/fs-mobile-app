@@ -17,7 +17,9 @@ import com.delhivery.orion.ui.base.BaseActivity
 import com.delhivery.orion.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterInterface
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Timeout
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
+import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
 
@@ -79,9 +81,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      adapter.resetStaticData()
-      /* remove user bid transactions and fetch again */
-      viewModel.fetchTrips(false)
+      refreshData()
     }
 
     /* setup recycler view */
@@ -114,6 +114,13 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     add(0, HomeTripsProgressItem())
   }
 
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    viewModel.fetchTrips(false)
+  }
+
   override fun handleAction(
     actionId: String,
     item: BaseHomeTripsRVAdapterItem<*>
@@ -121,6 +128,12 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     when (item.type) {
       TripItem -> {
         startActivity(tripDetailsIntent(item.data as HomeTripsItemData, this))
+      }
+      Timeout -> {
+        refreshData()
+      }
+      Warning -> {
+        finish()
       }
       else -> {
       }

@@ -19,6 +19,7 @@ import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.orion.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.orion.data.home.loads.HomeLoadsSearchAction_Search
+import com.delhivery.orion.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.orion.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.orion.databinding.FragmentHomeLoadsBinding
@@ -72,9 +73,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      adapter.resetStaticData()
-      /* remove user transactions and fetch again */
-      viewModel.fetchUserTransactions()
+      refreshData()
     }
 
     /* setup recycler view */
@@ -149,15 +148,22 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     viewModel.fetchUserTransactions()
   }
 
+  override fun onResume() {
+    super.onResume()
+    /* check user route/lane preferences*/
+    viewModel.checkUserRoutes()
+  }
+
   private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {
     add(0, HomeLoadsSearchItem())
     add(1, HomeLoadsProgressItem())
   }
 
-  override fun onResume() {
-    super.onResume()
-    /* check user route/lane preferences*/
-    viewModel.checkUserRoutes()
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    viewModel.fetchUserTransactions()
   }
 
   override fun handleAction(
@@ -178,6 +184,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
       HomeLoadsInfoAction_EditRoute, HomeLoadsWarningAction_NoLoads -> context?.let {
         startActivity(selectRouteIntent(it, EditRoute))
+      }
+      HomeLoadsTimeOutAction -> {
+        refreshData()
       }
     }
   }

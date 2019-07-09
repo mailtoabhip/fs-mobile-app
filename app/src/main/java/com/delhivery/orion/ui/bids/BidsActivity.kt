@@ -13,6 +13,7 @@ import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsTimeOutAction
 import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_NoBids
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
@@ -71,9 +72,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      adapter.resetStaticData()
-      /* remove user bid transactions and fetch again */
-      viewModel.fetchBids(false)
+      refreshData()
     }
 
     /* setup recycler view */
@@ -107,6 +106,13 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     viewModel.fetchBids(false)
   }
 
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    viewModel.fetchBids(false)
+  }
+
   override fun handleAction(
     actionId: String,
     item: BaseHomeBidsRVAdapterItem<*>
@@ -119,6 +125,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       HomeBidsRequestAction_ViewDetails ->
         startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))
 
+      HomeBidsTimeOutAction ->
+        refreshData()
     }
   }
 

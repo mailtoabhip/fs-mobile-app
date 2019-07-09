@@ -16,6 +16,7 @@ import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_MyBids
 import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
+import com.delhivery.orion.data.home.bids.HomeBidsTimeOutAction
 import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_SelectRoutes
 import com.delhivery.orion.databinding.FragmentHomeBidsBinding
@@ -67,6 +68,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       /* remove user transactions and fetch again */
+      refreshData()
       adapter.resetStaticData()
       fetchBidsData()
     }
@@ -107,6 +109,13 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun fetchBidsData() {
     viewModel.fetchBidsSummary()
     viewModel.fetchBids()
+  }
+
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    fetchBidsData()
   }
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
@@ -159,6 +168,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           uiUtils.toggleKeyboard(false)
           toolbarElevationLiveData!!.postValue(0f)
         }, 300)
+      }
+      HomeBidsTimeOutAction -> {
+        refreshData()
       }
     }
   }

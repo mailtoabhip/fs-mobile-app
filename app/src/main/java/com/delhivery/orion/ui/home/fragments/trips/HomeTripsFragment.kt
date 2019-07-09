@@ -17,6 +17,7 @@ import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import com.delhivery.orion.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.orion.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.orion.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
@@ -69,8 +70,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       /* remove user trips and fetch again */
-      adapter.resetStaticData()
-      fetchTripsData()
+      refreshData()
     }
 
     /* setup recycler view */
@@ -111,6 +111,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   private fun fetchTripsData() {
     viewModel.fetchTripsSummary()
     viewModel.fetchTrips(false)
+  }
+
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    fetchTripsData()
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
@@ -170,6 +177,9 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
       HomeTripsWarningAction_NoLoads -> {
         action(NavigateHomeFragmentAction(BidsFragment))
+      }
+      HomeTripsTimeOutAction -> {
+        refreshData()
       }
     }
   }
