@@ -76,13 +76,21 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
     /* select all */
     binding.checkSelectAll.setOnCheckedChangeListener { v, selected ->
       v.post {
+        selectedStates.clear()
+
         if (!selected) {
-          selectedStates.clear()
+          binding.checkSelectAll.text = getString(R.string.action_select_all_states)
           adapter.itemsList()
               .forEach { state -> state.checked = false }
           adapter.notifyDataSetChanged()
-          v.isEnabled = false
           hide()
+        } else {
+          binding.checkSelectAll.text = getString(R.string.action_deselect_all_states)
+          adapter.itemsList()
+              .forEach { state -> state.checked = true }
+          selectedStates.addAll(states)
+          adapter.notifyDataSetChanged()
+          show()
         }
       }
     }
@@ -114,21 +122,25 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
       selectedStates.add(item)
     }
 
-    when (selectedStates.size) {
-      0 -> {
-        binding.checkSelectAll.isChecked = false
-        binding.checkSelectAll.isEnabled = false
+    adapter.updateItem(item)
+
+    when (selectedStates.isEmpty()) {
+      true -> {
+        hide()
       }
-      else -> {
-        binding.checkSelectAll.isChecked = true
-        binding.checkSelectAll.isEnabled = true
+      false -> {
+        if (binding.btnAction.visibility == View.GONE) {
+          binding.btnAction.visibility = View.VISIBLE
+        }
+        if (!visible && selectedStates.size == 1) {
+          show()
+        }
       }
     }
-
-    adapter.updateItem(item)
   }
 
   fun hide() {
+    visible = false;
     binding.actionContainer.animate()
         .translationY(
             PositionAnimExpectation.dpToPx(
@@ -142,15 +154,18 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
   }
 
   fun show() {
-    binding.actionContainer.animate()
-        .translationY(
-            -PositionAnimExpectation.dpToPx(
-                this@SelectRouteDestinationFragment.context!!, 0f
-            )
-        )
-        .setInterpolator(DecelerateInterpolator(2f))
-        .setDuration(300L)
-        .start()
+    if (!selectedStates.isEmpty()) {
+      visible = true
+      binding.actionContainer.animate()
+          .translationY(
+              -PositionAnimExpectation.dpToPx(
+                  this@SelectRouteDestinationFragment.context!!, 0f
+              )
+          )
+          .setInterpolator(DecelerateInterpolator(2f))
+          .setDuration(300L)
+          .start()
+    }
   }
 
   inner class DestinationsRVScrollListener() : OnScrollListener() {
@@ -165,11 +180,9 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
       if (visible && scrollDist > MINIMUM) {
         hide();
         scrollDist = 0;
-        visible = false;
       } else if (!visible && scrollDist < -MINIMUM) {
         show();
         scrollDist = 0;
-        visible = true;
       }
 
       if ((visible && dy > 0) || (!visible && dy < 0)) {

@@ -110,6 +110,7 @@
   <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
   <string name="action_confirm_route">Confirm Route</string>
   <string name="action_deselect_all_states">Deselect all states</string>
+  <string name="action_select_all_states">Select all states</string>
   <string name="label_routes_added">Routes added</string>
   <string name="action_add_more_route">Add more routes</string>
   <string name="action_go_to_load_requests">GO to load requests</string>
@@ -148,6 +149,7 @@
     <!--<item>Truck type</item>-->
     <item>Closed</item>
     <item>Open</item>
+    <item>Trailer</item>
   </string-array>
 
   <string-array name="array_truck_size">

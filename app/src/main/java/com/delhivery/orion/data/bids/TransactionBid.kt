@@ -21,12 +21,12 @@ data class TransactionBid(
    * Formatted string for target price diff
    */
   fun targetPriceDiff(targetPrice: Int) = (targetPrice - bidAmount).let { _diff ->
-    if (_diff == 0) return "(Same as target amount)"
+    if (_diff == 0) return "(Your Bid is same as target amount)"
     when (_diff > 0) {
       true -> "less"
       false -> "more"
     }.let { _x ->
-      "(₹ ${Math.abs(_diff)} $_x than target price)"
+      "(Your Bid is ₹ ${Math.abs(_diff)} $_x than target price)"
     }
   }
 

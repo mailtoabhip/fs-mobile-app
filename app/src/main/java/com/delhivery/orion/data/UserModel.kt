@@ -10,8 +10,9 @@ import java.util.Collections
 data class UserModel(
   @SerializedName("onboard_status") var onboardingStatus: String?,
   @SerializedName("uuid") var userId: String,
-  @SerializedName("name") var name: String?,
-  @SerializedName("base_city") var baseCity: String?,
+  @SerializedName("name") var name: String,
+  @SerializedName("base_city") var baseCity: String,
+  @SerializedName("base_city_code") var baseCityCode: String,
   @SerializedName("user_type") var userType: String?,
   @SerializedName("phone_no") var phoneNo: String?,
   @SerializedName("company_name") var companyName: String?,
@@ -28,8 +29,7 @@ data class UserModel(
   @SerializedName("pancard") var panCardNo: String?,
   @SerializedName("acccount_no") var acccountNo: String?,
   @SerializedName("ifcs_code") var ifcsCode: String?,
-  @SerializedName("payment_mode") var paymentMode: String?,
-  @SerializedName("base_city_code") var baseCityCode: String?
+  @SerializedName("payment_mode") var paymentMode: String?
 ) {
 
   /**
@@ -41,7 +41,7 @@ data class UserModel(
    * user routes as {routeModel}
    */
   fun userRoutes(): List<RouteModel> {
-    val _routes = routes?.toRoutes() ?: listOf()
+    val _routes = routes?.toRoutes() ?: mutableListOf()
     Collections.sort(_routes, { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
     return _routes
   }

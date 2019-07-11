@@ -6,6 +6,7 @@ import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus
+import com.delhivery.orion.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
@@ -62,6 +63,17 @@ data class HomeBidsRequestItemData(
 
   fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
 
+  fun bidAmount(): String {
+    return if (transactionBid != null) {
+      when (transactionBid!!.status()) {
+        Accepted -> "₹ ${transactionBid!!.bidAmount}"
+        else -> "₹ $targetPrice"
+      }
+    } else {
+      "₹ $targetPrice"
+    }
+  }
+
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
@@ -108,27 +120,6 @@ data class HomeBidsRequestItemData(
         || originState.contains(query, true) || destinationState.contains(query, true)
 
   fun bidText() = "Bid successfully placed for ₹ ${transactionBid?.bidAmount}"
-}
-
-enum class BidStatus(
-  val statusKey: String,
-  val status: String
-) {
-  Requested("requested", "Active"),
-  TruckConfirmed("truck_confirmed", "Confirmed"),
-  TruckLoaded("truck_loaded", "Truck Loaded"),
-  TruckReached("truck_reached", "Truck Reached"),
-  TruckUnloaded("truck_unloaded", "Truck Unloaded"),
-  Unknown("unknown", "Unknown");
-
-  companion object {
-
-    /**
-     * Get [TripStatus] from response key
-     */
-    fun byKey(statusKey: String) =
-      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull()?.status ?: statusKey
-  }
 }
 
 /* actions */

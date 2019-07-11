@@ -66,6 +66,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
     (activity as SelectRouteActivity).title = "Route Detail"
 
+    binding.textOriginCityName.text = "Origin City"
     binding.route = route
     selectedStates.clear()
 
@@ -106,11 +107,23 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
       selectedStates.add(item)
     }
 
-    binding.textDestinationHeading.text = "Destination States(" + selectedStates.size + ")"
+    binding.textDestinationHeading.text = "Destination States(${selectedStates.size})"
     adapter.updateItem(item)
 
-    if (binding.btnSave.visibility == View.GONE)
-      binding.btnSave.visibility = View.VISIBLE
+    when (selectedStates.isEmpty()) {
+      true -> {
+        hide()
+        visible = false
+      }
+      false -> {
+        if (binding.btnSave.visibility == View.GONE) {
+          binding.btnSave.visibility = View.VISIBLE
+        }
+        if (!visible && selectedStates.size == 1) {
+          show()
+        }
+      }
+    }
   }
 
   override fun onCreateOptionsMenu(
@@ -134,20 +147,26 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   }
 
   fun show() {
-    binding.btnSave.animate()
-        .translationY(
-            -PositionAnimExpectation.dpToPx(
-                this@SelectRouteDetailFragment.context!!, 0f
-            )
-        )
-        .setInterpolator(DecelerateInterpolator(2f))
-        .setDuration(300L)
-        .start()
+    if (!selectedStates.isEmpty()) {
+      visible = true
+      binding.btnSave.animate()
+          .translationY(
+              -PositionAnimExpectation.dpToPx(
+                  this@SelectRouteDetailFragment.context!!, 0f
+              )
+          )
+          .setInterpolator(DecelerateInterpolator(2f))
+          .setDuration(300L)
+          .start()
+    } else {
+      binding.btnSave.visibility = View.GONE
+    }
   }
 
   fun populateRoute() {
     binding.textOriginCityName.text =
       route?.origin?.cityState() ?: getString(R.string.not_available)
+
     adapter.clearItems()
     selectedStates.clear()
 
@@ -159,6 +178,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         selectedStates.add(t)
       }
     }
+    binding.textDestinationHeading.text = "Destination States(${selectedStates.size})"
     adapter.operation(mutableListOf<Pair<StateModel, DataRVAdapterOperationType>>().apply {
       states.forEach { _item ->
         add(Pair(_item, Add))
@@ -176,17 +196,16 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
       super.onScrolled(recyclerView, dx, dy)
 
       if (visible && scrollDist > MINIMUM) {
-        hide();
-        scrollDist = 0;
+        hide()
+        scrollDist = 0
         visible = false;
       } else if (!visible && scrollDist < -MINIMUM) {
-        show();
-        scrollDist = 0;
-        visible = true;
+        show()
+        scrollDist = 0
       }
 
       if ((visible && dy > 0) || (!visible && dy < 0)) {
-        scrollDist += dy;
+        scrollDist += dy
       }
     }
   }

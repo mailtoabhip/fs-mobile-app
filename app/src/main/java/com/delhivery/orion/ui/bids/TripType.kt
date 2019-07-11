@@ -27,12 +27,12 @@ enum class TripType(
   Unknown(-1, listOf(TripStatus.Unknown.statusKey), "NA", "NA"),
   AdvancePending(
       0,
-      listOf(TruckArrived.statusKey, TruckConfirmed.statusKey),
+      listOf(TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey),
       "Advance Pending", "Advance Pending trips"
   ),
   InTransit(
       1,
-      listOf(TruckLoaded.statusKey, TruckReached.statusKey, In_Transit.statusKey),
+      listOf(TruckReached.statusKey, In_Transit.statusKey),
       "InTransit", "InTransit trips"
   ),
   BalancePending(
