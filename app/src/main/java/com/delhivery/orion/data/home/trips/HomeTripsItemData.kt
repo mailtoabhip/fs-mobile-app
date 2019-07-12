@@ -58,22 +58,22 @@ data class HomeTripsItemData(
   fun tripPayment(): String {
     when (tripStatus()) {
       AdvancePending -> {
-        if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
+        if (payment != null && payment!!.advancePayout > 0.0) {
           return "₹ ${String.format(
-              "%.2f", (bidDetails.advancePayout ?: 0.0).plus(bidDetails.fuelPayout ?: 0.0)
+              "%.2f", (payment!!.advancePayout).plus(payment!!.fuelPayout ?: 0.0)
           )}"
         }
       }
       BalancePending -> {
-        if (payment != null && payment?.bidPrice ?: 0.0 > 0.0 && payment?.advancePayout ?: 0.0 > 0.0) {
-          val balance = payment?.bidPrice?.minus(payment?.advancePayout ?: 0.0)
+        if (payment != null && payment!!.bidPrice > 0.0 && payment!!.advancePayout > 0.0) {
+          val balance = payment!!.bidPrice.minus(payment!!.advancePayout)
           return "₹ ${String.format("%.2f", balance)}"
         }
       }
       Completed -> {
-        if (payment != null && payment?.bidPrice != null) {
+        if (payment != null && payment!!.bidPrice > 0) {
           return "₹ ${String.format(
-              "%.2f", (payment?.bidPrice ?: 0.0).plus(payment?.payments?.fuelAdvance ?: 0.0)
+              "%.2f", payment!!.bidPrice.plus(payment!!.fuelPayout ?: 0.0)
           )}"
         }
       }

@@ -49,6 +49,7 @@
         >
 
       <android.support.constraint.ConstraintLayout
+          android:id="@+id/container_city"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_margin="@dimen/size_16dp"
@@ -75,6 +76,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:textStyle="normal"
+            android:hint="Origin City"
             android:text="@{route.origin.cityState()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/img_edit_origin"
@@ -105,13 +107,12 @@
         android:layout_marginTop="@dimen/size_24dp"
         android:fontFamily="sans-serif"
         android:lineSpacingExtra="@dimen/text_6sp"
-        android:text=""
+        android:text="Destination States"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/container_gps_origin_city"
-        bind:htmlText="@{ @string/label_destination_state(route.destinationCount()) }"
         />
 
     <RelativeLayout

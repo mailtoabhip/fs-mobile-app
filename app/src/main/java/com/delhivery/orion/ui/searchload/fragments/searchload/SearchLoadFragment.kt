@@ -137,8 +137,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
-          "", "",
-          "", "", "", ""
+          city = "Anywhere", cityId = "", state = "Anywhere"
       ), type
       )
     }

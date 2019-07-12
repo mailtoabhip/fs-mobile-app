@@ -73,7 +73,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.transactions(offset)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset)
         .flatMap { t ->
           offset = t.offset
           total = t.total
@@ -131,11 +131,18 @@ class HomeLoadsViewModel @Inject constructor(
    * Checks if user has added routes/lane preference
    */
   fun checkUserRoutes() {
-    compositeDisposable += userRepository.getUser()
+    compositeDisposable += userRepository.getUser(false)
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
-            userPrefs.baseCityCode = _user.baseCityCode
+            if (_user.hasRoutes()) {
+              userPrefs.cityCode = _user.userRoutes()
+                  .get(0)
+                  .origin.cityId
+            } else {
+              userPrefs.cityCode = _user.baseCityCode
+            }
+
             routesLiveData.postValue(_user.hasRoutes())
           } else {
             error.handle()
@@ -184,6 +191,12 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+
+  fun isRouteUpdated() = userPrefs.routeUpdate
+
+  fun setRouteUpdated() {
+    userPrefs.routeUpdate = false
   }
 }
 

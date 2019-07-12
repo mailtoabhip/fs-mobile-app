@@ -17,8 +17,8 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun transactions(offset: Int) = transactionService.loadBoardTransactions(
-      userRepository.userId(), userPrefs.baseCityCode ?: "",
+  fun fetchLoadBoardTransactions(offset: Int) = transactionService.loadBoardTransactions(
+      userRepository.userId(), userPrefs.cityCode ?: "",
       offset, UserTripsLoadLimit
   ).convertResponse()
 

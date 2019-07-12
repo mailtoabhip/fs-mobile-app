@@ -2,7 +2,9 @@ package com.delhivery.orion.repository
 
 import com.auth0.android.jwt.JWT
 import com.delhivery.orion.api.UserService
+import com.delhivery.orion.api.request.UpdateUserBaseCityRequest
 import com.delhivery.orion.api.request.UpdateUserRoutesRequest
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.data.RouteMappingModel
 import com.delhivery.orion.data.UserModel
 import com.delhivery.orion.database.AppDatabase
@@ -66,23 +68,24 @@ class UserRepository @Inject constructor(
   }
 
   /**
-   * Add new route to user prefs
+   * Update user routes and get all routes
    */
-  fun addRoutes(routes: List<RouteMappingModel>) =
-    getUser()
-        .flatMap { _user ->
-          val _routes = mutableListOf<RouteMappingModel>()
-          _user.routes?.let { _routes.addAll(it) }
-          _routes.addAll(routes)
-          updateRoutes(_routes)
-        }
+  fun updateBaseCityAndRoutes(
+    city: CityModel?,
+    routes: List<RouteMappingModel>
+  ) =
+    userService.updateCity(
+        userId(), UpdateUserBaseCityRequest(
+        city?.city ?: "", city?.cityId ?: "",
+        routes
+    )
+    )
 
   /**
    * Update user routes and get all routes
    */
-  fun updateRoutes(routes: List<RouteMappingModel>) =
+  fun updateUserRoutes(
+    routes: List<RouteMappingModel>
+  ) =
     userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes))
-        .flatMap {
-          getUser(false)
-        }.map { it.userRoutes() }
 }

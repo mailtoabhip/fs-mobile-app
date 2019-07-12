@@ -104,7 +104,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       it?.let { _items -> adapter.operation(_items) }
     })
 
-    viewModel.loadsCountLiveData.observeOnce(this, Observer {
+    viewModel.loadsCountLiveData.observe(this, Observer {
       _title = when (it) {
         0, null -> "Load Request"
         else -> "Load Request(" + it + ")"
@@ -152,6 +152,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     super.onResume()
     /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
+    /* fetch new loads is routes updated*/
+    if (viewModel.isRouteUpdated()) {
+      refreshData()
+      viewModel.setRouteUpdated()
+    }
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {

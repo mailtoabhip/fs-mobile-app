@@ -83,7 +83,13 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
-                userPrefs.baseCityCode = it.baseCityCode
+                if (it.hasRoutes()) {
+                  userPrefs.cityCode = it.userRoutes()
+                      .get(0)
+                      .origin.cityId
+                } else {
+                  userPrefs.cityCode = it.baseCityCode
+                }
                 val msg =
                   if (_otpRes.second.isNotNullOrEmpty()) _otpRes.second else "Error validating OTP"
                 Triple(_otpRes.first, msg, it)

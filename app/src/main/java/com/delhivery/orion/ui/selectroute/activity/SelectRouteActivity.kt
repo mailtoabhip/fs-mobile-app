@@ -1,11 +1,14 @@
 package com.delhivery.orion.ui.selectroute.activity
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import com.delhivery.orion.R
+import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.data.home.routes.RouteModel
 import com.delhivery.orion.databinding.ActivitySelectRouteBinding
 import com.delhivery.orion.ui.base.BaseLocationActivity
@@ -27,9 +30,9 @@ import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionTyp
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteDetail
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentActionType.RouteUpdate
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType
+import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.DestinationFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.OriginCityFragment
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteDetailFragment
-import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentType.RouteListFragment
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
 import com.delhivery.orion.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListFragment
@@ -81,8 +84,20 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     /* observe routes and update route list fragment */
     viewModel.routesLiveData.observe(this, Observer {
       val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
-      if (_fragment is SelectRouteDetailFragment) {
-        currentRoute = it?.get(0)
+      if (_fragment is SelectRouteDetailFragment && it != null) {
+
+        if (!it.third.isNullOrEmpty()) {
+          val routeModel = it.third.get(0)
+          currentRoute = RouteModel(
+              CityModel(routeModel.origin.city, routeModel.origin.cityId)
+          )
+          currentRoute?.destinations = it.third.get(0)
+              .destinations
+        } else {
+          currentRoute = RouteModel(
+              CityModel(it.first, it.second)
+          )
+        }
         _fragment.route = currentRoute
         _fragment.populateRoute()
       }
@@ -113,27 +128,42 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       OriginSelected -> {
         (action as OriginSelectedAction).apply {
           when (currentRoute) {
-            null -> currentRoute = RouteModel(origin)
+            null -> {
+              currentRoute = RouteModel(origin)
+            }
             else -> {
               currentRoute?.origin = origin
-              viewModel.addUserRoutes(currentRoute!!.expandLocations()) { success ->
-                if (success) {
-                  navigate(RouteDetailFragment)
-                }
-              }
             }
           }
+          navigate(DestinationFragment)
         }
       }
       DestinationsAdded -> {
         (action as DestinationSelectedAction).apply {
           currentRoute?.destinations = destinations.toMutableSet()
-          viewModel.addUserRoutes(currentRoute!!.expandLocations()) { success ->
-            if (success) {
-              navigate(RouteListFragment)
+          viewModel.updateUserRoutes(
+              currentRoute!!.expandLocations()
+          ) { _routeUpdateSuccess ->
+            if (_routeUpdateSuccess) {
+              viewModel.fetchUser { _userUpdateSuccess ->
+                when (_userUpdateSuccess) {
+                  true -> {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                  }
+                  else -> {
+                    uiUtils.showSnackbar(
+                        "Routes addition failed, Try again!!", Snackbar.LENGTH_LONG
+                    )
+                  }
+                }
+              }
+            } else {
+              uiUtils.showSnackbar(
+                  "Routes addition failed, Try again!!", Snackbar.LENGTH_LONG
+              )
             }
           }
-          currentRoute = null
         }
       }
       AddMoreRoutes -> {
@@ -156,7 +186,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             add(route)
           }
 
-          viewModel.updateUserRoutes(_routes) { success ->
+          viewModel.updateUserRoutes(_routes) { _success ->
             finish()
           }
         }
