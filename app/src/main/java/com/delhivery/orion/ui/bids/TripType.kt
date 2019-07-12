@@ -61,8 +61,8 @@ enum class TripType(
     fun byTypeId(typeId: Int) = values().filter { it.typeId == typeId }.firstOrNull() ?: Unknown
 
     fun byStatus(_status: String) = when (_status) {
-      TruckArrived.statusKey, TruckConfirmed.statusKey -> AdvancePending
-      TruckLoaded.statusKey, TruckReached.statusKey, In_Transit.statusKey -> InTransit
+      TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey -> AdvancePending
+      TruckReached.statusKey, In_Transit.statusKey -> InTransit
       TruckUnloaded.statusKey -> BalancePending
       TripCompleted.statusKey -> Completed
       else -> Unknown
