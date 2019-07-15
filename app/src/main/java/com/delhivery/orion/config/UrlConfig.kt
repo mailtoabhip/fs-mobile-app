@@ -30,6 +30,10 @@ enum class UrlConfig(
   PaymentService(
       "https://orion-payment-api.delhivery.com",
       "https://orion-payment-api-dev.delhivery.com"
+  ),
+  CityService(
+      "https://orion-city-api.delhivery.com",
+      "https://orion-city-api-dev.delhivery.com"
   );
 
   /**

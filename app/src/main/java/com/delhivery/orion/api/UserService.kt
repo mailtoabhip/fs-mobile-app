@@ -4,25 +4,14 @@ import com.delhivery.orion.api.request.UpdateUserBaseCityRequest
 import com.delhivery.orion.api.request.UpdateUserRoutesRequest
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.RouteMappingModel
 import com.delhivery.orion.data.UserModel
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface UserService {
-  /**
-   * Search cities
-   */
-  @GET("/cities")
-  fun searchCities(
-    @Query("city_prefix") query: String
-  ): Single<BaseResponse<List<CityModel>>>
 
   /**
    * Near by cities
