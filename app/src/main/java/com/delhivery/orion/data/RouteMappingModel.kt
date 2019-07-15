@@ -1,5 +1,6 @@
 package com.delhivery.orion.data
 
+import com.delhivery.orion.data.home.routes.RouteModel
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -13,7 +14,7 @@ data class RouteMappingModel(
 /**
  * Convert to route list
  */
-fun List<RouteMappingModel>.toRoutes(): List<RouteModel> {
+fun List<RouteMappingModel>.toRoutes(): MutableList<RouteModel> {
   val routes = mutableMapOf<String, RouteModel>()
   map {
     if (!routes.containsKey(it.origin.key()) || routes[it.origin.key()] == null) {
@@ -21,5 +22,5 @@ fun List<RouteMappingModel>.toRoutes(): List<RouteModel> {
     }
     routes[it.origin.key()]!!.destinations.add(it.destination)
   }
-  return routes.values.toList()
+  return routes.values.toMutableList()
 }

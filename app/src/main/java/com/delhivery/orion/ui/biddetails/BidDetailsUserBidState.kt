@@ -3,6 +3,7 @@ package com.delhivery.orion.ui.biddetails
 import android.support.annotation.LayoutRes
 import com.delhivery.orion.R
 import com.delhivery.orion.data.bids.TransactionBid
+import com.delhivery.orion.data.home.trips.TripDriverDetails
 
 /**
  * Base state with [containerId]
@@ -44,7 +45,9 @@ data class BidDetailsUserBidState_LoadingBids(
  * Confirmed bid state
  */
 data class BidDetailsUserBidState_ConfirmedBid(
-  val pickupLocation: String
+  var pickupLocation: String?,
+  var driverDetails: TripDriverDetails?,
+  var vehicleNumber: String?
 ) : BidDetailsUserBidState(R.layout.view_bid_details_confirmed_bid)
 
 /**

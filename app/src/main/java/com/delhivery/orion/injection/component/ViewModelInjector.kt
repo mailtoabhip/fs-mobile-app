@@ -7,6 +7,7 @@ import com.delhivery.orion.ui.bids.BidsViewModel
 import com.delhivery.orion.ui.home.HomeViewModel
 import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsViewModel
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.orion.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel
@@ -14,7 +15,7 @@ import com.delhivery.orion.ui.onboarding.OnboardingViewModel
 import com.delhivery.orion.ui.searchload.SearchLoadViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.orion.ui.searchload.fragments.searchresults.SearchResultsViewModel
-import com.delhivery.orion.ui.selectroute.SelectRouteViewModel
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.orion.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
 import com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
 import com.delhivery.orion.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
@@ -56,6 +57,8 @@ interface ViewModelInjector {
   fun inject(homeViewModel: HomeViewModel)
 
   fun inject(homeBidsViewModel: HomeBidsViewModel)
+
+  fun inject(homeLoadsViewModel: HomeLoadsViewModel)
 
   fun inject(homeTripsViewModel: HomeTripsViewModel)
 

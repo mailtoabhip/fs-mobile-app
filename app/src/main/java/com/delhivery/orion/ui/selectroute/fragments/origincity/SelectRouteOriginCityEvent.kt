@@ -13,8 +13,14 @@ abstract class SelectRouteOriginCityBaseEvent
 data class SelectRouteOriginCityNearbyLocations(
   val originLocation: CityModel,
   val locations: List<CityModel>
-) :
-    SelectRouteOriginCityBaseEvent()
+) : SelectRouteOriginCityBaseEvent()
+
+/**
+ * Nearby locations
+ */
+data class SelectRouteOriginCitySelected(
+  val originLocation: CityModel
+) : SelectRouteOriginCityBaseEvent()
 
 /**
  * Error event

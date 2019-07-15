@@ -20,6 +20,8 @@ import com.delhivery.orion.utils.extensions.onPageSelected
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {
 
+  var currPos: Int = 0
+
   override fun getViewModelClass() = HomeViewModel::class.java
 
   override fun layoutId() = R.layout.activity_home
@@ -36,7 +38,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = HomeFragmentType.BidsFragment.title
+    title = "Load Requests"
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -46,7 +48,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       onPageSelected { p ->
         HomeFragmentType.pos(p)
             ?.let {
-              title = it.title
+              uiUtils.toggleKeyboard()
+              this@HomeActivity.title = HomeFragmentType.pos(p)
+                  ?.fragment?.title
               binding.bottomNav.selectedItemId = it.menuId
               observeFragmentLiveData(p)
             }
@@ -95,10 +99,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
         binding.viewpager.apply {
+          uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
+            this@HomeActivity.title = HomeFragmentType.pos(pos)
+                ?.fragment?.title
             setCurrentItem(pos, true)
           }
         }
         pos != -1
       }
+}
+
+interface TitleProvider {
+  val title: CharSequence
 }

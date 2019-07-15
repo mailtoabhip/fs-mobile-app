@@ -3,9 +3,9 @@ package com.delhivery.orion.repository
 import com.delhivery.orion.api.TransactionService
 import com.delhivery.orion.api.TripService
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.HomeTripsItemData
-import com.delhivery.orion.data.home.TripStatus
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.utils.extensions.convertResponse
 import io.reactivex.Single
 import io.reactivex.functions.Function3
@@ -20,14 +20,30 @@ class TripsRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
+   * @status set null to fetch all trips or add any single trip status
    * Get user trips
+   *
    */
   fun trips(
     offset: Int = 0,
     status: TripStatus? = null
-  ) = tripsService.trips(
-      "0060w0000028cA4A1K"/*userRepository.userId()*/, limit = UserTripsLoadLimit, offset = offset,
-      status = status?.statusKey
+  ) = tripsService.tripsForStatuses(
+      userRepository.userId(), UserTripsLoadLimit,
+      offset, status?.statusKey
+  )
+      .convertResponse()
+
+  /**
+   * @status set null to fetch all trips or add any comma separated trip statuses
+   * Get user trips for multiple statuses
+   *
+   */
+  fun trips(
+    offset: Int = 0,
+    statuses: String
+  ) = tripsService.tripsForStatuses(
+      userRepository.userId(), UserTripsLoadLimit,
+      offset, statuses
   )
       .convertResponse()
 
@@ -38,10 +54,19 @@ class TripsRepository @Inject constructor(
       transactionService.transactionDetails(transactionId).convertResponse(),
       tripsService.trip(transactionId).convertResponse(),
       tripsService.tripHistory(transactionId).convertResponse(),
-      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>, Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
+      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>,
+          Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
         Triple(t1, t2, t3)
       }
   )
+
+  /**
+   * User/supplier trip summary [BidSummaryResponse]
+   */
+  fun userTripsSummary(
+  ) = tripsService
+      .userTripsSummary(userRepository.userId())
+      .convertResponse()
 }
 
 /* User trips pagination load limit */

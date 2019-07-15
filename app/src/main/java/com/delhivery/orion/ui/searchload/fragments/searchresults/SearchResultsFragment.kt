@@ -4,23 +4,20 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
-import com.delhivery.orion.data.home.HomeBidsRequestAction_ViewDetails
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.databinding.FragmentSearchResultsBinding
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
-import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsSearchSpinnerItem
 import com.delhivery.orion.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.orion.utils.extensions.centerX
@@ -28,7 +25,7 @@ import com.delhivery.orion.utils.extensions.centerY
 import com.delhivery.orion.utils.extensions.setup
 
 class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBinding, SearchResultsViewModel>(),
-    HomeBidsRVAdapterInterface {
+    SearchLoadsRVAdapterInterface {
 
   companion object {
     val _instance: SearchResultsFragment by lazy { SearchResultsFragment() }
@@ -39,8 +36,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   override fun layoutId() = R.layout.fragment_search_results
 
   private val _adapter by lazy {
-    HomeBidsRVAdapter(this)
+    SearchLoadsRVAdapter(this)
   }
+
   private val _scrollListener by lazy {
     SearchResultsRVScrollListener()
   }
@@ -58,16 +56,26 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       layoutManager = LinearLayoutManager(context)
       adapter = _adapter
       addOnScrollListener(_scrollListener)
-      LinearSnapHelper().attachToRecyclerView(this)
-      /* add first dummy item */
-      _adapter.operation(HomeBidsSearchSpinnerItem(), Add)
     }
+
+    viewModel.bidsActionLiveData.observe(this, Observer {
+      uiUtils.toggleKeyboard()
+          .apply {
+            when {
+              it != null -> {
+                (_adapter.itemsList()
+                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                _adapter.notifyItemChanged(it.first)
+              }
+            }
+          }
+    })
 
     /* transform observe search results */
     Transformations.map(viewModel.searchResults) {
-      return@map mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
         /* add all transactions */
-        it.forEach { _item -> add(Pair(HomeBidsRequestItem(_item), Add)) }
+        it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
       }
     }
         .observe(this, SearchResultsObserver())
@@ -77,13 +85,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    * Setup spinners
    */
   private fun setupSpinners() {
+    binding.spinnerTruckType.isEnabled = false
+    binding.spinnerTruckType.isClickable = false
     /* truck type */
     binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
-
-    }
-
-    /* truck size */
-    binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
 
     }
   }
@@ -93,22 +98,30 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   fun search(
     origin: CityModel,
-    destination: CityModel,
+    destination: CityModel?,
     type: String,
-    size: String,
     progress: Boolean = true
   ) {
+    /* clear and add first dummy item */
+    _adapter.clearItems()
+    _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true))
     binding.origin = origin
     binding.destination = destination
-    viewModel.searchLoad(origin, destination, type, size)
+    val pos = when (type) {
+      "Closed" -> 0
+      "Open" -> 1
+      else -> 2
+    }
+    binding.spinnerTruckType.setSelection(pos, true)
+    viewModel.searchLoad(origin, destination, type)
   }
 
   override fun handleAction(
     actionId: String,
-    item: BaseHomeBidsRVAdapterItem<*>
+    item: BaseSearchLoadsRVAdapterItem<*>
   ) {
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> context?.let {
@@ -119,11 +132,32 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     }
   }
 
+  override fun handleAction(
+    actionId: String,
+    item: BaseSearchLoadsRVAdapterItem<*>,
+    position: Int
+  ) {
+    when (actionId) {
+      HomeBidsRequestAction_PlaceBid -> {
+        (item.data as HomeBidsRequestItemData).let {
+          BidDetailsCreateEditDialog(
+              context!!, it, it.transactionBid, viewModel, position, uiUtils
+          ).show()
+        }
+      }
+      HomeBidsRequestAction_AcceptBid -> {
+        (item.data as HomeBidsRequestItemData).let {
+          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
+        }
+      }
+    }
+  }
+
   /**
    * Search results observer
    */
-  inner class SearchResultsObserver : Observer<MutableList<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
-    override fun onChanged(t: MutableList<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
+  inner class SearchResultsObserver : Observer<MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
+    override fun onChanged(t: MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
       resetSpinnerContainer()
       /* hide progress */
       action(ProgressSearchLoadAction(false))
@@ -142,7 +176,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private fun resetSpinnerContainer() {
     binding.apply {
       _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
-      _scrollListener.coordinateView(spinnerTruckSize, viewHiddenIndicator, 0f)
       viewHiddenIndicator.alpha = 0f
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f
@@ -167,9 +200,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
         containerSpinner.translationY = if (pos >= 1) {
           viewHiddenIndicator.alpha = 1f
-
           updateVisibility(spinnerTruckType, View.INVISIBLE)
-          updateVisibility(spinnerTruckSize, View.INVISIBLE)
           maxTranslationY
         } else {
           val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
@@ -177,7 +208,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           val factor = Math.min(childTop / maxTranslationY, 1f)
           viewHiddenIndicator.alpha = factor
           coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
-          coordinateView(spinnerTruckSize, viewHiddenIndicator, factor)
           Math.max(maxTranslationY, childTop)
         }
       }

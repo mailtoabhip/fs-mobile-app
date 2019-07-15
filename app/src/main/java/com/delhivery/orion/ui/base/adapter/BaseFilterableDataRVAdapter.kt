@@ -5,14 +5,16 @@ import com.delhivery.orion.data.BaseKeyTypeModel
 import com.delhivery.orion.ui.base.BaseViewHolder
 import com.delhivery.orion.utils.extensions.isNotNullOrEmpty
 
-abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : ViewDataBinding, VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) :
-    BaseDataRVAdapter<D, B, VH>(clickListener) {
+abstract class BaseFilterableDataRVAdapter<
+    D : BaseKeyTypeModel<out Any>,
+    B : ViewDataBinding,
+    VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) : BaseDataRVAdapter<D, B, VH>(clickListener) {
 
   /* List of filtered items */
   private val filteredItems = mutableListOf<D>()
 
   /* Is filter mode enabled */
-  private var isFiltering = false
+  protected var isFiltering = false
 
   override fun itemsList() = when (isFiltering) {
     true -> filteredItems
@@ -42,7 +44,7 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
   /**
    * Enable filtering
    */
-  fun enableFilter() {
+  open fun enableFilter() {
     isFiltering = true
     notifyDataSetChanged()
   }
@@ -54,5 +56,9 @@ abstract class BaseFilterableDataRVAdapter<D : BaseKeyTypeModel<out Any>, B : Vi
     isFiltering = false
     filteredItems.clear()
     notifyDataSetChanged()
+  }
+
+  fun checkFiltering(): Boolean {
+    return isFiltering
   }
 }

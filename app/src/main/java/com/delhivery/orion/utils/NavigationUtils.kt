@@ -1,6 +1,7 @@
 package com.delhivery.orion.utils
 
 import android.content.Intent
+import android.os.Bundle
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.repository.AuthenticationRepository
 import com.delhivery.orion.ui.auth.AuthenticationActivity
@@ -27,10 +28,39 @@ class NavigationUtils @Inject constructor(
    */
   fun <A : BaseActivity<*, *>> navigate(
     anotherActivity: Class<A>,
-    finishAfter: Boolean = false
+    finishAfter: Boolean = false,
+    extras: Bundle? = null
   ) {
     Intent(activity, anotherActivity).let {
+      if (extras != null) {
+        it.putExtras(extras)
+      }
       activity.startActivity(it)
+    }
+
+    //finish activity, if required
+    if (finishAfter) {
+      activity.finish()
+    }
+  }
+
+  /**
+   * Navigate to another activity with result callback
+   *
+   * @param anotherActivity Target activity class
+   * @param finishAfter Should current activity be finished after navigation, default if false
+   */
+  fun <A : BaseActivity<*, *>> navigateForActivityResult(
+    anotherActivity: Class<A>,
+    finishAfter: Boolean = false,
+    requestCode: Int,
+    extras: Bundle? = null
+  ) {
+    Intent(activity, anotherActivity).let {
+      if (extras != null) {
+        it.putExtras(extras)
+      }
+      activity.startActivityForResult(it, requestCode)
     }
 
     //finish activity, if required
@@ -55,6 +85,22 @@ class NavigationUtils @Inject constructor(
         } else {
           replace(containerId, fragment, tag)
         }
+      }
+          .commitNow()
+    }
+  }
+
+  /**
+   * Replace fragment
+   */
+  fun replaceFragment(
+    containerId: Int,
+    fragment: BaseFragment<*, *>,
+    tag: String
+  ) {
+    activity.supportFragmentManager.apply {
+      beginTransaction().apply {
+        replace(containerId, fragment, tag)
       }
           .commitNow()
     }

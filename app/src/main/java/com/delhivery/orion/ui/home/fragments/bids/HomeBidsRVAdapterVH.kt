@@ -2,15 +2,16 @@ package com.delhivery.orion.ui.home.fragments.bids
 
 import android.databinding.ViewDataBinding
 import android.view.View
-import com.delhivery.orion.data.home.HomeBidsHeaderAction_ConfirmedBids
-import com.delhivery.orion.data.home.HomeBidsHeaderAction_MyBids
-import com.delhivery.orion.data.home.HomeBidsSearchAction_Search
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_LostBids
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderAction_MyBids
+import com.delhivery.orion.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.orion.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.orion.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsSearchSpinnerItemBinding
-import com.delhivery.orion.databinding.ViewHomeBidsWarningItemBinding
+import com.delhivery.orion.databinding.ViewHomeSearchItemBinding
+import com.delhivery.orion.databinding.ViewTimeOutItemBinding
+import com.delhivery.orion.databinding.ViewWarningItemBinding
 import com.delhivery.orion.ui.base.BaseViewHolder
 
 /**
@@ -51,24 +52,35 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
     item: HomeBidsHeaderItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.myBids = item.data.myBids.toString()
-    binding.confirmedBids = item.data.confirmedBids.toString()
+    binding.myBids = when (item.data.myBids) {
+      -1 -> ""
+      else -> item.data.myBids.toString() + " Bids"
+    }
+    binding.confirmedBids = when (item.data.confirmedBid) {
+      -1 -> ""
+      else -> item.data.confirmedBid.toString() + " Bids"
+    }
+    binding.lostBids = when (item.data.lostBids) {
+      -1 -> ""
+      else -> item.data.lostBids.toString() + " Bids"
+    }
+
     binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
     binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
+    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
   }
 }
 
 /**
  * Search item view holder
  */
-internal class HomeBidsSearchItemVH(binding: ViewHomeBidsSearchItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsSearchItemBinding, HomeBidsSearchItem>(binding) {
+internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewHomeSearchItemBinding, HomeBidsSearchItem>(binding) {
   override fun bind(
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.loadRequests = item.data.loadRequests
-    binding.editSearch.clickToAction(HomeBidsSearchAction_Search, item, _interface)
+    binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
   }
 }
 
@@ -88,29 +100,32 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
 /**
  * Bids warning item view holder
  */
-internal class HomeBidsWarningItemVH(binding: ViewHomeBidsWarningItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsWarningItemBinding, HomeBidsWarningItem>(binding) {
+internal class HomeBidsWarningItemVH(binding: ViewWarningItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewWarningItemBinding, HomeBidsWarningItem>(binding) {
   override fun bind(
     item: HomeBidsWarningItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.data = item.data
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }
 
 /**
- * Search load dummy header
+ * Bids timeout view holder
  */
-internal class HomeBidsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinnerItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsSearchSpinnerItemBinding, HomeBidsSearchSpinnerItem>(
-        binding
-    ) {
+internal class HomeBidsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeBidsTimeoutItem>(binding) {
   override fun bind(
-    item: HomeBidsSearchSpinnerItem,
+    item: HomeBidsTimeoutItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }
 
@@ -121,7 +136,6 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
     BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, HomeBidsProgressItem>(
         binding
     ) {
-
   override fun bind(
     item: HomeBidsProgressItem,
     _interface: HomeBidsRVAdapterInterface

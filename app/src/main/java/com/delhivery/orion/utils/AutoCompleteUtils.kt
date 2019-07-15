@@ -1,6 +1,6 @@
 package com.delhivery.orion.utils
 
-import com.delhivery.orion.api.UserService
+import com.delhivery.orion.api.CityService
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.custom.DelhiveryCityAutoEditText
@@ -12,11 +12,11 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 /**
- * AutoCompleteutils acts as Auto Complete controller including network interactions
+ * AutoCompleteUtils acts as Auto Complete controller including network interactions
  */
 @ActivityScope
 class AutoCompleteUtils @Inject constructor(
-  private val userService: UserService,
+  private val cityService: CityService,
   private val activity: DaggerAppCompatActivity
 ) {
 
@@ -47,7 +47,7 @@ class AutoCompleteUtils @Inject constructor(
     action: (CityModel) -> Unit
   ) {
     disposable?.dispose()
-    disposable = userService.searchCities(query)
+    disposable = cityService.searchCities(query)
         .onBackground()
         .doOnSubscribe {
           editText.progress()
@@ -67,6 +67,10 @@ class AutoCompleteUtils @Inject constructor(
             }
           }
         }
-
   }
+
+  fun clearDisposable() {
+    disposable?.dispose()
+  }
+
 }

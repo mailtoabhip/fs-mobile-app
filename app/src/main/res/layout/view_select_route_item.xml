@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
     <variable
         name="route"
-        type="com.delhivery.orion.data.RouteModel"
+        type="com.delhivery.orion.data.home.routes.RouteModel"
         />
   </data>
+
   <android.support.v7.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_4dp"
-      android:layout_marginEnd="@dimen/size_24dp"
-      android:layout_marginStart="@dimen/size_24dp"
+      android:layout_marginEnd="@dimen/size_12dp"
+      android:layout_marginStart="@dimen/size_12dp"
       android:layout_marginTop="@dimen/size_4dp"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardBackgroundColor="@color/colorPrimary"
       app:cardCornerRadius="@dimen/size_6dp"
-      app:cardElevation="@dimen/size_8dp"
+      app:cardElevation="@dimen/size_2dp"
       >
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -43,11 +43,10 @@
           android:layout_marginStart="@dimen/size_18dp"
           android:layout_weight="1"
           android:fontFamily="sans-serif"
-          android:text="@{ route.origin.city }"
-          android:textColor="#de000000"
-          android:textSize="16sp"
+          android:text="@{ route.origin.cityName() }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
-          tools:text="GOA"
           />
 
       <android.support.v7.widget.AppCompatImageView
@@ -64,11 +63,10 @@
           android:layout_height="wrap_content"
           android:layout_weight="0.75"
           android:fontFamily="sans-serif"
-          android:text="@{ route.destinationsCount() }"
-          android:textColor="#de000000"
-          android:textSize="16sp"
+          android:text="@{ route.statesCount() }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
-          tools:text="6 States"
           />
     </android.support.v7.widget.LinearLayoutCompat>
 

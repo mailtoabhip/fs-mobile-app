@@ -1,29 +1,36 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import android.arch.lifecycle.MutableLiveData
-import com.delhivery.orion.data.UserModel
-import com.delhivery.orion.data.home.HomeBidsHeaderItemData
-import com.delhivery.orion.data.home.HomeBidsSearchItemData
+import android.util.Log
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.orion.exception.NoBidsFoundException
 import com.delhivery.orion.repository.BidsRepository
-import com.delhivery.orion.repository.TransactionStatus.Requested
 import com.delhivery.orion.repository.TransactionsRepository
-import com.delhivery.orion.repository.UserRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.orion.ui.bids.BidType
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.extensions.safeEquals
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * View model class for [HomeBidsFragment]
+ *
+ **
+ */
 class HomeBidsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
@@ -31,102 +38,132 @@ class HomeBidsViewModel @Inject constructor(
   var userBidsData =
     MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  /* fab visibility live data */
-  var fabVisibilityLiveData = MutableLiveData<Boolean>()
+  /* bids count live data */
+  var bidsCountLiveData = MutableLiveData<Int>()
 
-  var hasMoreData = true
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  /* pagination params */
+  var total = 0
   var offset = 0
+  var hasMoreData = true
 
   /**
-   * Fetch user static data
+   * Fetch bids summary
    */
-  fun fetchStaticData() {
-    compositeDisposable += Single.zip(
-        userRepository.getUser(), bidsRepository.userBidsCount(),
-        BiFunction<UserModel, Pair<Int, Int>, Triple<UserModel, Int, Int>> { t1, t2 ->
-          Triple(t1, t2.first, t2.second)
-        })
+  fun fetchBidsSummary() {
+    compositeDisposable += bidsRepository.userBidsSummary()
         .onBackground()
-        .doOnSubscribe { showProgress() }
-        .subscribe { _data, error ->
+        .subscribe { _res, error ->
           if (!error) {
-            _data.apply {
-              val _items =
-                mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>()
-
-              /* add header counts */
-              _items.add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData(second, third)), Update))
-
-              /* show no routes warning item when no routes found */
-              if (first.userRoutes().isEmpty()) {
-                _items.add(Pair(HomeBidsWarningItem_SelectRoutes, AddUpdate))
-                fabVisibilityLiveData.postValue(false)
-                showProgress(false)
-              }
-              /* start fetching transactions */
-              else {
-                fetchUserTransactions(false)
-                _items.add(Pair(HomeBidsProgressItem(), AddUpdate))
-              }
-              /* post to static data */
-              userBidsData.postValue(_items)
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(
+                  Pair(
+                      HomeBidsHeaderItem(
+                          HomeBidsHeaderItemData(
+                              _res.myBids,
+                              _res.confirmedBids,
+                              _res.lostBids
+                          )
+                      ), Update
+                  )
+              )
             }
+                .let { userBidsData.postValue(it) }
           } else {
             error.handle()
-            fabVisibilityLiveData.postValue(false)
-            showProgress(false)
           }
         }
   }
 
   /**
-   * Fetch user transactions
+   * Fetch bids
    */
-  fun fetchUserTransactions(paginate: Boolean) {
+  fun fetchBids(paginate: Boolean = false) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
     }
+
+    /* add progress if not paginating */
     if (paginate) {
-      showProgress()
-      /* add progress if not paginating */
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
-    compositeDisposable += transactionsRepository.transactions(offset, Requested)
+    val statuses = mutableListOf<String>().apply {
+      add(BidType.ActiveBid.status.statusKey)
+      add(BidType.ConfirmedBid.status.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
+    dataLoadingLiveData.postValue(true)
+
+    compositeDisposable += bidsRepository.userBids(offset, statuses)
+        .flatMap { _res ->
+          total = _res.first
+          bidsCountLiveData.postValue(total)
+          if (!paginate && total == 0) {
+            Single.error(NoBidsFoundException())
+          } else {
+            transactionsRepository.bulkTransactions(_res.second)
+          }
+        }
         .onBackground()
-        .subscribe { _tRes, error ->
-          if (!error && _tRes != null) {
-            offset = _tRes.offset
-            hasMoreData = _tRes.offset != _tRes.total
+        .subscribe { _res, error ->
+          if (!error) {
+            offset = _res.second.offset
+            hasMoreData = _res.second.hasNext
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeBidsProgressItem(), Remove))
 
               /* edit route prefs, if fresh fetch n total == 0 */
-              if (!paginate && _tRes.total == 0) {
-                add(Pair(HomeBidsWarningItem_EditRoutePrefs, AddUpdate))
-                fabVisibilityLiveData.postValue(false)
+              if (!paginate && total == 0) {
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
               }
-              /* post all transactions as add */
+              /* post all transactions mapped to bids as add */
               else {
-                add(Pair(HomeBidsSearchItem(HomeBidsSearchItemData(_tRes.total)), Update))
-                _tRes.transactions.forEach { _item ->
-                  add(Pair(HomeBidsRequestItem(_item), Add))
+                val bids = _res.first
+                val transactions = _res.second.transactions
+
+                for (transaction in transactions) {
+                  try {
+                    transaction.transactionBid = bids.filter { b ->
+                      b.transactionId.safeEquals(transaction.transactionId)
+                    }
+                        .get(0)
+
+                  } catch (e: Exception) {
+                    Log.d("No Bid found for: ", transaction.transactionId)
+                  }
+                  add(Pair(HomeBidsRequestItem(transaction), Add))
                 }
-                fabVisibilityLiveData.postValue(true)
               }
             }
                 .let { userBidsData.postValue(it) }
           } else {
-            /* remove progress item */
-            Pair(HomeBidsProgressItem(), Remove).let { userBidsData.postValue(listOf(it)) }
-            error.handle()
-            fabVisibilityLiveData.postValue(false)
+            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeBidsProgressItem(), Remove))
+              /* remove search item */
+              add(Pair(HomeBidsSearchItem(), Remove))
+              if (error is NoBidsFoundException) {
+                /* add no bids warning item */
+                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+              } else {
+                /* add api time out item */
+                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
+              }
+            }
+                .let { userBidsData.postValue(it) }
           }
-          showProgress(false)
+
+          dataLoadingLiveData.postValue(false)
         }
   }
+
 }

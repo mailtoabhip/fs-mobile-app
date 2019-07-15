@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
+      android:id="@+id/nav_loads"
+      android:icon="@drawable/ic_nav_loads"
+      android:title="@string/label_nav_load"/>
+
+  <item
       android:id="@+id/nav_bids"
       android:icon="@drawable/ic_nav_bids"
       android:title="@string/label_nav_bids"/>
@@ -11,15 +16,15 @@
       android:icon="@drawable/ic_nav_trips"
       android:title="@string/label_nav_trips"/>
 
-  <item
-      android:id="@+id/nav_payments"
-      android:icon="@drawable/ic_nav_payment"
-      android:title="@string/label_nav_payment"/>
+  <!--<item-->
+  <!--android:id="@+id/nav_payments"-->
+  <!--android:icon="@drawable/ic_nav_payment"-->
+  <!--android:title="@string/label_nav_payment"/>-->
 
-  <item
-      android:id="@+id/nav_alerts"
-      android:icon="@drawable/ic_nav_alerts"
-      android:title="@string/label_nav_alerts"/>
+  <!--<item-->
+  <!--android:id="@+id/nav_alerts"-->
+  <!--android:icon="@drawable/ic_nav_alerts"-->
+  <!--android:title="@string/label_nav_alerts"/>-->
 
   <item
       android:id="@+id/nav_profile"

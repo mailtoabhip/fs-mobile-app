@@ -2,9 +2,11 @@ package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
 import com.delhivery.orion.api.response.TransactionsResponse
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
+import com.delhivery.orion.api.response.TripMeterResponse
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TransactionService {
@@ -16,8 +18,20 @@ interface TransactionService {
   fun transactions(
     @Query("offset") offset: Int,
     @Query("status") status: String?,
-    @Query("source") source: String? = null,
-    @Query("destination") destination: String? = null
+    @Query("origin_city_code") source: String? = null,
+    @Query("destination_city_code") destination: String? = null,
+    @Query("truck_type") truckType: String? = null
+  ): Single<BaseResponse<TransactionsResponse>>
+
+  /**
+   * List all transactions
+   */
+  @GET("/transactions/loadboard/")
+  fun loadBoardTransactions(
+    @Query("sp_id") userId: String,
+    @Query("city_code") cityCode: String,
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -37,4 +51,12 @@ interface TransactionService {
   fun bulkTransactions(
     @Query("transactions_ids") transactionIds: String
   ): Single<BaseResponse<TransactionsResponse>>
+
+  /**
+   * List all transactions
+   */
+  @GET("/transactions/tripmeter/{sp_id}")
+  fun transactionsTripMeter(
+    @Path("sp_id") userId: String
+  ): Single<BaseResponse<TripMeterResponse>>
 }

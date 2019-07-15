@@ -1,22 +1,26 @@
 package com.delhivery.orion.repository
 
 import com.delhivery.orion.api.TransactionService
+import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.utils.extensions.convertResponse
+import com.delhivery.orion.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TransactionsRepository @Inject constructor(
-  private val transactionService: TransactionService
+  private val transactionService: TransactionService,
+  private val userRepository: UserRepository,
+  private val userPrefs: UserPrefs
 ) : BaseRepository() {
 
   /**
    * Get user transactions
    */
-  fun transactions(
-    offset: Int,
-    status: TransactionStatus
-  ) = transactionService.transactions(offset, status.statusId).convertResponse()
+  fun fetchLoadBoardTransactions(offset: Int) = transactionService.loadBoardTransactions(
+      userRepository.userId(), userPrefs.cityCode ?: "",
+      offset, UserTripsLoadLimit
+  ).convertResponse()
 
   /**
    * Search transactions
@@ -24,21 +28,29 @@ class TransactionsRepository @Inject constructor(
   fun searchTransactions(
     offset: Int,
     source: String,
-    destination: String
+    destination: String?,
+    truckType: String?
   ) = transactionService.transactions(
-      offset, null, source = source, destination = destination
+      offset, null, source, destination, truckType
   ).convertResponse()
 
   /**
    * Get bulk transactions using ids
    */
-  fun bulkTransactions(ids: List<String>) =
-    ids.joinToString(separator = ",") { it }.let { transactionService.bulkTransactions(it) }
+  fun bulkTransactions(bids: List<TransactionBid>) =
+    bids.joinToString(
+        separator = ","
+    ) { it.transactionId }.let { transactionService.bulkTransactions(it) }
+        .convertResponse()
+        .map { Pair(bids, it) }
 
   /**
    * Transaction details
    */
   fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
+
+  fun transactionTripMeter() =
+    transactionService.transactionsTripMeter(userRepository.userId()).convertResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {

@@ -77,7 +77,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
     when (viewModel.isUserAuthenticated()) {
       true -> HomeActivity::class
       false -> AuthenticationActivity::class
-    }.let { navigationUtils.navigate(it.java, finishAfter = true) }
+    }.let { navigationUtils.navigate(it.java, true) }
   }
 
   /**

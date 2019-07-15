@@ -1,9 +1,10 @@
 package com.delhivery.orion.api
 
 import com.delhivery.orion.api.response.BaseResponse
+import com.delhivery.orion.api.response.TripSummaryResponse
 import com.delhivery.orion.api.response.TripsResponse
 import com.delhivery.orion.data.TripHistoryModel
-import com.delhivery.orion.data.home.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,6 +24,17 @@ interface TripService {
   ): Single<BaseResponse<TripsResponse>>
 
   /**
+   * List of trips
+   */
+  @GET("trips/")
+  fun tripsForStatuses(
+    @Query("vendor_id") userId: String,
+    @Query("limit") limit: Int,
+    @Query("offset") offset: Int,
+    @Query("status_list") status: String? = null
+  ): Single<BaseResponse<TripsResponse>>
+
+  /**
    * Trip details
    */
   @GET("trips/{transactionId}/")
@@ -37,4 +49,12 @@ interface TripService {
   fun tripHistory(
     @Path("transactionId") transactionId: String
   ): Single<BaseResponse<List<TripHistoryModel>>>
+
+  /**
+   * Get User/supplier trips summary [TripSummaryResponse]
+   */
+  @GET("/trips/summary/{vendor_id}/")
+  fun userTripsSummary(
+    @Path("vendor_id") userId: String
+  ): Single<BaseResponse<TripSummaryResponse>>
 }

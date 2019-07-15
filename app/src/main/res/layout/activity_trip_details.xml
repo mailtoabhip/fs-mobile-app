@@ -12,13 +12,15 @@
 
     <variable
         name="tripDetails"
-        type="com.delhivery.orion.data.home.HomeTripsItemData"
+        type="com.delhivery.orion.data.home.trips.HomeTripsItemData"
         />
+
     <variable
         name="transactionDetails"
-        type="com.delhivery.orion.data.home.HomeBidsRequestItemData"
+        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
         />
   </data>
+
   <android.support.v7.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -38,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
       <android.support.v7.widget.LinearLayoutCompat
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -45,84 +48,60 @@
           >
 
         <!-- vehicle/driver details container -->
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_2dp"
             android:background="@color/colorPrimary"
             android:paddingBottom="@dimen/size_16dp"
-            android:paddingEnd="@dimen/size_24dp"
             android:paddingStart="@dimen/size_24dp"
             android:paddingTop="@dimen/size_16dp"
             bind:shadow="@{ @dimen/size_2dp }"
             >
-
-          <View
-              android:id="@+id/view_center_dot"
-              android:layout_width="@dimen/size_2dp"
-              android:layout_height="@dimen/size_2dp"
-              android:layout_centerInParent="true"
-              />
-
-          <TextView
-              android:id="@+id/text_vehicle_no_label"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentStart="true"
-              android:layout_toStartOf="@id/view_center_dot"
-              android:fontFamily="sans-serif"
-              android:text="@string/label_vehicle"
-              android:textColor="#99000000"
-              android:textSize="12sp"
-              android:textStyle="normal"
-              />
 
           <TextView
               android:id="@+id/text_vehicle_no"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentStart="true"
-              android:layout_below="@id/text_vehicle_no_label"
               android:layout_marginTop="@dimen/size_4dp"
-              android:layout_toStartOf="@id/view_center_dot"
               android:fontFamily="sans-serif"
               android:text="@{ tripDetails.vehicleDetails.vehicleNo }"
-              android:textColor="#181818"
-              android:textSize="14sp"
-              android:textStyle="normal"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              android:textStyle="bold"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
               tools:text="DL 4S FG 2134"
-              />
-
-          <TextView
-              android:id="@+id/text_driver_label"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentEnd="true"
-              android:layout_toEndOf="@id/view_center_dot"
-              android:fontFamily="sans-serif"
-              android:text="@string/label_driver"
-              android:textColor="#99000000"
-              android:textSize="12sp"
-              android:textStyle="normal"
               />
 
           <TextView
               android:id="@+id/text_driver"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_alignParentEnd="true"
-              android:layout_below="@id/text_vehicle_no_label"
+              android:layout_below="@id/text_vehicle_no"
               android:layout_marginTop="@dimen/size_4dp"
-              android:layout_toEndOf="@id/view_center_dot"
               android:fontFamily="sans-serif"
               android:lineSpacingMultiplier="1.2"
               android:text="@{ tripDetails.formattedDriverDetails() }"
-              android:textColor="#181818"
-              android:textSize="14sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
-              tools:text="Ram kumar,\n+919090909090"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/text_vehicle_no"
+              tools:text="Ram kumar,+919090909090"
               />
-        </RelativeLayout>
+
+          <android.support.v7.widget.AppCompatImageView
+              android:id="@+id/img_awaiting_truck_details"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentEnd="true"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              app:srcCompat="@drawable/ic_awaiting_truck_details"
+              />
+        </android.support.constraint.ConstraintLayout>
 
         <!-- trip details container -->
         <android.support.constraint.ConstraintLayout
@@ -130,10 +109,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:background="@color/colorPrimary"
-            android:paddingBottom="@dimen/size_8dp"
+            android:paddingBottom="@dimen/size_16dp"
             android:paddingEnd="@dimen/size_24dp"
             android:paddingStart="@dimen/size_24dp"
-            android:paddingTop="@dimen/size_24dp"
+            android:paddingTop="@dimen/size_16dp"
             bind:shadow="@{ @dimen/size_2dp }"
             >
 
@@ -143,9 +122,11 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:text="@string/label_from"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
               />
 
           <TextView
@@ -154,10 +135,11 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:textColor="#de000000"
-              android:textSize="16sp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_from_label"
-              bind:htmlText="@{ @string/label_city_state(transactionDetails.origin, transactionDetails.origin) }"
+              bind:htmlText="@{ @string/label_city_state(transactionDetails.originCityName(), transactionDetails.originStateName()) }"
               tools:text="Panjim, Goa"
               />
 
@@ -168,9 +150,10 @@
               android:layout_marginTop="@dimen/size_16dp"
               android:fontFamily="sans-serif"
               android:text="@string/label_to"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_source"
               />
 
@@ -180,10 +163,11 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_2dp"
               android:fontFamily="sans-serif"
-              android:textColor="#de000000"
-              android:textSize="16sp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_to_label"
-              bind:htmlText="@{ @string/label_city_state(transactionDetails.destination, transactionDetails.destinationState) }"
+              bind:htmlText="@{ @string/label_city_state(transactionDetails.destinationCityName(), transactionDetails.destinationStateName()) }"
               tools:text="Andheri east, Mumbai, Maharashtra"
               />
 
@@ -192,10 +176,11 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_16dp"
-              android:lineSpacingExtra="4sp"
+              android:lineSpacingExtra="@dimen/text_4sp"
               android:text="@{ transactionDetails.requiredAt() }"
-              android:textColor="#ffffff"
-              android:textSize="10sp"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_10sp"
+              app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_destination"
               bind:drawableResId="@{ transactionDetails.requiredAtBg() }"
               tools:background="@drawable/bg_date_today"
@@ -209,8 +194,8 @@
               android:fontFamily="sans-serif"
               android:gravity="center_vertical"
               android:text="@{ transactionDetails.truckTypeDetails() }"
-              android:textColor="#99000000"
-              android:textSize="13sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
               app:layout_constraintBottom_toBottomOf="@id/text_date_time"
               app:layout_constraintEnd_toEndOf="parent"
@@ -222,22 +207,13 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_8dp"
+              app:layout_constraintBottom_toBottomOf="@id/text_truck_details"
               app:layout_constraintEnd_toStartOf="@id/text_truck_details"
               app:layout_constraintTop_toTopOf="@id/text_truck_details"
               app:srcCompat="@{ transactionDetails.truckTypeDrawableRes() }"
               tools:srcCompat="@drawable/ic_closed_truck"
               />
 
-          <android.support.v7.widget.AppCompatImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_36dp"
-              android:alpha="0.6"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_truck_details"
-              app:srcCompat="@drawable/ic_chevron_down_black"
-              />
         </android.support.constraint.ConstraintLayout>
 
         <!-- Pickup location -->
@@ -259,8 +235,8 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:text="@string/label_pickup_location"
-              android:textColor="#99000000"
-              android:textSize="12sp"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
               />
 
@@ -269,58 +245,88 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
-              android:text="@{ transactionDetails.pickupLocation }"
-              android:textColor="#de000000"
-              android:textSize="14sp"
+              android:text="@{ transactionDetails.pickUpLocationName() }"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
               tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
               />
 
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_16dp"
-              android:fontFamily="sans-serif"
-              android:text="@string/label_contact"
-              android:textColor="#99000000"
-              android:textSize="12sp"
-              android:textStyle="normal"
-              />
-
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_4dp"
-              android:fontFamily="sans-serif"
-              android:text="@{ transactionDetails.clientName }"
-              android:textColor="#de000000"
-              android:textSize="14sp"
-              android:textStyle="normal"
-              tools:text="Amit Kumar , +91 9728 281 321"
-              />
         </android.support.v7.widget.LinearLayoutCompat>
 
         <!-- Status history header -->
-        <TextView
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_16dp"
-            android:layout_marginTop="@dimen/size_20dp"
-            android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.01"
-            android:lineSpacingExtra="4sp"
-            android:text="@string/label_status_history"
-            android:textColor="#8a000000"
-            android:textSize="14sp"
-            android:textStyle="normal"
-            />
+            android:layout_marginTop="@dimen/size_4dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/size_8dp"
+            bind:shadow="@{ @dimen/size_2dp }"
+            >
+
+          <android.support.v7.widget.LinearLayoutCompat
+              android:id="@+id/view_history"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_weight="1"
+              android:background="@drawable/bg_selector_trip_detail_tab"
+              >
+
+            <TextView
+                android:id="@+id/text_status_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0.01"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:paddingBottom="@dimen/size_16dp"
+                android:paddingTop="@dimen/size_16dp"
+                android:text="@string/label_status_history"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                />
+          </android.support.v7.widget.LinearLayoutCompat>
+
+          <android.support.v7.widget.LinearLayoutCompat
+              android:id="@+id/view_summary"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_weight="1"
+              android:background="@drawable/bg_selector_trip_detail_tab"
+              >
+
+            <TextView
+                android:id="@+id/text_payment_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal"
+                android:letterSpacing="0.01"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:paddingBottom="@dimen/size_16dp"
+                android:paddingTop="@dimen/size_16dp"
+                android:text="@string/label_payment_summary"
+                android:textColor="@color/transparent_grey"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                />
+          </android.support.v7.widget.LinearLayoutCompat>
+
+        </android.support.v7.widget.LinearLayoutCompat>
 
         <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/container_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_4dp"
             android:orientation="vertical"
             />
 

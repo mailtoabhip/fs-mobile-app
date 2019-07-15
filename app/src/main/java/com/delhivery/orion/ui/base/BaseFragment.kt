@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.delhivery.orion.BR
+import com.delhivery.orion.ui.home.TitleProvider
 import com.delhivery.orion.utils.ErrorUtils
 import com.delhivery.orion.utils.UiUtils
 import dagger.android.support.AndroidSupportInjection
@@ -23,7 +24,11 @@ import javax.inject.Inject
  */
 
 abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFragment(),
-    LifecycleOwner {
+    LifecycleOwner, TitleProvider {
+
+  override val title: CharSequence
+    get() = ""
+
   protected lateinit var binding: B
   lateinit var viewModel: VM
 

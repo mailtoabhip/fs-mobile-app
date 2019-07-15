@@ -1,17 +1,17 @@
 package com.delhivery.orion.ui.home.fragments.bids
 
 import com.delhivery.orion.data.BaseKeyTypeModel
-import com.delhivery.orion.data.home.HomeBidsHeaderItemData
-import com.delhivery.orion.data.home.HomeBidsProgressItemData
-import com.delhivery.orion.data.home.HomeBidsRequestItemData
-import com.delhivery.orion.data.home.HomeBidsSearchItemData
-import com.delhivery.orion.data.home.HomeBidsSearchSpinnerItemData
-import com.delhivery.orion.data.home.HomeBidsWarningItemData
+import com.delhivery.orion.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.orion.data.home.bids.HomeBidsProgressItemData
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsSearchItemData
+import com.delhivery.orion.data.home.bids.HomeBidsTimeOutItemData
+import com.delhivery.orion.data.home.bids.HomeBidsWarningItemData
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.SearchSpinner
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Timeout
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
 enum class HomeBidsRVAdapterItemType(val typeId: Int) {
@@ -19,8 +19,8 @@ enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Search(1),
   Request(2),
   Warning(3),
-  SearchSpinner(4),
-  Progress(5);
+  Progress(4),
+  Timeout(5);
 
   companion object {
     /**
@@ -43,14 +43,16 @@ abstract class BaseHomeBidsRVAdapterItem<D : BaseKeyTypeModel<String>>(
 /**
  * Header item with my bids and confirmed bids
  */
-class HomeBidsHeaderItem(data: HomeBidsHeaderItemData = HomeBidsHeaderItemData(0, 0)) :
-    BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
+class HomeBidsHeaderItem(
+  data: HomeBidsHeaderItemData = HomeBidsHeaderItemData()
+) : BaseHomeBidsRVAdapterItem<HomeBidsHeaderItemData>(Header, data)
 
 /**
  * Search item with live load requests
  */
-class HomeBidsSearchItem(data: HomeBidsSearchItemData = HomeBidsSearchItemData(0)) :
-    BaseHomeBidsRVAdapterItem<HomeBidsSearchItemData>(Search, data)
+class HomeBidsSearchItem(
+  data: HomeBidsSearchItemData = HomeBidsSearchItemData()
+) : BaseHomeBidsRVAdapterItem<HomeBidsSearchItemData>(Search, data)
 
 /**
  * Bid request item
@@ -65,10 +67,10 @@ class HomeBidsWarningItem(data: HomeBidsWarningItemData) :
     BaseHomeBidsRVAdapterItem<HomeBidsWarningItemData>(Warning, data)
 
 /**
- * Search load screen dummy view
+ * Timeout item
  */
-class HomeBidsSearchSpinnerItem(data: HomeBidsSearchSpinnerItemData = HomeBidsSearchSpinnerItemData()) :
-    BaseHomeBidsRVAdapterItem<HomeBidsSearchSpinnerItemData>(SearchSpinner, data)
+class HomeBidsTimeoutItem(data: HomeBidsTimeOutItemData) :
+    BaseHomeBidsRVAdapterItem<HomeBidsTimeOutItemData>(Timeout, data)
 
 /**
  * Inline progress item

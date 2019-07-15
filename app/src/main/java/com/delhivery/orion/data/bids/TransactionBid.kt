@@ -21,12 +21,12 @@ data class TransactionBid(
    * Formatted string for target price diff
    */
   fun targetPriceDiff(targetPrice: Int) = (targetPrice - bidAmount).let { _diff ->
-    if (_diff == 0) return "(Same as target amount)"
+    if (_diff == 0) return "(Your Bid is same as target amount)"
     when (_diff > 0) {
       true -> "less"
       false -> "more"
     }.let { _x ->
-      "(₹ ${Math.abs(_diff)} $_x than target price)"
+      "(Your Bid is ₹ ${Math.abs(_diff)} $_x than target price)"
     }
   }
 
@@ -36,15 +36,18 @@ data class TransactionBid(
   fun status() = TransactionBidStatus.byStatusKey(_status)
 }
 
-enum class TransactionBidStatus(val statusKey: String) {
-  Open("open"),
-  Rejected("rejected"),
-  Accepted("accepted"),
-  NA("na");
+enum class TransactionBidStatus(
+  val statusKey: String,
+  val status: String
+) {
+  Open("open", "Active"),
+  Rejected("rejected", "Lost"),
+  Accepted("accepted", "Confirmed"),
+  NA("na", "NA");
 
   companion object {
     /**
-     * Status by response key
+     * Status by response keyg
      */
     fun byStatusKey(_status: String) =
       values().filter { it.statusKey.safeEquals(_status) }.firstOrNull() ?: Open

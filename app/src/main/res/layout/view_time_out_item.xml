@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="title"
+        type="String"
+        />
+
+    <variable
+        name="subTitle"
+        type="String"
+        />
+
+    <variable
+        name="actionLabel"
+        type="String"
+        />
+  </data>
+
+  <android.support.v7.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:paddingEnd="@dimen/size_24dp"
+      android:paddingStart="@dimen/size_24dp"
+      >
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_empty_box"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_40dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_2sp"
+        android:text="@{ title }"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_16sp"
+        android:textStyle="normal"
+        tools:text="heading"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_24dp"
+        android:layout_marginStart="@dimen/size_24dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@{ subTitle }"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="normal"
+        tools:text="sub heading"
+        />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_action"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="@dimen/size_56dp"
+        android:text="@{ actionLabel }"
+        tools:text="Action"
+        style="@style/ActionButton"
+        />
+  </android.support.v7.widget.LinearLayoutCompat>
+
+</layout>

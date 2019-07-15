@@ -2,9 +2,8 @@ package com.delhivery.orion.ui.home.fragments
 
 import com.delhivery.orion.R
 import com.delhivery.orion.ui.base.BaseFragment
-import com.delhivery.orion.ui.home.fragments.alerts.HomeAlertsFragment
 import com.delhivery.orion.ui.home.fragments.bids.HomeBidsFragment
-import com.delhivery.orion.ui.home.fragments.payment.HomePaymentFragment
+import com.delhivery.orion.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.orion.ui.home.fragments.profile.HomeProfileFragment
 import com.delhivery.orion.ui.home.fragments.trips.HomeTripsFragment
 
@@ -17,11 +16,10 @@ enum class HomeFragmentType(
   val fragment: BaseFragment<*, *>,
   val title: String
 ) {
-  BidsFragment(R.id.nav_bids, 0, HomeBidsFragment._instance, "Bids & Requests"),
-  TripsFragment(R.id.nav_trips, 1, HomeTripsFragment._instance, "Ongoing Trips"),
-  PaymentFragment(R.id.nav_payments, 2, HomePaymentFragment._instance, "Payment"),
-  AlertFragment(R.id.nav_alerts, 3, HomeAlertsFragment._instance, "Alerts"),
-  ProfileFragment(R.id.nav_profile, 4, HomeProfileFragment._instance, "Profile");
+  LoadsFragment(R.id.nav_loads, 0, HomeLoadsFragment._instance, "Loads Requests"),
+  BidsFragment(R.id.nav_bids, 1, HomeBidsFragment._instance, "Bids & Requests"),
+  TripsFragment(R.id.nav_trips, 2, HomeTripsFragment._instance, "Ongoing Trips"),
+  ProfileFragment(R.id.nav_profile, 3, HomeProfileFragment._instance, "Profile");
 
   companion object {
     /**

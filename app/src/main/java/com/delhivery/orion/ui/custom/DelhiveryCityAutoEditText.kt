@@ -9,6 +9,7 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.AppCompatAutoCompleteTextView
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import com.delhivery.orion.R
 import com.delhivery.orion.data.CityModel
@@ -103,6 +104,7 @@ class DelhiveryCityAutoEditText(
       ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
     setAdapter(adapter)
     setOnItemClickListener { _, _, i, _ ->
+      setText(cities[i].cityName())
       selected(cities[i])
       dismissDropDown()
     }
@@ -113,6 +115,11 @@ class DelhiveryCityAutoEditText(
       error = false
     }
     invalidate()
+  }
+
+  fun errorAnimate() {
+    val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
+    this.startAnimation(shake)
   }
 }
 

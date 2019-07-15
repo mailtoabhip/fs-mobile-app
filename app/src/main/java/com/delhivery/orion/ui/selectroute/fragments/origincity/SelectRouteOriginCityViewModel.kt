@@ -20,8 +20,6 @@ class SelectRouteOriginCityViewModel @Inject constructor(private val originDataS
    * origin city selected, fetch and show nearyby locations
    */
   fun fetchNearByLocations(city: CityModel) {
-//    if (!isConnected) return
-
     compositeDisposable += originDataService.nearByLocations(city.cityId)
         .convertResponse()
         .onBackground()

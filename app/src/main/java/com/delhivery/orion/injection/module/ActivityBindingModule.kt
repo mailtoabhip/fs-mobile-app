@@ -7,15 +7,17 @@ import com.delhivery.orion.injection.scope.ActivityScope
 import com.delhivery.orion.ui.auth.AuthenticationActivity
 import com.delhivery.orion.ui.biddetails.BidDetailsActivity
 import com.delhivery.orion.ui.bids.BidsActivity
+import com.delhivery.orion.ui.bids.TripsActivity
 import com.delhivery.orion.ui.home.HomeActivity
 import com.delhivery.orion.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.orion.ui.onboarding.OnboardingActivity
 import com.delhivery.orion.ui.searchload.SearchLoadActivity
 import com.delhivery.orion.ui.searchload.fragments.SearchLoadFragmentsBindingModule
-import com.delhivery.orion.ui.selectroute.SelectRouteActivity
+import com.delhivery.orion.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.orion.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.orion.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.orion.ui.splash.SplashActivity
+import com.delhivery.orion.ui.tripdetails.ImageViewActivity
 import com.delhivery.orion.ui.tripdetails.TripDetailsActivity
 import dagger.Binds
 import dagger.Module
@@ -68,6 +70,11 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsBidsActivityModule::class])
   internal abstract fun bindBidsActivity(): BidsActivity
 
+  /* Advance/Balance/InTransit/Completed Trips activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTripsActivityModule::class])
+  internal abstract fun bindTripsActivity(): TripsActivity
+
   /* Bid Details activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
@@ -86,6 +93,13 @@ abstract class ActivityBindingModule {
       modules = [AbsTripDetailsActivityModule::class]
   )
   internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
+
+  /* Trip details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsImageViewActivityModule::class]
+  )
+  internal abstract fun bindImageViewActivity(): ImageViewActivity
 }
 
 /**
@@ -117,6 +131,9 @@ internal abstract class AbsHomeActivityModule : ActivityModule<HomeActivity>()
 internal abstract class AbsBidsActivityModule : ActivityModule<BidsActivity>()
 
 @Module
+internal abstract class AbsTripsActivityModule : ActivityModule<TripsActivity>()
+
+@Module
 internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
 
 @Module
@@ -124,6 +141,9 @@ internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadA
 
 @Module
 internal abstract class AbsTripDetailsActivityModule : ActivityModule<TripDetailsActivity>()
+
+@Module
+internal abstract class AbsImageViewActivityModule : ActivityModule<ImageViewActivity>()
 
 /**
  * Activity Binds Module

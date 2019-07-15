@@ -79,7 +79,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       Auth -> AuthenticationActivity::class
       Home -> HomeActivity::class
     }.let {
-      navigationUtils.navigate(it.java, finishAfter = true)
+      navigationUtils.navigate(it.java, true)
     }
   }
 }

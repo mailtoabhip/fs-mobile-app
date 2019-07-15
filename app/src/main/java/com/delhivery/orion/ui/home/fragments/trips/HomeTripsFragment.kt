@@ -1,35 +1,46 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
+import android.animation.ValueAnimator
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.view.View
 import com.delhivery.orion.R
-import com.delhivery.orion.data.home.HomeTripsItemData
-import com.delhivery.orion.data.home.TripStatus.InTrasit
-import com.delhivery.orion.data.home.TripStatus.TripCompleted
-import com.delhivery.orion.data.home.TripStatus.TruckArrived
-import com.delhivery.orion.data.home.TripStatus.TruckReached
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_AdvancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_BalancePending
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_Completed
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderAction_InTransit
+import com.delhivery.orion.data.home.trips.HomeTripsItemData
+import com.delhivery.orion.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.orion.data.home.trips.HomeTripsTimeOutAction
+import com.delhivery.orion.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.orion.databinding.FragmentHomeTripsBinding
 import com.delhivery.orion.repository.UserTripsLoadLimit
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.orion.ui.bids.TripType.AdvancePending
+import com.delhivery.orion.ui.bids.TripType.BalancePending
+import com.delhivery.orion.ui.bids.TripType.Completed
+import com.delhivery.orion.ui.bids.TripType.InTransit
+import com.delhivery.orion.ui.bids.userTripsIntent
 import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
+import com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.orion.ui.home.fragments.HomeBaseFragment
 import com.delhivery.orion.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.orion.ui.home.fragments.NavigateHomeFragmentAction
-import com.delhivery.orion.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.orion.ui.tripdetails.tripDetailsIntent
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
-import com.delhivery.orion.utils.extensions.visible
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
-    ItemClickListener<BaseHomeTripsRVAdapterItem<*>> {
+    HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
+
+  var _title: String = "Ongoing Trips"
+
+  override val title: CharSequence
+    get() = _title
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -56,83 +67,125 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
-
     binding.refreshLayout.setOnRefreshListener {
-      adapter.reset()
+      binding.refreshLayout.isRefreshing = false
       /* remove user trips and fetch again */
-      viewModel.fetchTrips(false)
+      refreshData()
     }
 
     /* setup recycler view */
     binding.rvTrips.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeTripsFragment.adapter
-      addOnScrollListener(PaginationInterface())
       addOnScrollListener(HomeTripsRVScrollListener(binding.editStickySearch))
+      addOnScrollListener(PaginationInterface())
     }
 
     adapter.setItems(getStaticItems())
 
-    /* fab menu */
-    binding.fabFilter.setOnClickListener { fab ->
-      uiUtils.fabCardMenu(fab as FloatingActionButton, HomeTripsFabCardMenuItems) {
-        menuItemClicked(it)
-      }
-    }
-
-    /* no trips, start bidding button */
-    binding.btnStartBidding.setOnClickListener { action(NavigateHomeFragmentAction(BidsFragment)) }
-
     /* observe and update adapter items */
-    viewModel.userTripsData.observe(this, Observer { _items ->
-      /* error container, if items are null */
-      if (_items == null) {
-        true
-      } else {
+    viewModel.userTripsData.observe(this, Observer {
+      it?.let { _items ->
         adapter.operation(_items)
-        false
-      }.let {
-        binding.containerError.visible(it)
-        binding.rvTrips.visible(!it)
       }
     })
 
+    viewModel.tripsCountLiveData.observe(this, Observer {
+      _title = when (it) {
+        0, null -> "Ongoing Trips"
+        else -> "Ongoing Trips(" + it + ")"
+      }
+    })
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
+    })
+
     /* attach sticky search with adapter */
-    binding.editStickySearch.attachWithAdapter(adapter)
+    binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch trips initially */
+    fetchTripsData()
+  }
+
+  private fun fetchTripsData() {
+    viewModel.fetchTripsSummary()
     viewModel.fetchTrips(false)
   }
 
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    fetchTripsData()
+  }
+
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
-    add(0, HomeTripsSearchItem())
+    add(0, HomeTripsHeaderItem())
+    add(1, HomeTripsSearchItem())
+    add(2, HomeTripsProgressItem())
   }
 
-  override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
-    when (item.type) {
-      TripItem -> {
-        context?.let { startActivity(tripDetailsIntent(item.data as HomeTripsItemData, it)) }
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeTripsRVAdapterItem<*>
+  ) {
+    when (actionId) {
+      HomeTripsRequestAction_ViewDetails -> context?.let {
+        startActivity(
+            tripDetailsIntent(item.data as HomeTripsItemData, it)
+        )
       }
-      else -> {/* useless */
+      HomeTripsSearchAction_Search -> context?.let {
+        val childView = binding.rvTrips.findViewHolderForAdapterPosition(1)!!.itemView
+        val stickyView = binding.editStickySearch
+        stickyView.visibility = View.VISIBLE
+        stickyView.translationY = childView.top.toFloat()
+        stickyView.alpha = 1f
+        binding.rvTrips.alpha = 0f
+        adapter.enableFilter()
+
+        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
+        valueAnimator.duration = 250
+        valueAnimator.addUpdateListener { t ->
+          val animValue = t.animatedValue as Int
+          stickyView.translationY = animValue.toFloat()
+          stickyView.setRatio((animValue.toFloat() / childView.top))
+          if (animValue.toFloat() / childView.top == 1f) {
+            binding.rvTrips.alpha = 1f
+          }
+        }
+        valueAnimator.start()
+
+        stickyView.postDelayed(Runnable {
+          stickyView.requestFocus()
+          uiUtils.toggleKeyboard(false)
+          toolbarElevationLiveData!!.postValue(0f)
+        }, 300)
+      }
+      HomeTripsHeaderAction_AdvancePending -> context?.let {
+        startActivity(userTripsIntent(it, AdvancePending))
+      }
+      HomeTripsHeaderAction_BalancePending -> context?.let {
+        startActivity(userTripsIntent(it, BalancePending))
+      }
+      HomeTripsHeaderAction_InTransit -> context?.let {
+        startActivity(userTripsIntent(it, InTransit))
+      }
+      HomeTripsHeaderAction_Completed -> context?.let {
+        startActivity(userTripsIntent(it, Completed))
+      }
+      HomeTripsWarningAction_NoLoads -> {
+        action(NavigateHomeFragmentAction(BidsFragment))
+      }
+      HomeTripsTimeOutAction -> {
+        refreshData()
       }
     }
   }
 
-  /**
-   * Handle menu item clicked
-   */
-  private fun menuItemClicked(item: DelhiveryFabCardMenuItem) {
-    when (item.id) {
-      0 -> InTrasit
-      1 -> TripCompleted
-      2 -> TruckArrived
-      3 -> TruckReached
-      else -> null
-    }.let {
-      adapter.reset()
-      viewModel.fetchTrips(false, it)
-    }
+  override fun postElevation(elevation: Float) {
+    toolbarElevationLiveData!!.postValue(elevation)
   }
 
   /**
@@ -143,14 +196,14 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     override fun hasMore() = viewModel.hasMoreData
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 
   inner class HomeTripsRVScrollListener(
     private val stickyView: DelhiveryAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {
-    /* Current toolbar elevation */
+
     private var toolbarElevation = -1f
 
     override fun onScrolled(
@@ -161,17 +214,45 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       super.onScrolled(recyclerView, dx, dy)
 
       val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
-
       val pos = layoutManager.findFirstVisibleItemPosition()
-      if (pos >= 1) {
-        stickyView.setRatio(0f)
-        toolbarElevationLiveData!!.postValue(0f)
-      } else if (recyclerView.childCount > 0) {
-        val searchView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
-        val factor =
-          (searchView.height.toFloat() - searchView.bottom.toFloat()) / searchView.height.toFloat()
-        stickyView.setRatio((1 - factor))
-        toolbarElevationLiveData!!.postValue((1 - factor) * elevation)
+      if (!adapter.checkFiltering()) {
+        val _toolbarElevation = if (pos == 0) {
+          stickyView.translationY = 0f
+          stickyView.visibility = View.GONE
+          stickyView.alpha = 0f
+          stickyView.setRatio(1f)
+          defToolbarElevation
+        } else if (pos == 1) {
+          stickyView.visibility = View.VISIBLE
+          val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
+          val viewTopGap = childView.height - stickyView.height * 1f
+          val viewTop = childView.top + viewTopGap
+          if (viewTop > 0) {
+            val factor = viewTop / viewTopGap
+            val invFactor = 1f - factor
+            stickyView.translationY = viewTop
+            stickyView.alpha = invFactor
+            ViewCompat.setElevation(stickyView, elevation * invFactor)
+          } else {
+            stickyView.translationY = stickyView.top * 1f
+            stickyView.alpha = 1f
+            ViewCompat.setElevation(stickyView, elevation)
+          }
+          val factor =
+            (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+          stickyView.setRatio((1 - factor))
+          factor * defToolbarElevation
+        } else {
+          stickyView.visibility = View.VISIBLE
+          stickyView.translationY = 0f
+          stickyView.alpha = 1f
+          stickyView.setRatio(0f)
+          0f
+        }
+        if (_toolbarElevation != toolbarElevation) {
+          toolbarElevation = _toolbarElevation
+          toolbarElevationLiveData!!.postValue(toolbarElevation)
+        }
       }
     }
   }

@@ -26,7 +26,7 @@ fun LinearLayoutCompat.calculateChildren(childView: View): Int {
   }
 }
 
-/**(
+/**
  * Bind [SwipeRefreshLayout] with progress live data with boolean
  */
 fun SwipeRefreshLayout.progressLiveData(

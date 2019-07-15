@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import com.delhivery.orion.R
+import com.delhivery.orion.R.string
 import com.delhivery.orion.data.CityModel
 import com.delhivery.orion.database.entity.SearchLoadHistoryEntity
 import com.delhivery.orion.databinding.FragmentSearchLoadBinding
@@ -60,6 +61,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }
   }
 
+  override fun onPause() {
+    super.onPause()
+    uiUtils.toggleKeyboard()
+    autoCompleteUtils.clearDisposable()
+  }
+
   private fun setupSearchScreen() {
     autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
       origin = it
@@ -74,10 +81,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     /* truck type */
     binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
 
-    }
-
-    /* truck size */
-    binding.spinnerTruckSize.setup(R.array.array_truck_size) { p, v ->
     }
 
     /* submit */
@@ -121,26 +124,33 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   ) {
     uiUtils.toggleKeyboard(true)
 
-    if (origin == null || destination == null) return
+    if (origin == null) {
+      binding.editOriginCity.setError(getString(string.error_search_missing_origin))
+      binding.editOriginCity.errorAnimate()
+      return
+    }
 
     /* form data */
     val type = binding.spinnerTruckType.selectedItem.toString()
-    val size = binding.spinnerTruckSize.selectedItem.toString()
 
     /* save to history if needed */
     if (saveToHistory) {
-      viewModel.saveToHistory(origin, destination, type, size)
+      viewModel.saveToHistory(
+          origin, destination ?: CityModel(
+          city = "Anywhere", cityId = "", state = "Anywhere"
+      ), type
+      )
     }
     /* searching progress */
     action(ProgressSearchLoadAction(true))
 
     /* delay and search for better UX */
     Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, type, size))
+      action(SearchLoadAction(origin, destination, type))
     }, 200)
   }
 
-  private fun validate() = origin != null && destination != null
+  private fun validate() = origin != null
 
   /**
    * init observers

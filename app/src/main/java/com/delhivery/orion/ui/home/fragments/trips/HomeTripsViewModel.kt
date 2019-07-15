@@ -1,67 +1,161 @@
 package com.delhivery.orion.ui.home.fragments.trips
 
 import android.arch.lifecycle.MutableLiveData
-import com.delhivery.orion.data.home.TripStatus
+import android.util.Log
+import com.delhivery.orion.data.home.trips.HomeTripsHeaderItemData
+import com.delhivery.orion.data.home.trips.TripStatus
+import com.delhivery.orion.repository.PaymentRepository
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.orion.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
+import com.delhivery.orion.utils.extensions.safeEquals
 import javax.inject.Inject
 
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * View model class for [HomeTripsFragment]
+ *
+ **
+ */
 class HomeTripsViewModel @Inject constructor(
-  private val tripsRepository: TripsRepository
+  private val tripsRepository: TripsRepository,
+  private val payementRepository: PaymentRepository
 ) : BaseViewModel() {
 
   /* user trips live data */
   var userTripsData =
     MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /* bids count live data */
+  var tripsCountLiveData = MutableLiveData<Int>()
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
+
   var hasMoreData = true
   var offset = 0
-  var status: TripStatus? = null
+  var total = 0
+
+  /**
+   * Fetch trips summary
+   */
+  fun fetchTripsSummary() {
+    compositeDisposable += tripsRepository.userTripsSummary()
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              add(
+                  Pair(
+                      HomeTripsHeaderItem(
+                          HomeTripsHeaderItemData(
+                              _res.advancePending,
+                              _res.balancePending,
+                              _res.inTransit,
+                              _res.completed
+                          )
+                      ), Update
+                  )
+              )
+            }
+                .let { userTripsData.postValue(it) }
+          } else {
+            error.handle()
+          }
+        }
+  }
 
   /**
    * Fetch user trips
    */
-  fun fetchTrips(
-    paginate: Boolean,
-    status: TripStatus? = null
-  ) {
+  fun fetchTrips(paginate: Boolean = false) {
     if (!paginate) {
       offset = 0
-      this.status = status
     } else if (paginate && !hasMoreData) {
       return
     }
 
-    compositeDisposable += tripsRepository.trips(offset, this.status)
-        .onBackground()
-        .progress()
-        .subscribe { _tripsRes, error ->
-          if (!error) {
-            offset += _tripsRes.trips.size
-            hasMoreData = _tripsRes.hasNext
+    /* add progress if not paginating */
+    if (paginate) {
+      Pair(HomeTripsProgressItem(), AddUpdate).let { userTripsData.postValue(listOf(it)) }
+    }
 
-            if (!paginate && _tripsRes.total == 0) {
-              /* show no trips error */
-              userTripsData.postValue(null)
-            } else {
-              mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                /* post all trips as add */
-                _tripsRes.trips.forEach { _item ->
-                  add(Pair(HomeTripsItem(_item), Add))
+    val statuses = mutableListOf<String>().apply {
+      add(TripStatus.In_Transit.statusKey)
+      add(TripStatus.TruckArrived.statusKey)
+      add(TripStatus.TruckConfirmed.statusKey)
+      add(TripStatus.TruckLoaded.statusKey)
+      add(TripStatus.TruckReached.statusKey)
+      add(TripStatus.TruckUnloaded.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
+    dataLoadingLiveData.postValue(true)
+
+    compositeDisposable += tripsRepository.trips(offset, statuses)
+        .flatMap { t ->
+          offset += t.trips.size
+          hasMoreData = t.hasNext
+          total = t.total
+          tripsCountLiveData.postValue(total)
+          payementRepository.bulkPaymentTransactions(t.trips)
+        }
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeTripsProgressItem(), Remove))
+
+              val trips = _res.first
+              val payments = _res.second
+
+              /* No trips found, if fresh fetch n total == 0 */
+              if (total == 0) {
+                add(Pair(HomeTripsSearchItem(), Remove))
+                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
+              }
+              /* post all trips with their respective payments as add */
+              else {
+                for (trip in trips) {
+                  try {
+                    trip.payment = payments.filter { p ->
+                      p.transactionId.safeEquals(trip.transactionId)
+                    }
+                        .get(0)
+                  } catch (e: Exception) {
+                    Log.d("No payment found for: ", trip.transactionId)
+                  }
+                  add(Pair(HomeTripsItem(trip), Add))
                 }
               }
-                  .let {
-                    userTripsData.postValue(it)
-                  }
             }
+                .let {
+                  userTripsData.postValue(it)
+                }
           } else {
-            error.handle()
+            mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              /* remove progress item */
+              add(Pair(HomeTripsProgressItem(), Remove))
+              /* remove search item */
+              add(Pair(HomeTripsSearchItem(), Remove))
+              /* add api time out item */
+              add(Pair(HomeTripsWarningItem_TimeOut, AddUpdate))
+            }
+                .let { userTripsData.postValue(it) }
           }
+
+          dataLoadingLiveData.postValue(false)
         }
   }
 }

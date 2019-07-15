@@ -5,10 +5,9 @@ import com.delhivery.orion.api.request.CreateTransactionBidRequest
 import com.delhivery.orion.api.request.UpdateTransactionBidRequest
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.orion.utils.extensions.convertResponse
 import com.delhivery.orion.utils.extensions.safeEquals
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,17 +17,18 @@ class BidsRepository @Inject constructor(
   private val bidService: BidService
 ) : BaseRepository() {
 
-  /**
-   * Get user bids count, my bids and confirm bids
-   */
-  fun userBidsCount() =
-    Single.zip(
-        userBids(TransactionBidStatus.Open, 0),
-        userBids(TransactionBidStatus.Accepted, 0),
-        BiFunction<Pair<Int, List<TransactionBid>>, Pair<Int, List<TransactionBid>>, Pair<Int, Int>>
-        { _myBids, _cnfBids ->
-          Pair(_myBids.first, _cnfBids.first)
-        })!!
+  private fun createList(
+    t1: Pair<Int, List<TransactionBid>>,
+    t2: Pair<Int, List<TransactionBid>>,
+    t3: Pair<Int, List<TransactionBid>>
+  ): Pair<Triple<Int, Int, Int>, MutableList<TransactionBid>> {
+    val count = Triple(t1.first, t2.first, t3.first)
+    val list: MutableList<TransactionBid> = mutableListOf()
+    list.addAll(t1.second)
+    list.addAll(t2.second)
+    list.addAll(t3.second)
+    return Pair(count, list)
+  }
 
   /**
    * Transaction Bids along with user bid and bid count
@@ -42,6 +42,26 @@ class BidsRepository @Inject constructor(
         val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
             .firstOrNull()
         Triple(userBid, it.bids, it.totalBids)
+      }!!
+
+  fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
+      .convertResponse()
+      .map {
+        val userId = userRepository.userId()
+        val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
+            .firstOrNull()
+        userBid
+      }!!
+
+  fun bidsForLoads(
+    transactions: List<HomeBidsRequestItemData>
+  ) = bidService.bidsForLoads(
+      userRepository.userId(),
+      transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+  )
+      .convertResponse()
+      .map {
+        Pair(transactions, it.bids)
       }!!
 
   /**
@@ -65,14 +85,37 @@ class BidsRepository @Inject constructor(
       .let { bidService.updateTransactionBid(it) }
 
   /**
-   * User/supplier bids as [Pair] of Total bids count and List of [TransactionBid]
+   * User/supplier bids by status as [Pair] of Total bids count and List of [TransactionBid]
    */
-  fun userBids(
+  fun userBidsByStatus(
     status: TransactionBidStatus,
     offset: Int
-  ) = bidService.userBids(userRepository.userId(), offset, UserBidsLoadLimit, status.statusKey)
+  ) = bidService.userBidsByStatus(
+      userRepository.userId(), offset, UserBidsLoadLimit, status.statusKey
+  )
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
+
+  /**
+   * User/supplier bids by status as [Pair] of Total bids count and List of [TransactionBid]
+   */
+  fun userBids(
+    offset: Int,
+    statuses: String
+  ) = bidService.bidsForStatuses(
+      userRepository.userId(), UserBidsLoadLimit,
+      offset, statuses
+  )
+      .convertResponse()
+      .map { Pair(it.totalBids, it.bids) }
+
+  /**
+   * User/supplier bid summary [BidSummaryResponse]
+   */
+  fun userBidsSummary(
+  ) = bidService
+      .userBidsSummary(userRepository.userId())
+      .convertResponse()
 }
 
 /* User bids pagination load limit */

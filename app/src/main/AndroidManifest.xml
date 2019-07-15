@@ -15,10 +15,11 @@
       android:icon="@drawable/ic_launcher"
       android:label="@string/app_name"
       android:roundIcon="@drawable/ic_launcher"
+      android:screenOrientation="portrait"
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="true"
-      tools:ignore="GoogleAppIndexingWarning">
+      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
     <activity android:name=".ui.splash.SplashActivity">
       <intent-filter>
@@ -31,14 +32,13 @@
 
     <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
-    <activity android:name=".ui.selectroute.SelectRouteActivity"/>
+    <activity android:name=".ui.selectroute.activity.SelectRouteActivity"/>
 
     <activity android:name=".ui.onboarding.OnboardingActivity"/>
 
     <activity
         android:name=".ui.home.HomeActivity"
-        android:windowSoftInputMode="stateHidden|adjustPan"
-        />
+        android:windowSoftInputMode="stateAlwaysHidden"/>
 
     <activity android:name=".ui.bids.BidsActivity"/>
 
@@ -46,7 +46,12 @@
 
     <activity android:name=".ui.searchload.SearchLoadActivity"/>
 
+    <activity android:name=".ui.bids.TripsActivity"/>
+
     <activity android:name=".ui.tripdetails.TripDetailsActivity"/>
+
+    <activity android:name=".ui.tripdetails.ImageViewActivity"/>
+
   </application>
 
 </manifest>

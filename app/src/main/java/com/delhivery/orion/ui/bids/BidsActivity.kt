@@ -4,29 +4,28 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SearchView.OnQueryTextListener
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
 import com.delhivery.orion.R
+import com.delhivery.orion.data.home.bids.HomeBidsRequestAction_ViewDetails
+import com.delhivery.orion.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.orion.data.home.bids.HomeBidsTimeOutAction
+import com.delhivery.orion.data.home.bids.HomeBidsWarningAction_NoBids
 import com.delhivery.orion.databinding.ActivityBidsBinding
 import com.delhivery.orion.ui.base.BaseActivity
-import com.delhivery.orion.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.orion.ui.biddetails.bidDetailsIntent
-import com.delhivery.orion.ui.bids.BidType.ActiveBid
-import com.delhivery.orion.ui.bids.BidType.LostBid
-import com.delhivery.orion.ui.bids.BidType.Unknown
-import com.delhivery.orion.ui.custom.DelhiveryFabCardMenuItem
-import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.orion.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapter
+import com.delhivery.orion.ui.home.fragments.bids.HomeBidsRVAdapterInterface
 import com.delhivery.orion.utils.PaginationScrollListener
-import com.delhivery.orion.utils.extensions.progressLiveData
 
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
-    ItemClickListener<HomeBidsRequestItem> {
+    HomeBidsRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -38,12 +37,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   override fun requireConnection() = true
 
+  var isLoadingData = true
+
   /* search menu item ref */
   private var searchItem: MenuItem? = null
 
   /* rv adapter */
   private val adapter by lazy {
-    BidsRVAdapter(this)
+    HomeBidsRVAdapter(this)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,14 +67,12 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     title = viewModel.bidType.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    binding.refreshLayout.progressLiveData(viewModel.progressLiveData, this)
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
 
     binding.refreshLayout.setOnRefreshListener {
-      adapter.clearItems()
-      /* remove user bid transactions and fetch again */
-      viewModel.fetchBids(false)
+      binding.refreshLayout.isRefreshing = false
+      refreshData()
     }
 
     /* setup recycler view */
@@ -83,47 +82,56 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       addOnScrollListener(PaginationInterface())
     }
 
-    /* Use this logic to create our own menu as per ui */
-    binding.fabFilter.setOnClickListener { fab ->
-      uiUtils.fabCardMenu(fab as FloatingActionButton, BidsFabCardMenuItems) {
-        onFabMenuItemSelected(it)
-      }
-    }
-
-    binding.btnStartBidding.setOnClickListener { finish() }
+    adapter.setItems(mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
+      add(0, HomeBidsProgressItem())
+    })
 
     /* bids observer */
     viewModel.bidsLiveData.observe(this, Observer {
       title = viewModel.bidType.toolbarTitle(viewModel.total)
-      binding.error = it == null
       searchItem?.isVisible = it != null
       if (it != null) {
         adapter.operation(it)
       }
     })
 
+    viewModel.bidsCountLiveData.observe(this, Observer {
+      title = viewModel.bidType.toolbarTitle(it ?: 0)
+    })
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
+    })
+
     viewModel.fetchBids(false)
   }
 
-  override fun onItemClicked(item: HomeBidsRequestItem) =
-    startActivity(bidDetailsIntent(item.data, this))
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData()
+    /* fetch again */
+    viewModel.fetchBids(false)
+  }
 
-  private fun onFabMenuItemSelected(item: DelhiveryFabCardMenuItem) {
-    when (item.id) {
-      0 -> ActiveBid
-      1 -> LostBid
-      else -> Unknown
-    }.let { _type ->
-      if (_type != viewModel.bidType) {
-        viewModel.bidType = _type
-        title = _type.toolbarTitle()
-        viewModel.fetchBids(false)
-      }
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeBidsRVAdapterItem<*>
+  ) {
+    // handle actions here
+    when (actionId) {
+      HomeBidsWarningAction_NoBids ->
+        finish()
+
+      HomeBidsRequestAction_ViewDetails ->
+        startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))
+
+      HomeBidsTimeOutAction ->
+        refreshData()
     }
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-    menuInflater.inflate(R.menu.menu_bids_activity, menu)
+    menuInflater.inflate(R.menu.menu_search, menu)
     val searchItem = menu?.findItem(R.id.action_search)
     val searchView = searchItem?.actionView as SearchView?
     setupSearch(searchItem, searchView)
@@ -154,7 +162,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
       override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
         binding.refreshLayout.isEnabled = false
-        binding.fabFilter.hide()
         adapter.enableFilter()
         return true
       }
@@ -162,7 +169,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
         uiUtils.toggleKeyboard()
         binding.refreshLayout.isEnabled = true
-        binding.fabFilter.show()
         adapter.cancelFilter()
         return true
       }
@@ -177,7 +183,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
     override fun hasMore() = viewModel.offset < viewModel.total
 
-    override fun isLoading() = binding.refreshLayout.isRefreshing
+    override fun isLoading() = isLoadingData
   }
 }
 

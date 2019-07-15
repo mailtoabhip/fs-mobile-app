@@ -95,6 +95,10 @@ dependencies {
   //Kotlin please animate - animation library
   implementation 'com.github.florent37:kotlinpleaseanimate:1.0.2'
 
+  //Glide
+  implementation "com.github.bumptech.glide:glide:$glideVersion"
+  kapt "com.github.bumptech.glide:compiler:$glideVersion"
+
   //JWT Decode library
   implementation 'com.auth0.android:jwtdecode:1.2.0'
 }
