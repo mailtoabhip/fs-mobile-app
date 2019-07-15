@@ -58,10 +58,8 @@ data class HomeTripsItemData(
   fun tripPayment(): String {
     when (tripStatus()) {
       AdvancePending -> {
-        if (payment != null && payment!!.advancePayout > 0.0) {
-          return "₹ ${String.format(
-              "%.2f", (payment!!.advancePayout).plus(payment!!.fuelPayout ?: 0.0)
-          )}"
+        if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
+          return "₹ ${String.format("%.2f", bidDetails.advancePayout)}"
         }
       }
       BalancePending -> {
@@ -73,7 +71,7 @@ data class HomeTripsItemData(
       Completed -> {
         if (payment != null && payment!!.bidPrice > 0) {
           return "₹ ${String.format(
-              "%.2f", payment!!.bidPrice.plus(payment!!.fuelPayout ?: 0.0)
+              "%.2f", payment!!.bidPrice
           )}"
         }
       }

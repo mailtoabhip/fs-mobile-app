@@ -193,9 +193,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     paymentSummaryBinding.total = "₹ ${String.format("%.2f", total)}"
 
-    val advance = (viewModel.bidDetail?.advancePayout ?: 0.0).plus(
-        viewModel.bidDetail?.fuelPayout ?: 0.0
-    )
+    val advance = viewModel.bidDetail?.advancePayout ?: 0.0
     if (advance > 0.0) {
       paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
       paymentSummaryBinding.advance = when (viewModel.advancePaid) {
