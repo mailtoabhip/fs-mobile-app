@@ -115,6 +115,7 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
       activityRoot.addView(delhiveryProgressBinding.root)
       delhiveryProgressBinding.title = title
       delhiveryProgressBinding.message = message
+      // Pro tip hidden right now
       delhiveryProgressBinding.tip = proTip
 
       delhiveryProgressBinding.progress.startAnim()

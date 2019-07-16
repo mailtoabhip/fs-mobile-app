@@ -51,7 +51,7 @@ data class HomeBidsRequestItemData(
 
   fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
-  fun targetPrice() = "₹ $targetPrice"
+  fun targetPrice() = "₹ ${String.format("%,d", targetPrice)}"
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
@@ -66,11 +66,11 @@ data class HomeBidsRequestItemData(
   fun bidAmount(): String {
     return if (transactionBid != null) {
       when (transactionBid!!.status()) {
-        Accepted -> "₹ ${transactionBid!!.bidAmount}"
-        else -> "₹ $targetPrice"
+        Accepted -> "₹ ${String.format("%,d", transactionBid!!.bidAmount)}"
+        else -> "₹ ${String.format("%,d", targetPrice)}"
       }
     } else {
-      "₹ $targetPrice"
+      "₹ ${String.format("%,d", targetPrice)}"
     }
   }
 
@@ -119,7 +119,7 @@ data class HomeBidsRequestItemData(
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid successfully placed for ₹ ${transactionBid?.bidAmount}"
+  fun bidText() = "Bid successfully placed for ₹ ${String.format("%, d", targetPrice)}"
 }
 
 /* actions */

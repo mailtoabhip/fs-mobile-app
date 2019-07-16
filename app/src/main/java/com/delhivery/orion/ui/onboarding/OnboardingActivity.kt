@@ -65,7 +65,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
    */
   private fun moveNext() {
     val currentPage = binding.viewpager.currentItem
-    if (currentPage < adapter.count) {
+    if (currentPage < adapter.count-1) {
       binding.viewpager.setCurrentItem(currentPage + 1, true)
     } else {
       skip()

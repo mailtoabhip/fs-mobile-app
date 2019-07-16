@@ -248,7 +248,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
-          true -> uiUtils.showProgress("Placing your bid, hang on!!")
+          true -> uiUtils.showProgress("Placing your bid, hang on!")
           false -> uiUtils.hideProgress()
         }
       }

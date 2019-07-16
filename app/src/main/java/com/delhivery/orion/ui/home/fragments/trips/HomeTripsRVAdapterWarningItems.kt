@@ -12,8 +12,8 @@ import com.delhivery.orion.data.home.trips.HomeTripsWarningItemData
 val HomeTripsWarningItem_NoLoads = HomeTripsWarningItem(
     HomeTripsWarningItemData(
         "No Trips found",
-        "Bid smartly and win to get your trucks on the trips…",
-        "Start Bidding", HomeTripsWarningAction_NoLoads
+        "Start bidding now !",
+        "View Available Load", HomeTripsWarningAction_NoLoads
     )
 )
 
