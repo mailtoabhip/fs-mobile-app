@@ -2,13 +2,10 @@ package com.delhivery.orion.ui.auth
 
 import android.Manifest
 import android.arch.lifecycle.Observer
-import android.content.IntentFilter
 import android.os.Bundle
 import com.delhivery.orion.R
 import com.delhivery.orion.databinding.ActivityAuthenticationBinding
-import com.delhivery.orion.receiver.OTPReceiver
 import com.delhivery.orion.receiver.OTPReceiverInterface
-import com.delhivery.orion.receiver.OTP_INTENT_FILTER
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.orion.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.orion.ui.auth.AuthenticationUIError.None
@@ -36,9 +33,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun requireConnection() = true
 
-  /* OTP receiver */
-  private val otpReceiver by lazy { OTPReceiver(this) }
-
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -65,9 +59,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     /* Initiate state */
     viewModel.state = PhoneNo
-
-    /* request sms receive permission */
-    receiveSMSPermission {}
   }
 
   override fun onBackPressed() {
@@ -118,13 +109,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.toggleKeyboard()
           }
           OTP -> {
-            /* read sms per */
-            receiveSMSPermission {
-              if (it) {
-                registerReceiver(otpReceiver, IntentFilter(OTP_INTENT_FILTER))
-              }
-            }
-
             uiUtils.hideDelhiveryProgress()
             //show keyboard and clear otp
             uiUtils.toggleKeyboard(false)
@@ -139,9 +123,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             }
           }
           LoginProgress -> {
-            /* un register otp reader */
-            unregisterReceiver(otpReceiver)
-
             //hide keyboard show progress view
             uiUtils.showDelhiveryProgress(
                 title = "Logging you in..",

@@ -7,6 +7,9 @@ import com.delhivery.orion.data.StateModel
 import com.delhivery.orion.data.bids.TransactionBid
 import com.delhivery.orion.data.bids.TransactionBidStatus
 import com.delhivery.orion.data.bids.TransactionBidStatus.Accepted
+import com.delhivery.orion.data.bids.TransactionBidStatus.Open
+import com.delhivery.orion.ui.bids.TripType
+import com.delhivery.orion.ui.bids.TripType.AdvancePending
 import com.delhivery.orion.utils.ColorProviderUtils
 import com.delhivery.orion.utils.DatePatterns
 import com.delhivery.orion.utils.DateUtils
@@ -63,15 +66,19 @@ data class HomeBidsRequestItemData(
 
   fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
 
-  fun bidAmount(): String {
-    return if (transactionBid != null) {
-      when (transactionBid!!.status()) {
-        Accepted -> "₹ ${String.format("%,d", transactionBid!!.bidAmount)}"
-        else -> "₹ ${String.format("%,d", targetPrice)}"
-      }
-    } else {
-      "₹ ${String.format("%,d", targetPrice)}"
+  fun bidAmount() = if (transactionBid != null) {
+    when (transactionBid!!.status()) {
+      Accepted -> "₹ ${String.format("%,d", transactionBid!!.bidAmount)}"
+      else -> "₹ ${String.format("%,d", targetPrice)}"
     }
+  } else {
+    "₹ ${String.format("%,d", targetPrice)}"
+  }
+
+  fun amountLabel() = when (bidStatus()) {
+    Open -> "Bid Price"
+    Accepted -> "Confirmed Price"
+    else -> "Trip Price"
   }
 
   @DrawableRes
@@ -104,10 +111,13 @@ data class HomeBidsRequestItemData(
   /**
    * Trip display name for toolbar title
    */
-  fun tripDisplayName() =
-    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
-        destinationState
-    )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
+  fun tripDisplayName(tripType: TripType? = null) =
+    when (tripType) {
+      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
+          destinationState
+      )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
+      else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+    }
 
   fun tripPriceDifference(): String {
     return transactionBid?.targetPriceDiff(targetPrice) ?: ""
@@ -119,7 +129,7 @@ data class HomeBidsRequestItemData(
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid successfully placed for ₹ ${String.format("%, d", targetPrice)}"
+  fun bidText() = "Bid placed for ₹ ${String.format("%, d", transactionBid?.bidAmount)}"
 }
 
 /* actions */

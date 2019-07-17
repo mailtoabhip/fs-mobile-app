@@ -32,5 +32,5 @@ data class MonthlyEarning(
 
   fun count() = "$count trips"
 
-  fun sum() = "₹ $sum"
+  fun sum() = "₹ ${String.format("%, .0f", sum)}"
 }

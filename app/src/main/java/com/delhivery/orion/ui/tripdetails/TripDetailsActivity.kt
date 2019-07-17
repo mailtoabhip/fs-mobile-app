@@ -53,7 +53,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     viewModel.tripLiveData.observe(this, Observer {
       it?.apply {
-        title = first.tripDisplayName()
+        title = first.tripDisplayName(second.tripStatus())
         binding.transactionDetails = first
         binding.tripDetails = second
         viewModel.bidDetail = second.bidDetails
