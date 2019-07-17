@@ -83,6 +83,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     binding.btnAccept.clickToAction(
         HomeBidsRequestAction_AcceptBid, item, adapterPosition, _interface
     )
+
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface

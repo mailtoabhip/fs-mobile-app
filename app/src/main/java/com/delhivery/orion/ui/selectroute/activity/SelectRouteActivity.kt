@@ -153,14 +153,14 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
                   }
                   else -> {
                     uiUtils.showSnackbar(
-                        "Routes addition failed, Try again!!", Snackbar.LENGTH_LONG
+                        "Routes addition failed, Try again!", Snackbar.LENGTH_LONG
                     )
                   }
                 }
               }
             } else {
               uiUtils.showSnackbar(
-                  "Routes addition failed, Try again!!", Snackbar.LENGTH_LONG
+                  "Routes addition failed, Try again!", Snackbar.LENGTH_LONG
               )
             }
           }

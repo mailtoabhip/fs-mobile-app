@@ -53,7 +53,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     viewModel.tripLiveData.observe(this, Observer {
       it?.apply {
-        title = first.tripDisplayName()
+        title = first.tripDisplayName(second.tripStatus())
         binding.transactionDetails = first
         binding.tripDetails = second
         viewModel.bidDetail = second.bidDetails
@@ -191,7 +191,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.total = "₹ ${String.format("%.2f", total)}"
+    paymentSummaryBinding.total = "₹ ${String.format("%, .0f", total)}"
 
     val advance = viewModel.bidDetail?.advancePayout ?: 0.0
     if (advance > 0.0) {
@@ -199,11 +199,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       paymentSummaryBinding.advance = when (viewModel.advancePaid) {
         true -> {
           paymentSummaryBinding.labelAdvance.text = "Advance Paid"
-          "₹ ${String.format("%.2f", advance)}"
+          "₹ ${String.format("%, .0f", advance)}"
         }
         false -> {
           paymentSummaryBinding.labelAdvance.text = "Advance Pending"
-          "₹ ${String.format("%.2f", advance)}"
+          "₹ ${String.format("%, .0f", advance)}"
         }
       }
     } else {
@@ -214,11 +214,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     paymentSummaryBinding.balance = when (viewModel.balancePaid) {
       true -> {
         paymentSummaryBinding.labelBalance.text = "Balance Paid"
-        "₹ ${String.format("%.2f", balance)}"
+        "₹ ${String.format("%, .0f", balance)}"
       }
       false -> {
         paymentSummaryBinding.labelBalance.text = "Balance Pending"
-        "₹ ${String.format("%.2f", balance)}"
+        "₹ ${String.format("%, .0f", balance)}"
       }
     }
     paymentSummaryBinding.containerTotal.visibility = View.VISIBLE

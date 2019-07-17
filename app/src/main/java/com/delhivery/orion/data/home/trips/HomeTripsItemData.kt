@@ -55,30 +55,31 @@ data class HomeTripsItemData(
    */
   fun tripStatus() = TripType.byStatus(_tripStatus)
 
-  fun tripPayment(): String {
-    when (tripStatus()) {
-      AdvancePending -> {
-        if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-          return "₹ ${String.format("%.2f", bidDetails.advancePayout)}"
-        }
+  fun tripPayment() = when (tripStatus()) {
+    AdvancePending -> {
+      if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
+        "₹ ${String.format("%, .0f", bidDetails.advancePayout)}"
+      } else {
+        ""
       }
-      BalancePending -> {
-        if (payment != null && payment!!.bidPrice > 0.0 && payment!!.advancePayout > 0.0) {
-          val balance = payment!!.bidPrice.minus(payment!!.advancePayout)
-          return "₹ ${String.format("%.2f", balance)}"
-        }
-      }
-      Completed -> {
-        if (payment != null && payment!!.bidPrice > 0) {
-          return "₹ ${String.format(
-              "%.2f", payment!!.bidPrice
-          )}"
-        }
-      }
-      else -> return ""
     }
+    BalancePending -> {
+      if (payment != null && payment!!.bidPrice > 0.0 && payment!!.advancePayout > 0.0) {
+        val balance = payment!!.bidPrice.minus(payment!!.advancePayout)
+        "₹ ${String.format("%, .0f", balance)}"
+      } else {
+        ""
+      }
+    }
+    Completed -> {
+      if (payment != null && payment!!.bidPrice > 0) {
+        "₹ ${String.format("%, .0f", payment!!.bidPrice)}"
+      } else {
+        ""
+      }
+    }
+    else -> ""
 
-    return ""
   }
 
   override fun filter(query: String) =

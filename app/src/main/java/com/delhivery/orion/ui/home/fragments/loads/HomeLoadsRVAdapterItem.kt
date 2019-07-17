@@ -77,7 +77,7 @@ class HomeLoadsTimeoutItem(data: HomeLoadsTimeOutItemData) :
  */
 class HomeLoadsInfoItem(
   data: HomeLoadsInfoItemData = HomeLoadsInfoItemData(
-      "These are all the recommended loads. To find more relevant loads Search here!!",
-      "To get more relevant loads - change your \n preferences here!!"
+      "These are all the recommended loads. To find more relevant loads Search here!",
+      "To get more relevant loads - change your \n preferences here!"
   )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsInfoItemData>(Info, data)

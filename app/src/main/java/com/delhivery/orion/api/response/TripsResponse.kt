@@ -29,6 +29,6 @@ data class Summary(
 
   fun amount() = when (amount) {
     null -> ""
-    else -> "₹ $amount"
+    else -> "₹ ${String.format("%, .0f", amount)}"
   }
 }

@@ -123,19 +123,35 @@
           />
 
       <TextView
-          android:id="@+id/text_amount"
+          android:id="@+id/label_amount"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_14dp"
           android:fontFamily="sans-serif-medium"
           android:letterSpacing="0.01"
           android:lineSpacingExtra="-2sp"
-          android:text="@{ request.bidAmount() }"
-          android:textColor="@color/black"
-          android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
+          android:text="@{ request.amountLabel() }"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_14sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_date_time"
+          tools:text="Trip Price"
+          />
+
+      <TextView
+          android:id="@+id/text_amount"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif-medium"
+          android:letterSpacing="0.01"
+          android:lineSpacingExtra="-2sp"
+          android:text="@{ request.bidAmount() }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_20sp"
+          android:textStyle="bold"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/label_amount"
           tools:text="₹ 23900.00"
           />
 
@@ -154,7 +170,7 @@
           app:layout_constraintHorizontal_weight="0.75"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_amount"
-          tools:text="Your bid is same as target price"
+          tools:text="Your bid is same as target "
           />
 
       <TextView

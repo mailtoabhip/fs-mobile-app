@@ -16,13 +16,14 @@
         type="String"
         />
   </data>
+
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorPrimary"
-      android:paddingBottom="32dp"
-      android:paddingEnd="48dp"
-      android:paddingStart="48dp"
+      android:paddingBottom="@dimen/size_32dp"
+      android:paddingEnd="@dimen/size_48dp"
+      android:paddingStart="@dimen/size_48dp"
       >
 
     <LinearLayout
@@ -35,22 +36,22 @@
 
       <com.delhivery.orion.ui.custom.DelhiveryProgressView
           android:id="@+id/progress"
-          android:layout_width="80dp"
-          android:layout_height="80dp"
-          android:layout_marginBottom="24dp"
+          android:layout_width="@dimen/size_80dp"
+          android:layout_height="@dimen/size_80dp"
+          android:layout_marginBottom="@dimen/size_24dp"
           />
 
       <TextView
           android:id="@+id/text_title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="24dp"
+          android:layout_marginTop="@dimen/size_24dp"
           android:fontFamily="sans-serif-medium"
           android:gravity="center_horizontal"
-          android:lineSpacingExtra="8sp"
+          android:lineSpacingExtra="@dimen/text_8sp"
           android:text="@{ title }"
-          android:textColor="#de000000"
-          android:textSize="20sp"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_20sp"
           android:textStyle="normal"
           tools:text="Logging you in.."
           />
@@ -58,13 +59,13 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="16dp"
+          android:layout_marginTop="@dimen/size_16dp"
           android:fontFamily="sans-serif"
           android:gravity="center_horizontal"
-          android:lineSpacingExtra="5sp"
+          android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@{ message }"
-          android:textColor="#de000000"
-          android:textSize="14sp"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           tools:text="This usually takes few seconds to load. please be patient."
           />
@@ -77,11 +78,12 @@
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:letterSpacing="0.01"
-        android:lineSpacingExtra="4sp"
+        android:lineSpacingExtra="@dimen/text_4sp"
         android:text="@{ @string/msg_loading_pro_tip(tip) }"
-        android:textColor="#99000000"
-        android:textSize="14sp"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_14sp"
         android:textStyle="normal"
+        android:visibility="invisible"
         tools:text="Pro tip:\nSome tip regarding how to bid, or whats to be considered while bidding. "
         />
   </FrameLayout>

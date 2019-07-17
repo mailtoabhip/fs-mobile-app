@@ -24,6 +24,7 @@ import com.delhivery.orion.data.home.trips.TripStatus
 import com.delhivery.orion.repository.PaymentRepository
 import com.delhivery.orion.repository.TripsRepository
 import com.delhivery.orion.ui.base.BaseViewModel
+import com.delhivery.orion.utils.StringUtils
 import com.delhivery.orion.utils.extensions.not
 import com.delhivery.orion.utils.extensions.onBackground
 import com.delhivery.orion.utils.extensions.plusAssign
@@ -83,7 +84,8 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     AdvancePending,
                     "Advance Pending",
-                    "₹ ${tripDetail.bidDetails?.advancePayout} will be paid once the loading is completed"
+                    "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
+                        " will be paid once the loading is completed"
                 )
             )
           }
@@ -102,8 +104,10 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   ReachedPickupPoint,
                   "Reached Pickup Point",
-                  (history.details?.driverDetails?.driverName
-                      ?: "Driver") + " has reached pickup point",
+                  StringUtils.capitalize(
+                      history.details?.driverDetails?.driverName ?: "driver"
+                  )
+                      + " has reached pickup point",
                   history.details?.getArrivalEpoch() ?: ""
               )
           )
@@ -114,7 +118,7 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   TruckLoaded,
                   "Loading Completed",
-                  "Truck is ready to start to ${history.details?.unloadingLocation}",
+                  "Truck is ready to start " + "from ${tripDetail.loadingLocation}",
                   history.epoch()
               )
           )
@@ -138,7 +142,9 @@ class TripDetailsViewModel @Inject constructor(
                     TripHistoryItem(
                         AdvancePaid,
                         "Advance Paid",
-                        "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been paid",
+                        "Advance payment of " +
+                            "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
+                            " has been paid",
                         history.epoch()
                     )
                 )
@@ -148,7 +154,9 @@ class TripDetailsViewModel @Inject constructor(
                     TripHistoryItem(
                         AdvancePending,
                         "Advance Pending",
-                        "Advance payment of ₹ ${tripDetail.bidDetails?.advancePayout} has been initiated",
+                        "Advance payment of " +
+                            "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
+                            " has been initiated",
                         history.epoch()
                     )
                 )
