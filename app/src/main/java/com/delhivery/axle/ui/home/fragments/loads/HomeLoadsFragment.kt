@@ -1,16 +1,14 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
@@ -272,7 +270,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager = (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+      val layoutManager =
+        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
       val pos = layoutManager.findFirstVisibleItemPosition()
       val _toolbarElevation = if (pos == 0) {
         val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
