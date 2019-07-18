@@ -7,12 +7,12 @@
   <data>
     <variable
         name="trip"
-        type="com.delhivery.orion.data.home.trips.HomeTripsItemData"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
 
-    <import type="android.support.v4.content.ContextCompat"/>
+    <import type="androidx.core.content.ContextCompat"/>
   </data>
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_6dp"
@@ -26,7 +26,7 @@
       app:cardElevation="@dimen/size_2dp"
       >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -95,7 +95,7 @@
           tools:text="Suresh raj (+91 9823222123)"
           />
 
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/img_forward"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -164,6 +164,6 @@
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           tools:text="Mumbai"
           />
-    </android.support.constraint.ConstraintLayout>
-  </android.support.v7.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
 </layout>

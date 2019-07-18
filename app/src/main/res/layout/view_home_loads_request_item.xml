@@ -8,12 +8,12 @@
   <data>
     <variable
         name="request"
-        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
+        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
 
     <import type="android.view.View"/>
   </data>
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_12dp"
@@ -26,14 +26,14 @@
       app:cardElevation="@dimen/size_2dp"
       >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
         >
 
-      <android.support.constraint.ConstraintLayout
+      <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/container_data"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
             tools:text="Goa"
             />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_forward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
             tools:text="Today"
             />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_truck_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
             app:layout_constraintTop_toBottomOf="@id/label_amount"
             tools:text="₹ 23900.00"
             />
-      </android.support.constraint.ConstraintLayout>
+      </androidx.constraintlayout.widget.ConstraintLayout>
 
       <FrameLayout
           android:layout_width="match_parent"
@@ -212,7 +212,7 @@
           app:layout_constraintTop_toBottomOf="@+id/container_data"
           >
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_bid_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -226,7 +226,7 @@
             tools:visibility="visible"
             >
 
-          <android.support.v7.widget.AppCompatImageView
+          <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/img_tick"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
               app:srcCompat="@drawable/ic_tick"
               />
 
-          <com.delhivery.orion.ui.custom.DelhiveryAutoFitTextView
+          <com.delhivery.axle.ui.custom.DelhiveryAutoFitTextView
               android:id="@+id/text_bid_amount"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -271,9 +271,9 @@
               app:srcCompat="@drawable/ic_arrow_forward_black"
               />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container_bid_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -285,7 +285,7 @@
             tools:visibility="gone"
             >
 
-          <android.support.v7.widget.LinearLayoutCompat
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/btn_bid"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -306,9 +306,9 @@
                 android:textStyle="bold"
                 />
 
-          </android.support.v7.widget.LinearLayoutCompat>
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <android.support.v7.widget.LinearLayoutCompat
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/btn_accept"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -328,11 +328,11 @@
                 android:textStyle="bold"
                 />
 
-          </android.support.v7.widget.LinearLayoutCompat>
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
       </FrameLayout>
 
-    </android.support.constraint.ConstraintLayout>
-  </android.support.v7.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
 </layout>

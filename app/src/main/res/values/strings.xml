@@ -1,5 +1,4 @@
 <resources>
-  <string name="app_name">Orion</string>
 
   <!-- Title (title_) -->
   <string name="title_dialog_location_setting_disabled">Enable location</string>

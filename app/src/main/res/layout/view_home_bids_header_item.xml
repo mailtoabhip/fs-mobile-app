@@ -18,12 +18,12 @@
         />
   </data>
 
-  <android.support.constraint.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       >
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/view_my_bids"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_56dp"
@@ -59,9 +59,9 @@
           android:textStyle="bold"
           tools:text="0"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/view_confirmed_bids"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_56dp"
@@ -96,9 +96,9 @@
           android:textStyle="bold"
           tools:text="0"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/view_lost_bids"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_56dp"
@@ -133,6 +133,6 @@
           android:textStyle="bold"
           tools:text="0"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
-  </android.support.constraint.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

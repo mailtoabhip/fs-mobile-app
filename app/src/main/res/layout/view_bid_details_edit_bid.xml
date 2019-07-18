@@ -10,12 +10,12 @@
         type="Integer"
         />
   </data>
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
       >
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/size_8dp"
@@ -27,7 +27,7 @@
         bind:shadow="@{ @dimen/size_2dp }"
         >
 
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="38dp"
@@ -51,7 +51,7 @@
           tools:text="23 bids recieved till now"
           />
 
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_8dp"
@@ -89,10 +89,10 @@
             android:textStyle="normal"
             tools:text="(₹ 2400.00 less than target price)"
             />
-      </android.support.v7.widget.LinearLayoutCompat>
-    </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
     <!---->
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_10dp"
@@ -103,7 +103,7 @@
         bind:shadow="@{ @dimen/size_2dp }"
         >
 
-      <android.support.v7.widget.AppCompatButton
+      <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/btn_edit_bid"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -122,6 +122,6 @@
           android:textColor="@color/colorAccent"
           android:textSize="14sp"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
-  </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

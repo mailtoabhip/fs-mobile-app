@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.splash.SplashViewModel"
+        type="com.delhivery.axle.ui.splash.SplashViewModel"
         />
   </data>
   <FrameLayout
@@ -21,7 +21,7 @@
         android:layout_gravity="center"
         />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         app:srcCompat="@drawable/ic_orion_logo"
         />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         app:srcCompat="@drawable/ic_orion_text"
         />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_delhivery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

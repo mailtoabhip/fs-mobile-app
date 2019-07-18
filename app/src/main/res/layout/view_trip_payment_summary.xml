@@ -23,7 +23,7 @@
 
   </data>
 
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_4dp"
@@ -34,7 +34,7 @@
       app:cardElevation="2dp"
       >
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/size_16dp"
@@ -54,7 +54,7 @@
           android:textStyle="normal"
           />
 
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/container_payment"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -62,9 +62,9 @@
           android:orientation="vertical"
           >
 
-      </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
 
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/container_total"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
             android:background="@color/transparent_grey"
             />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_6dp"
@@ -113,7 +113,7 @@
               tools:text="Rs 3500.00"
               />
 
-          <android.support.constraint.ConstraintLayout
+          <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/container_advance"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -160,9 +160,9 @@
                 tools:text="Rs 1750.00"
                 />
 
-          </android.support.constraint.ConstraintLayout>
+          </androidx.constraintlayout.widget.ConstraintLayout>
 
-          <android.support.constraint.ConstraintLayout
+          <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/container_balance"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -209,17 +209,17 @@
                 tools:text="Rs 1750.00"
                 />
 
-          </android.support.constraint.ConstraintLayout>
+          </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.2dp"
             android:background="@color/transparent_grey"
             />
-      </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </android.support.v7.widget.LinearLayoutCompat>
-  </android.support.v7.widget.CardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.cardview.widget.CardView>
 </layout>

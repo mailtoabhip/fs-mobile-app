@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.delhivery.orion">
+    package="com.delhivery.axle">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
   <application
-      android:name=".KotlinApp"
+      android:name="com.delhivery.axle.KotlinApp"
       android:allowBackup="true"
       android:hardwareAccelerated="true"
       android:icon="@drawable/ic_launcher"
@@ -20,36 +20,36 @@
       android:usesCleartextTraffic="true"
       tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
-    <activity android:name=".ui.splash.SplashActivity">
+    <activity android:name="com.delhivery.axle.ui.splash.SplashActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
 
-    <activity android:name=".ui.auth.AuthenticationActivity"/>
+    <activity android:name="com.delhivery.axle.ui.auth.AuthenticationActivity"/>
 
-    <activity android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
+    <activity android:name="com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity"/>
 
-    <activity android:name=".ui.selectroute.activity.SelectRouteActivity"/>
+    <activity android:name="com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity"/>
 
-    <activity android:name=".ui.onboarding.OnboardingActivity"/>
+    <activity android:name="com.delhivery.axle.ui.onboarding.OnboardingActivity"/>
 
     <activity
-        android:name=".ui.home.HomeActivity"
+        android:name="com.delhivery.axle.ui.home.HomeActivity"
         android:windowSoftInputMode="stateAlwaysHidden"/>
 
-    <activity android:name=".ui.bids.BidsActivity"/>
+    <activity android:name="com.delhivery.axle.ui.bids.BidsActivity"/>
 
-    <activity android:name=".ui.biddetails.BidDetailsActivity"/>
+    <activity android:name="com.delhivery.axle.ui.biddetails.BidDetailsActivity"/>
 
-    <activity android:name=".ui.searchload.SearchLoadActivity"/>
+    <activity android:name="com.delhivery.axle.ui.searchload.SearchLoadActivity"/>
 
-    <activity android:name=".ui.bids.TripsActivity"/>
+    <activity android:name="com.delhivery.axle.ui.bids.TripsActivity"/>
 
-    <activity android:name=".ui.tripdetails.TripDetailsActivity"/>
+    <activity android:name="com.delhivery.axle.ui.tripdetails.TripDetailsActivity"/>
 
-    <activity android:name=".ui.tripdetails.ImageViewActivity"/>
+    <activity android:name="com.delhivery.axle.ui.tripdetails.ImageViewActivity"/>
 
   </application>
 

@@ -6,10 +6,10 @@
   <data>
     <variable
         name="state"
-        type="com.delhivery.orion.data.StateModel"
+        type="com.delhivery.axle.data.StateModel"
         />
   </data>
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_4dp"
@@ -21,7 +21,7 @@
       app:cardElevation="@dimen/size_2dp"
       >
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,5 +36,5 @@
         android:textSize="@dimen/text_16sp"
         tools:targetApi="lollipop"
         />
-  </android.support.v7.widget.CardView>
+  </androidx.cardview.widget.CardView>
 </layout>

@@ -7,28 +7,28 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.tripdetails.TripDetailsViewModel"
+        type="com.delhivery.axle.ui.tripdetails.TripDetailsViewModel"
         />
 
     <variable
         name="tripDetails"
-        type="com.delhivery.orion.data.home.trips.HomeTripsItemData"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
 
     <variable
         name="transactionDetails"
-        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
+        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
   </data>
 
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
       android:orientation="vertical"
       >
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
@@ -41,14 +41,14 @@
         android:layout_height="match_parent"
         >
 
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
           >
 
         <!-- vehicle/driver details container -->
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_2dp"
@@ -92,7 +92,7 @@
               tools:text="Ram kumar,+919090909090"
               />
 
-          <android.support.v7.widget.AppCompatImageView
+          <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/img_awaiting_truck_details"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -101,10 +101,10 @@
               app:layout_constraintTop_toTopOf="parent"
               app:srcCompat="@drawable/ic_awaiting_truck_details"
               />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- trip details container -->
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
@@ -203,7 +203,7 @@
               tools:text="Closed truck (32ft)"
               />
 
-          <android.support.v7.widget.AppCompatImageView
+          <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_8dp"
@@ -214,10 +214,10 @@
               tools:srcCompat="@drawable/ic_closed_truck"
               />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Pickup location -->
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
@@ -252,10 +252,10 @@
               tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
               />
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <!-- Status history header -->
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
@@ -266,7 +266,7 @@
             bind:shadow="@{ @dimen/size_2dp }"
             >
 
-          <android.support.v7.widget.LinearLayoutCompat
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/view_history"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -291,9 +291,9 @@
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="normal"
                 />
-          </android.support.v7.widget.LinearLayoutCompat>
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <android.support.v7.widget.LinearLayoutCompat
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/view_summary"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -318,11 +318,11 @@
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="normal"
                 />
-          </android.support.v7.widget.LinearLayoutCompat>
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -330,7 +330,7 @@
             android:orientation="vertical"
             />
 
-      </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
-  </android.support.v7.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
