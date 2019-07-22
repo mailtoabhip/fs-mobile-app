@@ -108,7 +108,8 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
   fun showErrorDialog(
     error: String,
     dismissTimeout: Long = -1
-  ) = ErrorDialog(
+  ) =
+    ErrorDialog(
       activity, error, dismissTimeout
   ).show()
 }

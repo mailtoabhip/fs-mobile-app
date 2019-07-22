@@ -32,7 +32,7 @@
         android:textColor="#de000000"
         android:textSize="20sp"
         android:textStyle="normal"
-        tools:text="Welcome to Orion!"
+        tools:text="Welcome to Axle!"
         />
 
     <TextView

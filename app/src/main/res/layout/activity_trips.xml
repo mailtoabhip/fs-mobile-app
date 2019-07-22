@@ -9,10 +9,6 @@
         name="viewModel"
         type="com.delhivery.axle.ui.bids.TripsViewModel"
         />
-    <variable
-        name="error"
-        type="Boolean"
-        />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"

@@ -48,7 +48,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Orion"
+    title = "Axle"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* setup live data observers */

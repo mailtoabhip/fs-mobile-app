@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.profile
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
 import com.delhivery.axle.ui.home.TitleProvider
@@ -51,6 +51,10 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
 
       containerLogout.setOnClickListener { it.post { confirmLogout() } }
+    }
+
+    binding.containerTripMeter.setOnClickListener {
+      viewModel.fetchTripMeter()
     }
 
     viewModel.tripEarningLiveData.observe(this, Observer { t ->

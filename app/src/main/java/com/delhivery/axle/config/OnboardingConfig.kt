@@ -13,7 +13,7 @@ data class OnboardingScreen(
  */
 val OnboardingConfig = listOf(
     OnboardingScreen(
-        "Welcome to Orion",
+        "Welcome to Axle",
         "We're changing the way India ships freight across the country. You're now part of our revolutionary journey !"
     ),
     OnboardingScreen("Best Loads", "View, search and bid for loads in your favorite lanes"),

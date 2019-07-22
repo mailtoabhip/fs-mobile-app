@@ -33,7 +33,7 @@
     static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
 }
 
--keep class com.delhivery.orion.data.** { *; }
+-keep class com.delhivery.axle.data.** { *; }
 
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
