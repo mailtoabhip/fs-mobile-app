@@ -24,19 +24,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.CityCode, value).apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
 
-  var spId: String?
-    set(value) = editor.putString(PrefKeys.SupplierId, value).apply()
-    get() = prefs.getString(PrefKeys.SupplierId, null)
+  var phoneNumber: String?
+    set(value) = editor.putString(PrefKeys.PhoneNumber, value).apply()
+    get() = prefs.getString(PrefKeys.PhoneNumber, "")
 
   /* Routes update flag */
   var routeUpdate: Boolean
     set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value).apply()
     get() = prefs.getBoolean(PrefKeys.RouteUpdate, false)
-
-  /* Routes update flag */
-  var phoneNumber: String?
-    set(value) = editor.putString(PrefKeys.Phone, value).apply()
-    get() = prefs.getString(PrefKeys.Phone, "")
 
   /**
    * Pref keys
@@ -45,6 +40,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val JWTToken = "jwt_token"
     const val CityCode = "city_code"
     const val RouteUpdate = "route_update"
-    const val SupplierId = "supplier_id"
+    const val PhoneNumber = "phone_number"
   }
 }
