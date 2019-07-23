@@ -14,7 +14,7 @@ import com.delhivery.axle.ui.base.BaseActivity
  * for Delhivery Private Limited
  **
  *
- * <Define what the class does>
+ *
  *
  **
  */

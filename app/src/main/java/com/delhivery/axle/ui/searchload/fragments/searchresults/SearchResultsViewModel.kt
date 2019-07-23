@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
-import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData

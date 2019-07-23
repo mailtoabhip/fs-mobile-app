@@ -1,15 +1,14 @@
 package com.delhivery.axle.ui.bids
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -22,7 +21,12 @@ import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_BID
 
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     HomeBidsRVAdapterInterface {
@@ -122,9 +126,17 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       HomeBidsWarningAction_NoBids ->
         finish()
 
-      HomeBidsRequestAction_ViewDetails ->
-        startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, this))
+      HomeBidsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
 
+        startActivity(bidDetailsIntent(_item, this))
+      }
       HomeBidsTimeOutAction ->
         refreshData()
     }
@@ -163,6 +175,12 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_SEARCH_LOCAL,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE),
+            mutableListOf(VALUE_BID)
+        )
         return true
       }
 

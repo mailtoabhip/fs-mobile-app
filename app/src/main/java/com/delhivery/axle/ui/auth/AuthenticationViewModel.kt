@@ -29,6 +29,8 @@ class AuthenticationViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
+  var otpStatusLiveData = MutableLiveData<Boolean>()
+
   /* states */
   var stateLiveData = MutableLiveData<AuthenticationUIState>()
   var state: AuthenticationUIState = PhoneNo
@@ -52,7 +54,11 @@ class AuthenticationViewModel @Inject constructor(
       errorLiveData.postValue(Pair(InvalidPhoneNo, null))
       return
     }
+
+    userPrefs.phoneNumber = phoneNo
     //make api call and move to otp state
+    otpStatusLiveData.postValue(true)
+
     compositeDisposable += authenticationRepository.sendOTP(phoneNo)
         .onBackground()
         .progress()

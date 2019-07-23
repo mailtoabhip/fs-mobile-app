@@ -69,7 +69,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
           navigate(ResultsFragment)
           /* search query */
           (ResultsFragment.fragment as SearchResultsFragment).search(
-              originCity, destinationCity, truckType, false
+              originCity, destinationCity, truckType, saveToHistory, false
           )
         }
       }

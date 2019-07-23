@@ -45,6 +45,7 @@
   <string name="action_add_user">Add User</string>
   <string name="action_get_users">Get all users</string>
   <string name="action_send_otp">Send OTP</string>
+  <string name="action_resend_otp">Resend OTP</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>

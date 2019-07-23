@@ -146,7 +146,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
     Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, type))
+      action(SearchLoadAction(origin, destination, type, saveToHistory))
     }, 200)
   }
 

@@ -33,6 +33,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value).apply()
     get() = prefs.getBoolean(PrefKeys.RouteUpdate, false)
 
+  /* Routes update flag */
+  var phoneNumber: String?
+    set(value) = editor.putString(PrefKeys.Phone, value).apply()
+    get() = prefs.getString(PrefKeys.Phone, "")
+
   /**
    * Pref keys
    */

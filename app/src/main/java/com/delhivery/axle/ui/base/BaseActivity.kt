@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
 import com.delhivery.axle.network.ConnectionLiveData
+import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.ErrorUtils
 import com.delhivery.axle.utils.NavigationUtils
 import com.delhivery.axle.utils.UiUtils
@@ -59,6 +60,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var uiUtils: UiUtils
   @Inject lateinit var navigationUtils: NavigationUtils
   @Inject lateinit var errorUtils: ErrorUtils
+  @Inject lateinit var analyticsUtil: AnalyticsUtil
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 
