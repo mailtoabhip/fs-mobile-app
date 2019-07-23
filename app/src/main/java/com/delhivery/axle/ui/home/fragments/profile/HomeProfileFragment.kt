@@ -10,7 +10,10 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.NavigationUtils
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.VALUE_PROFILE
 import javax.inject.Inject
 
 class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>(),
@@ -43,6 +46,12 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     binding.apply {
       containerYourRoutes.setOnClickListener {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_EDIT_ROUTE,
+            mutableListOf(PROPERTY_SOURCE),
+            mutableListOf(VALUE_PROFILE)
+        )
         it.post {
           startActivity(
               selectRouteIntent(it.context, EditRoute)

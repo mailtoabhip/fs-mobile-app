@@ -37,6 +37,10 @@ import com.delhivery.axle.utils.PROPERTY_ITEM
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_ADVANCE_PENDING
+import com.delhivery.axle.utils.VALUE_BALANCE_PENDING
+import com.delhivery.axle.utils.VALUE_COMPLETED
+import com.delhivery.axle.utils.VALUE_INTRANSIT
 import com.delhivery.axle.utils.VALUE_TRIP
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
@@ -150,6 +154,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
           )
         }
       }
+
       HomeTripsSearchAction_Search -> context?.let {
         // Capture event
         analyticsUtil.trackEvent(
@@ -190,48 +195,53 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         analyticsUtil.trackEvent(
             EVENT_LIST_HEADER,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_TRIP, "advance pending")
+            mutableListOf(VALUE_TRIP, VALUE_ADVANCE_PENDING)
         )
         context?.let {
           startActivity(userTripsIntent(it, AdvancePending))
         }
       }
+
       HomeTripsHeaderAction_BalancePending -> {
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_HEADER,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_TRIP, "balance pending")
+            mutableListOf(VALUE_TRIP, VALUE_BALANCE_PENDING)
         )
         context?.let {
           startActivity(userTripsIntent(it, BalancePending))
         }
       }
+
       HomeTripsHeaderAction_InTransit -> {
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_HEADER,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_TRIP, "intransit")
+            mutableListOf(VALUE_TRIP, VALUE_INTRANSIT)
         )
         context?.let {
           startActivity(userTripsIntent(it, InTransit))
         }
       }
+
       HomeTripsHeaderAction_Completed -> {
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_HEADER,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_TRIP, "completed")
+            mutableListOf(VALUE_TRIP, VALUE_COMPLETED)
         )
         context?.let {
           startActivity(userTripsIntent(it, Completed))
         }
       }
+
       HomeTripsWarningAction_NoLoads -> {
         action(NavigateHomeFragmentAction(BidsFragment))
       }
+
       HomeTripsTimeOutAction -> {
         refreshData()
       }

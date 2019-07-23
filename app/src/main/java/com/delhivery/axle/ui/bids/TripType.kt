@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.bids
 
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.In_Transit
 import com.delhivery.axle.data.home.trips.TripStatus.TripCompleted
 import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
@@ -37,7 +38,7 @@ enum class TripType(
   ),
   BalancePending(
       2,
-      listOf(TruckUnloaded.statusKey),
+      listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey),
       "Balance Pending", "Balance Pending trips "
   ),
   Completed(

@@ -12,6 +12,7 @@ import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class HomeTripsItemData(
+  @SerializedName("LR") val lr: String,
   @SerializedName("action_time") val actionTime: String,
   @SerializedName("arrival_time") val arrivalTime: String?,
   @SerializedName("client_id") val clientId: String,
@@ -141,6 +142,7 @@ enum class TripStatus(
   TruckLoaded("truck_loaded", "Loading Completed"),
   TruckReached("truck_reached", "Reached Destination"),
   TruckUnloaded("truck_unloaded", "Truck Unloaded"),
+  EPodUploaded("epod_uploaded", "EPod Uploaded"),
   Unknown("unknown", "Unknown");
 
   companion object {

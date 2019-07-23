@@ -217,7 +217,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Pickup location -->
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
@@ -231,6 +231,35 @@
             >
 
           <TextView
+              android:id="@+id/id1"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif"
+              android:text="LR Number"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_12sp"
+              android:textStyle="normal"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              />
+
+          <TextView
+              android:id="@+id/id2"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:text="@{ tripDetails.lr }"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              android:textStyle="bold"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/id1"
+              tools:text="000000"
+              />
+
+          <TextView
+              android:id="@+id/id3"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
@@ -238,21 +267,28 @@
               android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
               />
 
           <TextView
-              android:layout_width="wrap_content"
+              android:id="@+id/id4"
+              android:layout_width="0dp"
               android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/size_16dp"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
               android:text="@{ transactionDetails.pickUpLocationName() }"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
+              app:layout_constraintEnd_toStartOf="@+id/id2"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/id3"
               tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
               />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Status history header -->
         <androidx.appcompat.widget.LinearLayoutCompat

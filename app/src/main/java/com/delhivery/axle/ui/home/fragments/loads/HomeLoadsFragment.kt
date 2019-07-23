@@ -30,11 +30,15 @@ import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.EVENT_ACCEPT_BID
+import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_LOAD_INFO
+import com.delhivery.axle.utils.VALUE_NO_RESULTS
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -199,8 +203,28 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         }
       }
 
-      HomeLoadsInfoAction_EditRoute, HomeLoadsWarningAction_NoLoads -> context?.let {
-        startActivity(selectRouteIntent(it, EditRoute))
+      HomeLoadsInfoAction_EditRoute -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_EDIT_ROUTE,
+            mutableListOf(PROPERTY_SOURCE),
+            mutableListOf(VALUE_LOAD_INFO)
+        )
+        context?.let {
+          startActivity(selectRouteIntent(it, EditRoute))
+        }
+      }
+
+      HomeLoadsWarningAction_NoLoads -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_EDIT_ROUTE,
+            mutableListOf(PROPERTY_SOURCE),
+            mutableListOf(VALUE_NO_RESULTS)
+        )
+        context?.let {
+          startActivity(selectRouteIntent(it, EditRoute))
+        }
       }
 
       HomeLoadsTimeOutAction -> {
@@ -222,6 +246,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           ).show()
         }
       }
+
       HomeBidsRequestAction_AcceptBid -> {
         (item.data as HomeBidsRequestItemData).let {
           analyticsUtil.trackEvent(

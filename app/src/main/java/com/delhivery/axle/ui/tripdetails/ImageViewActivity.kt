@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.tripdetails
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityImageViewBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -14,7 +14,7 @@ import com.delhivery.axle.ui.base.BaseActivity
  * for Delhivery Private Limited
  **
  *
- *
+ * Activity to view images with pinch zoom feature
  *
  **
  */

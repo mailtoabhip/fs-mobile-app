@@ -7,7 +7,6 @@
         name="viewModel"
         type="com.delhivery.axle.ui.tripdetails.ImageViewModel"
         />
-
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -25,7 +24,7 @@
         bind:shadow="@{ @dimen/size_4dp }"
         />
 
-    <ImageView
+    <com.delhivery.axle.ui.custom.DelhiveryZoomDragImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

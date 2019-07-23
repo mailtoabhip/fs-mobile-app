@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.tripdetails
 
-import androidx.lifecycle.MutableLiveData
 import android.text.TextUtils
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.data.AdvancePaid
 import com.delhivery.axle.data.AdvancePending
@@ -227,36 +227,27 @@ class TripDetailsViewModel @Inject constructor(
           )
         }
 
+        TripStatus.EPodUploaded.statusKey -> {
+          tripHistory.add(
+              TripHistoryItem(
+                  PODUploaded,
+                  "POD uploaded",
+                  "Balance amount will be settled soon",
+                  history.epoch(),
+                  history.details?.podUrl ?: ""
+              )
+          )
+        }
+
         TripStatus.TripCompleted.statusKey -> {
-          if (!TextUtils.isEmpty(history.details?.podUrl)) {
-            balancePaid = true
-            tripHistory.add(
-                TripHistoryItem(
-                    BalancePending,
-                    "Balance pending",
-                    "Invoice will be shared post payment"
-                )
-            )
-
-            tripHistory.add(
-                TripHistoryItem(
-                    PODUploaded,
-                    "POD uploaded",
-                    "Balance amount will be settled soon",
-                    history.epoch(),
-                    history.details?.podUrl ?: ""
-                )
-            )
-
-          } else {
-            tripHistory.add(
-                TripHistoryItem(
-                    AwaitingPODUpload,
-                    "Awaiting POD upload",
-                    "This can take some days, Please be patient"
-                )
-            )
-          }
+          balancePaid = true
+          tripHistory.add(
+              TripHistoryItem(
+                  BalancePending,
+                  "Balance pending",
+                  "Invoice will be shared post payment"
+              )
+          )
         }
       }
 

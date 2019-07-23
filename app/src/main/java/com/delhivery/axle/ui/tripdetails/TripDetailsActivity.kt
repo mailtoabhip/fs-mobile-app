@@ -133,7 +133,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   it.post {
                     startActivity(
                         imageViewIntent(
-                            it.context, "${UrlConfig.TripService.url()}/${item.podUrl}", "View POD"
+                            it.context, item.podUrl, "View POD"
                         )
                     )
                   }

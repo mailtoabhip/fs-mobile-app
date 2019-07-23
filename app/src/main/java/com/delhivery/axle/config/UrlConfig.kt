@@ -36,15 +36,18 @@ enum class UrlConfig(
   CityService(
       "https://orion-city-api.delhivery.com",
       "https://orion-city-api-dev.delhivery.com"
+  ),
+  ImageService(
+      "",
+      "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
   );
 
   /**
    * Get url based on logic
    */
   fun url() =
-    dev
-//    when (BuildConfig.CHANNEL) {
-//    "prod" -> prod
-//    else -> dev
-//  }
+    when (BuildConfig.FLAVOR) {
+      "devlopment" -> dev
+      else -> prod
+    }
 }

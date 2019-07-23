@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
-import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderItemData
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.repository.PaymentRepository
@@ -97,6 +97,7 @@ class HomeTripsViewModel @Inject constructor(
       add(TripStatus.TruckLoaded.statusKey)
       add(TripStatus.TruckReached.statusKey)
       add(TripStatus.TruckUnloaded.statusKey)
+      add(TripStatus.EPodUploaded.statusKey)
     }
         .joinToString(separator = ",") { it }
 
