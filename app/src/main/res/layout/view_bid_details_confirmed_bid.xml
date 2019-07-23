@@ -4,6 +4,7 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+
   <data>
     <variable
         name="pickUpLocation"
@@ -23,7 +24,7 @@
         />
   </data>
 
-  <android.support.constraint.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/size_4dp"
@@ -63,7 +64,7 @@
         tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
         />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_awaiting_truck_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -181,5 +182,5 @@
         tools:text="9090909090"
         />
 
-  </android.support.constraint.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

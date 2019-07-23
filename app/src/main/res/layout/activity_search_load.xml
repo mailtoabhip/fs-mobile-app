@@ -4,17 +4,17 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.searchload.SearchLoadViewModel"
+        type="com.delhivery.axle.ui.searchload.SearchLoadViewModel"
         />
   </data>
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
       android:orientation="vertical"
       >
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
@@ -26,5 +26,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-  </android.support.v7.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

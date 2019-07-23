@@ -5,10 +5,10 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.onboarding.OnboardingViewModel"
+        type="com.delhivery.axle.ui.onboarding.OnboardingViewModel"
         />
   </data>
-  <android.support.constraint.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorAccent"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <com.delhivery.orion.ui.custom.DelhiveryOnboardingArcView
+    <com.delhivery.axle.ui.custom.DelhiveryOnboardingArcView
         android:id="@+id/arc_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -57,7 +57,7 @@
           android:textStyle="normal"
           />
 
-      <com.delhivery.orion.ui.custom.DelhiveryViewPagerIndicator
+      <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator
           android:id="@+id/pager_indicator"
           android:layout_width="wrap_content"
           android:layout_height="@dimen/size_24dp"
@@ -66,7 +66,7 @@
           android:layout_toStartOf="@+id/fab_next"
           />
 
-      <android.support.design.widget.FloatingActionButton
+      <com.google.android.material.floatingactionbutton.FloatingActionButton
           android:id="@+id/fab_next"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
 
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -90,5 +90,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/arc_view"
         />
-  </android.support.constraint.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,5 +1,4 @@
 <resources>
-  <string name="app_name">Orion</string>
 
   <!-- Title (title_) -->
   <string name="title_dialog_location_setting_disabled">Enable location</string>
@@ -12,13 +11,13 @@
   <string name="msg_hello_world">Message Hello World</string>
   <string name="msg_user_added">User added successfully</string>
   <string name="msg_dialog_location_setting_disabled">Your location is set to &lt;b>“off”&lt;/b>. Please enable location to use the app&lt;br>&lt;br></string>
-  <string name="msg_dialog_location_permission_disabled">Allow &lt;b>ORION app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
-  <string name="msg_send_otp_auth">Please use the registered number if are already an ORION partner</string>
+  <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
+  <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
   <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
   <string name="msg_otp_sent_to_phone_no">We have send the otp to your phone number ending with %1$s</string>
   <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
   <string name="msg_select_route_welcome_user">Welcome\n%s</string>
-  <string name="msg_glad_to_onboard">Glad too see you onboarded with Orion</string>
+  <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
   <string name="msg_select_route_pref_to_load">We would need your route preferences to fetch the best possible load requests for you.</string>
   <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
   <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
@@ -27,10 +26,10 @@
   <string name="msg_bids_received_till_now">%1$d bids received till now</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
   <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
-  <string name="msg_confirmed_bid_details_banner">Our ORION executive will be calling you to finalise the truck detils. Keep the details ready</string>
+  <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck detils. Keep the details ready</string>
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
-  <string name="msg_dialog_logout">You are signing out of ORION app.</string>
+  <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -46,6 +45,7 @@
   <string name="action_add_user">Add User</string>
   <string name="action_get_users">Get all users</string>
   <string name="action_send_otp">Send OTP</string>
+  <string name="action_resend_otp">Resend OTP</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>

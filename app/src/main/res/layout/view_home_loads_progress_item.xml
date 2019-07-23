@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_12dp"
@@ -16,11 +16,11 @@
       app:cardElevation="2dp"
       >
 
-    <com.delhivery.orion.ui.custom.DelhiveryShimmerLayout
+    <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-      <android.support.constraint.ConstraintLayout
+      <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:clickable="false"
@@ -166,7 +166,7 @@
             app:layout_constraintStart_toEndOf="@+id/id1"
             app:layout_constraintTop_toBottomOf="@+id/view"
             />
-      </android.support.constraint.ConstraintLayout>
-    </com.delhivery.orion.ui.custom.DelhiveryShimmerLayout>
-  </android.support.v7.widget.CardView>
+      </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+  </androidx.cardview.widget.CardView>
 </layout>

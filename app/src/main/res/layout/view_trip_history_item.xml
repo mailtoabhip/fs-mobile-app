@@ -6,7 +6,7 @@
   <data>
     <variable
         name="history"
-        type="com.delhivery.orion.data.TripHistoryItem"
+        type="com.delhivery.axle.data.TripHistoryItem"
         />
 
     <variable
@@ -14,7 +14,7 @@
         type="Boolean"
         />
   </data>
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_4dp"
@@ -76,5 +76,5 @@
           />
 
     </RelativeLayout>
-  </android.support.v7.widget.CardView>
+  </androidx.cardview.widget.CardView>
 </layout>

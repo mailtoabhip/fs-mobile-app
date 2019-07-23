@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-  <android.support.v7.widget.CardView
+  <androidx.cardview.widget.CardView
       android:id="@+id/add_more_route"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_8dp"
       >
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -27,7 +27,7 @@
         android:paddingTop="@dimen/size_20dp"
         >
 
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           app:srcCompat="@drawable/ic_add_black_24dp"
@@ -44,6 +44,6 @@
           android:textStyle="normal"
           />
 
-    </android.support.v7.widget.LinearLayoutCompat>
-  </android.support.v7.widget.CardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.cardview.widget.CardView>
 </layout>

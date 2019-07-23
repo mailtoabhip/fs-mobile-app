@@ -14,7 +14,7 @@
       android:layout_height="wrap_content"
       android:background="@android:color/white"
       android:orientation="vertical"
-      android:padding="16dp"
+      android:padding="@dimen/size_16dp"
       >
 
     <FrameLayout
@@ -28,15 +28,15 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="12sp"
+          android:lineSpacingExtra="@dimen/text_12sp"
           android:text="@string/label_error"
           android:textColor="@color/colorAccent"
-          android:textSize="16sp"
+          android:textSize="@dimen/text_16sp"
           android:textStyle="normal"
           tools:text="Error"
           />
 
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/btn_close"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -53,15 +53,15 @@
         android:gravity="center"
         android:lineSpacingMultiplier="1.2"
         android:text="@{ error }"
-        android:textColor="#de000000"
-        android:textSize="16sp"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_16sp"
         tools:text="Error placeholder"
         />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_dismiss"
         android:layout_width="match_parent"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/size_12dp"
         android:text="@string/action_dismiss"
         style="@style/ActionButton"
         />

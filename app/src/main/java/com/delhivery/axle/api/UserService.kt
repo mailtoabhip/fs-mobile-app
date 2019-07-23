@@ -1,0 +1,49 @@
+package com.delhivery.axle.api
+
+import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
+import com.delhivery.axle.api.request.UpdateUserRoutesRequest
+import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.UserModel
+import io.reactivex.Single
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.Path
+
+interface UserService {
+
+  /**
+   * Near by cities
+   */
+  @GET("/cities/suggestions/{cityId}")
+  fun nearByLocations(
+    @Path("cityId") cityId: String
+  ): Single<BaseResponse<List<CityModel>>>
+
+  /**
+   * Get user details
+   */
+  @GET("/users/supplypartners/{user_id}")
+  fun userDetails(
+    @Path("user_id") userId: String
+  ): Single<BaseResponse<UserModel>>
+
+  /**
+   * Update user route prefs
+   */
+  @PATCH("/users/supplypartners/{user_id}/")
+  fun updateUserRoutes(
+    @Path("user_id") userId: String,
+    @Body payload: UpdateUserRoutesRequest
+  ): Single<Any>
+
+  /**
+   * Update base city
+   */
+  @PATCH("/users/supplypartners/{user_id}/")
+  fun updateCity(
+    @Path("user_id") userId: String,
+    @Body payload: UpdateUserBaseCityRequest
+  ): Single<Any>
+}

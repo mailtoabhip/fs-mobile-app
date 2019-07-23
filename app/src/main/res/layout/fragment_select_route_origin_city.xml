@@ -4,11 +4,11 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel"
+        type="com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel"
         />
   </data>
 
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:focusableInTouchMode="true"
@@ -29,7 +29,7 @@
         android:textStyle="bold"
         />
 
-    <com.delhivery.orion.ui.custom.DelhiveryCityAutoEditText
+    <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
         android:id="@+id/edit_origin_city"
         android:layout_marginEnd="@dimen/size_24dp"
         android:layout_marginStart="@dimen/size_24dp"
@@ -57,5 +57,5 @@
         android:textStyle="normal"
         />
 
-  </android.support.v7.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

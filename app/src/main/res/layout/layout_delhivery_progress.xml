@@ -34,7 +34,7 @@
         android:orientation="vertical"
         >
 
-      <com.delhivery.orion.ui.custom.DelhiveryProgressView
+      <com.delhivery.axle.ui.custom.DelhiveryProgressView
           android:id="@+id/progress"
           android:layout_width="@dimen/size_80dp"
           android:layout_height="@dimen/size_80dp"

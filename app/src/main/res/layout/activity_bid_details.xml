@@ -7,21 +7,21 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.biddetails.BidDetailsViewModel"
+        type="com.delhivery.axle.ui.biddetails.BidDetailsViewModel"
         />
     <variable
         name="transaction"
-        type="com.delhivery.orion.data.home.bids.HomeBidsRequestItemData"
+        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
   </data>
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:animateLayoutChanges="true"
       android:orientation="vertical"
       >
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
@@ -34,14 +34,14 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         >
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
           >
 
         <!-- confirmed bid banner -->
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_confirm_bid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
               app:layout_constraintTop_toTopOf="parent"
               />
 
-          <android.support.v7.widget.AppCompatImageView
+          <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_4dp"
@@ -98,10 +98,10 @@
               app:layout_constraintTop_toBottomOf="@id/text_title_confirmed_bid"
               />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- details container -->
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -196,7 +196,7 @@
               tools:text="Closed truck (32ft)"
               />
 
-          <android.support.v7.widget.AppCompatImageView
+          <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_8dp"
@@ -253,7 +253,7 @@
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
               tools:text="₹ 23900.00"
               />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- bidding completed text -->
         <TextView
@@ -280,7 +280,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/size_4dp"
             />
-      </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
-  </android.support.v7.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

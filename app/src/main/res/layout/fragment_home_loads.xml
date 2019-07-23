@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.home.fragments.loads.HomeLoadsViewModel"
+        type="com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel"
         />
   </data>
 
@@ -14,7 +14,7 @@
       android:layout_height="match_parent"
       >
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,7 +25,7 @@
           android:layout_height="match_parent"
           >
 
-        <com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+        <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
             android:id="@+id/edit_sticky_search"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_72dp"
@@ -41,7 +41,7 @@
             bind:shadow="@{ @dimen/size_4dp }"
             />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_loads"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -52,7 +52,7 @@
 
             />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/routes_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
-          <android.support.v7.widget.LinearLayoutCompat
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginStart="@dimen/size_16dp"
@@ -104,9 +104,9 @@
                 android:textStyle="normal"
                 />
 
-          </android.support.v7.widget.LinearLayoutCompat>
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <android.support.v7.widget.CardView
+          <androidx.cardview.widget.CardView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_8dp"
@@ -122,12 +122,12 @@
                 android:text="ADD NOW"
                 />
 
-          </android.support.v7.widget.CardView>
-        </android.support.constraint.ConstraintLayout>
+          </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
       </RelativeLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   </FrameLayout>
 </layout>

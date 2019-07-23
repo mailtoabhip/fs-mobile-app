@@ -6,11 +6,11 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.orion.api.response.TripChargesResponse"
+        type="com.delhivery.axle.api.response.TripChargesResponse"
         />
   </data>
 
-  <android.support.constraint.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_6dp"
@@ -46,6 +46,6 @@
         tools:text="Rs 3500.00"
         />
 
-  </android.support.constraint.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

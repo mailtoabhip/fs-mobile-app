@@ -10,7 +10,7 @@
         type="Integer"
         />
   </data>
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_12dp"
@@ -23,7 +23,7 @@
       bind:shadow="@{ @dimen/size_2dp }"
       >
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="38dp"
@@ -61,7 +61,7 @@
         android:textStyle="normal"
         />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_place_bid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,5 +77,5 @@
         android:textColor="@color/colorAccent"
         android:textSize="14sp"
         />
-  </android.support.v7.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

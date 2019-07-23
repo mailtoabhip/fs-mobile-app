@@ -6,11 +6,11 @@
   <data>
     <variable
         name="route"
-        type="com.delhivery.orion.data.home.routes.RouteModel"
+        type="com.delhivery.axle.data.home.routes.RouteModel"
         />
   </data>
 
-  <android.support.constraint.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/container_gps_origin_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,14 +48,14 @@
         app:cardElevation="@dimen/size_8dp"
         >
 
-      <android.support.constraint.ConstraintLayout
+      <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/container_city"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_margin="@dimen/size_16dp"
           >
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_gps"
             android:layout_width="@dimen/size_24dp"
             android:layout_height="@dimen/size_24dp"
@@ -84,7 +84,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_edit_origin"
             android:layout_width="@dimen/size_24dp"
             android:layout_height="@dimen/size_24dp"
@@ -94,9 +94,9 @@
             app:srcCompat="@drawable/ic_edit_pencil"
             />
 
-      </android.support.constraint.ConstraintLayout>
+      </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/text_destination_heading"
@@ -123,7 +123,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_destination_heading"
         >
 
-      <android.support.v7.widget.RecyclerView
+      <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/rv_destinations"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
@@ -133,7 +133,7 @@
           android:saveEnabled="false"
           />
 
-      <android.support.v7.widget.LinearLayoutCompat
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/btn_save"
           android:layout_width="match_parent"
           android:layout_height="56dp"
@@ -157,9 +157,9 @@
             android:textStyle="normal"
             />
 
-      </android.support.v7.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
 
     </RelativeLayout>
 
-  </android.support.constraint.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

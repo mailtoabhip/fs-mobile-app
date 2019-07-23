@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.home.fragments.trips.HomeTripsViewModel"
+        type="com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel"
         />
   </data>
   <FrameLayout
@@ -14,19 +14,19 @@
       android:background="@color/colorBackground"
       >
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-      <android.support.v7.widget.RecyclerView
+      <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/rv_trips"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.delhivery.orion.ui.custom.DelhiveryAnimatedSearchBar
+    <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
         android:id="@+id/edit_sticky_search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_72dp"

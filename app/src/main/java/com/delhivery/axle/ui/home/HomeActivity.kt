@@ -1,0 +1,115 @@
+package com.delhivery.axle.ui.home
+
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import android.os.Bundle
+import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import androidx.core.view.ViewCompat
+import android.view.MenuItem
+import com.delhivery.axle.R
+import com.delhivery.axle.databinding.ActivityHomeBinding
+import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType
+import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
+import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.utils.extensions.onPageSelected
+
+class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
+    OnNavigationItemSelectedListener {
+
+  var currPos: Int = 0
+
+  override fun getViewModelClass() = HomeViewModel::class.java
+
+  override fun layoutId() = R.layout.activity_home
+
+  override fun requireConnection() = true
+
+  /* home fragments pager adapter */
+  private val pagerAdapter: HomeFragmentsAdapter by lazy {
+    HomeFragmentsAdapter(supportFragmentManager)
+  }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+
+    /* setup toolbar */
+    setSupportActionBar(binding.toolbar)
+    title = "Load Requests"
+
+    /* setup view pager */
+    binding.viewpager.apply {
+      offscreenPageLimit = HomeFragmentType.count()
+      adapter = pagerAdapter
+      /* update ui on page changed */
+      onPageSelected { p ->
+        HomeFragmentType.pos(p)
+            ?.let {
+              uiUtils.toggleKeyboard()
+              this@HomeActivity.title = HomeFragmentType.pos(p)
+                  ?.fragment?.title
+              binding.bottomNav.selectedItemId = it.menuId
+              observeFragmentLiveData(p)
+            }
+      }
+    }
+
+    /* set navigation item selection listener */
+    binding.bottomNav.setOnNavigationItemSelectedListener(this)
+
+    /* by default observe first fragment */
+    observeFragmentLiveData()
+  }
+
+  /**
+   * Observe toolbar from current fragment live Data or fallback to default
+   */
+  private fun observeFragmentLiveData(pos: Int = 0) {
+    val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
+    val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
+    if (elevationLiveData == null) {
+      /* default toolbar elevation */
+      ViewCompat.setElevation(binding.toolbar, resources.getDimension(R.dimen.toolbar_elevation))
+    } else {
+      elevationLiveData.observe(this, Observer {
+        ViewCompat.setElevation(
+            binding.toolbar,
+            it ?: resources.getDimension(R.dimen.toolbar_elevation)
+        )
+      })
+    }
+  }
+
+  /**
+   * Fragment action observer
+   */
+  fun fragmentAction(action: BaseHomeFragmentAction) {
+    when (action.type) {
+      /* navigate to fragment action */
+      HomeFragmentActionType.Navigate -> {
+        val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
+        binding.viewpager.setCurrentItem(fragmentType.position, true)
+      }
+    }
+  }
+
+  override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
+      .let { pos ->
+        binding.viewpager.apply {
+          uiUtils.toggleKeyboard()
+          if (pos != -1 && currentItem != pos) {
+            this@HomeActivity.title = HomeFragmentType.pos(pos)
+                ?.fragment?.title
+            setCurrentItem(pos, true)
+          }
+        }
+        pos != -1
+      }
+}
+
+interface TitleProvider {
+  val title: CharSequence
+}

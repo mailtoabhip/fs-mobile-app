@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "793097357337",
+    "firebase_url": "https://axle-by-delhivery.firebaseio.com",
+    "project_id": "axle-by-delhivery",
+    "storage_bucket": "axle-by-delhivery.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793097357337:android:93a13a55f393e849",
+        "android_client_info": {
+          "package_name": "com.delhivery.axle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793097357337-2sda7huggskagd35ajvcajho1kqrfa23.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.delhivery.axle",
+            "certificate_hash": "a828d768b8f7e6f368b55836706605a7e77004d9"
+          }
+        },
+        {
+          "client_id": "793097357337-ig58cvk4bp6vce8u0pd0c0n0v36ctkr9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_ZxPrtqE79mUt4nUVVoZ2ggZXPpcZj3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793097357337-ig58cvk4bp6vce8u0pd0c0n0v36ctkr9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
