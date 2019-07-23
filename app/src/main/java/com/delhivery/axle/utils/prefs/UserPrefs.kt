@@ -41,6 +41,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val JWTToken = "jwt_token"
     const val CityCode = "city_code"
     const val RouteUpdate = "route_update"
+    const val SupplierId = "supplier_id"
     const val Phone = "phone_number"
   }
 }
