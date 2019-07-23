@@ -29,7 +29,12 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.utils.EVENT_ACCEPT_BID
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_LOAD
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -175,19 +180,29 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   ) {
     // handle actions here
     when (actionId) {
-      HomeBidsRequestAction_ViewDetails -> context?.let {
-        startActivity(
-            bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
+      HomeBidsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
+        context?.let { startActivity(bidDetailsIntent(_item, it)) }
       }
-      HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> context?.let {
-        startActivity(
-            Intent(it, SearchLoadActivity::class.java)
-        )
+
+      HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> {
+        context?.let {
+          startActivity(
+              Intent(it, SearchLoadActivity::class.java)
+          )
+        }
       }
+
       HomeLoadsInfoAction_EditRoute, HomeLoadsWarningAction_NoLoads -> context?.let {
         startActivity(selectRouteIntent(it, EditRoute))
       }
+
       HomeLoadsTimeOutAction -> {
         refreshData()
       }
@@ -203,12 +218,17 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       HomeBidsRequestAction_PlaceBid -> {
         (item.data as HomeBidsRequestItemData).let {
           BidDetailsCreateEditDialog(
-              context!!, it, it.transactionBid, viewModel, position, uiUtils
+              context!!, it, it.transactionBid, viewModel, position, analyticsUtil
           ).show()
         }
       }
       HomeBidsRequestAction_AcceptBid -> {
         (item.data as HomeBidsRequestItemData).let {
+          analyticsUtil.trackEvent(
+              EVENT_ACCEPT_BID,
+              mutableListOf(PROPERTY_TRANSACTION_ID),
+              mutableListOf(it.transactionId ?: "No user id saved")
+          )
           it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
         }
       }

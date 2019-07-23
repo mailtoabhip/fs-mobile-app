@@ -1,15 +1,14 @@
 package com.delhivery.axle.ui.bids
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityTripsBinding
@@ -21,7 +20,13 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_BID
+import com.delhivery.axle.utils.VALUE_TRIP
 
 /**
  * Created by saurabh
@@ -127,7 +132,14 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   ) {
     when (item.type) {
       TripItem -> {
-        startActivity(tripDetailsIntent(item.data as HomeTripsItemData, this))
+        val _item = item.data as HomeTripsItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_TRIP, _item.transactionId)
+        )
+        startActivity(tripDetailsIntent(_item, this))
       }
       Timeout -> {
         refreshData()
@@ -173,6 +185,12 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_SEARCH_LOCAL,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE),
+            mutableListOf(VALUE_TRIP)
+        )
         return true
       }
 

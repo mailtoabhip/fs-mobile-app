@@ -18,20 +18,31 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.HomeActivity
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
+import com.delhivery.axle.utils.EVENT_OTP_RESEND
+import com.delhivery.axle.utils.EVENT_OTP_SEND
+import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
 import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.raisedFocus
+import com.delhivery.axle.utils.extensions.safeDispose
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
 
 class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
     DelhiveryOTPViewInterface, OTPReceiverInterface {
+
   override fun getViewModelClass() = AuthenticationViewModel::class.java
 
   override fun layoutId() = R.layout.activity_authentication
 
   override fun requireConnection() = true
+
+  /* dismiss timeout disposable */
+  private var timeoutDisposable: Disposable? = null
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -50,15 +61,72 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
       raisedFocus()
-      lengthAction(10) { viewModel.sendOTP() }
-      actionDone { viewModel.sendOTP() }
+      lengthAction(10) {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_OTP_SEND,
+            mutableListOf(),
+            mutableListOf()
+        )
+        viewModel.sendOTP()
+      }
+      actionDone {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_OTP_SEND,
+            mutableListOf(),
+            mutableListOf()
+        )
+        viewModel.sendOTP()
+      }
     }
+
+    viewModel.otpStatusLiveData.observe(this, Observer {
+      if (it == true) {
+        timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
+            .onBackground()
+            .subscribe {
+              val timeLeft = 15L - it
+              if (timeLeft > 0) {
+                binding.btnResendOtp.text = "Resend OTP($timeLeft)"
+                binding.btnResendOtp.isEnabled = false
+              } else if (timeLeft == 0L) {
+                binding.btnResendOtp.text = "Resend OTP"
+                binding.btnResendOtp.isEnabled = true
+              } else {
+                viewModel.otpStatusLiveData.postValue(false)
+              }
+            }
+      } else {
+        timeoutDisposable.safeDispose()
+      }
+    })
 
     /* otp view interface */
     binding.otpView.otpViewInterface = this
 
     /* Initiate state */
     viewModel.state = PhoneNo
+
+    binding.btnResendOtp.setOnClickListener {
+      // Capture event
+      analyticsUtil.trackEvent(
+          EVENT_OTP_RESEND,
+          mutableListOf(),
+          mutableListOf()
+      )
+      viewModel.sendOTP()
+    }
+
+    binding.btnSendOtp.setOnClickListener {
+      // Capture event
+      analyticsUtil.trackEvent(
+          EVENT_OTP_SEND,
+          mutableListOf(),
+          mutableListOf()
+      )
+      viewModel.sendOTP()
+    }
   }
 
   override fun onBackPressed() {
@@ -134,11 +202,23 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
+            // Capture event
+            analyticsUtil.trackEvent(
+                EVENT_OTP_VERIFIED,
+                mutableListOf(),
+                mutableListOf()
+            )
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, true)
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
+            // Capture event
+            analyticsUtil.trackEvent(
+                EVENT_OTP_VERIFIED,
+                mutableListOf(),
+                mutableListOf()
+            )
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }

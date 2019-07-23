@@ -1,18 +1,19 @@
 package com.delhivery.axle.ui.base
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import android.os.Bundle
-import androidx.annotation.LayoutRes
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.delhivery.axle.BR
 import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.ErrorUtils
 import com.delhivery.axle.utils.UiUtils
 import dagger.android.support.AndroidSupportInjection
@@ -35,6 +36,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
   @Inject lateinit var uiUtils: UiUtils
   @Inject lateinit var errorUtils: ErrorUtils
+  @Inject lateinit var analyticsUtil: AnalyticsUtil
 
   /* set true if inline progress */
   protected var hasInlineProgress = false

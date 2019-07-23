@@ -1,11 +1,11 @@
 package com.delhivery.axle.ui.tripdetails
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.ChargeType
 import com.delhivery.axle.api.response.TripChargesResponse
@@ -20,6 +20,11 @@ import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
+import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.VALUE_LOAD
 
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>() {
 
@@ -97,6 +102,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
    * Populate trip history
    */
   private fun populateHistory(history: MutableList<TripHistoryItem>) {
+    // Capture event
+    analyticsUtil.trackEvent(
+        EVENT_TRIP_STATUS_HISTORY,
+        mutableListOf(PROPERTY_TRANSACTION_ID),
+        mutableListOf(viewModel.transactionId)
+    )
     binding.viewHistory.isSelected = true
     binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewSummary.isSelected = false
@@ -152,6 +163,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
    * Populate payment summary
    */
   private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
+    // Capture event
+    analyticsUtil.trackEvent(
+        EVENT_PAYMENT_SUMMARY,
+        mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+        mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
     binding.viewSummary.isSelected = true
     binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewHistory.isSelected = false

@@ -1,12 +1,10 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
-import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import android.view.View
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
@@ -20,6 +18,17 @@ import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
+import com.delhivery.axle.utils.EVENT_ACCEPT_BID
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
+import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
+import com.delhivery.axle.utils.PROPERTY_DESTINATION
+import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
+import com.delhivery.axle.utils.PROPERTY_ORIGIN
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
+import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.setup
@@ -34,6 +43,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   override fun getViewModelClass() = SearchResultsViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_search_results
+
+  private var saveToHistory: Boolean = false
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -100,8 +111,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     origin: CityModel,
     destination: CityModel?,
     type: String,
+    saveToHistory: Boolean,
     progress: Boolean = true
   ) {
+    this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
     _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
@@ -124,10 +137,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     item: BaseSearchLoadsRVAdapterItem<*>
   ) {
     when (actionId) {
-      HomeBidsRequestAction_ViewDetails -> context?.let {
-        startActivity(
-            bidDetailsIntent(item.data as HomeBidsRequestItemData, it)
+      HomeBidsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
+        context?.let { startActivity(bidDetailsIntent(_item, it)) }
       }
     }
   }
@@ -141,12 +159,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       HomeBidsRequestAction_PlaceBid -> {
         (item.data as HomeBidsRequestItemData).let {
           BidDetailsCreateEditDialog(
-              context!!, it, it.transactionBid, viewModel, position, uiUtils
+              context!!, it, it.transactionBid, viewModel, position, analyticsUtil
           ).show()
         }
       }
       HomeBidsRequestAction_AcceptBid -> {
         (item.data as HomeBidsRequestItemData).let {
+          analyticsUtil.trackEvent(
+              EVENT_ACCEPT_BID,
+              mutableListOf(PROPERTY_TRANSACTION_ID),
+              mutableListOf(it.transactionId ?: "No user id saved")
+          )
           it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
         }
       }
@@ -162,11 +185,39 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
-      if (t == null) { //&& viewModel.offset == 0
+      val event: String
+      var numResults = 0
+
+      when (saveToHistory) {
+        true -> {
+          event = EVENT_SEARCH_LOAD
+        }
+        false -> {
+          event = EVENT_SEARCH_SAVED_LOAD
+        }
+      }
+
+      if (t == null) {
+        numResults = 0
         //error
       } else {
+        numResults = t.size
         _adapter.operation(t)
       }
+
+      analyticsUtil.trackEvent(
+          event,
+          mutableListOf(
+              PROPERTY_ORIGIN, PROPERTY_DESTINATION,
+              PROPERTY_TRUCK_TYPE, PROPERTY_NUM_RESULTS
+          ),
+          mutableListOf(
+              binding.origin?.cityName() ?: "Anywhere",
+              binding.destination?.cityName() ?: "Anywhere",
+              binding.spinnerTruckType.selectedItem.toString(),
+              numResults.toString()
+          )
+      )
     }
   }
 
@@ -193,7 +244,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     ) {
       super.onScrolled(recyclerView, dx, dy)
       binding.apply {
-        val layoutManager = (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        val layoutManager =
+          (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
         val pos = layoutManager.findFirstVisibleItemPosition()
         val visibleHeight = viewHiddenIndicator.height * 3f
         val maxTranslationY = visibleHeight - containerSpinner.height

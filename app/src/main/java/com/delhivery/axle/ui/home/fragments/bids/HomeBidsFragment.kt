@@ -1,14 +1,13 @@
 package com.delhivery.axle.ui.home.fragments.bids
 
 import android.animation.ValueAnimator
+import android.os.Bundle
+import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import android.view.View
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_LostBids
@@ -30,7 +29,17 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationC
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.utils.EVENT_LIST_HEADER
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
+import com.delhivery.axle.utils.PROPERTY_ITEM
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_ACTIVE
+import com.delhivery.axle.utils.VALUE_BID
+import com.delhivery.axle.utils.VALUE_CONFIRMED
+import com.delhivery.axle.utils.VALUE_LOST
 
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -130,20 +139,66 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     // handle actions here
     when (actionId) {
-      HomeBidsHeaderAction_MyBids -> context?.let { startActivity(userBidsIntent(it, ActiveBid)) }
-      HomeBidsHeaderAction_ConfirmedBids -> context?.let {
-        startActivity(userBidsIntent(it, ConfirmedBid))
+      HomeBidsHeaderAction_MyBids -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_BID, VALUE_ACTIVE)
+        )
+        context?.let { startActivity(userBidsIntent(it, ActiveBid)) }
       }
-      HomeBidsHeaderAction_LostBids -> context?.let {
-        startActivity(userBidsIntent(it, LostBid))
+
+      HomeBidsHeaderAction_ConfirmedBids -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_BID, VALUE_CONFIRMED)
+        )
+        context?.let {
+          startActivity(userBidsIntent(it, ConfirmedBid))
+        }
       }
+
+      HomeBidsHeaderAction_LostBids -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_BID, VALUE_LOST)
+        )
+        context?.let {
+          startActivity(userBidsIntent(it, LostBid))
+        }
+      }
+
       HomeBidsWarningAction_EditRoutePrefs, HomeBidsWarningAction_SelectRoutes -> context?.let {
         startActivity(selectRouteIntent(it, EditRoute))
       }
-      HomeBidsRequestAction_ViewDetails -> context?.let {
-        startActivity(bidDetailsIntent(item.data as HomeBidsRequestItemData, it))
+
+      HomeBidsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+
+        context?.let {
+          startActivity(bidDetailsIntent(_item, it))
+        }
       }
+
       HomeBidsSearchAction_Search -> context?.let {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_SEARCH_LOCAL,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE),
+            mutableListOf(VALUE_BID)
+        )
+
         val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
         val stickyView = binding.editStickySearch
         stickyView.visibility = View.VISIBLE
@@ -169,6 +224,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           toolbarElevationLiveData!!.postValue(0f)
         }, 300)
       }
+
       HomeBidsTimeOutAction -> {
         refreshData()
       }
@@ -198,13 +254,14 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     private var toolbarElevation = -1f
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager = (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+      val layoutManager =
+        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
       val pos = layoutManager.findFirstVisibleItemPosition()
       if (!adapter.checkFiltering()) {
         val _toolbarElevation = if (pos == 0) {

@@ -1,14 +1,12 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
 import android.animation.ValueAnimator
+import android.os.Bundle
+import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import android.view.View
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
@@ -32,7 +30,14 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.BidsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.utils.EVENT_LIST_HEADER
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
+import com.delhivery.axle.utils.PROPERTY_ITEM
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_TRIP
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>(),
     HomeTripsRVAdapterInterface, ToolbarElevationChangeListener {
@@ -131,12 +136,28 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     item: BaseHomeTripsRVAdapterItem<*>
   ) {
     when (actionId) {
-      HomeTripsRequestAction_ViewDetails -> context?.let {
-        startActivity(
-            tripDetailsIntent(item.data as HomeTripsItemData, it)
+      HomeTripsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeTripsItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_ITEM,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_TRIP, _item.transactionId)
         )
+        context?.let {
+          startActivity(
+              tripDetailsIntent(_item, it)
+          )
+        }
       }
       HomeTripsSearchAction_Search -> context?.let {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_SEARCH_LOCAL,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE),
+            mutableListOf(VALUE_TRIP)
+        )
+
         val childView = binding.rvTrips.findViewHolderForAdapterPosition(1)!!.itemView
         val stickyView = binding.editStickySearch
         stickyView.visibility = View.VISIBLE
@@ -163,17 +184,50 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
           toolbarElevationLiveData!!.postValue(0f)
         }, 300)
       }
-      HomeTripsHeaderAction_AdvancePending -> context?.let {
-        startActivity(userTripsIntent(it, AdvancePending))
+
+      HomeTripsHeaderAction_AdvancePending -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_TRIP, "advance pending")
+        )
+        context?.let {
+          startActivity(userTripsIntent(it, AdvancePending))
+        }
       }
-      HomeTripsHeaderAction_BalancePending -> context?.let {
-        startActivity(userTripsIntent(it, BalancePending))
+      HomeTripsHeaderAction_BalancePending -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_TRIP, "balance pending")
+        )
+        context?.let {
+          startActivity(userTripsIntent(it, BalancePending))
+        }
       }
-      HomeTripsHeaderAction_InTransit -> context?.let {
-        startActivity(userTripsIntent(it, InTransit))
+      HomeTripsHeaderAction_InTransit -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_TRIP, "intransit")
+        )
+        context?.let {
+          startActivity(userTripsIntent(it, InTransit))
+        }
       }
-      HomeTripsHeaderAction_Completed -> context?.let {
-        startActivity(userTripsIntent(it, Completed))
+      HomeTripsHeaderAction_Completed -> {
+        // Capture event
+        analyticsUtil.trackEvent(
+            EVENT_LIST_HEADER,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
+            mutableListOf(VALUE_TRIP, "completed")
+        )
+        context?.let {
+          startActivity(userTripsIntent(it, Completed))
+        }
       }
       HomeTripsWarningAction_NoLoads -> {
         action(NavigateHomeFragmentAction(BidsFragment))
@@ -213,7 +267,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager = (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+      val layoutManager =
+        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
       val pos = layoutManager.findFirstVisibleItemPosition()
       if (!adapter.checkFiltering()) {
         val _toolbarElevation = if (pos == 0) {

@@ -2,14 +2,17 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidCreateEditBinding
-import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_EDIT_BID
+import com.delhivery.axle.utils.EVENT_PLACE_BID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import javax.inject.Inject
 
 /**
@@ -21,7 +24,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
   private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
   private val dialogInterface: BidDetailsCreateEditDialogInterface,
   private val position: Int = 0,
-  private val uiUtils: UiUtils? = null
+  private val analyticsUtil: AnalyticsUtil
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -62,11 +65,20 @@ class BidDetailsCreateEditDialog @Inject constructor(
     try {
       val _amount = Integer.parseInt(binding.editAmount.text.toString())
       if (_amount > 0) {
+        var event = ""
         if (transactionBid == null) {
+          event = EVENT_PLACE_BID
           dialogInterface.createBid(transaction.key(), _amount, position)
         } else {
+          event = EVENT_EDIT_BID
           dialogInterface.editBid(transaction.key(), transactionBid.key(), _amount, position)
         }
+        // Capture event
+        analyticsUtil.trackEvent(
+            event,
+            mutableListOf(PROPERTY_TRANSACTION_ID),
+            mutableListOf(transaction.key())
+        )
         dismiss()
       } else {
         throw Exception()

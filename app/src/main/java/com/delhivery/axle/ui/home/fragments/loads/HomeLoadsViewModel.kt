@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.repository.BidsRepository
 import com.delhivery.axle.repository.TransactionStatus.Requested

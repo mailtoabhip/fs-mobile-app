@@ -103,7 +103,6 @@
             android:layout_width="match_parent"
             android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_24dp"
-            android:onClick="@{ () -> viewModel.sendOTP() }"
             android:text="@string/action_send_otp"
             bind:shadow="@{ @dimen/action_btn_elevation }"
             style="@style/ActionButton"
@@ -190,6 +189,16 @@
             android:textSize="@dimen/text_14sp"
             android:textStyle="normal"
             tools:text="We have send the otp to your phone number ending with (32)"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_resend_otp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:text="@string/action_resend_otp"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
+            style="@style/ActionButton"
             />
 
       </androidx.appcompat.widget.LinearLayoutCompat>

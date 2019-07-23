@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.biddetails
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBid
@@ -175,7 +175,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   private fun bidDialog(bid: TransactionBid? = null) {
     binding.transaction?.let {
-      BidDetailsCreateEditDialog(this, it, bid, viewModel).show()
+      BidDetailsCreateEditDialog(this, it, bid, viewModel, analyticsUtil = analyticsUtil).show()
     }
   }
 }
