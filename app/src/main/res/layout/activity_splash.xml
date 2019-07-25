@@ -11,7 +11,7 @@
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#181818"
+      android:background="@drawable/bg_splash_gradient"
       >
 
     <View
@@ -19,14 +19,16 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
+        android:visibility="gone"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/size_96dp"
+        android:layout_height="@dimen/size_96dp"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_orion_logo"
+        android:alpha="0"
+        app:srcCompat="@drawable/splash_logo"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -35,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:alpha="0"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_orion_text"
         />
 
@@ -61,6 +64,7 @@
         android:background="@drawable/bg_circle_delhivery_red"
         android:scaleX="0"
         android:scaleY="0"
+        android:visibility="gone"
         />
   </FrameLayout>
 </layout>

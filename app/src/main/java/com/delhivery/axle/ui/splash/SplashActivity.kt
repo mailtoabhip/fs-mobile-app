@@ -38,38 +38,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   private fun animate() {
     val isAuthenticated = viewModel.postState()
     please(1500, OvershootInterpolator()) {
-      animate(binding.imgLogo) toBe {
-        toBeRotated(360f)
-      }
-      animate(binding.imgLogo) toBe {
-        aboveOf(binding.centerDot, marginDp = 12f)
-      }
-      animate(binding.imgName) toBe {
-        alpha(1f)
-        belowOf(binding.centerDot, marginDp = 12f)
-      }
       animate(binding.textDelhivery) toBe {
         alpha(1f)
       }
-    }.withEndAction {
-      please(100L) {
-        animate(binding.viewCenterReveal) toBe {
-          sameCenterAs(binding.imgLogo)
-        }
-      }.withEndAction {
-        please {
-          animate(binding.viewCenterReveal) toBe {
-            scale(1f, 1f)
-          }
-        }.withEndAction {
-          postAnimate(isAuthenticated)
-        }
-            .start()
+      animate(binding.imgLogo) toBe {
+        alpha(1f)
+        scale(1.6f, 1.6f)
       }
-          .setStartDelay(SplashAnimationDelay / 2)
-          .start()
+    }.withEndAction {
+      postAnimate(isAuthenticated)
     }
-        .setStartDelay(SplashAnimationDelay)
+        .setStartDelay(SplashAnimationDelay / 2)
         .start()
   }
 

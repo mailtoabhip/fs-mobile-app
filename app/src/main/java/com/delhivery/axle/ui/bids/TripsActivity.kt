@@ -25,7 +25,6 @@ import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.VALUE_BID
 import com.delhivery.axle.utils.VALUE_TRIP
 
 /**

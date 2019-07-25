@@ -27,7 +27,7 @@ import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.BidsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.EVENT_LIST_HEADER
@@ -239,7 +239,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       }
 
       HomeTripsWarningAction_NoLoads -> {
-        action(NavigateHomeFragmentAction(BidsFragment))
+        action(NavigateHomeFragmentAction(LoadsFragment))
       }
 
       HomeTripsTimeOutAction -> {

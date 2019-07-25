@@ -54,7 +54,7 @@ data class HomeBidsRequestItemData(
 
   fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
-  fun targetPrice() = "₹ ${String.format("%,d", targetPrice)}"
+  fun targetPrice() = "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
@@ -69,10 +69,10 @@ data class HomeBidsRequestItemData(
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
       Accepted -> "₹ ${String.format("%,d", transactionBid!!.bidAmount)}"
-      else -> "₹ ${String.format("%,d", targetPrice)}"
+      else -> "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
     }
   } else {
-    "₹ ${String.format("%,d", targetPrice)}"
+    "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
   }
 
   fun amountLabel() = when (bidStatus()) {
@@ -120,7 +120,7 @@ data class HomeBidsRequestItemData(
     }
 
   fun tripPriceDifference(): String {
-    return transactionBid?.targetPriceDiff(targetPrice) ?: ""
+    return transactionBid?.targetPriceDiff(targetPrice * 95 / 100) ?: ""
   }
 
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
