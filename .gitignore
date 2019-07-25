@@ -32,6 +32,9 @@ proguard/
 # Log Files
 *.log
 
+#Key encryption file
+*.pepk
+
 # Android Studio Navigation editor temp files
 .navigation/
 
