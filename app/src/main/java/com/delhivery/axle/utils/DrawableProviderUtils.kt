@@ -10,7 +10,8 @@ object DrawableProviderUtils {
   @DrawableRes
   fun truckTypeDrawableRes(containerType: String?) = when (containerType) {
     "closed" -> R.drawable.ic_closed_truck
-    else -> R.drawable.ic_open_truck
+    "open" -> R.drawable.ic_open_truck
+    else -> R.drawable.ic_trailer_truck
   }
 
   /**

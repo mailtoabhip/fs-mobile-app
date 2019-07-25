@@ -17,7 +17,6 @@
       android:background="@color/colorAccent"
       >
 
-
     <View
         android:id="@+id/center_view"
         android:layout_width="match_parent"

@@ -26,7 +26,7 @@
   <string name="msg_bids_received_till_now">%1$d bids received till now</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
   <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
-  <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck detils. Keep the details ready</string>
+  <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
@@ -38,7 +38,7 @@
   <string name="hint_otp_digit"></string>
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
-  <string name="hint_search_trips">Vehicle / Driver / destination</string>
+  <string name="hint_search_trips">Vehicle / Driver / Destination / LR</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>

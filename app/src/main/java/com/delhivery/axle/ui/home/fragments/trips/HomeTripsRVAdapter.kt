@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsProgressItemBinding

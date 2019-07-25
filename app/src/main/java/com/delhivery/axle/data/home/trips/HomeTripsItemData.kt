@@ -40,7 +40,7 @@ data class HomeTripsItemData(
   @SerializedName("required_on") val requiredOn: String?,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("user_name") val userName: String?,
-  @SerializedName("advance_status") val advanceStatus: String = "failure",
+  @SerializedName("advance_status") val advanceStatus: String? = "failure",
   var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
@@ -87,6 +87,7 @@ data class HomeTripsItemData(
     vehicleDetails.vehicleNo.contains(query, true)
         || driverDetails?.driverName?.contains(query, true) == true
         || destination.contains(query, true)
+        || lr.contains(query, true)
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
@@ -96,7 +97,7 @@ data class HomeTripsItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
-  fun advanceStatus() = when (advanceStatus.toLowerCase()) {
+  fun advanceStatus() = when (advanceStatus ?: "failure".toLowerCase()) {
     "success" -> true
     else -> false
   }
