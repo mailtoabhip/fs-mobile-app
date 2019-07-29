@@ -78,8 +78,6 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       binding.refreshLayout.isRefreshing = false
       /* remove user transactions and fetch again */
       refreshData()
-      adapter.resetStaticData()
-      fetchBidsData()
     }
 
     /* setup recycler view */
