@@ -1,6 +1,7 @@
 package com.delhivery.axle.data.bids
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.google.gson.annotations.SerializedName
 
@@ -26,7 +27,7 @@ data class TransactionBid(
       true -> "less"
       false -> "more"
     }.let { _x ->
-      "(Your Bid is ₹ ${Math.abs(_diff)} $_x than target price)"
+      "(Your Bid is ₹ ${StringUtils.formatAmount(Math.abs(_diff))} $_x than target price)"
     }
   }
 

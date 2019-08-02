@@ -1,9 +1,11 @@
 package com.delhivery.axle.ui.auth
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityAuthenticationBinding
 import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
@@ -17,7 +19,8 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.SelectRoute
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.HomeActivity
-import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
+import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
+import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
 import com.delhivery.axle.utils.EVENT_OTP_SEND
 import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
@@ -40,6 +43,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun layoutId() = R.layout.activity_authentication
 
   override fun requireConnection() = true
+
+  val ADD_ROUTES_RC: Int = 1234
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
@@ -88,10 +93,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             .subscribe {
               val timeLeft = 15L - it
               if (timeLeft > 0) {
-                binding.btnResendOtp.text = "Resend OTP($timeLeft)"
+                binding.btnResendOtp.text = "${getString(string.label_resend_otp)}($timeLeft)"
                 binding.btnResendOtp.isEnabled = false
               } else if (timeLeft == 0L) {
-                binding.btnResendOtp.text = "Resend OTP"
+                binding.btnResendOtp.text = getString(string.label_resend_otp)
                 binding.btnResendOtp.isEnabled = true
               } else {
                 viewModel.otpStatusLiveData.postValue(false)
@@ -209,7 +214,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 mutableListOf()
             )
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(SelectRouteWelcomeActivity::class.java, true)
+            val bundle = Bundle()
+            bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
+            navigationUtils.navigateForActivityResult(
+                SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
+            )
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
@@ -249,6 +258,19 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
         }
       }
+    }
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      ADD_ROUTES_RC -> navigationUtils.navigate(
+          HomeActivity::class.java, true
+      )
     }
   }
 }

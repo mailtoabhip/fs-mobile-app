@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:lineSpacingExtra="@dimen/text_8sp"
-        android:text="@string/title_add_nearby_locations"
+        android:text="@string/label_add_nearby_locations"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_20sp"
         android:textStyle="normal"

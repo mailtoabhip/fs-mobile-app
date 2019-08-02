@@ -1,7 +1,5 @@
 package com.delhivery.axle.repository
 
-import android.text.TextUtils
-import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
@@ -41,28 +39,7 @@ class UserRepository @Inject constructor(
    */
   fun userId() =
 //    "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
-    (jwt.claims["sub"]?.asString()!!)
-
-  /**
-   * User full name
-   */
-  fun username() =
-    JWT(userPrefs.jwtToken!!).claims.let {
-      val name = StringBuilder()
-      val fName = it["first_name"]?.toString()
-      val lName = it["last_name"]?.toString()
-
-      if (!TextUtils.isEmpty(fName)) {
-        name.append(fName)
-      }
-
-      if (!TextUtils.isEmpty(lName)) {
-        name.append(lName)
-      }
-      Log.d("Name", name.toString())
-
-      name.toString()
-    }
+      (jwt.claims["sub"]?.asString()!!)
 
   /**
    * Get user selected routes

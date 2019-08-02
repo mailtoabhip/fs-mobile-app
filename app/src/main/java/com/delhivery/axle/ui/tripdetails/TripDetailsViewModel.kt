@@ -28,11 +28,13 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
-  private val paymentRepository: PaymentRepository
+  private val paymentRepository: PaymentRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   /* transaction id */
@@ -84,8 +86,10 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     AdvancePending,
                     "Advance Pending",
-                    "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
-                        " will be paid once the loading is completed"
+                    "₹ ${String.format(
+                        "%, .0f",
+                        (tripDetail.bidDetails?.advancePayout ?: 0)
+                    )}" + " will be paid once the loading is completed"
                 )
             )
           }
@@ -143,7 +147,9 @@ class TripDetailsViewModel @Inject constructor(
                         AdvancePaid,
                         "Advance Paid",
                         "Advance payment of " +
-                            "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
+                            "₹ ${String.format(
+                                "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                            )}" +
                             " has been paid",
                         history.epoch()
                     )
@@ -155,7 +161,9 @@ class TripDetailsViewModel @Inject constructor(
                         AdvancePending,
                         "Advance Pending",
                         "Advance payment of " +
-                            "₹ ${String.format("%, .0f", tripDetail.bidDetails?.advancePayout)}" +
+                            "₹ ${String.format(
+                                "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                            )}" +
                             " has been initiated",
                         history.epoch()
                     )
@@ -212,7 +220,7 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     AwaitingPODUpload,
                     "Awaiting POD upload",
-                    "This can take some days, Please be patient"
+                    "Balance will be paid within 3 days of POD verification"
                 )
             )
           }

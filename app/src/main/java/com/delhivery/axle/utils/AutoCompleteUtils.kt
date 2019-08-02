@@ -21,10 +21,26 @@ class AutoCompleteUtils @Inject constructor(
 ) {
 
   private var disposable: Disposable? = null
+  private lateinit var cities: List<CityModel>
 
   /**
    * Attach auto complete for cities
    */
+  fun autoCompleteCity(
+    editText: DelhiveryCityAutoEditText,
+    cities: List<CityModel>,
+    action: (CityModel) -> Unit
+  ) {
+    this.cities = cities
+    val d = RxTextView.textChanges(editText)
+        .filter { it.length >= 3 }
+        .subscribe({
+          resetStaticSuggestions(it.toString(), editText, action)
+        }, {
+          it.printStackTrace()
+        })
+  }
+
   fun autoCompleteCity(
     editText: DelhiveryCityAutoEditText,
     action: (CityModel) -> Unit
@@ -32,7 +48,7 @@ class AutoCompleteUtils @Inject constructor(
     val d = RxTextView.textChanges(editText)
         .filter { it.length >= 3 }
         .subscribe({
-          resetSuggestions(it.toString(), editText, action)
+          resetNetworkSuggestions(it.toString(), editText, action)
         }, {
           it.printStackTrace()
         })
@@ -41,7 +57,22 @@ class AutoCompleteUtils @Inject constructor(
   /**
    * Re-fetch suggestions
    */
-  private fun resetSuggestions(
+  private fun resetStaticSuggestions(
+    query: String,
+    editText: DelhiveryCityAutoEditText,
+    action: (CityModel) -> Unit
+  ) {
+    editText.setItems(
+        cities.filter {
+          it.city.toLowerCase()
+              .startsWith(query.toLowerCase())
+        }) {
+      editText.dismissDropDown()
+      action(it)
+    }
+  }
+
+  private fun resetNetworkSuggestions(
     query: String,
     editText: DelhiveryCityAutoEditText,
     action: (CityModel) -> Unit

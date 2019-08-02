@@ -8,6 +8,7 @@ import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
+import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.utils.ColorProviderUtils
@@ -47,14 +48,17 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_city_code") val destinationCityCode: String,
   @SerializedName("truck_specifications") val truckSpecs: TruckSpecifications,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("load_price_percent") var loadPricePercent: Int,
   var transactionBid: TransactionBid? = null,
+  var targetPricePercent: Int,
   var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
   fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
-  fun targetPrice() = "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
+  fun targetPrice() =
+    "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
@@ -68,15 +72,17 @@ data class HomeBidsRequestItemData(
 
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
-      Accepted -> "₹ ${String.format("%,d", transactionBid!!.bidAmount)}"
-      else -> "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
+      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(
+          transactionBid!!.bidAmount
+      )}"
+      else -> "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
     }
   } else {
-    "₹ ${String.format("%,d", targetPrice * 95 / 100)}"
+    "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
   }
 
   fun amountLabel() = when (bidStatus()) {
-    Open -> "Bid Price"
+    Open -> "Your Bid"
     Accepted -> "Confirmed Price"
     else -> "Trip Price"
   }
@@ -120,7 +126,7 @@ data class HomeBidsRequestItemData(
     }
 
   fun tripPriceDifference(): String {
-    return transactionBid?.targetPriceDiff(targetPrice * 95 / 100) ?: ""
+    return transactionBid?.targetPriceDiff(targetPrice * targetPricePercent / 100) ?: ""
   }
 
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
@@ -129,7 +135,7 @@ data class HomeBidsRequestItemData(
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid placed for ₹ ${String.format("%, d", transactionBid?.bidAmount)}"
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount?:0)}"
 }
 
 /* actions */

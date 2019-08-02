@@ -1,14 +1,12 @@
 package com.delhivery.axle.utils
 
 import android.content.Context
-import androidx.annotation.StringRes
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.StringRes
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.LayoutDelhiveryProgressBinding
 import com.delhivery.axle.databinding.LayoutFabCardMenuBinding
@@ -17,6 +15,8 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryFabCardMenuInterface
 import com.delhivery.axle.ui.custom.DelhiveryFabCardMenuItem
 import com.delhivery.axle.utils.extensions.consumeTouch
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 

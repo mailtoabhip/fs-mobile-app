@@ -8,6 +8,7 @@ import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripVehicleDetails
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +31,7 @@ data class TripHistoryModel(
 }
 
 private fun getEpoch(actionTime: String): String {
-  return if (actionTime.isNotEmpty()) {
+  return if (actionTime.isNotNullOrEmpty()) {
     (System.currentTimeMillis() - DateUtils.parseDate(
         actionTime, DatePatterns.OrionDateFormat
     ).time).let { msDiff ->

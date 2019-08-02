@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class TripsResponse(
@@ -29,6 +30,6 @@ data class Summary(
 
   fun amount() = when (amount) {
     null -> ""
-    else -> "₹ ${String.format("%, .0f", amount)}"
+    else -> "₹ ${StringUtils.formatAmount(amount)}"
   }
 }

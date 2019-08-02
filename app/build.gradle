@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
-  compileSdkVersion 28
+  compileSdkVersion 29
 
   signingConfigs {
     release {
@@ -19,9 +19,9 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
-    targetSdkVersion 28
+    targetSdkVersion 29
     versionCode 1
-    versionName "1.0-alpha(1)"
+    versionName "1.1-alpha"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -41,10 +41,12 @@ android {
     devlopment {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
+      resValue("bool", "FIREBASE_ANALYTICS_DEACTIVATED", "false")
     }
     production {
       dimension "vanilla"
       resValue "string", "app_name", "Axle"
+      resValue("bool", "FIREBASE_ANALYTICS_DEACTIVATED", "true")
       signingConfig signingConfigs.release
     }
   }
@@ -83,7 +85,15 @@ android {
       def date = new Date();
       def formattedDate = date.format('ddMMyy_HHmm')
 
-      def newApkName = project + SEP + flavor + SEP + buildType + SEP + version + SEP + formattedDate + ".apk"
+      def newApkName = project + SEP +
+          flavor +
+          SEP +
+          buildType +
+          SEP +
+          version +
+          SEP +
+          formattedDate +
+          ".apk"
 
       outputFileName = new File(newApkName)
     }
@@ -151,8 +161,9 @@ dependencies {
   //JWT Decode library
   implementation 'com.auth0.android:jwtdecode:1.2.0'
 
-  //Firebase core
+  //Firebase
   implementation 'com.google.firebase:firebase-core:17.0.1'
+  implementation 'com.google.firebase:firebase-inappmessaging-display:18.0.2'
 
   //Firebase crashlytics
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'

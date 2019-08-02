@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.searchload.fragments.searchload
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.CityModel
@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -42,23 +43,29 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    /* animate open */
-    binding.arcView.animate(RevealOpen) {
-      please {
-        animate(binding.containerHistory) toBe {
-          visible()
-        }
-        animate(binding.textHistoryTitle) toBe {
-          visible()
-        }
-        animate(binding.containerSearchLoadHeaderForm) toBe {
-          visible()
-        }
-      }.setStartDelay(200)
-          .start()
+    viewModel.progressLiveData.observe(this, ProgressObserver())
 
-      setupSearchScreen()
-    }
+    viewModel.citiesLiveData.observe(this, Observer {
+      /* animate open */
+      binding.arcView.animate(RevealOpen) {
+        please {
+          animate(binding.containerHistory) toBe {
+            visible()
+          }
+          animate(binding.textHistoryTitle) toBe {
+            visible()
+          }
+          animate(binding.containerSearchLoadHeaderForm) toBe {
+            visible()
+          }
+        }.setStartDelay(300)
+            .start()
+      }
+
+      setupSearchScreen(it)
+    })
+
+    viewModel.fetchCities()
   }
 
   override fun onPause() {
@@ -67,13 +74,13 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     autoCompleteUtils.clearDisposable()
   }
 
-  private fun setupSearchScreen() {
-    autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
+  private fun setupSearchScreen(cities: List<CityModel>) {
+    autoCompleteUtils.autoCompleteCity(binding.editOriginCity, cities) {
       origin = it
       binding.editDestinationCity.requestFocus()
     }
 
-    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
+    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity, cities) {
       destination = it
       uiUtils.toggleKeyboard()
     }
@@ -127,6 +134,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     if (origin == null) {
       binding.editOriginCity.setError(getString(string.error_search_missing_origin))
       binding.editOriginCity.errorAnimate()
+      analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
       return
     }
 
@@ -182,7 +190,24 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         }
       }
       /* title as per search results */
-      binding.textHistoryTitle.visible(t != null && t.isNotEmpty())
+      binding.textHistoryTitle.visible(!t.isNullOrEmpty())
+    }
+  }
+
+  /**
+   * Progress observer
+   */
+  inner class ProgressObserver : Observer<Boolean> {
+    override fun onChanged(t: Boolean?) {
+      t?.let {
+        when (t) {
+          true -> uiUtils.showDelhiveryProgress(
+              "Getting details", "This usually takes few seconds to load. please be patient.",
+              "This usually takes few seconds to load. please be patient."
+          )
+          false -> uiUtils.hideDelhiveryProgress()
+        }
+      }
     }
   }
 

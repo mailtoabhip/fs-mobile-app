@@ -1,11 +1,10 @@
 package com.delhivery.axle.ui.home
 
+import android.os.Bundle
+import android.view.MenuItem
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
-import androidx.core.view.ViewCompat
-import android.view.MenuItem
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -16,11 +15,10 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.utils.extensions.onPageSelected
+import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {
-
-  var currPos: Int = 0
 
   override fun getViewModelClass() = HomeViewModel::class.java
 

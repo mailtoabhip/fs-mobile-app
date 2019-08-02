@@ -8,13 +8,15 @@ import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BidsRepository @Inject constructor(
   private val userRepository: UserRepository,
-  private val bidService: BidService
+  private val bidService: BidService,
+  private val userPrefs: UserPrefs
 ) : BaseRepository() {
 
   private fun createList(
@@ -39,9 +41,10 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
+        val lowest = (it.bids.minBy { b -> b.bidAmount })?.bidAmount ?: 0
         val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
             .firstOrNull()
-        Triple(userBid, it.bids, it.totalBids)
+        Triple(Pair(userBid, lowest), it.bids, it.totalBids)
       }!!
 
   fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
@@ -71,7 +74,7 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     amount: Int
   ) = CreateTransactionBidRequest(
-      transactionId, userRepository.userId(), userRepository.username(), amount
+      transactionId, userRepository.userId(), userPrefs.userName, amount
   ).let { bidService.createTransactionBid(it) }
 
   /**

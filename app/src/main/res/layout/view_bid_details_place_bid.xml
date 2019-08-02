@@ -9,6 +9,11 @@
         name="bidsRecieved"
         type="Integer"
         />
+
+    <variable
+        name="lowestBid"
+        type="String"
+        />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
@@ -36,13 +41,13 @@
         android:layout_marginTop="@dimen/size_12dp"
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.01"
-        android:lineSpacingExtra="2sp"
+        android:lineSpacingExtra="@dimen/text_2sp"
         android:shadowColor="#3b000000"
         android:shadowDy="2"
         android:shadowRadius="16"
         android:text="@{ @string/msg_bids_received_till_now(bidsRecieved) }"
         android:textColor="#ffffff"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_16sp"
         android:textStyle="normal"
         tools:text="23 bids recieved till now"
         />
@@ -54,11 +59,26 @@
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
         android:letterSpacing="0.01"
-        android:lineSpacingExtra="6sp"
+        android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_you_have_not_placed_any_bid"
         android:textColor="#e0e0e0"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_12sp"
         android:textStyle="normal"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_2dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@{lowestBid}"
+        android:textColor="#e0e0e0"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="normal"
+        tools:text="Lowest Bid Placed- 34000"
         />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -71,11 +91,11 @@
         android:fontFamily="sans-serif-medium"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:letterSpacing="0.04"
-        android:paddingEnd="36dp"
-        android:paddingStart="36dp"
+        android:paddingEnd="@dimen/size_36dp"
+        android:paddingStart="@dimen/size_36dp"
         android:text="@string/action_place_bid"
         android:textColor="@color/colorAccent"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_14sp"
         />
   </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

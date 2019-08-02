@@ -151,7 +151,7 @@
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:lineSpacingExtra="@dimen/text_6sp"
-            android:text="@string/update_route"
+            android:text="@string/action_update_route"
             android:textColor="@color/white"
             android:textSize="@dimen/text_16sp"
             android:textStyle="normal"

@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils
 
 import com.delhivery.axle.injection.scope.ActivityScope
+import java.text.DecimalFormat
 
 /**
  * Created by saurabh
@@ -30,4 +31,9 @@ object StringUtils {
       string
     } else Character.toTitleCase(ch) + string.substring(1)
   }
+
+  fun formatAmount(num: Int) = DecimalFormat("##,##,##,###").format(num)
+
+  fun formatAmount(num: Double) = DecimalFormat("##,##,##,###").format(num)
+
 }

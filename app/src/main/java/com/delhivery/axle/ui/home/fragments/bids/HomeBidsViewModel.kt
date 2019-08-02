@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.bids
 
-import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.repository.BidsRepository
@@ -132,6 +132,7 @@ class HomeBidsViewModel @Inject constructor(
 
                 for (transaction in transactions) {
                   try {
+                    transaction.targetPricePercent = _res.second.loadPricePercent
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }

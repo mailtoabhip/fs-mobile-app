@@ -89,6 +89,8 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
+                userPrefs.userName = it.name
+                userPrefs.tdsRate = it.getTDS()
                 if (it.hasRoutes()) {
                   userPrefs.cityCode = it.userRoutes()
                       .get(0)
@@ -104,6 +106,7 @@ class AuthenticationViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
+            userPrefs.hasLoggedIn = true
             if (_res.third.hasRoutes()) {
               LoadRequest
             } else {
@@ -111,6 +114,7 @@ class AuthenticationViewModel @Inject constructor(
             }
           } else {
             if (error is HttpException) {
+              userPrefs.hasLoggedIn = false
               error.handle()
             }
             errorLiveData.postValue(Pair(InvalidOTP, ""))

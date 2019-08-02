@@ -9,6 +9,7 @@ import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
 data class HomeTripsItemData(
@@ -59,7 +60,7 @@ data class HomeTripsItemData(
   fun tripPayment() = when (tripStatus()) {
     AdvancePending -> {
       if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-        "₹ ${String.format("%, .0f", bidDetails.advancePayout)}"
+        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout?: 0.0)}"
       } else {
         ""
       }
@@ -67,14 +68,14 @@ data class HomeTripsItemData(
     BalancePending -> {
       if (payment != null && payment!!.bidPrice > 0.0 && payment!!.advancePayout > 0.0) {
         val balance = payment!!.bidPrice.minus(payment!!.advancePayout)
-        "₹ ${String.format("%, .0f", balance)}"
+        "₹ ${StringUtils.formatAmount(balance)}"
       } else {
         ""
       }
     }
     Completed -> {
       if (payment != null && payment!!.bidPrice > 0) {
-        "₹ ${String.format("%, .0f", payment!!.bidPrice)}"
+        "₹ ${StringUtils.formatAmount(payment!!.bidPrice)}"
       } else {
         ""
       }
@@ -87,7 +88,7 @@ data class HomeTripsItemData(
     vehicleDetails.vehicleNo.contains(query, true)
         || driverDetails?.driverName?.contains(query, true) == true
         || destination.contains(query, true)
-        || lr.contains(query, true)
+        || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
