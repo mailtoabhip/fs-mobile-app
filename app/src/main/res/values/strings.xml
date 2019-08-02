@@ -30,6 +30,16 @@
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+  <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
+  <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
+  <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
+  <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
+  <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
+  <string name="msg_you_lost_bid">You lost the bid</string>
+  <string name="msg_accepted_bid_value">Accepted bid value: ₹ %1$d</string>
+  <string name="msg_your_highest_bid">Your bid: ₹  %1$d</string>
+  <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
+  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -39,6 +49,9 @@
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
   <string name="hint_search_trips">Vehicle / Driver / Destination / LR</string>
+  <string name="hint_search_bids">Vehicle / Driver / Destination</string>
+  <string name="hint_enter_bid_value">Enter bid value (₹)</string>
+  <string name="hint_amount">23900</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -54,6 +67,16 @@
   <string name="action_start_bidding">Start Bidding</string>
   <string name="action_delete">Delete</string>
   <string name="action_no_dont_delete">No, Don’t Delete</string>
+  <string name="action_edit_bid">Edit Bid</string>
+  <string name="action_confirm_route">Confirm Route</string>
+  <string name="action_deselect_all_states">Deselect all states</string>
+  <string name="action_select_all_states">Select all states</string>
+  <string name="action_go_to_load_requests">GO to load requests</string>
+  <string name="action_add_more_route">Add more routes</string>
+  <string name="action_confirm">Confirm</string>
+  <string name="action_logout_from_app">Logout from the app</string>
+  <string name="action_dismiss">DISMISS</string>
+  <string name="action_update_route">Update Route</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -93,35 +116,11 @@
   <string name="label_in_transit">In-transit</string>
   <string name="label_balance_pending">Balance Pending</string>
   <string name="label_complete">Complete</string>
-  <string name="Rs">\u20B9</string>
-
-  <!--Error (error_-->
-  <string name="error_no_internet">No Internet connection</string>
-  <string name="error_name_required">Please enter name</string>
-  <string name="error_dob_required">Please enter Date of birth</string>
-  <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="action_edit_bid">Edit Bid</string>
+  <string name="label_advance_paid">Advance Paid</string>
+  <string name="label_balance_paid">Balance Paid</string>
   <string name="label_your_recent_search">Your recent searches</string>
-  <string name="title_add_nearby_locations">Add nearby locations ?</string>
-  <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
-  <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
-  <string name="action_confirm">Confirm</string>
-  <string name="label_destination_states">Destination States</string>
-  <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
-  <string name="action_confirm_route">Confirm Route</string>
-  <string name="action_deselect_all_states">Deselect all states</string>
-  <string name="action_select_all_states">Select all states</string>
   <string name="label_routes_added">Routes added</string>
-  <string name="action_add_more_route">Add more routes</string>
-  <string name="action_go_to_load_requests">GO to load requests</string>
   <string name="label_bid_amount">Bid Amount</string>
-  <string name="hint_enter_bid_value">Enter bid value (₹)</string>
-  <string name="hint_amount">23900</string>
-  <string name="label_bidding_ended">Bidding ended</string>
-  <string name="msg_you_lost_bid">You lost the bid</string>
-  <string name="msg_accepted_bid_value">Accepted bid value: ₹ %1$d</string>
-  <string name="msg_your_highest_bid">Your highest bid: ₹  %1$d</string>
-  <string name="action_dismiss">DISMISS</string>
   <string name="label_error">Error</string>
   <string name="label_vehicle">Vehicle</string>
   <string name="label_driver">Driver</string>
@@ -129,21 +128,27 @@
   <string name="label_status_history">Status history</string>
   <string name="label_payment_summary">Payment Summary</string>
   <string name="label_no_bids_found">No bids found</string>
-  <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
-  <string name="title_we_are_building_this_page">We are building the page</string>
-  <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
   <string name="label_your_routes">Your Routes</string>
-  <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
-  <string name="action_logout_from_app">Logout from the app</string>
-  <string name="title_coming_soon">Coming Soon</string>
-  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
-  <string name="card_heading_trip_meter">Trip Meter</string>
-  <string name="card_subheading_trip_meter"><![CDATA[Trips completed & Revenue you earned working with us.]]></string>
-  <string name="update_route">Update Route</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
-  <string name="not_available">Not available</string>
+  <string name="label_bidding_ended">Bidding ended</string>
+  <string name="label_destination_states">Destination States</string>
+  <string name="label_we_are_building_this_page">We are building the page</string>
+  <string name="label_coming_soon">Coming Soon</string>
+  <string name="label_trip_meter">Trip Meter</string>
+  <string name="label_add_nearby_locations">Add nearby locations?</string>
+  <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.></string>
+  <string name="label_resend_otp">Resend OTP</string>
+  <string name="Rs">\u20B9</string>
+
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
   <string name="error_search_missing_origin">Please select origin</string>
+
+  <string name="not_available">Not available</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

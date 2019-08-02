@@ -45,4 +45,10 @@ data class UserModel(
     Collections.sort(_routes, { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
     return _routes
   }
+
+  fun getTDS() = when (userType) {
+    "individual" -> 99
+    else -> 98
+  }
+
 }

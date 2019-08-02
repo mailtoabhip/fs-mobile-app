@@ -30,6 +30,8 @@ class BidDetailsViewModel @Inject constructor(
 
   var transactionBidLiveData = MutableLiveData<BidDetailsUserBidState>()
 
+  var bidPriceLiveData = MutableLiveData<TransactionBid>()
+
   /**
    * Fetch transaction details
    */
@@ -58,22 +60,40 @@ class BidDetailsViewModel @Inject constructor(
           if (!error) {
             //determine bid state and post to live data
             when {
-              _bRes.third == 0 -> transactionBidLiveData.postValue(
-                  BidDetailsUserBidState_PlaceBidFirst()
-              )
-              _bRes.first == null -> transactionBidLiveData.postValue(
-                  BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second)
-              )
-              else -> when (_bRes.first!!.status()) {
-                Accepted -> fetchTripDetails()
-                Rejected -> transactionBidLiveData.postValue(
-                    BidDetailsUserBidState_RejectedBid(
-                        _bRes.second.acceptedBid()!!, _bRes.first!!
-                    )
+              _bRes.third == 0 -> {
+                transactionBidLiveData.postValue(
+                    BidDetailsUserBidState_PlaceBidFirst()
                 )
-                else -> transactionBidLiveData.postValue(
-                    BidDetailsUserBidState_EditBid(_bRes.third, _bRes.second, _bRes.first!!)
+                bidPriceLiveData.postValue(null)
+              }
+              _bRes.first.first == null -> {
+                transactionBidLiveData.postValue(
+                    BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second, _bRes.first.second)
                 )
+                bidPriceLiveData.postValue(null)
+              }
+              else -> when (_bRes.first.first!!.status()) {
+                Accepted -> {
+                  bidPriceLiveData.postValue(_bRes.first.first)
+                  fetchTripDetails()
+                }
+                Rejected -> {
+                  transactionBidLiveData.postValue(
+                      BidDetailsUserBidState_RejectedBid(
+                          _bRes.second.acceptedBid()!!, _bRes.first.first!!
+                      )
+                  )
+                  bidPriceLiveData.postValue(null)
+                }
+                else -> {
+                  transactionBidLiveData.postValue(
+                      BidDetailsUserBidState_EditBid(
+                          _bRes.third, _bRes.second, _bRes.first.first!!,
+                          _bRes.first.second
+                      )
+                  )
+                  bidPriceLiveData.postValue(null)
+                }
               }
             }
           } else {

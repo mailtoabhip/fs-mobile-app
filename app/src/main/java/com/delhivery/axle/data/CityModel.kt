@@ -30,8 +30,12 @@ data class CityModel(
         }
     return sb.toString()
   }
-
 }
+
+data class CitiesResponse(
+  @SerializedName("total") val totalBids: Int,
+  @SerializedName("cities") val cities: List<CityModel>
+)
 
 /**
  * Convert city list to city names, string list

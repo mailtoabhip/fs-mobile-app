@@ -31,7 +31,8 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("city_code") cityCode: String,
     @Query("offset") offset: Int,
-    @Query("limit") limit: Int
+    @Query("limit") limit: Int,
+    @Query("axle_current_week_loads") currWeekLoads: String = "yes"
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

@@ -1,10 +1,12 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class TransactionsResponse(
   @SerializedName("has_next") val hasNext: Boolean,
+  @SerializedName("load_price_percent") val loadPricePercent: Int,
   @SerializedName("total") val total: Int,
   @SerializedName("offset") val offset: Int,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>
@@ -32,5 +34,5 @@ data class MonthlyEarning(
 
   fun count() = "$count trips"
 
-  fun sum() = "₹ ${String.format("%, .0f", sum)}"
+  fun sum() = "₹ ${StringUtils.formatAmount(sum)}"
 }

@@ -7,9 +7,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.ChargeType
 import com.delhivery.axle.api.response.TripChargesResponse
-import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
@@ -24,6 +24,7 @@ import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
 import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_LOAD
 
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>() {
@@ -187,6 +188,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         "", ""
     )
     )
+
     tripChargesSummary.forEach { _payment ->
       if (_payment.payVendor > 0) {
         ViewPaymentSummaryItemBinding.inflate(
@@ -194,6 +196,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         )
             .apply {
               data = _payment
+              seprator.visibility = View.GONE
               if (_payment.head.compareTo(ChargeType.Damages.charge_key) == 0) {
                 textChargeValue.setTextColor(
                     ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
@@ -208,34 +211,66 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.total = "₹ ${String.format("%, .0f", total)}"
+    ViewPaymentSummaryItemBinding.inflate(
+        layoutInflater, paymentSummaryBinding.containerPayment, false
+    )
+        .apply {
+          seprator.visibility = View.VISIBLE
+          data = TripChargesResponse(
+              "", ChargeType.SubTotal.charge_key,
+              0.0, total,
+              "", ""
+          )
+          paymentSummaryBinding.containerPayment.addView(root)
+        }
 
-    val advance = viewModel.bidDetail?.advancePayout ?: 0.0
+    ViewPaymentSummaryItemBinding.inflate(
+        layoutInflater, paymentSummaryBinding.containerPayment, false
+    )
+        .apply {
+          seprator.visibility = View.GONE
+          data = TripChargesResponse(
+              "", ChargeType.TDS.charge_key,
+              0.0, total * (100 - viewModel.userPrefs.tdsRate) / 100,
+              "", ""
+          )
+          textChargeValue.setTextColor(
+              ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
+          )
+
+          paymentSummaryBinding.containerPayment.addView(root)
+        }
+
+    paymentSummaryBinding.total =
+      "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
+
+    val advance =
+      (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100) ?: 0.0
     if (advance > 0.0) {
       paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
       paymentSummaryBinding.advance = when (viewModel.advancePaid) {
         true -> {
-          paymentSummaryBinding.labelAdvance.text = "Advance Paid"
-          "₹ ${String.format("%, .0f", advance)}"
+          paymentSummaryBinding.labelAdvance.text = getString(string.label_advance_paid)
+          "₹ ${StringUtils.formatAmount(advance)}"
         }
         false -> {
-          paymentSummaryBinding.labelAdvance.text = "Advance Pending"
-          "₹ ${String.format("%, .0f", advance)}"
+          paymentSummaryBinding.labelAdvance.text = getString(string.label_advance_pending)
+          "₹ ${StringUtils.formatAmount(advance)}"
         }
       }
     } else {
       paymentSummaryBinding.containerAdvance.visibility = View.GONE
     }
 
-    val balance = total.minus(advance)
+    val balance = (total * viewModel.userPrefs.tdsRate / 100).minus(advance)
     paymentSummaryBinding.balance = when (viewModel.balancePaid) {
       true -> {
-        paymentSummaryBinding.labelBalance.text = "Balance Paid"
-        "₹ ${String.format("%, .0f", balance)}"
+        paymentSummaryBinding.labelBalance.text = getString(string.label_balance_paid)
+        "₹ ${StringUtils.formatAmount(balance)}"
       }
       false -> {
-        paymentSummaryBinding.labelBalance.text = "Balance Pending"
-        "₹ ${String.format("%, .0f", balance)}"
+        paymentSummaryBinding.labelBalance.text = getString(string.label_balance_pending)
+        "₹ ${StringUtils.formatAmount(balance)}"
       }
     }
     paymentSummaryBinding.containerTotal.visibility = View.VISIBLE

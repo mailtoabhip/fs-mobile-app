@@ -40,66 +40,6 @@
           android:orientation="vertical"
           >
 
-        <!-- confirmed bid banner -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container_confirm_bid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_4dp"
-            android:background="@color/colorPrimary"
-            android:paddingBottom="@dimen/size_36dp"
-            android:paddingEnd="@dimen/size_28dp"
-            android:paddingStart="@dimen/size_28dp"
-            android:paddingTop="@dimen/size_36dp"
-            android:visibility="gone"
-            bind:shadow="@{ @dimen/size_2dp }"
-            >
-
-          <TextView
-              android:id="@+id/text_title_confirmed_bid"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:fontFamily="sans-serif-medium"
-              android:gravity="center_horizontal"
-              android:letterSpacing="0.01"
-              android:lineSpacingExtra="@dimen/text_2sp"
-              android:text="@string/title_confirmed_bid_details_banner"
-              android:textColor="@color/colorAccent"
-              android:textSize="@dimen/text_16sp"
-              android:textStyle="normal"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toTopOf="parent"
-              />
-
-          <androidx.appcompat.widget.AppCompatImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginEnd="@dimen/size_4dp"
-              app:layout_constraintEnd_toStartOf="@id/text_title_confirmed_bid"
-              app:layout_constraintTop_toTopOf="@+id/text_title_confirmed_bid"
-              app:srcCompat="@drawable/ic_check_circle_green"
-              />
-
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_10dp"
-              android:fontFamily="sans-serif"
-              android:gravity="center_horizontal"
-              android:letterSpacing="0.01"
-              android:lineSpacingExtra="@dimen/text_6sp"
-              android:text="@string/msg_confirmed_bid_details_banner"
-              android:textColor="@color/colorAccent"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_title_confirmed_bid"
-              />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <!-- details container -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -188,8 +128,8 @@
               android:gravity="center_vertical"
               android:text="@{ transaction.truckTypeDetails() }"
               android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
+              android:textSize="@dimen/text_14sp"
+              android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="@id/text_date_time"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintTop_toTopOf="@id/text_date_time"
@@ -233,6 +173,7 @@
               android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
+              android:visibility="invisible"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_load_details"
               />
@@ -249,6 +190,7 @@
               android:textColor="@color/black"
               android:textSize="@dimen/text_24sp"
               android:textStyle="normal"
+              android:visibility="invisible"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
               tools:text="₹ 23900.00"

@@ -33,7 +33,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    window.clearFlags(
+    window?.clearFlags(
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
     )
 
@@ -45,7 +45,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
 
     /* set binding params */
     binding.apply {
-      targetPrice = transaction.targetPrice
+      targetPrice = transaction.targetPrice * transaction.loadPricePercent / 100
       route = "${transaction.origin} - ${transaction.destination}"
       transactionBid?.bidAmount?.let { binding.editAmount.setText(it.toString()) }
     }

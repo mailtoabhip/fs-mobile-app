@@ -5,12 +5,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import androidx.core.content.res.ResourcesCompat
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.names
@@ -99,14 +99,16 @@ class DelhiveryCityAutoEditText(
     cities: List<CityModel>,
     selected: (CityModel) -> Unit
   ) {
-    progress(false)
-    val adapter =
-      ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
-    setAdapter(adapter)
-    setOnItemClickListener { _, _, i, _ ->
-      setText(cities[i].cityName())
-      selected(cities[i])
-      dismissDropDown()
+    if (!isPerformingCompletion) {
+      progress(false)
+      val adapter =
+        ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
+      setAdapter(adapter)
+      setOnItemClickListener { _, _, i, _ ->
+        setText(cities[i].cityName())
+        selected(cities[i])
+        dismissDropDown()
+      }
     }
     if (cities.isEmpty()) {
       error = true

@@ -15,6 +15,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_MyBids
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
+import com.delhivery.axle.data.home.bids.HomeBidsSearchItemData
 import com.delhivery.axle.data.home.bids.HomeBidsTimeOutAction
 import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
 import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_SelectRoutes
@@ -127,7 +128,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
-    add(1, HomeBidsSearchItem())
+    add(1, HomeBidsSearchItem(HomeBidsSearchItemData()))
     add(2, HomeBidsProgressItem())
   }
 

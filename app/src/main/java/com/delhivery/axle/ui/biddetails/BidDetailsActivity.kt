@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.biddetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -55,6 +56,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
     viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+    viewModel.bidPriceLiveData.observe(this, Observer {
+      if (it != null) {
+        binding.transaction?.transactionBid = it
+        binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+        binding.textTargetPrice.text = binding.transaction?.bidAmount()
+      }
+      binding.textTargetPrice.visibility = View.VISIBLE
+      binding.textTargetPriceLabel.visibility = View.VISIBLE
+    })
 
     /* fetch transaction details */
     viewModel.fetchTransactionDetails()
@@ -108,6 +118,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
+                  lowestBid = when (state.lowestBid) {
+                    0, null -> ""
+                    else -> "Lowest Bid - ${state.lowestBid}"
+                  }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
           }
@@ -115,10 +129,18 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
+                  lowestBid = when (state.lowestBid) {
+                    0, null -> ""
+                    else -> "Lowest Bid - ${state.lowestBid}"
+                  }
                   textUserBidAmount.text =
                     getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
                   textUserBidAmountDiff.text =
-                    state.userBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                    state.userBid.targetPriceDiff(
+                        binding.transaction?.targetPrice?.times(
+                            binding.transaction?.loadPricePercent ?: 100
+                        )?.div(100) ?: 0
+                    )
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }
@@ -146,18 +168,18 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  textAcceptedBidValue.text =
-                    getString(R.string.msg_accepted_bid_value, state.acceptedBid.bidAmount)
                   textBidAmoutDiff.text =
-                    state.acceptedBid.targetPriceDiff(binding.transaction?.targetPrice ?: 0)
+                    state.acceptedBid.targetPriceDiff(
+                        binding.transaction?.targetPrice?.times(
+                            binding.transaction?.loadPricePercent ?: 100
+                        )?.div(100) ?: 0
+                    )
                   textUserHighestBid.text =
                     getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
                 }
           }
           else -> null
         }?.let { _binding ->
-          /* confirmed banner visibility */
-          binding.containerConfirmBid.visible(_binding is ViewBidDetailsConfirmedBidBinding)
           /* bidding ended */
           binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
 
@@ -175,7 +197,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   private fun bidDialog(bid: TransactionBid? = null) {
     binding.transaction?.let {
-      BidDetailsCreateEditDialog(this, it, bid, viewModel, analyticsUtil = analyticsUtil).show()
+      BidDetailsCreateEditDialog(
+          this, it, bid, viewModel, analyticsUtil = analyticsUtil
+      ).show()
     }
   }
 }

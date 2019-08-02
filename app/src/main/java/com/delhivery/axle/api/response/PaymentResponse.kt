@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.api.response.ChargeType.Damages
+import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -25,8 +26,8 @@ data class TripChargesResponse(
   fun chargeType() = ChargeType.byTypeId(head).charge
 
   fun charges() = when (head) {
-    Damages.charge_key -> "- ₹ ${String.format("%, .0f", payVendor)}"
-    else -> "₹ ${String.format("%, .0f", payVendor)}"
+    Damages.charge_key -> "- ₹ ${StringUtils.formatAmount(payVendor)}"
+    else -> "₹ ${StringUtils.formatAmount(payVendor)}"
   }
 }
 
@@ -62,6 +63,8 @@ enum class ChargeType(
   Rto("rto", "RTO"),
   Damages("damage", "Damages"),
   ExtraRun("extra_run", "Extra Run"),
+  TDS("tds", "TDS"),
+  SubTotal("sub_total", "Sub Total"),
   Unknown("misc", "Miscellaneous");
 
   companion object {

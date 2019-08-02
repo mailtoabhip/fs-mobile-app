@@ -22,7 +22,8 @@ data class BidDetailsUserBidState_PlaceBidFirst(val bidsCount: Int = 0) : BidDet
  */
 data class BidDetailsUserBidState_PlaceBid(
   val bidsCount: Int,
-  val bids: List<TransactionBid>
+  val bids: List<TransactionBid>,
+  val lowestBid: Int
 ) : BidDetailsUserBidState(R.layout.view_bid_details_place_bid)
 
 /**
@@ -31,7 +32,8 @@ data class BidDetailsUserBidState_PlaceBid(
 data class BidDetailsUserBidState_EditBid(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val userBid: TransactionBid
+  val userBid: TransactionBid,
+  val lowestBid: Int
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
 
 /**

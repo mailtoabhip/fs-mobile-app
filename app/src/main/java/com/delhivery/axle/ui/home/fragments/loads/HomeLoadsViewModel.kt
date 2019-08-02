@@ -33,7 +33,7 @@ import javax.inject.Inject
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
-  private val userPrefs: UserPrefs,
+  val userPrefs: UserPrefs,
   private val bidsRepository: BidsRepository
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
@@ -53,6 +53,9 @@ class HomeLoadsViewModel @Inject constructor(
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
+  var loadPricePercent = 0
+
+  /* pagination params */
   var hasMoreData = true
   var offset = 0
   var total = 0
@@ -78,6 +81,7 @@ class HomeLoadsViewModel @Inject constructor(
           offset = t.offset
           total = t.total
           hasMoreData = t.offset != t.total
+          loadPricePercent = t.loadPricePercent
           loadsCountLiveData.postValue(total)
           bidsRepository.bidsForLoads(t.transactions)
         }
@@ -96,6 +100,7 @@ class HomeLoadsViewModel @Inject constructor(
               } else {
                 for (load in loads.toMutableList()) {
                   try {
+                    load.loadPricePercent = loadPricePercent
                     load.transactionBid =
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
@@ -135,6 +140,8 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
+            userPrefs.userName = _user.name
+            userPrefs.tdsRate = _user.getTDS()
             if (_user.hasRoutes()) {
               userPrefs.cityCode = _user.userRoutes()
                   .get(0)
