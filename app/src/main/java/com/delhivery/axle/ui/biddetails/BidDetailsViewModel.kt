@@ -41,7 +41,6 @@ class BidDetailsViewModel @Inject constructor(
         .progress()
         .subscribe { _tRes, error ->
           if (!error) {
-            _tRes.targetPricePercent = _tRes.loadPricePercent
             transactionLiveData.postValue(_tRes)
             fetchTransactionBids()
           } else {

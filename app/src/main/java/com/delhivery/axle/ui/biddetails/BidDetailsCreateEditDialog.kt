@@ -45,7 +45,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
 
     /* set binding params */
     binding.apply {
-      targetPrice = transaction.targetPrice * transaction.targetPricePercent / 100
+      targetPrice = transaction.targetPrice * transaction.loadPricePercent / 100
       route = "${transaction.origin} - ${transaction.destination}"
       transactionBid?.bidAmount?.let { binding.editAmount.setText(it.toString()) }
     }

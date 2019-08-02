@@ -50,7 +50,6 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   var transactionBid: TransactionBid? = null,
-  var targetPricePercent: Int,
   var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
@@ -58,7 +57,7 @@ data class HomeBidsRequestItemData(
   fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
 
   fun targetPrice() =
-    "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
+    "₹ ${StringUtils.formatAmount(targetPrice * loadPricePercent / 100)}"
 
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
@@ -75,10 +74,10 @@ data class HomeBidsRequestItemData(
       Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(
           transactionBid!!.bidAmount
       )}"
-      else -> "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
+      else -> "₹ ${StringUtils.formatAmount(targetPrice * loadPricePercent / 100)}"
     }
   } else {
-    "₹ ${StringUtils.formatAmount(targetPrice * targetPricePercent / 100)}"
+    "₹ ${StringUtils.formatAmount(targetPrice * loadPricePercent / 100)}"
   }
 
   fun amountLabel() = when (bidStatus()) {
@@ -126,7 +125,7 @@ data class HomeBidsRequestItemData(
     }
 
   fun tripPriceDifference(): String {
-    return transactionBid?.targetPriceDiff(targetPrice * targetPricePercent / 100) ?: ""
+    return transactionBid?.targetPriceDiff(targetPrice * loadPricePercent / 100) ?: ""
   }
 
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
@@ -135,7 +134,7 @@ data class HomeBidsRequestItemData(
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount?:0)}"
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0)}"
 }
 
 /* actions */

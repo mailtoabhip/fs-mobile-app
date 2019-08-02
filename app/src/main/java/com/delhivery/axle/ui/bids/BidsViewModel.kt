@@ -96,7 +96,7 @@ class BidsViewModel @Inject constructor(
 
                 for (transaction in transactions) {
                   try {
-                    transaction.targetPricePercent = _res.second.loadPricePercent
+                    transaction.loadPricePercent = _res.second.loadPricePercent
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }

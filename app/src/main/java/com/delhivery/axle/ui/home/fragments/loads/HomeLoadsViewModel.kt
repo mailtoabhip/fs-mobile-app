@@ -100,7 +100,7 @@ class HomeLoadsViewModel @Inject constructor(
               } else {
                 for (load in loads.toMutableList()) {
                   try {
-                    load.targetPricePercent = loadPricePercent
+                    load.loadPricePercent = loadPricePercent
                     load.transactionBid =
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
