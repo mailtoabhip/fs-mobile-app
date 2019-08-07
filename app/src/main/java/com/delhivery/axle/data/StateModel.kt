@@ -37,7 +37,6 @@ data class StateModel(
 }
 
 val StateModelList = listOf<StateModel>(
-    StateModel("Andaman & nicobar islands", "AN"),
     StateModel("Andhra pradesh", "AP"),
     StateModel("Arunachal pradesh", "AR"),
     StateModel("Assam", "AS"),

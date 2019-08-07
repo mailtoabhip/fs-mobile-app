@@ -1,6 +1,7 @@
 package com.delhivery.axle.data.home.trips
 
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import com.delhivery.axle.api.response.TripPayment
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.ui.bids.TripType
@@ -8,6 +9,9 @@ import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.ColorProviderUtils
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
@@ -38,10 +42,11 @@ data class HomeTripsItemData(
   @SerializedName("loading_advice") val loadingAdvice: String?,
   @SerializedName("loading_location") val loadingLocation: String?,
   @SerializedName("reached_time") val reachedTime: String?,
-  @SerializedName("required_on") val requiredOn: String?,
+  @SerializedName("required_on") val requiredOn: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("user_name") val userName: String?,
   @SerializedName("advance_status") val advanceStatus: String? = "failure",
+  @SerializedName("payment_mode") val paymentMode: String,
   var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
@@ -102,6 +107,27 @@ data class HomeTripsItemData(
     "success" -> true
     else -> false
   }
+
+  fun displayTime() = when (_tripStatus) {
+    TripStatus.TruckConfirmed.statusKey -> requiredOn
+    else -> arrivalTime ?: requiredOn
+  }
+
+  /**
+   * Formatted required at
+   */
+  fun requiredAt() = DateUtils.formatDate(
+      DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat),
+      "dd MMM"
+  )
+
+  /**
+   * Required at background as per designs
+   */
+  @DrawableRes
+  fun requiredAtBg() =
+    DrawableProviderUtils.daysDiffBgDrawableRes(displayTime(), DatePatterns.OrionDateFormat)
+
 
   /**
    * Required at text color as per status

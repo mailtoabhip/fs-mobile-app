@@ -92,10 +92,11 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         R.string.title_dialog_logout,
         R.string.msg_dialog_logout,
         positiveAction = "LOGOUT",
-        negativeAction = "BACK"
-    ) {
-      it.dismiss()
-      navigationUtils.logout("Successfully logged out")
-    }
+        negativeAction = "BACK",
+        positiveClickListener = {
+          it.dismiss()
+          navigationUtils.logout("Successfully logged out")
+        }
+    )
   }
 }

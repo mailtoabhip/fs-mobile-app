@@ -1,14 +1,15 @@
 package com.delhivery.axle.utils
 
+import android.R.string
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.text.Html
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
-import androidx.core.content.res.ResourcesCompat
 import androidx.appcompat.app.AlertDialog
-import android.text.Html
+import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.dialogs.ErrorDialog
@@ -42,9 +43,10 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
    */
   fun showBasicConfirmDialog(
     @StringRes title: Int, @StringRes message: Int?,
-    positiveAction: String = activity.getString(android.R.string.ok),
-    negativeAction: String = activity.getString(android.R.string.cancel),
-    positiveClickListener: (DialogInterface) -> Unit
+    positiveAction: String = activity.getString(string.ok),
+    negativeAction: String = activity.getString(string.cancel),
+    positiveClickListener: (DialogInterface) -> Unit,
+    negativeClickListener: ((DialogInterface) -> Unit)? = null
   ) {
     val titleStr = activity.getString(title)
     val messageStr = message?.let { activity.getString(it) }
@@ -54,7 +56,13 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     )
     showConfirmDialog(
         activity, titleStr, messageStr, positiveAction, negativeAction,
-        DialogInterface.OnClickListener { d, _ -> positiveClickListener(d) }, null, actionBtnColor,
+        OnClickListener { d, _ -> positiveClickListener(d) },
+        OnClickListener { d, _ ->
+          if (negativeClickListener != null) {
+            negativeClickListener(d)
+          }
+        },
+        actionBtnColor,
         actionBtnColor
     )
   }

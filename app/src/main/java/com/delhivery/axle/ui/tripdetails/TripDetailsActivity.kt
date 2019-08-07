@@ -62,6 +62,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         title = first.tripDisplayName(second.tripStatus())
         binding.transactionDetails = first
         binding.tripDetails = second
+        binding.advanceDeduction = when (second.paymentMode) {
+          "automatic" -> true
+          else -> false
+        }
         viewModel.bidDetail = second.bidDetails
         populateHistory(viewModel.tripHistory.toMutableList())
       }
@@ -245,7 +249,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
 
     val advance =
-      (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100) ?: 0.0
+      when (binding.advanceDeduction) {
+        true -> {
+          (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100) ?: 0.0
+        }
+        else -> {
+          viewModel.bidDetail?.advancePayout ?: 0.0
+        }
+      }
+
     if (advance > 0.0) {
       paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
       paymentSummaryBinding.advance = when (viewModel.advancePaid) {
@@ -277,6 +289,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     binding.containerHistory.addView(paymentSummaryBinding.root)
   }
+
 }
 
 /* intent keys */

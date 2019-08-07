@@ -229,7 +229,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 mutableListOf()
             )
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(HomeActivity::class.java, true)
+            val bundle = Bundle()
+            bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
+            navigationUtils.navigateForActivityResult(
+                SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
+            )
           }
         }
       }

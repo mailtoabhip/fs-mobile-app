@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.base
 import android.Manifest
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
-import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.LocationFlowState
 import com.delhivery.axle.utils.LocationUtils
 import com.delhivery.axle.utils.extensions.onBackground
@@ -14,7 +13,6 @@ import javax.inject.Inject
 abstract class BaseLocationActivity<B : ViewDataBinding, VM : BaseViewModel> : BaseActivity<B, VM>() {
   @Inject lateinit var locationUtils: LocationUtils
   @Inject lateinit var globalPrefs: GlobalPrefs
-  @Inject lateinit var dialogUtils: DialogUtils
 
   protected fun onLocationButtonClicked(): Boolean {
     return when (locationUtils.getLocationPermissionFlowState()) {
@@ -44,10 +42,11 @@ abstract class BaseLocationActivity<B : ViewDataBinding, VM : BaseViewModel> : B
     dialogUtils.showBasicConfirmDialog(
         R.string.title_dialog_location_setting_disabled,
         R.string.msg_dialog_location_setting_disabled,
-        positiveAction = "GO TO SETTINGS"
-    ) {
-      locationUtils.startEnableLocationActivity()
-    }
+        positiveAction = "GO TO SETTINGS",
+        positiveClickListener = {
+          locationUtils.startEnableLocationActivity()
+        }
+    )
   }
 
   /**
@@ -58,10 +57,11 @@ abstract class BaseLocationActivity<B : ViewDataBinding, VM : BaseViewModel> : B
         R.string.title_dialog_location_permission_disabled,
         R.string.msg_dialog_location_permission_disabled,
         positiveAction = "ALLOW",
-        negativeAction = "DENY"
-    ) {
-      locationUtils.openAppInfo()
-    }
+        negativeAction = "DENY",
+        positiveClickListener = {
+          locationUtils.openAppInfo()
+        }
+    )
   }
 
   /**

@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.bids
 
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding

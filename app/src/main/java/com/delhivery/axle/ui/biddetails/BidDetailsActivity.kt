@@ -136,11 +136,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   textUserBidAmount.text =
                     getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
                   textUserBidAmountDiff.text =
-                    state.userBid.targetPriceDiff(
-                        binding.transaction?.targetPrice?.times(
-                            binding.transaction?.loadPricePercent ?: 100
-                        )?.div(100) ?: 0
-                    )
+                    state.userBid.targetPriceDiff(binding.transaction?.target() ?: 0)
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }
@@ -170,9 +166,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   textBidAmoutDiff.text =
                     state.acceptedBid.targetPriceDiff(
-                        binding.transaction?.targetPrice?.times(
-                            binding.transaction?.loadPricePercent ?: 100
-                        )?.div(100) ?: 0
+                        binding.transaction?.target() ?: 0
                     )
                   textUserHighestBid.text =
                     getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)

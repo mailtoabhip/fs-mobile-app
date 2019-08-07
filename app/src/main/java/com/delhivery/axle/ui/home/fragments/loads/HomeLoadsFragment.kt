@@ -152,7 +152,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     })
 
     /* fetch user transactions */
-    viewModel.fetchUserTransactions()
+    if (!viewModel.isRouteUpdated()) {
+      viewModel.fetchUserTransactions()
+    }
   }
 
   override fun onResume() {
@@ -254,7 +256,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
               mutableListOf(PROPERTY_TRANSACTION_ID),
               mutableListOf(it.transactionId ?: "No user id saved")
           )
-          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
+          it.transactionId?.let { it1 ->
+            viewModel.createBid(
+                it1, it.target(), position
+            )
+          }
         }
       }
     }

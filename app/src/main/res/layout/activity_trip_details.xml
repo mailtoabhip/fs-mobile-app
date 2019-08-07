@@ -19,6 +19,11 @@
         name="transactionDetails"
         type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
+
+    <variable
+        name="advanceDeduction"
+        type="Boolean"
+        />
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat

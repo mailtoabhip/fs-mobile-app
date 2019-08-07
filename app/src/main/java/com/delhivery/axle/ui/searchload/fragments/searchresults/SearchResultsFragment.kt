@@ -170,7 +170,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               mutableListOf(PROPERTY_TRANSACTION_ID),
               mutableListOf(it.transactionId ?: "No user id saved")
           )
-          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
+          it.transactionId?.let { it1 ->
+            viewModel.createBid(
+                it1, it.target(), position
+            )
+          }
         }
       }
     }
