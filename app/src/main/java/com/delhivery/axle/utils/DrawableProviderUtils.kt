@@ -21,9 +21,12 @@ object DrawableProviderUtils {
   fun daysDiffBgDrawableRes(
     date: String,
     format: String
-  ) = when (DateUtils.daysDiff(DateUtils.parseDate(date, format))) {
-    0 -> R.drawable.bg_date_today
-    1 -> R.drawable.bg_date_tomorrow
-    else -> R.drawable.bg_date_others
+  ): Int {
+    val diff = DateUtils.daysDiff(DateUtils.parseDate(date, format))
+    if (diff <= 0) {
+      return R.drawable.bg_date_today
+    } else {
+      return R.drawable.bg_date_tomorrow
+    }
   }
 }

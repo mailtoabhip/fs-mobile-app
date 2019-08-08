@@ -95,6 +95,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         negativeAction = "BACK",
         positiveClickListener = {
           it.dismiss()
+          viewModel.logout()
           navigationUtils.logout("Successfully logged out")
         }
     )

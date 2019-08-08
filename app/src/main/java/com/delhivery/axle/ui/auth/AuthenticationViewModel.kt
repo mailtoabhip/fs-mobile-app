@@ -66,7 +66,6 @@ class AuthenticationViewModel @Inject constructor(
           state = if (!error && _res.first) {
             OTP
           } else {
-            phoneNo = ""
             errorLiveData.postValue(Pair(InvalidPhoneNo, _res.second))
             PhoneNo
           }
@@ -107,9 +106,10 @@ class AuthenticationViewModel @Inject constructor(
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
             userPrefs.hasLoggedIn = true
-            if (_res.third.hasRoutes()) {
+            if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               LoadRequest
             } else {
+              userPrefs.hasEditedRoute = true
               SelectRoute
             }
           } else {

@@ -97,7 +97,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     }
   }
 
-  fun checkForUpdatedVersion(completedAction: (success: Boolean) -> Unit) {
+  private fun checkForUpdatedVersion(completedAction: (success: Boolean) -> Unit) {
     val configSettings = FirebaseRemoteConfigSettings.Builder()
         .setMinimumFetchIntervalInSeconds(0)
         .build()
@@ -105,14 +105,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     val remoteConfig = FirebaseRemoteConfig.getInstance()
     remoteConfig.setConfigSettingsAsync(configSettings)
 
-    var currentVersionCode = 0
-    var playStoreVersionCode = 0
+
     FirebaseRemoteConfig.getInstance()
         .fetchAndActivate()
         .addOnCompleteListener(
             this
         ) {
           if (it.isSuccessful) {
+            var currentVersionCode = 0
+            var playStoreVersionCode = 0
             try {
               remoteConfig.activate()
               playStoreVersionCode = remoteConfig.getString("android_latest_version_code")

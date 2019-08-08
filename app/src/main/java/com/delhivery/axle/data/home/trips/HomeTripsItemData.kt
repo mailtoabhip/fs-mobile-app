@@ -20,6 +20,7 @@ data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
   @SerializedName("action_time") val actionTime: String,
   @SerializedName("arrival_time") val arrivalTime: String?,
+  @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean? = false,
   @SerializedName("client_id") val clientId: String,
   @SerializedName("client_name") val clientName: String,
   @SerializedName("destination") val destination: String,
@@ -46,7 +47,7 @@ data class HomeTripsItemData(
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("user_name") val userName: String?,
   @SerializedName("advance_status") val advanceStatus: String? = "failure",
-  @SerializedName("payment_mode") val paymentMode: String,
+  @SerializedName("payment_mode") val paymentMode: String? = null,
   var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
@@ -65,7 +66,7 @@ data class HomeTripsItemData(
   fun tripPayment() = when (tripStatus()) {
     AdvancePending -> {
       if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout?: 0.0)}"
+        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout ?: 0.0)}"
       } else {
         ""
       }
@@ -113,6 +114,19 @@ data class HomeTripsItemData(
     else -> arrivalTime ?: requiredOn
   }
 
+  fun advanceDeduction() = when (tripStatus()) {
+    AdvancePending -> {
+      autoAdvanceTransfer ?: false
+    }
+    else -> {
+      when (paymentMode) {
+        "automatic" -> true
+        null -> false
+        else -> false
+      }
+    }
+  }
+
   /**
    * Formatted required at
    */
@@ -127,7 +141,6 @@ data class HomeTripsItemData(
   @DrawableRes
   fun requiredAtBg() =
     DrawableProviderUtils.daysDiffBgDrawableRes(displayTime(), DatePatterns.OrionDateFormat)
-
 
   /**
    * Required at text color as per status
