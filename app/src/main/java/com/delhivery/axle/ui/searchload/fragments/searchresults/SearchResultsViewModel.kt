@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 class SearchResultsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val bidsRepository: BidsRepository
+  private val bidsRepository: BidsRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* bid action result live data */

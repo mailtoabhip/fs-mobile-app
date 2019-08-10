@@ -5,6 +5,7 @@ import com.delhivery.axle.repository.AuthenticationRepository
 import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
+import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
 import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
@@ -88,8 +89,7 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
-                userPrefs.userName = it.name
-                userPrefs.tdsRate = it.getTDS()
+                userPrefs.saveUser(it)
                 if (it.hasRoutes()) {
                   userPrefs.cityCode = it.userRoutes()
                       .get(0)
@@ -97,8 +97,11 @@ class AuthenticationViewModel @Inject constructor(
                 } else {
                   userPrefs.cityCode = it.baseCityCode
                 }
-                val msg =
-                  if (_otpRes.second.isNotNullOrEmpty()) _otpRes.second else "Error validating OTP"
+                val msg = if (_otpRes.second.isNotNullOrEmpty()) {
+                  _otpRes.second
+                } else {
+                  "Error validating OTP"
+                }
                 Triple(_otpRes.first, msg, it)
               }
         }
@@ -106,7 +109,9 @@ class AuthenticationViewModel @Inject constructor(
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
             userPrefs.hasLoggedIn = true
-            if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+            if (!_res.third.supplierEnabled) {
+              Disabled
+            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               LoadRequest
             } else {
               userPrefs.hasEditedRoute = true

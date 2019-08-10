@@ -11,6 +11,7 @@ import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.None
+import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
 import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
@@ -21,6 +22,7 @@ import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
+import com.delhivery.axle.utils.Config.AxleOnboardingEmail
 import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
 import com.delhivery.axle.utils.EVENT_OTP_SEND
@@ -235,6 +237,28 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
+          Disabled -> {
+            uiUtils.hideDelhiveryProgress()
+            dialogUtils.showBasicConfirmDialog(
+                string.title_dialog_supplier_disabled,
+                string.msg_dialog_supplier_disabled,
+                "RETRY", "MAIL US",
+                {
+                  it.dismiss()
+                  navigationUtils.logout("Supplier disabled")
+                },
+                {
+                  when (contactUtils.openGmail(receiver = "axle-support@delhivery.com")) {
+                    false -> {
+                      it.dismiss()
+                      uiUtils.showToast("Sorry...You don't have any mail app installed")
+                    }
+                    else -> {
+                    }
+                  }
+                }
+            )
+          }
         }
       }
     }
@@ -261,7 +285,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   it.dismiss()
                 },
                 {
-                  when (contactUtils.openGmail(receiver = "axle-onboarding@delhivery.com")) {
+                  when (contactUtils.openGmail(receiver = AxleOnboardingEmail)) {
                     false -> {
                       it.dismiss()
                       uiUtils.showToast("Sorry...You don't have any mail app installed")

@@ -140,8 +140,7 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
-            userPrefs.userName = _user.name
-            userPrefs.tdsRate = _user.getTDS()
+            userPrefs.saveUser(_user)
             if (_user.hasRoutes()) {
               userPrefs.cityCode = _user.userRoutes()
                   .get(0)

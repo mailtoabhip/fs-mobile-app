@@ -130,8 +130,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
 
             completedAction(playStoreVersionCode > currentVersionCode)
+          } else {
+            completedAction(false)
           }
         }
+        .addOnFailureListener { completedAction(false) }
+        .addOnCanceledListener { completedAction(false) }
   }
 
   private fun postAnimate(state: SplashPostState) {

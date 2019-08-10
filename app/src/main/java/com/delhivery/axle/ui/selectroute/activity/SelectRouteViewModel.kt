@@ -78,7 +78,6 @@ class SelectRouteViewModel @Inject constructor(
         .progress()
         .subscribe { _routes, error ->
           if (!error) {
-            userPrefs.routeUpdate = true
             completedAction(true)
           } else {
             error.handle()

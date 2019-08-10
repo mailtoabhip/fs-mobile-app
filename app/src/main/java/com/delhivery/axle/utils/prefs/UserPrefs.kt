@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
+import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,25 +47,61 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /* Username */
   var userName: String
     set(value) = editor.putString(PrefKeys.UserName, value).apply()
-    get() = prefs.getString(PrefKeys.UserName, "No name").toString()
+    get() = prefs.getString(PrefKeys.UserName, "No name") ?: "No name"
 
-
-  /* First login */
+  /* Has edited routes flag*/
   var hasEditedRoute: Boolean
-    set(value) = editor.putBoolean(PrefKeys.hadEditedRoutes, value).apply()
-    get() = prefs.getBoolean(PrefKeys.hadEditedRoutes, false)
+    set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value).apply()
+    get() = prefs.getBoolean(PrefKeys.HadEditedRoutes, false)
+
+  /* Supplier onbaording status */
+  var onboardingStatus: String
+    set(value) = editor.putString(PrefKeys.OnboardingStatus, value).apply()
+    get() = prefs.getString(PrefKeys.OnboardingStatus, "na") ?: "na"
+
+  /* Supplier enabled flag */
+  var supplierEnabled: Boolean
+    set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value).apply()
+    get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
   /**
    * Clear all preferences
    */
-  fun clearPrefs(){
-    editor.remove(PrefKeys.JWTToken).apply()
-    editor.remove(PrefKeys.CityCode).apply()
-    editor.remove(PrefKeys.RouteUpdate).apply()
-    editor.remove(PrefKeys.PhoneNumber).apply()
-    editor.remove(PrefKeys.HasLoggedIn).apply()
-    editor.remove(PrefKeys.TdsRate).apply()
-    editor.remove(PrefKeys.UserName).apply()
+  fun clearPrefs() {
+    editor.remove(PrefKeys.JWTToken)
+        .apply()
+    editor.remove(PrefKeys.CityCode)
+        .apply()
+    editor.remove(PrefKeys.RouteUpdate)
+        .apply()
+    editor.remove(PrefKeys.PhoneNumber)
+        .apply()
+    editor.remove(PrefKeys.HasLoggedIn)
+        .apply()
+    editor.remove(PrefKeys.TdsRate)
+        .apply()
+    editor.remove(PrefKeys.UserName)
+        .apply()
+    editor.remove(PrefKeys.OnboardingStatus)
+        .apply()
+    editor.remove(PrefKeys.SupplierEnabled)
+        .apply()
+  }
+
+  fun saveUser(user: UserModel) {
+    userName = user.name
+    onboardingStatus = user.onboardingStatus ?: "na"
+    supplierEnabled = user.supplierEnabled
+    tdsRate = user.getTDS()
+  }
+
+  fun canBid() = if (supplierEnabled) {
+    when (onboardingStatus) {
+      "approved" -> APPROVED
+      else -> UNAPPROVED
+    }
+  } else {
+    DISABLED
   }
 
   /**
@@ -78,6 +115,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val HasLoggedIn = "has_logged_in"
     const val TdsRate = "tds_rate"
     const val UserName = "user_name"
-    const val hadEditedRoutes = "has_edited_routes"
+    const val HadEditedRoutes = "has_edited_routes"
+    const val OnboardingStatus = "onboarding_status"
+    const val SupplierEnabled = "supplier_enabled"
   }
 }
+
+const val DISABLED = 1
+const val UNAPPROVED = 2
+const val APPROVED = 3
