@@ -1,6 +1,7 @@
 package com.delhivery.axle.repository
 
 import com.auth0.android.jwt.JWT
+import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
@@ -38,8 +39,10 @@ class UserRepository @Inject constructor(
    * Current user id
    */
   fun userId() =
-    "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
-//    (jwt.claims["sub"]?.asString()!!)
+    when (BuildConfig.FLAVOR) {
+      "devlopment" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
+      else -> (jwt.claims["sub"]?.asString()!!)
+    }
 
   /**
    * Get user selected routes
