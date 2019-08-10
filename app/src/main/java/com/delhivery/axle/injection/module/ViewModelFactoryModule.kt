@@ -160,13 +160,11 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(SearchResultsViewModel::class)
   abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
 
-  /* Trip details */
   @Binds
   @IntoMap
   @ViewModelScope(TripDetailsViewModel::class)
   abstract fun bindTripDetailsViewModel(tripDetailsViewModel: TripDetailsViewModel): ViewModel
 
-  /* Trip details */
   @Binds
   @IntoMap
   @ViewModelScope(ImageViewModel::class)

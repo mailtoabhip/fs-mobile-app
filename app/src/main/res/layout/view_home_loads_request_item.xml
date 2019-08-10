@@ -193,7 +193,7 @@
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.01"
             android:lineSpacingExtra="-2sp"
-            android:text="@{request.targetPrice()}"
+            android:text="@{request.targetPriceString()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_20sp"
             android:textStyle="bold"

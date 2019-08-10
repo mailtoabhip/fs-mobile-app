@@ -8,5 +8,6 @@ enum class AuthenticationUIState {
   OTP,
   LoginProgress,
   SelectRoute,
-  LoadRequest
+  LoadRequest,
+  Disabled
 }

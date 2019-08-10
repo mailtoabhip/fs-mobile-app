@@ -12,6 +12,7 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class BidDetailsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository,
-  private val tripsRepository: TripsRepository
+  private val tripsRepository: TripsRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* transaction id */

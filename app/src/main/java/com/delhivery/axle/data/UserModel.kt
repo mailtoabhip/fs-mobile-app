@@ -29,7 +29,8 @@ data class UserModel(
   @SerializedName("pancard") var panCardNo: String?,
   @SerializedName("acccount_no") var acccountNo: String?,
   @SerializedName("ifcs_code") var ifcsCode: String?,
-  @SerializedName("payment_mode") var paymentMode: String?
+  @SerializedName("payment_mode") var paymentMode: String?,
+  @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false
 ) {
 
   /**

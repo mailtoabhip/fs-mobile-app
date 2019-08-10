@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
@@ -29,6 +30,9 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.utils.Config
+import com.delhivery.axle.utils.ContactUtils
+import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_ACCEPT_BID
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
@@ -39,7 +43,11 @@ import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_LOAD_INFO
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.prefs.APPROVED
+import com.delhivery.axle.utils.prefs.DISABLED
+import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import javax.inject.Inject
 
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
@@ -52,6 +60,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
+
+  @Inject lateinit var dialogUtils: DialogUtils
+
+  @Inject lateinit var contactUtils: ContactUtils
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -152,7 +164,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     })
 
     /* fetch user transactions */
-    viewModel.fetchUserTransactions()
+    if (!viewModel.isRouteUpdated()) {
+      viewModel.fetchUserTransactions()
+    }
   }
 
   override fun onResume() {
@@ -238,24 +252,72 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     item: BaseHomeLoadsRVAdapterItem<*>,
     position: Int
   ) {
-    when (actionId) {
-      HomeBidsRequestAction_PlaceBid -> {
-        (item.data as HomeBidsRequestItemData).let {
-          BidDetailsCreateEditDialog(
-              context!!, it, it.transactionBid, viewModel, position, analyticsUtil
-          ).show()
+    when (viewModel.userPrefs.canBid()) {
+      APPROVED -> {
+        when (actionId) {
+          HomeBidsRequestAction_PlaceBid -> {
+            (item.data as HomeBidsRequestItemData).let {
+              BidDetailsCreateEditDialog(
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil
+              ).show()
+            }
+          }
+
+          HomeBidsRequestAction_AcceptBid -> {
+            (item.data as HomeBidsRequestItemData).let {
+              analyticsUtil.trackEvent(
+                  EVENT_ACCEPT_BID,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(it.transactionId ?: "No user id saved")
+              )
+              it.transactionId?.let { it1 ->
+                viewModel.createBid(
+                    it1, it.target(), position
+                )
+              }
+            }
+          }
         }
       }
-
-      HomeBidsRequestAction_AcceptBid -> {
-        (item.data as HomeBidsRequestItemData).let {
-          analyticsUtil.trackEvent(
-              EVENT_ACCEPT_BID,
-              mutableListOf(PROPERTY_TRANSACTION_ID),
-              mutableListOf(it.transactionId ?: "No user id saved")
-          )
-          it.transactionId?.let { it1 -> viewModel.createBid(it1, it.targetPrice, position) }
-        }
+      UNAPPROVED -> {
+        dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_not_approved,
+            string.msg_dialog_supplier_not_approved,
+            "EXIT", "MAIL US",
+            {
+              it.dismiss()
+            },
+            {
+              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
+                false -> {
+                  it.dismiss()
+                  uiUtils.showToast("Sorry...You don't have any mail app installed")
+                }
+                else -> {
+                }
+              }
+            }
+        )
+      }
+      DISABLED -> {
+        dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_disabled,
+            string.msg_dialog_supplier_disabled,
+            "EXIT", "MAIL US",
+            {
+              it.dismiss()
+            },
+            {
+              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
+                false -> {
+                  it.dismiss()
+                  uiUtils.showToast("Sorry...You don't have any mail app installed")
+                }
+                else -> {
+                }
+              }
+            }
+        )
       }
     }
   }

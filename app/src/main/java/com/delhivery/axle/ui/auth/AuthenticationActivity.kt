@@ -11,6 +11,7 @@ import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.None
+import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
 import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
@@ -21,6 +22,8 @@ import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
+import com.delhivery.axle.utils.Config.AxleOnboardingEmail
+import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
 import com.delhivery.axle.utils.EVENT_OTP_SEND
 import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
@@ -34,6 +37,7 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
     DelhiveryOTPViewInterface, OTPReceiverInterface {
@@ -43,6 +47,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun layoutId() = R.layout.activity_authentication
 
   override fun requireConnection() = true
+
+  @Inject lateinit var contactUtils: ContactUtils
 
   val ADD_ROUTES_RC: Int = 1234
 
@@ -231,6 +237,28 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
+          Disabled -> {
+            uiUtils.hideDelhiveryProgress()
+            dialogUtils.showBasicConfirmDialog(
+                string.title_dialog_supplier_disabled,
+                string.msg_dialog_supplier_disabled,
+                "RETRY", "MAIL US",
+                {
+                  it.dismiss()
+                  navigationUtils.logout("Supplier disabled")
+                },
+                {
+                  when (contactUtils.openGmail(receiver = "axle-support@delhivery.com")) {
+                    false -> {
+                      it.dismiss()
+                      uiUtils.showToast("Sorry...You don't have any mail app installed")
+                    }
+                    else -> {
+                    }
+                  }
+                }
+            )
+          }
         }
       }
     }
@@ -249,6 +277,24 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         /* handle each error state */
         when (error.first) {
           InvalidPhoneNo -> {   //Invalid phone number functionality
+            dialogUtils.showBasicConfirmDialog(
+                string.title_dialog_invalid_num,
+                string.msg_dialog_invalid_num,
+                "RETRY", "MAIL US",
+                {
+                  it.dismiss()
+                },
+                {
+                  when (contactUtils.openGmail(receiver = AxleOnboardingEmail)) {
+                    false -> {
+                      it.dismiss()
+                      uiUtils.showToast("Sorry...You don't have any mail app installed")
+                    }
+                    else -> {
+                    }
+                  }
+                }
+            )
             binding.editPhoneNo.errorVibrate()
           }
           InvalidOTP -> {   //Invalid OTP clear fields

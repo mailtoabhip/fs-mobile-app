@@ -17,14 +17,22 @@ import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.axle.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.Config.AxleSupportEmail
+import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
+import com.delhivery.axle.utils.prefs.APPROVED
+import com.delhivery.axle.utils.prefs.DISABLED
+import com.delhivery.axle.utils.prefs.UNAPPROVED
+import javax.inject.Inject
 
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
 
   init {
     hasInlineProgress = true
   }
+
+  @Inject lateinit var contactUtils: ContactUtils
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -136,11 +144,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   textUserBidAmount.text =
                     getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
                   textUserBidAmountDiff.text =
-                    state.userBid.targetPriceDiff(
-                        binding.transaction?.targetPrice?.times(
-                            binding.transaction?.loadPricePercent ?: 100
-                        )?.div(100) ?: 0
-                    )
+                    state.userBid.targetPriceDiff(binding.transaction?.target() ?: 0)
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }
@@ -170,9 +174,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   textBidAmoutDiff.text =
                     state.acceptedBid.targetPriceDiff(
-                        binding.transaction?.targetPrice?.times(
-                            binding.transaction?.loadPricePercent ?: 100
-                        )?.div(100) ?: 0
+                        binding.transaction?.target() ?: 0
                     )
                   textUserHighestBid.text =
                     getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
@@ -196,10 +198,54 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    * Create/edit bid dialog
    */
   private fun bidDialog(bid: TransactionBid? = null) {
-    binding.transaction?.let {
-      BidDetailsCreateEditDialog(
-          this, it, bid, viewModel, analyticsUtil = analyticsUtil
-      ).show()
+    when (viewModel.userPrefs.canBid()) {
+      APPROVED -> {
+        binding.transaction?.let {
+          BidDetailsCreateEditDialog(
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil
+          ).show()
+        }
+      }
+      UNAPPROVED -> {
+        dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_not_approved,
+            string.msg_dialog_supplier_not_approved,
+            "EXIT", "MAIL US",
+            {
+              it.dismiss()
+            },
+            {
+              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
+                false -> {
+                  it.dismiss()
+                  uiUtils.showToast("Sorry...You don't have any mail app installed")
+                }
+                else -> {
+                }
+              }
+            }
+        )
+      }
+      DISABLED -> {
+        dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_disabled,
+            string.msg_dialog_supplier_disabled,
+            "EXIT", "MAIL US",
+            {
+              it.dismiss()
+            },
+            {
+              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
+                false -> {
+                  it.dismiss()
+                  uiUtils.showToast("Sorry...You don't have any mail app installed")
+                }
+                else -> {
+                }
+              }
+            }
+        )
+      }
     }
   }
 }

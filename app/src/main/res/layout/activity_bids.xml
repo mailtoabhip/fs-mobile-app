@@ -5,10 +5,7 @@
     >
   <data>
     <import type="com.delhivery.axle.ui.bids.BidType"/>
-    <variable
-        name="viewModel"
-        type="com.delhivery.axle.ui.bids.BidsViewModel"
-        />
+    f
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"

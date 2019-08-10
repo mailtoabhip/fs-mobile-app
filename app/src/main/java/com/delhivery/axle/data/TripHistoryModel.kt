@@ -40,7 +40,16 @@ private fun getEpoch(actionTime: String): String {
       val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
       val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
       if (days > 0) {
-        "$days day ago"
+        if (days <= 3) {
+          "$days day ago"
+        } else {
+          DateUtils.formatDate(
+              DateUtils.parseDate(
+                  actionTime, DatePatterns.OrionDateFormat
+              ), DatePatterns.SimpleDateFormat
+          )
+              .toString()
+        }
       } else if (hours > 0) {
         "$hours hr $mins min ago"
       } else if (mins > 0) {

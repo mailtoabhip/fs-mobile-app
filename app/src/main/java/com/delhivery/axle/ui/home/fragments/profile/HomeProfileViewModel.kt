@@ -7,10 +7,12 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class HomeProfileViewModel @Inject constructor(
-  private val transactionsRepository: TransactionsRepository
+  private val transactionsRepository: TransactionsRepository,
+  private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
@@ -42,5 +44,9 @@ class HomeProfileViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+
+  fun logout() {
+    userPrefs.clearPrefs()
   }
 }

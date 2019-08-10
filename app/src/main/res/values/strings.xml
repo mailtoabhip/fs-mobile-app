@@ -6,6 +6,10 @@
   <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
   <string name="title_dialog_delete_route">Delete Route ?</string>
   <string name="title_dialog_logout">Confirm Logout</string>
+  <string name="title_dialog_update">Update Available</string>
+  <string name="title_dialog_invalid_num">Invalid phone number</string>
+  <string name="title_dialog_supplier_disabled">User Disabled</string>
+  <string name="title_dialog_supplier_not_approved">User Not Approved</string>
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -30,6 +34,10 @@
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+  <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
+  <string name="msg_dialog_invalid_num">You have entered an invalid phone number. Please try again. To become an Axle partner, please message us at axle-onboarding@delhivery.com</string>
+  <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please message us at  axle-support@delhivery.com</string>
+  <string name="msg_dialog_supplier_not_approved">Your KYC is not yet complete. Please reach out to us at axle-support@delhivery.com to get it completed</string>
   <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
   <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
   <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
@@ -39,7 +47,7 @@
   <string name="msg_accepted_bid_value">Accepted bid value: ₹ %1$d</string>
   <string name="msg_your_highest_bid">Your bid: ₹  %1$d</string>
   <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
-  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips</string>
+  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>

@@ -21,7 +21,11 @@
 
     <meta-data
         android:name="firebase_crashlytics_collection_enabled"
-        android:value="@bool/FIREBASE_ANALYTICS_DEACTIVATED"/>
+        android:value="@bool/FIREBASE_ACTIVATED"/>
+
+    <meta-data
+        android:name="firebase_analytics_collection_enabled"
+        android:value="@bool/FIREBASE_ACTIVATED"/>
 
     <activity
         android:name="com.delhivery.axle.ui.splash.SplashActivity"

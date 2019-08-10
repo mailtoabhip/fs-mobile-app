@@ -28,10 +28,6 @@ abstract class BasePrefs(
     prefs.edit()
   }
 
-  /**
-   * Clear all preferences
-   */
-  fun clearPrefs() = editor.clear().apply()
 }
 
 enum class PrefNames(val prefName: String) {
