@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface TransactionService {
 
   /**
-   * List all transactions
+   * List all transactions basis [status] [origin] [destination] [truckType]
    */
   @GET("/transactions/list/")
   fun transactions(
@@ -24,7 +24,7 @@ interface TransactionService {
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
-   * List all transactions
+   * Loadboard transactions
    */
   @GET("/transactions/loadboard/")
   fun loadBoardTransactions(
@@ -54,7 +54,7 @@ interface TransactionService {
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
-   * List all transactions
+   * Fetch trip meter details
    */
   @GET("/transactions/tripmeter/{sp_id}")
   fun transactionsTripMeter(
