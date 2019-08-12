@@ -23,7 +23,7 @@ class TransactionsRepository @Inject constructor(
   ).convertResponse()
 
   /**
-   * Search transactions
+   * Search [TransactionStatus.Requested] transactions
    */
   fun searchTransactions(
     offset: Int,
@@ -31,7 +31,7 @@ class TransactionsRepository @Inject constructor(
     destination: String?,
     truckType: String?
   ) = transactionService.transactions(
-      offset, null, source, destination, truckType
+      offset, TransactionStatus.Requested.statusId, source, destination, truckType
   ).convertResponse()
 
   /**

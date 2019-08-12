@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
@@ -69,11 +69,11 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
    */
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      add(Pair(HomeLoadsWarningItem_NoLoads, Remove))
-      add(Pair(HomeLoadsWarningItem_TimeOut, Remove))
-      add(Pair(HomeLoadsInfoItem(), Remove))
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
-      items.filter { it.type == Request }
+      items.filter {
+        it.type == Request || it.type == Warning ||
+            it.type == Timeout || it.type == Info
+      }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

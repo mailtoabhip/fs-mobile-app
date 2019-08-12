@@ -74,11 +74,8 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeTripsHeaderItem(), AddUpdate))
-      add(Pair(HomeTripsSearchItem(), AddUpdate))
       add(Pair(HomeTripsProgressItem(), AddUpdate))
-      add(Pair(HomeTripsWarningItem_NoLoads, Remove))
-      add(Pair(HomeTripsWarningItem_TimeOut, Remove))
-      items.filter { it.type == TripItem }
+      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)
