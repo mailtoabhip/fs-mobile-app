@@ -29,6 +29,8 @@ class SearchResultsViewModel @Inject constructor(
   /* search results live data */
   var searchResults = MutableLiveData<List<HomeBidsRequestItemData>>()
 
+  var loadPricePercent = 0
+
   /**
    * Search load api
    */
@@ -42,6 +44,7 @@ class SearchResultsViewModel @Inject constructor(
         0, origin.cityId, destination?.cityId, type.toLowerCase()
     )
         .flatMap { t ->
+          this.loadPricePercent = t.loadPricePercent
           bidsRepository.bidsForLoads(t.transactions)
         }
         .onBackground()
@@ -52,6 +55,7 @@ class SearchResultsViewModel @Inject constructor(
 
             for (load in loads.toMutableList()) {
               try {
+                load.loadPricePercent = loadPricePercent
                 load.transactionBid =
                   bids.filter { b ->
                     b.transactionId.safeEquals(load.transactionId)
