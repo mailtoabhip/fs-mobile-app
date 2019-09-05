@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.bids
 
 import android.animation.ValueAnimator
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.ViewCompat
@@ -17,8 +19,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.axle.data.home.bids.HomeBidsSearchItemData
 import com.delhivery.axle.data.home.bids.HomeBidsTimeOutAction
-import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_EditRoutePrefs
-import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_SelectRoutes
+import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_NoBids
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
@@ -28,8 +29,8 @@ import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.utils.EVENT_LIST_HEADER
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
@@ -145,7 +146,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_ACTIVE)
         )
-        context?.let { startActivity(userBidsIntent(it, ActiveBid)) }
+        startActivityForResult(userBidsIntent(context!!, ActiveBid), REQUESTCODE_NOROUTES)
       }
 
       HomeBidsHeaderAction_ConfirmedBids -> {
@@ -155,9 +156,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_CONFIRMED)
         )
-        context?.let {
-          startActivity(userBidsIntent(it, ConfirmedBid))
-        }
+        startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQUESTCODE_NOROUTES)
       }
 
       HomeBidsHeaderAction_LostBids -> {
@@ -167,13 +166,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_LOST)
         )
-        context?.let {
-          startActivity(userBidsIntent(it, LostBid))
-        }
-      }
-
-      HomeBidsWarningAction_EditRoutePrefs, HomeBidsWarningAction_SelectRoutes -> context?.let {
-        startActivity(selectRouteIntent(it, EditRoute))
+        startActivityForResult(userBidsIntent(context!!, LostBid), REQUESTCODE_NOROUTES)
       }
 
       HomeBidsRequestAction_ViewDetails -> {
@@ -224,6 +217,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         }, 300)
       }
 
+      HomeBidsWarningAction_NoBids -> {
+        action(NavigateHomeFragmentAction(LoadsFragment))
+      }
+
       HomeBidsTimeOutAction -> {
         refreshData()
       }
@@ -232,6 +229,24 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   override fun postElevation(elevation: Float) {
     toolbarElevationLiveData!!.postValue(elevation)
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQUESTCODE_NOROUTES -> {
+        if (resultCode == RESULT_OK) {
+          action(NavigateHomeFragmentAction(LoadsFragment))
+        }
+      }
+      else -> {
+
+      }
+    }
   }
 
   /**
@@ -259,10 +274,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager =
-        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
-      val pos = layoutManager.findFirstVisibleItemPosition()
       if (!adapter.checkFiltering()) {
+        val layoutManager =
+          (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        val pos = layoutManager.findFirstVisibleItemPosition()
         val _toolbarElevation = if (pos == 0) {
           stickyView.translationY = 0f
           stickyView.visibility = View.GONE
@@ -304,3 +319,5 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
   }
 }
+
+private var REQUESTCODE_NOROUTES = 12345

@@ -53,6 +53,7 @@ internal class HomeTripsSearchItemVH(binding: ViewHomeSearchItemBinding) :
     item: HomeTripsSearchItem,
     _interface: HomeTripsRVAdapterInterface
   ) {
+    binding.editQuery.hint = "Vehicle / Driver / Destination / LR"
     binding.editQuery.clickToAction(HomeTripsSearchAction_Search, item, _interface)
   }
 }

@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.view.ViewCompat
@@ -92,6 +93,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         binding.viewpager.setCurrentItem(fragmentType.position, true)
       }
     }
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
   }
 
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)

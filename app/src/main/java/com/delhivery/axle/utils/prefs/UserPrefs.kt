@@ -64,6 +64,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value).apply()
     get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
+  /* Supplier enabled flag */
+  var isTestUser: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsTestUser, value).apply()
+    get() = prefs.getBoolean(PrefKeys.IsTestUser, false)
+
   /**
    * Clear all preferences
    */
@@ -86,12 +91,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.SupplierEnabled)
         .apply()
+    editor.remove(PrefKeys.IsTestUser)
+        .apply()
   }
 
   fun saveUser(user: UserModel) {
     userName = user.name
     onboardingStatus = user.onboardingStatus ?: "na"
     supplierEnabled = user.supplierEnabled
+    isTestUser = user.testUser
     tdsRate = user.getTDS()
   }
 
@@ -118,6 +126,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val HadEditedRoutes = "has_edited_routes"
     const val OnboardingStatus = "onboarding_status"
     const val SupplierEnabled = "supplier_enabled"
+    const val IsTestUser = "test_user"
   }
 }
 

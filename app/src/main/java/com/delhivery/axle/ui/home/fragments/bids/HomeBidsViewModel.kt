@@ -2,6 +2,9 @@ package com.delhivery.axle.ui.home.fragments.bids
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.TransactionsResponse
+import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.repository.BidsRepository
@@ -18,6 +21,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 /**
@@ -108,7 +112,13 @@ class HomeBidsViewModel @Inject constructor(
           if (!paginate && total == 0) {
             Single.error(NoBidsFoundException())
           } else {
-            transactionsRepository.bulkTransactions(_res.second)
+            Single.zip(
+                transactionsRepository.bulkTransactions(_res.second),
+                bidsRepository.bulkLowestBidsForTransactions(_res.second),
+                BiFunction<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,
+                    Triple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>>> { t1, t2 ->
+                  Triple(t1.first, t1.second, t2)
+                })
           }
         }
         .onBackground()
@@ -127,17 +137,21 @@ class HomeBidsViewModel @Inject constructor(
               }
               /* post all transactions mapped to bids as add */
               else {
+                add(Pair(HomeBidsSearchItem(), AddUpdate))
+
                 val bids = _res.first
                 val transactions = _res.second.transactions
 
+                var index = 0
                 for (transaction in transactions) {
                   try {
+                    transaction.numBids = _res.third[index].numBids
+                    transaction.lowestBid = _res.third[index].minBid
                     transaction.loadPricePercent = _res.second.loadPricePercent
+                    index++
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
-                    }
-                        .get(0)
-
+                    }[0]
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", transaction.transactionId)
                   }

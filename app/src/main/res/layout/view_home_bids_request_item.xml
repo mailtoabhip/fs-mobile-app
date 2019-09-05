@@ -11,6 +11,7 @@
         />
 
     <import type="androidx.core.content.ContextCompat"/>
+    <import type="android.view.View" />
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
@@ -149,7 +150,6 @@
           android:text="@{ request.bidAmount() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="bold"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/label_amount"
           tools:text="₹ 23900.00"
@@ -158,36 +158,32 @@
       <TextView
           android:id="@+id/text_user_bid_amount_diff"
           android:layout_width="0dp"
-          android:layout_height="0dp"
-          android:layout_marginTop="@dimen/size_4dp"
+          android:layout_height="wrap_content"
           android:fontFamily="sans-serif"
-          android:text="@{request.tripPriceDifference()}"
+          android:text="@{request.bidDifference()}"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_12sp"
+          android:layout_marginTop="@dimen/size_4dp"
           android:textStyle="normal"
-          app:layout_constraintBottom_toBottomOf="@+id/text_bid_status"
-          app:layout_constraintEnd_toStartOf="@+id/text_bid_status"
+          android:gravity="center_vertical"
           app:layout_constraintHorizontal_weight="0.75"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_amount"
-          tools:text="Your bid is same as target "
+          app:layout_constraintTop_toBottomOf="@+id/text_amount"
+          tools:text="Your bid is same as lowest"
+          android:visibility="@{ (request.bidDifference().isEmpty()) ? View.GONE : View.VISIBLE }"
           />
 
       <TextView
           android:id="@+id/text_bid_status"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
           android:gravity="end"
           android:text="@{request.bidStatus().status}"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
-          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintBottom_toBottomOf="@+id/text_amount"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_weight="0.25"
-          app:layout_constraintStart_toEndOf="@+id/text_user_bid_amount_diff"
-          app:layout_constraintTop_toBottomOf="@id/text_amount"
+          app:layout_constraintTop_toTopOf="@id/text_amount"
           bind:textColor="@{ ContextCompat.getColor(context, request.requiredTextColor()) }"
           tools:text="STATUS"
           tools:textColor="@color/black"

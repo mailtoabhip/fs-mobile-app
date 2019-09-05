@@ -1,12 +1,11 @@
 package com.delhivery.axle.ui.selectroute.activity
 
 import android.app.Activity
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.routes.RouteModel
@@ -37,6 +36,7 @@ import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestin
 import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListFragment
 import com.delhivery.axle.utils.LocationFlowState
+import com.google.android.material.snackbar.Snackbar
 
 class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, SelectRouteViewModel>() {
 
@@ -63,11 +63,12 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     addRouteOnLogin = intent?.extras?.getBoolean(SelectRouteWelcomeIntentExtra) ?: false
 
     /* flow type */
-    flowType = intent?.getIntExtra(
-        SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId
-    )?.let {
-      SelectRouteFlowType.byTypeId(it)
-    } ?: AddNewRoute
+    try {
+      flowType = intent?.getIntExtra(
+          SelectRouteFlowTypeIntentExtra, AddNewRoute.typeId
+      )?.let { SelectRouteFlowType.byTypeId(it) } ?: AddNewRoute
+    } catch (e: Exception) {
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -246,7 +247,7 @@ const val SelectRouteWelcomeIntentExtra = "select_route_welcome_tag"
  */
 fun selectRouteIntent(
   context: Context,
-  type: SelectRouteFlowType
-) = Intent(context, SelectRouteActivity::class.java).apply {
+  type: SelectRouteFlowType = AddNewRoute
+): Intent = Intent(context, SelectRouteActivity::class.java).apply {
   putExtra(SelectRouteFlowTypeIntentExtra, type.typeId)
 }

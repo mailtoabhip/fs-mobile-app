@@ -49,7 +49,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
 
     /* set transaction id */
-    viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey)
+    viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -67,11 +67,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.bidPriceLiveData.observe(this, Observer {
       if (it != null) {
         binding.transaction?.transactionBid = it
-        binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+        val visibility =
+          if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
+        binding.textTargetPrice.visibility = visibility
+        binding.textTargetPriceLabel.visibility = visibility
+        if (visibility == View.VISIBLE) {
         binding.textTargetPrice.text = binding.transaction?.bidAmount()
+          binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+        }
       }
-      binding.textTargetPrice.visibility = View.VISIBLE
-      binding.textTargetPriceLabel.visibility = View.VISIBLE
     })
 
     /* fetch transaction details */
@@ -127,7 +131,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
-                    0, null -> ""
+                    0.0, null -> ""
                     else -> "Lowest Bid - ${state.lowestBid}"
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
@@ -138,13 +142,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
-                    0, null -> ""
+                    0.0, null -> ""
                     else -> "Lowest Bid - ${state.lowestBid}"
+                  }
+                  if (state.bidsCount > 1) {
+                    textUserBidAmountDiff.text =
+                      state.userBid.diffFromLowestBid(state.lowestBid)
                   }
                   textUserBidAmount.text =
                     getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
-                  textUserBidAmountDiff.text =
-                    state.userBid.targetPriceDiff(binding.transaction?.target() ?: 0)
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }
@@ -172,12 +178,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  textBidAmoutDiff.text =
-                    state.acceptedBid.targetPriceDiff(
-                        binding.transaction?.target() ?: 0
-                    )
                   textUserHighestBid.text =
-                    getString(R.string.msg_your_highest_bid, state.userBid.bidAmount)
+                    getString(string.msg_your_highest_bid, state.userBid.bidAmount)
                 }
           }
           else -> null

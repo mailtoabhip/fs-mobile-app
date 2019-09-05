@@ -142,15 +142,17 @@ class TripDetailsViewModel @Inject constructor(
             if (tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
               if (tripDetail.advanceStatus()) {
                 advancePaid = true
+                val utrString = when (tripDetail.bankTransactionId) {
+                  null -> "."
+                  else -> " with UTR no: ${tripDetail.bankTransactionId}."
+                }
                 tripHistory.add(
                     TripHistoryItem(
                         AdvancePaid,
                         "Advance Paid",
-                        "Advance payment of " +
-                            "₹ ${String.format(
+                        "Advance payment of ₹ ${String.format(
                                 "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
-                            )}" +
-                            " has been paid",
+                        )} has been paid$utrString",
                         history.epoch()
                     )
                 )
@@ -185,7 +187,7 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     InTransit,
                     "In-Transit",
-                    "Truck is in-transit, current location is  ${history.details?.currentLocation}",
+                    "Truck is in-transit, current location is ${history.details?.currentLocation}",
                     history.epoch()
                 )
             )

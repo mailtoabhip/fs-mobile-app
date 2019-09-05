@@ -33,7 +33,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("status") val status: String,
   @SerializedName("required_on") val _requiredOn: String,
   @SerializedName("pod_required") val podRequired: Boolean,
-  @SerializedName("target_price") val targetPrice: Int,
+  @SerializedName("target_price") val targetPrice: Double,
   @SerializedName("request_type") val requestType: String,
   @SerializedName("truck_size") val truckSize: String?,
   @SerializedName("client_id") val clientId: String,
@@ -49,6 +49,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_specifications") val truckSpecs: TruckSpecifications,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  var lowestBid: Double? = 0.0,
+  var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
   var showing: Boolean = false
 ) : BaseKeyTypeModel<String>() {
@@ -59,7 +61,7 @@ data class HomeBidsRequestItemData(
   fun target() = if (targetPrice > 0 && loadPricePercent > 0) {
     targetPrice * loadPricePercent / 100
   } else {
-    0
+    0.0
   }
 
   fun targetPriceString() = "₹ ${StringUtils.formatAmount(target())}"
@@ -76,19 +78,17 @@ data class HomeBidsRequestItemData(
 
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
-      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(
-          transactionBid!!.bidAmount
-      )}"
-      else -> targetPriceString()
+      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+      else -> ""
     }
   } else {
-    targetPriceString()
+    ""
   }
 
   fun amountLabel() = when (bidStatus()) {
-    Open -> "Your Bid"
+    Open, Rejected -> "Your Bid"
     Accepted -> "Confirmed Price"
-    else -> "Trip Price"
+    else -> ""
   }
 
   @DrawableRes
@@ -129,8 +129,11 @@ data class HomeBidsRequestItemData(
       else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
     }
 
-  fun tripPriceDifference(): String {
-    return transactionBid?.targetPriceDiff(target()) ?: ""
+  fun bidDifference(): String {
+    if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
+      return transactionBid?.diffFromLowestBid(lowestBid!!) ?: ""
+    }
+    return ""
   }
 
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
@@ -139,13 +142,12 @@ data class HomeBidsRequestItemData(
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0)}"
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
 }
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
-const val HomeBidsRequestAction_AcceptBid = "accept_bid"
 
 data class TruckSpecifications(
   @SerializedName("height") val height: Any?,

@@ -4,6 +4,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.google.gson.annotations.SerializedName
+import kotlin.math.abs
 
 data class TransactionBid(
   @SerializedName("supplier_id") val supplierId: String,
@@ -12,7 +13,7 @@ data class TransactionBid(
   @SerializedName("supplier_name") val supplierName: String,
   @SerializedName("creation_date") val creationDate: String,
   @SerializedName("updation_date") val updationDate: String,
-  @SerializedName("latest_bid") val bidAmount: Int,
+  @SerializedName("latest_bid") val bidAmount: Double,
   @SerializedName("id") val id: String,
   @SerializedName("transaction_id") val transactionId: String
 ) : BaseKeyTypeModel<String>() {
@@ -22,12 +23,22 @@ data class TransactionBid(
    * Formatted string for target price diff
    */
   fun targetPriceDiff(targetPrice: Int) = (targetPrice - bidAmount).let { _diff ->
-    if (_diff == 0) return "(Your Bid is same as target price)"
+    if (_diff.toInt() == 0) return "(Your Bid is same as target price)"
     when (_diff > 0) {
       true -> "less"
       false -> "more"
     }.let { _x ->
-      "(Your Bid is ₹ ${StringUtils.formatAmount(Math.abs(_diff))} $_x than target price)"
+      "(Your Bid is ₹ ${StringUtils.formatAmount(abs(_diff))} $_x than target price)"
+    }
+  }
+
+  fun diffFromLowestBid(lowestBid: Double) = (lowestBid - bidAmount).let { _diff ->
+    if (_diff.toInt() == 0) return "(Your Bid is same as lowest bid)"
+    when (_diff > 0) {
+      true -> "less"
+      false -> "more"
+    }.let { _x ->
+      "(Your Bid is ₹ ${StringUtils.formatAmount(abs(_diff))} $_x than lowest bid)"
     }
   }
 

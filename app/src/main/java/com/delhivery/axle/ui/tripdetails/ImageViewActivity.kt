@@ -35,8 +35,8 @@ class ImageViewActivity : BaseActivity<ActivityImageViewBinding, ImageViewModel>
     }
 
     /* set transaction id */
-    viewModel.url = intent.getStringExtra(ImageUrlIntentKey)
-    viewModel.type = intent.getStringExtra(ImageTypeIntentKey)
+    viewModel.url = intent.getStringExtra(ImageUrlIntentKey) ?: ""
+    viewModel.type = intent.getStringExtra(ImageTypeIntentKey) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {

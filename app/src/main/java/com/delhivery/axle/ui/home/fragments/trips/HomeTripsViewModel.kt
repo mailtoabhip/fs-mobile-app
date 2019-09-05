@@ -69,8 +69,6 @@ class HomeTripsViewModel @Inject constructor(
               )
             }
                 .let { userTripsData.postValue(it) }
-          } else {
-            error.handle()
           }
         }
   }
@@ -123,11 +121,11 @@ class HomeTripsViewModel @Inject constructor(
 
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
-                add(Pair(HomeTripsSearchItem(), Remove))
                 add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
               }
               /* post all trips with their respective payments as add */
               else {
+                add(Pair(HomeTripsSearchItem(), AddUpdate))
                 for (trip in trips) {
                   try {
                     trip.payment = payments.filter { p ->

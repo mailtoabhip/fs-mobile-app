@@ -123,8 +123,10 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   ) {
     // handle actions here
     when (actionId) {
-      HomeBidsWarningAction_NoBids ->
+      HomeBidsWarningAction_NoBids -> {
+        setResult(RESULT_OK)
         finish()
+      }
 
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
@@ -137,6 +139,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
         startActivity(bidDetailsIntent(_item, this))
       }
+
       HomeBidsTimeOutAction ->
         refreshData()
     }
