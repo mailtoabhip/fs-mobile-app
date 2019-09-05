@@ -20,8 +20,8 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.SelectRoute
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.HomeActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
+import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.Config.AxleOnboardingEmail
 import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
@@ -223,7 +223,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             val bundle = Bundle()
             bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
             navigationUtils.navigateForActivityResult(
-                SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
+                intent = selectRouteIntent(this@AuthenticationActivity),
+                requestCode = ADD_ROUTES_RC, extras = bundle
             )
           }
           /* Login success, user routes found - navigate to load requests */

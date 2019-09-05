@@ -30,7 +30,8 @@ data class UserModel(
   @SerializedName("acccount_no") var acccountNo: String?,
   @SerializedName("ifcs_code") var ifcsCode: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
-  @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false
+  @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
+  @SerializedName("test_user") var testUser: Boolean = false
 ) {
 
   /**
@@ -43,7 +44,7 @@ data class UserModel(
    */
   fun userRoutes(): List<RouteModel> {
     val _routes = routes?.toRoutes() ?: mutableListOf()
-    Collections.sort(_routes, { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
+    _routes.sortWith(Comparator { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
     return _routes
   }
 

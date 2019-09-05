@@ -1,8 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
-import androidx.databinding.ViewDataBinding
 import android.view.View
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
@@ -70,9 +69,6 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-    binding.btnAccept.clickToAction(
-        HomeBidsRequestAction_AcceptBid, item, adapterPosition, _interface
-    )
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface

@@ -41,7 +41,7 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
-        val lowest = (it.bids.minBy { b -> b.bidAmount })?.bidAmount ?: 0
+        val lowest = (it.bids.minBy { b -> b.bidAmount })?.bidAmount ?: 0.0
         val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
             .firstOrNull()
         Triple(Pair(userBid, lowest), it.bids, it.totalBids)
@@ -74,7 +74,7 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     amount: Int
   ) = CreateTransactionBidRequest(
-      transactionId, userRepository.userId(), userPrefs.userName, amount
+      transactionId, userRepository.userId(), userPrefs.userName, amount, userPrefs.isTestUser
   ).let { bidService.createTransactionBid(it) }
 
   /**
@@ -84,7 +84,9 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     bidId: String,
     amount: Int
-  ) = UpdateTransactionBidRequest(transactionId, bidId, amount, userRepository.userId())
+  ) = UpdateTransactionBidRequest(
+      transactionId, bidId, amount, userRepository.userId()
+  )
       .let { bidService.updateTransactionBid(it) }
 
   /**
@@ -119,6 +121,14 @@ class BidsRepository @Inject constructor(
   ) = bidService
       .userBidsSummary(userRepository.userId())
       .convertResponse()
+
+  /**
+   * Get lowest bid for [transactionIds]
+   */
+  fun bulkLowestBidsForTransactions(bids: List<TransactionBid>) =
+    bids.joinToString(separator = ",") { it.transactionId }
+        .let { bidService.bulkLowestBidsForTransactions(it) }
+        .convertResponse()
 }
 
 /* User bids pagination load limit */

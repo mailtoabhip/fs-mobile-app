@@ -48,6 +48,7 @@ data class HomeTripsItemData(
   @SerializedName("user_name") val userName: String?,
   @SerializedName("advance_status") val advanceStatus: String? = "failure",
   @SerializedName("payment_mode") val paymentMode: String? = null,
+  @SerializedName("bank_transaction_id") val bankTransactionId: String? = null,
   var payment: TripPayment? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId

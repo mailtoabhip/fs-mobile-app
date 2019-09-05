@@ -80,6 +80,7 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
+    binding.editQuery.hint = "Origin / Destination"
     binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
   }
 }

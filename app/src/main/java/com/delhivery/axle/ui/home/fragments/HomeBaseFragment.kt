@@ -1,14 +1,16 @@
 package com.delhivery.axle.ui.home.fragments
 
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.utils.NavigationUtils
+import javax.inject.Inject
 
 abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<B, VM>() {
 
@@ -16,6 +18,8 @@ abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseF
   var toolbarElevationLiveData: MutableLiveData<Float>? = null
 
   var isLoadingData = true
+
+  @Inject lateinit var navigationUtils: NavigationUtils
 
   /* elevation default value */
   protected val defToolbarElevation: Float  by lazy {

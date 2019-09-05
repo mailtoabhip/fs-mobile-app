@@ -50,13 +50,13 @@ class NavigationUtils @Inject constructor(
    * @param anotherActivity Target activity class
    * @param finishAfter Should current activity be finished after navigation, default if false
    */
-  fun <A : BaseActivity<*, *>> navigateForActivityResult(
-    anotherActivity: Class<A>,
+  fun navigateForActivityResult(
+    intent: Intent,
     finishAfter: Boolean = false,
     requestCode: Int,
     extras: Bundle? = null
   ) {
-    Intent(activity, anotherActivity).let {
+    intent.let {
       if (extras != null) {
         it.putExtras(extras)
       }

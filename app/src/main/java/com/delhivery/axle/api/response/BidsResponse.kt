@@ -19,3 +19,8 @@ data class BidSummaryResponse(
   @SerializedName("my_bids") val myBids: Int,
   @SerializedName("lost_bids") val lostBids: Int
 )
+
+data class LowestBidResponse(
+  @SerializedName("count") val numBids: Int,
+  @SerializedName("min_price") val minBid: Double? = null
+)

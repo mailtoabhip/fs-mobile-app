@@ -1,13 +1,12 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import androidx.databinding.ViewDataBinding
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
@@ -80,10 +79,6 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-    binding.btnAccept.clickToAction(
-        HomeBidsRequestAction_AcceptBid, item, adapterPosition, _interface
-    )
-
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface

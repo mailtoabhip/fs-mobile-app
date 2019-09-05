@@ -5,6 +5,7 @@ import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.api.response.CreateTransactionBidResponse
+import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionBidsResponseBody
 import io.reactivex.Single
 import retrofit2.http.Body
@@ -79,10 +80,18 @@ interface BidService {
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
-   * Get User/supplier bids summary
+   * Get bids summary basis [userId]
    */
   @GET("/bids/summary")
   fun userBidsSummary(
     @Query("supplier_id") userId: String
   ): Single<BaseResponse<BidSummaryResponse>>
+
+  /**
+   * Get lowest bid for [transactionIds]
+   */
+  @GET("/bids/lowest")
+  fun bulkLowestBidsForTransactions(
+    @Query("transaction_id_list") transactionIds: String
+  ): Single<BaseResponse<List<LowestBidResponse>>>
 }

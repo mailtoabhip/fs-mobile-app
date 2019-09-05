@@ -7,8 +7,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
 import com.delhivery.axle.ui.home.HomeActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
+import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.LocationFlowState
 import com.github.florent37.kotlin.pleaseanimate.please
 
@@ -31,13 +31,12 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
 
     /* select route submit button */
     binding.btnSelectRoute.setOnClickListener {
-      //      if (onLocationButtonClicked()) {
       val bundle = Bundle()
       bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
       navigationUtils.navigateForActivityResult(
-          SelectRouteActivity::class.java, false, ADD_ROUTES_RC, bundle
+          intent = selectRouteIntent(this@SelectRouteWelcomeActivity),
+          requestCode = ADD_ROUTES_RC, extras = bundle
       )
-//      }
     }
 
     /* skip button functionality */

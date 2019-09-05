@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -22,7 +21,6 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.Config
 import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_ACCEPT_BID
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
 import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
@@ -175,20 +173,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil
               ).show()
-            }
-          }
-          HomeBidsRequestAction_AcceptBid -> {
-            (item.data as HomeBidsRequestItemData).let {
-              analyticsUtil.trackEvent(
-                  EVENT_ACCEPT_BID,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(it.transactionId ?: "No user id saved")
-              )
-              it.transactionId?.let { it1 ->
-                viewModel.createBid(
-                    it1, it.target(), position
-                )
-              }
             }
           }
         }

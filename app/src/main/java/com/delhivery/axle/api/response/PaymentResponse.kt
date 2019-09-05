@@ -41,7 +41,6 @@ data class TripPayment(
   @SerializedName("advance_payout") val advancePayout: Double,
   @SerializedName("fuel_payout") val fuelPayout: Double?,
   @SerializedName("bid_price") val bidPrice: Double,
-  @SerializedName("payments") val payments: Payments?,
   @SerializedName("transaction_id") val transactionId: String
 )
 

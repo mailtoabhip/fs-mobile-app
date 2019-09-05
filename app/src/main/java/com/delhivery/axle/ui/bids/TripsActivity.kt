@@ -11,14 +11,14 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
+import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Timeout
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
@@ -129,8 +129,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     actionId: String,
     item: BaseHomeTripsRVAdapterItem<*>
   ) {
-    when (item.type) {
-      TripItem -> {
+    when (actionId) {
+      HomeTripsRequestAction_ViewDetails -> {
         val _item = item.data as HomeTripsItemData
         // Capture event
         analyticsUtil.trackEvent(
@@ -140,14 +140,14 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         )
         startActivity(tripDetailsIntent(_item, this))
       }
-      Timeout -> {
+      HomeTripsTimeOutAction -> {
         refreshData()
       }
-      Warning -> {
+      HomeTripsWarningAction_NoLoads -> {
+        setResult(RESULT_OK)
         finish()
       }
-      else -> {
-      }
+
     }
   }
 

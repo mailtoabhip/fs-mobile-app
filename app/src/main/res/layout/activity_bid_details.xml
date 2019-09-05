@@ -13,6 +13,7 @@
         name="transaction"
         type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
+    <import type="android.view.View" />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
@@ -167,13 +168,12 @@
               android:id="@+id/text_target_price_label"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_32dp"
+              android:layout_marginTop="@dimen/size_24dp"
               android:fontFamily="sans-serif"
-              android:text="@{transaction.amountLabel()}"
               android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_12sp"
               android:textStyle="normal"
-              android:visibility="invisible"
+              android:visibility="gone"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_load_details"
               />
@@ -186,11 +186,10 @@
               android:fontFamily="sans-serif-medium"
               android:letterSpacing="0.01"
               android:lineSpacingExtra="-4sp"
-              android:text="@{transaction.bidAmount() }"
               android:textColor="@color/black"
               android:textSize="@dimen/text_24sp"
               android:textStyle="normal"
-              android:visibility="invisible"
+              android:visibility="gone"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
               tools:text="₹ 23900.00"

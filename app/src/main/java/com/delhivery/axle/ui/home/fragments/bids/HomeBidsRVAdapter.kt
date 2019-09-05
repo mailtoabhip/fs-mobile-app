@@ -76,6 +76,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
+      add(Pair(HomeBidsSearchItem(), AddUpdate))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
       items.filter { it.type == Request || it.type == Warning || it.type == Timeout }
           .map { Pair(it, Remove) }

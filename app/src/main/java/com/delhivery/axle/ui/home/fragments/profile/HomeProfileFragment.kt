@@ -32,7 +32,6 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
   }
 
   @Inject lateinit var dialogUtils: DialogUtils
-  @Inject lateinit var navigationUtils: NavigationUtils
 
   override fun getViewModelClass() = HomeProfileViewModel::class.java
 
@@ -69,14 +68,14 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     viewModel.tripEarningLiveData.observe(this, Observer { t ->
       if (t != null && t.size == 2) {
         val keys = t.keys.toMutableList()
-        val key1 = keys.get(0)
-        val key2 = keys.get(1)
+        val key1 = keys[0]
+        val key2 = keys[1]
         if (key1 == 1 && key2 == 12) {
-          binding.lastMonth = t.get(key2)
-          binding.currentMonth = t.get(key1)
+          binding.lastMonth = t[key2]
+          binding.currentMonth = t[key1]
         } else {
-          binding.lastMonth = t.get(key1)
-          binding.currentMonth = t.get(key2)
+          binding.lastMonth = t[key1]
+          binding.currentMonth = t[key2]
         }
       }
     })

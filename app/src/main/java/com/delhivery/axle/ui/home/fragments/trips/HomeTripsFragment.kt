@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
 import android.animation.ValueAnimator
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.ViewCompat
@@ -197,9 +199,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_ADVANCE_PENDING)
         )
-        context?.let {
-          startActivity(userTripsIntent(it, AdvancePending))
-        }
+        startActivityForResult(userTripsIntent(context!!, AdvancePending), REQUESTCODE_NOTRIPS)
       }
 
       HomeTripsHeaderAction_BalancePending -> {
@@ -209,9 +209,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_BALANCE_PENDING)
         )
-        context?.let {
-          startActivity(userTripsIntent(it, BalancePending))
-        }
+        startActivityForResult(userTripsIntent(context!!, BalancePending), REQUESTCODE_NOTRIPS)
       }
 
       HomeTripsHeaderAction_InTransit -> {
@@ -221,9 +219,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_INTRANSIT)
         )
-        context?.let {
-          startActivity(userTripsIntent(it, InTransit))
-        }
+        startActivityForResult(userTripsIntent(context!!, InTransit), REQUESTCODE_NOTRIPS)
       }
 
       HomeTripsHeaderAction_Completed -> {
@@ -233,9 +229,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_COMPLETED)
         )
-        context?.let {
-          startActivity(userTripsIntent(it, Completed))
-        }
+        startActivityForResult(userTripsIntent(context!!, Completed), REQUESTCODE_NOTRIPS)
       }
 
       HomeTripsWarningAction_NoLoads -> {
@@ -250,6 +244,24 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   override fun postElevation(elevation: Float) {
     toolbarElevationLiveData!!.postValue(elevation)
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQUESTCODE_NOTRIPS -> {
+        if (resultCode == Activity.RESULT_OK) {
+          action(NavigateHomeFragmentAction(LoadsFragment))
+        }
+      }
+      else -> {
+
+      }
+    }
   }
 
   /**
@@ -322,3 +334,5 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
   }
 }
+
+private val REQUESTCODE_NOTRIPS = 12345

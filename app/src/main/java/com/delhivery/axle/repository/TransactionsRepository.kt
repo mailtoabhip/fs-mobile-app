@@ -38,9 +38,8 @@ class TransactionsRepository @Inject constructor(
    * Get bulk transactions using ids
    */
   fun bulkTransactions(bids: List<TransactionBid>) =
-    bids.joinToString(
-        separator = ","
-    ) { it.transactionId }.let { transactionService.bulkTransactions(it) }
+    bids.joinToString(separator = ",") { it.transactionId }
+        .let { transactionService.bulkTransactions(it) }
         .convertResponse()
         .map { Pair(bids, it) }
 
@@ -49,6 +48,9 @@ class TransactionsRepository @Inject constructor(
    */
   fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
 
+  /**
+   * Transaction trip meter
+   */
   fun transactionTripMeter() =
     transactionService.transactionsTripMeter(userRepository.userId()).convertResponse()
 }
