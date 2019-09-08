@@ -149,8 +149,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     textUserBidAmountDiff.text =
                       state.userBid.diffFromLowestBid(state.lowestBid)
                   }
-                  textUserBidAmount.text =
-                    getString(R.string.label_user_bid_amount, state.userBid.bidAmount)
+                  val bid = getString(string.label_user_bid_amount) + StringUtils.formatAmount(
+                      state.userBid.bidAmount
+                  )
+                  textUserBidAmount.text = bid
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
           }

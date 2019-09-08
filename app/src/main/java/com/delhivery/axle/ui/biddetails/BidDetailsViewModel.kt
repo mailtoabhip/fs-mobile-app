@@ -80,12 +80,17 @@ class BidDetailsViewModel @Inject constructor(
                   fetchTripDetails()
                 }
                 Rejected -> {
-                  transactionBidLiveData.postValue(
-                      BidDetailsUserBidState_RejectedBid(
-                          _bRes.second.acceptedBid()!!, _bRes.first.first!!
-                      )
-                  )
-                  bidPriceLiveData.postValue(null)
+                  try {
+                    transactionBidLiveData.postValue(
+                        BidDetailsUserBidState_RejectedBid(
+                            _bRes.second.acceptedBid()!!, _bRes.first.first!!
+                        )
+                    )
+                  } catch (e: Exception) {
+
+                  } finally {
+                    bidPriceLiveData.postValue(null)
+                  }
                 }
                 else -> {
                   transactionBidLiveData.postValue(

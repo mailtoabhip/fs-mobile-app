@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.Results
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 
 class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadViewModel>() {
+
   override fun getViewModelClass() = SearchLoadViewModel::class.java
 
   override fun layoutId() = R.layout.activity_search_load

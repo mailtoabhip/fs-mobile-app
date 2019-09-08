@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
@@ -283,16 +284,16 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     private var toolbarElevation = -1f
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager =
-        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
-      val pos = layoutManager.findFirstVisibleItemPosition()
       if (!adapter.checkFiltering()) {
+        val layoutManager =
+          (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        val pos = layoutManager.findFirstVisibleItemPosition()
         val _toolbarElevation = if (pos == 0) {
           stickyView.translationY = 0f
           stickyView.visibility = View.GONE

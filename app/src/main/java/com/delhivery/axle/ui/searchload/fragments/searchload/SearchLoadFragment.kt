@@ -45,27 +45,66 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
+    binding.btnRetry.setOnClickListener {
+      binding.warningItem.visibility = View.GONE
+      binding.warningItem.alpha = 0f
+      viewModel.fetchCities()
+    }
+
     viewModel.citiesLiveData.observe(this, Observer {
       /* animate open */
-      binding.arcView.animate(RevealOpen) {
-        please {
-          animate(binding.containerHistory) toBe {
-            visible()
-          }
-          animate(binding.textHistoryTitle) toBe {
-            visible()
-          }
-          animate(binding.containerSearchLoadHeaderForm) toBe {
-            visible()
-          }
-        }.setStartDelay(300)
-            .start()
-      }
+      if (it.isNullOrEmpty()) {
+        toggleVisibility(true)
+        binding.arcView.animate(RevealOpen) {
+          please {
+            animate(binding.warningItem).toBe {
+              visible()
+            }
+          }.setStartDelay(300)
+              .start()
+        }
+      } else {
+        toggleVisibility(false)
+        binding.arcView.animate(RevealOpen) {
+          please {
+            animate(binding.containerHistory) toBe {
+              visible()
+            }
+            animate(binding.textHistoryTitle) toBe {
+              visible()
+            }
+            animate(binding.containerSearchLoadHeaderForm) toBe {
+              visible()
+            }
+            animate(binding.warningItem).toBe {
+              invisible()
+            }
+          }.setStartDelay(300)
+              .start()
+        }
 
-      setupSearchScreen(it)
+        setupSearchScreen(it)
+      }
     })
 
     viewModel.fetchCities()
+  }
+
+  private fun toggleVisibility(toggle: Boolean) {
+    when (toggle) {
+      true -> {
+        binding.warningItem.visibility = View.VISIBLE
+        binding.containerHistory.visibility = View.GONE
+        binding.textHistoryTitle.visibility = View.GONE
+        binding.containerSearchLoadHeaderForm.visibility = View.GONE
+      }
+      false -> {
+        binding.warningItem.visibility = View.GONE
+        binding.containerHistory.visibility = View.VISIBLE
+        binding.textHistoryTitle.visibility = View.VISIBLE
+        binding.containerSearchLoadHeaderForm.visibility = View.VISIBLE
+      }
+    }
   }
 
   override fun onPause() {
@@ -107,9 +146,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
             originalRotation()
           }
         }.withEndAction {
-          val _origin = binding.editOriginCity.text.toString()
+          val origin = binding.editOriginCity.text.toString()
           binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
-          binding.editDestinationCity.setText(_origin)
+          binding.editDestinationCity.setText(origin)
         }
             .setStartDelay(300)
             .start()
@@ -132,7 +171,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     uiUtils.toggleKeyboard(true)
 
     if (origin == null) {
-      binding.editOriginCity.setError(getString(string.error_search_missing_origin))
+      binding.editOriginCity.error = getString(string.error_search_missing_origin)
       binding.editOriginCity.errorAnimate()
       analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
       return
@@ -145,7 +184,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
-          city = "Anywhere", cityId = "", state = "Anywhere"
+          city = getString(string.label_anywhere), cityId = "",
+          state = getString(string.label_anywhere)
       ), type
       )
     }

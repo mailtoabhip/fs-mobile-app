@@ -2,7 +2,6 @@ package com.delhivery.axle.utils
 
 import android.R.string
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
 import android.text.Html
@@ -55,7 +54,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         null
     )
     showConfirmDialog(
-        activity, titleStr, messageStr, positiveAction, negativeAction,
+        titleStr, messageStr, positiveAction, negativeAction,
         OnClickListener { d, _ -> positiveClickListener(d) },
         OnClickListener { d, _ ->
           if (negativeClickListener != null) {
@@ -70,7 +69,6 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
   /**
    * Show Confirm Dialog
    *
-   * @param context - Activity Context
    * @param title - Dialog title
    * @param message - Dialog Message
    * @param positiveBtnText - Used to set Positive Button for Dialog
@@ -80,8 +78,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
    * @param positiveBtnClr - [ColorInt] Color of positive Action Button
    * @param negativeBtnClr - [ColorInt] Color of negative Action Button
    */
-  fun showConfirmDialog(
-    context: Context,
+  private fun showConfirmDialog(
     title: String,
     message: String?,
     positiveBtnText: String,
@@ -90,13 +87,14 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     negativeClickListener: OnClickListener? = null, @ColorInt positiveBtnClr: Int, @ColorInt negativeBtnClr: Int
   ) {
 
-    val dialog = AlertDialog.Builder(context)
+    val dialog = AlertDialog.Builder(activity)
         .setTitle(title)
         .setMessage(Html.fromHtml(message))
         .setPositiveButton(positiveBtnText, positiveClickListener)
         .setNegativeButton(negativeBtnText, negativeClickListener)
         .create()
 
+    dialog.setOwnerActivity(activity)
     dialog.setOnShowListener {
       dialog.getButton(AlertDialog.BUTTON_POSITIVE)
           .setTextColor(positiveBtnClr)
@@ -104,7 +102,8 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
           .setTextColor(negativeBtnClr)
     }
 
-    dialog.show()
+    if (!activity.isFinishing)
+      dialog.show()
   }
 
   /**
@@ -116,8 +115,12 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
   fun showErrorDialog(
     error: String,
     dismissTimeout: Long = -1
-  ) =
-    ErrorDialog(
+  ): () -> Unit = {
+    val dialog = ErrorDialog(
       activity, error, dismissTimeout
-  ).show()
+    )
+    dialog.setOwnerActivity(activity)
+    if (!activity.isFinishing)
+      dialog.show()
+  }
 }

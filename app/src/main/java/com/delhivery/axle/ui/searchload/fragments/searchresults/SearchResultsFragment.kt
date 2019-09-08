@@ -96,7 +96,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
         /* add all transactions */
-        it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
+        if (it.isNullOrEmpty()) {
+          //TODO: add warning item
+        } else {
+          it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
+        }
       }
     }
         .observe(this, SearchResultsObserver())

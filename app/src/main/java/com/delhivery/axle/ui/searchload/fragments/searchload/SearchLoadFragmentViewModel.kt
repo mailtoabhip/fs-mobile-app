@@ -39,7 +39,7 @@ class SearchLoadFragmentViewModel @Inject constructor(
         .onBackground()
         .subscribe { res, error ->
           if (!error) {
-            Log.d("harish", "search entry stored $res")
+            Log.d("Search Load History", "search entry stored $res")
           } else {
             error.handle()
           }
@@ -54,7 +54,7 @@ class SearchLoadFragmentViewModel @Inject constructor(
         .onBackground()
         .subscribe { res, error ->
           if (!error) {
-            Log.d("harish", "entry deleted: $res")
+            Log.d("Search Load History", "entry deleted: $res")
           } else {
             error.handle()
           }
@@ -65,9 +65,11 @@ class SearchLoadFragmentViewModel @Inject constructor(
     compositeDisposable += cityService.getAllCities()
         .onBackground()
         .progress()
-        .subscribe { _res, error ->
+        .subscribe { _res, _ ->
           if (_res != null) {
             citiesLiveData.postValue(_res.responseData?.cities ?: listOf())
+          } else {
+            citiesLiveData.postValue(null)
           }
         }
   }

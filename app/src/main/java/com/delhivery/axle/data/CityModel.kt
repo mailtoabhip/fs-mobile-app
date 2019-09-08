@@ -33,7 +33,6 @@ data class CityModel(
 }
 
 data class CitiesResponse(
-  @SerializedName("total") val totalBids: Int,
   @SerializedName("cities") val cities: List<CityModel>
 )
 

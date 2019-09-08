@@ -33,24 +33,58 @@
           app:direction="bottom"
           />
 
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/warning_item"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:alpha="0"
+          android:orientation="vertical"
+          android:padding="@dimen/size_48dp"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <TextView
+            android:id="@+id/error_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:text="@string/label_something_went_wrong"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_retry"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:text="@string/label_retry"
+            style="@style/ActionButton"
+            />
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
       <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/container_search_load_header_form"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:alpha="1"
+          android:alpha="0"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           >
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_forward"
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_forward_black"
+            android:text="@string/label_select_from_drop_down"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="@+id/til_origin"
+            app:layout_constraintStart_toStartOf="@+id/til_origin"
+            app:layout_constraintTop_toBottomOf="@+id/til_origin"
             />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -82,11 +116,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="*Select from drop down*"
+            android:text="@string/label_select_from_drop_down"
             android:textSize="@dimen/text_12sp"
-            app:layout_constraintEnd_toEndOf="@+id/til_origin"
-            app:layout_constraintStart_toStartOf="@+id/til_origin"
-            app:layout_constraintTop_toBottomOf="@+id/til_origin"
+            app:layout_constraintEnd_toEndOf="@+id/til_destination"
+            app:layout_constraintStart_toStartOf="@+id/til_destination"
+            app:layout_constraintTop_toBottomOf="@+id/til_destination"
             />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -115,14 +149,15 @@
               />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_forward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="*Select from drop down*"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintEnd_toEndOf="@+id/til_destination"
-            app:layout_constraintStart_toStartOf="@+id/til_destination"
-            app:layout_constraintTop_toBottomOf="@+id/til_destination"
+            android:layout_marginTop="@dimen/size_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
             />
 
         <androidx.appcompat.widget.AppCompatSpinner
@@ -154,7 +189,9 @@
             app:layout_constraintTop_toBottomOf="@id/spinner_truck_type"
             style="@style/ActionButton"
             />
-      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- History container -->

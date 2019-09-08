@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.dialogs
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.databinding.DialogErrorBinding
 import com.delhivery.axle.utils.extensions.onBackground
@@ -64,8 +65,15 @@ class ErrorDialog(
    */
   private fun dismissDialog() {
     timeoutDisposable.safeDispose()
-    if (isShowing) {
-      dismiss()
+    try {
+      if (ownerActivity == null || ownerActivity!!.isDestroyed) {
+        return
+      }
+      if (isShowing) {
+        dismiss()
+      }
+    } catch (e: Exception) {
+      Log.d("Error Dialog", "Exception while closing dialog")
     }
   }
 }

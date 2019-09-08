@@ -117,7 +117,7 @@
   <string name="label_destination_city">Destination city</string>
   <string name="label_from_state">From %1$s</string>
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
-  <string name="label_user_bid_amount">You have bid: ₹ %1$d</string>
+  <string name="label_user_bid_amount">You have bid: ₹ </string>
   <string name="label_bids">%1$s Bids</string>
   <string name="label_destination_state">Destination States(%1$s)</string>
   <string name="label_advance_pending">Advance Pending</string>
@@ -157,6 +157,10 @@
   <string name="error_search_missing_origin">Please select origin</string>
 
   <string name="not_available">Not available</string>
+  <string name="label_anywhere">Anywhere</string>
+  <string name="label_select_from_drop_down">*Select from drop down*</string>
+  <string name="label_something_went_wrong">Something went wrong</string>
+  <string name="label_retry">Retry</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
