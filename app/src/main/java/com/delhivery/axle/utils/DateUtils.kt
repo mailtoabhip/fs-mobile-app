@@ -116,10 +116,10 @@ object DateUtils {
     return daysDiffStr(requiredOn)
   }
 
-  fun convertToRelativeTimeStamp(actionTime: String): String {
+  fun convertToRelativeTimeStamp(actionTime: String?=""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(
-          actionTime, DatePatterns.OrionDateFormat
+          actionTime!!, DatePatterns.OrionDateFormat
       ).time).let { msDiff ->
         val days = TimeUnit.MILLISECONDS.toDays(msDiff)
         val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))

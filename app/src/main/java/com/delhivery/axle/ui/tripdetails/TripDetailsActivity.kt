@@ -130,6 +130,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     history.forEach { item ->
       when (item.id) {
         BalancePaid -> {
+          ViewTripHistoryItemBinding.inflate(
+              layoutInflater, binding.containerHistory, false
+          )
+              .apply {
+                focusView = false
+                if (index == 0) {
+                  val background = item.getBackground()
+                  container.setBackgroundResource(background)
+                  focusView = background != R.color.white
+                }
+                setHistory(item)
+                binding.containerHistory.addView(root)
+              }
         }
         PODUploaded -> {
           ViewTripHistoryPodUploadedBinding.inflate(layoutInflater, binding.containerHistory, false)
@@ -143,11 +156,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 setHistory(item)
                 textInvoice.setOnClickListener {
                   it.post {
-                    startActivity(
-                        imageViewIntent(
-                            it.context, item.podUrl, "View POD"
-                        )
-                    )
+                    startActivity(imageViewIntent(it.context, item.podUrl, "View POD"))
                   }
                 }
                 binding.containerHistory.addView(root)
