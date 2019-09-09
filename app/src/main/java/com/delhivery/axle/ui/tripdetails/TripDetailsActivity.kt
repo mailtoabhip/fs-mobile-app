@@ -63,7 +63,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.transactionDetails = first
         binding.tripDetails = second
         viewModel.bidDetail = second.bidDetails
+        viewModel.fetchWarehouseDetails()
       }
+    })
+
+    viewModel.warehouseLiveData.observe(this, Observer {
+      binding.labelWarehouse.text = it
     })
 
     viewModel.paymentLiveData.observe(this, Observer {

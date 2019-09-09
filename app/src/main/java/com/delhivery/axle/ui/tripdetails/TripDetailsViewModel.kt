@@ -25,6 +25,7 @@ import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.repository.PaymentRepository
 import com.delhivery.axle.repository.TripsRepository
+import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.not
@@ -36,6 +37,7 @@ import javax.inject.Inject
 class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val paymentRepository: PaymentRepository,
+  private val warehouseRepository: WarehouseRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
@@ -43,10 +45,12 @@ class TripDetailsViewModel @Inject constructor(
   lateinit var transactionId: String
 
   private lateinit var tripDetail: HomeTripsItemData
+  private lateinit var warehouse: String
 
   /* trip details live data */
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
   var paymentLiveData = MutableLiveData<Boolean>()
+  var warehouseLiveData = MutableLiveData<String>()
 
   /* payment summary */
   var paymentSummary = mutableListOf<TripChargesResponse>()
@@ -70,9 +74,26 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error) {
             this.tripDetail = _res.second
+            this.warehouse = _res.first.pickupLocation
             tripLiveData.postValue(_res)
           } else {
             error.handle()
+          }
+        }
+  }
+
+  fun fetchWarehouseDetails() {
+    compositeDisposable += warehouseRepository.fetchWarehouseDetails(
+        tripDetail.clientId, warehouse
+    )
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            if (_res.warehouses.isNullOrEmpty()) {
+              warehouseLiveData.postValue(tripDetail.unloadingLocation)
+            } else {
+              warehouseLiveData.postValue(_res.warehouses[0].completeAddress())
+            }
           }
         }
   }
@@ -178,22 +199,6 @@ class TripDetailsViewModel @Inject constructor(
                         history.timeStamp()
                     )
                 )
-//              if (tripDetail.advanceStatus()) {
-//                advancePaid = true
-//                val utrString = when (tripDetail.bankTransactionId) {
-//                  null -> "."
-//                  else -> " with UTR no: ${tripDetail.bankTransactionId}."
-//                }
-//                tripHistory.add(
-//                    TripHistoryItem(
-//                        AdvancePaid,
-//                        "Advance Paid",
-//                        "Advance payment of ₹ ${String.format(
-//                                "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
-//                        )} has been paid$utrString",
-//                        history.epoch()
-//                    )
-//                )
               } else {
                 advancePaid = false
                 tripHistory.add(

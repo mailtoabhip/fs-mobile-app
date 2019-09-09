@@ -272,13 +272,12 @@
               />
 
           <TextView
-              android:id="@+id/id4"
+              android:id="@+id/label_warehouse"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_16dp"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
-              android:text="@{ transactionDetails.pickUpLocationName() }"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
