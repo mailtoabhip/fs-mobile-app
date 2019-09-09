@@ -131,7 +131,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* submit */
     binding.btnAction.setOnClickListener {
-      searchLoad()
+      searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString())
     }
 
     /* reverse origin/destination cities */
@@ -165,8 +165,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
    */
   private fun searchLoad(
     saveToHistory: Boolean = true,
-    origin: CityModel? = this@SearchLoadFragment.origin,
-    destination: CityModel? = this@SearchLoadFragment.destination
+    origin: CityModel? = null,
+    destination: CityModel? = null,
+    truckType: String
   ) {
     uiUtils.toggleKeyboard(true)
 
@@ -177,16 +178,14 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       return
     }
 
-    /* form data */
-    val type = binding.spinnerTruckType.selectedItem.toString()
-
     /* save to history if needed */
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
           city = getString(string.label_anywhere), cityId = "",
           state = getString(string.label_anywhere)
-      ), type
+      ),
+          truckType
       )
     }
     /* searching progress */
@@ -194,11 +193,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
     Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, type, saveToHistory))
+      action(SearchLoadAction(origin, destination, truckType, saveToHistory))
     }, 200)
   }
-
-  private fun validate() = origin != null
 
   /**
    * init observers
@@ -220,7 +217,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false, item.originCity, item.destinationCity)
+            searchLoad(false, item.originCity, item.destinationCity, item.truckType)
           }
           itemBinding.root.setOnLongClickListener {
             viewModel.deleteSearchResult(item)

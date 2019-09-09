@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_72dp"
         android:gravity="center_vertical"
-        android:hint="@string/hint_search_trips"
+        android:hint="@string/hint_search_bids"
         android:imeOptions="actionSearch"
         android:maxLines="1"
         android:paddingBottom="@dimen/size_16dp"

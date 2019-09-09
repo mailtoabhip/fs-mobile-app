@@ -57,7 +57,7 @@
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
   <string name="hint_search_trips">Vehicle / Driver / Destination / LR</string>
-  <string name="hint_search_bids">Vehicle / Driver / Destination</string>
+  <string name="hint_search_bids">Origin / Destination</string>
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
   <string name="hint_amount">23900</string>
 
