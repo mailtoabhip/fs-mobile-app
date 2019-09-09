@@ -2,7 +2,7 @@ package com.delhivery.axle.data.home.trips
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import com.delhivery.axle.api.response.TripPayment
+import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
@@ -49,7 +49,7 @@ data class HomeTripsItemData(
   @SerializedName("advance_status") val advanceStatus: String? = "failure",
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("bank_transaction_id") val bankTransactionId: String? = null,
-  var payment: TripPayment? = null
+  var payment: BulkPaymentItem? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
 
@@ -105,12 +105,12 @@ data class HomeTripsItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
-  fun advanceStatus() = when (advanceStatus ?: "failure".toLowerCase()) {
+  fun advanceStatus() = when ((advanceStatus ?: "failure").toLowerCase()) {
     "success" -> true
     else -> false
   }
 
-  fun displayTime() = when (_tripStatus) {
+  private fun displayTime() = when (_tripStatus) {
     TripStatus.TruckConfirmed.statusKey -> requiredOn
     else -> arrivalTime ?: requiredOn
   }

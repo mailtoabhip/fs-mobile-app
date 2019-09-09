@@ -102,9 +102,9 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   override fun onItemClicked(item: StateModel) {
     if (selectedStates.contains(item)) {
       selectedStates.remove(item)
-      item.checked = false;
+      item.checked = false
     } else {
-      item.checked = true;
+      item.checked = true
       selectedStates.add(item)
     }
 
@@ -132,7 +132,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     inflater: MenuInflater?
   ) {
     super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.menu_delete, menu);
+    inflater?.inflate(R.menu.menu_delete, menu)
   }
 
   fun hide() {
@@ -144,7 +144,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         )
         .setInterpolator(AccelerateInterpolator(2f))
         .setDuration(100L)
-        .start();
+        .start()
   }
 
   fun show() {
@@ -187,7 +187,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     })
   }
 
-  inner class DestinationsRVScrollListener() : OnScrollListener() {
+  inner class DestinationsRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
       recyclerView: androidx.recyclerview.widget.RecyclerView,
@@ -199,7 +199,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
       if (visible && scrollDist > MINIMUM) {
         hide()
         scrollDist = 0
-        visible = false;
+        visible = false
       } else if (!visible && scrollDist < -MINIMUM) {
         show()
         scrollDist = 0

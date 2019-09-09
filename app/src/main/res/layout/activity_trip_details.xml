@@ -355,8 +355,12 @@
                 android:textStyle="normal"
                 />
           </androidx.appcompat.widget.LinearLayoutCompat>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <include
+            layout="@layout/view_bid_details_loading_bids"
+            android:id="@+id/progress_history"
+            />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container_history"

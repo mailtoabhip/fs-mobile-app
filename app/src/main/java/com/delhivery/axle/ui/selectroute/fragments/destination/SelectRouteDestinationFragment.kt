@@ -118,9 +118,9 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
 
     if (selectedStates.contains(item)) {
       selectedStates.remove(item)
-      item.checked = false;
+      item.checked = false
     } else {
-      item.checked = true;
+      item.checked = true
       selectedStates.add(item)
     }
 
@@ -142,7 +142,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
   }
 
   fun hide() {
-    visible = false;
+    visible = false
     binding.actionContainer.animate()
         .translationY(
             PositionAnimExpectation.dpToPx(
@@ -152,7 +152,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
         )
         .setInterpolator(AccelerateInterpolator(2f))
         .setDuration(100L)
-        .start();
+        .start()
   }
 
   fun show() {
@@ -170,7 +170,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
     }
   }
 
-  inner class DestinationsRVScrollListener() : OnScrollListener() {
+  inner class DestinationsRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
       recyclerView: androidx.recyclerview.widget.RecyclerView,
@@ -180,15 +180,15 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
       super.onScrolled(recyclerView, dx, dy)
 
       if (visible && scrollDist > MINIMUM) {
-        hide();
-        scrollDist = 0;
+        hide()
+        scrollDist = 0
       } else if (!visible && scrollDist < -MINIMUM) {
-        show();
-        scrollDist = 0;
+        show()
+        scrollDist = 0
       }
 
       if ((visible && dy > 0) || (!visible && dy < 0)) {
-        scrollDist += dy;
+        scrollDist += dy
       }
     }
   }

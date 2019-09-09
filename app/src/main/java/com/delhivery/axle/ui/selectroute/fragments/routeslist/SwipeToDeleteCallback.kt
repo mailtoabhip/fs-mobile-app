@@ -51,7 +51,7 @@ class SwipeToDeleteCallback @Inject constructor(
     p0: ViewHolder,
     p1: Int
   ) {
-    val position = p0.getAdapterPosition()
+    val position = p0.adapterPosition
     _adapter.deleteItem(position)
   }
 
@@ -68,12 +68,12 @@ class SwipeToDeleteCallback @Inject constructor(
     val itemView = viewHolder.itemView
     val backgroundCornerOffset = 20
 
-    val iconMargin = (itemView.height - (icon.getIntrinsicHeight() ?: 0) ?: 0) / 2
-    val iconTop = itemView.top + (itemView.height - (icon.getIntrinsicHeight() ?: 0)) / 2
-    val iconBottom = iconTop + (icon.getIntrinsicHeight() ?: 0)
+    val iconMargin = (itemView.height - icon.intrinsicHeight) / 2
+    val iconTop = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
+    val iconBottom = iconTop + icon.intrinsicHeight
 
     if (dX > 0) { // Swiping to the right
-      val iconLeft = itemView.left + iconMargin + (icon.getIntrinsicHeight() ?: 0)
+      val iconLeft = itemView.left + iconMargin + icon.intrinsicHeight
       val iconRight = itemView.left + iconMargin
       icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 
@@ -83,7 +83,7 @@ class SwipeToDeleteCallback @Inject constructor(
           itemView.bottom
       )
     } else if (dX < 0) { // Swiping to the left
-      val iconLeft = itemView.right - iconMargin - (icon.getIntrinsicHeight() ?: 0)
+      val iconLeft = itemView.right - iconMargin - icon.intrinsicHeight
       val iconRight = itemView.right - iconMargin
       icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 

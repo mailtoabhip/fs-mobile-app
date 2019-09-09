@@ -3,10 +3,12 @@ package com.delhivery.axle.ui.tripdetails
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.response.TripChargesResponse
+import com.delhivery.axle.api.response.TripPaymentsResponse
 import com.delhivery.axle.data.AdvancePaid
 import com.delhivery.axle.data.AdvancePending
 import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.AwaitingUnloading
+import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.BalancePending
 import com.delhivery.axle.data.InTransit
 import com.delhivery.axle.data.PODUploaded
@@ -40,9 +42,11 @@ class TripDetailsViewModel @Inject constructor(
   /* transaction id */
   lateinit var transactionId: String
 
+  private lateinit var tripDetail: HomeTripsItemData
+
   /* trip details live data */
-  var tripLiveData =
-    MutableLiveData<Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>>()
+  var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
+  var paymentLiveData = MutableLiveData<Boolean>()
 
   /* payment summary */
   var paymentSummary = mutableListOf<TripChargesResponse>()
@@ -65,8 +69,26 @@ class TripDetailsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error) {
-            processTrips(_res.third, _res.second)
+            this.tripDetail = _res.second
             tripLiveData.postValue(_res)
+          } else {
+            error.handle()
+          }
+        }
+  }
+
+  /**
+   * Fetch payment summary
+   */
+  fun fetchPaymentSummary() {
+    compositeDisposable += paymentRepository.chargesSummary(transactionId)
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            processTrips(_res.first, _res.third)
+            paymentSummary.clear()
+            paymentSummary.addAll(_res.second)
+            paymentLiveData.postValue(true)
           } else {
             error.handle()
           }
@@ -75,10 +97,9 @@ class TripDetailsViewModel @Inject constructor(
 
   private fun processTrips(
     histories: List<TripHistoryModel>,
-    tripDetail: HomeTripsItemData
+    payments: List<TripPaymentsResponse>
   ) {
-    var index = 0;
-    for (history in histories) {
+    for ((index, history) in histories.withIndex()) {
       when (history.status().statusKey) {
         TripStatus.TruckConfirmed.statusKey -> {
           if (index == 0 && tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
@@ -98,7 +119,7 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   TruckPlaced,
                   "Truck Placed",
-                  "Truck is on its way to pickup location", history.epoch()
+                  "Truck is on its way to pickup location", history.timeStamp()
               )
           )
         }
@@ -123,7 +144,7 @@ class TripDetailsViewModel @Inject constructor(
                   TruckLoaded,
                   "Loading Completed",
                   "Truck is ready to start " + "from ${tripDetail.loadingLocation}",
-                  history.epoch()
+                  history.timeStamp()
               )
           )
         }
@@ -135,27 +156,44 @@ class TripDetailsViewModel @Inject constructor(
                     InTransit,
                     "In-Transit",
                     "Truck started from pickup location",
-                    history.epoch()
+                    history.timeStamp()
                 )
             )
 
             if (tripDetail.bidDetails?.advancePayout ?: 0.0 > 0.0) {
-              if (tripDetail.advanceStatus()) {
+              val advancePay = payments.firstOrNull { it.head == "cash_advance" }
+              if (advancePay != null) {
                 advancePaid = true
-                val utrString = when (tripDetail.bankTransactionId) {
+                val utrString = when (advancePay.bankTransactionId) {
                   null -> "."
-                  else -> " with UTR no: ${tripDetail.bankTransactionId}."
+                  else -> " with UTR no: ${advancePay.bankTransactionId}."
                 }
                 tripHistory.add(
                     TripHistoryItem(
                         AdvancePaid,
                         "Advance Paid",
                         "Advance payment of ₹ ${String.format(
-                                "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                            "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                         )} has been paid$utrString",
-                        history.epoch()
+                        history.timeStamp()
                     )
                 )
+//              if (tripDetail.advanceStatus()) {
+//                advancePaid = true
+//                val utrString = when (tripDetail.bankTransactionId) {
+//                  null -> "."
+//                  else -> " with UTR no: ${tripDetail.bankTransactionId}."
+//                }
+//                tripHistory.add(
+//                    TripHistoryItem(
+//                        AdvancePaid,
+//                        "Advance Paid",
+//                        "Advance payment of ₹ ${String.format(
+//                                "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+//                        )} has been paid$utrString",
+//                        history.epoch()
+//                    )
+//                )
               } else {
                 advancePaid = false
                 tripHistory.add(
@@ -167,7 +205,7 @@ class TripDetailsViewModel @Inject constructor(
                                 "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                             )}" +
                             " has been initiated",
-                        history.epoch()
+                        history.timeStamp()
                     )
                 )
               }
@@ -178,7 +216,7 @@ class TripDetailsViewModel @Inject constructor(
                       AdvancePending,
                       "Advance Pending",
                       "Advance payment is being processed, will update shortly",
-                      history.epoch()
+                      history.timeStamp()
                   )
               )
             }
@@ -188,7 +226,7 @@ class TripDetailsViewModel @Inject constructor(
                     InTransit,
                     "In-Transit",
                     "Truck is in-transit, current location is ${history.details?.currentLocation}",
-                    history.epoch()
+                    history.timeStamp()
                 )
             )
           }
@@ -243,39 +281,42 @@ class TripDetailsViewModel @Inject constructor(
                   PODUploaded,
                   "POD uploaded",
                   "Balance amount will be settled soon",
-                  history.epoch(),
+                  history.timeStamp(),
                   history.details?.podUrl ?: ""
               )
           )
         }
 
         TripStatus.TripCompleted.statusKey -> {
-          balancePaid = true
-          tripHistory.add(
-              TripHistoryItem(
-                  BalancePending,
-                  "Balance pending",
-                  "Invoice will be shared post payment"
-              )
-          )
-        }
-      }
-
-      index++
-    }
-  }
-
-  /**
-   * Fetch payment summary
-   */
-  fun fetchPaymentSummary() {
-    compositeDisposable += paymentRepository.chargesSummary(transactionId)
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            paymentSummary.clear()
-            paymentSummary.addAll(_res)
+          val balancePay = payments.firstOrNull { it.head == "balance_payment" }
+          if (balancePay != null) {
+            balancePaid = true
+            val utrString = when (balancePay.bankTransactionId) {
+              null -> "."
+              else -> " with UTR no: ${balancePay.bankTransactionId}."
+            }
+            tripHistory.add(
+                TripHistoryItem(
+                    BalancePaid,
+                    "Balance Paid",
+                    "Balance payment of ₹ ${String.format(
+                        "%, .0f", balancePay.amount
+                    )} has been paid$utrString",
+                    balancePay.timeStamp()
+                )
+            )
+          } else {
+            balancePaid = false
+            tripHistory.add(
+                TripHistoryItem(
+                    BalancePending,
+                    "Balance pending",
+                    "Invoice will be shared post payment"
+                )
+            )
           }
         }
+      }
+    }
   }
 }

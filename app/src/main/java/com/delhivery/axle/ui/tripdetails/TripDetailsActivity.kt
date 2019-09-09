@@ -63,6 +63,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.transactionDetails = first
         binding.tripDetails = second
         viewModel.bidDetail = second.bidDetails
+      }
+    })
+
+    viewModel.paymentLiveData.observe(this, Observer {
+      if (it) {
+        binding.progressHistory.root.visibility = View.GONE
         populateHistory(viewModel.tripHistory.toMutableList())
       }
     })
