@@ -42,7 +42,7 @@ data class HomeTripsItemData(
   /**
    * Formatted driver details as per UI
    */
-  fun formattedDriverDetails() = "Driver: (${driverDetails?.driverPhoneNo})"
+  fun formattedDriverDetails() = "Driver: ${driverDetails?.driverPhoneNo}"
 
   /**
    * Trip Status [TripStatus]
@@ -110,10 +110,8 @@ data class HomeTripsItemData(
   /**
    * Formatted required at
    */
-  fun requiredAt() = DateUtils.formatDate(
-      DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat),
-      "dd MMM"
-  )
+  fun requiredAt() =
+    DateUtils.formatDate(DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat), "dd MMM")
 
   /**
    * Required at background as per designs
