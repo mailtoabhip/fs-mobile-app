@@ -49,7 +49,7 @@ class TripsRepository @Inject constructor(
   /**
    * Complete trip details with transaction and trip history
    */
-  fun tripDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =
+  fun tripAndTransactionDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =
     Single.zip(
       transactionService.transactionDetails(transactionId).convertResponse(),
       tripsService.trip(transactionId).convertResponse(),
@@ -60,12 +60,15 @@ class TripsRepository @Inject constructor(
   )
 
   /**
+   * Complete trip details with transaction and trip history
+   */
+  fun tripDetails(transactionId: String) =
+    transactionService.transactionDetails(transactionId).convertResponse()
+
+  /**
    * User/supplier trip summary [BidSummaryResponse]
    */
-  fun userTripsSummary(
-  ) = tripsService
-      .userTripsSummary(userRepository.userId())
-      .convertResponse()
+  fun userTripsSummary() = tripsService.userTripsSummary(userRepository.userId()).convertResponse()
 }
 
 /* User trips pagination load limit */

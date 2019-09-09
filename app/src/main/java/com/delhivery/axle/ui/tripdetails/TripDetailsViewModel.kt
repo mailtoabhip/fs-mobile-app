@@ -27,7 +27,6 @@ import com.delhivery.axle.repository.PaymentRepository
 import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -68,7 +67,7 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch trip details
    */
   fun fetchTripDetails() {
-    compositeDisposable += tripsRepository.tripDetails(transactionId)
+    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -150,10 +149,7 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   ReachedPickupPoint,
                   "Reached Pickup Point",
-                  StringUtils.capitalize(
-                      history.details?.driverDetails?.driverName ?: "driver"
-                  )
-                      + " has reached pickup point",
+                  "Driver has reached pickup point",
                   history.details?.getArrivalEpoch() ?: ""
               )
           )

@@ -10,18 +10,6 @@
         name="pickUpLocation"
         type="String"
         />
-    <variable
-        name="vehicleNumber"
-        type="String"
-        />
-    <variable
-        name="driverName"
-        type="String"
-        />
-    <variable
-        name="driverPhone"
-        type="String"
-        />
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,132 +38,30 @@
 
     <TextView
         android:id="@+id/text_pickup_location"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_4dp"
         android:fontFamily="sans-serif"
-        android:paddingEnd="@dimen/size_24dp"
         android:text="@{pickUpLocation}"
         android:textColor="@color/white"
         android:textSize="@dimen/text_14sp"
         android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_pickup_location_label"
+        app:layout_constraintEnd_toStartOf="@+id/id1"
         tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_awaiting_truck_details"
+        android:id="@+id/id1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_awaiting_truck_details"
-        />
-
-    <TextView
-        android:id="@+id/text_truck_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_32dp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.01"
-        android:lineSpacingExtra="-2sp"
-        android:text="@string/label_truck_details"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_20sp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_pickup_location"
-        />
-
-    <TextView
-        android:id="@+id/label_vehicle_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:fontFamily="sans-serif"
-        android:text="Vehicle Number:"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_truck_details"
-        />
-
-    <TextView
-        android:id="@+id/text_vehicle_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:fontFamily="sans-serif"
-        android:text="@{vehicleNumber}"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toEndOf="@+id/label_driver_number"
-        app:layout_constraintTop_toTopOf="@+id/label_vehicle_number"
-        tools:text="HD56 AWM"
-        />
-
-    <TextView
-        android:id="@+id/label_driver_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:fontFamily="sans-serif"
-        android:text="Driver Name:"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_vehicle_number"
-        app:layout_goneMarginTop="@dimen/size_16dp"
-        />
-
-    <TextView
-        android:id="@+id/text_driver_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="sans-serif"
-        android:text="@{driverName}"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/img_awaiting_truck_details"
-        app:layout_constraintStart_toStartOf="@+id/text_vehicle_number"
-        app:layout_constraintTop_toTopOf="@id/label_driver_name"
-        tools:text="Suresh Kumar"
-        />
-
-    <TextView
-        android:id="@+id/label_driver_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:fontFamily="sans-serif"
-        android:text="Driver Phone No:"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_driver_name"
-        app:layout_goneMarginTop="@dimen/size_16dp"
-        />
-
-    <TextView
-        android:id="@+id/text_driver_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:text="@{driverPhone}"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="@+id/text_vehicle_number"
-        app:layout_constraintTop_toTopOf="@id/label_driver_number"
-        tools:text="9090909090"
+        app:layout_constraintStart_toEndOf="@+id/text_pickup_location"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_awaiting_truck"
         />
 
   </androidx.constraintlayout.widget.ConstraintLayout>

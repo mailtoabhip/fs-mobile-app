@@ -116,10 +116,7 @@ class BidDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error) {
             transactionBidLiveData.postValue(
-                BidDetailsUserBidState_ConfirmedBid(
-                    _res.first.pickupLocation, _res.second.driverDetails,
-                    _res.second.vehicleDetails.vehicleNo
-                )
+                BidDetailsUserBidState_ConfirmedBid(_res.pickupLocation)
             )
           } else {
             error.handle()

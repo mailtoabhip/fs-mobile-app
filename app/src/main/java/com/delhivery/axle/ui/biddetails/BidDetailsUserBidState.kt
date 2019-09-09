@@ -47,9 +47,7 @@ data class BidDetailsUserBidState_LoadingBids(
  * Confirmed bid state
  */
 data class BidDetailsUserBidState_ConfirmedBid(
-  var pickupLocation: String?,
-  var driverDetails: TripDriverDetails?,
-  var vehicleNumber: String?
+  var pickupLocation: String?
 ) : BidDetailsUserBidState(R.layout.view_bid_details_confirmed_bid)
 
 /**
