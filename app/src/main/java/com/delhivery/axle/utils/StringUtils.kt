@@ -32,8 +32,6 @@ object StringUtils {
     } else Character.toTitleCase(ch) + string.substring(1)
   }
 
-  fun formatAmount(num: Int) = DecimalFormat("##,##,##,###").format(num)
-
-  fun formatAmount(num: Double) = DecimalFormat("##,##,##,###").format(num)
+  fun formatAmount(num: Double): String = DecimalFormat("##,##,##,###").format(num) ?: ""
 
 }

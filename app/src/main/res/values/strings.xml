@@ -56,7 +56,7 @@
   <string name="hint_otp_digit"></string>
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
-  <string name="hint_search_trips">Vehicle / Driver / Destination / LR</string>
+  <string name="hint_search_trips">Vehicle / Destination / LR</string>
   <string name="hint_search_bids">Origin / Destination</string>
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
   <string name="hint_amount">23900</string>
@@ -161,6 +161,8 @@
   <string name="label_select_from_drop_down">*Select from drop down*</string>
   <string name="label_something_went_wrong">Something went wrong</string>
   <string name="label_retry">Retry</string>
+  <string name="label_vehicle_number">Vehicle Number:</string>
+  <string name="label_driver_phone_no">Driver Phone No:</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

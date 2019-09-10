@@ -204,6 +204,12 @@ class HomeLoadsViewModel @Inject constructor(
   fun setRouteUpdated() {
     userPrefs.routeUpdate = false
   }
+
+  fun updateUserAppAccess() {
+    compositeDisposable += userRepository.updateUserAppAccess()
+        .onBackground()
+        .subscribe { _, _ -> }
+  }
 }
 
 private const val BidsUpdateDelay = 1L

@@ -13,6 +13,7 @@ import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_EDIT_BID
 import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.StringUtils
 import javax.inject.Inject
 
 /**
@@ -47,7 +48,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       route = "${transaction.originCityName()} - ${transaction.destinationCityName()}"
-      transactionBid?.bidAmount?.let { binding.editAmount.setText(it.toString()) }
+      transactionBid?.bidAmount?.let { binding.editAmount.setText(StringUtils.formatAmount(it)) }
     }
 
     /* button click listeners */
@@ -63,15 +64,15 @@ class BidDetailsCreateEditDialog @Inject constructor(
    */
   private fun submit() {
     try {
-      val _amount = Integer.parseInt(binding.editAmount.text.toString())
-      if (_amount > 0) {
+      val amount = Integer.parseInt(binding.editAmount.text.toString())
+      if (amount > 0) {
         var event = ""
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
-          dialogInterface.createBid(transaction.key(), _amount, position)
+          dialogInterface.createBid(transaction.key(), amount, position)
         } else {
           event = EVENT_EDIT_BID
-          dialogInterface.editBid(transaction.key(), transactionBid.key(), _amount, position)
+          dialogInterface.editBid(transaction.key(), transactionBid.key(), amount, position)
         }
         // Capture event
         analyticsUtil.trackEvent(
