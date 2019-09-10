@@ -163,7 +163,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     /* fetch user transactions */
     if (!viewModel.isRouteUpdated()) {
-      viewModel.fetchUserTransactions()q
+      viewModel.fetchUserTransactions()
     }
 
     viewModel.updateUserAppAccess()

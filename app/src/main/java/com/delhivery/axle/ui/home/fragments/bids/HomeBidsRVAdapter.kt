@@ -73,7 +73,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   /**
    * Reset all data, remove all errors/transactions
    */
-  fun resetStaticData(source: Int) {
+  fun resetStaticData() {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
       add(Pair(HomeBidsSearchItem(), Remove))

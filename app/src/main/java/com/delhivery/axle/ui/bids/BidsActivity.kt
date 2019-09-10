@@ -112,7 +112,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   private fun refreshData() {
     /* remove user transactions */
-    adapter.resetStaticData(1)
+    adapter.resetStaticData()
     /* fetch again */
     viewModel.fetchBids(false)
   }

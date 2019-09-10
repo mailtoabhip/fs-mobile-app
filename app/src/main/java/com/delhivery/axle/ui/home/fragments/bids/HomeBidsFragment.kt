@@ -122,7 +122,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   private fun refreshData() {
     /* remove user transactions */
-    adapter.resetStaticData(0)
+    adapter.resetStaticData()
     /* fetch again */
     fetchBidsData()
   }
