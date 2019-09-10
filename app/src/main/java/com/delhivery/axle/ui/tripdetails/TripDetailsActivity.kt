@@ -73,7 +73,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     viewModel.paymentLiveData.observe(this, Observer {
       if (it) {
-        binding.progressHistory.root.visibility = View.GONE
         populateHistory(viewModel.tripHistory.toMutableList())
       }
     })
@@ -120,6 +119,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         mutableListOf(PROPERTY_TRANSACTION_ID),
         mutableListOf(viewModel.transactionId)
     )
+    binding.progressHistory.root.visibility = View.GONE
     binding.viewHistory.isSelected = true
     binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewSummary.isSelected = false
@@ -190,6 +190,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
         mutableListOf(VALUE_LOAD, viewModel.transactionId)
     )
+    binding.progressHistory.root.visibility = View.GONE
     binding.viewSummary.isSelected = true
     binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
     binding.viewHistory.isSelected = false

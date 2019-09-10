@@ -160,7 +160,7 @@ class TripDetailsViewModel @Inject constructor(
               TripHistoryItem(
                   TruckLoaded,
                   "Loading Completed",
-                  "Truck is ready to start " + "from ${tripDetail.loadingLocation}",
+                  "Truck is ready to start from pickup warehouse",
                   history.timeStamp()
               )
           )

@@ -161,6 +161,8 @@
   <string name="label_select_from_drop_down">*Select from drop down*</string>
   <string name="label_something_went_wrong">Something went wrong</string>
   <string name="label_retry">Retry</string>
+  <string name="label_vehicle_number">Vehicle Number:</string>
+  <string name="label_driver_phone_no">Driver Phone No:</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

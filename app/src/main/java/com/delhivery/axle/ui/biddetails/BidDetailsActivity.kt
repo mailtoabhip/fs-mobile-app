@@ -168,6 +168,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   pickUpLocation =
                     StringUtils.capitalize(state.pickupLocation) ?: getString(string.not_available)
+                  vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
+                  driverPhone =
+                    state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
                 }
           }
           is BidDetailsUserBidState_RejectedBid -> {

@@ -3,6 +3,7 @@ package com.delhivery.axle.repository
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.UserService
+import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.data.CityModel
@@ -81,8 +82,8 @@ class UserRepository @Inject constructor(
   /**
    * Update user routes and get all routes
    */
-  fun updateUserRoutes(
-    routes: List<RouteMappingModel>
-  ) =
+  fun updateUserRoutes(routes: List<RouteMappingModel>) =
     userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes))
+
+  fun updateUserAppAccess() = userService.updateUserAppAccess(userId(), UpdateUserAccessRequest())
 }

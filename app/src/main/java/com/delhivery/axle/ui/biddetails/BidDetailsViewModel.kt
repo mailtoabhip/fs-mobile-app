@@ -110,13 +110,16 @@ class BidDetailsViewModel @Inject constructor(
   }
 
   private fun fetchTripDetails() {
-    compositeDisposable += tripsRepository.tripDetails(transactionId)
+    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error) {
             transactionBidLiveData.postValue(
-                BidDetailsUserBidState_ConfirmedBid(_res.pickupLocation)
+                BidDetailsUserBidState_ConfirmedBid(
+                    _res.first.pickupLocation, _res.second.driverDetails,
+                    _res.second.vehicleDetails.vehicleNo
+                )
             )
           } else {
             error.handle()
