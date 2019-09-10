@@ -127,7 +127,6 @@ dependencies {
   implementation "com.google.dagger:dagger-android:$dagger2Version"
   implementation "com.google.dagger:dagger-android-support:$dagger2Version"
   kapt "com.google.dagger:dagger-android-processor:$dagger2Version"
-  //  kapt 'com.google.guava:guava:24.1-jre'
 
   //Retrofit2
   implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
