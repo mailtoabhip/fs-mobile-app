@@ -15,10 +15,6 @@
         type="String"
         />
     <variable
-        name="driverName"
-        type="String"
-        />
-    <variable
         name="driverPhone"
         type="String"
         />
@@ -65,12 +61,12 @@
         />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_awaiting_truck_details"
+        android:id="@+id/id1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_awaiting_truck_details"
+        app:srcCompat="@drawable/ic_awaiting_truck"
         />
 
     <TextView
@@ -95,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_8dp"
         android:fontFamily="sans-serif"
-        android:text="Vehicle Number:"
+        android:text="@string/label_vehicle_number"
         android:textColor="@color/white"
         android:textSize="@dimen/text_14sp"
         android:textStyle="bold"
@@ -119,48 +115,17 @@
         />
 
     <TextView
-        android:id="@+id/label_driver_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:fontFamily="sans-serif"
-        android:text="Driver Name:"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_vehicle_number"
-        app:layout_goneMarginTop="@dimen/size_16dp"
-        />
-
-    <TextView
-        android:id="@+id/text_driver_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="sans-serif"
-        android:text="@{driverName}"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/img_awaiting_truck_details"
-        app:layout_constraintStart_toStartOf="@+id/text_vehicle_number"
-        app:layout_constraintTop_toTopOf="@id/label_driver_name"
-        tools:text="Suresh Kumar"
-        />
-
-    <TextView
         android:id="@+id/label_driver_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_8dp"
         android:fontFamily="sans-serif"
-        android:text="Driver Phone No:"
+        android:text="@string/label_driver_phone_no"
         android:textColor="@color/white"
         android:textSize="@dimen/text_14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_driver_name"
+        app:layout_constraintTop_toBottomOf="@id/text_vehicle_number"
         app:layout_goneMarginTop="@dimen/size_16dp"
         />
 

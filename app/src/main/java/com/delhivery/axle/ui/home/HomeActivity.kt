@@ -95,14 +95,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
 
-  override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-  ) {
-    super.onActivityResult(requestCode, resultCode, data)
-  }
-
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
         binding.viewpager.apply {

@@ -49,8 +49,8 @@ class DelhiveryZoomDragImageView(
   ) {
     when (event.action and MotionEvent.ACTION_MASK) {
       MotionEvent.ACTION_DOWN -> {
-        xCoOrdinate = view.getX() - event.rawX
-        yCoOrdinate = view.getY() - event.rawY
+        xCoOrdinate = view.x - event.rawX
+        yCoOrdinate = view.y - event.rawY
 
         start.set(event.x, event.y)
         isOutSide = false
@@ -106,13 +106,13 @@ class DelhiveryZoomDragImageView(
         if (mode == ZOOM && event.pointerCount == 2) {
           val newDist1 = spacing(event)
           if (newDist1 > 10f) {
-            val scale = newDist1 / oldDist * view.getScaleX()
-            view.setScaleX(scale)
-            view.setScaleY(scale)
+            val scale = newDist1 / oldDist * view.scaleX
+            view.scaleX = scale
+            view.scaleY = scale
           }
           if (lastEvent != null) {
             newRot = rotation(event)
-            view.setRotation((view.getRotation() + (newRot - d)) as Float)
+            view.rotation = (view.rotation + (newRot - d))
           }
         }
       }

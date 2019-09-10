@@ -54,7 +54,7 @@ class RoutesRVAdapter(private val _interface: RoutesRVAdapterInterface) :
   }
 
   fun deleteItem(position: Int) {
-    notifyItemRemoved(position);
+    notifyItemRemoved(position)
   }
 
 }

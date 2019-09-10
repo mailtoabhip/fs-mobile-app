@@ -2,13 +2,12 @@ package com.delhivery.axle.repository
 
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
-import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.utils.extensions.convertResponse
 import io.reactivex.Single
-import io.reactivex.functions.Function3
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,23 +49,26 @@ class TripsRepository @Inject constructor(
   /**
    * Complete trip details with transaction and trip history
    */
-  fun tripDetails(transactionId: String) = Single.zip(
+  fun tripAndTransactionDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =
+    Single.zip(
       transactionService.transactionDetails(transactionId).convertResponse(),
       tripsService.trip(transactionId).convertResponse(),
-      tripsService.tripHistory(transactionId).convertResponse(),
-      Function3<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>,
-          Triple<HomeBidsRequestItemData, HomeTripsItemData, List<TripHistoryModel>>> { t1, t2, t3 ->
-        Triple(t1, t2, t3)
+        BiFunction<HomeBidsRequestItemData, HomeTripsItemData,
+            Pair<HomeBidsRequestItemData, HomeTripsItemData>> { t1, t2 ->
+          Pair(t1, t2)
       }
   )
 
   /**
+   * Complete trip details with transaction and trip history
+   */
+  fun tripDetails(transactionId: String) =
+    transactionService.transactionDetails(transactionId).convertResponse()
+
+  /**
    * User/supplier trip summary [BidSummaryResponse]
    */
-  fun userTripsSummary(
-  ) = tripsService
-      .userTripsSummary(userRepository.userId())
-      .convertResponse()
+  fun userTripsSummary() = tripsService.userTripsSummary(userRepository.userId()).convertResponse()
 }
 
 /* User trips pagination load limit */

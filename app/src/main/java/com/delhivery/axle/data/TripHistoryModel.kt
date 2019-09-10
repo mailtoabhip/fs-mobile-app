@@ -6,11 +6,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.TripDriverDetails
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripVehicleDetails
-import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
-import java.util.concurrent.TimeUnit
 
 data class TripHistoryModel(
   @SerializedName("action_time") val actionTime: String,
@@ -26,41 +23,8 @@ data class TripHistoryModel(
   /**
    * Compute epoch to action time
    */
-  fun epoch() = getEpoch(actionTime)
+  fun timeStamp() = DateUtils.convertToRelativeTimeStamp(actionTime)
 
-}
-
-private fun getEpoch(actionTime: String): String {
-  return if (actionTime.isNotNullOrEmpty()) {
-    (System.currentTimeMillis() - DateUtils.parseDate(
-        actionTime, DatePatterns.OrionDateFormat
-    ).time).let { msDiff ->
-      val days = TimeUnit.MILLISECONDS.toDays(msDiff)
-      val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
-      val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
-      val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
-      if (days > 0) {
-        if (days <= 3) {
-          "$days day ago"
-        } else {
-          DateUtils.formatDate(
-              DateUtils.parseDate(
-                  actionTime, DatePatterns.OrionDateFormat
-              ), DatePatterns.SimpleDateFormat
-          )
-              .toString()
-        }
-      } else if (hours > 0) {
-        "$hours hr $mins min ago"
-      } else if (mins > 0) {
-        "$mins min $secs s ago"
-      } else {
-        "Just now"
-      }
-    }
-  } else {
-    ""
-  }
 }
 
 data class TripHistoryDetail(
@@ -76,11 +40,11 @@ data class TripHistoryDetail(
   @SerializedName("unloading_location") val unloadingLocation: String
 ) {
 
-  fun getArrivalEpoch() = getEpoch(arrivalTime)
+  fun getArrivalEpoch() = DateUtils.convertToRelativeTimeStamp(arrivalTime)
 
-  fun getReachedEpoch() = getEpoch(reachedTime)
+  fun getReachedEpoch() = DateUtils.convertToRelativeTimeStamp(reachedTime)
 
-  fun getUnloadedEpoch() = getEpoch(unloadedTime)
+  fun getUnloadedEpoch() = DateUtils.convertToRelativeTimeStamp(unloadedTime)
 }
 
 data class TripHistoryItem(

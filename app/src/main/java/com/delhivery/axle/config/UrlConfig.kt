@@ -37,6 +37,10 @@ enum class UrlConfig(
       "https://orion-city-api.delhivery.com",
       "https://orion-city-api-dev.delhivery.com"
   ),
+  WarehouseService(
+      "https://orion-warehouse-api.delhivery.com",
+      "https://orion-warehouse-api-dev.delhivery.com"
+  ),
   ImageService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
       "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"

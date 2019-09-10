@@ -46,7 +46,7 @@ class DestinationSelectedAction(
 /**
  * Add more routes [RouteModel]
  */
-class AddMoreRoutesAction() : BaseSelectRouteFragmentAction(AddMoreRoutes)
+class AddMoreRoutesAction : BaseSelectRouteFragmentAction(AddMoreRoutes)
 
 /**
  * @Deprecated
@@ -60,7 +60,7 @@ class RouteDetailAction(
  * @NotUsed
  * Go to load request/home
  */
-class LoadRequestsAction() : BaseSelectRouteFragmentAction(LoadRequests)
+class LoadRequestsAction : BaseSelectRouteFragmentAction(LoadRequests)
 
 /**
  * Update Current route

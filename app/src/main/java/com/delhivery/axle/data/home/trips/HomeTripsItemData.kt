@@ -2,7 +2,7 @@ package com.delhivery.axle.data.home.trips
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import com.delhivery.axle.api.response.TripPayment
+import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
@@ -18,46 +18,31 @@ import com.google.gson.annotations.SerializedName
 
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
-  @SerializedName("action_time") val actionTime: String,
   @SerializedName("arrival_time") val arrivalTime: String?,
   @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean? = false,
   @SerializedName("client_id") val clientId: String,
-  @SerializedName("client_name") val clientName: String,
   @SerializedName("destination") val destination: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("origin") val origin: String,
   @SerializedName("origin_state") val originState: String,
   @SerializedName("transaction_id") val transactionId: String,
   @SerializedName("trip_status") private val _tripStatus: String,
-  @SerializedName("vendor_id") val vendorId: String,
-  @SerializedName("vendor_name") val vendorName: String,
   @SerializedName("vehicle") val vehicleDetails: TripVehicleDetails,
   @SerializedName("driver") val driverDetails: TripDriverDetails?,
   @SerializedName("bid_details") val bidDetails: TripBidDetails?,
-  @SerializedName("city_code") val cityCode: String?,
-  @SerializedName("current_location") val currentLocation: String?,
-  @SerializedName("origin_city_id") val originCityId: String?,
-  @SerializedName("destination_city_id") val destinationCityId: String?,
-  @SerializedName("is_advance_required") val isAdvancePaymentRequired: Boolean?,
-  @SerializedName("is_epod_available") val isEPodAvailable: Boolean?,
-  @SerializedName("loading_advice") val loadingAdvice: String?,
   @SerializedName("loading_location") val loadingLocation: String?,
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("required_on") val requiredOn: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
-  @SerializedName("user_name") val userName: String?,
-  @SerializedName("advance_status") val advanceStatus: String? = "failure",
   @SerializedName("payment_mode") val paymentMode: String? = null,
-  @SerializedName("bank_transaction_id") val bankTransactionId: String? = null,
-  var payment: TripPayment? = null
+  var payment: BulkPaymentItem? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
 
   /**
    * Formatted driver details as per UI
    */
-  fun formattedDriverDetails() =
-    "${StringUtils.capitalize(driverDetails?.driverName)} (${driverDetails?.driverPhoneNo})"
+  fun formattedDriverDetails() = "Driver: ${driverDetails?.driverPhoneNo}"
 
   /**
    * Trip Status [TripStatus]
@@ -93,7 +78,6 @@ data class HomeTripsItemData(
 
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
-        || driverDetails?.driverName?.contains(query, true) == true
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
@@ -105,12 +89,7 @@ data class HomeTripsItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
-  fun advanceStatus() = when (advanceStatus ?: "failure".toLowerCase()) {
-    "success" -> true
-    else -> false
-  }
-
-  fun displayTime() = when (_tripStatus) {
+  private fun displayTime() = when (_tripStatus) {
     TripStatus.TruckConfirmed.statusKey -> requiredOn
     else -> arrivalTime ?: requiredOn
   }
@@ -131,10 +110,8 @@ data class HomeTripsItemData(
   /**
    * Formatted required at
    */
-  fun requiredAt() = DateUtils.formatDate(
-      DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat),
-      "dd MMM"
-  )
+  fun requiredAt() =
+    DateUtils.formatDate(DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat), "dd MMM")
 
   /**
    * Required at background as per designs
@@ -156,9 +133,7 @@ data class HomeTripsItemData(
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 
 data class TripDriverDetails(
-  @SerializedName("name") val driverName: String?,
-  @SerializedName("phone_number") val driverPhoneNo: String?,
-  @SerializedName("licence_number") val licenceNo: String?
+  @SerializedName("phone_number") val driverPhoneNo: String?
 )
 
 data class TripVehicleDetails(

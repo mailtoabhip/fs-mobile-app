@@ -110,7 +110,7 @@ class BidDetailsViewModel @Inject constructor(
   }
 
   private fun fetchTripDetails() {
-    compositeDisposable += tripsRepository.tripDetails(transactionId)
+    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->

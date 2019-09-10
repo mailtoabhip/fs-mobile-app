@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.api.response.ChargeType.Damages
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
@@ -31,12 +32,12 @@ data class TripChargesResponse(
   }
 }
 
-data class TripPaymentsResponse(
-  @SerializedName("items") val payments: List<TripPayment>,
+data class TripPaymentsBulkResponse(
+  @SerializedName("items") val payments: List<BulkPaymentItem>,
   @SerializedName("total") val total: Int
 )
 
-data class TripPayment(
+data class BulkPaymentItem(
   @SerializedName("effective_price") val effectivePrice: Double,
   @SerializedName("advance_payout") val advancePayout: Double,
   @SerializedName("fuel_payout") val fuelPayout: Double?,
@@ -49,6 +50,17 @@ data class Payments(
   @SerializedName("cash_advance") val cashAdvance: Double,
   @SerializedName("fuel_advance") val fuelAdvance: Double
 )
+
+data class TripPaymentsResponse(
+  @SerializedName("head") val head: String,
+  @SerializedName("bank_transaction_id") val bankTransactionId: String,
+  @SerializedName("amount") val amount: Double,
+  @SerializedName("updation_date") val updationTime: String
+) {
+
+  fun timeStamp() = DateUtils.convertToRelativeTimeStamp(updationTime)
+
+}
 
 enum class ChargeType(
   val charge_key: String,

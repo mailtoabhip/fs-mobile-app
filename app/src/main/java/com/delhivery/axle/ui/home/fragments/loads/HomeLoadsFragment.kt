@@ -165,6 +165,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     if (!viewModel.isRouteUpdated()) {
       viewModel.fetchUserTransactions()
     }
+
+    viewModel.updateUserAppAccess()
   }
 
   override fun onResume() {

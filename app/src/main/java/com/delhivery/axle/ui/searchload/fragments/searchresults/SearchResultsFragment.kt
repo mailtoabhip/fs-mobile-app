@@ -284,7 +284,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   /**
    * Search results rv scroll listener
    */
-  inner class SearchResultsRVScrollListener() : OnScrollListener() {
+  inner class SearchResultsRVScrollListener : OnScrollListener() {
     override fun onScrolled(
       recyclerView: androidx.recyclerview.widget.RecyclerView,
       dx: Int,

@@ -1,5 +1,6 @@
 package com.delhivery.axle.api
 
+import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.api.response.BaseResponse
@@ -46,4 +47,14 @@ interface UserService {
     @Path("user_id") userId: String,
     @Body payload: UpdateUserBaseCityRequest
   ): Single<Any>
+
+  /**
+   * Update user app access
+   */
+  @PATCH("/users/supplypartners/{user_id}/")
+  fun updateUserAppAccess(
+    @Path("user_id") userId: String,
+    @Body payload: UpdateUserAccessRequest
+  ): Single<Any>
+
 }

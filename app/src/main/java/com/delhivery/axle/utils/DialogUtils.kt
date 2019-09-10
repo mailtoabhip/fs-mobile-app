@@ -116,9 +116,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     error: String,
     dismissTimeout: Long = -1
   ): () -> Unit = {
-    val dialog = ErrorDialog(
-      activity, error, dismissTimeout
-    )
+    val dialog = ErrorDialog(activity, error, dismissTimeout)
     dialog.setOwnerActivity(activity)
     if (!activity.isFinishing)
       dialog.show()

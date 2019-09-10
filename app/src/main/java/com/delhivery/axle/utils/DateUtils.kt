@@ -1,12 +1,14 @@
 package com.delhivery.axle.utils
 
 import androidx.annotation.IntRange
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.toCalendar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 object DateUtils {
 
@@ -43,7 +45,7 @@ object DateUtils {
   ): String {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
-      dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+      dateFormatter.timeZone = TimeZone.getTimeZone("UTC")
       dateFormatter.format(date)
     } catch (e: Exception) {
       e.printStackTrace()
@@ -65,7 +67,7 @@ object DateUtils {
   ): Date {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
-      dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+      dateFormatter.timeZone = TimeZone.getTimeZone("UTC")
       dateFormatter.parse(date)
     } catch (e: Exception) {
       Date()
@@ -112,6 +114,36 @@ object DateUtils {
     val requiredOn = parseDate(date, format)
     val reqTime = formatDate(requiredOn, "hh:mm a")
     return daysDiffStr(requiredOn)
+  }
+
+  fun convertToRelativeTimeStamp(actionTime: String?=""): String {
+    return if (actionTime.isNotNullOrEmpty()) {
+      (System.currentTimeMillis() - parseDate(
+          actionTime!!, DatePatterns.OrionDateFormat
+      ).time).let { msDiff ->
+        val days = TimeUnit.MILLISECONDS.toDays(msDiff)
+        val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
+        val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
+        val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
+        if (days > 0) {
+          if (days <= 3) {
+            "$days day ago"
+          } else {
+            formatDate(
+                parseDate(actionTime, DatePatterns.OrionDateFormat), DatePatterns.SimpleDateFormat
+            )
+          }
+        } else if (hours > 0) {
+          "$hours hr $mins min ago"
+        } else if (mins > 0) {
+          "$mins min $secs s ago"
+        } else {
+          "Just now"
+        }
+      }
+    } else {
+      ""
+    }
   }
 }
 

@@ -7,7 +7,8 @@ data class CreateTransactionBidRequest(
   @SerializedName("supplier_id") val supplierId: String,
   @SerializedName("supplier_name") val supplierName: String,
   @SerializedName("bid_price") val bidAmount: Int,
-  @SerializedName("test_bid") val testUser: Boolean
+  @SerializedName("test_bid") val testUser: Boolean,
+  @SerializedName("originator") val originator: String = "axle-app"
 )
 
 data class UpdateTransactionBidRequest(

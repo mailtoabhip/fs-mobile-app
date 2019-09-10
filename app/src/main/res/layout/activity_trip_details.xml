@@ -93,13 +93,12 @@
               />
 
           <androidx.appcompat.widget.AppCompatImageView
-              android:id="@+id/img_awaiting_truck_details"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentEnd="true"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintTop_toTopOf="parent"
-              app:srcCompat="@drawable/ic_awaiting_truck_details"
+              app:srcCompat="@drawable/ic_awaiting_truck"
               />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -272,13 +271,12 @@
               />
 
           <TextView
-              android:id="@+id/id4"
+              android:id="@+id/label_warehouse"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/size_16dp"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
-              android:text="@{ transactionDetails.pickUpLocationName() }"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_14sp"
               android:textStyle="normal"
@@ -355,8 +353,12 @@
                 android:textStyle="normal"
                 />
           </androidx.appcompat.widget.LinearLayoutCompat>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <include
+            layout="@layout/view_bid_details_loading_bids"
+            android:id="@+id/progress_history"
+            />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container_history"
