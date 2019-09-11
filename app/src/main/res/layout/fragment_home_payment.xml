@@ -1,23 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.home.fragments.payment.HomePaymentViewModel"
+        type="com.delhivery.axle.ui.home.fragments.payment.HomePaymentViewModel"
         />
   </data>
-  <android.support.constraint.ConstraintLayout
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:gravity="center"
+      android:orientation="vertical"
       >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Under development"
-        android:textSize="24sp"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_under_development"
         />
 
-  </android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="2sp"
+        android:text="@string/label_coming_soon"
+        android:textColor="#181818"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_24dp"
+        android:layout_marginStart="@dimen/size_24dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="6sp"
+        android:text="@string/msg_under_dev"
+        android:textColor="#181818"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        />
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

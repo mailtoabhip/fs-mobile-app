@@ -2,18 +2,17 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
   <item>
     <shape>
-      <corners android:radius="6dp"/>
+      <corners android:radius="@dimen/size_6dp"/>
       <solid android:color="@color/colorPrimary"/>
       <padding
-          android:bottom="12dp"
-          android:left="16dp"
-          android:right="16dp"
-          android:top="12dp"/>
+          android:bottom="@dimen/size_12dp"
+          android:left="@dimen/size_20dp"
+          android:top="@dimen/size_12dp"/>
     </shape>
   </item>
 
   <item
       android:drawable="@drawable/ic_search_black"
-      android:height="24dp"
-      android:width="24dp"/>
+      android:height="@dimen/size_24dp"
+      android:width="@dimen/size_24dp"/>
 </layer-list>

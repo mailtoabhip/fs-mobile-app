@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="data"
+        type="com.delhivery.axle.data.home.loads.HomeLoadsInfoItemData"
+        />
+  </data>
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginStart="@dimen/size_2dp"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:paddingBottom="@dimen/size_16dp"
+        android:paddingEnd="@dimen/size_12dp"
+        android:paddingStart="@dimen/size_12dp"
+        android:paddingTop="@dimen/size_12dp"
+        >
+
+      <TextView
+          android:id="@+id/text_search"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:textSize="@dimen/text_14sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="These are recommended loads,\n Search Here"
+          />
+
+      <View
+          android:id="@+id/seprator"
+          android:layout_width="match_parent"
+          android:layout_height="8dp"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:background="@drawable/seprator_dotted"
+          app:layout_constraintTop_toBottomOf="@+id/text_search"
+          />
+
+      <TextView
+          android:id="@+id/text_edit_route"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:fontFamily="sans-serif"
+          android:textSize="@dimen/text_14sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/seprator"
+          tools:text="To get more relevant loads - change your \n preference here"
+          />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

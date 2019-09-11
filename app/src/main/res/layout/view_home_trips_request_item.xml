@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+
+    <import type="androidx.core.content.ContextCompat"/>
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_6dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_6dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:padding="@dimen/size_16dp"
+        >
+
+      <TextView
+          android:id="@+id/text_truck_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_8sp"
+          android:text="@{ trip.vehicleDetails.vehicleNo }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="HR26"
+          />
+
+      <TextView
+          android:id="@+id/text_trip_status"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="10sp"
+          android:text="@{ trip.tripStatus().typeText}"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+          tools:text="Load picked up"
+          tools:textColor="@color/status_active"
+          />
+
+      <TextView
+          android:id="@+id/text_trip_payment"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="10sp"
+          android:text="@{ trip.tripPayment()}"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/text_trip_status"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+          tools:text=" Rs 52000"
+          tools:textColor="@color/status_active"
+          />
+
+      <TextView
+          android:id="@+id/text_date_time"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:lineSpacingExtra="4sp"
+          android:text="@{trip.requiredAt()}"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_12sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_driver_details"
+          bind:drawableResId="@{ trip.requiredAtBg() }"
+          tools:text="Today"
+          />
+
+      <TextView
+          android:id="@+id/text_driver_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="@{ trip.formattedDriverDetails() }"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+          tools:text="Suresh raj (+91 9823222123)"
+          />
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/img_forward"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_24dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_date_time"
+          app:srcCompat="@drawable/ic_arrow_forward_black"
+          />
+
+      <TextView
+          android:id="@+id/text_source_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="@{ trip.originCityName() }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          tools:text="Panjim"
+          />
+
+      <TextView
+          android:id="@+id/text_source_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="@{trip.originStateName()}"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          tools:text="GOA"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_24dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ trip.destinationCityName() }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toEndOf="@id/img_forward"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          tools:text="Andheri East"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="@{trip.destinationStateName()}"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="@id/text_destination_city"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          tools:text="Mumbai"
+          />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+</layout>

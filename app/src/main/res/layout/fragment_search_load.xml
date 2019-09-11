@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel"
+        />
+  </data>
+  <RelativeLayout
+      android:id="@+id/container_search_load"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_search_load_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+      <com.delhivery.axle.ui.custom.DelhiveryOnboardingArcView
+          android:id="@+id/arc_view"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:focusableInTouchMode="true"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:direction="bottom"
+          />
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/warning_item"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:alpha="0"
+          android:orientation="vertical"
+          android:padding="@dimen/size_48dp"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <TextView
+            android:id="@+id/error_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:text="@string/label_something_went_wrong"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_retry"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:text="@string/label_retry"
+            style="@style/ActionButton"
+            />
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/container_search_load_header_form"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:alpha="0"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_select_from_drop_down"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="@+id/til_origin"
+            app:layout_constraintStart_toStartOf="@+id/til_origin"
+            app:layout_constraintTop_toBottomOf="@+id/til_origin"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_origin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:layout_constraintEnd_toStartOf="@id/img_forward"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+          <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+              android:id="@+id/edit_origin_city"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_form_edit"
+              android:hint="@string/label_origin_city"
+              android:imeOptions="actionNext"
+              android:inputType="textCapWords"
+              android:maxLines="1"
+              android:textColorHint="@color/color_hint"
+              android:textSize="@dimen/text_16sp"
+              />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_select_from_drop_down"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="@+id/til_destination"
+            app:layout_constraintStart_toStartOf="@+id/til_destination"
+            app:layout_constraintTop_toBottomOf="@+id/til_destination"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_forward"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+          <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+              android:id="@+id/edit_destination_city"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_form_edit"
+              android:hint="@string/label_destination_city"
+              android:inputType="textCapWords"
+              android:maxLines="1"
+              android:textColorHint="@color/color_hint"
+              android:textSize="@dimen/text_16sp"
+
+              />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
+            />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner_truck_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:background="@drawable/bg_search_load_spinner"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_origin"
+            bind:shadow="@{ @dimen/size_2dp }"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_action"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/size_48dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_32dp"
+            android:text="@string/action_search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_truck_type"
+            style="@style/ActionButton"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- History container -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/container_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/size_4dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:alpha="0"
+        android:orientation="vertical"
+        />
+
+    <TextView
+        android:id="@+id/text_history_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/container_history"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:alpha="0"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/label_your_recent_search"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_14sp"
+        android:textStyle="normal"
+        />
+  </RelativeLayout>
+</layout>

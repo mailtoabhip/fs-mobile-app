@@ -1,0 +1,21 @@
+package com.delhivery.axle.ui.home.fragments.trips
+
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
+
+interface HomeTripsRVAdapterInterface : ItemClickListener<BaseHomeTripsRVAdapterItem<*>> {
+  override fun onItemClicked(item: BaseHomeTripsRVAdapterItem<*>) {
+    if (item.type == TripItem) {
+      handleAction(HomeTripsRequestAction_ViewDetails, item)
+    }
+  }
+
+  /**
+   * Handle specific action
+   */
+  fun handleAction(
+    actionId: String,
+    item: BaseHomeTripsRVAdapterItem<*>
+  )
+}

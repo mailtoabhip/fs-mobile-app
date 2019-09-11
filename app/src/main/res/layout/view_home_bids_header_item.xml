@@ -12,100 +12,127 @@
         name="confirmedBids"
         type="String"
         />
+    <variable
+        name="lostBids"
+        type="String"
+        />
   </data>
-  <RelativeLayout
+
+  <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       >
 
-    <View
-        android:id="@+id/center_view"
-        android:layout_width="0dp"
-        android:layout_height="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="4dp"
-        />
-
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/view_my_bids"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_toStartOf="@id/center_view"
-        android:background="@drawable/bg_my_bids_gradient"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginStart="@dimen/size_8dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toStartOf="@id/view_confirmed_bids"
+        bind:layout_constraintStart_toStartOf="parent"
+        bind:layout_constraintTop_toTopOf="parent"
         bind:shadow="@{ @dimen/action_btn_elevation }"
+        style="@style/view_header_background"
         >
 
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="6sp"
-          android:text="@string/label_my_bids"
-          android:textColor="#ffffff"
-          android:textSize="14sp"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="@string/label_active_bids"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_10sp"
           android:textStyle="normal"
           />
 
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="4dp"
+          android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{ myBids }"
-          android:textColor="#ffffff"
-          android:textSize="24sp"
-          android:textStyle="normal"
+          android:text="@{myBids}"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="bold"
           tools:text="0"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/view_confirmed_bids"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_toEndOf="@id/center_view"
-        android:background="@drawable/bg_confirmed_bids_gradient"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toStartOf="@id/view_lost_bids"
+        bind:layout_constraintStart_toEndOf="@id/view_my_bids"
+        bind:layout_constraintTop_toTopOf="parent"
         bind:shadow="@{ @dimen/action_btn_elevation }"
+        style="@style/view_header_background"
         >
 
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="6sp"
+          android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/label_confirmed_bids"
-          android:textColor="#ffffff"
-          android:textSize="14sp"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_10sp"
           android:textStyle="normal"
           />
 
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="4dp"
+          android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif-medium"
-          android:text="@{ confirmedBids }"
-          android:textColor="#ffffff"
-          android:textSize="24sp"
-          android:textStyle="normal"
+          android:text="@{confirmedBids}"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="bold"
           tools:text="0"
           />
-    </android.support.v7.widget.LinearLayoutCompat>
-  </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/view_lost_bids"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toEndOf="parent"
+        bind:layout_constraintStart_toEndOf="@id/view_confirmed_bids"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/action_btn_elevation }"
+        style="@style/view_header_background"
+        >
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="@string/label_lost_bids"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_10sp"
+          android:textStyle="normal"
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif-medium"
+          android:text="@{lostBids}"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="bold"
+          tools:text="0"
+          />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

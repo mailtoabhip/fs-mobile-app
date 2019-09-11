@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel"
+        />
+  </data>
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          >
+
+        <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+            android:id="@+id/edit_sticky_search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_72dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_search_load"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:paddingBottom="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_56dp"
+            android:singleLine="true"
+            android:textColorHint="@color/color_hint"
+            android:textSize="@dimen/text_16sp"
+            bind:shadow="@{ @dimen/size_4dp }"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_loads"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:saveEnabled="false"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/routes_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:background="@drawable/bg_loads_empty_banner_gradient"
+            android:paddingBottom="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_8dp"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_16dp"
+            android:visibility="gone"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:orientation="vertical"
+              bind:layout_constraintBottom_toBottomOf="parent"
+              bind:layout_constraintStart_toStartOf="parent"
+              bind:layout_constraintTop_toTopOf="parent"
+              >
+
+            <TextView
+                android:id="@+id/text_route_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:lineSpacingExtra="6sp"
+                android:text="Route preference not added"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="normal"
+                />
+
+            <TextView
+                android:id="@+id/text_route_sub_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:lineSpacingExtra="6sp"
+                android:text="Add route details to see loads in your area"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.cardview.widget.CardView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/size_8dp"
+              bind:layout_constraintBottom_toBottomOf="parent"
+              bind:layout_constraintEnd_toEndOf="parent"
+              bind:layout_constraintTop_toTopOf="parent"
+              >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/size_16dp"
+                android:text="ADD NOW"
+                />
+
+          </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+  </FrameLayout>
+</layout>

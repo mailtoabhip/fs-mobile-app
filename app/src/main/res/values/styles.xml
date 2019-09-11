@@ -14,32 +14,53 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:background">@drawable/bg_action_btn</item>
     <item name="android:textColor">@android:color/white</item>
-    <item name="android:textSize">14sp</item>
+    <item name="android:textSize">@dimen/text_14sp</item>
     <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
   </style>
 
   <!-- Form input field -->
-  <style name="FormInputField" parent="Base.V7.Widget.AppCompat.EditText">
+  <style name="FormInputField" parent="SearchEditText">
+    <item name="android:background">@drawable/bg_form_edit</item>
     <item name="colorControlNormal">#1e000000</item>
     <item name="colorControlActivated">@color/colorAccent</item>
     <item name="colorControlHighlight">@color/colorAccent</item>
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:textColorHint">#61000000</item>
-    <item name="android:textSize">16sp</item>
-    <item name="android:textColor">#de000000</item>
+    <item name="android:textSize">@dimen/text_16sp</item>
+    <item name="android:textColor">@color/heading_black</item>
     <item name="android:textCursorDrawable">@null</item>
   </style>
 
   <!-- Bottom navigation View(Inactive) -->
   <style name="BottomNavigationView.Inactive" parent="@style/TextAppearance.AppCompat.Caption">
-    <item name="android:textSize">12sp</item>
+    <item name="android:textSize">@dimen/text_12sp</item>
     <item name="android:textStyle">normal</item>
   </style>
 
   <!-- Bottom navigation View(Active) -->
   <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
-    <item name="android:textSize">12sp</item>
+    <item name="android:textSize">@dimen/text_12sp</item>
     <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="SearchEditText" parent="Base.V7.Widget.AppCompat.EditText">
+    <item name="colorControlNormal">#1e000000</item>
+    <item name="colorControlActivated">@color/colorAccent</item>
+    <item name="colorControlHighlight">@color/colorAccent</item>
+  </style>
+
+  <style name="view_header_background">
+    <item name="android:background">@drawable/bg_bids_header_gradient</item>
+    <item name="android:clickable">true</item>
+    <item name="android:focusable">true</item>
+    <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:orientation">vertical</item>
+    <item name="android:paddingBottom">@dimen/size_8dp</item>
+    <item name="android:paddingLeft">@dimen/size_16dp</item>
+    <item name="android:paddingTop">@dimen/size_8dp</item>
+    <item name="android:layout_marginTop">@dimen/size_16dp</item>
+    <item name="android:layout_marginBottom">@dimen/size_8dp</item>
   </style>
 </resources>

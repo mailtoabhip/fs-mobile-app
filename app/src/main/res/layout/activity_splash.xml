@@ -5,13 +5,13 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.orion.ui.splash.SplashViewModel"
+        type="com.delhivery.axle.ui.splash.SplashViewModel"
         />
   </data>
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#181818"
+      android:background="@drawable/bg_splash_gradient"
       >
 
     <View
@@ -19,26 +19,29 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
+        android:visibility="gone"
         />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/size_96dp"
+        android:layout_height="@dimen/size_96dp"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_orion_logo"
+        android:alpha="0"
+        app:srcCompat="@drawable/splash_logo"
         />
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:alpha="0"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_orion_text"
         />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_delhivery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,12 +58,13 @@
 
     <View
         android:id="@+id/view_center_reveal"
-        android:layout_width="1500dp"
-        android:layout_height="1500dp"
+        android:layout_width="960dp"
+        android:layout_height="960dp"
         android:layout_gravity="center"
         android:background="@drawable/bg_circle_delhivery_red"
         android:scaleX="0"
         android:scaleY="0"
+        android:visibility="gone"
         />
   </FrameLayout>
 </layout>

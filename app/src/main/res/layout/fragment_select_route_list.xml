@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:focusableInTouchMode="true"
+      android:paddingTop="@dimen/size_24dp"
+      >
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_24dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@string/label_routes_added"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_title"
+        >
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rv_routes"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:saveEnabled="false"
+          />
+
+    </RelativeLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

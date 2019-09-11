@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="data"
+        type="com.delhivery.axle.database.entity.SearchLoadHistoryEntity"
+        />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_8dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_16dp"
+        >
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/img_forward"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_bids_deadline"
+          app:srcCompat="@drawable/ic_arrow_forward_black"
+          />
+
+      <TextView
+          android:id="@+id/text_source_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="@{ data.originCity.city }"
+          android:textColor="#de000000"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          tools:text="Panjim"
+          />
+
+      <TextView
+          android:id="@+id/text_source_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ data.originCity.state }"
+          android:textColor="#99000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_city"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ data.destinationCity.city }"
+          android:textColor="#de000000"
+          android:textSize="16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toEndOf="@id/img_forward"
+          app:layout_constraintTop_toTopOf="@id/img_forward"
+          tools:text="Andheri East"
+          />
+
+      <TextView
+          android:id="@+id/text_destination_state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ data.destinationCity.state }"
+          android:textColor="#99000000"
+          android:textSize="13sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="@id/text_destination_city"
+          app:layout_constraintTop_toBottomOf="@id/text_source_city"
+          />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+</layout>
