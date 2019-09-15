@@ -69,6 +69,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.IsTestUser, value).apply()
     get() = prefs.getBoolean(PrefKeys.IsTestUser, false)
 
+  /* Device FCM Token */
+  var fcmTokenGenerated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value).apply()
+    get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
+
   /**
    * Clear all preferences
    */
@@ -127,6 +132,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val OnboardingStatus = "onboarding_status"
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
+    const val FCMTokenGenerated = "fcm_token_generated"
   }
 }
 

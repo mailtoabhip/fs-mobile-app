@@ -60,6 +60,14 @@ class HomeLoadsViewModel @Inject constructor(
   var offset = 0
   var total = 0
 
+  fun isRouteUpdated() = userPrefs.routeUpdate
+
+  fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
+
+  fun setRouteUpdated() {
+    userPrefs.routeUpdate = false
+  }
+
   /**
    * Fetch user [Requested] transactions
    */
@@ -104,8 +112,7 @@ class HomeLoadsViewModel @Inject constructor(
                     load.transactionBid =
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
-                      }
-                          .get(0)
+                      }[0]
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", load.transactionId)
                   }
@@ -142,9 +149,7 @@ class HomeLoadsViewModel @Inject constructor(
           if (!error) {
             userPrefs.saveUser(_user)
             if (_user.hasRoutes()) {
-              userPrefs.cityCode = _user.userRoutes()
-                  .get(0)
-                  .origin.cityId
+              userPrefs.cityCode = _user.userRoutes()[0].origin.cityId
             } else {
               userPrefs.cityCode = _user.baseCityCode
             }
@@ -199,16 +204,20 @@ class HomeLoadsViewModel @Inject constructor(
         }
   }
 
-  fun isRouteUpdated() = userPrefs.routeUpdate
-
-  fun setRouteUpdated() {
-    userPrefs.routeUpdate = false
-  }
-
   fun updateUserAppAccess() {
     compositeDisposable += userRepository.updateUserAppAccess()
         .onBackground()
         .subscribe { _, _ -> }
+  }
+
+  fun updateFCMToken(fcmToken: String) {
+    compositeDisposable += userRepository.updateFCMToken(fcmToken)
+        .onBackground()
+        .subscribe { _, error ->
+          if (!error) {
+            userPrefs.fcmTokenGenerated = false
+          }
+        }
   }
 }
 

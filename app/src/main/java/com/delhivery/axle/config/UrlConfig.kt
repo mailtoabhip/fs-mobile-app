@@ -51,7 +51,7 @@ enum class UrlConfig(
    */
   fun url() =
     when (BuildConfig.FLAVOR) {
-      "devlopment" -> dev
+      "development" -> dev
       else -> prod
     }
 }

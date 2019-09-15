@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.utils.extensions.onPageSelected
@@ -61,6 +62,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* by default observe first fragment */
     observeFragmentLiveData()
+  }
+
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
   }
 
   /**

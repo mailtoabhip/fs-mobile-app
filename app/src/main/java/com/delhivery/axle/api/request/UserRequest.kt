@@ -16,3 +16,14 @@ data class UpdateUserRoutesRequest(
 data class UpdateUserAccessRequest(
   @SerializedName("accessed_by_axle") val accessed: Boolean = true
 )
+
+data class UpdateUserFCMTokenRequest(
+  @SerializedName("fcm_reg_token") val token: String
+) {
+  companion object {
+    /**
+     * @param fcmToken FCM token
+     */
+    fun getRequest(fcmToken: String) = UpdateUserFCMTokenRequest(fcmToken)
+  }
+}

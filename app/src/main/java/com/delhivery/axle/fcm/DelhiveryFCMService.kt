@@ -8,13 +8,19 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
 import androidx.core.app.NotificationManagerCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 /**
  * Created by saurabhdhillon
@@ -27,36 +33,22 @@ import com.google.firebase.messaging.RemoteMessage
  */
 class DelhiveryFCMService : FirebaseMessagingService() {
 
+  @Inject lateinit var userPrefs: UserPrefs
+
+  override fun onCreate() {
+    AndroidInjection.inject(this)
+    super.onCreate()
+  }
+
   override fun onNewToken(fcmToken: String) {
     super.onNewToken(fcmToken)
     Log.d("DelhiveryFCMService", fcmToken)
+    userPrefs.fcmTokenGenerated = true
   }
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
-    buildNotificationChannel()
     remoteMessage.notification?.let { sendNotification(it) }
-  }
-
-  /**
-   *
-   * Configure the notification channel
-   *
-   */
-  private fun buildNotificationChannel() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val notificationChannel = NotificationChannel(
-          DEFAULT_NOTIFICATION_CHANNEL, "My Default Notifications",
-          NotificationManager.IMPORTANCE_HIGH
-      )
-      notificationChannel.description = "Default Channel"
-      notificationChannel.enableVibration(true)
-      notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
-      // Register the channel with the system
-      val notificationManager: NotificationManager =
-        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-      notificationManager.createNotificationChannel(notificationChannel)
-    }
   }
 
   /**
@@ -65,36 +57,58 @@ class DelhiveryFCMService : FirebaseMessagingService() {
    *
    */
   private fun sendNotification(notification: RemoteMessage.Notification) {
-    val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
+      buildNotificationChannel()
       Builder(this, DEFAULT_NOTIFICATION_CHANNEL)
     } else {
       Builder(this)
     }
     val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
     val intent = Intent(this, HomeActivity::class.java).apply {
-      flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+      flags =
+        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
     }
     val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-    val largeIcon = BitmapFactory.decodeResource(
-        resources, R.mipmap.ic_launcher
-    )
+    val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
 
     notificationBuilder.setAutoCancel(true)
         .setDefaults(Notification.DEFAULT_ALL)
         .setWhen(System.currentTimeMillis())
-        .setSmallIcon(R.drawable.ic_notificaiton)
         .setLargeIcon(largeIcon)
+        .setSmallIcon(R.drawable.ic_notification)
         .setContentTitle(notification.title)
         .setContentText(notification.body)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(notification.body))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
         .setSound(soundUri)
 
     with(NotificationManagerCompat.from(this)) {
+      cancelAll()
       notify(1, notificationBuilder.build())
     }
   }
 
+  /**
+   *
+   * Configure the notification channel
+   *
+   */
+  @RequiresApi(VERSION_CODES.O)
+  private fun buildNotificationChannel() {
+    val notificationChannel = NotificationChannel(
+        DEFAULT_NOTIFICATION_CHANNEL, "Axle Notifications",
+        NotificationManager.IMPORTANCE_HIGH
+    )
+    notificationChannel.description = "Default Channel"
+    notificationChannel.enableVibration(true)
+    notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
+    // Register the channel with the system
+    val notificationManager: NotificationManager =
+      getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.createNotificationChannel(notificationChannel)
+  }
+
 }
 
-private const val DEFAULT_NOTIFICATION_CHANNEL = "delhivery_notification_channel"
+private const val DEFAULT_NOTIFICATION_CHANNEL = "axle_notification_channel"

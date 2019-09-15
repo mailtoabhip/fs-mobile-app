@@ -37,7 +37,7 @@ android {
   flavorDimensions "vanilla"
 
   productFlavors {
-    devlopment {
+    development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "false")

@@ -52,7 +52,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         scale(1.6f, 1.6f)
       }
     }.withEndAction {
-      checkForUpdatedVersion(completedAction = {
+      checkForUpdatedVersion {
         when (it) {
           true -> {
             dialogUtils.showBasicConfirmDialog(
@@ -74,7 +74,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             postAnimate(isAuthenticated)
           }
         }
-      })
+      }
     }
         .setStartDelay(SplashAnimationDelay / 2)
         .start()
@@ -112,14 +112,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             this
         ) {
           if (it.isSuccessful) {
-            var currentVersionCode = 0
-            var playStoreVersionCode = 0
-            try {
+            val currentVersionCode: Int
+            val playStoreVersionCode: Int = try {
               remoteConfig.activate()
-              playStoreVersionCode = remoteConfig.getString("android_latest_version_code")
+              remoteConfig.getString("android_latest_version_code")
                   .toInt()
             } catch (e: Exception) {
-              playStoreVersionCode = 0
+              0
             }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)

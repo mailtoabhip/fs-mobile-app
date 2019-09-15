@@ -91,13 +91,13 @@ object DateUtils {
   /**
    * Days diff as string
    */
-  fun daysDiffStr(
+  private fun daysDiffStr(
     requiredOn: Date
   ): String {
-    val _diff = daysDiff(requiredOn)
-    return if (_diff <= 0) {
+    val diff = daysDiff(requiredOn)
+    return if (diff <= 0) {
       "Today"
-    } else if (_diff == 1) {
+    } else if (diff == 1) {
       "Tomorrow"
     } else {
       formatDate(requiredOn, "dd MMM")

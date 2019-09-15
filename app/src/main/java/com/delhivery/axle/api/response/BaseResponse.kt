@@ -25,6 +25,21 @@ data class BaseResponse<M : Any>(
   }
 }
 
+data class BaseMessageResponse(
+  @SerializedName("message") val message: String,
+  @SerializedName("success") val isSuccess: Boolean,
+  @SerializedName("error") val errorBody: BaseErrorResponse?
+) {
+  /**
+   * Convert to [HttpException] when success is false
+   */
+  fun toHttpException(): HttpException {
+    val responseBody = ResponseBody.create(MediaType.parse("application/json"), Gson().toJson(this))
+    val response = Response.error<Any>(errorBody?.errorCode() ?: 400, responseBody)
+    return HttpException(response)
+  }
+}
+
 /**
  * Base error response
  */
