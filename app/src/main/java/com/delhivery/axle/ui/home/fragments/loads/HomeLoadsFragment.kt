@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -366,15 +367,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     private var toolbarElevation = -1f
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager =
-        (recyclerView.layoutManager as LinearLayoutManager)
-      val pos = layoutManager.findFirstVisibleItemPosition()
+      val layoutManager: LinearLayoutManager? = recyclerView.layoutManager as? LinearLayoutManager
+      val pos = layoutManager?.findFirstVisibleItemPosition()
       val toolbarElevation = if (pos == 0) {
         val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
         val viewTopGap = childView.height - stickyView.height * 1f
@@ -400,7 +400,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         stickyView.setRatio(0f)
         0f
       }
-      if (toolbarElevation != this.toolbarElevation) {
+      if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
         this.toolbarElevation = toolbarElevation
         toolbarElevationLiveData!!.postValue(this.toolbarElevation)
       }
@@ -413,7 +413,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   inner class BannerRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {
