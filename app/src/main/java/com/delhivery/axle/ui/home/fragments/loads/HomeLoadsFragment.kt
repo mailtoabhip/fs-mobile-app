@@ -169,13 +169,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       viewModel.fetchUserTransactions()
     }
 
-    if (viewModel.isFCMTokenGenerated()) {
-      fcmUtils.generateToken {
-        if (it.isNotNullOrEmpty()) {
-          viewModel.updateFCMToken(it)
-        }
-      }
-    }
+//    if (viewModel.isFCMTokenGenerated()) {
+//      fcmUtils.generateToken {
+//        if (it.isNotNullOrEmpty()) {
+//          viewModel.updateFCMToken(it)
+//        }
+//      }
+//    }
 
     viewModel.updateUserAppAccess()
   }
