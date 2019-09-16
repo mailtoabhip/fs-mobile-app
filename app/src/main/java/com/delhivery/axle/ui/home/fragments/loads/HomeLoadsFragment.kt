@@ -402,7 +402,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
       if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
         this.toolbarElevation = toolbarElevation
-        toolbarElevationLiveData!!.postValue(this.toolbarElevation)
+        toolbarElevationLiveData?.postValue(this.toolbarElevation)
       }
     }
   }
