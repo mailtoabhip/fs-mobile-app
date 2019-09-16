@@ -15,7 +15,7 @@ gen/
 out/
 app/release
 app/production
-app/devlopment
+app/development
 
 # Gradle files
 .gradle/
