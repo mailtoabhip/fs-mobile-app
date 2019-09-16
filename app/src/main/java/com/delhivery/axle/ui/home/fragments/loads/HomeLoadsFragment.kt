@@ -151,13 +151,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           .apply {
             when {
               it != null -> {
-                try {
-                  val data = adapter.itemsList()[it.first].data
-                  (data as HomeBidsRequestItemData).transactionBid = it.second
-                  adapter.notifyItemChanged(it.first)
-                } catch (e: TypeCastException) {
-
-                }
+                val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                data?.transactionBid = it.second
+                adapter.notifyItemChanged(it.first)
               }
             }
           }
@@ -377,9 +373,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       super.onScrolled(recyclerView, dx, dy)
 
       val layoutManager =
-        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        (recyclerView.layoutManager as LinearLayoutManager)
       val pos = layoutManager.findFirstVisibleItemPosition()
-      val _toolbarElevation = if (pos == 0) {
+      val toolbarElevation = if (pos == 0) {
         val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
         val viewTopGap = childView.height - stickyView.height * 1f
         val viewTop = childView.top + viewTopGap
@@ -404,9 +400,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         stickyView.setRatio(0f)
         0f
       }
-      if (_toolbarElevation != toolbarElevation) {
-        toolbarElevation = _toolbarElevation
-        toolbarElevationLiveData!!.postValue(toolbarElevation)
+      if (toolbarElevation != this.toolbarElevation) {
+        this.toolbarElevation = toolbarElevation
+        toolbarElevationLiveData!!.postValue(this.toolbarElevation)
       }
     }
   }

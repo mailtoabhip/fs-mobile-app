@@ -93,14 +93,9 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     notificationChannel.description = "Default Channel"
     notificationChannel.enableVibration(true)
     notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
-    // Register the channel with the system
-    try {
-      val notificationManager: NotificationManager =
-        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-      notificationManager.createNotificationChannel(notificationChannel)
-    }catch (e: TypeCastException){
-
-    }
+    val notificationManager: NotificationManager? =
+      getSystemService(NOTIFICATION_SERVICE) as? NotificationManager
+    notificationManager?.createNotificationChannel(notificationChannel)
   }
 
 }

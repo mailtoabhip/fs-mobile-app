@@ -62,9 +62,14 @@ class HomeLoadsViewModel @Inject constructor(
 
   fun isRouteUpdated() = userPrefs.routeUpdate
 
-  // Check FCM registration flag
+  /**
+   * Check FCM registration flag
+   */
   fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
 
+  /**
+   * Save route update flag to preferences
+   */
   fun setRouteUpdated() {
     userPrefs.routeUpdate = false
   }
