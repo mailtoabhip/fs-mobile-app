@@ -15,16 +15,21 @@ import retrofit2.HttpException
 fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
   map {
     if (it.isSuccess) {
-      return@map it.responseData
+      it.responseData
     } else {
       throw it.toHttpException()
     }
   }
 
+/**
+ * Handle response and based on [BaseMessageResponse.isSuccess] flag,
+ * response is passed or exception is thrown
+ *
+ */
 fun Single<BaseMessageResponse>.convertMessageResponse(): Single<String> =
   map {
     if (it.isSuccess) {
-      return@map it.message
+      it.message
     } else {
       throw it.toHttpException()
     }

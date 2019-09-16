@@ -8,7 +8,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 /**
- * Base Response for all APIs
+ * Base Response for all APIs with data key
  */
 data class BaseResponse<M : Any>(
   @SerializedName("data") val responseData: M?,
@@ -25,6 +25,9 @@ data class BaseResponse<M : Any>(
   }
 }
 
+/**
+ * Base Message response for all APIs with only message and success key
+ */
 data class BaseMessageResponse(
   @SerializedName("message") val message: String,
   @SerializedName("success") val isSuccess: Boolean,

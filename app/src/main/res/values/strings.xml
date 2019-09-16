@@ -163,6 +163,7 @@
   <string name="label_vehicle_number">Vehicle Number:</string>
   <string name="label_driver_phone_no">Driver Phone No:</string>
   <string name="label_load_request">Load Request</string>
+  <string name="label_lr_number">LR Number</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

@@ -51,11 +51,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     remoteMessage.notification?.let { sendNotification(it) }
   }
 
-  /**
-   *
-   * Configure the notification
-   *
-   */
   private fun sendNotification(notification: RemoteMessage.Notification) {
     val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       buildNotificationChannel()
@@ -89,11 +84,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     }
   }
 
-  /**
-   *
-   * Configure the notification channel
-   *
-   */
   @RequiresApi(VERSION_CODES.O)
   private fun buildNotificationChannel() {
     val notificationChannel = NotificationChannel(
@@ -104,9 +94,13 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     notificationChannel.enableVibration(true)
     notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
     // Register the channel with the system
-    val notificationManager: NotificationManager =
-      getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    notificationManager.createNotificationChannel(notificationChannel)
+    try {
+      val notificationManager: NotificationManager =
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+      notificationManager.createNotificationChannel(notificationChannel)
+    }catch (e: TypeCastException){
+
+    }
   }
 
 }

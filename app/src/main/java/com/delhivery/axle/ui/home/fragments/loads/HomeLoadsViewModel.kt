@@ -62,6 +62,7 @@ class HomeLoadsViewModel @Inject constructor(
 
   fun isRouteUpdated() = userPrefs.routeUpdate
 
+  // Check FCM registration flag
   fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
 
   fun setRouteUpdated() {
@@ -204,12 +205,18 @@ class HomeLoadsViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Update app user access status
+   */
   fun updateUserAppAccess() {
     compositeDisposable += userRepository.updateUserAppAccess()
         .onBackground()
         .subscribe { _, _ -> }
   }
 
+  /**
+   * Update FCM token
+   */
   fun updateFCMToken(fcmToken: String) {
     compositeDisposable += userRepository.updateFCMToken(fcmToken)
         .onBackground()
