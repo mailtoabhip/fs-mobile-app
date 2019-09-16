@@ -8,10 +8,28 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 /**
- * Base Response for all APIs
+ * Base Response for all APIs with data key
  */
 data class BaseResponse<M : Any>(
   @SerializedName("data") val responseData: M?,
+  @SerializedName("success") val isSuccess: Boolean,
+  @SerializedName("error") val errorBody: BaseErrorResponse?
+) {
+  /**
+   * Convert to [HttpException] when success is false
+   */
+  fun toHttpException(): HttpException {
+    val responseBody = ResponseBody.create(MediaType.parse("application/json"), Gson().toJson(this))
+    val response = Response.error<Any>(errorBody?.errorCode() ?: 400, responseBody)
+    return HttpException(response)
+  }
+}
+
+/**
+ * Base Message response for all APIs with only message and success key
+ */
+data class BaseMessageResponse(
+  @SerializedName("message") val message: String,
   @SerializedName("success") val isSuccess: Boolean,
   @SerializedName("error") val errorBody: BaseErrorResponse?
 ) {

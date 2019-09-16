@@ -31,7 +31,8 @@ import dagger.android.support.DaggerAppCompatActivity
  */
 @Module
 abstract class ActivityBindingModule {
-  /* Spalsh/Launch activity */
+
+  /* Splash/Launch activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSplashActivityModule::class])
   internal abstract fun bindSplashActivity(): SplashActivity

@@ -91,9 +91,7 @@ class AuthenticationViewModel @Inject constructor(
               .map {
                 userPrefs.saveUser(it)
                 if (it.hasRoutes()) {
-                  userPrefs.cityCode = it.userRoutes()
-                      .get(0)
-                      .origin.cityId
+                  userPrefs.cityCode = it.userRoutes()[0].origin.cityId
                 } else {
                   userPrefs.cityCode = it.baseCityCode
                 }

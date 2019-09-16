@@ -178,8 +178,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  textUserHighestBid.text =
-                    getString(string.msg_your_highest_bid, state.userBid.bidAmount)
+                  val bidText = getString(string.msg_your_bid) + StringUtils.formatAmount(
+                      state.userBid.bidAmount
+                  )
+                  textUserHighestBid.text = bidText
                 }
           }
           else -> null

@@ -60,12 +60,6 @@ class TripsRepository @Inject constructor(
   )
 
   /**
-   * Complete trip details with transaction and trip history
-   */
-  fun tripDetails(transactionId: String) =
-    transactionService.transactionDetails(transactionId).convertResponse()
-
-  /**
    * User/supplier trip summary [BidSummaryResponse]
    */
   fun userTripsSummary() = tripsService.userTripsSummary(userRepository.userId()).convertResponse()

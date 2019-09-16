@@ -5,11 +5,13 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
+import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
@@ -41,7 +43,7 @@ class UserRepository @Inject constructor(
    */
   fun userId() =
     when (BuildConfig.FLAVOR) {
-      "devlopment" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
+      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
       else -> (jwt.claims["sub"]?.asString()!!)
     }
 
@@ -85,5 +87,16 @@ class UserRepository @Inject constructor(
   fun updateUserRoutes(routes: List<RouteMappingModel>) =
     userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes))
 
+  /**
+   * Update app access flag
+   */
   fun updateUserAppAccess() = userService.updateUserAppAccess(userId(), UpdateUserAccessRequest())
+
+  /**
+   * Update FCM token
+   */
+  fun updateFCMToken(fcmToken: String) =
+    userService.updateFCMToken(
+        userId(), UpdateUserFCMTokenRequest.getRequest(fcmToken)
+    ).convertMessageResponse()
 }
