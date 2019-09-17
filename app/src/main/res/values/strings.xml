@@ -104,7 +104,7 @@
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_alerts">Alerts</string>
-  <string name="label_nav_payment">Payment</string>
+  <string name="label_nav_payment">Wallet</string>
   <string name="label_nav_profile">Profile</string>
   <string name="label_from">From</string>
   <string name="label_to">To</string>
