@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
-import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.ErrorUtils
 import com.delhivery.axle.utils.UiUtils

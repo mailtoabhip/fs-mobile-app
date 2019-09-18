@@ -12,7 +12,7 @@ import com.delhivery.axle.databinding.ViewOnboardingBinding
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingViewModel>() {

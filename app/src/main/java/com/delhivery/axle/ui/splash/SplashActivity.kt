@@ -11,7 +11,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home

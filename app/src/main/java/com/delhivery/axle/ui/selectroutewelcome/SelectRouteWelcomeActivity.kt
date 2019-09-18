@@ -6,7 +6,7 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.LocationFlowState

@@ -164,6 +164,15 @@
   <string name="label_driver_phone_no">Driver Phone No:</string>
   <string name="label_load_request">Load Request</string>
   <string name="label_lr_number">LR Number</string>
+  <string name="label_your_balance">Your Balance</string>
+  <string name="label_view_transaction_summary">VIEW TRANSACTION SUMMARY</string>
+  <string name="label_fastag">Fast Tag</string>
+  <string name="label_bank">Bank</string>
+  <string name="label_fuel_credit">Fuel Credit</string>
+  <string name="label_transfer_amount">Transfer Advance Amount to</string>
+  <string name="label_your_advance_amount">Your advance amount</string>
+  <string name="label_transaction_history">Transaction History</string>
+  <string name="label_custom_dates">Custom Dates</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

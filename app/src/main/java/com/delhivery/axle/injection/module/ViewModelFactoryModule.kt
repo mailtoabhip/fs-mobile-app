@@ -7,13 +7,16 @@ import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
-import com.delhivery.axle.ui.home.HomeViewModel
+import com.delhivery.axle.ui.home.activity.home.HomeViewModel
+import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -169,6 +172,22 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ImageViewModel::class)
   abstract fun bindImageViewModel(imageViewModel: ImageViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeWalletViewModel::class)
+  abstract fun bindHomeWalletViewModel(viewModel: HomeWalletViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionsViewModel::class)
+  abstract fun bindTransactionsViewModel(viewModel: TransactionsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionDetailViewModel::class)
+  abstract fun bindTransactionsDetailiewModel(viewModel: TransactionDetailViewModel): ViewModel
+
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

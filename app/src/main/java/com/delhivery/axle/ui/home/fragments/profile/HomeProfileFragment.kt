@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
-import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
-import com.delhivery.axle.utils.NavigationUtils
 import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.VALUE_PROFILE
 import javax.inject.Inject
@@ -66,21 +66,25 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     }
 
     viewModel.tripEarningLiveData.observe(this, Observer { t ->
-      if (t != null && t.size == 2) {
-        val keys = t.keys.toMutableList()
-        val key1 = keys[0]
-        val key2 = keys[1]
-        if (key1 == 1 && key2 == 12) {
-          binding.lastMonth = t[key2]
-          binding.currentMonth = t[key1]
-        } else {
-          binding.lastMonth = t[key1]
-          binding.currentMonth = t[key2]
-        }
-      }
+      updateTripMeter(t)
     })
 
     viewModel.fetchTripMeter()
+  }
+
+  private fun updateTripMeter(t: Map<Int, MonthlyEarning?>?) {
+    if (t != null && t.size == 2) {
+      val keys = t.keys.toMutableList()
+      val key1 = keys[0]
+      val key2 = keys[1]
+      if (key1 == 1 && key2 == 12) {
+        binding.lastMonth = t[key2]
+        binding.currentMonth = t[key1]
+      } else {
+        binding.lastMonth = t[key1]
+        binding.currentMonth = t[key2]
+      }
+    }
   }
 
   /**

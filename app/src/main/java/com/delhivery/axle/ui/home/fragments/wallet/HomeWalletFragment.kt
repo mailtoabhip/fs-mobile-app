@@ -2,9 +2,10 @@ package com.delhivery.axle.ui.home.fragments.wallet
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeWalletBinding
-import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.utils.DialogUtils
 import javax.inject.Inject
@@ -35,6 +36,40 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    binding.activated = viewModel.isWalletActivated()
+    viewModel.walletLiveData.observe(this, Observer {
+      when {
+        it.autoWithdraw -> {
+
+        }
+        else -> {
+
+        }
+      }
+    })
+
+    binding.viewTransactionHistory.setOnClickListener { openTransactions() }
+    binding.containerFuel.setOnClickListener { openFuelCredits() }
+    binding.containerBank.setOnClickListener { openBankTransfer() }
+    binding.containerFastTag.setOnClickListener { openFastTag() }
+
+    viewModel.fetchWalletData()
+  }
+
+  private fun openTransactions() {
+
+  }
+
+  private fun openFuelCredits() {
+
+  }
+
+  private fun openBankTransfer() {
+
+  }
+
+  private fun openFastTag() {
 
   }
 

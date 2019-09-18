@@ -6,6 +6,7 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
+import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletFragment
 
 /**
  * Home fragment type data
@@ -20,18 +21,18 @@ enum class HomeFragmentType(
   BidsFragment(R.id.nav_bids, 1, HomeBidsFragment._instance, "Bids & Requests"),
   TripsFragment(R.id.nav_trips, 2, HomeTripsFragment._instance, "Ongoing Trips"),
   ProfileFragment(R.id.nav_profile, 3, HomeProfileFragment._instance, "Profile"),
-  Wallet(R.id.nav_wallet, 4, HomeWalletFragment._instance, "Wallet");
+  Wallet(R.id.nav_wallet, 4, HomeWalletFragment._instance, "Balance");
 
   companion object {
     /**
      * Get fragment position by [menuId]
      */
-    fun posById(menuId: Int) = values().filter { it.menuId == menuId }.firstOrNull()?.position ?: -1
+    fun posById(menuId: Int) = values().firstOrNull { it.menuId == menuId }?.position ?: -1
 
     /**
      * Get [HomeFragmentType] by position
      */
-    fun pos(position: Int) = values().filter { it.position == position }.firstOrNull()
+    fun pos(position: Int) = values().firstOrNull { it.position == position }
 
     /**
      * Count

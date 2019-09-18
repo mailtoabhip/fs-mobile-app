@@ -26,8 +26,7 @@ enum class HomeTripsRVAdapterItemType(val typeId: Int) {
     /**
      * Get [HomeTripsRVAdapterItemType] by typeId
      */
-    fun byTypeId(typeId: Int) =
-      HomeTripsRVAdapterItemType.values().filter { typeId == it.typeId }.firstOrNull()
+    fun byTypeId(typeId: Int) = values().firstOrNull { typeId == it.typeId }
   }
 }
 

@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.home
+package com.delhivery.axle.ui.home.activity.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -56,6 +56,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             }
       }
     }
+
+    binding.viewpager.disableScroll(true)
 
     /* set navigation item selection listener */
     binding.bottomNav.setOnNavigationItemSelectedListener(this)

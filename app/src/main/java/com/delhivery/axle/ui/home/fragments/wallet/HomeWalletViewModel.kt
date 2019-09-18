@@ -1,9 +1,56 @@
 package com.delhivery.axle.ui.home.fragments.wallet
 
+import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.response.WalletData
+import com.delhivery.axle.repository.WalletRepository
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.not
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class HomeWalletViewModel @Inject constructor(
+  private val walletRepository: WalletRepository,
+  private val userPrefs: UserPrefs
 ) : BaseViewModel() {
+
+  var walletLiveData = MutableLiveData<WalletData>()
+
+  /**
+   * Returns wallet active flag from cache
+   */
+  fun isWalletActivated() = userPrefs.walletActivated
+
+  /**
+   * Activate wallet
+   */
+  fun activateWallet() {
+    compositeDisposable += walletRepository.activateWallet()
+        .onBackground()
+        .subscribe { _res, error ->
+          if (_res != null && !error) {
+            userPrefs.walletActivated = true
+            walletLiveData.postValue(_res.wallet)
+          } else {
+            error.handle()
+          }
+        }
+  }
+
+  /**
+   * Fetch wallet data
+   */
+  fun fetchWalletData() {
+    compositeDisposable += walletRepository.fetchWalletData()
+        .onBackground()
+        .subscribe { _res, error ->
+          if (_res != null && !error) {
+            walletLiveData.postValue(_res.wallet)
+          } else {
+            error.handle()
+          }
+        }
+  }
 
 }

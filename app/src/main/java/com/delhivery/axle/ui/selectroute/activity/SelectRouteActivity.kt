@@ -11,7 +11,7 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.ActivitySelectRouteBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.AddNewRoute
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
@@ -172,7 +172,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       LoadRequests -> {
         when (flowType) {
-          AddNewRoute -> navigationUtils.navigate(HomeActivity::class.java, true)
+          AddNewRoute -> navigationUtils.navigate(
+              HomeActivity::class.java, true)
           EditRoute -> finish()
         }
       }

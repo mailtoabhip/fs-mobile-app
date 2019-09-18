@@ -6,7 +6,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.home.HomeViewModel"
+        type="com.delhivery.axle.ui.home.activity.home.HomeViewModel"
         />
   </data>
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <androidx.viewpager.widget.ViewPager
+    <com.delhivery.axle.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

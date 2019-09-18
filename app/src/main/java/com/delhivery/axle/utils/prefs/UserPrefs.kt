@@ -74,6 +74,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value).apply()
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
+  var walletActivated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.WalletActive, value).apply()
+    get() = prefs.getBoolean(PrefKeys.WalletActive, false)
   /**
    * Clear all preferences
    */
@@ -133,6 +136,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
     const val FCMTokenGenerated = "fcm_token_generated"
+    const val WalletActive = "wallet_active"
   }
 }
 

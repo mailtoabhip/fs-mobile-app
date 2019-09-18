@@ -8,6 +8,7 @@ import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
 import com.delhivery.axle.api.UMSService
 import com.delhivery.axle.api.UserService
+import com.delhivery.axle.api.WalletService
 import com.delhivery.axle.api.WarehouseService
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
@@ -169,5 +170,17 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.WarehouseService).create(
       WarehouseService::class.java
+  )
+
+  /**
+   * Provide [WalletService]
+   */
+  @Provides
+  @Singleton
+  fun provideWalletService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.WalletService).create(
+      WalletService::class.java
   )
 }

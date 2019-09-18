@@ -8,7 +8,9 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -95,12 +97,26 @@ abstract class ActivityBindingModule {
   )
   internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
 
-  /* Trip details activity */
+  /* Image view activity */
   @ActivityScope
   @ContributesAndroidInjector(
       modules = [AbsImageViewActivityModule::class]
   )
   internal abstract fun bindImageViewActivity(): ImageViewActivity
+
+  /* Transactions activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsTransactionsActivityModule::class]
+  )
+  internal abstract fun bindTransactionsActivity(): TransactionsActivity
+
+  /* Transaction Detail activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsTransactionDetailActivityModule::class]
+  )
+  internal abstract fun bindTransactionDetailActivity(): TransactionDetailActivity
 }
 
 /**
@@ -145,6 +161,12 @@ internal abstract class AbsTripDetailsActivityModule : ActivityModule<TripDetail
 
 @Module
 internal abstract class AbsImageViewActivityModule : ActivityModule<ImageViewActivity>()
+
+@Module
+internal abstract class AbsTransactionsActivityModule : ActivityModule<TransactionsActivity>()
+
+@Module
+internal abstract class AbsTransactionDetailActivityModule : ActivityModule<TransactionDetailActivity>()
 
 /**
  * Activity Binds Module

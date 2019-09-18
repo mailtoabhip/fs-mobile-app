@@ -26,7 +26,7 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
@@ -185,7 +185,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
     /* fetch new loads is routes updated*/
-    if (viewModel.isRouteUpdated()) {
+    if (viewModel.isRouteUpdated()
+    ) {
       refreshData()
       viewModel.setRouteUpdated()
     }
