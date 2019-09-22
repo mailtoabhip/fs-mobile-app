@@ -15,6 +15,7 @@
       android:orientation="vertical"
       android:background="@color/colorBackground"
       >
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -23,24 +24,19 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
 
-      <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-          android:id="@+id/refresh_layout"
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rv_transactions"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          >
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_transactions"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-      </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+          />
 
-    </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

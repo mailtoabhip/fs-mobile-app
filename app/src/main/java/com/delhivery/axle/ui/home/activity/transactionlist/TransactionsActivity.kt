@@ -3,11 +3,15 @@ package com.delhivery.axle.ui.home.activity.transactionlist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
+import com.delhivery.axle.data.transactions.TransactionAction_ViewDetails
+import com.delhivery.axle.data.transactions.TransactionTimeOutAction
+import com.delhivery.axle.data.transactions.TransactionsItemData
 import com.delhivery.axle.databinding.ActivityTransactionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
+import com.delhivery.axle.ui.home.activity.transactiondetail.transactionDetailIntent
 
 class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, TransactionsViewModel>(),
     TransactionsRVAdapterInterface {
@@ -25,12 +29,18 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
-    /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Transactions Summary"
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    viewModel.tranactionsLiveData.observe(this, Observer {
+      binding.refreshLayout.isRefreshing = false
+      it?.let { _items ->
+        adapter.operation(_items)
+      }
+    })
 
     binding.refreshLayout.setOnRefreshListener {
-      binding.refreshLayout.isRefreshing = false
       refreshData()
     }
 
@@ -38,21 +48,30 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
       layoutManager = LinearLayoutManager(context)
       adapter = this@TransactionsActivity.adapter
     }
+
+    refreshData()
   }
 
   private fun refreshData() {
-
-  }
-
-  private fun openFilter() {
-
+    binding.refreshLayout.isRefreshing = true
+    adapter.resetStaticData()
+    viewModel.fetchTransactions()
   }
 
   override fun handleAction(
     actionId: String,
     item: BaseTransactionsRVAdapterItem<*>
   ) {
+    when (actionId) {
+      TransactionAction_ViewDetails -> {
+        val transaction = item.data as? TransactionsItemData
+        navigationUtils.navigate(transactionDetailIntent(this, transaction))
+      }
 
+      TransactionTimeOutAction -> {
+        refreshData()
+      }
+    }
   }
 
 }

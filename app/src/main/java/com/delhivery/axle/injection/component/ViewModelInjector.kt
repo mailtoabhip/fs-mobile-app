@@ -4,13 +4,17 @@ import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
+import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
+import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -33,55 +37,60 @@ import javax.inject.Singleton
 interface ViewModelInjector {
 
   /**
+   *
    * Injects required dependencies into the specified
+   *
    */
-  /* onboarding */
-  fun inject(splashViewModel: SplashViewModel)
 
-  fun inject(authenticationViewModel: AuthenticationViewModel)
+  fun inject(viewModel: SplashViewModel)
 
-  fun inject(onboardingViewModel: OnboardingViewModel)
+  fun inject(viewModel: AuthenticationViewModel)
 
-  /* select route */
-  fun inject(selectRouteWelcomeViewModel: SelectRouteWelcomeViewModel)
+  fun inject(viewModel: OnboardingViewModel)
 
-  fun inject(selectRouteViewModel: SelectRouteViewModel)
+  fun inject(viewModel: SelectRouteWelcomeViewModel)
 
-  fun inject(selectRouteOriginCityViewModel: SelectRouteOriginCityViewModel)
+  fun inject(viewModel: SelectRouteViewModel)
 
-  fun inject(selectRouteDestinationViewModel: SelectRouteDestinationViewModel)
+  fun inject(viewModel: SelectRouteOriginCityViewModel)
 
-  fun inject(selectRouteListViewModel: SelectRouteListViewModel)
+  fun inject(viewModel: SelectRouteDestinationViewModel)
 
-  /* Home */
-  fun inject(homeViewModel: HomeViewModel)
+  fun inject(viewModel: SelectRouteListViewModel)
 
-  fun inject(homeBidsViewModel: HomeBidsViewModel)
+  fun inject(viewModel: HomeViewModel)
 
-  fun inject(homeLoadsViewModel: HomeLoadsViewModel)
+  fun inject(viewModel: HomeBidsViewModel)
 
-  fun inject(homeTripsViewModel: HomeTripsViewModel)
+  fun inject(viewModel: HomeLoadsViewModel)
 
-  fun inject(homePaymentViewModel: HomePaymentViewModel)
+  fun inject(viewModel: HomeTripsViewModel)
 
-  fun inject(homeAlertsViewModel: HomeAlertsViewModel)
+  fun inject(viewModel: HomePaymentViewModel)
 
-  fun inject(homeProfileViewModel: HomeProfileViewModel)
+  fun inject(viewModel: HomeAlertsViewModel)
 
-  /* Bids */
-  fun inject(bidsViewModel: BidsViewModel)
+  fun inject(viewModel: HomeProfileViewModel)
 
-  fun inject(bidDetailsViewModel: BidDetailsViewModel)
+  fun inject(viewModel: HomeWalletViewModel)
 
-  /* Search Load */
-  fun inject(searchLoadViewModel: SearchLoadViewModel)
+  fun inject(viewModel: BidsViewModel)
 
-  fun inject(searchLoadFragmentViewModel: SearchLoadFragmentViewModel)
+  fun inject(viewModel: BidDetailsViewModel)
 
-  fun inject(searchResultsViewModel: SearchResultsViewModel)
+  fun inject(viewModel: SearchLoadViewModel)
 
-  /* Trip details */
-  fun inject(tripDetailsViewModel: TripDetailsViewModel)
+  fun inject(viewModel: SearchLoadFragmentViewModel)
+
+  fun inject(viewModel: SearchResultsViewModel)
+
+  fun inject(viewModel: TripDetailsViewModel)
+
+  fun inject(viewModel: TransactionDetailViewModel)
+
+  fun inject(viewModel: TransactionsViewModel)
+
+  fun inject(viewModel: BankTransferViewModel)
 
   @Component.Builder
   interface Builder {

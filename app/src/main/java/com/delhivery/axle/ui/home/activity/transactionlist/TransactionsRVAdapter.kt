@@ -10,8 +10,10 @@ import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Timeout
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Transaction
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Warning
 
 class TransactionsRVAdapter(private val _interface: TransactionsRVAdapterInterface) :
@@ -34,7 +36,7 @@ class TransactionsRVAdapter(private val _interface: TransactionsRVAdapterInterfa
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewTransactionHeaderItemBinding -> TransactionHeaderItemVH(binding)
-//    is ViewHomeTripsProgressItemBinding -> TransactionsProgressItemVH(binding)
+//    is TransactionsProgressItemBinding -> TransactionsProgressItemVH(binding)
     is ViewWarningItemBinding -> TransactionWarningItemVH(binding)
     is ViewTimeOutItemBinding -> TransactionTimeOutItemVH(binding)
     else -> TransactionsItemVH(binding as ViewTransactionItemBinding)
@@ -47,25 +49,25 @@ class TransactionsRVAdapter(private val _interface: TransactionsRVAdapterInterfa
     when (holder) {
       is TransactionHeaderItemVH -> holder.bind(item as TransactionHeaderItem, _interface)
       is TransactionsItemVH -> holder.bind(item as TransactionDataItem, _interface)
-//      is HomeTripsProgressItemVH -> holder.bind(item as HomeTripsProgressItem, _interface)
-//      is HomeTripsHeaderItemVH -> holder.bind(item as HomeTripsHeaderItem, _interface)
+//      is TransactionsProgressItemVH -> holder.bind(item as TransactionsProgressItem, _interface)
       is TransactionWarningItemVH -> holder.bind(item as TransactionWarningItem, _interface)
       is TransactionTimeOutItemVH -> holder.bind(item as TransactionTimeoutItem, _interface)
     }
   }
 
   /**
-   * Reset to empty state with search bar
+   *
+   * Reset to empty state with progress bar
+   *
    */
   fun resetStaticData() {
     mutableListOf<Pair<BaseTransactionsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      //      add(Pair(HomeTripsHeaderItem(), AddUpdate))
-//      add(Pair(HomeTripsProgressItem(), AddUpdate))
-//      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout }
-//          .map { Pair(it, Remove) }
-//          .let {
-//            addAll(it)
-//          }
+      //      add(Pair(TransactionsProgressItem(), AddUpdate))
+      items.filter { it.type == Transaction || it.type == Warning || it.type == Timeout || it.type == Header }
+          .map { Pair(it, Remove) }
+          .let {
+            addAll(it)
+          }
     }
         .let {
           operation(it)

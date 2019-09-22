@@ -105,7 +105,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     val remoteConfig = FirebaseRemoteConfig.getInstance()
     remoteConfig.setConfigSettingsAsync(configSettings)
 
-
     FirebaseRemoteConfig.getInstance()
         .fetchAndActivate()
         .addOnCompleteListener(

@@ -8,6 +8,7 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
+import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
@@ -117,6 +118,13 @@ abstract class ActivityBindingModule {
       modules = [AbsTransactionDetailActivityModule::class]
   )
   internal abstract fun bindTransactionDetailActivity(): TransactionDetailActivity
+
+  /* Bank Transfer activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsBankTransferActivityModule::class]
+  )
+  internal abstract fun bindBankTransferActivity(): BankTransferActivity
 }
 
 /**
@@ -167,6 +175,9 @@ internal abstract class AbsTransactionsActivityModule : ActivityModule<Transacti
 
 @Module
 internal abstract class AbsTransactionDetailActivityModule : ActivityModule<TransactionDetailActivity>()
+
+@Module
+internal abstract class AbsBankTransferActivityModule : ActivityModule<BankTransferActivity>()
 
 /**
  * Activity Binds Module

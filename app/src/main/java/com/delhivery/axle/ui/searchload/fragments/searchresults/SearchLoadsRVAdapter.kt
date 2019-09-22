@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
@@ -41,6 +41,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
   ) {
     when (holder) {
       is SearchLoadsRequestItemVH -> holder.bind(item as SearchLoadsRequestItem, _interface)
+      is SearchLoadsSearchSpinnerItemVH -> holder.bind(item as SearchLoadsSearchSpinnerItem, _interface)
     }
   }
 

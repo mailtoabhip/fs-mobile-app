@@ -2,9 +2,9 @@ package com.delhivery.axle.ui.onboarding
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.viewpager.widget.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.delhivery.axle.R
 import com.delhivery.axle.config.OnboardingConfig
 import com.delhivery.axle.databinding.ActivityOnboardingBinding
@@ -39,6 +39,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
       this.adapter = this@OnboardingActivity.adapter
       binding.pagerIndicator.viewPager = this
     }
+
 
     /* skip */
     binding.textSkip.setOnClickListener { skip() }

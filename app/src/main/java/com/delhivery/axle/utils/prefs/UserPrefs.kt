@@ -49,6 +49,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.UserName, value).apply()
     get() = prefs.getString(PrefKeys.UserName, "No name") ?: "No name"
 
+  /* Username */
+  var bankName: String
+    set(value) = editor.putString(PrefKeys.BankName, value).apply()
+    get() = prefs.getString(PrefKeys.BankName, "No Bank") ?: "No Bank"
+
+  /* Username */
+  var pancard: String
+    set(value) = editor.putString(PrefKeys.Pancard, value).apply()
+    get() = prefs.getString(PrefKeys.Pancard, "No PAN") ?: "No PAN"
+
   /* Has edited routes flag*/
   var hasEditedRoute: Boolean
     set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value).apply()
@@ -77,6 +87,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   var walletActivated: Boolean
     set(value) = editor.putBoolean(PrefKeys.WalletActive, value).apply()
     get() = prefs.getBoolean(PrefKeys.WalletActive, false)
+
   /**
    * Clear all preferences
    */
@@ -109,6 +120,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     supplierEnabled = user.supplierEnabled
     isTestUser = user.testUser
     tdsRate = user.getTDS()
+    pancard = user.panCardNo ?: "No PAN"
+    bankName = user.bank ?: "No Bank"
+    cityCode = if (user.hasRoutes()) {
+      user.userRoutes()[0].origin.cityId
+    } else {
+      user.baseCityCode
+    }
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -131,6 +149,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val HasLoggedIn = "has_logged_in"
     const val TdsRate = "tds_rate"
     const val UserName = "user_name"
+    const val Pancard = "pan_card"
+    const val BankName = "bank_name"
     const val HadEditedRoutes = "has_edited_routes"
     const val OnboardingStatus = "onboarding_status"
     const val SupplierEnabled = "supplier_enabled"

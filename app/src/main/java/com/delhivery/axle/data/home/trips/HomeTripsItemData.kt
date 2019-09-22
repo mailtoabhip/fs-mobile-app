@@ -35,6 +35,7 @@ data class HomeTripsItemData(
   @SerializedName("required_on") val requiredOn: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
+  @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   var payment: BulkPaymentItem? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = transactionId
@@ -145,7 +146,10 @@ data class TripBidDetails(
   @SerializedName("bid_price") val bidPrice: Int?,
   @SerializedName("effective_price") val effectivePrice: Int?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
-)
+) {
+
+  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
+}
 
 enum class TripStatus(
   val statusKey: String,

@@ -20,7 +20,11 @@ class HomeWalletViewModel @Inject constructor(
   /**
    * Returns wallet active flag from cache
    */
-  fun isWalletActivated() = userPrefs.walletActivated
+  var walletActivated: Boolean
+    get() = userPrefs.walletActivated
+    set(value) {
+      userPrefs.walletActivated = value
+    }
 
   /**
    * Activate wallet
@@ -28,6 +32,7 @@ class HomeWalletViewModel @Inject constructor(
   fun activateWallet() {
     compositeDisposable += walletRepository.activateWallet()
         .onBackground()
+        .progress()
         .subscribe { _res, error ->
           if (_res != null && !error) {
             userPrefs.walletActivated = true
@@ -44,11 +49,13 @@ class HomeWalletViewModel @Inject constructor(
   fun fetchWalletData() {
     compositeDisposable += walletRepository.fetchWalletData()
         .onBackground()
+        .progress()
         .subscribe { _res, error ->
           if (_res != null && !error) {
             walletLiveData.postValue(_res.wallet)
           } else {
             error.handle()
+
           }
         }
   }

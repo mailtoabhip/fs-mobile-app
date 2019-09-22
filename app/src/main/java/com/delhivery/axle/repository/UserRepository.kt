@@ -62,7 +62,12 @@ class UserRepository @Inject constructor(
   fun getUser(cache: Boolean = true) = if (!cache || user == null) {
     userService.userDetails(userId())
         .convertResponse()
-        .doOnSuccess { user = it }
+        .doOnSuccess {
+          if (it != null) {
+            user = it
+            userPrefs.saveUser(it)
+          }
+        }
   } else {
     Single.just(user)
   }

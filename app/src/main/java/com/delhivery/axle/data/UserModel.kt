@@ -2,7 +2,6 @@ package com.delhivery.axle.data
 
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.google.gson.annotations.SerializedName
-import java.util.Collections
 
 /**
  * User details model
@@ -29,6 +28,7 @@ data class UserModel(
   @SerializedName("pancard") var panCardNo: String?,
   @SerializedName("acccount_no") var acccountNo: String?,
   @SerializedName("ifcs_code") var ifcsCode: String?,
+  @SerializedName("bank_name") var bank: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
   @SerializedName("test_user") var testUser: Boolean = false

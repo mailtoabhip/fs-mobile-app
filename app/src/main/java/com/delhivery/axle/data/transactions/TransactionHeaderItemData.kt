@@ -1,19 +1,19 @@
 package com.delhivery.axle.data.transactions
 
-import com.delhivery.axle.api.response.Summary
+import com.delhivery.axle.api.response.WalletData
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class TransactionHeaderItemData(
-  val advancePending: Summary? = null,
-  val balancePending: Summary? = null,
-  val inTransit: Summary? = null,
-  val completed: Summary? = null
+  val wallet: WalletData,
+  val numTransactions: Int? = 0
 ) : BaseKeyTypeModel<String>() {
   override fun key() = TransactionHeaderItemDataKey
+
+  fun numTransactions() = when (numTransactions) {
+    0, null -> "Transaction History(0)"
+    else -> "Transaction History($numTransactions)"
+  }
 }
 
 /* unique key for diff */
 const val TransactionHeaderItemDataKey = "header"
-
-/* actions */
-const val TransactionHeaderAction_AdvancePending = "advance_pending"

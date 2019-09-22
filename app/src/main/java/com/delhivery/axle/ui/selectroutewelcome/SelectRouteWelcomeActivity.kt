@@ -10,11 +10,10 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.LocationFlowState
+import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.github.florent37.kotlin.pleaseanimate.please
 
 class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelcomeBinding, SelectRouteWelcomeViewModel>() {
-
-  val ADD_ROUTES_RC: Int = 1234
 
   init {
     StatusBarColor = Color.parseColor("#181818")
@@ -35,7 +34,7 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
       bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
       navigationUtils.navigateForActivityResult(
           intent = selectRouteIntent(this@SelectRouteWelcomeActivity),
-          requestCode = ADD_ROUTES_RC, extras = bundle
+          requestCode = REQCODE_ADD_ROUTES, extras = bundle
       )
     }
 
@@ -79,7 +78,7 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      ADD_ROUTES_RC -> navigationUtils.navigate(
+      REQCODE_ADD_ROUTES -> navigationUtils.navigate(
           HomeActivity::class.java, true
       )
     }

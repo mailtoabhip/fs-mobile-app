@@ -3,6 +3,8 @@ package com.delhivery.axle.utils
 import androidx.annotation.IntRange
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.toCalendar
+import com.google.gson.internal.bind.util.ISO8601Utils
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -47,6 +49,19 @@ object DateUtils {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
       dateFormatter.timeZone = TimeZone.getTimeZone("UTC")
       dateFormatter.format(date)
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ""
+    }
+  }
+
+  fun formatISODate(
+    date: String,
+    format: String
+  ): String {
+    return try {
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.format(ISO8601Utils.parse(date, ParsePosition(0)))
     } catch (e: Exception) {
       e.printStackTrace()
       ""
@@ -111,7 +126,7 @@ object DateUtils {
     return daysDiffStr(requiredOn)
   }
 
-  fun convertToRelativeTimeStamp(actionTime: String?=""): String {
+  fun convertToRelativeTimeStamp(actionTime: String? = ""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(
           actionTime!!, DatePatterns.OrionDateFormat

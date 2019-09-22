@@ -6,278 +6,404 @@
 
   <data>
     <variable
-        name="activated"
-        type="Boolean"
+        name="balance"
+        type="String"
         />
+    <import type="android.view.View" />
   </data>
 
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:background="@color/white"
       >
 
     <LinearLayout
         android:id="@+id/container_activate"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:weightSum="1"
         >
 
-      <TextView
-          android:id="@+id/btn_activate"
+      <RelativeLayout
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center"
-          android:padding="@dimen/size_24dp"
-          android:text="Get Started"
-          android:gravity="center"
-          android:textColor="@color/black"
-          />
+          android:layout_height="0dp"
+          android:layout_weight="0.6"
+          >
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/pager_indicator"
+            />
+
+        <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator
+            android:id="@+id/pager_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_alignParentBottom="true"
+            />
+
+      </RelativeLayout>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_gravity="center_vertical"
+          android:gravity="center_vertical"
+          android:orientation="vertical"
+          android:layout_weight="0.4"
+          >
+
+        <TextView
+            android:id="@+id/btn_activate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_get_started"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_all_round_corner_black"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:textSize="@dimen/text_16sp"
+            android:paddingTop="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_32dp"
+            android:paddingEnd="@dimen/size_32dp"
+            />
+
+        <TextView
+            android:id="@+id/btn_faq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_wallet_faq"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="@dimen/text_16sp"
+            android:layout_marginTop="@dimen/size_32dp"
+            android:paddingTop="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_32dp"
+            android:paddingEnd="@dimen/size_32dp"
+            />
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
     </LinearLayout>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/container_wallet"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_wallet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="@color/colorBackground"
-        android:orientation="vertical"
-        android:padding="@dimen/size_8dp"
+        android:layout_height="match_parent"
         >
 
-      <androidx.constraintlayout.widget.ConstraintLayout
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_wallet"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@drawable/bg_all_round_corner_white"
+          android:layout_height="match_parent"
+          android:visibility="gone"
+          android:orientation="vertical"
           >
 
-        <TextView
-            android:id="@+id/text_balance"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <TextView
+                android:id="@+id/text_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="-2sp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_24sp"
+                app:layout_constraintStart_toStartOf="@+id/id2"
+                app:layout_constraintTop_toBottomOf="@+id/id2"
+                tools:text="₹ 23900.00"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/id1"
+                android:layout_width="@dimen/size_56dp"
+                android:layout_height="@dimen/size_56dp"
+                android:layout_marginStart="@dimen/size_32dp"
+                android:layout_marginTop="@dimen/size_32dp"
+                app:srcCompat="@drawable/ic_wallet"
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_12dp"
+                android:background="@drawable/bg_circular_boundary_black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/id2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:text="@string/label_your_balance"
+                app:layout_constraintStart_toEndOf="@+id/id1"
+                app:layout_constraintTop_toTopOf="@+id/id1"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/view_transaction_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:text="@string/label_view_transaction_summary"
+                android:textColor="@color/heading_black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_balance"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:fontFamily="sans-serif-medium"
-            android:lineSpacingExtra="-2sp"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_24sp"
-            app:layout_constraintStart_toEndOf="@+id/id1"
-            app:layout_constraintTop_toBottomOf="@+id/id2"
-            tools:text="₹ 23900.00"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/id1"
-            android:layout_width="@dimen/size_48dp"
-            android:layout_height="@dimen/size_48dp"
-            android:layout_marginStart="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_16dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/id2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
-            android:text="@string/label_your_balance"
-            app:layout_constraintStart_toEndOf="@+id/id1"
-            app:layout_constraintTop_toTopOf="@+id/id1"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/view_transaction_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginEnd="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_24dp"
-            android:text="@string/label_view_transaction_summary"
+            android:text="@string/label_transfer_amount"
             android:textColor="@color/heading_black"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_balance"
             />
 
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_16dp"
-          android:textColor="@color/heading_black"
-          android:text="@string/label_transfer_amount"
-          />
-
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/container_fuel"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@drawable/bg_all_round_corner_white"
-          android:layout_marginTop="@dimen/size_8dp"
-          >
-
-        <TextView
-            android:id="@+id/sublabel_fuel"
-            android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_fuel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
-            android:textColor="@color/sub_heading_black"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_fuel"
-            app:layout_constraintTop_toBottomOf="@+id/label_fuel"
-            tools:text="₹ 23900.00"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_fuel"
-            android:layout_width="@dimen/size_48dp"
-            android:layout_height="@dimen/size_48dp"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/size_24dp"
-            android:layout_height="@dimen/size_24dp"
             android:layout_marginEnd="@dimen/size_8dp"
-            app:srcCompat="@drawable/ic_arrow_forward_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/label_fuel"
-            android:layout_width="wrap_content"
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_fuel"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:paddingTop="@dimen/size_10dp"
+                android:paddingBottom="@dimen/size_10dp"
+                app:srcCompat="@drawable/ic_fuel"
+                android:background="@drawable/bg_circular_boundary_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_fuel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_fuel_credit"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/heading_black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/img_fuel"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_bank"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/label_fuel_credit"
-            android:textColor="@color/heading_black"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/sublabel_fuel"
-            app:layout_constraintStart_toEndOf="@+id/img_fuel"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/container_bank"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@drawable/bg_all_round_corner_white"
-          android:layout_marginTop="@dimen/size_16dp"
-          >
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_bank"
-            android:layout_width="@dimen/size_48dp"
-            android:layout_height="@dimen/size_48dp"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/size_24dp"
-            android:layout_height="@dimen/size_24dp"
             android:layout_marginEnd="@dimen/size_8dp"
-            app:srcCompat="@drawable/ic_arrow_forward_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/label_bank"
-            android:layout_width="wrap_content"
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_bank"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_12dp"
+                app:srcCompat="@drawable/ic_bank"
+                android:background="@drawable/bg_circular_boundary_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_bank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_bank"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/heading_black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_bank"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_fast_tag"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/label_bank"
-            android:textColor="@color/heading_black"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/img_bank"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/container_fast_tag"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@drawable/bg_all_round_corner_white"
-          android:layout_marginTop="@dimen/size_16dp"
-          >
-
-        <TextView
-            android:id="@+id/sublabel_fast_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:textColor="@color/sub_heading_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
-            app:layout_constraintTop_toBottomOf="@+id/label_fast_tag"
-            android:text="Coming Soon"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_fast_tag"
-            android:layout_width="@dimen/size_48dp"
-            android:layout_height="@dimen/size_48dp"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/size_24dp"
-            android:layout_height="@dimen/size_24dp"
             android:layout_marginEnd="@dimen/size_8dp"
-            app:srcCompat="@drawable/ic_arrow_forward_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/label_fast_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/label_fastag"
-            android:textColor="@color/heading_black"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/sublabel_fast_tag"
-            app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
 
-      </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/sublabel_fast_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:text="@string/label_coming_soon"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
+                app:layout_constraintTop_toBottomOf="@+id/label_fast_tag"
+                />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_fast_tag"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:paddingTop="@dimen/size_10dp"
+                app:tint="@color/transparent_grey"
+                android:paddingBottom="@dimen/size_10dp"
+                app:srcCompat="@drawable/ic_card"
+                android:background="@drawable/bg_circular_boundary_disable"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_fast_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_fastag"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/sub_heading_black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/sublabel_fast_tag"
+                app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
   </FrameLayout>
+
 </layout>

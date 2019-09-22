@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
 import com.delhivery.axle.utils.VALUE_PROFILE
 import javax.inject.Inject
 
@@ -52,8 +53,8 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
             mutableListOf(VALUE_PROFILE)
         )
         it.post {
-          startActivity(
-              selectRouteIntent(it.context, EditRoute)
+          startActivityForResult(
+              selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
           )
         }
       }
@@ -65,7 +66,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       viewModel.fetchTripMeter()
     }
 
-    viewModel.tripEarningLiveData.observe(this, Observer { t ->
+    viewModel.tripEarningLiveData.reobserve(this, Observer { t ->
       updateTripMeter(t)
     })
 

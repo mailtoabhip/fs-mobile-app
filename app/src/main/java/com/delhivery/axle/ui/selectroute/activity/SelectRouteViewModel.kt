@@ -47,10 +47,10 @@ class SelectRouteViewModel @Inject constructor(
     newRoutes: List<RouteModel>,
     completedAction: (success: Boolean) -> Unit
   ) {
-    val _routeMappings = mutableListOf<RouteMappingModel>().apply {
+    val routeMappings = mutableListOf<RouteMappingModel>().apply {
       newRoutes.forEach { addAll(it.toMapping()) }
     }
-    compositeDisposable += userRepository.updateBaseCityAndRoutes(city, _routeMappings)
+    compositeDisposable += userRepository.updateBaseCityAndRoutes(city, routeMappings)
         .onBackground()
         .progress()
         .subscribe { _routes, error ->
@@ -70,10 +70,10 @@ class SelectRouteViewModel @Inject constructor(
     newRoutes: List<RouteModel>,
     completedAction: (success: Boolean) -> Unit
   ) {
-    val _routeMappings = mutableListOf<RouteMappingModel>().apply {
+    val routeMappings = mutableListOf<RouteMappingModel>().apply {
       newRoutes.forEach { addAll(it.toMapping()) }
     }
-    compositeDisposable += userRepository.updateUserRoutes(_routeMappings)
+    compositeDisposable += userRepository.updateUserRoutes(routeMappings)
         .onBackground()
         .progress()
         .subscribe { _routes, error ->
@@ -98,5 +98,10 @@ class SelectRouteViewModel @Inject constructor(
             completedAction(false)
           }
         }
+  }
+
+  fun setRoutesUpdated(route: RouteModel) {
+    userPrefs.routeUpdate = true
+    userPrefs.cityCode = route.origin.cityId
   }
 }

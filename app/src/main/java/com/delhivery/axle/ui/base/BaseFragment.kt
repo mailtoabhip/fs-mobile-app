@@ -8,6 +8,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -90,6 +91,14 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     viewModel.exceptionLiveData.observe(this, Observer {
       it?.let { throwable -> errorUtils.handle(throwable) }
     })
+  }
+
+  fun <T> LiveData<T>.reobserve(
+    owner: LifecycleOwner,
+    observer: Observer<T>
+  ) {
+    removeObservers(owner)
+    observe(owner, observer)
   }
 
   abstract fun getViewModelClass(): Class<VM>

@@ -45,9 +45,33 @@ class NavigationUtils @Inject constructor(
   }
 
   /**
+   * Navigate to another activity
+   *
+   * @param intent Target intent
+   * @param finishAfter Should current activity be finished after navigation, default if false
+   */
+  fun navigate(
+    intent: Intent,
+    finishAfter: Boolean = false,
+    extras: Bundle? = null
+  ) {
+    intent.let {
+      if (extras != null) {
+        it.putExtras(extras)
+      }
+      activity.startActivity(it)
+    }
+
+    //finish activity, if required
+    if (finishAfter) {
+      activity.finish()
+    }
+  }
+
+  /**
    * Navigate to another activity with result callback
    *
-   * @param anotherActivity Target activity class
+   * @param intent Target activity intent
    * @param finishAfter Should current activity be finished after navigation, default if false
    */
   fun navigateForActivityResult(

@@ -1,9 +1,8 @@
 package com.delhivery.axle.ui.base.adapter
 
-import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.indexById
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -121,9 +120,7 @@ abstract class BaseDataRVAdapter<
     return false
   }
 
-  fun operation(
-    items: List<Pair<D, DataRVAdapterOperationType>>
-  ) {
+  fun operation(items: List<Pair<D, DataRVAdapterOperationType>>) {
     items.forEach {
       operation(it.first, it.second)
     }

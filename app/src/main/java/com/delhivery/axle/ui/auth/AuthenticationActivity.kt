@@ -27,6 +27,7 @@ import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
 import com.delhivery.axle.utils.EVENT_OTP_SEND
 import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
+import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -49,8 +50,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun requireConnection() = true
 
   @Inject lateinit var contactUtils: ContactUtils
-
-  val ADD_ROUTES_RC: Int = 1234
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
@@ -199,7 +198,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 binding.textOtpSentToPhoneNo.text =
-                  getString(R.string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
+                  getString(string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
               }
             }
           }
@@ -224,7 +223,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
             navigationUtils.navigateForActivityResult(
                 intent = selectRouteIntent(this@AuthenticationActivity),
-                requestCode = ADD_ROUTES_RC, extras = bundle
+                requestCode = REQCODE_ADD_ROUTES, extras = bundle
             )
           }
           /* Login success, user routes found - navigate to load requests */
@@ -315,7 +314,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      ADD_ROUTES_RC -> navigationUtils.navigate(
+      REQCODE_ADD_ROUTES -> navigationUtils.navigate(
           HomeActivity::class.java, true
       )
     }

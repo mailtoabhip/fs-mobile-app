@@ -185,7 +185,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
+            getString(string.label_exit), getString(string.label_mail_us),
             {
               it.dismiss()
             },
@@ -205,7 +205,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
+            getString(string.label_exit), getString(string.label_mail_us),
             {
               it.dismiss()
             },
@@ -233,18 +233,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
-      val event: String
-      var numResults = 0
-
-      when (saveToHistory) {
+      val event: String = when (saveToHistory) {
         true -> {
-          event = EVENT_SEARCH_LOAD
+          EVENT_SEARCH_LOAD
         }
         false -> {
-          event = EVENT_SEARCH_SAVED_LOAD
+          EVENT_SEARCH_SAVED_LOAD
         }
       }
 
+      val numResults: Int
       if (t == null) {
         numResults = 0
         //error

@@ -49,6 +49,7 @@ class TransactionsItemVH(binding: ViewTransactionItemBinding) :
     item: TransactionDataItem,
     _interface: TransactionsRVAdapterInterface
   ) {
+    binding.transaction = item.data
   }
 }
 
@@ -77,7 +78,10 @@ internal class TransactionHeaderItemVH(binding: ViewTransactionHeaderItemBinding
     item: TransactionHeaderItem,
     _interface: TransactionsRVAdapterInterface
   ) {
-
+    item.data.let {
+      binding.balance = it.wallet.balance()
+      binding.transaction = it.numTransactions()
+    }
   }
 }
 

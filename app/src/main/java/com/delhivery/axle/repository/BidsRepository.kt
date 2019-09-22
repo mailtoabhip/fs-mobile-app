@@ -3,6 +3,7 @@ package com.delhivery.axle.repository
 import com.delhivery.axle.api.BidService
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
+import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -74,7 +75,8 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     amount: Int
   ) = CreateTransactionBidRequest(
-      transactionId, userRepository.userId(), userPrefs.userName, amount, userPrefs.isTestUser
+      transactionId, userRepository.userId(), "${userPrefs.userName} ${userPrefs.pancard}",
+      amount, userPrefs.isTestUser
   ).let { bidService.createTransactionBid(it) }
 
   /**
@@ -123,7 +125,7 @@ class BidsRepository @Inject constructor(
       .convertResponse()
 
   /**
-   * Get lowest bid for [transactionIds]
+   * Get lowest bid for transactionIds
    */
   fun bulkLowestBidsForTransactions(bids: List<TransactionBid>) =
     bids.joinToString(separator = ",") { it.transactionId }

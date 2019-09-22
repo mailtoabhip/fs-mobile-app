@@ -59,7 +59,7 @@ enum class TripType(
     /**
      * Get [TripType] by type id
      */
-    fun byTypeId(typeId: Int) = values().filter { it.typeId == typeId }.firstOrNull() ?: Unknown
+    fun byTypeId(typeId: Int) = values().firstOrNull { it.typeId == typeId } ?: Unknown
 
     fun byStatus(_status: String) = when (_status) {
       TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey -> AdvancePending

@@ -2,12 +2,12 @@ package com.delhivery.axle.ui.custom
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.delhivery.axle.R
 
 class DelhiveryViewPagerIndicator(
@@ -32,8 +32,8 @@ class DelhiveryViewPagerIndicator(
   }
 
   /* Colors */
-  private val InactiveDotColor = Color.parseColor("#d8d8d8")
-  private val ActiveDotColor = Color.parseColor("#29a8e0")
+  private val InactiveDotColor = ContextCompat.getColor(context, R.color.viewpager_dot_inactive)
+  private val ActiveDotColor = ContextCompat.getColor(context, R.color.viewpager_dot_active)
 
   private var totalWidth = 0f
   private var activeDotCx = 0f

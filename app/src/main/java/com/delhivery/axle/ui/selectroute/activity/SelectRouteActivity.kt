@@ -89,15 +89,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
         if (!it.third.isNullOrEmpty()) {
           val routeModel = it.third.get(0)
-          currentRoute = RouteModel(
-              CityModel(routeModel.origin.city, routeModel.origin.cityId)
-          )
-          currentRoute?.destinations = it.third.get(0)
-              .destinations
+          currentRoute = RouteModel(CityModel(routeModel.origin.city, routeModel.origin.cityId))
+          currentRoute?.destinations = it.third[0].destinations
         } else {
-          currentRoute = RouteModel(
-              CityModel(it.first, it.second)
-          )
+          currentRoute = RouteModel(CityModel(it.first, it.second))
         }
         _fragment.route = currentRoute
         _fragment.populateRoute()
@@ -144,10 +139,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           currentRoute?.destinations = destinations.toMutableSet()
           viewModel.updateUserRoutes(
               currentRoute!!.expandLocations()
-          ) { _routeUpdateSuccess ->
-            if (_routeUpdateSuccess) {
-              viewModel.fetchUser { _userUpdateSuccess ->
-                when (_userUpdateSuccess) {
+          ) { routeUpdateSuccess ->
+            if (routeUpdateSuccess) {
+              viewModel.fetchUser { userUpdateSuccess ->
+                when (userUpdateSuccess) {
                   true -> {
                     setResult(Activity.RESULT_OK)
                     finish()
@@ -173,7 +168,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       LoadRequests -> {
         when (flowType) {
           AddNewRoute -> navigationUtils.navigate(
-              HomeActivity::class.java, true)
+              HomeActivity::class.java, true
+          )
           EditRoute -> finish()
         }
       }
@@ -189,6 +185,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
 
           viewModel.updateUserRoutes(_routes) { _success ->
+            viewModel.setRoutesUpdated(route)
             finish()
           }
         }
@@ -196,6 +193,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       EditOrigin -> {
         (action as RouteEditOriginAction).apply {
           currentRoute = route
+          viewModel.setRoutesUpdated(route)
           navigate(OriginCityFragment)
         }
       }

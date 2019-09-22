@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.request
 
+import com.delhivery.axle.data.transactions.TransactionChannel
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -7,7 +8,7 @@ import com.google.gson.annotations.SerializedName
  * for Delhivery Private Limited
  **
  *
- * Request creators for [WalletService]
+ * Request creators for WalletService
  *
  **
  */
@@ -19,5 +20,19 @@ data class WalletUpdateRequest(
      * @param autoWithdraw
      */
     fun getRequest(autoWithdraw: Boolean) = WalletUpdateRequest(autoWithdraw)
+  }
+}
+
+data class BankTransferRequest(
+  @SerializedName("amount") val ammount: String,
+  @SerializedName("transaction_type") val type: String = "debit",
+  @SerializedName("channel") val channel: String = TransactionChannel.ORACLE.type,
+  @SerializedName("payment_method") val method: String = "imps"
+) {
+  companion object {
+    /**
+     * @param ammount
+     */
+    fun getRequest(ammount: String) = BankTransferRequest(ammount)
   }
 }

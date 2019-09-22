@@ -21,7 +21,7 @@ enum class TransactionsRVAdapterItemType(val typeId: Int) {
 
   companion object {
     /**
-     * Get [HomeTripsRVAdapterItemType] by typeId
+     * Get [TransactionsRVAdapterItemType] by typeId
      */
     fun byTypeId(typeId: Int) = values().firstOrNull { typeId == it.typeId }
   }
@@ -52,9 +52,8 @@ class TransactionsProgressItem(data: TransactionProgressItemData = TransactionPr
 /**
  * Trip header items
  */
-class TransactionHeaderItem(
-  data: TransactionHeaderItemData = TransactionHeaderItemData()
-) : BaseTransactionsRVAdapterItem<TransactionHeaderItemData>(Header, data)
+class TransactionHeaderItem(data: TransactionHeaderItemData) :
+    BaseTransactionsRVAdapterItem<TransactionHeaderItemData>(Header, data)
 
 /**
  * Warning/action item

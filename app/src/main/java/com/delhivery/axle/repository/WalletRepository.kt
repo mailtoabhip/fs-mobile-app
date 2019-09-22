@@ -3,6 +3,8 @@ package com.delhivery.axle.repository
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.WalletService
+import com.delhivery.axle.api.request.BankTransferRequest
+import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -31,7 +33,9 @@ class WalletRepository @Inject constructor(
   /**
    * Activate wallet
    */
-  fun activateWallet() = walletService.activateWallet(walletId()).convertResponse()
+  fun activateWallet() = walletService.activateWallet(
+      walletId(), WalletUpdateRequest.getRequest(false)
+  ).convertResponse()
 
   /**
    * Fetches user wallet data
@@ -43,5 +47,13 @@ class WalletRepository @Inject constructor(
    */
   fun fetchWalletTransactions() =
     walletService.fetchWalletTransactions(walletId()).convertResponse()
+
+  /**
+   * Tranfer [amount] from wallet to bank
+   */
+  fun transferToBank(amount: Int) =
+    walletService.transferToBank(
+        walletId(), BankTransferRequest.getRequest(amount.toString())
+    ).convertResponse()
 
 }

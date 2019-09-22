@@ -15,4 +15,4 @@ data class TransactionWarningItemData(
 const val TransactionWarningItemDataKeyPrefix = "warning_"
 
 /* actions */
-const val TransactionWarningAction_NoLoads = "no_loads"
+const val TransactionWarningAction_NoTransactions = "no_transactions"
