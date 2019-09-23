@@ -48,39 +48,45 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
-    remoteMessage.notification?.let { sendNotification(it) }
+    remoteMessage.let { sendNotification(it) }
   }
 
-  private fun sendNotification(notification: RemoteMessage.Notification) {
+  private fun sendNotification(remoteMessage: RemoteMessage) {
     val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       buildNotificationChannel()
       Builder(this, DEFAULT_NOTIFICATION_CHANNEL)
     } else {
       Builder(this)
     }
-    val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-    val intent = Intent(this, HomeActivity::class.java).apply {
-      flags =
-        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-    }
-    val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-    val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+    val notificationId = remoteMessage.data["notification_service_notification_id"]
 
-    notificationBuilder.setAutoCancel(true)
-        .setDefaults(Notification.DEFAULT_ALL)
-        .setWhen(System.currentTimeMillis())
-        .setLargeIcon(largeIcon)
-        .setSmallIcon(R.drawable.ic_notification)
-        .setContentTitle(notification.title)
-        .setContentText(notification.body)
-        .setStyle(NotificationCompat.BigTextStyle().bigText(notification.body))
-        .setContentIntent(pendingIntent)
-        .setAutoCancel(true)
-        .setSound(soundUri)
+    remoteMessage.notification?.let {
+      val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+      val intent = Intent(this, HomeActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        putExtra(ARGS_NOTIFICATION_ID, notificationId)
+      }
+      Log.d("notificationId added", notificationId)
+      val pendingIntent = PendingIntent.getActivity(
+          this, 0, intent, PendingIntent.FLAG_ONE_SHOT
+      )
+      val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+      notificationBuilder.setAutoCancel(true)
+          .setDefaults(Notification.DEFAULT_ALL)
+          .setWhen(System.currentTimeMillis())
+          .setLargeIcon(largeIcon)
+          .setSmallIcon(R.drawable.ic_notification)
+          .setContentTitle(it.title)
+          .setContentText(it.body)
+          .setStyle(NotificationCompat.BigTextStyle().bigText(it.body))
+          .setContentIntent(pendingIntent)
+          .setAutoCancel(true)
+          .setSound(soundUri)
 
-    with(NotificationManagerCompat.from(this)) {
-      cancelAll()
-      notify(1, notificationBuilder.build())
+      with(NotificationManagerCompat.from(this)) {
+        cancelAll()
+        notify(0, notificationBuilder.build())
+      }
     }
   }
 
@@ -101,3 +107,5 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 }
 
 private const val DEFAULT_NOTIFICATION_CHANNEL = "axle_notification_channel"
+const val ARGS_NOTIFICATION_ID = "args_notification_id"
+const val ARGS_NOTIFICATION_KEY = "notification_service_notification_id"

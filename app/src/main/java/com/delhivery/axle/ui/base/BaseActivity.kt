@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.base
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -64,6 +63,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var errorUtils: ErrorUtils
   @Inject lateinit var analyticsUtil: AnalyticsUtil
   @Inject lateinit var dialogUtils: DialogUtils
+  var notificationId: String = ""
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 
@@ -137,6 +137,13 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
     //dispose and clear all process
     compositeDisposable.disposeAndClear()
+  }
+
+  /**
+   * Override for notification received
+   */
+  open fun markNotificationRead() {
+
   }
 
   /**

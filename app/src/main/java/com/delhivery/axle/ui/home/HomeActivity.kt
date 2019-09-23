@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -31,6 +32,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   /* home fragments pager adapter */
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -62,11 +68,24 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* by default observe first fragment */
     observeFragmentLiveData()
+
+    if (notificationId.isNotEmpty()) {
+      markNotificationRead()
+    }
   }
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
+    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    if (notificationId.isNotEmpty()) {
+      markNotificationRead()
+    }
     fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+  }
+
+  override fun markNotificationRead() {
+    super.markNotificationRead()
+    viewModel.markNotificationRead(notificationId)
   }
 
   /**

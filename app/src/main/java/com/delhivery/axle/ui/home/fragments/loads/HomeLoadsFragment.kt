@@ -44,6 +44,7 @@ import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_LOAD_INFO
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -169,13 +170,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       viewModel.fetchUserTransactions()
     }
 
-//    if (viewModel.isFCMTokenGenerated()) {
-//      fcmUtils.generateToken {
-//        if (it.isNotNullOrEmpty()) {
-//          viewModel.updateFCMToken(it)
-//        }
-//      }
-//    }
+    if (viewModel.isFCMTokenGenerated()) {
+      fcmUtils.generateToken {
+        if (it.isNotNullOrEmpty()) {
+          viewModel.updateFCMToken(it)
+        }
+      }
+    }
 
     viewModel.updateUserAppAccess()
   }

@@ -84,9 +84,7 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     bidId: String,
     amount: Int
-  ) = UpdateTransactionBidRequest(
-      transactionId, bidId, amount, userRepository.userId()
-  )
+  ) = UpdateTransactionBidRequest(transactionId, bidId, amount, userRepository.userId())
       .let { bidService.updateTransactionBid(it) }
 
   /**
@@ -107,20 +105,14 @@ class BidsRepository @Inject constructor(
   fun userBids(
     offset: Int,
     statuses: String
-  ) = bidService.bidsForStatuses(
-      userRepository.userId(), UserBidsLoadLimit,
-      offset, statuses
-  )
+  ) = bidService.bidsForStatuses(userRepository.userId(), UserBidsLoadLimit, offset, statuses)
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
 
   /**
    * User/supplier bid summary [BidSummaryResponse]
    */
-  fun userBidsSummary(
-  ) = bidService
-      .userBidsSummary(userRepository.userId())
-      .convertResponse()
+  fun userBidsSummary() = bidService.userBidsSummary(userRepository.userId()).convertResponse()
 
   /**
    * Get lowest bid for [transactionIds]
