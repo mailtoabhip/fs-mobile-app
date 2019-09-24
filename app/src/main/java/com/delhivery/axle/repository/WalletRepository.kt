@@ -56,4 +56,8 @@ class WalletRepository @Inject constructor(
         walletId(), BankTransferRequest.getRequest(amount.toString())
     ).convertResponse()
 
+  /**
+   * Fetch active fuel cards
+   */
+  fun fetchActiveFuelCards() = walletService.fetchActiveFuelCards()
 }

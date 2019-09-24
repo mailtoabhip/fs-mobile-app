@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.response
 
+import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.transactions.TransactionsItemData
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
@@ -49,4 +50,12 @@ data class WalletTransactionsResponse(
  */
 data class BankTransferResponse(
   @SerializedName("transaction_reference_number") val refNumber: String? = ""
+)
+
+/**
+ * Fuel cards Response
+ */
+data class FuelCardsResponse(
+  @SerializedName("remarks") val remarks: String,
+  @SerializedName("active_cards") val cards: List<FuelCardData>
 )

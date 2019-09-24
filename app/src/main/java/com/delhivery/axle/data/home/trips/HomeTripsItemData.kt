@@ -15,6 +15,7 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
@@ -37,7 +38,7 @@ data class HomeTripsItemData(
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   var payment: BulkPaymentItem? = null
-) : BaseKeyTypeModel<String>() {
+) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
   /**
@@ -135,7 +136,10 @@ const val HomeTripsRequestAction_ViewDetails = "trip_details"
 
 data class TripDriverDetails(
   @SerializedName("phone_number") val driverPhoneNo: String?
-)
+) {
+
+  fun driverPhoneNo() = "Driver($driverPhoneNo)"
+}
 
 data class TripVehicleDetails(
   @SerializedName("vehicle_number") val vehicleNo: String
@@ -172,6 +176,6 @@ enum class TripStatus(
      * Get [TripStatus] from response key
      */
     fun byKey(statusKey: String) =
-      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull() ?: Unknown
+      values().firstOrNull { it.statusKey.equals(statusKey, true) } ?: Unknown
   }
 }

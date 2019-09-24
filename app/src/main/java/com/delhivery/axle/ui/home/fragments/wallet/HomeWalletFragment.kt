@@ -13,6 +13,7 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.FragmentHomeWalletBinding
 import com.delhivery.axle.databinding.ViewWalletIntroBinding
 import com.delhivery.axle.ui.home.activity.bank.bankTransferIntent
+import com.delhivery.axle.ui.home.activity.fuel.tripsFuelCreditIntent
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -111,8 +112,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
   }
 
   private fun openFuelCredits() {
-    uiUtils.showToast(getString(string.label_coming_soon))
-//    context?.let { navigationUtils.navigate(fuelCardIntent(it)) }
+    context?.let { navigationUtils.navigate(tripsFuelCreditIntent(it)) }
   }
 
   private fun openBankTransfer() {

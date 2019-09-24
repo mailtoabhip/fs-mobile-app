@@ -52,7 +52,7 @@
   <string name="hint_hello_world">Hint Hello World</string>
   <string name="hint_name">Name</string>
   <string name="hint_dob">Date of Birth</string>
-  <string name="hint_otp_digit"/>
+  <string name="hint_otp_digit" />
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
   <string name="hint_search_trips">Vehicle / Destination / LR</string>
@@ -203,6 +203,10 @@
   <string name="label_go_back">GO BACK</string>
   <string name="label_track_transaction_status">TRACK TRANSACTION STATUS</string>
   <string name="label_wallet">Wallet</string>
+  <string name="label_money_given">Money given</string>
+  <string name="label_create_fuel_card">CREATE FUEL CARD</string>
+  <string name="label_enter_number">Enter mobile number</string>
+  <string name="label_fuel_faq">VIEW MORE DETAILS ABOUT FUEL DISCOUNTS</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

@@ -22,7 +22,7 @@ val WalletIntroConfig = listOf(
     ),
     WalletIntoScreen(
         "Introductory Offer Avail 3% cashback on fuel purchase",
-        "Receive advance money in Your Balance - Use for fuel purchase and transfer remaining to your bank",
+        "Get 3% cashback into account on fuel used and lower your operating cost while working with us",
         R.drawable.ic_fuel_intro
     ),
     WalletIntoScreen(

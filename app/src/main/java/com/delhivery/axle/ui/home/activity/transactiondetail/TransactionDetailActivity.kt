@@ -74,7 +74,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
             )
                 .apply {
                   transaction = state.transaction
-                  bank  = viewModel.bank
+                  bank = viewModel.bank
                 }
           }
 

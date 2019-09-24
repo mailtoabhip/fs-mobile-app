@@ -44,12 +44,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     super.onCreate(savedInstanceState)
 
     /* validate intent */
-    if (intent == null || !intent.hasExtra(TransactionIdIntentKey)) {
-      throw IllegalArgumentException("Required data $TransactionIdIntentKey not found")
+    if (intent == null || !intent.hasExtra(ARGS_TRANSACTION_ID)) {
+      throw IllegalArgumentException("Required data $ARGS_TRANSACTION_ID not found")
     }
 
     /* set transaction id */
-    viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.transactionId = intent.getStringExtra(ARGS_TRANSACTION_ID) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -255,7 +255,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 }
 
 /* intent keys */
-private const val TransactionIdIntentKey = "transaction_id"
+private const val ARGS_TRANSACTION_ID = "transaction_id"
 
 /**
  * Bid details intent
@@ -264,5 +264,5 @@ fun bidDetailsIntent(
   _data: HomeBidsRequestItemData,
   context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, _data.key())
+  putExtra(ARGS_TRANSACTION_ID, _data.key())
 }

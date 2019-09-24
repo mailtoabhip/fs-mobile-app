@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+
+    <variable
+        name="fuel"
+        type="com.delhivery.axle.data.fuelcards.FuelCardData"
+        />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:orientation="vertical"
+      >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.core.widget.NestedScrollView
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        >
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_bank"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:orientation="vertical"
+
+          >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/container_data"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_fuel_partner"
+                android:layout_width="@dimen/size_56dp"
+                android:layout_height="@dimen/size_56dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_fuel"
+                android:padding="@dimen/size_6dp"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+
+            <TextView
+                android:id="@+id/label_fuel_partner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="@dimen/text_8sp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="normal"
+                android:text="Fuel Partner - IOCL"
+                android:layout_marginStart="@dimen/size_8dp"
+                app:layout_constraintStart_toEndOf="@+id/img_fuel_partner"
+                app:layout_constraintTop_toTopOf="@+id/img_fuel_partner"
+                app:layout_constraintBottom_toBottomOf="@+id/img_fuel_partner"
+                />
+
+            <TextView
+                android:id="@+id/text_truck_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="@dimen/text_8sp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="normal"
+                android:text="@{trip.vehicleDetails.vehicleNo}"
+                android:layout_marginTop="@dimen/size_8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_fuel_partner"
+                tools:text="HR26 1234"
+                />
+
+            <TextView
+                android:id="@+id/text_source_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{ trip.originCityName() }"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/img_forward"
+                tools:text="Panjim"
+                />
+
+            <TextView
+                android:id="@+id/text_source_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:text="@{trip.originStateName()}"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_source_city"
+                tools:text="GOA"
+                />
+
+            <TextView
+                android:id="@+id/text_destination_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_24dp"
+                android:fontFamily="sans-serif"
+                android:text="@{ trip.destinationCityName() }"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toEndOf="@id/img_forward"
+                app:layout_constraintTop_toTopOf="@id/img_forward"
+                tools:text="Andheri East"
+                />
+
+            <TextView
+                android:id="@+id/text_destination_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:text="@{trip.destinationStateName()}"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="@id/text_destination_city"
+                app:layout_constraintTop_toBottomOf="@id/text_source_city"
+                tools:text="Mumbai"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/container_contact"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <TextView
+                android:id="@+id/id1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_8sp"
+                android:text="Select Contact number"
+                android:textColor="@color/heading_black"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <RadioGroup
+                android:id="@+id/radio_num_group"
+                android:layout_width="0dp"
+                app:layout_constraintTop_toBottomOf="@+id/id1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="wrap_content"
+                >
+
+              <androidx.appcompat.widget.AppCompatRadioButton
+                  android:id="@+id/radio_driver_num"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_6dp"
+                  android:textColor="@color/heading_black"
+                  android:textSize="@dimen/text_16sp"
+                  android:text="@{trip.driverDetails.driverPhoneNo()}"
+                  tools:text="Driver(1234567890)"
+                  />
+
+              <androidx.appcompat.widget.AppCompatRadioButton
+                  android:id="@+id/radio_other_num"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:textColor="@color/heading_black"
+                  android:textSize="@dimen/text_16sp"
+                  android:layout_marginTop="@dimen/size_6dp"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@+id/radio_driver_num"
+                  android:text="Different number"
+                  />
+
+            </RadioGroup>
+
+            <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+                android:id="@+id/til_mobile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radio_num_group"
+                app:errorEnabled="true"
+                app:max_length="10"
+                style="@style/TextInputLayoutAppearance"
+                >
+
+              <androidx.appcompat.widget.AppCompatEditText
+                  android:id="@+id/edit_mobile"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/bg_form_edit"
+                  android:digits="1234567890"
+                  android:maxLength="10"
+                  android:fontFamily="sans-serif"
+                  android:hint="@string/label_enter_number"
+                  android:inputType="number"
+                  android:maxLines="1"
+                  />
+            </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <TextView
+                android:id="@+id/btn_create"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:background="@drawable/bg_all_round_corner_black"
+                android:gravity="center"
+                android:paddingBottom="@dimen/size_16dp"
+                android:paddingTop="@dimen/size_16dp"
+                android:text="@string/label_create_fuel_card"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/til_amount"
+                />
+
+            <TextView
+                android:id="@+id/btn_fuel_faq"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_8dp"
+                android:text="@string/label_fuel_faq"
+                android:textColor="@color/heading_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_create"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+
+            <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+                android:id="@+id/til_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:errorEnabled="true"
+                style="@style/TextInputLayoutAppearance"
+                >
+
+              <androidx.appcompat.widget.AppCompatEditText
+                  android:id="@+id/edit_amount"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/bg_form_edit"
+                  android:digits="1234567890"
+                  android:fontFamily="sans-serif"
+                  android:hint="Enter amount to be given for fuel"
+                  android:inputType="number"
+                  android:maxLines="1"
+                  />
+            </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

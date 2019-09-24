@@ -9,6 +9,8 @@ import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
+import com.delhivery.axle.ui.home.activity.fuel.TripsFuelCreditActivity
+import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
@@ -125,6 +127,20 @@ abstract class ActivityBindingModule {
       modules = [AbsBankTransferActivityModule::class]
   )
   internal abstract fun bindBankTransferActivity(): BankTransferActivity
+
+  /* Fuel Card activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsFuelCardActivityModule::class]
+  )
+  internal abstract fun bindFuelCardActivity(): TripsFuelCreditActivity
+
+  /* Create Fuel Card activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsCreateFuelCardActivityModule::class]
+  )
+  internal abstract fun bindCreateFuelCardActivity(): CreateFuelCardActivity
 }
 
 /**
@@ -178,6 +194,12 @@ internal abstract class AbsTransactionDetailActivityModule : ActivityModule<Tran
 
 @Module
 internal abstract class AbsBankTransferActivityModule : ActivityModule<BankTransferActivity>()
+
+@Module
+internal abstract class AbsFuelCardActivityModule : ActivityModule<TripsFuelCreditActivity>()
+
+@Module
+internal abstract class AbsCreateFuelCardActivityModule : ActivityModule<CreateFuelCardActivity>()
 
 /**
  * Activity Binds Module

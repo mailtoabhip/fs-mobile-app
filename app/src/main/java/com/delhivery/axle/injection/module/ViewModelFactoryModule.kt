@@ -8,13 +8,14 @@ import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
+import com.delhivery.axle.ui.home.activity.fuel.TripsFuelCardViewModel
+import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
-import com.delhivery.axle.ui.home.fragments.payment.HomePaymentViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
@@ -118,11 +119,6 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(HomePaymentViewModel::class)
-  abstract fun bindHomePaymentViewModel(homePaymentViewModel: HomePaymentViewModel): ViewModel
-
-  @Binds
-  @IntoMap
   @ViewModelScope(HomeAlertsViewModel::class)
   abstract fun bindHomeAlertsViewModel(homeAlertsViewModel: HomeAlertsViewModel): ViewModel
 
@@ -193,6 +189,16 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BankTransferViewModel::class)
   abstract fun bindBankTransferViewwModel(viewModel: BankTransferViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TripsFuelCardViewModel::class)
+  abstract fun bindTripsFuelCardViewwModel(viewModel: TripsFuelCardViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(CreateFuelCardViewModel::class)
+  abstract fun bindCreateFuelCardViewwModel(viewModel: CreateFuelCardViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
