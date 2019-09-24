@@ -46,8 +46,8 @@ enum class UrlConfig(
       "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
   ),
   NotificationService(
-      "https://bvioygq82j.execute-api.ap-southeast-1.amazonaws.com/dev/",
-      "https://bvioygq82j.execute-api.ap-southeast-1.amazonaws.com/dev/"
+      "https://orion-notification-api.delhivery.com",
+      "https://orion-notification-api-dev.delhivery.com"
   );
 
   /**

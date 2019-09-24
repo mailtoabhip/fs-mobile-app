@@ -11,7 +11,7 @@ interface NotificationService {
   /**
    * Mark notification read
    */
-  @PUT("mark_notification")
+  @PUT("/mark_notification")
   fun markNotificationRead(
     @Body payload: NotificationReadRequest
   ): Single<BaseResponse<Any>>
