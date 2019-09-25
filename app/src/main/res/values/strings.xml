@@ -207,6 +207,7 @@
   <string name="error_search_missing_origin">Please select origin</string>
 
   <string name="not_available">Not available</string>
+  <string name="label_bank_status">You will receive a confirmation from your bank within 3-4 hours about successful transfer</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
