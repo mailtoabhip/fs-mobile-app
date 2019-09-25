@@ -51,7 +51,7 @@ enum class UrlConfig(
   ),
   FuelService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
-      "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
+      "https://ri8rg6r7e7.execute-api.ap-southeast-1.amazonaws.com/dev/"
   );
 
   /**

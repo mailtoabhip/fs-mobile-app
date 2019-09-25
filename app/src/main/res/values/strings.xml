@@ -175,15 +175,6 @@
   <string name="label_vehicle_type">Vehicle Type</string>
   <string name="label_trip_detail">Trip Details</string>
   <string name="label_transaction_id">Transaction Id</string>
-
-  <!--Error (error_-->
-  <string name="error_no_internet">No Internet connection</string>
-  <string name="error_name_required">Please enter name</string>
-  <string name="error_dob_required">Please enter Date of birth</string>
-  <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="error_search_missing_origin">Please select origin</string>
-
-  <string name="not_available">Not available</string>
   <string name="label_bank_details">Bank Details</string>
   <string name="label_enter_amount">Enter Amount</string>
   <string name="label_confirm_transfer">CONFIRM TRANSFER</string>
@@ -207,6 +198,15 @@
   <string name="label_create_fuel_card">CREATE FUEL CARD</string>
   <string name="label_enter_number">Enter mobile number</string>
   <string name="label_fuel_faq">VIEW MORE DETAILS ABOUT FUEL DISCOUNTS</string>
+
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
+  <string name="error_search_missing_origin">Please select origin</string>
+
+  <string name="not_available">Not available</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

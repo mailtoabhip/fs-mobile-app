@@ -1,13 +1,16 @@
 package com.delhivery.axle.ui.home.activity.fuelcard
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlin.math.min
 
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
@@ -26,8 +29,6 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     }
 
     viewModel.trip = intent.getSerializableExtra(ARGS_TRIP_DATA) as HomeTripsItemData
-    viewModel.fuelCard = intent.getSerializableExtra(ARGS_FUEL_CARD) as FuelCardData
-    viewModel.balance = intent.getIntExtra(ARGS_WALLET_BALANCE, 0)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -37,32 +38,72 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     setSupportActionBar(binding.toolbar)
     title = "Create fuel card"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    binding.trip = viewModel.trip
+    binding.fetching = true
+    binding.error = false
+    binding.created = false
+    if (viewModel.trip.fuelCard != null && viewModel.trip.fuelCard?.amount != "0") {
+      binding.containerActiveCard.visibility = View.VISIBLE
+    }
+    binding.executePendingBindings()
 
+    viewModel.walletLiveData.observe(this, Observer {
+      binding.fetching = false
+      if (it != null) {
+        viewModel.balance = it.balance.toInt()
+        binding.error = false
+      } else {
+        binding.error = true
+      }
+      binding.executePendingBindings()
+    })
+
+    viewModel.transactionLiveData.observe(this, Observer {
+      binding.created = it.isNotNullOrEmpty()
+      binding.error = !it.isNotNullOrEmpty()
+      binding.fetching = !it.isNotNullOrEmpty()
+      binding.executePendingBindings()
+    })
 
     binding.btnCreate.setOnClickListener { createFuelCard() }
+
+    binding.radioNumGroup.setOnCheckedChangeListener { group, checkedId ->
+      when (checkedId) {
+        R.id.radio_driver_num -> {
+          uiUtils.toggleKeyboard()
+          binding.editMobile.clearFocus()
+          binding.tilMobile.hint = getString(R.string.label_enter_number)
+        }
+
+        R.id.radio_other_num -> {
+          binding.editMobile.requestFocus()
+        }
+      }
+    }
+
+    binding.btnBack.setOnClickListener {
+      setResult(Activity.RESULT_OK)
+      finish()
+    }
+
+    binding.fetching = true
+    viewModel.fetchWalletData()
   }
 
   private fun createFuelCard() {
-    var mobileNum: String
-    when {
-      binding.radioDriverNum.isChecked -> {
-        mobileNum = viewModel.trip.driverDetails?.driverPhoneNo ?: ""
-      }
-
-      binding.radioOtherNum.isChecked -> {
-        mobileNum = binding.editMobile.text.toString()
-        if (mobileNum.isEmpty() || mobileNum.length != 10) {
-          mobileNum = ""
-          binding.tilAmount.requestFocus()
-          binding.tilAmount.error = "Enter a valid mobile number"
-          return
-        }
-      }
-      else -> {
-        mobileNum = ""
-        uiUtils.showToast("Please select number to recharge")
+    val mobileNum: String
+    if (binding.radioDriverNum.isChecked) {
+      mobileNum = viewModel.trip.driverDetails?.driverPhoneNo ?: ""
+    } else if (binding.radioOtherNum.isChecked) {
+      mobileNum = binding.editMobile.text.toString()
+      if (mobileNum.isEmpty() || mobileNum.length != 10) {
+        binding.tilMobile.requestFocus()
+        binding.tilMobile.error = "Enter a valid mobile number"
         return
       }
+    } else {
+      uiUtils.showToast("Please select number to recharge")
+      return
     }
 
     val amount = binding.editAmount.text.toString()
@@ -72,21 +113,26 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     } else {
       val mAmount =
         try {
-          amount.toInt()
+          amount.toDouble()
         } catch (e: Exception) {
           binding.tilAmount.requestFocus()
           binding.tilAmount.error = "Enter valid amount"
           return
         }
 
-      val minVal = min(viewModel.trip.bidDetails?.bidPrice ?: 0, viewModel.balance)
+      val minVal =
+        min(viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100) ?: 0, viewModel.balance)
       if (mAmount > minVal) {
         binding.tilAmount.requestFocus()
         binding.tilAmount.error = "Max amount which can be transferred is $minVal"
         return
       }
+      binding.cashback =
+        "You will receive cashback of " + (mAmount * 3 / 100) + " when the trip ends"
     }
 
+    binding.numberRecharged = mobileNum
+    binding.amountAdded = "₹ $amount"
     viewModel.createFuelCard(
         mobileNum, viewModel.trip.vehicleDetails.vehicleNo, amount, viewModel.trip.transactionId
     )
@@ -96,19 +142,13 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
 /* intent keys */
 private const val ARGS_TRIP_DATA = "args_trip_data"
-private const val ARGS_FUEL_CARD = "args_fuel_card"
-private const val ARGS_WALLET_BALANCE = "args_wallet_balance"
 
 /**
  * Create Fuel Card intent
  */
 fun createFuelCardIntent(
   context: Context,
-  trip: HomeTripsItemData,
-  fuelCard: FuelCardData,
-  balance: Int
+  trip: HomeTripsItemData
 ) = Intent(context, CreateFuelCardActivity::class.java).apply {
   putExtra(ARGS_TRIP_DATA, trip)
-  putExtra(ARGS_FUEL_CARD, fuelCard)
-  putExtra(ARGS_WALLET_BALANCE, balance)
 }

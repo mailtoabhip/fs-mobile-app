@@ -3,13 +3,14 @@ package com.delhivery.axle.repository
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.FuelService
+import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Wallet Repository
- * -- Manage interaction with wallet service
+ * Fuel Repository
+ * -- Manage interaction with fuel service
  *
  */
 @Singleton
@@ -30,5 +31,5 @@ class FuelRepository @Inject constructor(
   /**
    * Fetch active fuel cards
    */
-  fun fetchActiveFuelCards() = fuelService.fetchActiveFuelCards()
+  fun fetchActiveFuelCards() = fuelService.fetchActiveFuelCards(walletId()).convertResponse()
 }

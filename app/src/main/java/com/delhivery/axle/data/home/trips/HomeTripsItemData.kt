@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
@@ -37,7 +38,8 @@ data class HomeTripsItemData(
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
-  var payment: BulkPaymentItem? = null
+  var payment: BulkPaymentItem? = null,
+  var fuelCard: FuelCardData? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -134,23 +136,21 @@ data class HomeTripsItemData(
 /* actions */
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 
-data class TripDriverDetails(
-  @SerializedName("phone_number") val driverPhoneNo: String?
-) {
+data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: String?) :
+    Serializable {
 
   fun driverPhoneNo() = "Driver($driverPhoneNo)"
 }
 
-data class TripVehicleDetails(
-  @SerializedName("vehicle_number") val vehicleNo: String
-)
+data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: String) :
+    Serializable
 
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
   @SerializedName("bid_price") val bidPrice: Int?,
   @SerializedName("effective_price") val effectivePrice: Int?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
-) {
+) : Serializable {
 
   fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
 }

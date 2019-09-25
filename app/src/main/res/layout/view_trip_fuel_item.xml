@@ -14,9 +14,7 @@
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_12dp"
-      android:layout_marginEnd="@dimen/size_2dp"
-      android:layout_marginStart="@dimen/size_2dp"
+      android:layout_margin="@dimen/size_6dp"
       android:clickable="true"
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -54,6 +52,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:textStyle="normal"
+            android:text="@{trip.vehicleDetails.vehicleNo}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="HR26 1234"
@@ -181,10 +180,11 @@
               android:layout_height="wrap_content"
               android:maxLines="1"
               android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif-medium"
               tools:text="Rs 14000"
+              android:text="@{trip.fuelCard.amount()}"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
-              android:textStyle="bold"
               />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

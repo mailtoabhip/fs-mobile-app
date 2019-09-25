@@ -55,6 +55,7 @@ data class CreateFuelCardRequest(
   @SerializedName("vehicle_number") val vehicleNum: String,
   @SerializedName("amount") val amount: String,
   @SerializedName("transaction_type") val transactionType: String = TransactionType.DEBIT.type,
+  @SerializedName("payment_method") val mode: String = "neft",
   @SerializedName("channel") val channel: String = TransactionChannel.IOCL.type
 ) {
   companion object {

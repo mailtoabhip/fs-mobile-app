@@ -2,13 +2,14 @@ package com.delhivery.axle.data
 
 import androidx.room.Ignore
 import com.delhivery.axle.utils.extensions.safeEquals
+import java.io.Serializable
 
 /**
  * Base Key-Type model contains a key for unique identification
  *
  * @param key Model key, can be [Any] type defined by [KT]
  */
-abstract class BaseKeyTypeModel<KT : Any> {
+abstract class BaseKeyTypeModel<KT : Any> : Serializable {
   @Ignore
   abstract fun key(): KT
 

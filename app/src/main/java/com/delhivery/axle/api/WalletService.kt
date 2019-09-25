@@ -1,10 +1,10 @@
 package com.delhivery.axle.api
 
 import com.delhivery.axle.api.request.BankTransferRequest
+import com.delhivery.axle.api.request.CreateFuelCardRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.response.BankTransferResponse
 import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.FuelCardsResponse
 import com.delhivery.axle.api.response.WalletDataResponse
 import com.delhivery.axle.api.response.WalletTransactionsResponse
 import io.reactivex.Single
@@ -56,7 +56,10 @@ interface WalletService {
   /**
    * Fetch active fuel cards
    */
-  @GET("iocl/get_cards")
-  fun fetchActiveFuelCards(): Single<BaseResponse<FuelCardsResponse>>
+  @POST("/api/v1/wallet/{wallet_id}/transactions/")
+  fun createFuelCard(
+    @Path("wallet_id") walletId: String,
+    @Body payload: CreateFuelCardRequest
+  ): Single<BaseResponse<BankTransferResponse>>
 
 }

@@ -4,6 +4,7 @@ import com.auth0.android.jwt.JWT
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.WalletService
 import com.delhivery.axle.api.request.BankTransferRequest
+import com.delhivery.axle.api.request.CreateFuelCardRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -57,7 +58,15 @@ class WalletRepository @Inject constructor(
     ).convertResponse()
 
   /**
-   * Fetch active fuel cards
+   * Create fuel card
    */
-  fun fetchActiveFuelCards() = walletService.fetchActiveFuelCards()
+  fun createFuelCard(
+    mobile: String,
+    vehicleNum: String,
+    amount: String,
+    tripId: String
+  ) = walletService.createFuelCard(
+      walletId(), CreateFuelCardRequest.getRequest(vehicleNum, mobile, tripId, vehicleNum, amount)
+  ).convertResponse()
+
 }

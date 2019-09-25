@@ -2,9 +2,9 @@ package com.delhivery.axle.ui.home.activity.fuel
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.databinding.ViewHomeTripsProgressItemBinding
+import com.delhivery.axle.databinding.ViewFuelTripsProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
-import com.delhivery.axle.databinding.ViewTransactionItemBinding
+import com.delhivery.axle.databinding.ViewTripFuelItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 
@@ -38,38 +38,38 @@ abstract class BaseTripsFuelRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
 }
 
 /**
- * Transaction item view holder
+ * Fuel trips item view holder
  */
-class TransactionsItemVH(binding: ViewTransactionItemBinding) :
-    BaseTripsFuelRVAdapterViewHolder<ViewTransactionItemBinding, TransactionDataItem>(
+class TripsFuelItemVH(binding: ViewTripFuelItemBinding) :
+    BaseTripsFuelRVAdapterViewHolder<ViewTripFuelItemBinding, TripsFuelDataItem>(
         binding
     ) {
   override fun bind(
-    item: TransactionDataItem,
+    item: TripsFuelDataItem,
     _interface: TripsFuelRVAdapterInterface
   ) {
-    binding.transaction = item.data
+    binding.trip = item.data
   }
 }
 
 /**
- * Transaction Progress view holder
+ * Fuel trips Progress view holder
  */
-internal class TransactionsProgressItemVH(binding: ViewHomeTripsProgressItemBinding) :
-    BaseTripsFuelRVAdapterViewHolder<ViewHomeTripsProgressItemBinding, TransactionsProgressItem>(
+internal class TripsFuelProgressItemVH(binding: ViewFuelTripsProgressItemBinding) :
+    BaseTripsFuelRVAdapterViewHolder<ViewFuelTripsProgressItemBinding, TripsFuelProgressItem>(
         binding
     ) {
   override fun bind(
-    item: TransactionsProgressItem,
+    item: TripsFuelProgressItem,
     _interface: TripsFuelRVAdapterInterface
   ) {
   }
 }
 
 /**
- * Transaction warning item view holder
+ * Fuel trips warning item view holder
  */
-internal class TransactionWarningItemVH(binding: ViewWarningItemBinding) :
+internal class TripsFuelWarningItemVH(binding: ViewWarningItemBinding) :
     BaseTripsFuelRVAdapterViewHolder<ViewWarningItemBinding, TransactionWarningItem>(binding) {
   override fun bind(
     item: TransactionWarningItem,
@@ -83,9 +83,9 @@ internal class TransactionWarningItemVH(binding: ViewWarningItemBinding) :
 }
 
 /**
- * Transaction timeout view holder
+ * Fuel trips timeout view holder
  */
-internal class TransactionTimeOutItemVH(binding: ViewTimeOutItemBinding) :
+internal class TripsFuelTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     BaseTripsFuelRVAdapterViewHolder<ViewTimeOutItemBinding, TransactionTimeoutItem>(binding) {
   override fun bind(
     item: TransactionTimeoutItem,

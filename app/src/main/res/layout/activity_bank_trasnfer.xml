@@ -31,6 +31,7 @@
 
     <include
         android:id="@+id/progress"
+        tools:visibility="gone"
         layout="@layout/view_bid_details_loading_bids"
         />
 
