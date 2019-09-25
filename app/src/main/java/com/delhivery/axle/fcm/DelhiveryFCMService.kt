@@ -84,8 +84,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
           .setSound(soundUri)
 
       with(NotificationManagerCompat.from(this)) {
-        cancelAll()
-        notify(0, notificationBuilder.build())
+        notify(notificationId.hashCode(), notificationBuilder.build())
       }
     }
   }

@@ -10,6 +10,7 @@ import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -140,10 +141,14 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   }
 
   /**
-   * Override for notification received
+   * Clears all pending notifications
+   * and
+   * Override this for marking notification received
    */
   open fun markNotificationRead() {
-
+    with(NotificationManagerCompat.from(this)) {
+      cancelAll()
+    }
   }
 
   /**
