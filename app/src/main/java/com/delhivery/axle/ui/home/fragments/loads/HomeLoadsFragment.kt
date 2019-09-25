@@ -183,12 +183,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
   override fun onResume() {
     super.onResume()
-    /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
-    /* fetch new loads is routes updated*/
-    if (viewModel.isRouteUpdated()) {
+    if (viewModel.isRouteUpdated() || viewModel.fromNotification) {
       refreshData()
-      viewModel.setRouteUpdated()
+      if (viewModel.isRouteUpdated()) {
+        viewModel.setRouteUpdated()
+      } else if (viewModel.fromNotification) {
+        viewModel.fromNotification = false
+      }
     }
   }
 
