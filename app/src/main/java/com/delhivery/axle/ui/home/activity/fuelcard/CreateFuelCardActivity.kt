@@ -10,7 +10,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import kotlin.math.min
 
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
@@ -42,6 +42,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     binding.fetching = true
     binding.error = false
     binding.created = false
+    binding.createdError = false
     if (viewModel.trip.fuelCard != null && viewModel.trip.fuelCard?.amount != "0") {
       binding.containerActiveCard.visibility = View.VISIBLE
     }
@@ -59,13 +60,10 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     })
 
     viewModel.transactionLiveData.observe(this, Observer {
-      binding.created = it.isNotNullOrEmpty()
-      binding.error = !it.isNotNullOrEmpty()
-      binding.fetching = !it.isNotNullOrEmpty()
+      binding.created = !it.isNullOrEmpty()
+      binding.createdError = it.isNullOrEmpty()
       binding.executePendingBindings()
     })
-
-    binding.btnCreate.setOnClickListener { createFuelCard() }
 
     binding.radioNumGroup.setOnCheckedChangeListener { group, checkedId ->
       when (checkedId) {
@@ -81,9 +79,18 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       }
     }
 
+    binding.btnRetry.setOnClickListener { createFuelCard() }
+    binding.btnCreate.setOnClickListener { createFuelCard() }
+    binding.btnTransactionSummary.setOnClickListener {
+      navigationUtils.navigate(transactionsIntent(this))
+    }
     binding.btnBack.setOnClickListener {
       setResult(Activity.RESULT_OK)
       finish()
+    }
+    binding.containerCreateCardError.setOnClickListener {
+      binding.createdError = false
+      binding.executePendingBindings()
     }
 
     binding.fetching = true
@@ -91,6 +98,10 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
   }
 
   private fun createFuelCard() {
+    binding.error = false
+    binding.createdError = false
+    binding.created = false
+    binding.executePendingBindings()
     val mobileNum: String
     if (binding.radioDriverNum.isChecked) {
       mobileNum = viewModel.trip.driverDetails?.driverPhoneNo ?: ""

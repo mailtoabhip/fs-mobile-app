@@ -15,13 +15,11 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
-import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
-class TripsFuelCardViewModel @Inject constructor(
+class ActiveTripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
-  private val fuelRepository: FuelRepository,
-  private val userPrefs: UserPrefs
+  private val fuelRepository: FuelRepository
 ) : BaseViewModel() {
 
   private lateinit var cards: List<FuelCardData>
@@ -31,9 +29,8 @@ class TripsFuelCardViewModel @Inject constructor(
   var total = 0
   var trip: TripType = InTransit
 
-  /* user trips live data */
-  var tripsliveData =
-    MutableLiveData<List<Pair<BaseTripsFuelRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+  var tripsLiveData =
+    MutableLiveData<List<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
   fun fetchTrips(paginate: Boolean) {
     if (!paginate) {
@@ -52,9 +49,10 @@ class TripsFuelCardViewModel @Inject constructor(
             hasMoreData = _res.hasNext
             total = _res.total
 
-            mutableListOf<Pair<BaseTripsFuelRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              add(Pair(TripsFuelProgressItem(), Remove))
+            mutableListOf<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              add(Pair(ActiveTripProgressItem(), Remove))
               if (total == 0) {
+                add(Pair(ActiveTripWarningItem_NoTrip, Add))
               } else {
                 val trips = _res.trips
                 for (trip in trips) {
@@ -63,26 +61,27 @@ class TripsFuelCardViewModel @Inject constructor(
                       p.tripId.safeEquals(trip.transactionId)
                     }
                     if (cardList.isNullOrEmpty()) {
-                      trip.fuelCard = FuelCardData("","","0","","")
+                      trip.fuelCard = FuelCardData("", "", "0", "", "")
                     } else {
                       trip.fuelCard = cardList[0]
                     }
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                  add(Pair(TripsFuelDataItem(trip), Add))
+                  add(Pair(ActiveTripFuelDataItem(trip), Add))
                 }
               }
             }
                 .let {
-                  tripsliveData.postValue(it)
+                  tripsLiveData.postValue(it)
                 }
           } else {
-            mutableListOf<Pair<BaseTripsFuelRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-
+            mutableListOf<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              add(Pair(ActiveTripProgressItem(), Remove))
+              add(Pair(ActiveTripWarningItem_TimeOut, Add))
             }
                 .let {
-                  tripsliveData.postValue(it)
+                  tripsLiveData.postValue(it)
                 }
           }
         }
@@ -96,7 +95,13 @@ class TripsFuelCardViewModel @Inject constructor(
             this.cards = _res.cards
             fetchTrips(false)
           } else {
-
+            mutableListOf<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              add(Pair(ActiveTripProgressItem(), Remove))
+              add(Pair(ActiveTripWarningItem_TimeOut, Add))
+            }
+                .let {
+                  tripsLiveData.postValue(it)
+                }
           }
         }
   }

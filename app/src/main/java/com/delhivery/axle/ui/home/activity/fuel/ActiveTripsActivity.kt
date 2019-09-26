@@ -9,25 +9,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
-import com.delhivery.axle.databinding.ActivityTripsFuelCardBinding
+import com.delhivery.axle.data.transactions.TransactionTimeOutAction
+import com.delhivery.axle.data.transactions.TransactionWarningAction_NoTransactions
+import com.delhivery.axle.databinding.ActivityActiveTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.createFuelCardIntent
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_CREATE_FUELCARD
 
-class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, TripsFuelCardViewModel>(),
-    TripsFuelRVAdapterInterface {
+class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTripsViewModel>(),
+    ActiveTripsRVAdapterInterface {
 
-  override fun getViewModelClass() = TripsFuelCardViewModel::class.java
+  override fun getViewModelClass() = ActiveTripsViewModel::class.java
 
-  override fun layoutId() = R.layout.activity_trips_fuel_card
+  override fun layoutId() = R.layout.activity_active_trips
 
   override fun requireConnection() = true
 
   var isLoadingData = true
 
-  private val adapter: TripsFuelRVAdapter by lazy {
-    TripsFuelRVAdapter(this)
+  private val adapter: ActiveTripsRVAdapter by lazy {
+    ActiveTripsRVAdapter(this)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -38,7 +40,7 @@ class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, Trips
     title = "Fuel Cards"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    viewModel.tripsliveData.observe(this, Observer {
+    viewModel.tripsLiveData.observe(this, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
 
@@ -48,7 +50,7 @@ class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, Trips
 
     binding.rvTrips.apply {
       layoutManager = LinearLayoutManager(context)
-      adapter = this@TripsFuelCreditActivity.adapter
+      adapter = this@ActiveTripsActivity.adapter
       addOnScrollListener(PaginationInterface())
     }
 
@@ -63,7 +65,7 @@ class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, Trips
 
   override fun handleAction(
     actionId: String,
-    item: BaseTripsFuelRVAdapterItem<*>
+    item: BaseActiveTripsRVAdapterItem<*>
   ) {
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
@@ -72,8 +74,14 @@ class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, Trips
             createFuelCardIntent(this, data), false, REQCODE_CREATE_FUELCARD
         )
       }
-      else -> {
 
+      TransactionTimeOutAction -> {
+        refreshData()
+      }
+
+      TransactionWarningAction_NoTransactions -> {
+        setResult(RESULT_OK)
+        finish()
       }
     }
   }
@@ -102,9 +110,9 @@ class TripsFuelCreditActivity : BaseActivity<ActivityTripsFuelCardBinding, Trips
 }
 
 /**
- * Trips FuelCredit intent
+ * Trips Fuel Credit intent
  */
 fun tripsFuelCreditIntent(
   context: Context
-) = Intent(context, TripsFuelCreditActivity::class.java).apply {
+) = Intent(context, ActiveTripsActivity::class.java).apply {
 }

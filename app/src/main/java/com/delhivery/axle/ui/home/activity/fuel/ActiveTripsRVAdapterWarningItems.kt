@@ -9,15 +9,15 @@ import com.delhivery.axle.data.transactions.TransactionWarningItemData
  *
  * @Zeplin https://zpl.io/2pvmPol
  */
-val TransactionWarningItem_Transaction = TransactionWarningItem(
+val ActiveTripWarningItem_NoTrip = ActiveTripWarningItem(
     TransactionWarningItemData(
-        "No Transactions found",
-        "",
-        "", TransactionWarningAction_NoTransactions
+        "No Active trips",
+        "You can only take fuel credit against vehicles that are on their way right now",
+        "START BIDDING NOW!", TransactionWarningAction_NoTransactions
     )
 )
 
-val TransactionWarningItem_TimeOut = TransactionWarningItem(
+val ActiveTripWarningItem_TimeOut = ActiveTripWarningItem(
     TransactionWarningItemData(
         "Session timed out!",
         "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",

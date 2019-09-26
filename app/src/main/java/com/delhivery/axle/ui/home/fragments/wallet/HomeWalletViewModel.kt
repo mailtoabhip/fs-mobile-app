@@ -38,7 +38,7 @@ class HomeWalletViewModel @Inject constructor(
             userPrefs.walletActivated = true
             walletLiveData.postValue(_res.wallet)
           } else {
-            error.handle()
+            walletLiveData.postValue(null)
           }
         }
   }
@@ -54,8 +54,7 @@ class HomeWalletViewModel @Inject constructor(
           if (_res != null && !error) {
             walletLiveData.postValue(_res.wallet)
           } else {
-            error.handle()
-
+            walletLiveData.postValue(null)
           }
         }
   }

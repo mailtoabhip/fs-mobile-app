@@ -17,9 +17,12 @@ import com.delhivery.axle.ui.home.activity.fuel.tripsFuelCreditIntent
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.wallet.viewpager.WalletIntroConfig
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.REQCODE_BANK_TRANSACTION
+import com.delhivery.axle.utils.REQCODE_CREATE_ACTIVE_TRIPS
 import javax.inject.Inject
 
 class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalletViewModel>(),
@@ -53,15 +56,10 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    if (viewModel.walletActivated) {
-      binding.refreshWallet.visibility = View.VISIBLE
-      binding.containerActivate.visibility = View.GONE
-      binding.refreshWallet.isRefreshing = true
-    } else {
-      binding.refreshWallet.visibility = View.GONE
-      binding.containerActivate.visibility = View.VISIBLE
-      binding.refreshWallet.isRefreshing = false
-    }
+    binding.active = viewModel.walletActivated
+    binding.error = false
+    binding.loading = true
+    binding.executePendingBindings()
 
     adapter.layoutInflater = layoutInflater
     binding.viewPager.apply {
@@ -70,39 +68,43 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     }
 
     viewModel.walletLiveData.reobserve(this, Observer {
-      when {
-        it.autoWithdraw -> {
-          binding.refreshWallet.isRefreshing = false
-          binding.containerActivate.visibility = View.VISIBLE
-          binding.refreshWallet.visibility = View.GONE
-          binding.containerWallet.visibility = View.GONE
-        }
-        else -> {
-          viewModel.walletActivated = true
-          binding.textBalance.text = it.balance()
-          binding.refreshWallet.isRefreshing = false
-          binding.containerActivate.visibility = View.GONE
-          binding.refreshWallet.visibility = View.VISIBLE
-          binding.containerWallet.visibility = View.VISIBLE
-        }
+      binding.loading = false
+      if (it != null) {
+        binding.error = false
+        binding.active = !it.autoWithdraw
+        viewModel.walletActivated = !it.autoWithdraw
+        binding.textBalance.text = it.balance()
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Timed out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
+              " Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
       }
+      binding.executePendingBindings()
     })
 
-    viewModel.progressLiveData.reobserve(this, Observer {
-      if (it) {
-        binding.refreshWallet.visibility = View.VISIBLE
-        binding.containerWallet.visibility = View.GONE
-        binding.refreshWallet.isRefreshing = true
-        binding.containerActivate.visibility = View.GONE
-      }
-    })
-
-    binding.viewTransactionHistory.setOnClickListener { openTransactions() }
     binding.containerFuel.setOnClickListener { openFuelCredits() }
     binding.containerBank.setOnClickListener { openBankTransfer() }
     binding.containerFastTag.setOnClickListener { openFastTag() }
-    binding.btnActivate.setOnClickListener { viewModel.activateWallet() }
-    binding.refreshWallet.setOnRefreshListener { viewModel.fetchWalletData() }
+    binding.btnActivate.setOnClickListener {
+      binding.loading = true
+      binding.executePendingBindings()
+      viewModel.activateWallet()
+    }
+    binding.refreshWallet.setOnRefreshListener {
+      binding.refreshWallet.isRefreshing = false
+      binding.loading = true
+      binding.executePendingBindings()
+      viewModel.fetchWalletData()
+    }
+    binding.containerBalance.setOnClickListener { openTransactions() }
+    binding.containerError.btnAction.setOnClickListener {
+      binding.loading = true
+      binding.executePendingBindings()
+      viewModel.activateWallet()
+    }
 
     viewModel.fetchWalletData()
   }
@@ -112,7 +114,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
   }
 
   private fun openFuelCredits() {
-    context?.let { navigationUtils.navigate(tripsFuelCreditIntent(it)) }
+    context?.let { startActivityForResult(tripsFuelCreditIntent(it), REQCODE_CREATE_ACTIVE_TRIPS) }
   }
 
   private fun openBankTransfer() {
@@ -129,8 +131,16 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     data: Intent?
   ) {
     super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == REQCODE_BANK_TRANSACTION && resultCode == RESULT_OK) {
-      viewModel.fetchWalletData()
+    if (resultCode == RESULT_OK) {
+      when (requestCode) {
+        REQCODE_BANK_TRANSACTION -> {
+          viewModel.fetchWalletData()
+        }
+
+        REQCODE_CREATE_ACTIVE_TRIPS -> {
+          action(NavigateHomeFragmentAction(LoadsFragment))
+        }
+      }
     }
   }
 

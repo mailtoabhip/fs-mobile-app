@@ -9,7 +9,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
-import com.delhivery.axle.ui.home.activity.fuel.TripsFuelCreditActivity
+import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
@@ -133,7 +133,7 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(
       modules = [AbsFuelCardActivityModule::class]
   )
-  internal abstract fun bindFuelCardActivity(): TripsFuelCreditActivity
+  internal abstract fun bindFuelCardActivity(): ActiveTripsActivity
 
   /* Create Fuel Card activity */
   @ActivityScope
@@ -196,7 +196,7 @@ internal abstract class AbsTransactionDetailActivityModule : ActivityModule<Tran
 internal abstract class AbsBankTransferActivityModule : ActivityModule<BankTransferActivity>()
 
 @Module
-internal abstract class AbsFuelCardActivityModule : ActivityModule<TripsFuelCreditActivity>()
+internal abstract class AbsFuelCardActivityModule : ActivityModule<ActiveTripsActivity>()
 
 @Module
 internal abstract class AbsCreateFuelCardActivityModule : ActivityModule<CreateFuelCardActivity>()

@@ -2,10 +2,10 @@ package com.delhivery.axle.ui.home.activity.fuel
 
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
-import com.delhivery.axle.ui.home.activity.fuel.TripsFuelRVAdapterItemType.Trip
+import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Trip
 
-interface TripsFuelRVAdapterInterface : ItemClickListener<BaseTripsFuelRVAdapterItem<*>> {
-  override fun onItemClicked(item: BaseTripsFuelRVAdapterItem<*>) {
+interface ActiveTripsRVAdapterInterface : ItemClickListener<BaseActiveTripsRVAdapterItem<*>> {
+  override fun onItemClicked(item: BaseActiveTripsRVAdapterItem<*>) {
     if (item.type == Trip) {
       handleAction(HomeTripsRequestAction_ViewDetails, item)
     }
@@ -16,7 +16,7 @@ interface TripsFuelRVAdapterInterface : ItemClickListener<BaseTripsFuelRVAdapter
    */
   fun handleAction(
     actionId: String,
-    item: BaseTripsFuelRVAdapterItem<*>
+    item: BaseActiveTripsRVAdapterItem<*>
   )
 
 }

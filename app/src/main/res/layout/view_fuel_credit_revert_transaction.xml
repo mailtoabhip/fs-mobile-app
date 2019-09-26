@@ -200,7 +200,7 @@
             android:layout_marginStart="@dimen/size_8dp"
             android:fontFamily="sans-serif"
             android:gravity="end"
-            android:text="@{trip.driverDetails.driverPhoneNo}"
+            android:text="@{transaction.toAccNumber}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="@+id/text_date"

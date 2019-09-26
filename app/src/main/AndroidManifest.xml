@@ -108,7 +108,7 @@
         android:screenOrientation="portrait" />
 
     <activity
-        android:name=".ui.home.activity.fuel.TripsFuelCreditActivity"
+        android:name=".ui.home.activity.fuel.ActiveTripsActivity"
         android:screenOrientation="portrait" />
 
     <activity

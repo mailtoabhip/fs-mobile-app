@@ -214,7 +214,7 @@
             android:gravity="end"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@{trip.driverDetails.driverPhoneNo}"
+            android:text="@{transaction.toAccNumber}"
             app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
             app:layout_constraintStart_toEndOf="@+id/label_mobile"
             app:layout_constraintTop_toTopOf="@+id/label_mobile"

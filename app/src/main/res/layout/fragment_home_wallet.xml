@@ -9,6 +9,22 @@
         name="balance"
         type="String"
         />
+
+    <variable
+        name="active"
+        type="Boolean"
+        />
+
+    <variable
+        name="error"
+        type="Boolean"
+        />
+
+    <variable
+        name="loading"
+        type="Boolean"
+        />
+
     <import type="android.view.View" />
   </data>
 
@@ -23,7 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
+        tools:visibility="gone"
+        android:visibility="@{ !loading &amp;&amp; !active &amp;&amp; !error ? View.VISIBLE : View.GONE }"
         android:weightSum="1"
         >
 
@@ -98,20 +115,22 @@
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_wallet"
-        android:layout_width="match_parent"
-        android:background="@color/colorBackground"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:visibility="@{!loading &amp;&amp; active &amp;&amp; !error  ? View.VISIBLE : View.GONE }"
+        android:background="@color/colorBackground"
+        tools:visibility="visible"
         >
 
       <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/container_wallet"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:visibility="gone"
           android:orientation="vertical"
           >
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/container_balance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/size_8dp"
@@ -402,7 +421,21 @@
         </androidx.cardview.widget.CardView>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/container_error"
+        layout="@layout/view_warning_item"
+        tools:visibility="gone"
+        android:visibility="@{ !loading &amp;&amp; error ? View.VISIBLE : View.GONE }"
+        />
+
+    <include
+        layout="@layout/view_bid_details_loading_bids"
+        tools:visibility="gone"
+        android:visibility="@{ loading ? View.VISIBLE : View.GONE }"
+        />
 
   </FrameLayout>
 

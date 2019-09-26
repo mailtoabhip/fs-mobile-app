@@ -12,7 +12,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WalletService {
@@ -20,26 +19,20 @@ interface WalletService {
   /**
    * Activate Wallet
    */
-  @PATCH("/api/v1/wallet/{wallet_id}")
-  fun activateWallet(
-    @Path("wallet_id") walletId: String,
-    @Body payload: WalletUpdateRequest
-  ): Single<BaseResponse<WalletDataResponse>>
+  @PATCH("/api/v1/wallet/me")
+  fun activateWallet(@Body payload: WalletUpdateRequest): Single<BaseResponse<WalletDataResponse>>
 
   /**
    * Get wallet data
    */
-  @GET("/api/v1/wallet/{wallet_id}")
-  fun fetchWalletData(
-    @Path("wallet_id") walletId: String
-  ): Single<BaseResponse<WalletDataResponse>>
+  @GET("/api/v1/wallet/me")
+  fun fetchWalletData(): Single<BaseResponse<WalletDataResponse>>
 
   /**
    * Get wallet data
    */
-  @GET("/api/v1/wallet/{wallet_id}/transactions/")
+  @GET("/api/v1/wallet/me/transactions/")
   fun fetchWalletTransactions(
-    @Path("wallet_id") walletId: String,
     @Query("start_time") startTime: String = "2018-09-18T13:16:44",
     @Query("end_time") endTime: String = "2020-09-18T13:16:44"
   ): Single<BaseResponse<WalletTransactionsResponse>>
@@ -47,19 +40,13 @@ interface WalletService {
   /**
    * Tranfer amount from wallet to bank
    */
-  @POST("/api/v1/wallet/{wallet_id}/transactions/")
-  fun transferToBank(
-    @Path("wallet_id") walletId: String,
-    @Body payload: BankTransferRequest
-  ): Single<BaseResponse<BankTransferResponse>>
+  @POST("/api/v1/wallet/me/transactions/")
+  fun transferToBank(@Body payload: BankTransferRequest): Single<BaseResponse<BankTransferResponse>>
 
   /**
    * Fetch active fuel cards
    */
-  @POST("/api/v1/wallet/{wallet_id}/transactions/")
-  fun createFuelCard(
-    @Path("wallet_id") walletId: String,
-    @Body payload: CreateFuelCardRequest
-  ): Single<BaseResponse<BankTransferResponse>>
+  @POST("/api/v1/wallet/me/transactions/")
+  fun createFuelCard(@Body payload: CreateFuelCardRequest): Single<BaseResponse<BankTransferResponse>>
 
 }

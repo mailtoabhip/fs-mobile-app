@@ -55,7 +55,7 @@ class CreateFuelCardViewModel @Inject constructor(
           if (_res != null && !error) {
             transactionLiveData.postValue(_res.refNumber)
           } else {
-            error.handle()
+            transactionLiveData.postValue("")
           }
         }
   }

@@ -8,7 +8,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
-import com.delhivery.axle.ui.home.activity.fuel.TripsFuelCardViewModel
+import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
@@ -192,8 +192,8 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(TripsFuelCardViewModel::class)
-  abstract fun bindTripsFuelCardViewwModel(viewModel: TripsFuelCardViewModel): ViewModel
+  @ViewModelScope(ActiveTripsViewModel::class)
+  abstract fun bindTripsFuelCardViewwModel(viewModel: ActiveTripsViewModel): ViewModel
 
   @Binds
   @IntoMap
