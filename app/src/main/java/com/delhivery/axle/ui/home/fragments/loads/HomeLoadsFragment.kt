@@ -44,6 +44,7 @@ import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_LOAD_INFO
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -169,25 +170,27 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       viewModel.fetchUserTransactions()
     }
 
-//    if (viewModel.isFCMTokenGenerated()) {
-//      fcmUtils.generateToken {
-//        if (it.isNotNullOrEmpty()) {
-//          viewModel.updateFCMToken(it)
-//        }
-//      }
-//    }
+    if (viewModel.isFCMTokenGenerated()) {
+      fcmUtils.generateToken {
+        if (it.isNotNullOrEmpty()) {
+          viewModel.updateFCMToken(it)
+        }
+      }
+    }
 
     viewModel.updateUserAppAccess()
   }
 
   override fun onResume() {
     super.onResume()
-    /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
-    /* fetch new loads is routes updated*/
-    if (viewModel.isRouteUpdated()) {
+    if (viewModel.isRouteUpdated() || viewModel.fromNotification) {
       refreshData()
-      viewModel.setRouteUpdated()
+      if (viewModel.isRouteUpdated()) {
+        viewModel.setRouteUpdated()
+      } else if (viewModel.fromNotification) {
+        viewModel.fromNotification = false
+      }
     }
   }
 

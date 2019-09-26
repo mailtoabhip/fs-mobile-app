@@ -74,6 +74,12 @@ class HomeLoadsViewModel @Inject constructor(
     userPrefs.routeUpdate = false
   }
 
+  var fromNotification: Boolean
+    get() = userPrefs.fromNotification
+    set(value) {
+      userPrefs.fromNotification = value
+    }
+
   /**
    * Fetch user [Requested] transactions
    */

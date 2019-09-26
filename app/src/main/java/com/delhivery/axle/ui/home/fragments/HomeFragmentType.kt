@@ -25,12 +25,12 @@ enum class HomeFragmentType(
     /**
      * Get fragment position by [menuId]
      */
-    fun posById(menuId: Int) = values().filter { it.menuId == menuId }.firstOrNull()?.position ?: -1
+    fun posById(menuId: Int) = values().firstOrNull { it.menuId == menuId }?.position ?: -1
 
     /**
      * Get [HomeFragmentType] by position
      */
-    fun pos(position: Int) = values().filter { it.position == position }.firstOrNull()
+    fun pos(position: Int) = values().firstOrNull { it.position == position }
 
     /**
      * Count

@@ -2,13 +2,14 @@ package com.delhivery.axle.ui.onboarding
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.viewpager.widget.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.PagerAdapter
 import com.delhivery.axle.R
 import com.delhivery.axle.config.OnboardingConfig
 import com.delhivery.axle.databinding.ActivityOnboardingBinding
 import com.delhivery.axle.databinding.ViewOnboardingBinding
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
@@ -29,6 +30,12 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
   /* onboarding view pager adapter */
   private val adapter by lazy {
     OnboardingPagerAdapter()
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -58,6 +65,15 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
         }
       }.start()
     }
+
+    if (notificationId.isNotEmpty()) {
+      markNotificationRead()
+    }
+  }
+
+  override fun markNotificationRead() {
+    super.markNotificationRead()
+    viewModel.markNotificationRead(notificationId)
   }
 
   /**
@@ -65,7 +81,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
    */
   private fun moveNext() {
     val currentPage = binding.viewpager.currentItem
-    if (currentPage < adapter.count-1) {
+    if (currentPage < adapter.count - 1) {
       binding.viewpager.setCurrentItem(currentPage + 1, true)
     } else {
       skip()

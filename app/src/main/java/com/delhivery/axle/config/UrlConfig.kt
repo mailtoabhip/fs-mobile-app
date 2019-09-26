@@ -44,6 +44,10 @@ enum class UrlConfig(
   ImageService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
       "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
+  ),
+  NotificationService(
+      "https://orion-notification-api.delhivery.com",
+      "https://orion-notification-api-dev.delhivery.com"
   );
 
   /**
