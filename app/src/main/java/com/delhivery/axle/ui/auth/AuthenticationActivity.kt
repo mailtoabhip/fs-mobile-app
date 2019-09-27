@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityAuthenticationBinding
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
@@ -54,6 +55,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+  }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
@@ -138,6 +144,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       )
       viewModel.sendOTP()
     }
+
+    if (notificationId.isNotEmpty()) {
+      markNotificationRead()
+    }
+  }
+
+  override fun markNotificationRead() {
+    super.markNotificationRead()
+    viewModel.markNotificationRead(notificationId)
   }
 
   override fun onBackPressed() {

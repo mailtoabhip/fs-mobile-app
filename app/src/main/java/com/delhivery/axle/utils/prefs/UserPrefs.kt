@@ -15,12 +15,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 ) {
   override fun prefsName() = PrefNames.UserPrefs
 
-  /* JWT Token */
+  /**
+   *  JWT Token
+   */
   var jwtToken: String?
     set(value) = editor.putString(PrefKeys.JWTToken, value).apply()
     get() = prefs.getString(PrefKeys.JWTToken, null)
 
-  /* Base/Origin City Code */
+  /**
+   *  Base/Origin City Code
+   */
   var cityCode: String?
     set(value) = editor.putString(PrefKeys.CityCode, value).apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
@@ -29,45 +33,75 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.PhoneNumber, value).apply()
     get() = prefs.getString(PrefKeys.PhoneNumber, "")
 
-  /* Routes update flag */
+  /**
+   * Routes update flag
+   */
   var routeUpdate: Boolean
     set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value).apply()
     get() = prefs.getBoolean(PrefKeys.RouteUpdate, false)
 
-  /* LoggedIn flag */
+  /**
+   *  LoggedIn flag
+   */
   var hasLoggedIn: Boolean
     set(value) = editor.putBoolean(PrefKeys.HasLoggedIn, value).apply()
     get() = prefs.getBoolean(PrefKeys.HasLoggedIn, false)
 
-  /* TDS rate */
+  /**
+   *  TDS rate
+   */
   var tdsRate: Int
     set(value) = editor.putInt(PrefKeys.TdsRate, value).apply()
     get() = prefs.getInt(PrefKeys.TdsRate, 99)
 
-  /* Username */
+  /**
+   *  Username
+   */
   var userName: String
     set(value) = editor.putString(PrefKeys.UserName, value).apply()
     get() = prefs.getString(PrefKeys.UserName, "No name") ?: "No name"
 
-  /* Has edited routes flag*/
+  /**
+   *  Has edited routes flag
+   */
   var hasEditedRoute: Boolean
     set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value).apply()
     get() = prefs.getBoolean(PrefKeys.HadEditedRoutes, false)
 
-  /* Supplier onbaording status */
+  /**
+   *  Supplier onbaording status
+   */
   var onboardingStatus: String
     set(value) = editor.putString(PrefKeys.OnboardingStatus, value).apply()
     get() = prefs.getString(PrefKeys.OnboardingStatus, "na") ?: "na"
 
-  /* Supplier enabled flag */
+  /**
+   *  Supplier enabled flag
+   */
   var supplierEnabled: Boolean
     set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value).apply()
     get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
-  /* Supplier enabled flag */
+  /**
+   *  Supplier enabled flag
+   */
   var isTestUser: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsTestUser, value).apply()
     get() = prefs.getBoolean(PrefKeys.IsTestUser, false)
+
+  /**
+   *  Device FCM Token
+   */
+  var fcmTokenGenerated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value).apply()
+    get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
+
+  /**
+   *  Opened from notification flag
+   */
+  var fromNotification: Boolean
+    set(value) = editor.putBoolean(PrefKeys.FromNotification, value).apply()
+    get() = prefs.getBoolean(PrefKeys.FromNotification, false)
 
   /**
    * Clear all preferences
@@ -127,6 +161,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val OnboardingStatus = "onboarding_status"
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
+    const val FCMTokenGenerated = "fcm_token_generated"
+    const val FromNotification = "from_notification"
   }
 }
 

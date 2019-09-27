@@ -13,11 +13,11 @@ import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_EDIT_BID
 import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.StringUtils
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 /**
- *
+ * Bid Create/Edit dialog
  */
 class BidDetailsCreateEditDialog @Inject constructor(
   context: Context,
@@ -48,7 +48,11 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       route = "${transaction.originCityName()} - ${transaction.destinationCityName()}"
-      transactionBid?.bidAmount?.let { binding.editAmount.setText(StringUtils.formatAmount(it)) }
+      transactionBid?.bidAmount?.let {
+        binding.editAmount.setText(
+            DecimalFormat("#########").format(it)
+        )
+      }
     }
 
     /* button click listeners */

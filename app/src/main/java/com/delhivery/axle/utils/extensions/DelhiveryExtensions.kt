@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils.extensions
 
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ErrorResponseBody
 import com.google.gson.Gson
@@ -14,7 +15,21 @@ import retrofit2.HttpException
 fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
   map {
     if (it.isSuccess) {
-      return@map it.responseData
+      it.responseData
+    } else {
+      throw it.toHttpException()
+    }
+  }
+
+/**
+ * Handle response and based on [BaseMessageResponse.isSuccess] flag,
+ * response is passed or exception is thrown
+ *
+ */
+fun Single<BaseMessageResponse>.convertMessageResponse(): Single<String> =
+  map {
+    if (it.isSuccess) {
+      it.message
     } else {
       throw it.toHttpException()
     }
@@ -25,9 +40,7 @@ fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
  * */
 fun Throwable.errorResponseBody() = if (this is HttpException) {
   val errorResponseBody = try {
-    Gson().fromJson<ErrorResponseBody>(
-        response()?.errorBody()?.string(), ErrorResponseBody::class.java
-    )
+    Gson().fromJson(response()?.errorBody()?.string(), ErrorResponseBody::class.java)
   } catch (e: Exception) {
     //parsing exception
     e.printStackTrace()

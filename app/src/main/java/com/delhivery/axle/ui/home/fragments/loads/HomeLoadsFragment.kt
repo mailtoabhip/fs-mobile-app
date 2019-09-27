@@ -8,6 +8,8 @@ import android.view.animation.DecelerateInterpolator
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -34,6 +36,7 @@ import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.FCMUtils
 import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
@@ -41,6 +44,7 @@ import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_LOAD_INFO
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -60,8 +64,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   var visible = false
 
   @Inject lateinit var dialogUtils: DialogUtils
-
   @Inject lateinit var contactUtils: ContactUtils
+  @Inject lateinit var fcmUtils: FCMUtils
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -95,7 +99,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     /* setup recycler view */
     binding.rvLoads.apply {
-      layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+      layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
       addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
@@ -123,8 +127,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     viewModel.loadsCountLiveData.observe(this, Observer {
       _title = when (it) {
-        0, null -> "Load Request"
-        else -> "Load Request(" + it + ")"
+        0, null -> getString(string.label_load_request)
+        else -> "${getString(string.label_load_request)}($it)"
       }
       this@HomeLoadsFragment.activity?.title = _title
     })
@@ -149,8 +153,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           .apply {
             when {
               it != null -> {
-                (adapter.itemsList()
-                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                data?.transactionBid = it.second
                 adapter.notifyItemChanged(it.first)
               }
             }
@@ -166,17 +170,27 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       viewModel.fetchUserTransactions()
     }
 
+    if (viewModel.isFCMTokenGenerated()) {
+      fcmUtils.generateToken {
+        if (it.isNotNullOrEmpty()) {
+          viewModel.updateFCMToken(it)
+        }
+      }
+    }
+
     viewModel.updateUserAppAccess()
   }
 
   override fun onResume() {
     super.onResume()
-    /* check user route/lane preferences*/
     viewModel.checkUserRoutes()
-    /* fetch new loads is routes updated*/
-    if (viewModel.isRouteUpdated()) {
+    if (viewModel.isRouteUpdated() || viewModel.fromNotification) {
       refreshData()
-      viewModel.setRouteUpdated()
+      if (viewModel.isRouteUpdated()) {
+        viewModel.setRouteUpdated()
+      } else if (viewModel.fromNotification) {
+        viewModel.fromNotification = false
+      }
     }
   }
 
@@ -356,16 +370,15 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     private var toolbarElevation = -1f
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
-      val layoutManager =
-        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
-      val pos = layoutManager.findFirstVisibleItemPosition()
-      val _toolbarElevation = if (pos == 0) {
+      val layoutManager: LinearLayoutManager? = recyclerView.layoutManager as? LinearLayoutManager
+      val pos = layoutManager?.findFirstVisibleItemPosition()
+      val toolbarElevation = if (pos == 0) {
         val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
         val viewTopGap = childView.height - stickyView.height * 1f
         val viewTop = childView.top + viewTopGap
@@ -390,9 +403,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         stickyView.setRatio(0f)
         0f
       }
-      if (_toolbarElevation != toolbarElevation) {
-        toolbarElevation = _toolbarElevation
-        toolbarElevationLiveData!!.postValue(toolbarElevation)
+      if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
+        this.toolbarElevation = toolbarElevation
+        toolbarElevationLiveData?.postValue(this.toolbarElevation)
       }
     }
   }
@@ -403,7 +416,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   inner class BannerRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
-      recyclerView: androidx.recyclerview.widget.RecyclerView,
+      recyclerView: RecyclerView,
       dx: Int,
       dy: Int
     ) {

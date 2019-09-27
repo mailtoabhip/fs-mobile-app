@@ -2,7 +2,9 @@ package com.delhivery.axle.api
 
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
+import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.UserModel
@@ -56,5 +58,14 @@ interface UserService {
     @Path("user_id") userId: String,
     @Body payload: UpdateUserAccessRequest
   ): Single<Any>
+
+  /**
+   * Update FCM token
+   */
+  @PATCH("/users/supplypartners/{user_id}")
+  fun updateFCMToken(
+    @Path("user_id") userId: String,
+    @Body payload: UpdateUserFCMTokenRequest
+  ): Single<BaseMessageResponse>
 
 }

@@ -21,7 +21,7 @@ import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 /**
- * Created by Harish on 26/03/18.
+ * Created by saurabh on 26/03/18.
  */
 
 abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFragment(),

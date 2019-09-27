@@ -78,9 +78,9 @@ object DateUtils {
    * Calculate days diff from today
    */
   fun daysDiff(date: Date): Int {
-    val _cal = date.toCalendar()
-    val _now = Calendar.getInstance()
-    return _cal[Calendar.DAY_OF_YEAR] - _now[Calendar.DAY_OF_YEAR]
+    val cal = date.toCalendar()
+    val now = Calendar.getInstance()
+    return cal[Calendar.DAY_OF_YEAR] - now[Calendar.DAY_OF_YEAR]
   }
 
   fun daysDiffStr(
@@ -88,19 +88,14 @@ object DateUtils {
     format: String
   ) = daysDiffStr(parseDate(date, format))
 
-  /**
-   * Days diff as string
-   */
-  fun daysDiffStr(
+  private fun daysDiffStr(
     requiredOn: Date
   ): String {
-    val _diff = daysDiff(requiredOn)
-    return if (_diff <= 0) {
-      "Today"
-    } else if (_diff == 1) {
-      "Tomorrow"
-    } else {
-      formatDate(requiredOn, "dd MMM")
+    val diff = daysDiff(requiredOn)
+    return when {
+      diff <= 0 -> "Today"
+      diff == 1 -> "Tomorrow"
+      else -> formatDate(requiredOn, "dd MMM")
     }
   }
 

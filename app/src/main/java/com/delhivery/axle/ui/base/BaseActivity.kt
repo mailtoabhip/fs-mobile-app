@@ -10,6 +10,7 @@ import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -63,6 +64,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var errorUtils: ErrorUtils
   @Inject lateinit var analyticsUtil: AnalyticsUtil
   @Inject lateinit var dialogUtils: DialogUtils
+  var notificationId: String = ""
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 
@@ -136,6 +138,17 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
     //dispose and clear all process
     compositeDisposable.disposeAndClear()
+  }
+
+  /**
+   * Clears all pending notifications
+   * and
+   * Override this for marking notification received
+   */
+  open fun markNotificationRead() {
+    with(NotificationManagerCompat.from(this)) {
+      cancelAll()
+    }
   }
 
   /**

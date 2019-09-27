@@ -20,8 +20,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
     targetSdkVersion 29
-    versionCode 10
-    versionName "1.9"
+    versionCode 12
+    versionName "1.11"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -30,6 +30,8 @@ android {
 
   buildTypes {
     release {
+      minifyEnabled true
+      shrinkResources true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
@@ -37,7 +39,7 @@ android {
   flavorDimensions "vanilla"
 
   productFlavors {
-    devlopment {
+    development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
@@ -161,9 +163,10 @@ dependencies {
   implementation 'com.auth0.android:jwtdecode:1.2.0'
 
   //Firebase
-  implementation 'com.google.firebase:firebase-core:17.0.1'
-  implementation 'com.google.firebase:firebase-inappmessaging-display:18.0.2'
-  implementation 'com.google.firebase:firebase-config:18.0.0'
+  implementation 'com.google.firebase:firebase-core:17.2.0'
+  implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.0'
+  implementation 'com.google.firebase:firebase-config:19.0.1'
+  implementation 'com.google.firebase:firebase-messaging:20.0.0'
 
   //Firebase crashlytics
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'

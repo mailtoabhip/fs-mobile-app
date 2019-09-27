@@ -64,6 +64,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = second
         viewModel.bidDetail = second.bidDetails
         viewModel.fetchWarehouseDetails()
+        viewModel.fetchPaymentSummary()
       }
     })
 
@@ -89,7 +90,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* fetch trip details and payment summary */
     viewModel.fetchTripDetails()
-    viewModel.fetchPaymentSummary()
   }
 
   /**

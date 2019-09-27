@@ -6,9 +6,12 @@ import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.HomeActivity
@@ -31,6 +34,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   override fun requireConnection() = false
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
+  }
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -52,7 +61,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         scale(1.6f, 1.6f)
       }
     }.withEndAction {
-      checkForUpdatedVersion(completedAction = {
+      checkForUpdatedVersion { it ->
         when (it) {
           true -> {
             dialogUtils.showBasicConfirmDialog(
@@ -74,7 +83,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             postAnimate(isAuthenticated)
           }
         }
-      })
+      }
     }
         .setStartDelay(SplashAnimationDelay / 2)
         .start()
@@ -112,14 +121,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             this
         ) {
           if (it.isSuccessful) {
-            var currentVersionCode = 0
-            var playStoreVersionCode = 0
-            try {
+            val currentVersionCode: Int
+            val playStoreVersionCode: Int = try {
               remoteConfig.activate()
-              playStoreVersionCode = remoteConfig.getString("android_latest_version_code")
+              remoteConfig.getString("android_latest_version_code")
                   .toInt()
             } catch (e: Exception) {
-              playStoreVersionCode = 0
+              0
             }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
@@ -144,7 +152,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       Auth -> AuthenticationActivity::class
       Home -> HomeActivity::class
     }.let {
-      navigationUtils.navigate(it.java, true)
+      val bundle = Bundle()
+      if (!TextUtils.isEmpty(notificationId)) {
+        bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
+      }
+      navigationUtils.navigate(it.java, true, bundle)
     }
   }
 }

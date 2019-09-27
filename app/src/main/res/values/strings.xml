@@ -44,8 +44,7 @@
   <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
   <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
   <string name="msg_you_lost_bid">You lost the bid</string>
-  <string name="msg_accepted_bid_value">Accepted bid value: ₹ %1$d</string>
-  <string name="msg_your_highest_bid">Your bid: ₹  %1$d</string>
+  <string name="msg_your_bid">Your bid: ₹ </string>
   <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
 
@@ -163,6 +162,8 @@
   <string name="label_retry">Retry</string>
   <string name="label_vehicle_number">Vehicle Number:</string>
   <string name="label_driver_phone_no">Driver Phone No:</string>
+  <string name="label_load_request">Load Request</string>
+  <string name="label_lr_number">LR Number</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->
