@@ -50,6 +50,7 @@ class ActiveTripsItemVH(binding: ViewActiveTripItemBinding) :
     _interface: ActiveTripsRVAdapterInterface
   ) {
     binding.trip = item.data
+    binding.btnCreateCard.isEnabled = item.data.isFuelBalanceAvailable()
   }
 }
 

@@ -131,6 +131,26 @@ data class HomeTripsItemData(
   fun requiredTextColor() =
     ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
 
+  /**
+   * Check if fuel balance is available or not
+   */
+  fun isFuelBalanceAvailable(): Boolean {
+    if (fuelCard != null) {
+      try {
+        val activeAmount = fuelCard?.amount?.toInt() ?: 0
+        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0
+        if (activeAmount < allowedAmount) {
+          return true
+        }
+        return false
+      } catch (e: Exception) {
+        return false
+      }
+    } else {
+      return true
+    }
+  }
+
 }
 
 /* actions */

@@ -113,7 +113,7 @@ data class TransactionsItemData(
       transactionType(), TransactionChannel.byType(channel ?: "")
   )
 
-  fun dateTime() = DateUtils.formatISODate(dateTime, "hh:mm dd-MMM-YYY")
+  fun dateTime() = DateUtils.formatISODate(dateTime, "HH:mm dd-MMM-YYY")
 
 }
 

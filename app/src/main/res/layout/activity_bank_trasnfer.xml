@@ -255,6 +255,7 @@
           android:layout_height="match_parent"
           android:gravity="center"
           android:weightSum="1"
+          android:visibility="gone"
           android:orientation="horizontal"
           android:background="@color/transparent_grey"
           >

@@ -190,7 +190,6 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/btn_bid"
             android:layout_width="0dp"
             android:layout_weight="0.6"
             android:layout_height="wrap_content"
@@ -202,6 +201,7 @@
             >
 
           <androidx.appcompat.widget.LinearLayoutCompat
+              android:id="@+id/btn_create_card"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_weight="1"
