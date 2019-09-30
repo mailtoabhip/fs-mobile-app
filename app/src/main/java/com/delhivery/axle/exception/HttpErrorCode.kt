@@ -28,9 +28,7 @@ enum class HttpErrorCode(
     /**
      * Get exception from http response code
      */
-    fun exceptionFromCode(code: Int) = HttpErrorCode.values()
-        .filter { it.code == code }
-        .firstOrNull() ?: UnknownError
+    fun exceptionFromCode(code: Int) = values().firstOrNull { it.code == code } ?: UnknownError
   }
 
   fun toAPIException() = APIException(this)

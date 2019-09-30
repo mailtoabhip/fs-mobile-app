@@ -45,7 +45,7 @@ class ErrorUtils @Inject constructor(
   private fun HttpException.handle() {
     val errorCode = HttpErrorCode.exceptionFromCode(code())
     val errorResponseBody = try {
-      gson.fromJson<ErrorResponseBody>(
+      gson.fromJson(
           response().errorBody()?.string(), ErrorResponseBody::class.java
       )
     } catch (e: Exception) {
@@ -53,7 +53,13 @@ class ErrorUtils @Inject constructor(
       e.printStackTrace()
       null
     }
-    val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+
+    val errorMessage = try {
+      errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+    } catch (e: Exception) {
+      HttpErrorCode.UnknownError.errorMessage
+    }
+
     when (errorCode) {
       Unauthorized, Forbidden -> navigationUtils.logout(errorMessage)
       else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
