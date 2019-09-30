@@ -66,7 +66,7 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
   }
 
   private fun openTransactions() {
-    navigationUtils.navigate(transactionsIntent(this))
+    navigationUtils.navigate(transactionsIntent(this), true)
   }
 
   private fun processTransfer() {

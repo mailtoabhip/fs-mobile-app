@@ -82,7 +82,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     binding.btnRetry.setOnClickListener { createFuelCard() }
     binding.btnCreate.setOnClickListener { createFuelCard() }
     binding.btnTransactionSummary.setOnClickListener {
-      navigationUtils.navigate(transactionsIntent(this))
+      navigationUtils.navigate(transactionsIntent(this), true)
     }
     binding.btnBack.setOnClickListener {
       setResult(Activity.RESULT_OK)
