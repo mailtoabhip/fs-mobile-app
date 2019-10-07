@@ -58,7 +58,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     } else {
       Builder(this)
     }
-    val notificationId = remoteMessage.data["notification_service_notification_id"]
+    val notificationId = remoteMessage.data["notification_service_notification_id"]?:""
 
     remoteMessage.notification?.let {
       val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -66,7 +66,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         putExtra(ARGS_NOTIFICATION_ID, notificationId)
       }
-      Log.d("notificationId added", notificationId)
       val pendingIntent = PendingIntent.getActivity(
           this, 0, intent, PendingIntent.FLAG_ONE_SHOT
       )

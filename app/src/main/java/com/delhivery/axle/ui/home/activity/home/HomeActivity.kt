@@ -120,8 +120,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    viewModel.fromNotification = true
     if (notificationId.isNotEmpty()) {
-      viewModel.fromNotification = true
       markNotificationRead()
     }
     fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
