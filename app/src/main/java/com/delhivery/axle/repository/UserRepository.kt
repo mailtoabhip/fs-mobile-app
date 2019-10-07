@@ -51,7 +51,7 @@ class UserRepository @Inject constructor(
   /**
    * Get user
    */
-  fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache) {
+  fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache || user == null) {
     userService.userDetails(userId())
         .convertResponse()
         .onBackground()
