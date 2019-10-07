@@ -56,7 +56,7 @@ import javax.inject.Inject
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
 
-  var _title: String = "Load Requests"
+  var _title: String = "Load Request"
 
   override val title: CharSequence
     get() = _title
@@ -180,8 +180,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   override fun onResume() {
     super.onResume()
     viewModel.checkUserRoutes()
-    if (viewModel.routeUpdated) {
+    if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
+      viewModel.routeUpdated = false
+      viewModel.fromNotification = false
     }
   }
 
@@ -374,9 +376,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
       val layoutManager: LinearLayoutManager? = recyclerView.layoutManager as? LinearLayoutManager
       val pos = layoutManager?.findFirstVisibleItemPosition()
-      val childView = recyclerView.findViewHolderForAdapterPosition(0)
-          ?.itemView
-      val toolbarElevation = if (pos == 0 && childView != null) {
+      val toolbarElevation = if (pos == 0) {
+        val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
         val viewTopGap = childView.height - stickyView.height * 1f
         val viewTop = childView.top + viewTopGap
         if (viewTop > 0) {

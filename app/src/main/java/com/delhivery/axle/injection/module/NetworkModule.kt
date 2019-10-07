@@ -4,6 +4,7 @@ import android.content.Context
 import com.delhivery.axle.api.BidService
 import com.delhivery.axle.api.CityService
 import com.delhivery.axle.api.FuelService
+import com.delhivery.axle.api.NotificationService
 import com.delhivery.axle.api.PaymentService
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
@@ -171,6 +172,18 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.WarehouseService).create(
       WarehouseService::class.java
+  )
+
+  /**
+   * Provide [NotificationService]
+   */
+  @Provides
+  @Singleton
+  fun provideNotificationService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.NotificationService).create(
+      NotificationService::class.java
   )
 
   /**

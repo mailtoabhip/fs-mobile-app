@@ -17,7 +17,7 @@ import java.text.DecimalFormat
 import javax.inject.Inject
 
 /**
- *
+ * Bid Create/Edit dialog
  */
 class BidDetailsCreateEditDialog @Inject constructor(
   context: Context,

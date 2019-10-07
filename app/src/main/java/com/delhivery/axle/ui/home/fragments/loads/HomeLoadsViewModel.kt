@@ -74,6 +74,12 @@ class HomeLoadsViewModel @Inject constructor(
    */
   fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
 
+  var fromNotification: Boolean
+    get() = userPrefs.fromNotification
+    set(value) {
+      userPrefs.fromNotification = value
+    }
+
   /**
    * Fetch user [Requested] transactions
    */
