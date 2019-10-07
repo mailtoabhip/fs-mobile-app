@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.activity.bank
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -55,14 +56,18 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
 
     binding.btnTransfer.setOnClickListener { processTransfer() }
     binding.btnBack.setOnClickListener {
-      if (!TextUtils.isEmpty(viewModel.refNumber)) {
-        setResult(RESULT_OK)
-      }
       finish()
     }
     binding.btnTransactionSummary.setOnClickListener { openTransactions() }
 
     viewModel.fetchWalletData()
+  }
+
+  override fun finish() {
+    if (!TextUtils.isEmpty(viewModel.refNumber)) {
+      setResult(Activity.RESULT_OK)
+    }
+    super.finish()
   }
 
   private fun openTransactions() {

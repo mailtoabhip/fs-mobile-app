@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@string/label_date_and_time"
+            android:text="Trip Date"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
             android:gravity="end"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@{transaction.dateTime()}"
+            android:text="@{trip.requiredAt()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/label_date"
             app:layout_constraintTop_toTopOf="@+id/label_date"
@@ -194,35 +194,6 @@
             />
 
         <TextView
-            android:id="@+id/label_bid"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/label_bid_price"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_mobile"
-            />
-
-        <TextView
-            android:id="@+id/text_bid"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"
-            android:text="@{trip.bidDetails.bidPrice()}"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintEnd_toEndOf="@+id/text_date"
-            app:layout_constraintStart_toEndOf="@+id/label_bid"
-            app:layout_constraintTop_toTopOf="@+id/label_bid"
-            tools:text="Rs 1234"
-            />
-
-        <TextView
             android:id="@+id/label_vehicle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -232,7 +203,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_bid"
+            app:layout_constraintTop_toBottomOf="@+id/text_mobile"
             />
 
         <TextView

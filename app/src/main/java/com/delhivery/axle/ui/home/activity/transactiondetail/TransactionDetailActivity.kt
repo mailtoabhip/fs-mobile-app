@@ -7,20 +7,28 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.transactions.TransactionsItemData
 import com.delhivery.axle.databinding.ActivityTransactionDetailBinding
+import com.delhivery.axle.databinding.ViewAdvanceAutoDebitTransactionBinding
 import com.delhivery.axle.databinding.ViewAdvanceCreditTransactionBinding
 import com.delhivery.axle.databinding.ViewBankTransferTransactionBinding
 import com.delhivery.axle.databinding.ViewBidDetailsLoadingBidsBinding
+import com.delhivery.axle.databinding.ViewDebitNoteTransactionBinding
 import com.delhivery.axle.databinding.ViewFuelCashbackCreditTransactionBinding
+import com.delhivery.axle.databinding.ViewFuelCashbackDebitTransactionBinding
 import com.delhivery.axle.databinding.ViewFuelCreditRevertTransactionBinding
 import com.delhivery.axle.databinding.ViewFuelDebitTransactionBinding
+import com.delhivery.axle.databinding.ViewReconciliationDebitTransactionBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionState
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateAdvanceAutoDebit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateAdvanceCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateBankTransfer
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateDebitNote
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelCashbackCredit
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelCashbackDebit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelDebit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelRevertCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
 
 class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding, TransactionDetailViewModel>() {
 
@@ -84,7 +92,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
             )
                 .apply {
                   transaction = state.transaction
-                  trip = state.trip
+                  trip = state.tripAndFuel.first
                 }
           }
 
@@ -117,6 +125,48 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
                   trip = state.trip
                 }
           }
+
+          is TransactionStateReconciliationDebit -> {
+            ViewReconciliationDebitTransactionBinding.inflate(
+                layoutInflater, binding.containerDetail, false
+            )
+                .apply {
+                  transaction = state.transaction
+                  trip = state.trip
+                }
+          }
+
+          is TransactionStateFuelCashbackDebit -> {
+            ViewFuelCashbackDebitTransactionBinding.inflate(
+                layoutInflater, binding.containerDetail, false
+            )
+                .apply {
+                  transaction = state.transaction
+                  trip = state.trip
+                }
+          }
+
+          is TransactionStateAdvanceAutoDebit -> {
+            ViewAdvanceAutoDebitTransactionBinding.inflate(
+                layoutInflater, binding.containerDetail, false
+            )
+                .apply {
+                  transaction = state.transaction
+                  trip = state.trip
+                }
+          }
+
+          is TransactionStateDebitNote -> {
+            ViewDebitNoteTransactionBinding.inflate(
+                layoutInflater, binding.containerDetail, false
+            )
+                .apply {
+                  transaction = state.transaction
+                  trip = state.trip
+                }
+          }
+
+
 
           else -> null
         }?.let { _binding ->

@@ -56,7 +56,7 @@ import javax.inject.Inject
 class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
 
-  var _title: String = "Load Request"
+  var _title: String = "Load Requests"
 
   override val title: CharSequence
     get() = _title
@@ -130,7 +130,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         0, null -> getString(string.label_load_request)
         else -> "${getString(string.label_load_request)}($it)"
       }
-//      this@HomeLoadsFragment.activity?.title = _title
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {

@@ -30,10 +30,10 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
-    title = "Transactions Summary"
+    title = "Transaction Summary"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    viewModel.tranactionsLiveData.observe(this, Observer {
+    viewModel.transactionsLiveData.observe(this, Observer {
       binding.refreshLayout.isRefreshing = false
       it?.let { _items ->
         adapter.operation(_items)

@@ -81,7 +81,7 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:visibility="@{ !fetching &amp;&amp; !error ? View.VISIBLE : View.GONE }"
-          tools:visibility="gone"
+          tools:visibility="visible"
           >
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -111,75 +111,17 @@
                 >
 
               <TextView
-                  android:id="@+id/text_active_truck"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:fontFamily="sans-serif-medium"
-                  android:lineSpacingExtra="@dimen/text_8sp"
-                  android:textColor="@color/heading_black"
-                  android:textSize="@dimen/text_16sp"
-                  android:textStyle="normal"
-                  android:text="@{trip.vehicleDetails.vehicleNo}"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toTopOf="parent"
-                  tools:text="HR26 1234"
-                  />
-
-              <TextView
-                  android:id="@+id/text_active_origin"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:fontFamily="sans-serif"
-                  android:text="@{ trip.originCityName() }"
-                  android:textColor="@color/heading_black"
-                  android:layout_marginTop="@dimen/size_8dp"
-                  app:layout_constraintBottom_toBottomOf="parent"
-                  android:textSize="@dimen/text_16sp"
-                  android:textStyle="normal"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@id/text_active_truck"
-                  tools:text="Panjim"
-                  />
-
-              <androidx.appcompat.widget.AppCompatImageView
-                  android:id="@+id/active_img_forward"
-                  android:layout_width="@dimen/size_16dp"
-                  android:layout_height="@dimen/size_16dp"
-                  android:layout_marginStart="@dimen/size_4dp"
-                  app:layout_constraintBottom_toBottomOf="@+id/text_active_origin"
-                  app:layout_constraintStart_toEndOf="@+id/text_active_origin"
-                  app:layout_constraintTop_toTopOf="@+id/text_active_origin"
-                  app:srcCompat="@drawable/ic_arrow_forward_black"
-                  />
-
-              <TextView
-                  android:id="@+id/text_active_destination"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:fontFamily="sans-serif"
-                  android:text="@{ trip.destinationCityName() }"
-                  android:textColor="@color/heading_black"
-                  android:layout_marginStart="@dimen/size_4dp"
-                  android:textSize="@dimen/text_16sp"
-                  android:textStyle="normal"
-                  android:layout_marginEnd="@dimen/size_4dp"
-                  app:layout_constraintTop_toTopOf="@id/text_active_origin"
-                  app:layout_constraintStart_toEndOf="@+id/active_img_forward"
-                  tools:text="Panjim"
-                  />
-
-              <TextView
                   android:id="@+id/label_active_status"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:fontFamily="sans-serif"
                   android:lineSpacingExtra="@dimen/text_8sp"
-                  android:text="Money Given"
+                  android:text="@string/label_money_given"
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_16sp"
                   android:textStyle="normal"
-                  app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintTop_toTopOf="@+id/text_active_truck"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
                   />
 
               <TextView
@@ -193,7 +135,7 @@
                   android:textSize="@dimen/text_16sp"
                   android:textStyle="normal"
                   app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintTop_toTopOf="@+id/text_active_destination"
+                  app:layout_constraintTop_toTopOf="@+id/label_active_status"
                   tools:text="Rs 2000"
                   />
 
@@ -362,7 +304,7 @@
                   android:layout_height="wrap_content"
                   android:fontFamily="sans-serif"
                   android:lineSpacingExtra="@dimen/text_8sp"
-                  android:text="Select Contact number"
+                  android:text="@string/label_give_fuel_to"
                   android:textColor="@color/heading_black"
                   android:textStyle="normal"
                   app:layout_constraintStart_toStartOf="parent"
@@ -713,7 +655,7 @@
                 android:paddingBottom="@dimen/size_4dp"
                 android:background="@drawable/bg_all_round_corner_green"
                 app:layout_constraintTop_toBottomOf="@+id/text_amount"
-                android:text="Fuel Card Pin: 9415"
+                android:text="Fuel Card Pin: 1234"
                 />
 
             <ImageView

@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.transactions
 
+import android.text.TextUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -7,8 +8,10 @@ import com.delhivery.axle.data.transactions.TransactionChannel.HPCL
 import com.delhivery.axle.data.transactions.TransactionChannel.IOCL
 import com.delhivery.axle.data.transactions.TransactionChannel.ORACLE
 import com.delhivery.axle.data.transactions.TransactionChannel.UNKNOWN
+import com.delhivery.axle.data.transactions.TransactionType.ADVANCE_AUTO_DEBIT
 import com.delhivery.axle.data.transactions.TransactionType.ADVANCE_CREDIT
 import com.delhivery.axle.data.transactions.TransactionType.DEBIT
+import com.delhivery.axle.data.transactions.TransactionType.DEBIT_NOTE
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_CREDIT
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_DEBIT
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_REFUND_CREDIT
@@ -39,7 +42,8 @@ data class TransactionsItemData(
   @SerializedName("transaction_reference_number") val transactionNumber: String,
   @SerializedName("channel") val channel: String? = "",
   @SerializedName("trip_id") val tripId: String? = "",
-  @SerializedName("unreconciled_amount") val unreconciledAmount: String
+  @SerializedName("unreconciled_amount") val unreconciledAmount: String,
+  @SerializedName("vehicle_number") val vehicleNumber: String? = ""
 ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = type + (tripId ?: "") + dateTime + amount
@@ -49,7 +53,7 @@ data class TransactionsItemData(
       DEBIT -> {
         when (TransactionChannel.byType(channel ?: "")) {
           ORACLE -> "Transferred to Bank"
-          IOCL, HPCL -> "Transferred for Fuel Credit"
+          IOCL, HPCL -> "Transferred for Fuel"
           UNKNOWN -> transactionType().type
         }
       }
@@ -58,7 +62,32 @@ data class TransactionsItemData(
       RECONCILIATION_DEBIT -> "Advance amount auto withdrawal"
       PETRO_CASHBACK_CREDIT -> "Fuel Cashback Credit"
       PETRO_CASHBACK_DEBIT -> "Fuel Cashback auto withdrawal"
+      ADVANCE_AUTO_DEBIT -> "Advance Transferred Automatically"
+      DEBIT_NOTE -> "Debit Note"
       else -> transactionType().type
+    }
+
+  fun subLabel() =
+    if (TextUtils.isEmpty(failedStatus())) {
+      when (transactionType()) {
+        DEBIT -> {
+          when (TransactionChannel.byType(channel ?: "")) {
+            ORACLE -> accNumber()
+            IOCL, HPCL -> "$vehicleNumber, $toAccNumber"
+            UNKNOWN -> transactionType().type
+          }
+        }
+        ADVANCE_CREDIT -> vehicleNumber
+        PETRO_REFUND_CREDIT -> "$vehicleNumber, $toAccNumber"
+        RECONCILIATION_DEBIT -> "$vehicleNumber($toAccNumber)"
+        PETRO_CASHBACK_CREDIT -> "$vehicleNumber, $toAccNumber"
+        PETRO_CASHBACK_DEBIT -> "${accNumber()}, $vehicleNumber"
+        ADVANCE_AUTO_DEBIT -> "${accNumber()}, $vehicleNumber"
+        DEBIT_NOTE -> "$vehicleNumber, $toAccNumber"
+        else -> transactionType().type
+      }
+    } else {
+      failedStatus()
     }
 
   fun transactionType() = TransactionType.byType(type)
@@ -76,7 +105,10 @@ data class TransactionsItemData(
     else -> "PROCESSED"
   }
 
-  fun transactionRemarks() = (bankRemarks ?: "no bank") + (delhiveryRemarks ?: "no delhivery")
+  fun failedStatus() = when (status) {
+    "failed", "rejected" -> "FAILED"
+    else -> ""
+  }
 
   fun amountAndSymbol() = if (isCredit()) {
     "+ "
@@ -86,7 +118,7 @@ data class TransactionsItemData(
 
   fun amount() = "₹ " + StringUtils.formatAmount(amount)
 
-  fun cashback() = "Cashback: ₹ " + StringUtils.formatAmount(0.03 * amount)
+  fun cashback() = "Cashback: ₹ " + StringUtils.formatAmount(amount * 3 / 100)
 
   /**
    * @return encrypted [toAccNumber]]
@@ -94,7 +126,7 @@ data class TransactionsItemData(
   fun accNumber() =
     if (toAccNumber.isNotNullOrEmpty()) {
       val encrypted = StringBuilder()
-      val maskLength = toAccNumber?.length ?: 4 - 4
+      val maskLength = (toAccNumber?.length ?: 4) - 4
       repeat((maskLength downTo 1).count()) { encrypted.append("*") }
       encrypted.append(toAccNumber?.substring(maskLength))
       encrypted.toString()
@@ -119,7 +151,7 @@ data class TransactionsItemData(
 
 enum class TransactionType(val type: String) {
   DEBIT("debit"),
-  DEBITNOTE("debitnote-debit"),
+  DEBIT_NOTE("debitnote-debit"),
   ADVANCE_AUTO_DEBIT("advance-auto-debit"),
   PETRO_CASHBACK_DEBIT("petro-cashback-debit"),
   RECONCILIATION_DEBIT("reconciliation-debit"),

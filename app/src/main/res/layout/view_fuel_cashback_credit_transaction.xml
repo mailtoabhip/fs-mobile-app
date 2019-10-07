@@ -45,36 +45,6 @@
           >
 
         <TextView
-            android:id="@+id/label_transaction_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/label_transaction_id"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/id2"
-            />
-
-        <TextView
-            android:id="@+id/text_transaction_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            android:text="@{transaction.transactionNumber}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/label_transaction_id"
-            app:layout_constraintTop_toTopOf="@+id/label_transaction_id"
-            tools:text="1234567890"
-            />
-
-        <TextView
             android:id="@+id/label_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,7 +54,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_transaction_id"
+            app:layout_constraintTop_toBottomOf="@+id/id2"
             />
 
         <TextView
@@ -98,40 +68,10 @@
             android:text="@{transaction.dateTime()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/label_date"
             app:layout_constraintTop_toTopOf="@+id/label_date"
             tools:text="qwertyuio"
-            />
-
-        <TextView
-            android:id="@+id/text_lr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"
-            android:text="@{trip.lr}"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
-            app:layout_constraintStart_toEndOf="@+id/label_lr"
-            app:layout_constraintTop_toTopOf="@+id/label_lr"
-            tools:text="LR number"
-            />
-
-        <TextView
-            android:id="@+id/label_lr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/label_lr_number"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_date"
             />
 
         <TextView
@@ -144,11 +84,11 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_lr"
+            app:layout_constraintTop_toBottomOf="@+id/text_date"
             />
 
         <TextView
-            android:id="@+id/text_status"
+            android:id="@+id/text_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
@@ -157,7 +97,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:text="@{trip.originCityName()}"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_origin"
             app:layout_constraintTop_toTopOf="@+id/label_origin"
             tools:text="asdedfrf"
@@ -173,7 +113,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_status"
+            app:layout_constraintTop_toBottomOf="@+id/text_origin"
             />
 
         <TextView
@@ -186,7 +126,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:text="@{trip.destinationCityName()}"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_destination"
             app:layout_constraintTop_toTopOf="@+id/label_destination"
             tools:text="asdedfrf"
@@ -215,7 +155,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:text="@{transaction.toAccNumber}"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_mobile"
             app:layout_constraintTop_toTopOf="@+id/label_mobile"
             tools:text="1234567890"
@@ -246,7 +186,7 @@
             bind:textColor="@{ ContextCompat.getColor(context, transaction.requiredStatusColor()) }"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            app:layout_constraintEnd_toEndOf="@+id/text_transaction_id"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_transaction_status"
             app:layout_constraintTop_toTopOf="@+id/label_transaction_status"
             tools:text="Processed"

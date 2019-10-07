@@ -33,8 +33,8 @@ import javax.inject.Inject
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
-  val userPrefs: UserPrefs,
-  private val bidsRepository: BidsRepository
+  private val bidsRepository: BidsRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* user bids live data */

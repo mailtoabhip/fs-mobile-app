@@ -15,6 +15,11 @@
         type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
 
+    <variable
+        name="fuel"
+        type="com.delhivery.axle.data.fuelcards.FuelCardData"
+        />
+
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -51,26 +56,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
+            android:text="IOCL"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_20sp"
-            android:text="@{transaction.fromAccName}"
-            app:layout_constraintBottom_toTopOf="@+id/text_transaction_id"
-            app:layout_constraintStart_toEndOf="@+id/img_transaction"
-            app:layout_constraintTop_toTopOf="@+id/img_transaction"
-            tools:text="IOCL"
-            />
-
-        <TextView
-            android:id="@+id/text_transaction_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/heading_black"
             app:layout_constraintBottom_toBottomOf="@+id/img_transaction"
             app:layout_constraintStart_toEndOf="@+id/img_transaction"
-            app:layout_constraintTop_toBottomOf="@+id/text_payee_name"
-            tools:text="₹ 23,900.00"
+            app:layout_constraintTop_toTopOf="@+id/img_transaction"
             />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -78,7 +69,7 @@
             android:layout_width="@dimen/size_56dp"
             android:layout_height="@dimen/size_56dp"
             android:layout_marginStart="@dimen/size_12dp"
-            android:layout_marginTop="@dimen/text_16sp"
+            android:layout_marginTop="@dimen/size_8dp"
             app:srcCompat="@drawable/ic_wallet"
             android:paddingTop="@dimen/size_8dp"
             android:paddingBottom="@dimen/size_12dp"
@@ -149,7 +140,6 @@
             android:text="@string/label_wallet"
             />
 
-
         <TextView
             android:id="@+id/label_date"
             android:layout_width="0dp"
@@ -180,13 +170,14 @@
             tools:text="qwertyuio"
             />
 
+
         <TextView
-            android:id="@+id/label_mobile"
+            android:id="@+id/label_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@string/label_mobile_number"
+            android:text="@string/label_origin_city"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -194,19 +185,48 @@
             />
 
         <TextView
-            android:id="@+id/text_mobile"
+            android:id="@+id/text_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
             android:fontFamily="sans-serif"
             android:gravity="end"
-            android:text="@{transaction.toAccNumber}"
+            android:text="@{trip.originCityName()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="@+id/text_date"
-            app:layout_constraintStart_toEndOf="@+id/label_mobile"
-            app:layout_constraintTop_toTopOf="@+id/label_mobile"
-            tools:text="1234567890"
+            app:layout_constraintStart_toEndOf="@+id/label_origin"
+            app:layout_constraintTop_toTopOf="@+id/label_origin"
+            tools:text="asdedfrf"
+            />
+
+        <TextView
+            android:id="@+id/label_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_destination_city"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_origin"
+            />
+
+        <TextView
+            android:id="@+id/text_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="@{trip.destinationCityName()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_destination"
+            app:layout_constraintTop_toTopOf="@+id/label_destination"
+            tools:text="asdedfrf"
             />
 
         <TextView
@@ -219,7 +239,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_mobile"
+            app:layout_constraintTop_toBottomOf="@+id/text_destination"
             />
 
         <TextView
@@ -236,36 +256,6 @@
             app:layout_constraintStart_toEndOf="@+id/label_vehicle_number"
             app:layout_constraintTop_toTopOf="@+id/label_vehicle_number"
             tools:text="1234567890"
-            />
-
-        <TextView
-            android:id="@+id/label_vehicle_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/label_vehicle_type"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_vehicle_number"
-            />
-
-        <TextView
-            android:id="@+id/text_vehicle_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            android:text="@{trip.truckDisplayName}"
-            app:layout_constraintEnd_toEndOf="@+id/text_date"
-            app:layout_constraintStart_toEndOf="@+id/label_vehicle_type"
-            app:layout_constraintTop_toTopOf="@+id/label_vehicle_type"
-            tools:text="24MTX"
             />
 
       </androidx.constraintlayout.widget.ConstraintLayout>

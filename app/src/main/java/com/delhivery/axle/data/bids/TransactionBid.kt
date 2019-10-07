@@ -32,14 +32,10 @@ data class TransactionBid(
     }
   }
 
-  fun diffFromLowestBid(lowestBid: Double) = (lowestBid - bidAmount).let { _diff ->
-    if (_diff.toInt() == 0) return "(Your Bid is same as lowest bid)"
-    when (_diff > 0) {
-      true -> "less"
-      false -> "more"
-    }.let { _x ->
-      "(Your Bid is ₹ ${StringUtils.formatAmount(abs(_diff))} $_x than lowest bid)"
-    }
+  fun diffFromLowestBid(lowestBid: Double) = if (bidAmount > lowestBid) {
+    "(Your Bid is ₹ ${StringUtils.formatAmount(abs((bidAmount - lowestBid)))} more than lowest bid)"
+  } else {
+    "(Your Bid is same as lowest bid)"
   }
 
   /**

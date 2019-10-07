@@ -8,9 +8,11 @@ import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.InTransit
+import com.delhivery.axle.ui.bids.TripType.ActiveForFuel
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -27,10 +29,14 @@ class ActiveTripsViewModel @Inject constructor(
   var hasMoreData = true
   var offset = 0
   var total = 0
-  var trip: TripType = InTransit
+  var trip: TripType = ActiveForFuel
+  var optinDate = ""
 
   var tripsLiveData =
     MutableLiveData<List<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
 
   fun fetchTrips(paginate: Boolean) {
     if (!paginate) {
@@ -39,8 +45,15 @@ class ActiveTripsViewModel @Inject constructor(
       return
     }
 
+    if (paginate) {
+      Pair(ActiveTripProgressItem(), AddUpdate).let { tripsLiveData.postValue(listOf(it)) }
+    }
+
+    dataLoadingLiveData.postValue(true)
+
     compositeDisposable += tripsRepository.trips(
-        offset, trip.status.joinToString(separator = ",") { it }
+        offset, trip.status.joinToString(separator = ",") { it },
+        DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
     )
         .onBackground()
         .subscribe { _res, error ->
@@ -84,6 +97,7 @@ class ActiveTripsViewModel @Inject constructor(
                   tripsLiveData.postValue(it)
                 }
           }
+          dataLoadingLiveData.postValue(false)
         }
   }
 

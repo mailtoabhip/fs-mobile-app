@@ -4,12 +4,17 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+
   <data>
+
     <variable
         name="transaction"
         type="com.delhivery.axle.data.transactions.TransactionsItemData"
         />
+
     <import type="androidx.core.content.ContextCompat" />
+
+    <import type="android.view.View" />
   </data>
 
   <androidx.cardview.widget.CardView
@@ -38,9 +43,12 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif"
-          android:text="@{transaction.transactionRemarks()}"
+          android:text="@{transaction.subLabel()}"
+          bind:textColor="@{ ContextCompat.getColor(context, transaction.requiredStatusColor()) }"
           android:textColor="@color/heading_black"
+          android:visibility="@{ transaction.subLabel().isEmpty() ? View.GONE : View.VISIBLE }"
           app:layout_constraintEnd_toStartOf="@+id/time"
+          tools:visibility="gone"
           app:layout_constraintStart_toStartOf="@+id/label"
           app:layout_constraintTop_toTopOf="@+id/time"
           tools:text="₹ 23,900.00"

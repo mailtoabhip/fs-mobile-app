@@ -11,6 +11,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.utils.StringUtils
 import kotlin.math.min
 
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
@@ -23,6 +24,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     /* validate intent */
     if (intent == null || !intent.hasExtra(ARGS_TRIP_DATA)) {
       throw IllegalArgumentException("Required data $ARGS_TRIP_DATA not found")
@@ -43,8 +45,22 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     binding.error = false
     binding.created = false
     binding.createdError = false
+    binding.tilMobile.isEnabled = false
     if (viewModel.trip.fuelCard != null && viewModel.trip.fuelCard?.amount != "0") {
       binding.containerActiveCard.visibility = View.VISIBLE
+      if (viewModel.trip.fuelCard?.mobile?.compareTo(
+              viewModel.trip.driverDetails?.driverPhoneNo ?: ""
+          ) == 0
+      ) {
+        binding.radioDriverNum.isChecked = true
+        binding.radioOtherNum.isEnabled = false
+        binding.tilMobile.isEnabled = false
+      } else {
+        binding.radioOtherNum.isChecked = true
+        binding.radioDriverNum.isEnabled = false
+        binding.tilMobile.isEnabled = false
+        binding.editMobile.setText(viewModel.trip.fuelCard?.mobile ?: "")
+      }
     }
     binding.executePendingBindings()
 
@@ -65,15 +81,17 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       binding.executePendingBindings()
     })
 
-    binding.radioNumGroup.setOnCheckedChangeListener { group, checkedId ->
+    binding.radioNumGroup.setOnCheckedChangeListener { _, checkedId ->
       when (checkedId) {
         R.id.radio_driver_num -> {
           uiUtils.toggleKeyboard()
           binding.editMobile.clearFocus()
           binding.tilMobile.hint = getString(R.string.label_enter_number)
+          binding.tilMobile.isEnabled = false
         }
 
         R.id.radio_other_num -> {
+          binding.tilMobile.isEnabled = true
           binding.editMobile.requestFocus()
         }
       }
@@ -85,7 +103,6 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       navigationUtils.navigate(transactionsIntent(this), true)
     }
     binding.btnBack.setOnClickListener {
-      setResult(Activity.RESULT_OK)
       finish()
     }
     binding.containerCreateCardError.setOnClickListener {
@@ -95,6 +112,11 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
     binding.fetching = true
     viewModel.fetchWalletData()
+  }
+
+  override fun finish() {
+    setResult(Activity.RESULT_OK)
+    super.finish()
   }
 
   private fun createFuelCard() {
@@ -107,7 +129,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       mobileNum = viewModel.trip.driverDetails?.driverPhoneNo ?: ""
     } else if (binding.radioOtherNum.isChecked) {
       mobileNum = binding.editMobile.text.toString()
-      if (mobileNum.isEmpty() || mobileNum.length != 10) {
+      if (mobileNum.isEmpty() || mobileNum.length != 10 || mobileNum.toBigInteger() < 6000000000.toBigInteger()) {
         binding.tilMobile.requestFocus()
         binding.tilMobile.error = "Enter a valid mobile number"
         return
@@ -132,14 +154,19 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
         }
 
       val minVal =
-        min(viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100) ?: 0, viewModel.balance)
+        min(
+            viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100) ?: 0,
+            viewModel.balance
+        )
       if (mAmount > minVal) {
         binding.tilAmount.requestFocus()
         binding.tilAmount.error = "Max amount which can be transferred is $minVal"
         return
       }
       binding.cashback =
-        "You will receive cashback of " + (mAmount * 3 / 100) + " when the trip ends"
+        "You will receive cashback of " + StringUtils.formatAmount(
+            mAmount * 3 / 100
+        ) + " when the trip ends"
     }
 
     binding.numberRecharged = mobileNum

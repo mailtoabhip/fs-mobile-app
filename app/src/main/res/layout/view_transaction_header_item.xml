@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_24dp"
-            android:text="@string/label_your_advance_amount"
+            android:text="@string/label_axle_money"
             app:layout_constraintStart_toEndOf="@+id/id1"
             app:layout_constraintTop_toTopOf="@+id/id1"
             />

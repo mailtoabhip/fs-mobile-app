@@ -32,13 +32,28 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
     ActiveTripsRVAdapter(this)
   }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    /* validate intent */
+    if (intent == null || !intent.hasExtra(ARGS_OPTIN_DATE)) {
+      throw IllegalArgumentException("Required data $ARGS_OPTIN_DATE not found")
+    }
+
+    viewModel.optinDate = intent?.getStringExtra(ARGS_OPTIN_DATE) ?: ""
+  }
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Fuel Cards"
+    title = "Select Active Trip for fuel"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    viewModel.dataLoadingLiveData.observe(this, Observer {
+      isLoadingData = it ?: false
+    })
 
     viewModel.tripsLiveData.observe(this, Observer {
       it?.let { _items -> adapter.operation(_items) }
@@ -109,10 +124,15 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
   }
 }
 
+/* intent keys */
+private const val ARGS_OPTIN_DATE = "args_optin_date"
+
 /**
  * Trips Fuel Credit intent
  */
 fun tripsFuelCreditIntent(
-  context: Context
+  context: Context,
+  optinDate: String
 ) = Intent(context, ActiveTripsActivity::class.java).apply {
+  putExtra(ARGS_OPTIN_DATE, optinDate)
 }

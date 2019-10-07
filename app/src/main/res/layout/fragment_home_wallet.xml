@@ -47,7 +47,7 @@
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="0dp"
-          android:layout_weight="0.6"
+          android:layout_weight="0.5"
           >
 
         <androidx.viewpager.widget.ViewPager
@@ -72,14 +72,14 @@
           android:layout_gravity="center_vertical"
           android:gravity="center_vertical"
           android:orientation="vertical"
-          android:layout_weight="0.4"
+          android:layout_weight="0.5"
           >
 
         <TextView
             android:id="@+id/btn_activate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_get_started"
+            android:text="@string/label_next"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/white"
             android:background="@drawable/bg_all_round_corner_black"
@@ -95,18 +95,31 @@
 
         <TextView
             android:id="@+id/btn_faq"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_wallet_faq"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/black"
+            android:textColor="@color/heading_black"
             android:gravity="center"
             android:textSize="@dimen/text_16sp"
-            android:layout_marginTop="@dimen/size_32dp"
+            android:layout_marginTop="@dimen/size_20dp"
             android:paddingTop="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_16dp"
             android:paddingStart="@dimen/size_32dp"
             android:paddingEnd="@dimen/size_32dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_wallet_note"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/sub_heading_black"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:textSize="@dimen/text_14sp"
+            android:paddingStart="@dimen/size_24dp"
+            android:paddingEnd="@dimen/size_24dp"
             />
 
       </androidx.appcompat.widget.LinearLayoutCompat>

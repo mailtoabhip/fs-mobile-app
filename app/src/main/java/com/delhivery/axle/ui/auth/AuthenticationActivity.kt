@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.auth
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -32,7 +31,6 @@ import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import io.reactivex.Observable
@@ -154,22 +152,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun otpSubmitted(otp: CharArray) {
     viewModel.verifyOTP(otp)
-  }
-
-  /**
-   * Read receive permission
-   */
-  private fun receiveSMSPermission(action: (granted: Boolean) -> Unit) {
-    compositeDisposable += requestPermission(Manifest.permission.RECEIVE_SMS)
-        .onBackground()
-        .subscribe { granted, error ->
-          if (error == null && granted) {
-            action(granted)
-          } else {
-            action(false)
-            /* read permission error */
-          }
-        }
   }
 
   override fun otpFound(otp: String) {

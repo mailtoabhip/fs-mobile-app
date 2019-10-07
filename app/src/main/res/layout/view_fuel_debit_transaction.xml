@@ -17,6 +17,8 @@
         />
 
     <import type="androidx.core.content.ContextCompat" />
+
+    <import type="android.view.View"/>
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -93,9 +95,8 @@
             android:layout_marginBottom="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/text_16sp"
-            app:srcCompat="@drawable/ic_wallet"
-            android:paddingTop="@dimen/size_8dp"
-            android:paddingBottom="@dimen/size_12dp"
+            app:srcCompat="@drawable/ic_cashback"
+            android:padding="@dimen/size_8dp"
             android:background="@drawable/bg_circular_boundary_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -236,7 +237,7 @@
             android:gravity="end"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@{trip.driverDetails.driverPhoneNo}"
+            android:text="@{transaction.toAccNumber}"
             app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_mobile"
             app:layout_constraintTop_toTopOf="@+id/label_mobile"
@@ -312,7 +313,6 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_vehicle_type"
             />
 
@@ -330,6 +330,39 @@
             app:layout_constraintEnd_toEndOf="@+id/text_date"
             app:layout_constraintStart_toEndOf="@+id/label_transaction_status"
             app:layout_constraintTop_toTopOf="@+id/label_transaction_status"
+            tools:text="Processed"
+            />
+
+        <TextView
+            android:id="@+id/label_transaction_remarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:visibility="@{ transaction.failedStatus().isEmpty() ? View.GONE : View.VISIBLE }"
+            android:text="@string/label_transaction_remarks"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_transaction_status"
+            />
+
+        <TextView
+            android:id="@+id/text_transaction_remarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{transaction.bankRemarks}"
+            android:textColor="@color/heading_black"
+            android:visibility="@{ transaction.failedStatus().isEmpty() ? View.GONE : View.VISIBLE }"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_transaction_remarks"
+            app:layout_constraintTop_toTopOf="@+id/label_transaction_remarks"
             tools:text="Processed"
             />
 

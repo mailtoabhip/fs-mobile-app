@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.FragmentHomeWalletBinding
@@ -29,7 +30,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     TitleProvider {
 
   override val title: CharSequence
-    get() = "Balance"
+    get() = "Axle Money"
 
   init {
     hasInlineProgress = true
@@ -88,11 +89,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     binding.containerFuel.setOnClickListener { openFuelCredits() }
     binding.containerBank.setOnClickListener { openBankTransfer() }
     binding.containerFastTag.setOnClickListener { openFastTag() }
-    binding.btnActivate.setOnClickListener {
-      binding.loading = true
-      binding.executePendingBindings()
-      viewModel.activateWallet()
-    }
+    binding.btnActivate.setOnClickListener { moveNext() }
     binding.refreshWallet.setOnRefreshListener {
       binding.refreshWallet.isRefreshing = false
       binding.loading = true
@@ -105,8 +102,20 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
       binding.executePendingBindings()
       viewModel.activateWallet()
     }
+    binding.viewPager.addOnPageChangeListener(PageChangeListener())
 
     viewModel.fetchWalletData()
+  }
+
+  private fun moveNext() {
+    val currentPage = binding.viewPager.currentItem
+    if (currentPage < adapter.count - 1) {
+      binding.viewPager.setCurrentItem(currentPage + 1, true)
+    } else {
+      binding.loading = true
+      binding.executePendingBindings()
+      viewModel.activateWallet()
+    }
   }
 
   private fun openTransactions() {
@@ -114,7 +123,11 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
   }
 
   private fun openFuelCredits() {
-    context?.let { startActivityForResult(tripsFuelCreditIntent(it), REQCODE_CREATE_ACTIVE_TRIPS) }
+    context?.let {
+      startActivityForResult(
+          tripsFuelCreditIntent(it, viewModel.optinDate), REQCODE_CREATE_ACTIVE_TRIPS
+      )
+    }
   }
 
   private fun openBankTransfer() {
@@ -134,6 +147,9 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     if (resultCode == RESULT_OK) {
       when (requestCode) {
         REQCODE_BANK_TRANSACTION -> {
+          binding.refreshWallet.isRefreshing = false
+          binding.loading = true
+          binding.executePendingBindings()
           viewModel.fetchWalletData()
         }
 
@@ -144,7 +160,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     }
   }
 
-  class IntroPagerAdapter : PagerAdapter() {
+  inner class IntroPagerAdapter : PagerAdapter() {
 
     lateinit var layoutInflater: LayoutInflater
 
@@ -175,4 +191,25 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
       super.destroyItem(container, position, obj)
     }
   }
+
+  inner class PageChangeListener : OnPageChangeListener {
+
+    override fun onPageScrollStateChanged(state: Int) {}
+
+    override fun onPageScrolled(
+      position: Int,
+      positionOffset: Float,
+      positionOffsetPixels: Int
+    ) {
+    }
+
+    override fun onPageSelected(position: Int) {
+      if (position == adapter.count - 1) {
+        binding.btnActivate.text = getString(string.label_get_started)
+      } else {
+        binding.btnActivate.text = getString(string.label_next)
+      }
+    }
+  }
+
 }

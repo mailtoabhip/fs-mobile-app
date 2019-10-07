@@ -40,10 +40,11 @@ class TripsRepository @Inject constructor(
    */
   fun trips(
     offset: Int = 0,
-    statuses: String
+    statuses: String,
+    updatedAfter: String? = null
   ) = tripsService.tripsForStatuses(
       userRepository.userId(), UserTripsLoadLimit,
-      offset, statuses
+      offset, statuses, updatedAfter
   )
       .convertResponse()
 

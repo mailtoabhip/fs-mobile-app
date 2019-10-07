@@ -52,26 +52,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
+            android:text="@{transaction.fromAccName}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_20sp"
-            android:text="@{transaction.fromAccName}"
-            app:layout_constraintBottom_toTopOf="@+id/text_transaction_id"
+            app:layout_constraintBottom_toBottomOf="@+id/img_transaction"
             app:layout_constraintStart_toEndOf="@+id/img_transaction"
             app:layout_constraintTop_toTopOf="@+id/img_transaction"
             tools:text="From account name"
-            />
-
-        <TextView
-            android:id="@+id/text_transaction_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/heading_black"
-            app:layout_constraintBottom_toBottomOf="@+id/img_transaction"
-            app:layout_constraintStart_toEndOf="@+id/img_transaction"
-            app:layout_constraintTop_toBottomOf="@+id/text_payee_name"
-            tools:text="₹ 23,900.00"
             />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -126,21 +113,6 @@
           >
 
         <TextView
-            android:id="@+id/text_bank_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_4dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_20sp"
-            android:text="@{bank}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/id2"
-            tools:text="State bank of india"
-            />
-
-        <TextView
             android:id="@+id/label_acc_num"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -150,7 +122,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_bank_name"
+            app:layout_constraintTop_toBottomOf="@+id/id2"
             />
 
         <TextView

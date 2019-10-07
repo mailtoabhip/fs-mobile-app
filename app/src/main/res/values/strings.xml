@@ -89,7 +89,7 @@
   <string name="label_hello_world">Label Hello World</string>
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
   <string name="label_otp">Enter OTP</string>
-  <string name="label_powered_by_delhivery">Powerd by Delhivery pvt ltd</string>
+  <string name="label_powered_by_delhivery">Powered by Delhivery pvt ltd</string>
   <string name="label_phone_number">Phone number</string>
   <string name="label_isd_code">+91</string>
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
@@ -104,8 +104,9 @@
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_alerts">Alerts</string>
-  <string name="label_nav_payment">Wallet</string>
+  <string name="label_nav_payment">Axle Money</string>
   <string name="label_nav_profile">Profile</string>
+  <string name="label_nav_helpline">HELPLINE</string>
   <string name="label_from">From</string>
   <string name="label_to">To</string>
   <string name="label_target_price">Target price</string>
@@ -144,7 +145,7 @@
   <string name="label_coming_soon">Coming Soon</string>
   <string name="label_trip_meter">Trip Meter</string>
   <string name="label_add_nearby_locations">Add nearby locations?</string>
-  <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.></string>
+  <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.</string>
   <string name="label_resend_otp">Resend OTP</string>
   <string name="Rs">\u20B9</string>
   <string name="label_anywhere">Anywhere</string>
@@ -160,8 +161,8 @@
   <string name="label_fastag">Fast Tag</string>
   <string name="label_bank">Bank</string>
   <string name="label_fuel_credit">Fuel Credit</string>
-  <string name="label_transfer_amount">Transfer Advance Amount to</string>
-  <string name="label_your_advance_amount">Your advance amount</string>
+  <string name="label_transfer_amount">Transfer Axle Money to</string>
+  <string name="label_your_advance_amount">Axle Money</string>
   <string name="label_transaction_history">Transaction History</string>
   <string name="label_custom_dates">Custom Dates</string>
   <string name="label_ongoing_trips">Ongoing Trips</string>
@@ -179,11 +180,13 @@
   <string name="label_enter_amount">Enter Amount</string>
   <string name="label_confirm_transfer">CONFIRM TRANSFER</string>
   <string name="label_balance">Balance</string>
+  <string name="label_axle_money">Axle Money</string>
   <string name="label_utr_number">UTR Number</string>
   <string name="label_exit">EXIT</string>
   <string name="label_mail_us">MAIL US</string>
   <string name="label_get_started">GET STARTED</string>
-  <string name="label_wallet_faq">VIEW MORE DETAILS ABOUT FUEL DISCOUNTS</string>
+  <string name="label_wallet_faq">VIEW MORE DETAILS</string>
+  <string name="label_wallet_note">Note: On activating Axle Money, you will receive Advance amount in Axle Money instead of your bank account. You can transfer from Axle Money to your bank account easily anytime</string>
   <string name="label_you_will_receive">You will receive</string>
   <string name="label_when_the_trip_ends">when the trip ends</string>
   <string name="label_transfer_success">Transfer initiated successfully for</string>
@@ -197,7 +200,7 @@
   <string name="label_money_given">Money given</string>
   <string name="label_create_fuel_card">CREATE FUEL CARD</string>
   <string name="label_enter_number">Enter mobile number</string>
-  <string name="label_fuel_faq">VIEW MORE DETAILS ABOUT FUEL DISCOUNTS</string>
+  <string name="label_fuel_faq">VIEW MORE DETAILS</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -207,7 +210,12 @@
   <string name="error_search_missing_origin">Please select origin</string>
 
   <string name="not_available">Not available</string>
-  <string name="label_bank_status">You will receive a confirmation from your bank within 3-4 hours about successful transfer</string>
+  <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
+  <string name="msg_call_permission">Please provide permission to call</string>
+  <string name="label_next">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;NEXT&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
+  <string name="label_give_fuel_to">Give fuel to</string>
+  <string name="label_transaction_remarks">Transaction Remarks</string>
+  <string name="label_supplier_details">Suppliers Details</string>
 
   <string-array name="array_truck_type">
     <!--<item>Truck type</item>-->

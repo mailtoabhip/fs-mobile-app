@@ -20,7 +20,8 @@ data class WalletData(
   @SerializedName("withdrawal_account_ifsc") val ifsc: String,
   @SerializedName("withdrawal_account_name") val accName: String,
   @SerializedName("withdrawal_account_number") val accNumber: String,
-  @SerializedName("withdrawal_account_type") val accType: String
+  @SerializedName("withdrawal_account_type") val accType: String,
+  @SerializedName("optin_date_time") val optinDate: String
 ) {
 
   fun balance() = "₹ ${StringUtils.formatAmount(balance)}"

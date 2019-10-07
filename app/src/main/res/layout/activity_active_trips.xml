@@ -26,8 +26,8 @@
         android:textColor="@color/white"
         android:gravity="center"
         android:textSize="@dimen/text_16sp"
-        android:background="@color/transparent_grey"
-        android:text="Please use this card pin for all fuel purchases: 9087"
+        android:background="@color/status_active"
+        android:text="For all fuel purchases, use Card PIN: 1234"
         />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

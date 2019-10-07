@@ -10,8 +10,8 @@ data class TransactionHeaderItemData(
   override fun key() = TransactionHeaderItemDataKey
 
   fun numTransactions() = when (numTransactions) {
-    0, null -> "Transaction History(0)"
-    else -> "Transaction History($numTransactions)"
+    0, null -> "Transaction History (0)"
+    else -> "Transaction History ($numTransactions)"
   }
 }
 

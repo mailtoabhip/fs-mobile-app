@@ -55,6 +55,20 @@ object DateUtils {
     }
   }
 
+  fun formatISODateToUTC(
+    date: String,
+    format: String
+  ): String {
+    return try {
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.timeZone = TimeZone.getTimeZone("UTC")
+      dateFormatter.format(ISO8601Utils.parse(date, ParsePosition(0)))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ""
+    }
+  }
+
   fun formatISODate(
     date: String,
     format: String

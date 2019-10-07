@@ -32,20 +32,15 @@ enum class TripType(
       "Advance Pending", "Advance Pending trips"
   ),
   InTransit(
-      1,
-      listOf(TruckReached.statusKey, In_Transit.statusKey),
+      1, listOf(TruckReached.statusKey, In_Transit.statusKey),
       "InTransit", "InTransit trips"
   ),
   BalancePending(
-      2,
-      listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey),
+      2, listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey),
       "Balance Pending", "Balance Pending trips "
   ),
-  Completed(
-      3,
-      listOf(TripCompleted.statusKey),
-      "Completed", "Completed trips"
-  );
+  Completed(3, listOf(TripCompleted.statusKey), "Completed", "Completed trips"),
+  ActiveForFuel(4, listOf(In_Transit.statusKey), "Active", " Active trips");
 
   /**
    * Get toolbar title with count of items

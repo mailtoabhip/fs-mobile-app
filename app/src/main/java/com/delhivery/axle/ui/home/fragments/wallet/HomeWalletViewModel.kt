@@ -17,6 +17,8 @@ class HomeWalletViewModel @Inject constructor(
 
   var walletLiveData = MutableLiveData<WalletData>()
 
+  var optinDate = ""
+
   /**
    * Returns wallet active flag from cache
    */
@@ -36,6 +38,7 @@ class HomeWalletViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (_res != null && !error) {
             userPrefs.walletActivated = true
+            this.optinDate = _res.wallet.optinDate
             walletLiveData.postValue(_res.wallet)
           } else {
             walletLiveData.postValue(null)
@@ -53,6 +56,7 @@ class HomeWalletViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (_res != null && !error) {
             walletLiveData.postValue(_res.wallet)
+            this.optinDate = _res.wallet.optinDate
           } else {
             walletLiveData.postValue(null)
           }

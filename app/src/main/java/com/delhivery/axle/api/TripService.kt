@@ -31,7 +31,8 @@ interface TripService {
     @Query("vendor_id") userId: String,
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
-    @Query("status_list") status: String? = null
+    @Query("status_list") status: String? = null,
+    @Query("updated_after") updatedAfter: String? = null
   ): Single<BaseResponse<TripsResponse>>
 
   /**

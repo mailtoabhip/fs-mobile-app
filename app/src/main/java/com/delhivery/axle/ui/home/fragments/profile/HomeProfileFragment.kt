@@ -44,36 +44,62 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.apply {
-      containerYourRoutes.setOnClickListener {
-        // Capture event
-        analyticsUtil.trackEvent(
-            EVENT_EDIT_ROUTE,
-            mutableListOf(PROPERTY_SOURCE),
-            mutableListOf(VALUE_PROFILE)
-        )
-        it.post {
-          startActivityForResult(
-              selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
-          )
-        }
-      }
+    binding.error = false
+    binding.loading = true
+    binding.executePendingBindings()
 
-      containerLogout.setOnClickListener { it.post { confirmLogout() } }
+    viewModel.tripEarningLiveData.reobserve(this, Observer { t ->
+      binding.loading = false
+      if (t != null) {
+        binding.error = false
+        updateTripMeter(t)
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Timed out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
+              " Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
+      }
+      binding.executePendingBindings()
+    })
+
+    binding.containerYourRoutes.setOnClickListener {
+      // Capture event
+      analyticsUtil.trackEvent(
+          EVENT_EDIT_ROUTE,
+          mutableListOf(PROPERTY_SOURCE),
+          mutableListOf(VALUE_PROFILE)
+      )
+      it.post {
+        startActivityForResult(
+            selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
+        )
+      }
     }
+
+    binding.containerLogout.setOnClickListener { it.post { confirmLogout() } }
 
     binding.containerTripMeter.setOnClickListener {
       viewModel.fetchTripMeter()
     }
 
-    viewModel.tripEarningLiveData.reobserve(this, Observer { t ->
-      updateTripMeter(t)
-    })
+    binding.containerError.btnAction.setOnClickListener {
+      binding.loading = true
+      binding.executePendingBindings()
+      viewModel.fetchTripMeter()
+    }
 
     viewModel.fetchTripMeter()
   }
 
   private fun updateTripMeter(t: Map<Int, MonthlyEarning?>?) {
+    binding.name = viewModel.userPrefs.userName
+    binding.company = viewModel.userPrefs.companyName
+    binding.mobile = viewModel.userPrefs.phoneNumber
+    binding.bankAcc = viewModel.userPrefs.accNumber
+    binding.ifsc = viewModel.userPrefs.ifscCode
+    binding.pan = viewModel.userPrefs.pancard
     if (t != null && t.size == 2) {
       val keys = t.keys.toMutableList()
       val key1 = keys[0]
@@ -86,6 +112,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         binding.currentMonth = t[key2]
       }
     }
+    binding.executePendingBindings()
   }
 
   /**

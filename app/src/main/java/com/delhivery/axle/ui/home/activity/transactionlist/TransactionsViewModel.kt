@@ -23,7 +23,7 @@ class TransactionsViewModel @Inject constructor(
   private val walletRepository: WalletRepository
 ) : BaseViewModel() {
 
-  var tranactionsLiveData =
+  var transactionsLiveData =
     MutableLiveData<List<Pair<BaseTransactionsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
   fun fetchTransactions() {
@@ -52,13 +52,13 @@ class TransactionsViewModel @Inject constructor(
               }
             }
                 .let {
-                  tranactionsLiveData.postValue(it)
+                  transactionsLiveData.postValue(it)
                 }
           } else {
             mutableListOf<Pair<BaseTransactionsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               add(Pair(TransactionWarningItem_TimeOut, Add))
             }
-                .let { tranactionsLiveData.postValue(it) }
+                .let { transactionsLiveData.postValue(it) }
           }
         }
   }

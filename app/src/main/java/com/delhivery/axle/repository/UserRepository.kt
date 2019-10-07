@@ -1,7 +1,6 @@
 package com.delhivery.axle.repository
 
 import com.auth0.android.jwt.JWT
-import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
@@ -13,6 +12,7 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import javax.inject.Inject
@@ -25,7 +25,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class UserRepository @Inject constructor(
-  private val appDatabase: AppDatabase,
+  private val appDB: AppDatabase,
   private val userPrefs: UserPrefs,
   private val userService: UserService
 ) : BaseRepository() {
@@ -42,26 +42,19 @@ class UserRepository @Inject constructor(
    * Current user id
    */
   fun userId() =
-    when (BuildConfig.FLAVOR) {
-      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
-      else -> (jwt.claims["sub"]?.asString()!!)
-    }
-
-  /**
-   * Get user selected routes
-   */
-  fun userRoutes(cache: Boolean = true) = if (!cache || user == null) {
-    getUser()
-  } else {
-    Single.just(user!!)
-  }.map { it.routes }
+//    when (BuildConfig.FLAVOR) {
+//      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
+//      else ->
+    (jwt.claims["sub"]?.asString()!!)
+//    }
 
   /**
    * Get user
    */
-  fun getUser(cache: Boolean = true) = if (!cache || user == null) {
+  fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache) {
     userService.userDetails(userId())
         .convertResponse()
+        .onBackground()
         .doOnSuccess {
           if (it != null) {
             user = it

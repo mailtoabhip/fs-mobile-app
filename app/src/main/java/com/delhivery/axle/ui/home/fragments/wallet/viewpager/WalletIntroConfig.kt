@@ -5,27 +5,27 @@ import com.delhivery.axle.R
 /**
  * On-boarding config
  */
-data class WalletIntoScreen(
+data class WalletIntroScreen(
   val title: String,
   val message: String,
   val icon: Int
 )
 
 /**
- * On-boarding config [List] of [WalletIntoScreen]
+ * On-boarding config [List] of [WalletIntroScreen]
  */
 val WalletIntroConfig = listOf(
-    WalletIntoScreen(
-        "Introducing your balance",
-        "Receive advance money in Your Balance - Use for fuel purchase and transfer remaining to your bank",
+    WalletIntroScreen(
+        "Introducing Axle Money",
+        "Receive Advance amount as Axle Money - Use for fuel purchase and transfer remaining amount from Axle Money your bank",
         R.drawable.ic_balance_intro
     ),
-    WalletIntoScreen(
-        "Introductory Offer Avail 3% cashback on fuel purchase",
-        "Get 3% cashback into account on fuel used and lower your operating cost while working with us",
+    WalletIntroScreen(
+        "Introductory Offer of 3% Cashback on Fuel Purchase",
+        "Receive 3% cashback on fuel usage in bank account; lower your Operating Costs with us",
         R.drawable.ic_fuel_intro
     ),
-    WalletIntoScreen(
+    WalletIntroScreen(
         "Track your payments easily",
         "Get digital record of all transactions along with date and Bank Transaction ID",
         R.drawable.ic_transaction_intro
