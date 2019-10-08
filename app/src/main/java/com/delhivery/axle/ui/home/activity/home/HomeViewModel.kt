@@ -22,6 +22,9 @@ class HomeViewModel @Inject constructor(
       userPrefs.fromNotification = value
     }
 
+  /**
+   * Mark notification read
+   */
   fun markNotificationRead(id: String) {
     compositeDisposable += notificationRepository.markNotificationRead(id)
         .onBackground()

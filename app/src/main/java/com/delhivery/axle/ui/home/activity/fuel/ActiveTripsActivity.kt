@@ -30,6 +30,7 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
   override fun requireConnection() = true
 
   var isLoadingData = true
+  var cardCreated = false
 
   private val adapter: ActiveTripsRVAdapter by lazy {
     ActiveTripsRVAdapter(this)
@@ -90,7 +91,8 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
         val data = item.data as? HomeTripsItemData
         if (data != null)
           navigationUtils.navigateForActivityResult(
-              createFuelCardIntent(this, data), false, REQCODE_CREATE_FUELCARD
+              createFuelCardIntent(this, data, viewModel.getActiveNumbers(data.fuelCard?.mobile)),
+              false, REQCODE_CREATE_FUELCARD
           )
       }
 
@@ -99,10 +101,17 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
       }
 
       TransactionWarningAction_NoTransactions -> {
-        setResult(RESULT_OK)
+        setResult(Activity.RESULT_FIRST_USER)
         finish()
       }
     }
+  }
+
+  override fun finish() {
+    if (cardCreated) {
+      setResult(Activity.RESULT_OK)
+    }
+    super.finish()
   }
 
   override fun onActivityResult(
@@ -112,6 +121,7 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == REQCODE_CREATE_FUELCARD && resultCode == Activity.RESULT_OK) {
+      cardCreated = true
       refreshData()
     }
   }

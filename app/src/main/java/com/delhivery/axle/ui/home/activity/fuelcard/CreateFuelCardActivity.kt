@@ -34,6 +34,8 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
     }
 
     viewModel.trip = intent.getSerializableExtra(ARGS_TRIP_DATA) as HomeTripsItemData
+    viewModel.activeNumbers =
+      intent?.getStringArrayListExtra(ARGS_ACTIVE_NUM)?.toMutableList() ?: mutableListOf()
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -118,7 +120,8 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
   }
 
   override fun finish() {
-    setResult(Activity.RESULT_OK)
+    if (binding.created == true)
+      setResult(Activity.RESULT_OK)
     super.finish()
   }
 
@@ -142,6 +145,11 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       return
     }
 
+    if (viewModel.activeNumbers.contains(mobileNum)) {
+      binding.tilMobile.error = "This number already has an active fuel card"
+      return
+    }
+
     val amount = binding.editAmount.text.toString()
     if (amount.isEmpty()) {
       binding.tilAmount.requestFocus()
@@ -156,11 +164,9 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
           return
         }
 
-      val minVal =
-        min(
-            viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100) ?: 0,
-            viewModel.balance
-        )
+      val allowedFuel = (viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100)
+          ?: 0) - (viewModel.trip.fuelCard?.amount?.toInt() ?: 0)
+      val minVal = min(allowedFuel, viewModel.balance)
       if (mAmount > minVal) {
         binding.tilAmount.requestFocus()
         binding.tilAmount.error = "Max amount which can be transferred is $minVal"
@@ -183,13 +189,16 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
 /* intent keys */
 private const val ARGS_TRIP_DATA = "args_trip_data"
+private const val ARGS_ACTIVE_NUM = "args_active_num"
 
 /**
  * Create Fuel Card intent
  */
 fun createFuelCardIntent(
   context: Context,
-  trip: HomeTripsItemData
+  trip: HomeTripsItemData,
+  activeNumbers: ArrayList<String>
 ) = Intent(context, CreateFuelCardActivity::class.java).apply {
   putExtra(ARGS_TRIP_DATA, trip)
+  putExtra(ARGS_ACTIVE_NUM, activeNumbers)
 }

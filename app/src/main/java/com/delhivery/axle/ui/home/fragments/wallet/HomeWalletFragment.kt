@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.wallet
 
+import android.app.Activity.RESULT_FIRST_USER
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
@@ -146,16 +147,16 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     super.onActivityResult(requestCode, resultCode, data)
     if (resultCode == RESULT_OK) {
       when (requestCode) {
-        REQCODE_BANK_TRANSACTION -> {
+        REQCODE_BANK_TRANSACTION, REQCODE_CREATE_ACTIVE_TRIPS -> {
           binding.refreshWallet.isRefreshing = false
           binding.loading = true
           binding.executePendingBindings()
           viewModel.fetchWalletData()
         }
-
-        REQCODE_CREATE_ACTIVE_TRIPS -> {
-          action(NavigateHomeFragmentAction(LoadsFragment))
-        }
+      }
+    } else if (resultCode == RESULT_FIRST_USER) {
+      if (requestCode == REQCODE_CREATE_ACTIVE_TRIPS) {
+        action(NavigateHomeFragmentAction(LoadsFragment))
       }
     }
   }

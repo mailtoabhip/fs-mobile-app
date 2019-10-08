@@ -20,6 +20,7 @@ class CreateFuelCardViewModel @Inject constructor(
 ) : BaseViewModel() {
 
   lateinit var trip: HomeTripsItemData
+  lateinit var activeNumbers: MutableList<String>
 
   var balance: Int = 0
 

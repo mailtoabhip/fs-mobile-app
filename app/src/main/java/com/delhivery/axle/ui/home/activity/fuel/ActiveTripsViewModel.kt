@@ -128,4 +128,13 @@ class ActiveTripsViewModel @Inject constructor(
           }
         }
   }
+
+  fun getActiveNumbers(mobile: String?): ArrayList<String> {
+    val numbers = arrayListOf<String>()
+    for (card in cards) {
+      if (card.mobile.compareTo(mobile ?: "") != 0)
+        numbers.add(card.mobile)
+    }
+    return numbers
+  }
 }
