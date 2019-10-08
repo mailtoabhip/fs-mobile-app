@@ -4,6 +4,9 @@ import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Trip
 
+/**
+ * Adapter interface for [ActiveTripsActivity]
+ */
 interface ActiveTripsRVAdapterInterface : ItemClickListener<BaseActiveTripsRVAdapterItem<*>> {
   override fun onItemClicked(item: BaseActiveTripsRVAdapterItem<*>) {
     if (item.type == Trip) {

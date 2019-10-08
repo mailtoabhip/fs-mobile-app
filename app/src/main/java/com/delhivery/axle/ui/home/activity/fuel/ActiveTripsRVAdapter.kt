@@ -17,6 +17,9 @@ import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Trip
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Warning
 
+/**
+ * RV Adapter for [ActiveTripsActivity]
+ */
 class ActiveTripsRVAdapter(private val _interface: ActiveTripsRVAdapterInterface) :
     BaseDataRVAdapter<BaseActiveTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface

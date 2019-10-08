@@ -11,6 +11,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [CreateFuelCardActivity]
+ */
 class CreateFuelCardViewModel @Inject constructor(
   private val walletRepository: WalletRepository,
   private val userPrefs: UserPrefs

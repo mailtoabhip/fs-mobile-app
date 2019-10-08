@@ -35,7 +35,7 @@ class DelhiveryTextInputLayout(
   }
 
   override fun afterTextChanged(p0: Editable?) {
-
+    // Do nothing here
   }
 
   override fun beforeTextChanged(
@@ -44,6 +44,7 @@ class DelhiveryTextInputLayout(
     p2: Int,
     p3: Int
   ) {
+    // Do nothing here
   }
 
   override fun onTextChanged(
@@ -98,6 +99,7 @@ class DelhiveryTextInputLayout(
         errorTextInput.visibility = View.VISIBLE
       }
     } catch (e: Exception) {
+      // Do nothing here
     }
   }
 

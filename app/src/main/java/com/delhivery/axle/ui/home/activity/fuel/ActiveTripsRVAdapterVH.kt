@@ -14,6 +14,10 @@ import com.delhivery.axle.ui.base.BaseViewHolder
  */
 abstract class BaseActiveTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseActiveTripsRVAdapterItem<*>>(binding: B) :
     BaseViewHolder<B>(binding) {
+
+  /**
+   * Binds item to adapter
+   */
   abstract fun bind(
     item: IT,
     _interface: ActiveTripsRVAdapterInterface

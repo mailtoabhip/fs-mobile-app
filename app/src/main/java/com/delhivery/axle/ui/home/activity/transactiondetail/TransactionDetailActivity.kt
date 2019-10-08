@@ -30,6 +30,9 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelR
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
 
+/**
+ * Handles transactions details for bank transactions
+ */
 class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding, TransactionDetailViewModel>() {
 
   override fun getViewModelClass() = TransactionDetailViewModel::class.java
@@ -65,6 +68,9 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
     viewModel.updateDetails()
   }
 
+  /**
+   * Observes [TransactionState]
+   */
   inner class TransactionObserver : Observer<TransactionState> {
     override fun onChanged(t: TransactionState?) {
       t?.let { state ->
@@ -165,8 +171,6 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
                   trip = state.trip
                 }
           }
-
-
 
           else -> null
         }?.let { _binding ->

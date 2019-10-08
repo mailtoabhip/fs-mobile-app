@@ -2,6 +2,9 @@ package com.delhivery.axle.data.transactions
 
 import com.delhivery.axle.data.BaseKeyTypeModel
 
+/**
+ * Warning item data for wallet transaction list
+ */
 data class TransactionWarningItemData(
   val title: String,
   val subtitle: String,

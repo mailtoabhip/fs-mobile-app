@@ -19,6 +19,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import javax.inject.Inject
 
+/**
+ * Viewmodel for [ActiveTripsActivity]
+ */
 class ActiveTripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val fuelRepository: FuelRepository
@@ -38,6 +41,9 @@ class ActiveTripsViewModel @Inject constructor(
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
+  /**
+   * Fetches all active trips
+   */
   fun fetchTrips(paginate: Boolean) {
     if (!paginate) {
       offset = 0
@@ -101,6 +107,9 @@ class ActiveTripsViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Fetches all active fuel cards
+   */
   fun fetchFuelCards() {
     compositeDisposable += fuelRepository.fetchActiveFuelCards()
         .onBackground()

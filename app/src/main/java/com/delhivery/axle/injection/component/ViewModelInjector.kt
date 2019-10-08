@@ -36,57 +36,123 @@ import javax.inject.Singleton
 interface ViewModelInjector {
 
   /**
-   *
-   * Injects required dependencies into the specified
-   *
+   * Injects [SplashViewModel]
    */
-
   fun inject(viewModel: SplashViewModel)
 
+  /**
+   * Injects [AuthenticationViewModel]
+   */
   fun inject(viewModel: AuthenticationViewModel)
 
+  /**
+   * Injects [OnboardingViewModel]
+   */
   fun inject(viewModel: OnboardingViewModel)
 
+  /**
+   * Injects [SelectRouteWelcomeViewModel]
+   */
   fun inject(viewModel: SelectRouteWelcomeViewModel)
 
+  /**
+   * Injects [SelectRouteViewModel]
+   */
   fun inject(viewModel: SelectRouteViewModel)
 
+  /**
+   * Injects [SelectRouteOriginCityViewModel]
+   */
   fun inject(viewModel: SelectRouteOriginCityViewModel)
 
+  /**
+   * Injects [SelectRouteDestinationViewModel]
+   */
   fun inject(viewModel: SelectRouteDestinationViewModel)
 
+  /**
+   * Injects [SelectRouteListViewModel]
+   */
   fun inject(viewModel: SelectRouteListViewModel)
 
+  /**
+   * Injects [HomeViewModel]
+   */
   fun inject(viewModel: HomeViewModel)
 
+  /**
+   * Injects [HomeBidsViewModel]
+   */
   fun inject(viewModel: HomeBidsViewModel)
 
+  /**
+   * Injects [HomeLoadsViewModel]
+   */
   fun inject(viewModel: HomeLoadsViewModel)
 
+  /**
+   * Injects [HomeTripsViewModel]
+   */
   fun inject(viewModel: HomeTripsViewModel)
 
+  /**
+   * Injects [HomeAlertsViewModel]
+   */
   fun inject(viewModel: HomeAlertsViewModel)
 
+  /**
+   * Injects [HomeProfileViewModel]
+   */
   fun inject(viewModel: HomeProfileViewModel)
 
+  /**
+   * Injects [HomeWalletViewModel]
+   */
   fun inject(viewModel: HomeWalletViewModel)
 
+  /**
+   * Injects [BidsViewModel]
+   */
   fun inject(viewModel: BidsViewModel)
 
+  /**
+   * Injects [BidDetailsViewModel]
+   */
   fun inject(viewModel: BidDetailsViewModel)
 
+  /**
+   * Injects [SearchLoadViewModel]
+   */
   fun inject(viewModel: SearchLoadViewModel)
 
+  /**
+   * Injects [SearchLoadFragmentViewModel]
+   */
   fun inject(viewModel: SearchLoadFragmentViewModel)
 
+  /**
+   * Injects [SearchResultsViewModel]
+   */
   fun inject(viewModel: SearchResultsViewModel)
 
+  /**
+   * Injects [TripDetailsViewModel]
+   */
   fun inject(viewModel: TripDetailsViewModel)
 
+  /**
+   * Injects [TransactionDetailViewModel]
+   */
   fun inject(viewModel: TransactionDetailViewModel)
 
+  /**
+   * Injects [TransactionsViewModel]
+   */
   fun inject(viewModel: TransactionsViewModel)
 
+  /**
+   * Injects [BankTransferViewModel]
+   */
   fun inject(viewModel: BankTransferViewModel)
 
   @Component.Builder

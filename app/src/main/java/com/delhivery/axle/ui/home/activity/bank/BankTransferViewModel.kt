@@ -11,6 +11,9 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
+/**
+ * View model for [BankTransferActivity]
+ */
 class BankTransferViewModel @Inject constructor(
   private val walletRepository: WalletRepository,
   private val userPrefs: UserPrefs

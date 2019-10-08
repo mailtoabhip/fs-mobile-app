@@ -24,6 +24,9 @@ data class WalletData(
   @SerializedName("optin_date_time") val optinDate: String?
 ) {
 
+  /**
+   * @return formatted balance
+   */
   fun balance() = "₹ ${StringUtils.formatAmount(balance)}"
 
   /**

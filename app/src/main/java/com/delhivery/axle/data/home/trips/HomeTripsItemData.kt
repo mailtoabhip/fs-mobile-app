@@ -156,12 +156,21 @@ data class HomeTripsItemData(
 /* actions */
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 
+/**
+ * Trip Driver details
+ */
 data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: String?) :
     Serializable {
 
+  /**
+   * @return formatted [driverPhoneNo]
+   */
   fun driverPhoneNo() = "Driver($driverPhoneNo)"
 }
 
+/**
+ * Trip Vehicle details
+ */
 data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: String) :
     Serializable
 
@@ -172,6 +181,9 @@ data class TripBidDetails(
   @SerializedName("fuel_payout") val fuelPayout: Double?
 ) : Serializable {
 
+  /**
+   * @return formatted [bidPrice]
+   */
   fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
 }
 

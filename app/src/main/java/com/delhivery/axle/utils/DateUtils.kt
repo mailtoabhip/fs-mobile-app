@@ -55,6 +55,9 @@ object DateUtils {
     }
   }
 
+  /**
+   * @return Formatted ISO date to [format] in UTC
+   */
   fun formatISODateToUTC(
     date: String,
     format: String
@@ -69,6 +72,9 @@ object DateUtils {
     }
   }
 
+  /**
+   * @return Format ISO date to [format]
+   */
   fun formatISODate(
     date: String,
     format: String
@@ -104,7 +110,7 @@ object DateUtils {
   }
 
   /**
-   * Calculate days diff from today
+   * @return parse date string and days diff of [date] from today
    */
   fun daysDiff(date: Date): Int {
     val cal = date.toCalendar()
@@ -112,6 +118,9 @@ object DateUtils {
     return cal[Calendar.DAY_OF_YEAR] - now[Calendar.DAY_OF_YEAR]
   }
 
+  /**
+   * @return days diff of [date] string from today
+   */
   fun daysDiffStr(
     date: String,
     format: String
@@ -140,6 +149,9 @@ object DateUtils {
     return daysDiffStr(requiredOn)
   }
 
+  /**
+   * @return time stamp relative to current time
+   */
   fun convertToRelativeTimeStamp(actionTime: String? = ""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(

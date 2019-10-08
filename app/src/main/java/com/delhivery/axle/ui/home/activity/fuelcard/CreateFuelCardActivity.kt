@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.StringUtils
 import kotlin.math.min
 
+/**
+ * Handles fuel cards creation
+ */
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
 
   override fun getViewModelClass() = CreateFuelCardViewModel::class.java

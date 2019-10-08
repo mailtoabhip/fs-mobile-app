@@ -14,6 +14,9 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
 
+/**
+ * Handle network calls to User Service
+ */
 interface UserService {
 
   /**

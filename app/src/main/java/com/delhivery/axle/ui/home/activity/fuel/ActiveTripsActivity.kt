@@ -17,6 +17,9 @@ import com.delhivery.axle.ui.home.activity.fuelcard.createFuelCardIntent
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_CREATE_FUELCARD
 
+/**
+ * Displays active trips and their fuel card mapping
+ */
 class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTripsViewModel>(),
     ActiveTripsRVAdapterInterface {
 
@@ -84,10 +87,11 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
   ) {
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
-        val data = item.data as HomeTripsItemData
-        navigationUtils.navigateForActivityResult(
-            createFuelCardIntent(this, data), false, REQCODE_CREATE_FUELCARD
-        )
+        val data = item.data as? HomeTripsItemData
+        if (data != null)
+          navigationUtils.navigateForActivityResult(
+              createFuelCardIntent(this, data), false, REQCODE_CREATE_FUELCARD
+          )
       }
 
       TransactionTimeOutAction -> {

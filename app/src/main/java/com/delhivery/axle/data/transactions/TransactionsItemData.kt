@@ -26,6 +26,9 @@ import com.google.gson.internal.bind.util.ISO8601Utils
 import java.io.Serializable
 import java.text.ParsePosition
 
+/**
+ * Transaction item data for wallet transaction list
+ */
 data class TransactionsItemData(
   @SerializedName("amount") val amount: Double,
   @SerializedName("bank_reference_no") val referenceNo: String? = "",
@@ -48,6 +51,9 @@ data class TransactionsItemData(
 
   override fun key() = type + (tripId ?: "") + dateTime + amount
 
+  /**
+   * @return transaction heading
+   */
   fun transactionHeading() =
     when (transactionType()) {
       DEBIT -> {
@@ -67,57 +73,88 @@ data class TransactionsItemData(
       else -> transactionType().type
     }
 
+  /**
+   * @return transaction sub heading
+   */
   fun subLabel() =
     if (TextUtils.isEmpty(failedStatus())) {
       when (transactionType()) {
         DEBIT -> {
-          when (TransactionChannel.byType(channel ?: "")) {
-            ORACLE -> accNumber()
-            IOCL, HPCL -> "$vehicleNumber, $toAccNumber"
-            UNKNOWN -> transactionType().type
+          if (channel != null) {
+            when (TransactionChannel.byType(channel)) {
+              ORACLE -> accNumber()
+              IOCL, HPCL -> vehicleAndAccountNum()
+              UNKNOWN -> transactionType().type
+            }
+          } else {
+            ""
           }
         }
         ADVANCE_CREDIT -> vehicleNumber
-        PETRO_REFUND_CREDIT -> "$vehicleNumber, $toAccNumber"
-        RECONCILIATION_DEBIT -> "$vehicleNumber($toAccNumber)"
-        PETRO_CASHBACK_CREDIT -> "$vehicleNumber, $toAccNumber"
+        PETRO_REFUND_CREDIT, RECONCILIATION_DEBIT,
+        PETRO_CASHBACK_CREDIT, DEBIT_NOTE -> vehicleAndAccountNum()
         PETRO_CASHBACK_DEBIT -> "${accNumber()}, $vehicleNumber"
         ADVANCE_AUTO_DEBIT -> "${accNumber()}, $vehicleNumber"
-        DEBIT_NOTE -> "$vehicleNumber, $toAccNumber"
         else -> transactionType().type
       }
     } else {
       failedStatus()
     }
 
+  private fun vehicleAndAccountNum() = "$vehicleNumber, $toAccNumber"
+
+  /**
+   * @return [TransactionType]
+   */
   fun transactionType() = TransactionType.byType(type)
 
+  /**
+   * @return balance heading
+   */
   fun balanceHeading() = when {
     isCredit() -> "Amount credited"
     else -> "Amount debited"
   }
 
+  /**
+   * @return if transaction is credit or debit
+   */
   private fun isCredit() = type.toLowerCase().contains("credit")
 
+  /**
+   * @return transaction status
+   */
   fun status() = when (status) {
     "processing", "pending" -> "PROCESSING"
     "failed", "rejected" -> "FAILED"
     else -> "PROCESSED"
   }
 
+  /**
+   * @return failed status if failed or rejected
+   */
   fun failedStatus() = when (status) {
     "failed", "rejected" -> "FAILED"
     else -> ""
   }
 
+  /**
+   * @return amount with symbol +/-
+   */
   fun amountAndSymbol() = if (isCredit()) {
     "+ "
   } else {
     "- "
   } + "₹ " + StringUtils.formatAmount(amount)
 
+  /**
+   * @return formatted [amount]
+   */
   fun amount() = "₹ " + StringUtils.formatAmount(amount)
 
+  /**
+   * @return formatted [cashback]
+   */
   fun cashback() = "Cashback: ₹ " + StringUtils.formatAmount(amount * 3 / 100)
 
   /**
@@ -134,17 +171,29 @@ data class TransactionsItemData(
       "Not Available"
     }
 
+  /**
+   * @return amount color basis [TransactionType]
+   */
   @ColorRes
   fun requiredAmountColor() = ColorProviderUtils.getTransactionAmountColor(type)
 
+  /**
+   * @return status color basis [status]
+   */
   @ColorRes
   fun requiredStatusColor() = ColorProviderUtils.getTransactionStatusColor(status)
 
+  /**
+   * @return transaction drawable basis [TransactionChannel]
+   */
   @DrawableRes
   fun transactionTypeDrawableRes() = DrawableProviderUtils.transactionTypeDrawableRes(
       transactionType(), TransactionChannel.byType(channel ?: "")
   )
 
+  /**
+   * @return formatted [dateTime]
+   */
   fun dateTime() = DateUtils.formatISODate(dateTime, "HH:mm dd-MMM-YYY")
 
 }
@@ -186,6 +235,9 @@ enum class TransactionChannel(val type: String) {
   }
 }
 
+/**
+ * TransactionComparator basis [dateTime]
+ */
 class TransactionComparator : Comparator<TransactionsItemData> {
 
   override fun compare(

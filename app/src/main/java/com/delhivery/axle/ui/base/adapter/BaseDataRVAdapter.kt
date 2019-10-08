@@ -120,12 +120,18 @@ abstract class BaseDataRVAdapter<
     return false
   }
 
+  /**
+   * Perform [DataRVAdapterOperationType] on [items]
+   */
   fun operation(items: List<Pair<D, DataRVAdapterOperationType>>) {
     items.forEach {
       operation(it.first, it.second)
     }
   }
 
+  /**
+   * Perform [DataRVAdapterOperationType] on [item]
+   */
   fun operation(
     item: D,
     operationType: DataRVAdapterOperationType

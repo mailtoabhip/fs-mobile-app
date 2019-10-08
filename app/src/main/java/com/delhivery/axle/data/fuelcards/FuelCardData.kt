@@ -4,6 +4,9 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
+/**
+ * Fuel card response
+ */
 data class FuelCardData(
   @SerializedName("pan") val pan: String,
   @SerializedName("mobile") val mobile: String,
@@ -14,5 +17,8 @@ data class FuelCardData(
 
   override fun key() = refNumber
 
+  /**
+   * @return formatted amount
+   */
   fun amount() = "₹ $amount"
 }

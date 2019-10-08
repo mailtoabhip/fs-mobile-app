@@ -15,6 +15,9 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
+/**
+ * Handles Bank Transfer actions
+ */
 class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTransferViewModel>() {
 
   override fun getViewModelClass() = BankTransferViewModel::class.java
