@@ -255,7 +255,7 @@
           android:layout_height="match_parent"
           android:gravity="center"
           android:weightSum="1"
-          android:visibility="gone"
+          android:visibility="visible"
           android:orientation="horizontal"
           android:background="@color/transparent_grey"
           >
@@ -399,11 +399,11 @@
                 android:gravity="center"
                 android:padding="@dimen/size_16dp"
                 android:textSize="@dimen/text_16sp"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label_info"
+                app:layout_constraintTop_toBottomOf="@+id/btn_transaction_summary"
                 />
 
             <TextView
@@ -418,7 +418,7 @@
                 android:text="@string/label_track_transaction_status"
                 android:textColor="@color/heading_black"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_back"
+                app:layout_constraintTop_toBottomOf="@+id/label_info"
                 app:layout_constraintStart_toStartOf="parent"
                 />
 
