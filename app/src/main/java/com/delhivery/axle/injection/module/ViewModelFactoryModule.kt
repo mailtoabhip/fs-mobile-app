@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.home.fragments.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -199,6 +200,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(CreateFuelCardViewModel::class)
   abstract fun bindCreateFuelCardViewwModel(viewModel: CreateFuelCardViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(WalletOnboardingViewModel::class)
+  abstract fun bindWalletOnboardingViewwModel(viewModel: WalletOnboardingViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

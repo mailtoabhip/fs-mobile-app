@@ -212,7 +212,7 @@
   <string name="not_available">Not available</string>
   <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
   <string name="msg_call_permission">Please provide permission to call</string>
-  <string name="label_next">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;NEXT&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
+  <string name="label_next">NEXT</string>
   <string name="label_give_fuel_to">Give fuel to</string>
   <string name="label_transaction_remarks">Transaction Remarks</string>
   <string name="label_supplier_details">Suppliers Details</string>

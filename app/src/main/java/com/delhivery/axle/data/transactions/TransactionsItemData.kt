@@ -90,18 +90,24 @@ data class TransactionsItemData(
             ""
           }
         }
-        ADVANCE_CREDIT -> vehicleNumber
+        ADVANCE_CREDIT -> vehicleNum()
         PETRO_REFUND_CREDIT, RECONCILIATION_DEBIT,
         PETRO_CASHBACK_CREDIT, DEBIT_NOTE -> vehicleAndAccountNum()
-        PETRO_CASHBACK_DEBIT -> "${accNumber()}, $vehicleNumber"
-        ADVANCE_AUTO_DEBIT -> "${accNumber()}, $vehicleNumber"
+        PETRO_CASHBACK_DEBIT -> "${accNumber()}, " + vehicleNum()
+        ADVANCE_AUTO_DEBIT -> "${accNumber()}, " + vehicleNum()
         else -> transactionType().type
       }
     } else {
       failedStatus()
     }
 
-  private fun vehicleAndAccountNum() = "$vehicleNumber, $toAccNumber"
+  private fun vehicleNum() = if (vehicleNumber.isNotNullOrEmpty()) {
+    vehicleNumber
+  } else {
+    ""
+  }
+
+  private fun vehicleAndAccountNum() = vehicleNum() + " $toAccNumber"
 
   /**
    * @return [TransactionType]

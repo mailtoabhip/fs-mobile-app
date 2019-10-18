@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.home.fragments.wallet.viewpager.WalletIntroConfig
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.REQCODE_BANK_TRANSACTION
 import com.delhivery.axle.utils.REQCODE_CREATE_ACTIVE_TRIPS
+import com.delhivery.axle.utils.REQCODE_WALLET_ONBOARDING
 import javax.inject.Inject
 
 class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalletViewModel>(),
@@ -113,9 +114,11 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     if (currentPage < adapter.count - 1) {
       binding.viewPager.setCurrentItem(currentPage + 1, true)
     } else {
-      binding.loading = true
-      binding.executePendingBindings()
-      viewModel.activateWallet()
+      context?.let {
+        startActivityForResult(
+            walletOnbaordingIntent(it), REQCODE_WALLET_ONBOARDING
+        )
+      }
     }
   }
 
@@ -152,6 +155,12 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
           binding.loading = true
           binding.executePendingBindings()
           viewModel.fetchWalletData()
+        }
+
+        REQCODE_WALLET_ONBOARDING -> {
+          binding.loading = true
+          binding.executePendingBindings()
+          viewModel.activateWallet()
         }
       }
     } else if (resultCode == RESULT_FIRST_USER) {
@@ -206,9 +215,9 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
 
     override fun onPageSelected(position: Int) {
       if (position == adapter.count - 1) {
-        binding.btnActivate.text = getString(string.label_get_started)
+
       } else {
-        binding.btnActivate.text = getString(string.label_next)
+
       }
     }
   }

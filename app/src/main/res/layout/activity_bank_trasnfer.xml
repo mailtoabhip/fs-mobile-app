@@ -256,7 +256,7 @@
           android:background="@color/transparent_grey"
           android:gravity="center"
           android:orientation="horizontal"
-          android:visibility="visible"
+          android:visibility="gone"
           android:weightSum="1"
           >
 

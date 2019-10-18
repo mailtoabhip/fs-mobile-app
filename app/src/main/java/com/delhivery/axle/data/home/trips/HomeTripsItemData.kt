@@ -21,6 +21,7 @@ import java.io.Serializable
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
   @SerializedName("arrival_time") val arrivalTime: String?,
+  @SerializedName("action_time") val actionTime: String,
   @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean? = false,
   @SerializedName("client_id") val clientId: String,
   @SerializedName("destination") val destination: String,

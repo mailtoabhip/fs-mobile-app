@@ -39,15 +39,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:visibility="gone"
         android:visibility="@{ !loading &amp;&amp; !active &amp;&amp; !error ? View.VISIBLE : View.GONE }"
         android:weightSum="1"
+        tools:visibility="visible"
         >
 
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="0dp"
-          android:layout_weight="0.5"
+          android:layout_weight="0.8"
           >
 
         <androidx.viewpager.widget.ViewPager
@@ -66,73 +66,54 @@
 
       </RelativeLayout>
 
-      <androidx.appcompat.widget.LinearLayoutCompat
-          android:layout_width="match_parent"
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/btn_activate"
+          android:layout_width="wrap_content"
           android:layout_height="0dp"
-          android:layout_gravity="center_vertical"
-          android:gravity="center_vertical"
-          android:orientation="vertical"
-          android:layout_weight="0.5"
+          android:layout_weight="0.2"
+          android:layout_gravity="end"
+          android:orientation="horizontal"
+          android:paddingBottom="@dimen/size_16dp"
           >
 
         <TextView
-            android:id="@+id/btn_activate"
+            android:id="@+id/text_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_next"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_all_round_corner_black"
-            android:gravity="center"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_8dp"
-            android:textSize="@dimen/text_16sp"
-            android:paddingTop="@dimen/size_16dp"
-            android:paddingBottom="@dimen/size_16dp"
-            android:paddingStart="@dimen/size_32dp"
-            android:paddingEnd="@dimen/size_32dp"
-            />
-
-        <TextView
-            android:id="@+id/btn_faq"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_wallet_faq"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="end"
+            android:padding="@dimen/size_16dp"
+            android:text="@string/label_next"
             android:textColor="@color/heading_black"
-            android:gravity="center"
             android:textSize="@dimen/text_16sp"
-            android:layout_marginTop="@dimen/size_20dp"
-            android:paddingTop="@dimen/size_16dp"
-            android:paddingBottom="@dimen/size_16dp"
-            android:paddingStart="@dimen/size_32dp"
-            android:paddingEnd="@dimen/size_32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/img_next"
             />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_wallet_note"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/sub_heading_black"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:textSize="@dimen/text_14sp"
-            android:paddingStart="@dimen/size_24dp"
-            android:paddingEnd="@dimen/size_24dp"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_next"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="@id/text_next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_next"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
             />
 
-      </androidx.appcompat.widget.LinearLayoutCompat>
+      </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_wallet"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:visibility="@{!loading &amp;&amp; active &amp;&amp; !error  ? View.VISIBLE : View.GONE }"
+        android:layout_height="match_parent"
         android:background="@color/colorBackground"
-        tools:visibility="visible"
+        android:visibility="@{!loading &amp;&amp; active &amp;&amp; !error  ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
         >
 
       <androidx.appcompat.widget.LinearLayoutCompat
@@ -179,12 +160,12 @@
                 android:layout_height="@dimen/size_56dp"
                 android:layout_marginStart="@dimen/size_32dp"
                 android:layout_marginTop="@dimen/size_32dp"
-                app:srcCompat="@drawable/ic_wallet"
+                android:background="@drawable/bg_circular_boundary_black"
                 android:paddingTop="@dimen/size_8dp"
                 android:paddingBottom="@dimen/size_12dp"
-                android:background="@drawable/bg_circular_boundary_black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_wallet"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -201,9 +182,9 @@
                 android:id="@+id/view_transaction_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
                 android:text="@string/label_view_transaction_summary"
                 android:textColor="@color/heading_black"
                 android:textStyle="bold"
@@ -218,8 +199,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginBottom="@dimen/size_8dp"
             android:text="@string/label_transfer_amount"
             android:textColor="@color/heading_black"
@@ -229,10 +210,10 @@
             android:id="@+id/container_fuel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -249,16 +230,16 @@
                 android:id="@+id/img_fuel"
                 android:layout_width="@dimen/size_48dp"
                 android:layout_height="@dimen/size_48dp"
-                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_circular_boundary_black"
                 android:paddingTop="@dimen/size_10dp"
                 android:paddingBottom="@dimen/size_10dp"
-                app:srcCompat="@drawable/ic_fuel"
-                android:background="@drawable/bg_circular_boundary_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fuel"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -278,12 +259,12 @@
                 android:layout_marginStart="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_fuel_credit"
-                android:textSize="@dimen/text_16sp"
                 android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_fuel"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 />
 
           </androidx.constraintlayout.widget.ConstraintLayout>
@@ -293,10 +274,10 @@
             android:id="@+id/container_bank"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -313,16 +294,16 @@
                 android:id="@+id/img_bank"
                 android:layout_width="@dimen/size_48dp"
                 android:layout_height="@dimen/size_48dp"
-                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_circular_boundary_black"
                 android:paddingTop="@dimen/size_8dp"
                 android:paddingBottom="@dimen/size_12dp"
-                app:srcCompat="@drawable/ic_bank"
-                android:background="@drawable/bg_circular_boundary_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_bank"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -342,8 +323,8 @@
                 android:layout_marginStart="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_bank"
-                android:textSize="@dimen/text_16sp"
                 android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_bank"
@@ -358,10 +339,10 @@
             android:id="@+id/container_fast_tag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:layout_marginBottom="@dimen/size_4dp"
             android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -391,17 +372,17 @@
                 android:id="@+id/img_fast_tag"
                 android:layout_width="@dimen/size_48dp"
                 android:layout_height="@dimen/size_48dp"
-                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:paddingTop="@dimen/size_10dp"
-                app:tint="@color/transparent_grey"
-                android:paddingBottom="@dimen/size_10dp"
-                app:srcCompat="@drawable/ic_card"
+                android:layout_marginBottom="@dimen/size_8dp"
                 android:background="@drawable/bg_circular_boundary_disable"
+                android:paddingTop="@dimen/size_10dp"
+                android:paddingBottom="@dimen/size_10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_card"
+                app:tint="@color/transparent_grey"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -421,8 +402,8 @@
                 android:layout_marginStart="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_fastag"
-                android:textSize="@dimen/text_16sp"
                 android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/sublabel_fast_tag"
                 app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
@@ -440,14 +421,14 @@
     <include
         android:id="@+id/container_error"
         layout="@layout/view_warning_item"
-        tools:visibility="gone"
         android:visibility="@{ !loading &amp;&amp; error ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
         />
 
     <include
         layout="@layout/view_bid_details_loading_bids"
-        tools:visibility="gone"
         android:visibility="@{ loading ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
         />
 
   </FrameLayout>

@@ -61,5 +61,21 @@
         tools:text="Glad to see that you have taken the right step towards the digitising logistics. We ensure you the best possible loads across the country."
         />
 
+    <TextView
+        android:id="@+id/btn_faq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_wallet_faq"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/heading_black"
+        android:gravity="center"
+        android:textSize="@dimen/text_16sp"
+        android:layout_marginTop="@dimen/size_20dp"
+        android:paddingTop="@dimen/size_16dp"
+        android:paddingBottom="@dimen/size_16dp"
+        android:paddingStart="@dimen/size_32dp"
+        android:paddingEnd="@dimen/size_32dp"
+        />
+
   </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

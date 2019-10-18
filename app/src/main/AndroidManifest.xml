@@ -115,8 +115,13 @@
     <activity
         android:name=".ui.home.activity.bank.BankTransferActivity"
         android:screenOrientation="portrait" />
+
     <activity
         android:name=".ui.home.activity.fuelcard.CreateFuelCardActivity"
+        android:screenOrientation="portrait" />
+
+    <activity
+        android:name=".ui.home.fragments.wallet.WalletOnboardingActivity"
         android:screenOrientation="portrait" />
 
   </application>

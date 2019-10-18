@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+import com.delhivery.axle.ui.home.fragments.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
@@ -141,6 +142,13 @@ abstract class ActivityBindingModule {
       modules = [AbsCreateFuelCardActivityModule::class]
   )
   internal abstract fun bindCreateFuelCardActivity(): CreateFuelCardActivity
+
+  /* Wallet onboarding activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsWalletOnboardingActivityModule::class]
+  )
+  internal abstract fun bindWalletOnboardingActivity(): WalletOnboardingActivity
 }
 
 /**
@@ -200,6 +208,9 @@ internal abstract class AbsFuelCardActivityModule : ActivityModule<ActiveTripsAc
 
 @Module
 internal abstract class AbsCreateFuelCardActivityModule : ActivityModule<CreateFuelCardActivity>()
+
+@Module
+internal abstract class AbsWalletOnboardingActivityModule : ActivityModule<WalletOnboardingActivity>()
 
 /**
  * Activity Binds Module

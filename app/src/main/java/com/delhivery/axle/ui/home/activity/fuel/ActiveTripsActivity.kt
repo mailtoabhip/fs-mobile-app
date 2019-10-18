@@ -14,6 +14,8 @@ import com.delhivery.axle.data.transactions.TransactionWarningAction_NoTransacti
 import com.delhivery.axle.databinding.ActivityActiveTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.createFuelCardIntent
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_CREATE_FUELCARD
 
@@ -89,11 +91,22 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
         val data = item.data as? HomeTripsItemData
-        if (data != null)
+        if (data != null && DateUtils.parseDate(
+                data.arrivalTime ?: "", DatePatterns.OrionDateFormat
+            ).after(
+                DateUtils.parseDate(
+                    DateUtils.formatISODateToUTC(viewModel.optinDate, DatePatterns.OrionDateFormat),
+                    DatePatterns.OrionDateFormat
+                )
+            )
+        ) {
           navigationUtils.navigateForActivityResult(
               createFuelCardIntent(this, data, viewModel.getActiveNumbers(data.fuelCard?.mobile)),
               false, REQCODE_CREATE_FUELCARD
           )
+        } else {
+          uiUtils.showToast("Cant create fuel for this trip")
+        }
       }
 
       TransactionTimeOutAction -> {
