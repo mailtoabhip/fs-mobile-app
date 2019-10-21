@@ -80,10 +80,8 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     /* Observe on progress live data and show/hide progress */
     viewModel.progressLiveData.observe(this, Observer {
       if (!hasInlineProgress) {
-        when (it) {
-          true -> uiUtils.showProgress()
-          else -> uiUtils.hideProgress()
-        }
+        if (it == true) uiUtils.showProgress()
+        else uiUtils.hideProgress()
       }
     })
 

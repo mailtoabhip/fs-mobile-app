@@ -7,11 +7,13 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [HomeActivity]
+ */
 class HomeViewModel @Inject constructor(
   private val notificationRepository: NotificationRepository,
   private val userPrefs: UserPrefs
-) :
-    BaseViewModel() {
+) : BaseViewModel() {
 
   /**
    * Get/Set opened from notification flag
@@ -28,8 +30,6 @@ class HomeViewModel @Inject constructor(
   fun markNotificationRead(id: String) {
     compositeDisposable += notificationRepository.markNotificationRead(id)
         .onBackground()
-        .subscribe { _, _ ->
-
-        }
+        .subscribe { _, _ -> }
   }
 }

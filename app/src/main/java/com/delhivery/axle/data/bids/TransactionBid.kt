@@ -32,6 +32,9 @@ data class TransactionBid(
     }
   }
 
+  /**
+   * @return diff from lowest bid
+   */
   fun diffFromLowestBid(lowestBid: Double) = if (bidAmount > lowestBid) {
     "(Your Bid is ₹ ${StringUtils.formatAmount(abs((bidAmount - lowestBid)))} more than lowest bid)"
   } else {
@@ -44,6 +47,9 @@ data class TransactionBid(
   fun status() = TransactionBidStatus.byStatusKey(_status)
 }
 
+/**
+ * Enum for Bid status
+ */
 enum class TransactionBidStatus(
   val statusKey: String,
   val status: String
@@ -55,9 +61,9 @@ enum class TransactionBidStatus(
 
   companion object {
     /**
-     * Status by response keyg
+     * Status by response key
      */
     fun byStatusKey(_status: String) =
-      values().filter { it.statusKey.safeEquals(_status) }.firstOrNull() ?: Open
+      values().firstOrNull { it.statusKey.safeEquals(_status) } ?: Open
   }
 }

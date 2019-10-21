@@ -28,6 +28,9 @@ import com.delhivery.axle.utils.REQCODE_CALL
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
+/**
+ * Container for home screen
+ */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {
 
@@ -132,9 +135,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     viewModel.markNotificationRead(notificationId)
   }
 
-  /**
-   * Observe toolbar from current fragment live Data or fallback to default
-   */
   private fun observeFragmentLiveData(pos: Int = 0) {
     val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
     val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
@@ -195,6 +195,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 }
 
+/**
+ * Provides title from all fragments to activity
+ */
 interface TitleProvider {
   val title: CharSequence
 }
