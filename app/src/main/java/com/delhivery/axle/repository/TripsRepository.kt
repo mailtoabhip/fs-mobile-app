@@ -2,6 +2,7 @@ package com.delhivery.axle.repository
 
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
+import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
@@ -39,10 +40,11 @@ class TripsRepository @Inject constructor(
    */
   fun trips(
     offset: Int = 0,
-    statuses: String
+    statuses: String,
+    updatedAfter: String? = null
   ) = tripsService.tripsForStatuses(
       userRepository.userId(), UserTripsLoadLimit,
-      offset, statuses
+      offset, statuses, updatedAfter
   )
       .convertResponse()
 
@@ -51,16 +53,22 @@ class TripsRepository @Inject constructor(
    */
   fun tripAndTransactionDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =
     Single.zip(
-      transactionService.transactionDetails(transactionId).convertResponse(),
-      tripsService.trip(transactionId).convertResponse(),
+        transactionService.transactionDetails(transactionId).convertResponse(),
+        tripsService.trip(transactionId).convertResponse(),
         BiFunction<HomeBidsRequestItemData, HomeTripsItemData,
             Pair<HomeBidsRequestItemData, HomeTripsItemData>> { t1, t2 ->
           Pair(t1, t2)
-      }
-  )
+        }
+    )
 
   /**
-   * User/supplier trip summary [BidSummaryResponse]
+   * Complete trip details with transaction and trip history
+   */
+  fun tripDetails(transactionId: String): Single<HomeTripsItemData> =
+    tripsService.trip(transactionId).convertResponse()
+
+  /**
+   * User/supplier trip summary [TripSummaryResponse]
    */
   fun userTripsSummary() = tripsService.userTripsSummary(userRepository.userId()).convertResponse()
 }

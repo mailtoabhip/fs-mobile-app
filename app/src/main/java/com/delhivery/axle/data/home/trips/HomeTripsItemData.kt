@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
@@ -15,10 +16,12 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
   @SerializedName("arrival_time") val arrivalTime: String?,
+  @SerializedName("action_time") val actionTime: String,
   @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean? = false,
   @SerializedName("client_id") val clientId: String,
   @SerializedName("destination") val destination: String,
@@ -35,8 +38,10 @@ data class HomeTripsItemData(
   @SerializedName("required_on") val requiredOn: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
-  var payment: BulkPaymentItem? = null
-) : BaseKeyTypeModel<String>() {
+  @SerializedName("truck_display_name") val truckDisplayName: String? = "",
+  var payment: BulkPaymentItem? = null,
+  var fuelCard: FuelCardData? = null
+) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
   /**
@@ -127,25 +132,61 @@ data class HomeTripsItemData(
   fun requiredTextColor() =
     ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
 
+  /**
+   * Check if fuel balance is available or not
+   */
+  fun isFuelBalanceAvailable(): Boolean {
+    if (fuelCard != null) {
+      try {
+        val activeAmount = fuelCard?.amount?.toInt() ?: 0
+        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0
+        if (activeAmount < allowedAmount) {
+          return true
+        }
+        return false
+      } catch (e: Exception) {
+        return false
+      }
+    } else {
+      return true
+    }
+  }
+
 }
 
 /* actions */
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 
-data class TripDriverDetails(
-  @SerializedName("phone_number") val driverPhoneNo: String?
-)
+/**
+ * Trip Driver details
+ */
+data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: String?) :
+    Serializable {
 
-data class TripVehicleDetails(
-  @SerializedName("vehicle_number") val vehicleNo: String
-)
+  /**
+   * @return formatted [driverPhoneNo]
+   */
+  fun driverPhoneNo() = "Driver($driverPhoneNo)"
+}
+
+/**
+ * Trip Vehicle details
+ */
+data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: String) :
+    Serializable
 
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
   @SerializedName("bid_price") val bidPrice: Int?,
   @SerializedName("effective_price") val effectivePrice: Int?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
-)
+) : Serializable {
+
+  /**
+   * @return formatted [bidPrice]
+   */
+  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
+}
 
 enum class TripStatus(
   val statusKey: String,
@@ -168,6 +209,6 @@ enum class TripStatus(
      * Get [TripStatus] from response key
      */
     fun byKey(statusKey: String) =
-      values().filter { it.statusKey.equals(statusKey, true) }.firstOrNull() ?: Unknown
+      values().firstOrNull { it.statusKey.equals(statusKey, true) } ?: Unknown
   }
 }

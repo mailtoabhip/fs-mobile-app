@@ -17,6 +17,9 @@ import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
+/**
+ * View model for [BidDetailsActivity]
+ */
 class BidDetailsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository,
@@ -46,7 +49,7 @@ class BidDetailsViewModel @Inject constructor(
             transactionLiveData.postValue(_tRes)
             fetchTransactionBids()
           } else {
-            error.handle()
+            transactionLiveData.postValue(null)
           }
         }
   }

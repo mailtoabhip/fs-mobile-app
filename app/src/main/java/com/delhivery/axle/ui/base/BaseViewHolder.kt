@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * @param binding [ViewDataBinding] of specific layout
  */
-abstract class BaseViewHolder<out B : ViewDataBinding>(val binding: B) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
+abstract class BaseViewHolder<out B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root) {
     //Context reference
     protected val context: Context by lazy { binding.root.context }
 }

@@ -13,6 +13,9 @@ data class Warehouse(
   @SerializedName("address") val address: String
 ) {
 
-  fun completeAddress() = "${StringUtils.capitalize(name)}, ${StringUtils.capitalize(address)}"
+  /**
+   * @return formatted address
+   */
+  fun completeAddress() = "${StringUtils.capitalize(address)}"
 
 }

@@ -41,6 +41,10 @@ enum class UrlConfig(
       "https://orion-warehouse-api.delhivery.com",
       "https://orion-warehouse-api-dev.delhivery.com"
   ),
+  WalletService(
+      "https://orion-wallet-api.delhivery.com",
+      "https://orion-wallet-api-dev.delhivery.com"
+  ),
   ImageService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
       "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
@@ -48,6 +52,10 @@ enum class UrlConfig(
   NotificationService(
       "https://orion-notification-api.delhivery.com",
       "https://orion-notification-api-dev.delhivery.com"
+  ),
+  FuelService(
+      "https://orion-iocl-api.delhivery.com",
+      "https://orion-iocl-api.dev.delhivery.com"
   );
 
   /**

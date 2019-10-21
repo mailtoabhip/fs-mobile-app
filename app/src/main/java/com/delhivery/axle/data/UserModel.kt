@@ -1,8 +1,8 @@
 package com.delhivery.axle.data
 
 import com.delhivery.axle.data.home.routes.RouteModel
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
-import java.util.Collections
 
 /**
  * User details model
@@ -27,8 +27,9 @@ data class UserModel(
   @SerializedName("sec_194_declaration") var sec194DeclarationUrl: String?,
   @SerializedName("gst_number") var gstNumber: String?,
   @SerializedName("pancard") var panCardNo: String?,
-  @SerializedName("acccount_no") var acccountNo: String?,
-  @SerializedName("ifcs_code") var ifcsCode: String?,
+  @SerializedName("acccount_no") var accountNo: String?,
+  @SerializedName("ifcs_code") var ifscCode: String?,
+  @SerializedName("bank_name") var bank: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
   @SerializedName("test_user") var testUser: Boolean = false
@@ -52,5 +53,19 @@ data class UserModel(
     "individual" -> 99
     else -> 98
   }
+
+  /**
+   * @return encrypted [accountNo]]
+   */
+  fun accNumber() =
+    if (accountNo.isNotNullOrEmpty()) {
+      val encrypted = StringBuilder()
+      val maskLength = (accountNo?.length ?: 4) - 4
+      repeat((maskLength downTo 1).count()) { encrypted.append("*") }
+      encrypted.append(accountNo?.substring(maskLength))
+      encrypted.toString()
+    } else {
+      "Not Available"
+    }
 
 }

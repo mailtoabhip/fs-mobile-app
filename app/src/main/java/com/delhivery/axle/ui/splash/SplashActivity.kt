@@ -14,7 +14,7 @@ import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -113,7 +113,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
     val remoteConfig = FirebaseRemoteConfig.getInstance()
     remoteConfig.setConfigSettingsAsync(configSettings)
-
 
     FirebaseRemoteConfig.getInstance()
         .fetchAndActivate()

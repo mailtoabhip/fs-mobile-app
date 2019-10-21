@@ -1,12 +1,19 @@
-package com.delhivery.axle.ui.home
+package com.delhivery.axle.ui.home.activity.home
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.ui.base.BaseActivity
@@ -17,9 +24,13 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.utils.REQCODE_CALL
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
+/**
+ * Container for home screen
+ */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {
 
@@ -63,6 +74,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
 
+    binding.viewpager.disableScroll(true)
+
     /* set navigation item selection listener */
     binding.bottomNav.setOnNavigationItemSelectedListener(this)
 
@@ -74,11 +87,44 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
 
+  override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    menuInflater.inflate(R.menu.menu_call, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    return when (item?.itemId) {
+      R.id.nav_call -> {
+        callHelpline()
+        true
+      }
+      else -> {
+        super.onOptionsItemSelected(item)
+      }
+    }
+  }
+
+  private fun callHelpline() {
+    val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+    if (permission != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(
+          this, arrayOf(Manifest.permission.CALL_PHONE), REQCODE_CALL
+      )
+    } else {
+      this.let {
+        val callIntent = Intent(Intent.ACTION_CALL).apply {
+          data = Uri.parse("tel:01246220684")
+        }
+        it.startActivity(callIntent)
+      }
+    }
+  }
+
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    viewModel.fromNotification = true
     if (notificationId.isNotEmpty()) {
-      viewModel.fromNotification = true
       markNotificationRead()
     }
     fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -89,9 +135,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     viewModel.markNotificationRead(notificationId)
   }
 
-  /**
-   * Observe toolbar from current fragment live Data or fallback to default
-   */
   private fun observeFragmentLiveData(pos: Int = 0) {
     val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
     val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
@@ -133,8 +176,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         pos != -1
       }
+
+  override fun onRequestPermissionsResult(
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    when (requestCode) {
+      REQCODE_CALL -> {
+        if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+          uiUtils.showToast(string.msg_call_permission)
+        } else {
+          callHelpline()
+        }
+      }
+    }
+  }
 }
 
+/**
+ * Provides title from all fragments to activity
+ */
 interface TitleProvider {
   val title: CharSequence
 }

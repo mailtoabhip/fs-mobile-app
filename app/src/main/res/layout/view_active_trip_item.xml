@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+    <import type="android.view.View" />
+  </data>
+
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/size_6dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        >
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/container_data"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:clickable="false"
+          android:focusable="false"
+          android:paddingBottom="@dimen/size_8dp"
+          android:paddingEnd="@dimen/size_16dp"
+          android:paddingStart="@dimen/size_16dp"
+          android:paddingTop="@dimen/size_12dp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <TextView
+            android:id="@+id/text_truck_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:lineSpacingExtra="@dimen/text_8sp"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            android:text="@{trip.vehicleDetails.vehicleNo}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="HR26 1234"
+            />
+
+        <TextView
+            android:id="@+id/text_driver_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@{ trip.formattedDriverDetails() }"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            android:layout_marginTop="@dimen/size_4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+            tools:text="Driver: 9823222123"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_driver_details"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
+            />
+
+        <TextView
+            android:id="@+id/text_source_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@{ trip.originCityName() }"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            tools:text="Panjim"
+            />
+
+        <TextView
+            android:id="@+id/text_source_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.originStateName()}"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_source_city"
+            tools:text="GOA"
+            />
+
+        <TextView
+            android:id="@+id/text_destination_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:fontFamily="sans-serif"
+            android:text="@{ trip.destinationCityName() }"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@id/img_forward"
+            app:layout_constraintTop_toTopOf="@id/img_forward"
+            tools:text="Andheri East"
+            />
+
+        <TextView
+            android:id="@+id/text_destination_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.destinationStateName()}"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="@id/text_destination_city"
+            app:layout_constraintTop_toBottomOf="@id/text_source_city"
+            tools:text="Mumbai"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          android:orientation="horizontal"
+          android:weightSum="1"
+          app:layout_constraintTop_toBottomOf="@+id/container_data"
+          >
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="@dimen/size_8dp"
+            android:paddingStart="@dimen/size_16dp"
+            >
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:maxLines="1"
+              android:text="@string/label_money_given"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_14sp"
+              />
+
+          <TextView
+              android:id="@+id/text_amount_given"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:maxLines="1"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif-medium"
+              tools:text="Rs 14000"
+              android:text="@{trip.fuelCard.amount()}"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_8dp"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:id="@+id/btn_create_card"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:layout_gravity="center_vertical"
+              android:background="@drawable/bg_load_action_btn"
+              android:gravity="center_vertical"
+              >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="@string/label_create_fuel_card"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+</layout>

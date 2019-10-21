@@ -6,6 +6,9 @@ import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.PUT
 
+/**
+ * Handle network calls to Notification Service
+ */
 interface NotificationService {
 
   /**

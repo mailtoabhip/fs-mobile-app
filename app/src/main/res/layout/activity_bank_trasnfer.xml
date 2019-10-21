@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="wallet"
+        type="com.delhivery.axle.api.response.WalletData"
+        />
+
+    <variable
+        name="bank"
+        type="String"
+        />
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:orientation="vertical"
+      >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        />
+
+    <include
+        android:id="@+id/progress"
+        layout="@layout/view_bid_details_loading_bids"
+        tools:visibility="gone"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_bank"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:visibility="gone"
+          >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <TextView
+                android:id="@+id/text_bank_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@{bank}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/id2"
+                tools:text="State bank of india"
+                />
+
+            <TextView
+                android:id="@+id/label_acc_num"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_account_number"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_bank_name"
+                />
+
+            <TextView
+                android:id="@+id/text_acc_num"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{wallet.accNumber()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/label_acc_num"
+                app:layout_constraintTop_toTopOf="@+id/label_acc_num"
+                tools:text="1234567890"
+                />
+
+            <TextView
+                android:id="@+id/label_owner_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_account_owner"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_acc_num"
+                />
+
+            <TextView
+                android:id="@+id/text_owner_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{wallet.accName}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/text_acc_num"
+                app:layout_constraintStart_toEndOf="@+id/label_owner_name"
+                app:layout_constraintTop_toTopOf="@+id/label_owner_name"
+                tools:text="qwertyuio"
+                />
+
+            <TextView
+                android:id="@+id/label_balance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_axle_money"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_owner_name"
+                />
+
+            <TextView
+                android:id="@+id/text_balance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{wallet.balance()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/text_acc_num"
+                app:layout_constraintStart_toEndOf="@+id/label_balance"
+                app:layout_constraintTop_toTopOf="@+id/label_balance"
+                tools:text="qwertyuio"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/id2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_bank_details"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+                android:id="@+id/til_amount"
+                style="@style/TextInputLayoutAppearance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+              <androidx.appcompat.widget.AppCompatEditText
+                  android:id="@+id/edit_amount"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/bg_form_edit"
+                  android:digits="1234567890"
+                  android:fontFamily="sans-serif-medium"
+                  android:hint="@string/label_enter_amount"
+                  android:inputType="number"
+                  android:maxLines="1"
+                  />
+            </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+
+            <TextView
+                android:id="@+id/btn_transfer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:background="@drawable/bg_all_round_corner_black"
+                android:gravity="center"
+                android:paddingTop="@dimen/size_16dp"
+                android:paddingBottom="@dimen/size_16dp"
+                android:text="@string/label_confirm_transfer"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/til_amount"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_status"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@color/transparent_grey"
+          android:gravity="center"
+          android:orientation="horizontal"
+          android:visibility="gone"
+          android:weightSum="1"
+          >
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:layout_weight="0.8"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/bg_all_round_corner_white"
+              android:padding="@dimen/size_12dp"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_status"
+                android:layout_width="@dimen/size_72dp"
+                android:layout_height="@dimen/size_72dp"
+                android:layout_marginTop="@dimen/size_16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_success"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:gravity="center"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_status"
+                tools:text="Rs 7000"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_transaction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:gravity="center"
+                android:textColor="@color/sub_heading_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/amount"
+                tools:text="Transferred initiated"
+                />
+
+            <TextView
+                android:id="@+id/acc_num"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_account_number"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_transaction"
+                />
+
+            <TextView
+                android:id="@+id/text_acc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{wallet.accNumber()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/acc_num"
+                app:layout_constraintTop_toTopOf="@+id/acc_num"
+                tools:text="1234567890"
+                />
+
+            <TextView
+                android:id="@+id/label_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_transaction_status"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_acc"
+                />
+
+            <TextView
+                android:id="@+id/text_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="end"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/text_acc"
+                app:layout_constraintStart_toEndOf="@+id/label_status"
+                app:layout_constraintTop_toTopOf="@+id/label_status"
+                tools:text="Processing"
+                />
+
+            <TextView
+                android:id="@+id/label_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="@string/label_bank_status"
+                android:textColor="@color/sub_heading_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_status"
+                />
+
+            <TextView
+                android:id="@+id/btn_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:gravity="center"
+                android:padding="@dimen/size_8dp"
+                android:text="@string/label_go_back"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_transaction_summary"
+                />
+
+            <TextView
+                android:id="@+id/btn_transaction_summary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:background="@drawable/bg_all_round_corner_black"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:paddingTop="@dimen/size_10dp"
+                android:paddingBottom="@dimen/size_10dp"
+                android:text="@string/label_track_transaction_status"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_info"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+    </FrameLayout>
+
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

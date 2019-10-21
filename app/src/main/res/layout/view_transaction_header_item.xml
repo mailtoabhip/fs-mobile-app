@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="balance"
+        type="String"
+        />
+
+    <variable
+        name="transaction"
+        type="String"
+        />
+  </data>
+
+  <androidx.cardview.widget.CardView
+      android:id="@+id/container_fast_tag"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_4dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/size_4dp"
+        android:orientation="vertical"
+        >
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/header"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          >
+
+        <TextView
+            android:id="@+id/text_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_24sp"
+            android:text="@{balance}"
+            app:layout_constraintStart_toEndOf="@+id/id1"
+            app:layout_constraintTop_toBottomOf="@+id/id2"
+            tools:text="₹ 23,900.00"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/id1"
+            android:layout_width="@dimen/size_56dp"
+            android:layout_height="@dimen/size_56dp"
+            android:layout_marginStart="@dimen/size_32dp"
+            android:layout_marginTop="@dimen/size_32dp"
+            android:layout_marginBottom="@dimen/size_32dp"
+            app:srcCompat="@drawable/ic_wallet"
+            android:paddingTop="@dimen/size_8dp"
+            android:paddingBottom="@dimen/size_12dp"
+            android:background="@drawable/bg_circular_boundary_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/id2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:text="@string/label_axle_money"
+            app:layout_constraintStart_toEndOf="@+id/id1"
+            app:layout_constraintTop_toTopOf="@+id/id1"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/label_transactions"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="@dimen/size_4dp"
+          android:text="@{transaction}"
+          tools:text="@string/label_transaction_history"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          app:layout_constraintBottom_toBottomOf="@+id/label_filter"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/label_filter"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/label_filter"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toBottomOf="@+id/header"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:text="@string/label_custom_dates"
+          android:padding="@dimen/size_4dp"
+          android:visibility="invisible"
+          android:background="@drawable/bg_all_4_corner_white"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_16sp"
+          android:layout_margin="@dimen/size_6dp"
+          />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.cardview.widget.CardView>
+
+</layout>

@@ -8,8 +8,14 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
+import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
+import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+import com.delhivery.axle.ui.home.fragments.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
@@ -95,12 +101,54 @@ abstract class ActivityBindingModule {
   )
   internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
 
-  /* Trip details activity */
+  /* Image view activity */
   @ActivityScope
   @ContributesAndroidInjector(
       modules = [AbsImageViewActivityModule::class]
   )
   internal abstract fun bindImageViewActivity(): ImageViewActivity
+
+  /* Transactions activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsTransactionsActivityModule::class]
+  )
+  internal abstract fun bindTransactionsActivity(): TransactionsActivity
+
+  /* Transaction Detail activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsTransactionDetailActivityModule::class]
+  )
+  internal abstract fun bindTransactionDetailActivity(): TransactionDetailActivity
+
+  /* Bank Transfer activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsBankTransferActivityModule::class]
+  )
+  internal abstract fun bindBankTransferActivity(): BankTransferActivity
+
+  /* Fuel Card activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsFuelCardActivityModule::class]
+  )
+  internal abstract fun bindFuelCardActivity(): ActiveTripsActivity
+
+  /* Create Fuel Card activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsCreateFuelCardActivityModule::class]
+  )
+  internal abstract fun bindCreateFuelCardActivity(): CreateFuelCardActivity
+
+  /* Wallet onboarding activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsWalletOnboardingActivityModule::class]
+  )
+  internal abstract fun bindWalletOnboardingActivity(): WalletOnboardingActivity
 }
 
 /**
@@ -145,6 +193,24 @@ internal abstract class AbsTripDetailsActivityModule : ActivityModule<TripDetail
 
 @Module
 internal abstract class AbsImageViewActivityModule : ActivityModule<ImageViewActivity>()
+
+@Module
+internal abstract class AbsTransactionsActivityModule : ActivityModule<TransactionsActivity>()
+
+@Module
+internal abstract class AbsTransactionDetailActivityModule : ActivityModule<TransactionDetailActivity>()
+
+@Module
+internal abstract class AbsBankTransferActivityModule : ActivityModule<BankTransferActivity>()
+
+@Module
+internal abstract class AbsFuelCardActivityModule : ActivityModule<ActiveTripsActivity>()
+
+@Module
+internal abstract class AbsCreateFuelCardActivityModule : ActivityModule<CreateFuelCardActivity>()
+
+@Module
+internal abstract class AbsWalletOnboardingActivityModule : ActivityModule<WalletOnboardingActivity>()
 
 /**
  * Activity Binds Module

@@ -91,12 +91,6 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
-                userPrefs.saveUser(it)
-                if (it.hasRoutes()) {
-                  userPrefs.cityCode = it.userRoutes()[0].origin.cityId
-                } else {
-                  userPrefs.cityCode = it.baseCityCode
-                }
                 val msg = if (_otpRes.second.isNotNullOrEmpty()) {
                   _otpRes.second
                 } else {

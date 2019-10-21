@@ -75,7 +75,7 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeTripsHeaderItem(), AddUpdate))
       add(Pair(HomeTripsProgressItem(), AddUpdate))
-      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout }
+      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout || it.type == Search }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

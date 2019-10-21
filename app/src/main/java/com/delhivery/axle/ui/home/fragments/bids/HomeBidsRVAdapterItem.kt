@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Searc
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [HomeBidsRVAdapter]
+ */
 enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Header(0),
   Search(1),

@@ -19,6 +19,9 @@ object ColorProviderUtils {
     else -> R.drawable.bg_date_others
   }
 
+  /**
+   * Get bid status text color
+   */
   @ColorRes
   fun getStatusColor(
     status: String
@@ -28,12 +31,39 @@ object ColorProviderUtils {
     else -> R.color.status_lost
   }
 
+  /**
+   * Get trip status text color
+   */
   @ColorRes
   fun getTripStatusColor(
     status: String
   ) = when (status.toLowerCase()) {
     "advance pending", "balance pending" -> R.color.pending
     "intransit" -> R.color.status_active
+    else -> R.color.status_confirmed
+  }
+
+  /**
+   * Get bank transaction amount text color
+   */
+  @ColorRes
+  fun getTransactionAmountColor(
+    status: String
+  ) = if (status.toLowerCase().contains("debit")) {
+    R.color.status_lost
+  } else {
+    R.color.status_confirmed
+  }
+
+  /**
+   * Get bank transaction status text color
+   */
+  @ColorRes
+  fun getTransactionStatusColor(
+    status: String
+  ) = when (status.toLowerCase()) {
+    "processing", "pending" -> R.color.status_active
+    "failed", "rejected" -> R.color.status_lost
     else -> R.color.status_confirmed
   }
 }

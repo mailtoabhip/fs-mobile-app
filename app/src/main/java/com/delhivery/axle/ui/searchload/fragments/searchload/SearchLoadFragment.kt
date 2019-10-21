@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
+import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -175,6 +176,11 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       binding.editOriginCity.error = getString(string.error_search_missing_origin)
       binding.editOriginCity.errorAnimate()
       analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
+      return
+    }
+
+    if (truckType.toLowerCase().contains("choose")) {
+      binding.spinnerTruckType.errorVibrate()
       return
     }
 

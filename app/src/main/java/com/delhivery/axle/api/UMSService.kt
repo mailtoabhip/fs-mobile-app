@@ -9,7 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 /**
- * UMS Service
+ * Handle network calls to UMS Service
  */
 interface UMSService {
   @POST("request-otp/")

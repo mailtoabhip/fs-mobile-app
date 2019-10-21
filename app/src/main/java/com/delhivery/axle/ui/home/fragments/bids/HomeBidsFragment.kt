@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_LostBids
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_MyBids
@@ -38,6 +39,7 @@ import com.delhivery.axle.utils.PROPERTY_ITEM
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.REQCODE_NO_ROUTES
 import com.delhivery.axle.utils.VALUE_ACTIVE
 import com.delhivery.axle.utils.VALUE_BID
 import com.delhivery.axle.utils.VALUE_CONFIRMED
@@ -93,18 +95,18 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     adapter.setItems(getStaticData())
 
     /* observe and update adapter items */
-    viewModel.userBidsData.observe(this, Observer {
+    viewModel.userBidsData.reobserve(this, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
 
-    viewModel.bidsCountLiveData.observe(this, Observer {
+    viewModel.bidsCountLiveData.reobserve(this, Observer {
       _title = when (it) {
-        0, null -> "My Bids"
-        else -> "My Bids(" + it + ")"
+        0, null -> getString(string.label_my_bids)
+        else -> "${getString(string.label_my_bids)}($it)"
       }
     })
 
-    viewModel.dataLoadingLiveData.observe(this, Observer {
+    viewModel.dataLoadingLiveData.reobserve(this, Observer {
       isLoadingData = it ?: false
     })
 
@@ -146,7 +148,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_ACTIVE)
         )
-        startActivityForResult(userBidsIntent(context!!, ActiveBid), REQUESTCODE_NOROUTES)
+        startActivityForResult(userBidsIntent(context!!, ActiveBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsHeaderAction_ConfirmedBids -> {
@@ -156,7 +158,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_CONFIRMED)
         )
-        startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQUESTCODE_NOROUTES)
+        startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsHeaderAction_LostBids -> {
@@ -166,7 +168,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_BID, VALUE_LOST)
         )
-        startActivityForResult(userBidsIntent(context!!, LostBid), REQUESTCODE_NOROUTES)
+        startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsRequestAction_ViewDetails -> {
@@ -210,7 +212,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           }
         }
         valueAnimator.start()
-        stickyView.postDelayed(Runnable {
+        stickyView.postDelayed({
           stickyView.requestFocus()
           uiUtils.toggleKeyboard(false)
           toolbarElevationLiveData!!.postValue(0f)
@@ -238,7 +240,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      REQUESTCODE_NOROUTES -> {
+      REQCODE_NO_ROUTES -> {
         if (resultCode == RESULT_OK) {
           action(NavigateHomeFragmentAction(LoadsFragment))
         }
@@ -319,5 +321,3 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
   }
 }
-
-private var REQUESTCODE_NOROUTES = 12345

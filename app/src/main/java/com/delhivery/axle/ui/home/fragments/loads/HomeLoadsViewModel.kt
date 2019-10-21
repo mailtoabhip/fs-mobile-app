@@ -33,8 +33,8 @@ import javax.inject.Inject
 class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
-  val userPrefs: UserPrefs,
-  private val bidsRepository: BidsRepository
+  private val bidsRepository: BidsRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
 
   /* user bids live data */
@@ -60,19 +60,19 @@ class HomeLoadsViewModel @Inject constructor(
   var offset = 0
   var total = 0
 
-  fun isRouteUpdated() = userPrefs.routeUpdate
+  /**
+   * Getter/Setter for route update flag to preferences
+   */
+  var routeUpdated: Boolean
+    get() = userPrefs.routeUpdate
+    set(value) {
+      userPrefs.routeUpdate = value
+    }
 
   /**
    * Check FCM registration flag
    */
   fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
-
-  /**
-   * Save route update flag to preferences
-   */
-  fun setRouteUpdated() {
-    userPrefs.routeUpdate = false
-  }
 
   var fromNotification: Boolean
     get() = userPrefs.fromNotification
@@ -118,6 +118,7 @@ class HomeLoadsViewModel @Inject constructor(
               if (total == 0) {
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
+                add(Pair(HomeLoadsSearchItem(), AddUpdate))
                 for (load in loads.toMutableList()) {
                   try {
                     load.loadPricePercent = loadPricePercent
@@ -126,7 +127,7 @@ class HomeLoadsViewModel @Inject constructor(
                         b.transactionId.safeEquals(load.transactionId)
                       }[0]
                   } catch (e: Exception) {
-                    Log.d("No Bid found for: ", load.transactionId)
+                    Log.d("No Bid found for: ", load.transactionId ?: "")
                   }
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }
@@ -159,13 +160,6 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
-            userPrefs.saveUser(_user)
-            if (_user.hasRoutes()) {
-              userPrefs.cityCode = _user.userRoutes()[0].origin.cityId
-            } else {
-              userPrefs.cityCode = _user.baseCityCode
-            }
-
             routesLiveData.postValue(_user.hasRoutes())
           } else {
             error.handle()

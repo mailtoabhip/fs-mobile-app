@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -26,7 +27,7 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
@@ -41,6 +42,7 @@ import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_LOAD_INFO
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
@@ -105,8 +107,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       addOnScrollListener(PaginationInterface())
     }
 
-    adapter.setItems(getStaticItems())
-
     binding.editStickySearch.setOnClickListener {
       handleAction(
           HomeTripsSearchAction_Search, HomeLoadsSearchItem()
@@ -119,21 +119,20 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       )
     }
 
-    viewModel.progressLiveData.observe(this, ProgressObserver())
+    viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
-    viewModel.userLoadsData.observe(this, Observer {
+    viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
 
-    viewModel.loadsCountLiveData.observe(this, Observer {
+    viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       _title = when (it) {
         0, null -> getString(string.label_load_request)
         else -> "${getString(string.label_load_request)}($it)"
       }
-      this@HomeLoadsFragment.activity?.title = _title
     })
 
-    viewModel.routesLiveData.observe(this, Observer {
+    viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
       when (it) {
         false -> binding.rvLoads.apply {
           this@HomeLoadsFragment.visible = true
@@ -148,7 +147,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     })
 
-    viewModel.bidsActionLiveData.observe(this, Observer {
+    viewModel.bidsActionLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.toggleKeyboard()
           .apply {
             when {
@@ -161,14 +160,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           }
     })
 
-    viewModel.dataLoadingLiveData.observe(this, Observer {
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
       isLoadingData = it ?: false
     })
 
-    /* fetch user transactions */
-    if (!viewModel.isRouteUpdated()) {
-      viewModel.fetchUserTransactions()
-    }
+    refreshData()
 
     if (viewModel.isFCMTokenGenerated()) {
       fcmUtils.generateToken {
@@ -184,25 +180,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   override fun onResume() {
     super.onResume()
     viewModel.checkUserRoutes()
-    if (viewModel.isRouteUpdated() || viewModel.fromNotification) {
+    if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
-      if (viewModel.isRouteUpdated()) {
-        viewModel.setRouteUpdated()
-      } else if (viewModel.fromNotification) {
-        viewModel.fromNotification = false
-      }
+      viewModel.routeUpdated = false
+      viewModel.fromNotification = false
     }
   }
 
-  private fun getStaticItems() = mutableListOf<BaseHomeLoadsRVAdapterItem<*>>().apply {
-    add(0, HomeLoadsSearchItem())
-    add(1, HomeLoadsProgressItem())
-  }
-
   private fun refreshData() {
-    /* remove user transactions */
+    viewModel.routeUpdated = false
     adapter.resetStaticData()
-    /* fetch again */
     viewModel.fetchUserTransactions()
   }
 
@@ -213,14 +200,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     // handle actions here
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
-        val _item = item.data as HomeBidsRequestItemData
+        val data = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
+            mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item, it)) }
+        context?.let { startActivity(bidDetailsIntent(data, it)) }
       }
 
       HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> {
@@ -239,7 +226,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(VALUE_LOAD_INFO)
         )
         context?.let {
-          startActivity(selectRouteIntent(it, EditRoute))
+          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
         }
       }
 
@@ -251,7 +238,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(VALUE_NO_RESULTS)
         )
         context?.let {
-          startActivity(selectRouteIntent(it, EditRoute))
+          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
         }
       }
 
@@ -343,6 +330,17 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         .setInterpolator(DecelerateInterpolator(2f))
         .setDuration(400L)
         .start()
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == REQCODE_EDIT_ROUTE && resultCode == RESULT_OK) {
+      refreshData()
+    }
   }
 
   /**

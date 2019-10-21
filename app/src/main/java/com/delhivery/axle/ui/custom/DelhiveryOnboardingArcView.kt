@@ -7,12 +7,15 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.View
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 
+/**
+ * Custom implementation of View to make arc
+ */
 class DelhiveryOnboardingArcView(
   context: Context,
   attrs: AttributeSet? = null
