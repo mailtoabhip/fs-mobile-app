@@ -10,6 +10,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [HomeWalletFragment]
+ */
 class HomeWalletViewModel @Inject constructor(
   private val walletRepository: WalletRepository,
   private val userPrefs: UserPrefs
@@ -38,7 +41,7 @@ class HomeWalletViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (_res != null && !error) {
             userPrefs.walletActivated = true
-            this.optinDate = _res.wallet.optinDate?:""
+            this.optinDate = _res.wallet.optinDate ?: ""
             walletLiveData.postValue(_res.wallet)
           } else {
             walletLiveData.postValue(null)
@@ -56,7 +59,7 @@ class HomeWalletViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (_res != null && !error) {
             walletLiveData.postValue(_res.wallet)
-            this.optinDate = _res.wallet.optinDate?:""
+            this.optinDate = _res.wallet.optinDate ?: ""
           } else {
             walletLiveData.postValue(null)
           }

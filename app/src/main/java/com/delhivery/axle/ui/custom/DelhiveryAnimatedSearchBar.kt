@@ -7,10 +7,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Style.FILL
 import android.graphics.RectF
-import androidx.core.content.res.ResourcesCompat
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.widget.EditText
+import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.axle.utils.extensions.disposeAndClear
@@ -19,6 +19,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.disposables.CompositeDisposable
 
+/**
+ * Custom implementation of [EditText]
+ */
 class DelhiveryAnimatedSearchBar(
   context: Context,
   attrs: AttributeSet? = null

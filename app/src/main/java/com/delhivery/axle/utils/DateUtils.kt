@@ -161,20 +161,16 @@ object DateUtils {
         val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
         val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
         val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
-        if (days > 0) {
-          if (days <= 3) {
-            "$days day ago"
-          } else {
-            formatDate(
+        when {
+          days > 0 -> when {
+            days <= 3 -> "$days day ago"
+            else -> formatDate(
                 parseDate(actionTime, DatePatterns.OrionDateFormat), DatePatterns.SimpleDateFormat
             )
           }
-        } else if (hours > 0) {
-          "$hours hr $mins min ago"
-        } else if (mins > 0) {
-          "$mins min $secs s ago"
-        } else {
-          "Just now"
+          hours > 0 -> "$hours hr $mins min ago"
+          mins > 0 -> "$mins min $secs s ago"
+          else -> "Just now"
         }
       }
     } else {

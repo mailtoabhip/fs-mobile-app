@@ -38,6 +38,9 @@ import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListFra
 import com.delhivery.axle.utils.LocationFlowState
 import com.google.android.material.snackbar.Snackbar
 
+/**
+ * Handles route updation
+ */
 class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, SelectRouteViewModel>() {
 
   override fun getViewModelClass() = SelectRouteViewModel::class.java

@@ -1,13 +1,16 @@
 package com.delhivery.axle.ui.custom
 
 import android.content.Context
-import androidx.appcompat.widget.AppCompatEditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatEditText
 import com.delhivery.axle.R
 import com.delhivery.axle.utils.extensions.raisedFocus
 
+/**
+ * Custom implementation of [AppCompatEditText] for OTP enter
+ */
 class DelhiveryOTPViewEditText(
   context: Context,
   attrs: AttributeSet? = null

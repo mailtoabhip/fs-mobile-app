@@ -15,6 +15,9 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.names
 
+/**
+ * Custom implementation of [AppCompatAutoCompleteTextView]
+ */
 class DelhiveryCityAutoEditText(
   context: Context,
   attrs: AttributeSet? = null

@@ -29,6 +29,9 @@ class TransactionsViewModel @Inject constructor(
   var transactionsLiveData =
     MutableLiveData<List<Pair<BaseTransactionsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+  /**
+   * Fetch wallet transactions
+   */
   fun fetchTransactions() {
     compositeDisposable += Single.zip(walletRepository.fetchWalletData(),
         walletRepository.fetchWalletTransactions(),

@@ -10,6 +10,9 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.delhivery.axle.R
 
+/**
+ * ViewPagerIndicator for [ViewPager]
+ */
 class DelhiveryViewPagerIndicator(
   context: Context,
   attrs: AttributeSet? = null

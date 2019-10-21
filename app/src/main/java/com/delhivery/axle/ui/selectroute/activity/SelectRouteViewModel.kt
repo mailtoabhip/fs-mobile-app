@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.selectroute.activity
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.repository.UserRepository
@@ -12,6 +11,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [SelectRouteActivity]
+ */
 class SelectRouteViewModel @Inject constructor(
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs
@@ -40,30 +42,6 @@ class SelectRouteViewModel @Inject constructor(
   }
 
   /**
-   * Update Base city and Routes
-   */
-  fun updateBaseCityAndRoutes(
-    city: CityModel?,
-    newRoutes: List<RouteModel>,
-    completedAction: (success: Boolean) -> Unit
-  ) {
-    val routeMappings = mutableListOf<RouteMappingModel>().apply {
-      newRoutes.forEach { addAll(it.toMapping()) }
-    }
-    compositeDisposable += userRepository.updateBaseCityAndRoutes(city, routeMappings)
-        .onBackground()
-        .progress()
-        .subscribe { _routes, error ->
-          if (!error) {
-            completedAction(true)
-          } else {
-            error.handle()
-            completedAction(false)
-          }
-        }
-  }
-
-  /**
    * Update Routes
    */
   fun updateUserRoutes(
@@ -86,6 +64,9 @@ class SelectRouteViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Fetch latest user data
+   */
   fun fetchUser(completedAction: (success: Boolean) -> Unit) {
     compositeDisposable += userRepository.getUser(false)
         .onBackground()
@@ -100,6 +81,9 @@ class SelectRouteViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Set route updated flag
+   */
   fun setRoutesUpdated(route: RouteModel) {
     userPrefs.routeUpdate = true
     userPrefs.cityCode = route.origin.cityId

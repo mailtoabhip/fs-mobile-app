@@ -69,6 +69,7 @@ internal class ActiveTripsProgressItemVH(binding: ViewActiveTripsProgressItemBin
     item: ActiveTripProgressItem,
     _interface: ActiveTripsRVAdapterInterface
   ) {
+    //Do nothing
   }
 }
 

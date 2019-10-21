@@ -14,11 +14,14 @@ import com.delhivery.axle.databinding.ViewDelhiveryOtpBinding
 import com.delhivery.axle.databinding.ViewDelhiveryOtpItemBinding
 import com.delhivery.axle.utils.extensions.errorVibrate
 
+/**
+ * Custom implementation of [FrameLayout] for OTP enter view
+ */
 class DelhiveryOTPView(
   context: Context,
   attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
-  //
+
   private var otp = arrayOfNulls<OTPViewIDValuePair>(OTPDigitsCount)
 
   /* view binding */

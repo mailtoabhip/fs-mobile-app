@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.FragmentHomeWalletBinding
@@ -104,7 +103,6 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
       binding.executePendingBindings()
       viewModel.activateWallet()
     }
-    binding.viewPager.addOnPageChangeListener(PageChangeListener())
 
     viewModel.fetchWalletData()
   }
@@ -170,6 +168,9 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     }
   }
 
+  /**
+   * Pager adapter for WalletIntro
+   */
   inner class IntroPagerAdapter : PagerAdapter() {
 
     lateinit var layoutInflater: LayoutInflater
@@ -199,26 +200,6 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
       container.removeView(obj)
     } else {
       super.destroyItem(container, position, obj)
-    }
-  }
-
-  inner class PageChangeListener : OnPageChangeListener {
-
-    override fun onPageScrollStateChanged(state: Int) {}
-
-    override fun onPageScrolled(
-      position: Int,
-      positionOffset: Float,
-      positionOffsetPixels: Int
-    ) {
-    }
-
-    override fun onPageSelected(position: Int) {
-      if (position == adapter.count - 1) {
-
-      } else {
-
-      }
     }
   }
 

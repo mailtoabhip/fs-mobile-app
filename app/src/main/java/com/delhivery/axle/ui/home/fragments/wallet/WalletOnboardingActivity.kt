@@ -8,6 +8,9 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityWalletOnboardingBinding
 import com.delhivery.axle.ui.base.BaseActivity
 
+/**
+ * Handles wallet process onboarding
+ */
 class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, WalletOnboardingViewModel>() {
 
   override fun getViewModelClass() = WalletOnboardingViewModel::class.java

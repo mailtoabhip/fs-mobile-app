@@ -11,6 +11,9 @@ import android.widget.TextView
 import com.delhivery.axle.R
 import com.google.android.material.textfield.TextInputLayout
 
+/**
+ * Custom implementation of [TextInputLayout]
+ */
 class DelhiveryTextInputLayout(
   context: Context,
   attrs: AttributeSet
@@ -58,10 +61,10 @@ class DelhiveryTextInputLayout(
       if (seq.isEmpty()) {
         error = "*Please enter a value"
       } else if (minLength != Int.MIN_VALUE) {
-        if (seq.length < minLength) {
-          error = "*Min length required is $minLength"
+        error = if (seq.length < minLength) {
+          "*Min length required is $minLength"
         } else {
-          error = null
+          null
         }
       } else if (maxVal != Int.MAX_VALUE && seq.isNotEmpty()) {
         val maxVal: Int
@@ -72,10 +75,10 @@ class DelhiveryTextInputLayout(
           error = "*Invalid value"
           return
         }
-        if (maxVal > this.maxVal) {
-          error = "*Max value can be ${this.maxVal}"
+        error = if (maxVal > this.maxVal) {
+          "*Max value can be ${this.maxVal}"
         } else {
-          error = null
+          null
         }
       } else if (seq.isNotEmpty()) {
         error = null

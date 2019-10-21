@@ -129,6 +129,9 @@ class ActiveTripsViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Fetches all numbers with active fuel cards
+   */
   fun getActiveNumbers(mobile: String?): ArrayList<String> {
     val numbers = arrayListOf<String>()
     for (card in cards) {
