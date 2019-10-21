@@ -6,7 +6,6 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
-import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletFragment
 
 /**
  * Home fragment type data
@@ -20,8 +19,8 @@ enum class HomeFragmentType(
   LoadsFragment(R.id.nav_loads, 0, HomeLoadsFragment._instance, "Loads Requests"),
   BidsFragment(R.id.nav_bids, 1, HomeBidsFragment._instance, "Bids & Requests"),
   TripsFragment(R.id.nav_trips, 2, HomeTripsFragment._instance, "Ongoing Trips"),
-  Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
-  ProfileFragment(R.id.nav_profile, 4, HomeProfileFragment._instance, "Profile");
+//  Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
+  ProfileFragment(R.id.nav_profile, 3, HomeProfileFragment._instance, "Profile");
 
   companion object {
     /**

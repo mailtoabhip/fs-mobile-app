@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.Config
@@ -84,20 +85,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           .apply {
             when {
               it != null -> {
-                (_adapter.itemsList()
-                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
+                  it.second
                 _adapter.notifyItemChanged(it.first)
               }
             }
           }
     })
 
-    /* transform observe search results */
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-        /* add all transactions */
         if (it.isNullOrEmpty()) {
-          //TODO: add warning item
+          add(Pair(SearchLoadWarningItem_NoLoad, Add))
         } else {
           it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
         }
@@ -106,16 +105,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         .observe(this, SearchResultsObserver())
   }
 
-  /**
-   * Setup spinners
-   */
   private fun setupSpinners() {
     binding.spinnerTruckType.isEnabled = false
     binding.spinnerTruckType.isClickable = false
-    /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
-
-    }
+    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
   }
 
   /**
@@ -138,9 +131,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.origin = origin
     binding.destination = destination
     val pos = when (type) {
-      "Closed" -> 0
-      "Open" -> 1
-      else -> 2
+      "Closed" -> 1
+      "Open" -> 2
+      "Trailer" -> 3
+      else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
     viewModel.searchLoad(origin, destination, type)

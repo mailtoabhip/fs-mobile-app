@@ -5,6 +5,7 @@ import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
+import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 
 /**
@@ -58,7 +59,7 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
 }
 
 /**
- * Bid request item view holder
+ * Search request item view holder
  */
 class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     BaseSearchResultsRVAdapterViewHolder<ViewHomeLoadsRequestItemBinding, SearchLoadsRequestItem>(
@@ -88,5 +89,22 @@ internal class SearchLoadsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinner
     _interface: SearchLoadsRVAdapterInterface
   ) {
 
+  }
+}
+
+/**
+ * Search load warning item
+ */
+internal class SearchLoadsWarningItemVH(binding: ViewWarningItemBinding) :
+    BaseSearchResultsRVAdapterViewHolder<ViewWarningItemBinding, SearchLoadsWarningItem>(
+        binding
+    ) {
+  override fun bind(
+    item: SearchLoadsWarningItem,
+    _interface: SearchLoadsRVAdapterInterface
+  ) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.btnAction.visibility = View.GONE
   }
 }

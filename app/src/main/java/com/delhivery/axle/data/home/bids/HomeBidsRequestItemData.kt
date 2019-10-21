@@ -57,6 +57,10 @@ data class HomeBidsRequestItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
+  fun originCityState() = originCityName() + ", " + originStateName()
+
+  fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+
   fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
 
   fun bidAmount() = if (transactionBid != null) {

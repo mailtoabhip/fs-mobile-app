@@ -16,6 +16,9 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapter
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Transaction
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Warning
 
+/**
+ * RV Adapter for [TransactionsActivity]
+ */
 class TransactionsRVAdapter(private val _interface: TransactionsRVAdapterInterface) :
     BaseDataRVAdapter<BaseTransactionsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface

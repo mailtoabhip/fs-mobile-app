@@ -57,7 +57,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Axle"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* setup live data observers */
@@ -72,14 +71,27 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
-        binding.textTargetPrice.text = binding.transaction?.bidAmount()
+          binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }
       }
     })
 
-    /* fetch transaction details */
+    binding.containerError.btnAction.setOnClickListener {
+      refreshData()
+    }
+
+    binding.refreshLayout.setOnRefreshListener {
+      refreshData()
+    }
+
+    refreshData()
+  }
+
+  private fun refreshData() {
+    binding.error = false
     viewModel.fetchTransactionDetails()
+    binding.executePendingBindings()
   }
 
   /**
@@ -89,13 +101,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
-          true -> uiUtils.showDelhiveryProgress(
-              "Getting details", "This usually takes few seconds to load. please be patient.",
-              "This usually takes few seconds to load. please be patient."
-          )
-          false -> uiUtils.hideDelhiveryProgress()
+          true -> {
+            binding.refreshLayout.isRefreshing = true
+            binding.refreshing = true
+          }
+          false -> {
+            binding.refreshLayout.isRefreshing = false
+          }
         }
       }
+      binding.executePendingBindings()
     }
   }
 
@@ -104,10 +119,21 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
-      t?.let { _transaction ->
-        binding.transaction = _transaction
-        title = _transaction.tripDisplayName()
+      binding.refreshing = false
+      if (t != null) {
+        t.let { _transaction ->
+          binding.error = false
+          binding.transaction = _transaction
+          title = _transaction.tripDisplayName()
+        }
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Time Out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
       }
+      binding.executePendingBindings()
     }
   }
 
@@ -132,7 +158,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
                     0.0, null -> ""
-                    else -> "Lowest Bid - ${state.lowestBid}"
+                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(state.lowestBid)}"
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
@@ -143,7 +169,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
                     0.0, null -> ""
-                    else -> "Lowest Bid - ${state.lowestBid}"
+                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(state.lowestBid)}"
                   }
                   if (state.bidsCount > 1) {
                     textUserBidAmountDiff.text =

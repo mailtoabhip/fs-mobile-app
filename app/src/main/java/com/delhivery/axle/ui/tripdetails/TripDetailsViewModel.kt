@@ -76,11 +76,14 @@ class TripDetailsViewModel @Inject constructor(
             this.warehouse = _res.first.pickupLocation
             tripLiveData.postValue(_res)
           } else {
-            error.handle()
+            tripLiveData.postValue(null)
           }
         }
   }
 
+  /**
+   * Fetch warehouse details
+   */
   fun fetchWarehouseDetails() {
     compositeDisposable += warehouseRepository.fetchWarehouseDetails(
         tripDetail.clientId, warehouse

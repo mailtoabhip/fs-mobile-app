@@ -472,7 +472,7 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:gravity="center"
-          tools:visibility="gone"
+          tools:visibility="visible"
           android:visibility="@{ !fetching &amp;&amp; error ? View.VISIBLE : View.GONE }"
           android:layout_marginTop="@dimen/size_64dp"
           android:orientation="vertical"
@@ -532,7 +532,7 @@
           android:gravity="center"
           android:visibility="@{ created ? View.VISIBLE : View.GONE }"
           android:weightSum="1"
-          tools:visibility="visible"
+          tools:visibility="gone"
           android:orientation="horizontal"
           android:background="@color/transparent_grey"
           >

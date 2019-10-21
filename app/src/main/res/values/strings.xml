@@ -218,7 +218,7 @@
   <string name="label_supplier_details">Suppliers Details</string>
 
   <string-array name="array_truck_type">
-    <!--<item>Truck type</item>-->
+    <item>Choose Vehicle</item>
     <item>Closed</item>
     <item>Open</item>
     <item>Trailer</item>

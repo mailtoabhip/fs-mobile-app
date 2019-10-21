@@ -13,6 +13,9 @@ import com.delhivery.axle.databinding.ActivityTransactionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.transactionDetailIntent
 
+/**
+ * Displays wallet transactions
+ */
 class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, TransactionsViewModel>(),
     TransactionsRVAdapterInterface {
 

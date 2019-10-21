@@ -19,6 +19,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
+/**
+ * Viewmodel for [TransactionsActivity]
+ */
 class TransactionsViewModel @Inject constructor(
   private val walletRepository: WalletRepository
 ) : BaseViewModel() {

@@ -13,6 +13,7 @@ import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
@@ -29,6 +30,10 @@ import com.delhivery.axle.utils.VALUE_LOAD
 
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>() {
 
+  init {
+    hasInlineProgress = true
+  }
+
   override fun getViewModelClass() = TripDetailsViewModel::class.java
 
   override fun layoutId() = R.layout.activity_trip_details
@@ -44,7 +49,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     /* set transaction id */
-    viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey)
+    viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -56,18 +61,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* observe trip details live data */
     viewModel.progressLiveData.observe(this, ProgressObserver())
-
-    viewModel.tripLiveData.observe(this, Observer {
-      it?.apply {
-        title = first.tripDisplayName(second.tripStatus())
-        binding.transactionDetails = first
-        binding.tripDetails = second
-        viewModel.bidDetail = second.bidDetails
-        viewModel.fetchWarehouseDetails()
-        viewModel.fetchPaymentSummary()
-      }
-    })
-
+    viewModel.tripLiveData.observe(this, TransactionObserver())
     viewModel.warehouseLiveData.observe(this, Observer {
       binding.labelWarehouse.text = it
     })
@@ -88,8 +82,47 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       )
     }
 
-    /* fetch trip details and payment summary */
+    binding.containerError.btnAction.setOnClickListener {
+      refreshData()
+    }
+
+    binding.refreshLayout.setOnRefreshListener {
+      refreshData()
+    }
+
+    refreshData()
+  }
+
+  private fun refreshData() {
+    binding.refreshing = true
+    binding.error = false
     viewModel.fetchTripDetails()
+    binding.executePendingBindings()
+  }
+
+  /**
+   * Transaction details and UI updation Observer
+   */
+  inner class TransactionObserver : Observer<Pair<HomeBidsRequestItemData, HomeTripsItemData>> {
+    override fun onChanged(t: Pair<HomeBidsRequestItemData, HomeTripsItemData>?) {
+      binding.refreshing = false
+      if (t != null) {
+        binding.error = false
+        title = t.first.tripDisplayName(t.second.tripStatus())
+        binding.transactionDetails = t.first
+        binding.tripDetails = t.second
+        viewModel.bidDetail = t.second.bidDetails
+        viewModel.fetchWarehouseDetails()
+        viewModel.fetchPaymentSummary()
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Time Out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
+      }
+      binding.executePendingBindings()
+    }
   }
 
   /**
@@ -99,12 +132,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
-          true -> uiUtils.showDelhiveryProgress(
-              "Getting details", "This usually takes few seconds to load. please be patient.",
-              "This usually takes few seconds to load. please be patient."
-          )
-          false -> uiUtils.hideDelhiveryProgress()
+          true -> {
+            binding.refreshLayout.isRefreshing = true
+          }
+          false -> {
+            binding.refreshLayout.isRefreshing = false
+          }
         }
+        binding.executePendingBindings()
       }
     }
   }
