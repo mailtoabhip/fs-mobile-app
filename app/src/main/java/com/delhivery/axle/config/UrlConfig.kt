@@ -54,8 +54,8 @@ enum class UrlConfig(
       "https://orion-notification-api-dev.delhivery.com"
   ),
   FuelService(
-      "https://tryyippya1.execute-api.ap-southeast-1.amazonaws.com/prod/",
-      "https://tryyippya1.execute-api.ap-southeast-1.amazonaws.com/dev/"
+      "https://orion-iocl-api.delhivery.com",
+      "https://orion-iocl-api.dev.delhivery.com"
   );
 
   /**
