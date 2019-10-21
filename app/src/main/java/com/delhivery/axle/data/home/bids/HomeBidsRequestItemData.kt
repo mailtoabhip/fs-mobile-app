@@ -49,20 +49,39 @@ data class HomeBidsRequestItemData(
 
   fun targetPriceString() = "₹ ${StringUtils.formatAmount(target())}"
 
+  /**
+   * @return formatted origin city name
+   */
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
+  /**
+   * @return formatted destination city name
+   */
   fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
+  /**
+   * @return formatted origin state name
+   */
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
+  /**
+   * @return formatted destination state name
+   */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
+  /**
+   * @return formatted origin city, state
+   */
   fun originCityState() = originCityName() + ", " + originStateName()
 
+  /**
+   * @return formatted destination city, state
+   */
   fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
 
-  fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
-
+  /**
+   * @return formatted bid amount
+   */
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
       Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
@@ -72,12 +91,18 @@ data class HomeBidsRequestItemData(
     ""
   }
 
+  /**
+   * @return bid label
+   */
   fun amountLabel() = when (bidStatus()) {
     Open, Rejected -> "Your Bid"
     Accepted -> "Confirmed Price"
     else -> ""
   }
 
+  /**
+   * @return truckTypeDrawable basis [truckType]
+   */
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
@@ -116,6 +141,9 @@ data class HomeBidsRequestItemData(
       else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
     }
 
+  /**
+   * @return bid difference
+   */
   fun bidDifference(): String {
     if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
       return transactionBid?.diffFromLowestBid(lowestBid!!) ?: ""
@@ -123,12 +151,18 @@ data class HomeBidsRequestItemData(
     return ""
   }
 
+  /**
+   * @return bid status
+   */
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
+  /**
+   * @return bid text
+   */
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
 }
 
