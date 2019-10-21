@@ -8,6 +8,9 @@ import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVA
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [SearchLoadsRVAdapter]
+ */
 enum class SearchResultsRVAdapterItemType(val typeId: Int) {
   Request(0),
   SearchSpinner(1),

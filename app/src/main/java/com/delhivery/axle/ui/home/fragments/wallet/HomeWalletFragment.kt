@@ -27,6 +27,9 @@ import com.delhivery.axle.utils.REQCODE_CREATE_ACTIVE_TRIPS
 import com.delhivery.axle.utils.REQCODE_WALLET_ONBOARDING
 import javax.inject.Inject
 
+/**
+ * Handles user wallet view
+ */
 class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalletViewModel>(),
     TitleProvider {
 

@@ -122,9 +122,6 @@ data class TransactionsItemData(
     else -> "Amount debited"
   }
 
-  /**
-   * @return if transaction is credit or debit
-   */
   private fun isCredit() = type.toLowerCase().contains("credit")
 
   /**
@@ -204,6 +201,9 @@ data class TransactionsItemData(
 
 }
 
+/**
+ * Transaction Types for wallet
+ */
 enum class TransactionType(val type: String) {
   DEBIT("debit"),
   DEBIT_NOTE("debitnote-debit"),
@@ -227,6 +227,9 @@ enum class TransactionType(val type: String) {
   }
 }
 
+/**
+ * Transaction channel for transactions
+ */
 enum class TransactionChannel(val type: String) {
   IOCL("iocl"),
   HPCL("hpcl"),

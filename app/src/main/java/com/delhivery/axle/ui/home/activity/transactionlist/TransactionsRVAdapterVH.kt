@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.base.BaseViewHolder
  */
 abstract class BaseTransactionsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseTransactionsRVAdapterItem<*>>(binding: B) :
     BaseViewHolder<B>(binding) {
+  /**
+   * Binds item - [IT] to binding - [B]
+   */
   abstract fun bind(
     item: IT,
     _interface: TransactionsRVAdapterInterface

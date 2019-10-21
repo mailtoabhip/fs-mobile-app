@@ -52,6 +52,9 @@ class TransactionDetailViewModel @Inject constructor(
 
   var transactionStateLiveData = MutableLiveData<TransactionState>()
 
+  /**
+   * Updates transaction details or fetch required trip details
+   */
   fun updateDetails() {
     when (transaction.transactionType()) {
       DEBIT -> {
@@ -121,7 +124,7 @@ class TransactionDetailViewModel @Inject constructor(
               }
             }
           } else {
-
+            //Do Nothing
           }
         }
   }

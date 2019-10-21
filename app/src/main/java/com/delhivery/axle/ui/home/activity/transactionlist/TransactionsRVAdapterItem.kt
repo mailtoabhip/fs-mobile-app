@@ -12,6 +12,9 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapter
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Transaction
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [TransactionsRVAdapter]
+ */
 enum class TransactionsRVAdapterItemType(val typeId: Int) {
   Header(0),
   Transaction(1),

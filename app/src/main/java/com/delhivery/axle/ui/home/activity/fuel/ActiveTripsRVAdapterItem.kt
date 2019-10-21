@@ -10,6 +10,9 @@ import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Trip
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [ActiveTripsRVAdapter]
+ */
 enum class ActiveTripsRVAdapterItemType(val typeId: Int) {
   Trip(0),
   Progress(2),

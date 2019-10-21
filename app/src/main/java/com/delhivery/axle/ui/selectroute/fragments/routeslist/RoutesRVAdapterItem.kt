@@ -8,6 +8,9 @@ import com.delhivery.axle.ui.selectroute.fragments.routeslist.RoutesRVAdapterIte
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.RoutesRVAdapterItemType.Progress
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.RoutesRVAdapterItemType.Request
 
+/**
+ * RV item type for [RoutesRVAdapter]
+ */
 enum class RoutesRVAdapterItemType(val typeId: Int) {
   Request(0),
   Progress(1),
@@ -15,7 +18,7 @@ enum class RoutesRVAdapterItemType(val typeId: Int) {
 
   companion object {
     /**
-     * Get [HomeBidsRVAdapterItemType] by typeId
+     * Get [RoutesRVAdapter] by typeId
      */
     fun byTypeId(typeId: Int) = values().filter { typeId == it.typeId }.firstOrNull()
   }

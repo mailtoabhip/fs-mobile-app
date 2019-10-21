@@ -93,6 +93,9 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     })
   }
 
+  /**
+   * remove observer and observe live data
+   */
   fun <T> LiveData<T>.reobserve(
     owner: LifecycleOwner,
     observer: Observer<T>
