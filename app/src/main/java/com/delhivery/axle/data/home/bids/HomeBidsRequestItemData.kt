@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.home.bids
 
+import android.text.TextUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -29,6 +30,10 @@ data class HomeBidsRequestItemData(
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
+  @SerializedName("intermediary_stop1") val stop1City: String,
+  @SerializedName("intermediary_stop1_state") val stop1State: String,
+  @SerializedName("intermediary_stop2") val stop2City: String,
+  @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
@@ -78,6 +83,21 @@ data class HomeBidsRequestItemData(
    * @return formatted destination city, state
    */
   fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+
+  /**
+   * @return intermediary stops
+   */
+  fun intermediaryStops(): String {
+    var stopBuilder = StringBuilder()
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(stop1City)
+          .append(", ")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(stop2City)
+    }
+    return stopBuilder.toString()
+  }
 
   /**
    * @return formatted bid amount
