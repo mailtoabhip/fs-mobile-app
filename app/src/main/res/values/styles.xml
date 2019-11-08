@@ -78,4 +78,11 @@
     <item name="android:paddingTop">@dimen/size_4dp</item>
     <item name="android:layout_marginTop">@dimen/size_8dp</item>
   </style>
+
+  <style name="style_delete_button">
+    <item name="android:layout_width">@dimen/size_24dp</item>
+    <item name="android:layout_height">@dimen/size_24dp</item>
+    <item name="android:src">@drawable/ic_cancel</item>
+    <item name="android:visibility">gone</item>
+  </style>
 </resources>

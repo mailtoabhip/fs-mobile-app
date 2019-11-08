@@ -10,6 +10,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.ChargeType
 import com.delhivery.axle.api.response.TripChargesResponse
+import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
@@ -25,6 +26,7 @@ import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
 import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_LOAD
 
@@ -144,9 +146,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  /**
-   * Populate trip history
-   */
   private fun populateHistory(history: MutableList<TripHistoryItem>) {
     // Capture event
     analyticsUtil.trackEvent(
@@ -189,9 +188,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   focusView = background != R.color.white
                 }
                 setHistory(item)
-                textInvoice.setOnClickListener {
+                textAction.setOnClickListener {
                   it.post {
                     startActivity(imageViewIntent(it.context, item.podUrl, "View POD"))
+                  }
+                }
+                binding.containerHistory.addView(root)
+              }
+        }
+        AwaitingPODUpload -> {
+          ViewTripHistoryPodUploadedBinding.inflate(layoutInflater, binding.containerHistory, false)
+              .apply {
+                focusView = false
+                if (index == 0) {
+                  val background = item.getBackground()
+                  container.setBackgroundResource(background)
+                  focusView = background != R.color.white
+                }
+                setHistory(item)
+                textAction.text = "Upload ePod"
+                textAction.setOnClickListener {
+                  it.post {
+                    startActivityForResult(uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD)
                   }
                 }
                 binding.containerHistory.addView(root)
@@ -215,9 +233,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  /**
-   * Populate payment summary
-   */
   private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
     // Capture event
     analyticsUtil.trackEvent(
@@ -340,6 +355,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     paymentSummaryBinding.containerTotal.visibility = View.VISIBLE
 
     binding.containerHistory.addView(paymentSummaryBinding.root)
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == REQCODE_UPLOAD_POD && resultCode == RESULT_OK) {
+      //Upload the images to server
+    }
   }
 }
 

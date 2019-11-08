@@ -21,6 +21,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 
+/**
+ * RV Adapter for [HomeTripsFragment]
+ */
 class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     BaseFilterableDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface

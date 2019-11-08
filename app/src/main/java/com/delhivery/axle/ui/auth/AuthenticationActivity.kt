@@ -39,6 +39,9 @@ import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Authentication screen
+ */
 class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
     DelhiveryOTPViewInterface, OTPReceiverInterface {
 

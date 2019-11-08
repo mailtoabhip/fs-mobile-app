@@ -8,6 +8,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.GlobalPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [OnboardingActivity]
+ */
 class OnboardingViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
   private val notificationRepository: NotificationRepository,

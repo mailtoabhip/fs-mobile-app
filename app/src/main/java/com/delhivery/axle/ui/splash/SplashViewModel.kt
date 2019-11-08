@@ -9,6 +9,9 @@ import com.delhivery.axle.utils.prefs.GlobalPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [SplashActivity]]
+ */
 class SplashViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
   private val globalPrefs: GlobalPrefs,

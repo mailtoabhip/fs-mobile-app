@@ -5,6 +5,9 @@ import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 
+/**
+ * Base fragment for Search load and result
+ */
 abstract class SearchLoadBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<B, VM>() {
 
   /**

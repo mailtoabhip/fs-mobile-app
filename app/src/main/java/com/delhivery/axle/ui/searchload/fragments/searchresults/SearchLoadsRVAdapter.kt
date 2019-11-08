@@ -13,6 +13,9 @@ import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVA
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
 
+/**
+ * RV adapter for [SearchLoadsFragment]
+ */
 class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface) :
     BaseDataRVAdapter<BaseSearchLoadsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface

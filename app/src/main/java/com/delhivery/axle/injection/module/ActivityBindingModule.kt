@@ -14,8 +14,8 @@ import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
+import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
-import com.delhivery.axle.ui.home.fragments.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
+import com.delhivery.axle.ui.tripdetails.UploadImageActivity
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -149,6 +150,13 @@ abstract class ActivityBindingModule {
       modules = [AbsWalletOnboardingActivityModule::class]
   )
   internal abstract fun bindWalletOnboardingActivity(): WalletOnboardingActivity
+
+  /* Upload image activity */
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsUploadImageActivityModule::class]
+  )
+  internal abstract fun bindUploadImageActivity(): UploadImageActivity
 }
 
 /**
@@ -211,6 +219,9 @@ internal abstract class AbsCreateFuelCardActivityModule : ActivityModule<CreateF
 
 @Module
 internal abstract class AbsWalletOnboardingActivityModule : ActivityModule<WalletOnboardingActivity>()
+
+@Module
+internal abstract class AbsUploadImageActivityModule : ActivityModule<UploadImageActivity>()
 
 /**
  * Activity Binds Module

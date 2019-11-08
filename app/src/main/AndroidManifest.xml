@@ -6,6 +6,8 @@
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.CALL_PHONE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.CAMERA" />
 
   <application
       android:name="com.delhivery.axle.KotlinApp"
@@ -28,6 +30,20 @@
         <action android:name="com.google.firebase.MESSAGING_EVENT" />
       </intent-filter>
     </service>
+
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_paths" />
+    </provider>
+
+    <service
+        android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+        android:enabled="true" />
 
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_color"
@@ -121,7 +137,11 @@
         android:screenOrientation="portrait" />
 
     <activity
-        android:name=".ui.home.fragments.wallet.WalletOnboardingActivity"
+        android:name=".ui.home.activity.wallet.WalletOnboardingActivity"
+        android:screenOrientation="portrait" />
+
+    <activity
+        android:name=".ui.tripdetails.UploadImageActivity"
         android:screenOrientation="portrait" />
 
   </application>

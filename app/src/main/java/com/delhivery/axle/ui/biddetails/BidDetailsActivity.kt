@@ -26,6 +26,9 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import javax.inject.Inject
 
+/**
+ * Bid detail screen
+ */
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
 
   init {

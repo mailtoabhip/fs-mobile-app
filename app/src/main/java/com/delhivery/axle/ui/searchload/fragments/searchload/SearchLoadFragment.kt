@@ -22,6 +22,9 @@ import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
 import javax.inject.Inject
 
+/**
+ * Search load screen
+ */
 class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, SearchLoadFragmentViewModel>() {
 
   companion object {

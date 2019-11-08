@@ -29,7 +29,7 @@ import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
 /**
- * Container for home screen
+ * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     OnNavigationItemSelectedListener {

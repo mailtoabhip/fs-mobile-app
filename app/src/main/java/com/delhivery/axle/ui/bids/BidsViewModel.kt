@@ -27,6 +27,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
+/**
+ * View model for [BidsActivity]
+ */
 class BidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val transactionsRepository: TransactionsRepository

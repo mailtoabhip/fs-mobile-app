@@ -4,6 +4,9 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 
+/**
+ * Adapter interface for [SearchLoadsFragment]
+ */
 interface SearchLoadsRVAdapterInterface : ItemClickListener<BaseSearchLoadsRVAdapterItem<*>> {
   override fun onItemClicked(item: BaseSearchLoadsRVAdapterItem<*>) {
     if (item.type == Request) {

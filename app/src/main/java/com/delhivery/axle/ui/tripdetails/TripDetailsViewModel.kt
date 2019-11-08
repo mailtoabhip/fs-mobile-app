@@ -33,6 +33,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [TripDetailsActivity]
+ */
 class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val paymentRepository: PaymentRepository,

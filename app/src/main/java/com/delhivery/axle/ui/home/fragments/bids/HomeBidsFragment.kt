@@ -45,6 +45,9 @@ import com.delhivery.axle.utils.VALUE_BID
 import com.delhivery.axle.utils.VALUE_CONFIRMED
 import com.delhivery.axle.utils.VALUE_LOST
 
+/**
+ * All bids screen on home
+ */
 class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
 

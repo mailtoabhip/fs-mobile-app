@@ -9,12 +9,16 @@ import com.delhivery.axle.data.home.trips.TripVehicleDetails
 import com.delhivery.axle.utils.DateUtils
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Data class for Trip history item
+ */
 data class TripHistoryModel(
   @SerializedName("action_time") val actionTime: String,
   @SerializedName("trip_status") private val _tripStatus: String,
   @SerializedName("user_name") val userName: String,
   @SerializedName("details") val details: TripHistoryDetail?
 ) {
+
   /**
    * Trip Status [TripStatus]
    */
@@ -27,6 +31,9 @@ data class TripHistoryModel(
 
 }
 
+/**
+ * Data class for Trip history Detail
+ */
 data class TripHistoryDetail(
   @SerializedName("arrival_time") val arrivalTime: String,
   @SerializedName("auto_advance_transfer") val autoAdvanceTransfer: Boolean,
@@ -40,13 +47,25 @@ data class TripHistoryDetail(
   @SerializedName("unloading_location") val unloadingLocation: String
 ) {
 
+  /**
+   * @return convert arrivalTime to relative stamp
+   */
   fun getArrivalEpoch() = DateUtils.convertToRelativeTimeStamp(arrivalTime)
 
+  /**
+   * @return convert reachedTime to relative stamp
+   */
   fun getReachedEpoch() = DateUtils.convertToRelativeTimeStamp(reachedTime)
 
+  /**
+   * @return convert unloadedTime to relative stamp
+   */
   fun getUnloadedEpoch() = DateUtils.convertToRelativeTimeStamp(unloadedTime)
 }
 
+/**
+ * Data class for Trip History Item
+ */
 data class TripHistoryItem(
   val id: Int,
   val heading: String,
@@ -56,6 +75,9 @@ data class TripHistoryItem(
   val invoiceUrl: String = ""
 ) {
 
+  /**
+   * @return background basis status
+   */
   fun getBackground(): Int {
     return when (id) {
       BalancePending, AdvancePending -> R.drawable.bg_gradient_orange
@@ -65,6 +87,9 @@ data class TripHistoryItem(
     }
   }
 
+  /**
+   * @return heading text color
+   */
   fun getHeadingTextColor(
     focused: Boolean,
     context: Context
@@ -73,6 +98,9 @@ data class TripHistoryItem(
     false -> ContextCompat.getColor(context, R.color.heading_black)
   }
 
+  /**
+   * @return subheading text color
+   */
   fun getSubHeadingTextColor(
     focused: Boolean,
     context: Context
