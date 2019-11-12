@@ -73,3 +73,30 @@
   **[] $VALUES;
   public *;
 }
+
+# Class names are needed in reflection
+-keep class com.amazonaws.** { *; }
+-keep class com.amazon.** { *; }
+-keep class com.amazonaws.services.**.*Handler
+-keep class com.amazonaws.services.sqs.QueueUrlHandler  { *; }
+-keep class com.amazonaws.javax.xml.transform.sax.*     { public *; }
+-keep class com.amazonaws.javax.xml.stream.**           { *; }
+-keep class com.amazonaws.services.**.model.*Exception* { *; }
+
+-keep class org.apache.commons.logging.**               { *; }
+-keep class org.codehaus.**                             { *; }
+# The following are referenced but aren't required to run
+-dontwarn com.fasterxml.jackson.**
+-dontwarn org.codehaus.jackson.**
+-dontwarn org.apache.commons.logging.**
+-dontwarn org.apache.commons.logging.impl.**
+# Android 6.0 release removes support for the Apache HTTP client
+-dontwarn org.apache.http.**
+-dontwarn org.apache.http.conn.scheme.**
+# The SDK has several references of Apache HTTP client
+-dontwarn com.amazonaws.http.**
+-dontwarn com.amazonaws.metrics.**
+
+-keepattributes Signature,*Annotation*
+
+-dontwarn javax.xml.stream.events.**

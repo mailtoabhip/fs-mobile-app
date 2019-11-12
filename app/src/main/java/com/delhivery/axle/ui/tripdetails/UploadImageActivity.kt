@@ -17,21 +17,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.amazonaws.auth.BasicSessionCredentials
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
-import com.amazonaws.regions.Region
-import com.amazonaws.regions.Regions.AP_SOUTHEAST_1
-import com.amazonaws.services.s3.AmazonS3Client
-import com.amazonaws.services.s3.model.CannedAccessControlList.BucketOwnerFullControl
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityUploadImageBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.REQCODE_CAMERA
@@ -52,7 +45,8 @@ import javax.inject.Inject
  *
  **
  */
-class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImageViewModel>() {
+class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImageViewModel>(),
+    AWSProgressInterface {
 
   override fun getViewModelClass() = UploadImageViewModel::class.java
 
@@ -61,14 +55,11 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   override fun requireConnection() = true
 
   private lateinit var uploadImageName: String
-
   private lateinit var localImageName: String
-
   private var isCamera: Boolean = false
-
   private var mPhotoFile: File? = null
-
   @Inject lateinit var fileCompressor: FileCompressor
+  @Inject lateinit var awsUtils: AWSUtils
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -90,6 +81,15 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
     viewModel.delegationLiveData.observe(this, Observer {
       uploadImage(it.first, it.second)
+    })
+
+    viewModel.uploadResultLiveData.observe(this, Observer {
+      if (it) {
+        setResult(Activity.RESULT_OK)
+        finish()
+      } else {
+        uiUtils.showSnackbar("Upload Failed, Please try again")
+      }
     })
 
     binding.imagePod1.setOnClickListener {
@@ -131,7 +131,8 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     }
 
     binding.btnAction.setOnClickListener {
-      //upload image
+      if (!viewModel.imageUrls.isNullOrEmpty())
+        viewModel.uploadPod()
     }
   }
 
@@ -141,9 +142,9 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           "${viewModel.transactionId}-1", "vendor_pod_${viewModel.transactionId}-1"
       )
     } else {
-      for (url in viewModel.imagePaths) {
+      for (url in viewModel.imageUrls) {
         if (url.endsWith("$num.jpg")) {
-          viewImage(url, "ePod")
+          viewImage(url, "View ePod $num")
           return
         }
       }
@@ -182,62 +183,35 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     file: File
   ) {
     uiUtils.showProgress()
-    val credentials = BasicSessionCredentials(
-        delegationToken.accessKey, delegationToken.secretKey,
-        delegationToken.sessionToken
-    )
-
-    viewModel.imagePaths.add(file.path)
-    val s3 = AmazonS3Client(credentials, Region.getRegion(AP_SOUTHEAST_1))
     val awsPath = "trips/vendor_pod/${viewModel.transactionId}/" + uploadImageName + ".jpg"
-    val transferUtility = TransferUtility.builder()
-        .context(this)
-        .s3Client(s3)
-        .build()
+    awsUtils.startUpload(delegationToken, awsPath, file, this)
+    viewModel.imagePaths.add(file.path)
+  }
 
-    transferUtility.upload(AWSConfig.Bucket.value(), awsPath, file, BucketOwnerFullControl)
-        .setTransferListener(object : TransferListener {
-          override fun onStateChanged(
-            id: Int,
-            state: TransferState
-          ) {
-            if (!isFinishing) {
-              if (state == TransferState.COMPLETED) {
-                mPhotoFile = null
-                uiUtils.hideProgress()
-                uiUtils.showToast(getString(R.string.msg_file_upload_successful))
-                viewModel.imageUrls.add(awsPath)
-                updateView()
-                uploadImageName = ""
-                localImageName = ""
-              } else if (state == TransferState.FAILED) {
-                uiUtils.hideProgress()
-                uiUtils.showToast(getString(R.string.msg_file_upload_failed))
-                uploadImageName = ""
-                localImageName = ""
-              }
-            }
-          }
+  override fun onAWSSuccess(
+    path: String
+  ) {
+    if (!isFinishing) {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
+      viewModel.imageUrls.add(path)
+      updateView()
+      resetUploadData()
+    }
+  }
 
-          override fun onProgressChanged(
-            id: Int,
-            bytesCurrent: Long,
-            bytesTotal: Long
-          ) {
-          }
+  override fun onAWSFailure() {
+    if (!isFinishing) {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
+      resetUploadData()
+    }
+  }
 
-          override fun onError(
-            id: Int,
-            ex: Exception
-          ) {
-            if (!isFinishing) {
-              uiUtils.hideProgress()
-              uiUtils.showToast(getString(R.string.msg_file_upload_failed))
-              uploadImageName = ""
-              localImageName = ""
-            }
-          }
-        })
+  private fun resetUploadData() {
+    mPhotoFile = null
+    uploadImageName = ""
+    localImageName = ""
   }
 
   private fun updateView() {

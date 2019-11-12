@@ -1,10 +1,15 @@
 package com.delhivery.axle.ui.tripdetails
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -22,15 +27,22 @@ import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
 import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.io.File
+import javax.inject.Inject
 
-class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>() {
+class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>(),
+    AWSProgressInterface {
 
   init {
     hasInlineProgress = true
@@ -41,6 +53,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   override fun layoutId() = R.layout.activity_trip_details
 
   override fun requireConnection() = true
+
+  @Inject lateinit var awsUtils: AWSUtils
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -66,6 +80,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.tripLiveData.observe(this, TransactionObserver())
     viewModel.warehouseLiveData.observe(this, Observer {
       binding.labelWarehouse.text = it
+    })
+    viewModel.delegationLiveData.observe(this, Observer {
+      if (it != null) {
+        awsUtils.startDownload(it.first, it.second, it.third, this)
+      } else {
+        uiUtils.showSnackbar("Please try again")
+      }
     })
 
     viewModel.paymentLiveData.observe(this, Observer {
@@ -98,6 +119,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun refreshData() {
     binding.refreshing = true
     binding.error = false
+    viewModel.tripHistory.clear()
+    viewModel.paymentSummary.clear()
     viewModel.fetchTripDetails()
     binding.executePendingBindings()
   }
@@ -189,9 +212,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 }
                 setHistory(item)
                 textAction.setOnClickListener {
-                  it.post {
-                    startActivity(imageViewIntent(it.context, item.podUrl, "View POD"))
-                  }
+                  if (viewModel.tripDetail.podUrl.isNotNullOrEmpty())
+                    requestStoragePermission()
                 }
                 binding.containerHistory.addView(root)
               }
@@ -209,7 +231,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 textAction.text = "Upload ePod"
                 textAction.setOnClickListener {
                   it.post {
-                    startActivityForResult(uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD)
+                    startActivityForResult(
+                        uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD
+                    )
                   }
                 }
                 binding.containerHistory.addView(root)
@@ -230,6 +254,78 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
       index++
+    }
+  }
+
+  private fun requestStoragePermission() {
+    val storagePermission =
+      ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(
+          this,
+          arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+          REQCODE_STORAGE
+      )
+    } else {
+      uiUtils.showSnackbar("Downloading POD....")
+      checkFileExistsOrDownload()
+    }
+  }
+
+  override fun onAWSSuccess(
+    path: String
+  ) {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Downloaded")
+      checkFileExistsOrDownload()
+  }
+
+  override fun onAWSFailure() {
+    uiUtils.hideProgress()
+    uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
+  }
+
+  private fun checkFileExistsOrDownload() {
+    val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    val basePath = "$storageDir/" + viewModel.transactionId
+    val awsPath = viewModel.tripDetail.podUrl
+    if (awsPath != null) {
+      val file = when {
+        (awsPath).endsWith("pdf") -> File(basePath + "_pod.pdf")
+        (awsPath).endsWith("png") -> File(basePath + "_pod.png")
+        (awsPath).endsWith("jpg") || (awsPath).endsWith("jpeg") -> File(basePath + "_pod.jpg")
+        else -> {
+          uiUtils.showSnackbar("Can't process POD")
+          return
+        }
+      }
+      if (file.exists()) {
+        openFile(file)
+      } else {
+        uiUtils.showProgress()
+        viewModel.getDelegationToken(awsPath, file)
+      }
+    }
+  }
+
+  private fun openFile(file: File) {
+    try {
+      val uri = FileProvider.getUriForFile(this, applicationContext.packageName + ".provider", file)
+      val intent = Intent(Intent.ACTION_VIEW)
+      if (file.toString().contains(".pdf")) {
+        intent.setDataAndType(uri, "application/pdf")
+      } else if (file.toString().contains(".jpg") ||
+          file.toString().contains(".jpeg") || file.toString().contains(".png")
+      ) {
+        intent.setDataAndType(uri, "image/jpeg")
+      } else {
+        intent.setDataAndType(uri, "*/*")
+      }
+      intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+      startActivity(intent)
+    } catch (e: java.lang.Exception) {
+      uiUtils.showSnackbar("No application found which can open the file")
     }
   }
 
@@ -357,6 +453,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.containerHistory.addView(paymentSummaryBinding.root)
   }
 
+  override fun onRequestPermissionsResult(
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (requestCode == REQCODE_STORAGE) {
+      if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        uiUtils.showSnackbar("Storage permission required to download POD")
+      } else {
+        requestStoragePermission()
+      }
+    }
+  }
+
   override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,
@@ -364,7 +475,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == REQCODE_UPLOAD_POD && resultCode == RESULT_OK) {
-      //Upload the images to server
+      refreshData()
     }
   }
 }
