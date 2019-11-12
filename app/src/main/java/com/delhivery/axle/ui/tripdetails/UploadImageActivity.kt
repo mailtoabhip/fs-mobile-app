@@ -142,9 +142,9 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           "${viewModel.transactionId}-1", "vendor_pod_${viewModel.transactionId}-1"
       )
     } else {
-      for (url in viewModel.imagePaths) {
+      for (url in viewModel.imageUrls) {
         if (url.endsWith("$num.jpg")) {
-          viewImage(url, "ePod")
+          viewImage(url, "View ePod $num")
           return
         }
       }
