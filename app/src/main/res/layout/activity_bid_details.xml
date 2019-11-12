@@ -103,6 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
+                android:ellipsize="end"
                 android:fontFamily="sans-serif"
                 android:text="@{transaction.originCityState()}"
                 android:textColor="@color/heading_black"
