@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.tripdetails
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
@@ -15,10 +16,12 @@ import javax.inject.Inject
  * View model for [UploadImageActivity]
  */
 class UploadImageViewModel @Inject constructor(
-  private val userRepository: UserRepository
+  private val userRepository: UserRepository,
+  private val tripsRepository: TripsRepository
 ) : BaseViewModel() {
 
   var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
+  var uploadResultLiveData = MutableLiveData<Boolean>()
 
   lateinit var transactionId: String
   var imagePaths: MutableList<String> = mutableListOf()
@@ -37,6 +40,22 @@ class UploadImageViewModel @Inject constructor(
             delegationLiveData.postValue(Pair(_res.delegationToken, file))
           } else
             error.handle()
+        }
+  }
+
+  /**
+   * Upload POD
+   */
+  fun uploadPod() {
+    compositeDisposable += tripsRepository.uploadPod(transactionId, imageUrls)
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error) {
+            uploadResultLiveData.postValue(true)
+          } else {
+            uploadResultLiveData.postValue(false)
+          }
         }
   }
 

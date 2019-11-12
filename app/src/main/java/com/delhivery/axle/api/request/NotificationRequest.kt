@@ -2,6 +2,9 @@ package com.delhivery.axle.api.request
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Payload for marking notification as read
+ */
 data class NotificationReadRequest(
   @SerializedName("notification_ids") val ids: MutableList<String>,
   @SerializedName("source") val source: String = "axle-app"

@@ -59,7 +59,7 @@ enum class TripType(
     fun byStatus(_status: String) = when (_status) {
       TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey -> AdvancePending
       TruckReached.statusKey, In_Transit.statusKey -> InTransit
-      TruckUnloaded.statusKey -> BalancePending
+      TruckUnloaded.statusKey, EPodUploaded.statusKey -> BalancePending
       TripCompleted.statusKey -> Completed
       else -> Unknown
     }
