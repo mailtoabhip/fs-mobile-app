@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
+import android.text.TextUtils
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -60,8 +61,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onCreate(savedInstanceState)
 
     /* validate intent */
-    if (intent == null || !intent.hasExtra(TransactionIdIntentKey)) {
-      throw IllegalArgumentException("Required data $TransactionIdIntentKey not found")
+    try {
+      require(
+          !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
+      ) { "Required data $TransactionIdIntentKey not found" }
+    } catch (e: Exception) {
+      finish()
     }
 
     /* set transaction id */
@@ -134,7 +139,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (t != null) {
         binding.error = false
         title = t.first.tripDisplayName(t.second.tripStatus())
-        binding.transactionDetails = t.first
+        binding.transaction = t.first
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
@@ -268,16 +273,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       )
     } else {
       uiUtils.showSnackbar("Downloading POD....")
-      checkFileExistsOrDownload()
+      downloadFile()
     }
   }
 
   override fun onAWSSuccess(
     path: String
   ) {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Downloaded")
-      checkFileExistsOrDownload()
+    uiUtils.hideProgress()
+    uiUtils.showSnackbar("Downloaded")
+    val file = getFile()
+    if (file != null) {
+      openFile(file)
+    } else {
+      uiUtils.showSnackbar("Can't process POD")
+    }
   }
 
   override fun onAWSFailure() {
@@ -285,32 +295,37 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
   }
 
-  private fun checkFileExistsOrDownload() {
+  private fun downloadFile() {
+    val file = getFile()
+    if (file != null && !TextUtils.isEmpty(viewModel.tripDetail.podUrl)) {
+      uiUtils.showProgress()
+      viewModel.tripDetail.podUrl?.let { viewModel.getDelegationToken(it, file) }
+    } else {
+      uiUtils.showSnackbar("Can't process POD")
+    }
+  }
+
+  private fun getFile(): File? {
     val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
     val basePath = "$storageDir/" + viewModel.transactionId
     val awsPath = viewModel.tripDetail.podUrl
     if (awsPath != null) {
-      val file = when {
+      return when {
         (awsPath).endsWith("pdf") -> File(basePath + "_pod.pdf")
         (awsPath).endsWith("png") -> File(basePath + "_pod.png")
         (awsPath).endsWith("jpg") || (awsPath).endsWith("jpeg") -> File(basePath + "_pod.jpg")
         else -> {
-          uiUtils.showSnackbar("Can't process POD")
-          return
+          return null
         }
       }
-      if (file.exists()) {
-        openFile(file)
-      } else {
-        uiUtils.showProgress()
-        viewModel.getDelegationToken(awsPath, file)
-      }
     }
+    return null
   }
 
   private fun openFile(file: File) {
     try {
-      val uri = FileProvider.getUriForFile(this, applicationContext.packageName + ".provider", file)
+      val uri =
+        FileProvider.getUriForFile(this, applicationContext.packageName + ".provider", file)
       val intent = Intent(Intent.ACTION_VIEW)
       if (file.toString().contains(".pdf")) {
         intent.setDataAndType(uri, "application/pdf")
@@ -414,7 +429,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     val advance =
       when (binding.tripDetails?.advanceDeduction()) {
         true -> {
-          (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100) ?: 0.0
+          (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100)
+              ?: 0.0
         }
         else -> {
           viewModel.bidDetail?.advancePayout ?: 0.0

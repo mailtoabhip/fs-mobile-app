@@ -65,8 +65,12 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     super.onCreate(savedInstanceState)
 
     /* validate intent */
-    if (intent == null || !intent.hasExtra(TransactionIdIntentKey)) {
-      throw IllegalArgumentException("Required data $TransactionIdIntentKey not found")
+    try {
+      require(
+          !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
+      ) { "Required data $TransactionIdIntentKey not found" }
+    } catch (e: Exception) {
+      finish()
     }
 
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""

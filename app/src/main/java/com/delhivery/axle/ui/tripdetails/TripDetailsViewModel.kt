@@ -268,24 +268,22 @@ class TripDetailsViewModel @Inject constructor(
         }
 
         TripStatus.TruckUnloaded.statusKey -> {
-          if (index == 0) {
-            if (!TextUtils.isEmpty(tripDetail.podUrl)) {
-              tripHistory.add(
-                  TripHistoryItem(
-                      PODUploaded,
-                      "Awaiting Physical POD",
-                      "Balance will be paid within 3 days of POD verification"
-                  )
-              )
-            } else {
-              tripHistory.add(
-                  TripHistoryItem(
-                      AwaitingPODUpload,
-                      "Awaiting POD upload",
-                      "Balance will be paid within 3 days of POD verification"
-                  )
-              )
-            }
+          if (!TextUtils.isEmpty(tripDetail.podUrl)) {
+            tripHistory.add(
+                TripHistoryItem(
+                    PODUploaded,
+                    "Awaiting Physical POD",
+                    "Balance will be paid within 3 days of POD verification"
+                )
+            )
+          } else {
+            tripHistory.add(
+                TripHistoryItem(
+                    AwaitingPODUpload,
+                    "Awaiting POD upload",
+                    "Balance will be paid within 3 days of POD verification"
+                )
+            )
           }
 
           tripHistory.add(

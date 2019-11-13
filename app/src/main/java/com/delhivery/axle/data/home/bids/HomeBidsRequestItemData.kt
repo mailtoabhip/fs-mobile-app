@@ -17,6 +17,7 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -52,8 +53,6 @@ data class HomeBidsRequestItemData(
     0.0
   }
 
-  fun targetPriceString() = "₹ ${StringUtils.formatAmount(target())}"
-
   /**
    * @return formatted origin city name
    */
@@ -87,14 +86,47 @@ data class HomeBidsRequestItemData(
   /**
    * @return intermediary stops
    */
-  fun intermediaryStops(): String {
-    var stopBuilder = StringBuilder()
+  fun tripRoute(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+        .append(" - ")
     if (!TextUtils.isEmpty(stop1City)) {
-      stopBuilder.append(stop1City)
-          .append(", ")
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append(" - ")
     }
     if (!TextUtils.isEmpty(stop2City)) {
-      stopBuilder.append(stop2City)
+      stopBuilder.append(StringUtils.capitalize(stop2City))
+          .append(" - ")
+    }
+    stopBuilder.append(destinationCityName())
+    return if (isMultiDrop()) {
+      "Multi-Drop: $stopBuilder"
+    } else {
+      stopBuilder.toString()
+    }
+  }
+
+  /**
+   * @return is trips is multi drop
+   */
+  fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
+
+  /**
+   * @return intermedinaryStops string
+   */
+  fun intermedinaryStops(): String {
+    val stopBuilder = StringBuilder()
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append("(")
+          .append(StringUtils.capitalize(stop1State))
+          .append("), ")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(StringUtils.capitalize(stop2City))
+          .append("(")
+          .append(StringUtils.capitalize(stop2State))
+          .append(")")
     }
     return stopBuilder.toString()
   }

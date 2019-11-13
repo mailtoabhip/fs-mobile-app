@@ -47,7 +47,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
     /* set binding params */
     binding.apply {
       request = transaction
-      route = "${transaction.originCityName()} - ${transaction.destinationCityName()}"
+      route = transaction.tripRoute()
       transactionBid?.bidAmount?.let {
         binding.editAmount.setText(
             DecimalFormat("#########").format(it)
@@ -70,7 +70,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
     try {
       val amount = Integer.parseInt(binding.editAmount.text.toString())
       if (amount > 0) {
-        var event = ""
+        val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
           dialogInterface.createBid(transaction.key(), amount, position)
