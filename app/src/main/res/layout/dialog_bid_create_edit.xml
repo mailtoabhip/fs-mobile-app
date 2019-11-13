@@ -13,6 +13,8 @@
         name="request"
         type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
+
+    <import type="android.view.View" />
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -26,16 +28,44 @@
       android:paddingBottom="@dimen/size_4dp"
       >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:lineSpacingExtra="@dimen/text_8sp"
-        android:text="@string/label_bid_amount"
-        android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_20sp"
-        android:textStyle="normal"
-        />
+        android:orientation="horizontal"
+        >
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_8sp"
+          android:text="@string/label_bid_amount"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_20sp"
+          android:textStyle="normal"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="@drawable/bg_gradient_green"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_8sp"
+          android:paddingStart="@dimen/size_8dp"
+          android:paddingEnd="@dimen/size_8dp"
+          android:text="@string/label_multi_stop"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          android:visibility="@{request.multiDrop ? View.VISIBLE : View.GONE }"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/text_route_details"

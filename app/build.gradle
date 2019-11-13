@@ -42,7 +42,7 @@ android {
     development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
-      resValue("bool", "FIREBASE_ACTIVATED", "true")
+      resValue("bool", "FIREBASE_ACTIVATED", "false")
       resConfigs "en", "xxhdpi"
     }
     production {

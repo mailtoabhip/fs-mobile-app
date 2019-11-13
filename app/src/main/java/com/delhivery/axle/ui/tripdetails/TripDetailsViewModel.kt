@@ -131,6 +131,8 @@ class TripDetailsViewModel @Inject constructor(
     histories: List<TripHistoryModel>,
     payments: List<TripPaymentsResponse>
   ) {
+    var unloaded = false
+    var viewPod = false
     for ((index, history) in histories.withIndex()) {
       when (history.status().statusKey) {
         TripStatus.TruckConfirmed.statusKey -> {
@@ -251,7 +253,7 @@ class TripDetailsViewModel @Inject constructor(
                 TripHistoryItem(
                     AwaitingUnloading,
                     "Awaiting unloading",
-                    "POD will be uploaded once the truck is unloaded",
+                    "Upload ePOD once truck is unloaded",
                     history.details?.getReachedEpoch() ?: ""
                 )
             )
@@ -268,48 +270,49 @@ class TripDetailsViewModel @Inject constructor(
         }
 
         TripStatus.TruckUnloaded.statusKey -> {
-          if (!TextUtils.isEmpty(tripDetail.podUrl)) {
+          if (!viewPod) {
+            if (TextUtils.isEmpty(tripDetail.podUrl)) {
+              viewPod = true
+              tripHistory.add(
+                  TripHistoryItem(
+                      AwaitingPODUpload,
+                      "Awaiting POD upload",
+                      "Balance will be paid within 3 days of Physical POD verification"
+                  )
+              )
+            }
+          }
+
+          if (!unloaded) {
+            unloaded = true
+            tripHistory.add(
+                TripHistoryItem(
+                    TruckUnloaded,
+                    "Truck Unloaded",
+                    "Trip has been marked complete",
+                    history.details?.getUnloadedEpoch() ?: ""
+                )
+            )
+          }
+        }
+
+        TripStatus.EPodUploaded.statusKey -> {
+          if (!viewPod) {
+            viewPod = true
             tripHistory.add(
                 TripHistoryItem(
                     PODUploaded,
                     "Awaiting Physical POD",
-                    "Balance will be paid within 3 days of POD verification"
-                )
-            )
-          } else {
-            tripHistory.add(
-                TripHistoryItem(
-                    AwaitingPODUpload,
-                    "Awaiting POD upload",
-                    "Balance will be paid within 3 days of POD verification"
+                    "Balance will be paid within 3 days of Physical POD verification",
+                    history.timeStamp()
                 )
             )
           }
-
-          tripHistory.add(
-              TripHistoryItem(
-                  TruckUnloaded,
-                  "Truck Unloaded",
-                  "Trip has been marked complete",
-                  history.details?.getUnloadedEpoch() ?: ""
-              )
-          )
-        }
-
-        TripStatus.EPodUploaded.statusKey -> {
-          tripHistory.add(
-              TripHistoryItem(
-                  PODUploaded,
-                  "POD uploaded",
-                  "Balance amount will be settled soon",
-                  history.timeStamp(),
-                  history.details?.podUrl ?: ""
-              )
-          )
         }
 
         TripStatus.TripCompleted.statusKey -> {
           val balancePay = payments.firstOrNull { it.head == "balance_payment" }
+
           if (balancePay != null) {
             balancePaid = true
             val utrString = when (balancePay.bankTransactionId) {
@@ -335,6 +338,28 @@ class TripDetailsViewModel @Inject constructor(
                     "Invoice will be shared post payment"
                 )
             )
+          }
+
+          if (!viewPod) {
+            viewPod = true
+            if (TextUtils.isEmpty(tripDetail.podUrl)) {
+              tripHistory.add(
+                  TripHistoryItem(
+                      AwaitingPODUpload,
+                      "Awaiting POD upload",
+                      "Balance will be paid within 3 days of Physical POD verification"
+                  )
+              )
+            } else {
+              tripHistory.add(
+                  TripHistoryItem(
+                      PODUploaded,
+                      "POD uploaded",
+                      "Balance amount will be settled soon",
+                      history.timeStamp()
+                  )
+              )
+            }
           }
         }
       }

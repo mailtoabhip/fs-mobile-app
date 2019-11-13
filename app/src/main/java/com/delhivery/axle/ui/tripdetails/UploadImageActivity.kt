@@ -12,6 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.Media
 import android.view.View
+import android.view.ViewTreeObserver.OnPreDrawListener
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -60,6 +61,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   private var mPhotoFile: File? = null
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var bitmapUtils: BitmapUtils
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -255,9 +257,20 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     path: String?,
     view: AppCompatImageView
   ) {
-    GlideApp.with(this)
-        .load(BitmapUtils().loadBitmap(path))
-        .into(view)
+    view.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
+      override fun onPreDraw(): Boolean {
+        view.viewTreeObserver.removeOnPreDrawListener(this)
+        val imageViewHeight = view.measuredHeight
+        val imageViewWidth = view.measuredWidth
+        path?.let {
+          GlideApp.with(view.context)
+              .load(bitmapUtils.decodeSampledBitmap(path, imageViewWidth, imageViewHeight))
+              .into(view)
+        }
+        return true
+      }
+
+    })
   }
 
   private fun viewImage(

@@ -99,11 +99,7 @@ data class HomeBidsRequestItemData(
           .append(" - ")
     }
     stopBuilder.append(destinationCityName())
-    return if (isMultiDrop()) {
-      "Multi-Drop: $stopBuilder"
-    } else {
-      stopBuilder.toString()
-    }
+    return stopBuilder.toString()
   }
 
   /**
@@ -120,10 +116,11 @@ data class HomeBidsRequestItemData(
       stopBuilder.append(StringUtils.capitalize(stop1City))
           .append("(")
           .append(StringUtils.capitalize(stop1State))
-          .append("), ")
+          .append(")")
     }
     if (!TextUtils.isEmpty(stop2City)) {
-      stopBuilder.append(StringUtils.capitalize(stop2City))
+      stopBuilder.append(", ")
+          .append(StringUtils.capitalize(stop2City))
           .append("(")
           .append(StringUtils.capitalize(stop2State))
           .append(")")
