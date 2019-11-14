@@ -142,6 +142,36 @@
                 />
 
             <TextView
+                android:id="@+id/text_via_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_via"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_destination"
+                />
+
+            <TextView
+                android:id="@+id/text_via_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_2dp"
+                android:fontFamily="sans-serif"
+                android:text="@{transaction.intermedinaryStops()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_via_label"
+                tools:text="Mumbai(Maharashtra), Jaipur(Rajasthan)"
+                />
+
+            <TextView
                 android:id="@+id/text_date_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,7 +181,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_destination"
+                app:layout_constraintTop_toBottomOf="@id/text_via_destination"
                 bind:drawableResId="@{ transaction.requiredAtBg() }"
                 tools:background="@drawable/bg_date_today"
                 tools:text="TODAY"

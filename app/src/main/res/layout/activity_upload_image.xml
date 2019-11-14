@@ -11,6 +11,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/colorBackground"
+      android:keepScreenOn="true"
       android:orientation="vertical"
       >
 
@@ -287,8 +288,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_8dp"
-        android:gravity="center_horizontal"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginBottom="@dimen/size_4dp"
+        android:paddingStart="@dimen/size_8dp"
+        android:paddingEnd="@dimen/size_8dp"
         android:text="*Note: All the images will be combined into single ePod"
         android:textColor="@color/heading_black"
         />

@@ -29,7 +29,7 @@ data class HomeTripsItemData(
   @SerializedName("origin") val origin: String,
   @SerializedName("origin_state") val originState: String,
   @SerializedName("transaction_id") val transactionId: String,
-  @SerializedName("trip_status") private val _tripStatus: String,
+  @SerializedName("trip_status") val tripStatus: String,
   @SerializedName("vehicle") val vehicleDetails: TripVehicleDetails,
   @SerializedName("driver") val driverDetails: TripDriverDetails?,
   @SerializedName("bid_details") val bidDetails: TripBidDetails?,
@@ -53,7 +53,7 @@ data class HomeTripsItemData(
   /**
    * Trip Status [TripStatus]
    */
-  fun tripStatus() = TripType.byStatus(_tripStatus)
+  fun tripStatus() = TripType.byStatus(tripStatus)
 
   fun tripPayment() = when (tripStatus()) {
     AdvancePending -> {
@@ -95,7 +95,7 @@ data class HomeTripsItemData(
 
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
-  private fun displayTime() = when (_tripStatus) {
+  private fun displayTime() = when (tripStatus) {
     TripStatus.TruckConfirmed.statusKey -> requiredOn
     else -> arrivalTime ?: requiredOn
   }

@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.home.bids
 
+import android.text.TextUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -16,6 +17,7 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
 data class HomeBidsRequestItemData(
@@ -29,6 +31,10 @@ data class HomeBidsRequestItemData(
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
+  @SerializedName("intermediary_stop1") val stop1City: String,
+  @SerializedName("intermediary_stop1_state") val stop1State: String,
+  @SerializedName("intermediary_stop2") val stop2City: String,
+  @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
@@ -46,8 +52,6 @@ data class HomeBidsRequestItemData(
   } else {
     0.0
   }
-
-  fun targetPriceString() = "₹ ${StringUtils.formatAmount(target())}"
 
   /**
    * @return formatted origin city name
@@ -78,6 +82,51 @@ data class HomeBidsRequestItemData(
    * @return formatted destination city, state
    */
   fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+
+  /**
+   * @return intermediary stops
+   */
+  fun tripRoute(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+        .append(" - ")
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append(" - ")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(StringUtils.capitalize(stop2City))
+          .append(" - ")
+    }
+    stopBuilder.append(destinationCityName())
+    return stopBuilder.toString()
+  }
+
+  /**
+   * @return is trips is multi drop
+   */
+  fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
+
+  /**
+   * @return intermedinaryStops string
+   */
+  fun intermedinaryStops(): String {
+    val stopBuilder = StringBuilder()
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append("(")
+          .append(StringUtils.capitalize(stop1State))
+          .append(")")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(", ")
+          .append(StringUtils.capitalize(stop2City))
+          .append("(")
+          .append(StringUtils.capitalize(stop2State))
+          .append(")")
+    }
+    return stopBuilder.toString()
+  }
 
   /**
    * @return formatted bid amount
