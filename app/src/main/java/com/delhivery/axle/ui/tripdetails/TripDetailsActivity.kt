@@ -22,6 +22,7 @@ import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
@@ -42,6 +43,9 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Trip detail screen
+ */
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>(),
     AWSProgressInterface {
 
@@ -143,7 +147,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
-        viewModel.fetchPaymentSummary()
+        if (t.second.tripStatus != TripStatus.TruckArrived.statusKey) {
+          viewModel.fetchPaymentSummary()
+        } else {
+          viewModel.fetchPayments()
+        }
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"

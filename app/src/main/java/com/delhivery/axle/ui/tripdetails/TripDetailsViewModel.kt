@@ -110,16 +110,33 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch payment summary
+   * Fetch history, charges and payments summary
    */
   fun fetchPaymentSummary() {
-    compositeDisposable += paymentRepository.chargesSummary(transactionId)
+    compositeDisposable += paymentRepository.historyChargesAndPayments(transactionId)
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
             processTrips(_res.first, _res.third)
             paymentSummary.clear()
             paymentSummary.addAll(_res.second)
+            paymentLiveData.postValue(true)
+          } else {
+            error.handle()
+          }
+        }
+  }
+
+  /**
+   * Fetch history And Payments summary
+   */
+  fun fetchPayments() {
+    compositeDisposable += paymentRepository.historyAndPayments(transactionId)
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            processTrips(_res.first, _res.second)
+            paymentSummary.clear()
             paymentLiveData.postValue(true)
           } else {
             error.handle()
@@ -271,13 +288,22 @@ class TripDetailsViewModel @Inject constructor(
 
         TripStatus.TruckUnloaded.statusKey -> {
           if (!viewPod) {
+            viewPod = true
             if (TextUtils.isEmpty(tripDetail.podUrl)) {
-              viewPod = true
               tripHistory.add(
                   TripHistoryItem(
                       AwaitingPODUpload,
                       "Awaiting POD upload",
                       "Balance will be paid within 3 days of Physical POD verification"
+                  )
+              )
+            }else {
+              tripHistory.add(
+                  TripHistoryItem(
+                      PODUploaded,
+                      "POD uploaded",
+                      "Balance amount will be settled soon",
+                      history.timeStamp()
                   )
               )
             }

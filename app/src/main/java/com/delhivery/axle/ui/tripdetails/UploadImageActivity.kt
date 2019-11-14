@@ -269,7 +269,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
         }
         return true
       }
-
     })
   }
 

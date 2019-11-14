@@ -280,6 +280,54 @@
 
         <!-- trip meter container -->
         <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_12dp"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_4dp"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="@dimen/size_16dp"
+              >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Physical POD Postal Address"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:text="Delhivery Pvt Ltd Ground floor, Edificio Da Menezes E Silva, Sangolda, Near Holy Family Church Goa 403501. \nHelpline No: 0124 6220684 "
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/id1"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- trip meter container -->
+        <androidx.cardview.widget.CardView
             android:id="@+id/container_trip_meter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

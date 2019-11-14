@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.delhivery.axle.injection.scope.ActivityScope
 import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
 /**
  * Created by saurabhdhillon
@@ -15,7 +16,7 @@ import dagger.android.support.DaggerAppCompatActivity
  **
  */
 @ActivityScope
-class BitmapUtils(
+class BitmapUtils @Inject constructor(
   private val activity: DaggerAppCompatActivity
 ) {
 
