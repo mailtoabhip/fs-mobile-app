@@ -314,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_4dp"
                 android:fontFamily="sans-serif"
-                android:text="Delhivery Pvt Ltd Ground floor, Edificio Da Menezes E Silva, Sangolda, Near Holy Family Church Goa 403501. \nHelpline No: 0124 6220684 "
+                android:text="Delhivery Pvt Ltd, Ground floor, Edificio Da Menezes E Silva, Sangolda, Near Holy Family Church, Goa 403501"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
                 android:textStyle="normal"

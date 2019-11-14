@@ -27,11 +27,15 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
+import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
 import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
+import com.delhivery.axle.utils.VALUE_FAILURE
+import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import java.io.IOException
@@ -198,6 +202,11 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     path: String
   ) {
     if (!isFinishing) {
+      analyticsUtil.trackEvent(
+          EVENT_POD_UPLOAD,
+          mutableListOf(PROPERTY_STATUS),
+          mutableListOf(VALUE_SUCCESS)
+      )
       uiUtils.hideProgress()
       uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
       viewModel.imageUrls.add(path)
@@ -208,6 +217,11 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
   override fun onAWSFailure() {
     if (!isFinishing) {
+      analyticsUtil.trackEvent(
+          EVENT_POD_UPLOAD,
+          mutableListOf(PROPERTY_STATUS),
+          mutableListOf(VALUE_FAILURE)
+      )
       uiUtils.hideProgress()
       uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
       resetUploadData()

@@ -32,13 +32,17 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
+import com.delhivery.axle.utils.EVENT_POD_VIEWED
 import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
+import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import javax.inject.Inject
@@ -288,19 +292,33 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   override fun onAWSSuccess(
     path: String
   ) {
-    uiUtils.hideProgress()
-    uiUtils.showSnackbar("Downloaded")
-    val file = getFile()
-    if (file != null) {
-      openFile(file)
-    } else {
-      uiUtils.showSnackbar("Can't process POD")
+    if (!isFinishing) {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Downloaded")
+      val file = getFile()
+      if (file != null) {
+        analyticsUtil.trackEvent(
+            EVENT_POD_VIEWED,
+            mutableListOf(PROPERTY_STATUS),
+            mutableListOf(VALUE_SUCCESS)
+        )
+        openFile(file)
+      } else {
+        uiUtils.showSnackbar("Can't process POD")
+      }
     }
   }
 
   override fun onAWSFailure() {
-    uiUtils.hideProgress()
-    uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
+    if (!isFinishing) {
+      analyticsUtil.trackEvent(
+          EVENT_POD_VIEWED,
+          mutableListOf(PROPERTY_STATUS),
+          mutableListOf(VALUE_FAILURE)
+      )
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
+    }
   }
 
   private fun downloadFile() {

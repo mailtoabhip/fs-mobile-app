@@ -80,20 +80,12 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       raisedFocus()
       lengthAction(10) {
         // Capture event
-        analyticsUtil.trackEvent(
-            EVENT_OTP_SEND,
-            mutableListOf(),
-            mutableListOf()
-        )
+        analyticsUtil.trackEvent(EVENT_OTP_SEND)
         viewModel.sendOTP()
       }
       actionDone {
         // Capture event
-        analyticsUtil.trackEvent(
-            EVENT_OTP_SEND,
-            mutableListOf(),
-            mutableListOf()
-        )
+        analyticsUtil.trackEvent(EVENT_OTP_SEND)
         viewModel.sendOTP()
       }
     }
@@ -127,21 +119,13 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     binding.btnResendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(
-          EVENT_OTP_RESEND,
-          mutableListOf(),
-          mutableListOf()
-      )
+      analyticsUtil.trackEvent(EVENT_OTP_RESEND)
       viewModel.sendOTP()
     }
 
     binding.btnSendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(
-          EVENT_OTP_SEND,
-          mutableListOf(),
-          mutableListOf()
-      )
+      analyticsUtil.trackEvent(EVENT_OTP_SEND)
       viewModel.sendOTP()
     }
 
@@ -213,11 +197,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
             // Capture event
-            analyticsUtil.trackEvent(
-                EVENT_OTP_VERIFIED,
-                mutableListOf(),
-                mutableListOf()
-            )
+            analyticsUtil.trackEvent(EVENT_OTP_VERIFIED)
             uiUtils.hideDelhiveryProgress()
             val bundle = Bundle()
             bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
@@ -229,11 +209,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
             // Capture event
-            analyticsUtil.trackEvent(
-                EVENT_OTP_VERIFIED,
-                mutableListOf(),
-                mutableListOf()
-            )
+            analyticsUtil.trackEvent(EVENT_OTP_VERIFIED)
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }

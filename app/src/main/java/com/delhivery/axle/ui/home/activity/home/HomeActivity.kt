@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.utils.EVENT_CALL_HELPLINE
 import com.delhivery.axle.utils.REQCODE_CALL
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
@@ -112,6 +113,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       )
     } else {
       this.let {
+        analyticsUtil.trackEvent(EVENT_CALL_HELPLINE)
         val callIntent = Intent(Intent.ACTION_CALL).apply {
           data = Uri.parse("tel:01246220684")
         }
