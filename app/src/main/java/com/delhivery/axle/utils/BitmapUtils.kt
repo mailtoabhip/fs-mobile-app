@@ -4,8 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.delhivery.axle.injection.scope.ActivityScope
 import dagger.android.support.DaggerAppCompatActivity
-import java.io.File
-import javax.inject.Inject
 
 /**
  * Created by saurabhdhillon
@@ -17,39 +15,31 @@ import javax.inject.Inject
  **
  */
 @ActivityScope
-class BitmapUtils @Inject constructor(
+class BitmapUtils(
   private val activity: DaggerAppCompatActivity
 ) {
 
-  fun loadBitmap(
-    path: String?
+  /**
+   * @return decoded sampled bitmap
+   */
+  fun decodeSampledBitmap(
+    pathName: String,
+    reqWidth: Int,
+    reqHeight: Int
   ): Bitmap? {
-    if (path.isNullOrEmpty()) {
-      return null
-    }
 
-    val imgFile = File(path)
-    if (imgFile.exists()) {
-      return getResizedBitmap(BitmapFactory.decodeFile(imgFile.absolutePath))
-    }
-    return null
+    // First decode with inJustDecodeBounds=true to check dimensions
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    BitmapFactory.decodeFile(pathName, options)
+
+    // Calculate inSampleSize
+    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+
+    // Decode bitmap with inSampleSize set
+    options.inJustDecodeBounds = false
+    return BitmapFactory.decodeFile(pathName, options)
   }
-
-  private fun getResizedBitmap(
-    bitmap: Bitmap
-  ): Bitmap {
-    return Bitmap.createScaledBitmap(bitmap, bitmap.width / 5, bitmap.height / 5, true)
-  }
-
-//  //I added this to have a good approximation of the screen size:
-//  fun decodeSampledBitmap(pathName: String): Bitmap {
-//    val display = activity.windowManager.defaultDisplay
-//    val size = Point()
-//    display.getSize(size)
-//    val width = size.x
-//    val height = size.y
-//    return decodeSampledBitmap(pathName, width, height)
-//  }
 
   private fun calculateInSampleSize(
     options: BitmapFactory.Options,
@@ -74,25 +64,6 @@ class BitmapUtils @Inject constructor(
     }
 
     return inSampleSize
-  }
-
-  fun decodeSampledBitmap(
-    pathName: String,
-    reqWidth: Int,
-    reqHeight: Int
-  ): Bitmap? {
-
-    // First decode with inJustDecodeBounds=true to check dimensions
-    val options = BitmapFactory.Options()
-    options.inJustDecodeBounds = true
-    BitmapFactory.decodeFile(pathName, options)
-
-    // Calculate inSampleSize
-    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
-
-    // Decode bitmap with inSampleSize set
-    options.inJustDecodeBounds = false
-    return BitmapFactory.decodeFile(pathName, options)
   }
 
 }

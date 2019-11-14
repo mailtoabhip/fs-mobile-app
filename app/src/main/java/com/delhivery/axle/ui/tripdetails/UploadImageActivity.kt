@@ -425,7 +425,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
-private const val ImagesPathsIntentKey = "image_paths"
 
 /**
  * Upload Image intent
