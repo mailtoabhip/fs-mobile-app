@@ -24,6 +24,9 @@ import retrofit2.HttpException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
+/**
+ * View model for [AuthenticationActivity]
+ */
 class AuthenticationViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
   private val userRepository: UserRepository,
@@ -122,6 +125,9 @@ class AuthenticationViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Mark notification as read
+   */
   fun markNotificationRead(id: String) {
     compositeDisposable += notificationRepository.markNotificationRead(id)
         .onBackground()

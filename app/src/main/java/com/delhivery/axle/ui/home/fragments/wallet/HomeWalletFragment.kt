@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.home.activity.bank.bankTransferIntent
 import com.delhivery.axle.ui.home.activity.fuel.tripsFuelCreditIntent
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.ui.home.activity.wallet.walletOnbaordingIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction

@@ -39,6 +39,7 @@ data class HomeTripsItemData(
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
+  @SerializedName("pod_url") val podUrl: String? = "",
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null
 ) : BaseKeyTypeModel<String>(), Serializable {

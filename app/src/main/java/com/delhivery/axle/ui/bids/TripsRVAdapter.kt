@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.bids
 
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeTripsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsRequestItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
@@ -30,6 +30,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItemVH
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
 
+/**
+ * RV adapter for trip listing
+ */
 class TripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     BaseFilterableDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface

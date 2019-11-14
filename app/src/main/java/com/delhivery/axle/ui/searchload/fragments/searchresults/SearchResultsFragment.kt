@@ -40,6 +40,9 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import javax.inject.Inject
 
+/**
+ * Search results screen
+ */
 class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBinding, SearchResultsViewModel>(),
     SearchLoadsRVAdapterInterface {
 

@@ -2,8 +2,10 @@ package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
 import com.delhivery.axle.data.AdvancePending
 import com.delhivery.axle.data.AwaitingPODUpload
@@ -25,31 +27,38 @@ import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.repository.PaymentRepository
 import com.delhivery.axle.repository.TripsRepository
+import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.io.File
 import javax.inject.Inject
 
+/**
+ * View model for [TripDetailsActivity]
+ */
 class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val paymentRepository: PaymentRepository,
   private val warehouseRepository: WarehouseRepository,
+  private var userRepository: UserRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   /* transaction id */
   lateinit var transactionId: String
 
-  private lateinit var tripDetail: HomeTripsItemData
+  lateinit var tripDetail: HomeTripsItemData
   private lateinit var warehouse: String
 
   /* trip details live data */
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
   var paymentLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
+  var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   /* payment summary */
   var paymentSummary = mutableListOf<TripChargesResponse>()
@@ -260,13 +269,23 @@ class TripDetailsViewModel @Inject constructor(
 
         TripStatus.TruckUnloaded.statusKey -> {
           if (index == 0) {
-            tripHistory.add(
-                TripHistoryItem(
-                    AwaitingPODUpload,
-                    "Awaiting POD upload",
-                    "Balance will be paid within 3 days of POD verification"
-                )
-            )
+            if (!TextUtils.isEmpty(tripDetail.podUrl)) {
+              tripHistory.add(
+                  TripHistoryItem(
+                      PODUploaded,
+                      "Awaiting Physical POD",
+                      "Balance will be paid within 3 days of POD verification"
+                  )
+              )
+            } else {
+              tripHistory.add(
+                  TripHistoryItem(
+                      AwaitingPODUpload,
+                      "Awaiting POD upload",
+                      "Balance will be paid within 3 days of POD verification"
+                  )
+              )
+            }
           }
 
           tripHistory.add(
@@ -322,5 +341,22 @@ class TripDetailsViewModel @Inject constructor(
         }
       }
     }
+  }
+
+  /**
+   * Get delegation token for AWS
+   */
+  fun getDelegationToken(
+    awsPath: String,
+    file: File
+  ) {
+    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+          } else
+            error.handle()
+        }
   }
 }

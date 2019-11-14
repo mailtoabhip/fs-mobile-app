@@ -17,6 +17,9 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
+/**
+ * View model for [SearchResultsFragment]
+ */
 class SearchResultsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository,

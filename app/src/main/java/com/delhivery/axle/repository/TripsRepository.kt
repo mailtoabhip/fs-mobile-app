@@ -2,6 +2,7 @@ package com.delhivery.axle.repository
 
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
+import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
@@ -71,6 +72,14 @@ class TripsRepository @Inject constructor(
    * User/supplier trip summary [TripSummaryResponse]
    */
   fun userTripsSummary() = tripsService.userTripsSummary(userRepository.userId()).convertResponse()
+
+  /**
+   * Upload vendor POD
+   */
+  fun uploadPod(
+    transactionId: String,
+    imageUrls: MutableList<String>
+  ) = tripsService.uploadPod(PodRequest.getRequest(transactionId, imageUrls))
 }
 
 /* User trips pagination load limit */

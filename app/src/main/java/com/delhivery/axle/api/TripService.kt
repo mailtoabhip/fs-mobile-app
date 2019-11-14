@@ -1,12 +1,16 @@
 package com.delhivery.axle.api
 
+import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.api.response.TripsResponse
+import com.delhivery.axle.api.response.UploadPodResponse
 import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import io.reactivex.Single
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -61,4 +65,12 @@ interface TripService {
   fun userTripsSummary(
     @Path("vendor_id") userId: String
   ): Single<BaseResponse<TripSummaryResponse>>
+
+  /**
+   * Upload vendor POD
+   */
+  @POST("upload_vendor_pod")
+  fun uploadPod(
+    @Body request: PodRequest
+  ): Single<BaseResponse<UploadPodResponse>>
 }

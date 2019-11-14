@@ -29,5 +29,6 @@
   <color name="transparent_grey">#8a000000</color>
   <color name="viewpager_dot_inactive">#d8d8d8</color>
   <color name="viewpager_dot_active">#29a8e0</color>
+  <color name="light_grey">#e0e0e0</color>
 
 </resources>

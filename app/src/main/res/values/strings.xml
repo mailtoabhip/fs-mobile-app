@@ -47,6 +47,10 @@
   <string name="msg_your_bid">Your bid: ₹ </string>
   <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
+  <string name="msg_image_capture_failed">Unable to capture image</string>
+  <string name="msg_file_upload_failed">File Upload Failed</string>
+  <string name="msg_file_upload_successful">File Uploaded Successfully</string>
+  <string name="msg_pick_image_intent_text">Pick Image</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>

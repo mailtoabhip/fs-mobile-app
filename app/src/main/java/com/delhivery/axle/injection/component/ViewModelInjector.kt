@@ -8,13 +8,13 @@ import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsViewModel
+import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
-import com.delhivery.axle.ui.home.fragments.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -26,6 +26,7 @@ import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListVie
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
+import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -160,6 +161,11 @@ interface ViewModelInjector {
    * Injects [WalletOnboardingViewModel]
    */
   fun inject(viewModel: WalletOnboardingViewModel)
+
+  /**
+   * Injects [UploadImageViewModel]
+   */
+  fun inject(viewModel: UploadImageViewModel)
 
   @Component.Builder
   interface Builder {

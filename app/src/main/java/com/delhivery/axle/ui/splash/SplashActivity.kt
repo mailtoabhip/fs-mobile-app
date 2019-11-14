@@ -23,6 +23,9 @@ import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
+/**
+ * Splash screen
+ */
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   init {
     StatusBarColor = Color.parseColor("#181818")

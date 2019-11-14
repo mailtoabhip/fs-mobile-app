@@ -16,6 +16,9 @@ import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.github.florent37.kotlin.pleaseanimate.please
 
+/**
+ * First time user onboarding screen
+ */
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingViewModel>() {
   init {
     StatusBarColor = Color.parseColor("#181818")

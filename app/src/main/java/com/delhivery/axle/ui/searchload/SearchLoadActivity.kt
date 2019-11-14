@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFra
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 
+/**
+ * Search load screen
+ */
 class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadViewModel>() {
 
   override fun getViewModelClass() = SearchLoadViewModel::class.java

@@ -1,12 +1,11 @@
 package com.delhivery.axle.repository
 
 import com.auth0.android.jwt.JWT
+import com.delhivery.axle.api.UMSService
 import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
-import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
-import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
@@ -27,7 +26,8 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
   private val appDB: AppDatabase,
   private val userPrefs: UserPrefs,
-  private val userService: UserService
+  private val userService: UserService,
+  private val umsService: UMSService
 ) : BaseRepository() {
 
   /* JWT token */
@@ -66,20 +66,7 @@ class UserRepository @Inject constructor(
   }
 
   /**
-   * Update user routes and get all routes
-   */
-  fun updateBaseCityAndRoutes(
-    city: CityModel?,
-    routes: List<RouteMappingModel>
-  ) =
-    userService.updateCity(
-        userId(), UpdateUserBaseCityRequest(
-        city?.city ?: "", city?.cityId ?: "",
-        routes
-    )
-    )
-
-  /**
+   *
    * Update user routes and get all routes
    */
   fun updateUserRoutes(routes: List<RouteMappingModel>) =
@@ -97,4 +84,9 @@ class UserRepository @Inject constructor(
     userService.updateFCMToken(
         userId(), UpdateUserFCMTokenRequest.getRequest(fcmToken)
     ).convertMessageResponse()
+
+  /**
+   * Get delegation token for AWS
+   */
+  fun getDelegationToken(target: String) = umsService.getDelegationToken(target)
 }

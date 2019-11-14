@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.home.fragments.wallet
+package com.delhivery.axle.ui.home.activity.wallet
 
 import android.app.Activity
 import android.content.Context
