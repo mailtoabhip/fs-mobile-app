@@ -10,7 +10,6 @@ import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
-import com.delhivery.axle.data.home.bids.IndentType.PMT
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.utils.ColorProviderUtils
@@ -38,7 +37,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
-  @SerializedName("commercial_type") val commercialType: String?,
+  @SerializedName("commercial_type") val commercialType: String? = "",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
@@ -204,7 +203,7 @@ data class HomeBidsRequestItemData(
    */
   fun bidDifference(): String {
     if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
-      return transactionBid?.diffFromLowestBid(lowestBid!!) ?: ""
+      return transactionBid?.diffFromLowestBid(lowestBid!!, isPMTIndent()) ?: ""
     }
     return ""
   }
@@ -226,18 +225,10 @@ data class HomeBidsRequestItemData(
   )}" + if (isPMTIndent()) " PMT" else ""
 
   /**
-   * @return true if indent type[PMT]
+   * @return true if indent type(pmt/ftl)
    */
   fun isPMTIndent() = commercialType?.toLowerCase() == "pmt"
 
-}
-
-/**
- * Indent type ENUM
- */
-enum class IndentType(val type: Int) {
-  NON_PMT(1),
-  PMT(2)
 }
 
 /* actions */

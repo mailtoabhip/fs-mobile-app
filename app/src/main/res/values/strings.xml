@@ -223,6 +223,7 @@
   <string name="label_supplier_details">Suppliers Details</string>
   <string name="label_via">Via</string>
   <string name="label_multi_stop">Multi-Stop</string>
+  <string name="label_pmt">PMT</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

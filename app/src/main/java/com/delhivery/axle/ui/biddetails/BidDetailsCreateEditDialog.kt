@@ -33,6 +33,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
   /* dialog binding */
   private lateinit var binding: DialogBidCreateEditBinding
   private var amount = 0
+  private var pmtRate = 0
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -63,47 +64,46 @@ class BidDetailsCreateEditDialog @Inject constructor(
       }
     }
 
-    if (transaction.isPMTIndent()) {
-      binding.editAmount.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
+    binding.editAmount.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) {
 
-        }
+      }
 
-        override fun beforeTextChanged(
-          s: CharSequence?,
-          start: Int,
-          count: Int,
-          after: Int
-        ) {
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) {
 
-        }
+      }
 
-        override fun onTextChanged(
-          s: CharSequence?,
-          start: Int,
-          before: Int,
-          count: Int
-        ) {
-          if (s != null) {
-            try {
-              val input = s.trim()
-                  .toString()
-                  .toDouble()
-              amount = if (transaction.isPMTIndent()) {
-                (input * transaction.requestedCapacityMg).toInt()
-              } else {
-                input.toInt()
-              }
-              binding.labelBid.text = "Your amount: ₹ $amount"
-            } catch (ne: NumberFormatException) {
-              amount = 0
-              binding.labelBid.text = ""
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null) {
+          try {
+            val input = s.trim()
+                .toString()
+                .toInt()
+            amount = if (transaction.isPMTIndent()) {
+              pmtRate = input
+              (input * transaction.requestedCapacityMg).toInt()
+            } else {
+              input
             }
+            binding.labelBid.text = "Your bid amount: ₹ $amount"
+          } catch (ne: NumberFormatException) {
+            amount = 0
+            binding.labelBid.text = ""
           }
         }
+      }
 
-      })
-    }
+    })
 
     /* button click listeners */
     binding.btnConfirm.setOnClickListener {
@@ -124,13 +124,14 @@ class BidDetailsCreateEditDialog @Inject constructor(
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
           dialogInterface.createBid(
-              transaction.isPMTIndent(), transaction.key(), amount, position
+              transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
+              transaction.commercialType ?: "", position
           )
         } else {
           event = EVENT_EDIT_BID
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-              amount, position
+              amount, pmtRate, position
           )
         }
         // Capture event
@@ -159,6 +160,8 @@ interface BidDetailsCreateEditDialogInterface {
     isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
+    pmtRate: Int,
+    commercialType: String,
     position: Int = -1
   )
 
@@ -170,6 +173,7 @@ interface BidDetailsCreateEditDialogInterface {
     transactionId: String,
     bidId: String,
     bidAmount: Int,
+    pmtRate: Int,
     position: Int = -1
   )
 }

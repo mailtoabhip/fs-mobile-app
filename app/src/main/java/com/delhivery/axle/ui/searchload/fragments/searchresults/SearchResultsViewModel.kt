@@ -80,9 +80,13 @@ class SearchResultsViewModel @Inject constructor(
     isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
+    pmtRate: Int,
+    commercialType: String,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.createBid(isPMT, transactionId, bidAmount)
+    compositeDisposable += bidsRepository.createBid(
+        isPMT, transactionId, bidAmount, pmtRate, commercialType
+    )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)
@@ -103,9 +107,10 @@ class SearchResultsViewModel @Inject constructor(
     transactionId: String,
     bidId: String,
     bidAmount: Int,
+    pmtRate: Int,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
+    compositeDisposable += bidsRepository.editBid(isPMT, transactionId, bidId, bidAmount, pmtRate)
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)

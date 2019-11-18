@@ -37,6 +37,8 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
+  lateinit var transaction: HomeBidsRequestItemData
+
   /**
    * Fetch transaction details
    */
@@ -46,6 +48,7 @@ class BidDetailsViewModel @Inject constructor(
         .progress()
         .subscribe { _tRes, error ->
           if (!error) {
+            transaction = _tRes
             transactionLiveData.postValue(_tRes)
             fetchTransactionBids()
           } else {
@@ -73,7 +76,9 @@ class BidDetailsViewModel @Inject constructor(
               }
               _bRes.first.first == null -> {
                 transactionBidLiveData.postValue(
-                    BidDetailsUserBidState_PlaceBid(_bRes.third, _bRes.second, _bRes.first.second)
+                    BidDetailsUserBidState_PlaceBid(
+                        _bRes.third, _bRes.second, _bRes.first.second, transaction.isPMTIndent()
+                    )
                 )
                 bidPriceLiveData.postValue(null)
               }
@@ -86,7 +91,7 @@ class BidDetailsViewModel @Inject constructor(
                   try {
                     transactionBidLiveData.postValue(
                         BidDetailsUserBidState_RejectedBid(
-                            _bRes.second.acceptedBid()!!, _bRes.first.first!!
+                            _bRes.second.acceptedBid()!!, _bRes.first.first!!, transaction.isPMTIndent()
                         )
                     )
                   } catch (e: Exception) {
@@ -99,7 +104,7 @@ class BidDetailsViewModel @Inject constructor(
                   transactionBidLiveData.postValue(
                       BidDetailsUserBidState_EditBid(
                           _bRes.third, _bRes.second, _bRes.first.first!!,
-                          _bRes.first.second
+                          _bRes.first.second, transaction.isPMTIndent()
                       )
                   )
                   bidPriceLiveData.postValue(null)
@@ -134,9 +139,13 @@ class BidDetailsViewModel @Inject constructor(
     isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
+    pmtRate: Int,
+    commercialType: String,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.createBid(isPMT, transactionId, bidAmount)
+    compositeDisposable += bidsRepository.createBid(
+        isPMT, transactionId, bidAmount, pmtRate, commercialType
+    )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .bidsProgress()
@@ -154,9 +163,10 @@ class BidDetailsViewModel @Inject constructor(
     transactionId: String,
     bidId: String,
     bidAmount: Int,
+    pmtRate: Int,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.editBid(transactionId, bidId, bidAmount)
+    compositeDisposable += bidsRepository.editBid(isPMT, transactionId, bidId, bidAmount, pmtRate)
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .bidsProgress()

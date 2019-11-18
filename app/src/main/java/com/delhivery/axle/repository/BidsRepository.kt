@@ -74,21 +74,27 @@ class BidsRepository @Inject constructor(
   fun createBid(
     isPMT: Boolean,
     transactionId: String,
-    amount: Int
+    amount: Int,
+    pmtRate: Int,
+    commercialType: String
   ) = CreateTransactionBidRequest.getRequest(
       isPMT, transactionId, userRepository.userId(),
       "${userPrefs.userName} ${userPrefs.pancard}",
-      amount, userPrefs.isTestUser
+      amount, pmtRate, commercialType, userPrefs.isTestUser
   ).let { bidService.createTransactionBid(it) }
 
   /**
    * Edit bid
    */
   fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
-    amount: Int
-  ) = UpdateTransactionBidRequest(transactionId, bidId, amount, userRepository.userId())
+    amount: Int,
+    pmtRate: Int
+  ) = UpdateTransactionBidRequest.getRequest(
+      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate
+  )
       .let { bidService.updateTransactionBid(it) }
 
   /**

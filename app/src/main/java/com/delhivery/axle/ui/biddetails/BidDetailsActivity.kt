@@ -165,7 +165,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
                     0.0, null -> ""
-                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(state.lowestBid)}"
+                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                        state.lowestBid
+                    )}" + if (state.isPMTIndent) " PMT" else ""
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
@@ -176,15 +178,17 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   bidsRecieved = state.bidsCount
                   lowestBid = when (state.lowestBid) {
                     0.0, null -> ""
-                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(state.lowestBid)}"
+                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                        state.lowestBid
+                    )}" + if (state.isPMTIndent) " PMT" else ""
                   }
                   if (state.bidsCount > 1) {
                     textUserBidAmountDiff.text =
-                      state.userBid.diffFromLowestBid(state.lowestBid)
+                      state.userBid.diffFromLowestBid(state.lowestBid, state.isPMTIndent)
                   }
                   val bid = getString(string.label_user_bid_amount) + StringUtils.formatAmount(
                       state.userBid.bidAmount
-                  )
+                  ) + if (state.isPMTIndent) " PMT" else ""
                   textUserBidAmount.text = bid
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
@@ -213,7 +217,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 .apply {
                   val bidText = getString(string.msg_your_bid) + StringUtils.formatAmount(
                       state.userBid.bidAmount
-                  )
+                  ) + if (state.isPMTIndent) " PMT" else ""
                   textUserHighestBid.text = bidText
                 }
           }

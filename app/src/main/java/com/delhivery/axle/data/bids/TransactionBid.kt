@@ -35,10 +35,22 @@ data class TransactionBid(
   /**
    * @return diff from lowest bid
    */
-  fun diffFromLowestBid(lowestBid: Double) = if (bidAmount > lowestBid) {
-    "(Your Bid is ₹ ${StringUtils.formatAmount(abs((bidAmount - lowestBid)))} more than lowest bid)"
-  } else {
-    "(Your Bid is same as lowest bid)"
+  fun diffFromLowestBid(
+    lowestBid: Double,
+    isPMTIndent: Boolean
+  ): String {
+    val bidText = if (isPMTIndent) {
+      "PMT Bid"
+    } else {
+      "Bid"
+    }
+    return if (bidAmount > lowestBid) {
+      "(Your $bidText is ₹ ${StringUtils.formatAmount(
+          abs((bidAmount - lowestBid))
+      )} more than lowest $bidText)"
+    } else {
+      "(Your $bidText is same as lowest $bidText)"
+    }
   }
 
   /**

@@ -26,12 +26,14 @@ data class CreateTransactionBidRequest(
       supplierId: String,
       supplierName: String,
       bidAmount: Int,
-      testUser: Boolean,
-      commercialType: String? = ""
+      pmtRate: Int,
+      commercialType: String? = "",
+      testUser: Boolean
     ) = if (isPMT)
       CreateTransactionBidRequest(
           transactionId = transactionId, supplierId = supplierId,
-          supplierName = supplierName, bidAmount = bidAmount, testUser = testUser
+          supplierName = supplierName, bidAmount = bidAmount, testUser = testUser,
+          pmtRate = pmtRate, commercialType = commercialType
       )
     else
       CreateTransactionBidRequest(
@@ -47,9 +49,34 @@ data class CreateTransactionBidRequest(
 data class UpdateTransactionBidRequest(
   @SerializedName("transaction_id") val transactionId: String,
   @SerializedName("bid_id") val bidId: String,
+  @SerializedName("vendor_pmt_rate") val pmtRate: Int? = 0,
   @SerializedName("bid_price") val bidAmount: Int,
   @SerializedName("supplier_id") val supplierId: String,
   @SerializedName("action") val action: String = "bid_update"
-)
+) {
+
+  companion object {
+    /**
+     * @return [CreateTransactionBidRequest]
+     */
+    fun getRequest(
+      isPMT: Boolean,
+      transactionId: String,
+      bidId: String,
+      amount: Int,
+      supplierId: String,
+      pmtRate: Int
+    ) = if (isPMT)
+      UpdateTransactionBidRequest(
+          transactionId = transactionId, bidId = bidId,
+          bidAmount = amount, pmtRate = pmtRate, supplierId = supplierId
+      )
+    else
+      UpdateTransactionBidRequest(
+          transactionId = transactionId, bidId = bidId,
+          bidAmount = amount, supplierId = supplierId
+      )
+  }
+}
 
 
