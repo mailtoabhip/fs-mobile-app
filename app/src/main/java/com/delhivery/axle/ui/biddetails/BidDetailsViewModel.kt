@@ -131,11 +131,12 @@ class BidDetailsViewModel @Inject constructor(
   }
 
   override fun createBid(
+    isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
+    compositeDisposable += bidsRepository.createBid(isPMT, transactionId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .bidsProgress()
@@ -149,6 +150,7 @@ class BidDetailsViewModel @Inject constructor(
   }
 
   override fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
     bidAmount: Int,
@@ -170,8 +172,7 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * filter accepted Bid
    */
-  private fun List<TransactionBid>.acceptedBid() =
-    filter { it._status == Accepted.statusKey }.firstOrNull()
+  private fun List<TransactionBid>.acceptedBid() = firstOrNull { it._status == Accepted.statusKey }
 
   /**
    * Emit bids fetching progress

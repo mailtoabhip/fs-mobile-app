@@ -2,6 +2,8 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +32,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
 
   /* dialog binding */
   private lateinit var binding: DialogBidCreateEditBinding
+  private var amount = 0
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -48,11 +51,58 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       route = transaction.tripRoute()
-      transactionBid?.bidAmount?.let {
-        binding.editAmount.setText(
-            DecimalFormat("#########").format(it)
-        )
+      if (transaction.isPMTIndent()) {
+        binding.labelValue.text = context.getString(R.string.hint_enter_pmt_rate_value)
+      } else {
+        binding.labelValue.text = context.getString(R.string.hint_enter_bid_value)
+        transactionBid?.bidAmount?.let {
+          binding.editAmount.setText(
+              DecimalFormat("#########").format(it)
+          )
+        }
       }
+    }
+
+    if (transaction.isPMTIndent()) {
+      binding.editAmount.addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+
+        }
+
+        override fun beforeTextChanged(
+          s: CharSequence?,
+          start: Int,
+          count: Int,
+          after: Int
+        ) {
+
+        }
+
+        override fun onTextChanged(
+          s: CharSequence?,
+          start: Int,
+          before: Int,
+          count: Int
+        ) {
+          if (s != null) {
+            try {
+              val input = s.trim()
+                  .toString()
+                  .toDouble()
+              amount = if (transaction.isPMTIndent()) {
+                (input * transaction.requestedCapacityMg).toInt()
+              } else {
+                input.toInt()
+              }
+              binding.labelBid.text = "Your amount: ₹ $amount"
+            } catch (ne: NumberFormatException) {
+              amount = 0
+              binding.labelBid.text = ""
+            }
+          }
+        }
+
+      })
     }
 
     /* button click listeners */
@@ -60,6 +110,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
       binding.editAmount.clearFocus()
       submit()
     }
+
     binding.btnCancel.setOnClickListener { dismiss() }
   }
 
@@ -68,15 +119,19 @@ class BidDetailsCreateEditDialog @Inject constructor(
    */
   private fun submit() {
     try {
-      val amount = Integer.parseInt(binding.editAmount.text.toString())
       if (amount > 0) {
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
-          dialogInterface.createBid(transaction.key(), amount, position)
+          dialogInterface.createBid(
+              transaction.isPMTIndent(), transaction.key(), amount, position
+          )
         } else {
           event = EVENT_EDIT_BID
-          dialogInterface.editBid(transaction.key(), transactionBid.key(), amount, position)
+          dialogInterface.editBid(
+              transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
+              amount, position
+          )
         }
         // Capture event
         analyticsUtil.trackEvent(
@@ -101,6 +156,7 @@ interface BidDetailsCreateEditDialogInterface {
    * Create bid
    */
   fun createBid(
+    isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
     position: Int = -1
@@ -110,6 +166,7 @@ interface BidDetailsCreateEditDialogInterface {
    * Edit bid
    */
   fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
     bidAmount: Int,

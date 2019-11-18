@@ -168,11 +168,12 @@ class HomeLoadsViewModel @Inject constructor(
   }
 
   override fun createBid(
+    isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.createBid(transactionId, bidAmount)
+    compositeDisposable += bidsRepository.createBid(isPMT, transactionId, bidAmount)
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)
@@ -189,6 +190,7 @@ class HomeLoadsViewModel @Inject constructor(
   }
 
   override fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
     bidAmount: Int,

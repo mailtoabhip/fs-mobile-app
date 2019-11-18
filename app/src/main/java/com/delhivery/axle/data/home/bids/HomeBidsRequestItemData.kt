@@ -10,6 +10,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.data.home.bids.IndentType.PMT
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.utils.ColorProviderUtils
@@ -37,7 +38,10 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("commercial_type") val commercialType: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
+  @SerializedName("pmt_rate") var pmtRate: Double,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -108,9 +112,14 @@ data class HomeBidsRequestItemData(
   fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
 
   /**
-   * @return intermedinaryStops string
+   * @return requested capacity
    */
-  fun intermedinaryStops(): String {
+  fun requestedCapacityMg() = "Requested Capacity: $requestedCapacityMg MG"
+
+  /**
+   * @return intermediary Stops string
+   */
+  fun intermediaryStops(): String {
     val stopBuilder = StringBuilder()
     if (!TextUtils.isEmpty(stop1City)) {
       stopBuilder.append(StringUtils.capitalize(stop1City))
@@ -212,7 +221,23 @@ data class HomeBidsRequestItemData(
   /**
    * @return bid text
    */
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
+      transactionBid?.bidAmount ?: 0.0
+  )}" + if (isPMTIndent()) " PMT" else ""
+
+  /**
+   * @return true if indent type[PMT]
+   */
+  fun isPMTIndent() = commercialType?.toLowerCase() == "pmt"
+
+}
+
+/**
+ * Indent type ENUM
+ */
+enum class IndentType(val type: Int) {
+  NON_PMT(1),
+  PMT(2)
 }
 
 /* actions */

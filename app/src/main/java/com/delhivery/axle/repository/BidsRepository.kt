@@ -72,10 +72,12 @@ class BidsRepository @Inject constructor(
    * Create Bid
    */
   fun createBid(
+    isPMT: Boolean,
     transactionId: String,
     amount: Int
-  ) = CreateTransactionBidRequest(
-      transactionId, userRepository.userId(), "${userPrefs.userName} ${userPrefs.pancard}",
+  ) = CreateTransactionBidRequest.getRequest(
+      isPMT, transactionId, userRepository.userId(),
+      "${userPrefs.userName} ${userPrefs.pancard}",
       amount, userPrefs.isTestUser
   ).let { bidService.createTransactionBid(it) }
 

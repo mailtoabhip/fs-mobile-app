@@ -15,6 +15,8 @@
         />
 
     <import type="android.view.View" />
+
+    <import type="com.delhivery.axle.data.home.bids.IndentType" />
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -82,9 +84,9 @@
         />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_6dp"
         android:orientation="horizontal"
         >
 
@@ -110,7 +112,19 @@
 
     </LinearLayout>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_6dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@{request.requestedCapacityMg()}"
+        android:textColor="@color/sub_heading_black"
+        android:visibility="@{request.isPMTIndent()? View.VISIBLE: View.GONE}"
+        tools:text="Requested Capacity: 25MG"
+        />
+
     <TextView
+        android:id="@+id/label_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_24dp"
@@ -133,12 +147,27 @@
         android:inputType="number"
         />
 
+    <TextView
+        android:id="@+id/label_bid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="@dimen/text_4sp"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_16sp"
+        android:textStyle="normal"
+        android:visibility="@{request.isPMTIndent()? View.VISIBLE: View.GONE}"
+        tools:text="Your amount: ₹ rate * requested"
+        />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_28dp"
         android:gravity="end"
         >
+
       <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/btn_cancel"
           style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -165,6 +194,7 @@
           android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_14sp"
           />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
   </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
