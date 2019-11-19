@@ -62,7 +62,7 @@
   <string name="hint_search_trips">Vehicle / Destination / LR</string>
   <string name="hint_search_bids">Origin / Destination</string>
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
-  <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ per MT)</string>
+  <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
   <string name="hint_amount">23900</string>
 
   <!--Actions (action_)-->

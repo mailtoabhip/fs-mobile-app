@@ -38,6 +38,7 @@ import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -59,6 +60,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   @Inject lateinit var dialogUtils: DialogUtils
 
   @Inject lateinit var contactUtils: ContactUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -172,7 +174,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
               ).show()
             }
           }

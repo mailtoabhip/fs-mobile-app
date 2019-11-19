@@ -40,6 +40,8 @@ data class HomeTripsItemData(
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   @SerializedName("pod_url") val podUrl: String? = "",
+  @SerializedName("actual_load") val load: Double? = 0.0,
+  @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
@@ -55,6 +57,9 @@ data class HomeTripsItemData(
    */
   fun tripStatus() = TripType.byStatus(tripStatus)
 
+  /**
+   * @return payment advance/pending
+   */
   fun tripPayment() = when (tripStatus()) {
     AdvancePending -> {
       if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
@@ -82,24 +87,37 @@ data class HomeTripsItemData(
 
   }
 
-  override fun filter(query: String) =
-    vehicleDetails.vehicleNo.contains(query, true)
-        || destination.contains(query, true)
-        || (lr.isNotNullOrEmpty() && lr.contains(query, true))
-
+  /**
+   * @return formatted origin city
+   */
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
+  /**
+   * @return formatted destination city
+   */
   fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
+  /**
+   * @return formatted origin state
+   */
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
+  /**
+   * @return formatted destination state
+   */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
+  /**
+   * @return formatted display time
+   */
   private fun displayTime() = when (tripStatus) {
     TripStatus.TruckConfirmed.statusKey -> requiredOn
     else -> arrivalTime ?: requiredOn
   }
 
+  /**
+   * @return advance deduction flag
+   */
   fun advanceDeduction() = when (tripStatus()) {
     AdvancePending -> {
       autoAdvanceTransfer ?: false
@@ -112,6 +130,16 @@ data class HomeTripsItemData(
       }
     }
   }
+
+  /**
+   * @return formatted load
+   */
+  fun load() = "Loaded Weight: ${load}MT"
+
+  /**
+   * @return formatted pmt rate
+   */
+  fun pmtRate() = "Rate: ₹ $vendorPmtRate PMT"
 
   /**
    * Formatted required at
@@ -152,6 +180,11 @@ data class HomeTripsItemData(
       return true
     }
   }
+
+  override fun filter(query: String) =
+    vehicleDetails.vehicleNo.contains(query, true)
+        || destination.contains(query, true)
+        || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
 }
 

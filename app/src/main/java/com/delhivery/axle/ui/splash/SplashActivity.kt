@@ -132,6 +132,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               0
             }
 
+            try {
+              viewModel.savePMTValidation(
+                  remoteConfig.getString("max_pmt_rate").toInt(),
+                  remoteConfig.getString("max_cost_per_km").toInt()
+              )
+            } catch (e: NumberFormatException) {
+              //Do Nothing
+            }
+
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
             currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
               pInfo.longVersionCode.toInt()

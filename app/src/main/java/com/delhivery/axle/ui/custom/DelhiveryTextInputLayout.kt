@@ -20,6 +20,7 @@ class DelhiveryTextInputLayout(
 ) : TextInputLayout(context, attrs), TextWatcher {
 
   private var minLength: Int = Int.MIN_VALUE
+  private var minVal: Int = Int.MIN_VALUE
   private var maxVal: Int = Int.MAX_VALUE
 
   init {
@@ -28,12 +29,14 @@ class DelhiveryTextInputLayout(
       minLength =
         typedArray.getInteger(R.styleable.DelhiveryTextInputLayout_min_length, Int.MIN_VALUE)
       maxVal = typedArray.getInt(R.styleable.DelhiveryTextInputLayout_max_val, Int.MAX_VALUE)
+      minVal = typedArray.getInt(R.styleable.DelhiveryTextInputLayout_min_value, Int.MIN_VALUE)
       typedArray.recycle()
     }
   }
 
   override fun onDraw(canvas: Canvas?) {
     super.onDraw(canvas)
+    editText?.removeTextChangedListener(this)
     editText?.addTextChangedListener(this)
   }
 
@@ -80,6 +83,13 @@ class DelhiveryTextInputLayout(
         } else {
           null
         }
+      } else if (minVal != Int.MIN_VALUE && seq.isNotEmpty()) {
+        error = if (seq.toString()
+                .toInt() > this.minVal) {
+          "*Max value can be ${this.maxVal}"
+        } else {
+          null
+        }
       } else if (seq.isNotEmpty()) {
         error = null
       }
@@ -89,7 +99,6 @@ class DelhiveryTextInputLayout(
 
   override fun setError(errorText: CharSequence?) {
     super.setError(errorText)
-
     try {
       val errorTextInput = findViewById<TextView>(R.id.textinput_error)
       val layoutParams =
@@ -104,6 +113,11 @@ class DelhiveryTextInputLayout(
     } catch (e: Exception) {
       // Do nothing here
     }
+  }
+
+  fun setMaxVal(max: Int) {
+    this.maxVal = max
+    invalidate()
   }
 
 }

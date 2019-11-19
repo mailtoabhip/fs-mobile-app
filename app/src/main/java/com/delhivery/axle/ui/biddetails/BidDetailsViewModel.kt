@@ -91,7 +91,8 @@ class BidDetailsViewModel @Inject constructor(
                   try {
                     transactionBidLiveData.postValue(
                         BidDetailsUserBidState_RejectedBid(
-                            _bRes.second.acceptedBid()!!, _bRes.first.first!!, transaction.isPMTIndent()
+                            _bRes.second.acceptedBid()!!, _bRes.first.first!!,
+                            transaction.isPMTIndent()
                         )
                     )
                   } catch (e: Exception) {
@@ -164,9 +165,12 @@ class BidDetailsViewModel @Inject constructor(
     bidId: String,
     bidAmount: Int,
     pmtRate: Int,
+    commercialType: String,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.editBid(isPMT, transactionId, bidId, bidAmount, pmtRate)
+    compositeDisposable += bidsRepository.editBid(
+        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
+    )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .bidsProgress()

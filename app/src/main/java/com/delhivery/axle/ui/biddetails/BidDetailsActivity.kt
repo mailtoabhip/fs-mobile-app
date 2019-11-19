@@ -24,6 +24,7 @@ import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -36,6 +37,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   }
 
   @Inject lateinit var contactUtils: ContactUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -167,7 +169,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     0.0, null -> ""
                     else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
                         state.lowestBid
-                    )}" + if (state.isPMTIndent) " PMT" else ""
+                    )}" + if (state.isPMTIndent) "/MT" else ""
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
@@ -180,15 +182,18 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     0.0, null -> ""
                     else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
                         state.lowestBid
-                    )}" + if (state.isPMTIndent) " PMT" else ""
+                    )}" + if (state.isPMTIndent) "/MT" else ""
                   }
                   if (state.bidsCount > 1) {
                     textUserBidAmountDiff.text =
                       state.userBid.diffFromLowestBid(state.lowestBid, state.isPMTIndent)
                   }
-                  val bid = getString(string.label_user_bid_amount) + StringUtils.formatAmount(
-                      state.userBid.bidAmount
-                  ) + if (state.isPMTIndent) " PMT" else ""
+
+                  val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
+                    StringUtils.formatAmount(state.userBid.pmtRate) + "/MT"
+                  } else {
+                    StringUtils.formatAmount(state.userBid.bidAmount)
+                  }
                   textUserBidAmount.text = bid
                   btnEditBid.setOnClickListener { bidDialog(state.userBid) }
                 }
@@ -215,9 +220,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  val bidText = getString(string.msg_your_bid) + StringUtils.formatAmount(
-                      state.userBid.bidAmount
-                  ) + if (state.isPMTIndent) " PMT" else ""
+                  val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                    StringUtils.formatAmount(state.userBid.pmtRate) + "/MT"
+                  } else {
+                    StringUtils.formatAmount(state.userBid.bidAmount)
+                  }
                   textUserHighestBid.text = bidText
                 }
           }
@@ -243,7 +250,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }

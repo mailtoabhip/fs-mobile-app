@@ -199,9 +199,12 @@ class HomeLoadsViewModel @Inject constructor(
     bidId: String,
     bidAmount: Int,
     pmtRate: Int,
+    commercialType: String,
     position: Int
   ) {
-    compositeDisposable += bidsRepository.editBid(isPMT, transactionId, bidId, bidAmount, pmtRate)
+    compositeDisposable += bidsRepository.editBid(
+        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
+    )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
           bidsRepository.transactionBid(transactionId)

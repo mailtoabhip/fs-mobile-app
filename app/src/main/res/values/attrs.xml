@@ -25,6 +25,7 @@
     <attr format="boolean" name="error_state" />
     <attr format="string" name="error_message" />
     <attr format="string" name="max_val" />
+    <attr format="string" name="min_value" />
     <attr format="integer" name="min_length" />
     <attr format="integer" name="max_length" />
   </declare-styleable>

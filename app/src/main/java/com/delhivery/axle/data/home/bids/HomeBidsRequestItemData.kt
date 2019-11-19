@@ -41,6 +41,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
+  @SerializedName("distance") var distance: Double,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -113,7 +114,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return requested capacity
    */
-  fun requestedCapacityMg() = "Requested Capacity: $requestedCapacityMg MG"
+  fun requestedCapacityMg() = "Capacity: $requestedCapacityMg MG"
 
   /**
    * @return intermediary Stops string

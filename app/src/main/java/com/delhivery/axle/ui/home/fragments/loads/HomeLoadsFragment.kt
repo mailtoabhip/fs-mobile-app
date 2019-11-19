@@ -50,6 +50,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import javax.inject.Inject
 
@@ -68,6 +69,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var contactUtils: ContactUtils
   @Inject lateinit var fcmUtils: FCMUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -259,7 +261,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
               ).show()
             }
           }

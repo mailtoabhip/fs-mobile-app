@@ -27,4 +27,15 @@ class SplashViewModel @Inject constructor(
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
     else -> Auth
   }
+
+  /**
+   * Save PMT values from Firebase Config
+   */
+  fun savePMTValidation(
+    maxRate: Int,
+    maxCostPerKM: Int
+  ) {
+    userPrefs.maxPMTRate = maxRate
+    userPrefs.maxCostPerKM = maxCostPerKM
+  }
 }

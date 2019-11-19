@@ -52,6 +52,7 @@ data class UpdateTransactionBidRequest(
   @SerializedName("vendor_pmt_rate") val pmtRate: Int? = 0,
   @SerializedName("bid_price") val bidAmount: Int,
   @SerializedName("supplier_id") val supplierId: String,
+  @SerializedName("commercial_type") val commercialType: String? = "",
   @SerializedName("action") val action: String = "bid_update"
 ) {
 
@@ -65,16 +66,18 @@ data class UpdateTransactionBidRequest(
       bidId: String,
       amount: Int,
       supplierId: String,
-      pmtRate: Int
+      pmtRate: Int,
+      commercialType: String
     ) = if (isPMT)
       UpdateTransactionBidRequest(
           transactionId = transactionId, bidId = bidId,
-          bidAmount = amount, pmtRate = pmtRate, supplierId = supplierId
+          bidAmount = amount, pmtRate = pmtRate,
+          supplierId = supplierId, commercialType = commercialType
       )
     else
       UpdateTransactionBidRequest(
           transactionId = transactionId, bidId = bidId,
-          bidAmount = amount, supplierId = supplierId
+          bidAmount = amount, supplierId = supplierId, commercialType = commercialType
       )
   }
 }

@@ -151,7 +151,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
-        if (t.second.tripStatus != TripStatus.TruckArrived.statusKey) {
+        if (t.second.tripStatus != TripStatus.TruckArrived.statusKey &&
+            t.second.tripStatus != TripStatus.TruckConfirmed.statusKey) {
           viewModel.fetchPaymentSummary()
         } else {
           viewModel.fetchPayments()

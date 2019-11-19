@@ -42,10 +42,11 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
-        val lowest = (it.bids.minBy { b -> b.bidAmount })?.bidAmount ?: 0.0
-        val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
-            .firstOrNull()
-        Triple(Pair(userBid, lowest), it.bids, it.totalBids)
+        val lowestBid = (it.bids.minBy { b -> b.bidAmount })
+        val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        Triple(
+            Pair(userBid, lowestBid?.pmtRate ?: lowestBid?.bidAmount ?: 0.0), it.bids, it.totalBids
+        )
       }!!
 
   fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
@@ -91,9 +92,10 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     bidId: String,
     amount: Int,
+    commercialType: String,
     pmtRate: Int
   ) = UpdateTransactionBidRequest.getRequest(
-      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate
+      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType
   )
       .let { bidService.updateTransactionBid(it) }
 

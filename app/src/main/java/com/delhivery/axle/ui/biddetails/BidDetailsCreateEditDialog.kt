@@ -15,6 +15,8 @@ import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_EDIT_BID
 import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -27,13 +29,15 @@ class BidDetailsCreateEditDialog @Inject constructor(
   private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
   private val dialogInterface: BidDetailsCreateEditDialogInterface,
   private val position: Int = 0,
-  private val analyticsUtil: AnalyticsUtil
+  private val analyticsUtil: AnalyticsUtil,
+  private var userPrefs: UserPrefs
 ) : AlertDialog(context) {
 
   /* dialog binding */
   private lateinit var binding: DialogBidCreateEditBinding
   private var amount = 0
   private var pmtRate = 0
+  private var isChecked = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -53,20 +57,22 @@ class BidDetailsCreateEditDialog @Inject constructor(
       request = transaction
       route = transaction.tripRoute()
       if (transaction.isPMTIndent()) {
-        binding.labelValue.text = context.getString(R.string.hint_enter_pmt_rate_value)
+        binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
+        transactionBid?.pmtRate?.let {
+          binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
+          binding.labelBid.text = "Your bid is: ${StringUtils.formatAmount(transactionBid.bidAmount)}"
+        }
       } else {
-        binding.labelValue.text = context.getString(R.string.hint_enter_bid_value)
+        binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
         transactionBid?.bidAmount?.let {
-          binding.editAmount.setText(
-              DecimalFormat("#########").format(it)
-          )
+          binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
         }
       }
     }
 
-    binding.editAmount.addTextChangedListener(object : TextWatcher {
+    binding.tilAmount.editText?.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) {
-
+        // Do nothing
       }
 
       override fun beforeTextChanged(
@@ -75,7 +81,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
         count: Int,
         after: Int
       ) {
-
+        // Do nothing
       }
 
       override fun onTextChanged(
@@ -85,6 +91,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
         count: Int
       ) {
         if (s != null) {
+          binding.tilAmount.error = null
+          binding.tilAmount.isErrorEnabled = false
           try {
             val input = s.trim()
                 .toString()
@@ -95,17 +103,25 @@ class BidDetailsCreateEditDialog @Inject constructor(
             } else {
               input
             }
-            binding.labelBid.text = "Your bid amount: ₹ $amount"
-          } catch (ne: NumberFormatException) {
+            if (pmtRate > userPrefs.maxPMTRate) {
+              throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
+            }
+            binding.labelBid.text = "Your bid is: ₹ $amount"
+          } catch (e: NumberFormatException) {
+            binding.tilAmount.isErrorEnabled = true
+            binding.tilAmount.error = "*Invalid Value"
             amount = 0
             binding.labelBid.text = ""
+          } catch (e: Exception) {
+            binding.tilAmount.isErrorEnabled = true
+            binding.tilAmount.error = e.message
+            amount = 0
           }
         }
       }
 
     })
 
-    /* button click listeners */
     binding.btnConfirm.setOnClickListener {
       binding.editAmount.clearFocus()
       submit()
@@ -119,7 +135,17 @@ class BidDetailsCreateEditDialog @Inject constructor(
    */
   private fun submit() {
     try {
+      require(
+          !(transaction.isPMTIndent() && pmtRate > userPrefs.maxPMTRate)
+      ) { "*Rate should be less than ${userPrefs.maxPMTRate}/MT" }
       if (amount > 0) {
+        val costPerKm = pmtRate / transaction.distance
+        if (costPerKm > userPrefs.maxCostPerKM && !isChecked && transaction.isPMTIndent()) {
+          isChecked = true
+          throw IllegalArgumentException(
+              "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
+          )
+        }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
@@ -131,7 +157,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
           event = EVENT_EDIT_BID
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-              amount, pmtRate, position
+              amount, pmtRate, transaction.commercialType ?: "", position
           )
         }
         // Capture event
@@ -142,11 +168,13 @@ class BidDetailsCreateEditDialog @Inject constructor(
         )
         dismiss()
       } else {
-        throw Exception()
+        throw IllegalArgumentException("*Invalid amount")
       }
-    } catch (e: Exception) {
+    } catch (e: IllegalArgumentException) {
+      binding.tilAmount.isErrorEnabled = true
+      binding.tilAmount.error = e.message
       val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-      binding.editAmount.startAnimation(shake)
+      binding.tilAmount.startAnimation(shake)
     }
   }
 }
@@ -174,6 +202,7 @@ interface BidDetailsCreateEditDialogInterface {
     bidId: String,
     bidAmount: Int,
     pmtRate: Int,
+    commercialType: String,
     position: Int = -1
   )
 }

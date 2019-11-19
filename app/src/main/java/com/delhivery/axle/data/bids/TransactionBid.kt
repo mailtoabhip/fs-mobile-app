@@ -14,6 +14,7 @@ data class TransactionBid(
   @SerializedName("creation_date") val creationDate: String,
   @SerializedName("updation_date") val updationDate: String,
   @SerializedName("latest_bid") val bidAmount: Double,
+  @SerializedName("vendor_pmt_rate") val pmtRate: Double,
   @SerializedName("id") val id: String,
   @SerializedName("transaction_id") val transactionId: String
 ) : BaseKeyTypeModel<String>() {
@@ -39,14 +40,17 @@ data class TransactionBid(
     lowestBid: Double,
     isPMTIndent: Boolean
   ): String {
+    val bid: Double
     val bidText = if (isPMTIndent) {
+      bid = pmtRate
       "PMT Bid"
     } else {
+      bid = bidAmount
       "Bid"
     }
-    return if (bidAmount > lowestBid) {
+    return if (bid > lowestBid) {
       "(Your $bidText is ₹ ${StringUtils.formatAmount(
-          abs((bidAmount - lowestBid))
+          abs((bid - lowestBid))
       )} more than lowest $bidText)"
     } else {
       "(Your $bidText is same as lowest $bidText)"
