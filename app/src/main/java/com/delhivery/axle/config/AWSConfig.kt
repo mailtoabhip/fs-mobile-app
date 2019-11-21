@@ -17,7 +17,7 @@ enum class AWSConfig(
   private val uat: String
 ) {
 
-  Target("orion-sts-prod", "orion-sts-dev"),
+  Target("orion-sts-prod", "orion-sts-dev", ""),
   Bucket("orion-service-prod", "orion-service", "orion-uat");
 
   fun value() =
