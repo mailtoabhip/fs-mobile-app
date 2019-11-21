@@ -13,11 +13,12 @@ import com.delhivery.axle.BuildConfig
  */
 enum class AWSConfig(
   private val prod: String,
-  private val dev: String
+  private val dev: String,
+  private val uat: String
 ) {
 
   Target("orion-sts-prod", "orion-sts-dev"),
-  Bucket("orion-service-prod", "orion-service");
+  Bucket("orion-service-prod", "orion-service", "orion-uat");
 
   fun value() =
     when (BuildConfig.FLAVOR) {
