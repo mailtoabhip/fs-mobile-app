@@ -20,6 +20,10 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
+/**
+ *
+ * Transaction details
+ */
 data class HomeBidsRequestItemData(
   @SerializedName("material_type") val materialType: String,
   @SerializedName("pickup_location") val pickupLocation: String,
@@ -216,6 +220,9 @@ data class HomeBidsRequestItemData(
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
 }
 
+/**
+ * Truck specification detail
+ */
 data class TruckSpecification(
   @SerializedName("default_MG") val defaultMG: Double,
   @SerializedName("truck_display_name") val truckDispName: String

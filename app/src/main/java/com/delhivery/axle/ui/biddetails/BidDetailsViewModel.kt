@@ -57,7 +57,7 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * Fetch transaction bids and update UI as per response
    */
-  private fun fetchTransactionBids(postMessage: String? = null) {
+  private fun fetchTransactionBids() {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
         .bidsProgress()
@@ -141,7 +141,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-            fetchTransactionBids(_res.responseData?.message)
+            fetchTransactionBids()
           } else {
             error.handle()
           }
@@ -160,7 +160,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-            fetchTransactionBids(_res.responseData?.message)
+            fetchTransactionBids()
           } else {
             error.handle()
           }
