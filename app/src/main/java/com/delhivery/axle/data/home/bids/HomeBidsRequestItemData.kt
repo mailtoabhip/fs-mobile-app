@@ -20,6 +20,10 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
+/**
+ *
+ * Transaction details
+ */
 data class HomeBidsRequestItemData(
   @SerializedName("material_type") val materialType: String,
   @SerializedName("pickup_location") val pickupLocation: String,
@@ -38,6 +42,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -177,7 +182,7 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = truckDisplayName
+  fun truckDetail() = truckSpecification.truckDispName + "(" + truckSpecification.defaultMG + " MT)"
 
   /**
    * Trip display name for toolbar title
@@ -214,6 +219,14 @@ data class HomeBidsRequestItemData(
    */
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
 }
+
+/**
+ * Truck specification detail
+ */
+data class TruckSpecification(
+  @SerializedName("default_MG") val defaultMG: Double,
+  @SerializedName("truck_display_name") val truckDispName: String
+)
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

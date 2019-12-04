@@ -45,6 +45,12 @@ android {
       resValue("bool", "FIREBASE_ACTIVATED", "false")
       resConfigs "en", "xxhdpi"
     }
+    uat {
+      dimension "vanilla"
+      resValue "string", "app_name", "Stage Axle"
+      resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resConfigs "en", "xxhdpi"
+    }
     production {
       dimension "vanilla"
       resValue "string", "app_name", "Axle"

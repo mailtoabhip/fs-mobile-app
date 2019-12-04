@@ -16,6 +16,7 @@ out/
 app/release
 app/production
 app/development
+app/uat
 
 # Gradle files
 .gradle/
