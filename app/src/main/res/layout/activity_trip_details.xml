@@ -242,7 +242,7 @@
                 android:layout_marginTop="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center_vertical"
-                android:text="@{ transaction.truckTypeDetails() }"
+                android:text="@{ transaction.truckDetail() }"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"

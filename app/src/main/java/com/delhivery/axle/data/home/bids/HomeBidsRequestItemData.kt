@@ -38,6 +38,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -177,7 +178,7 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = truckDisplayName
+  fun truckDetail() = truckSpecification.truckDispName + "(" + truckSpecification.defaultMG + " MT)"
 
   /**
    * Trip display name for toolbar title
@@ -214,6 +215,11 @@ data class HomeBidsRequestItemData(
    */
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
 }
+
+data class TruckSpecification(
+  @SerializedName("default_MG") val defaultMG: Double,
+  @SerializedName("truck_display_name") val truckDispName: String
+)
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
