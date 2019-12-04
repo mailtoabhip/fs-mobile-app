@@ -33,7 +33,7 @@ enum class UrlConfig(
   TripService(
       "https://orion-trip-api.delhivery.com",
       "https://orion-trip-api-dev.delhivery.com",
-      "https://orion-trip-api-uat.delhivery.com"
+      "http://orion-trip-api-uat.delhivery.com"
   ),
   PaymentService(
       "https://orion-payment-api.delhivery.com",
@@ -58,7 +58,7 @@ enum class UrlConfig(
   ImageService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
       "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/",
-      "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
+      "https://szrwunpnp9.execute-api.us-east-1.amazonaws.com/default/"
   ),
   NotificationService(
       "https://orion-notification-api.delhivery.com",

@@ -36,7 +36,7 @@ class AWSUtils @Inject constructor(
         delegationToken.accessKey, delegationToken.secretKey,
         delegationToken.sessionToken
     )
-    val s3 = AmazonS3Client(credentials, Region.getRegion(AP_SOUTHEAST_1))
+    val s3 = AmazonS3Client(credentials, Region.getRegion(AWSConfig.ServerRegion.value()))
     val transferUtility = TransferUtility.builder()
         .context(activity)
         .s3Client(s3)
