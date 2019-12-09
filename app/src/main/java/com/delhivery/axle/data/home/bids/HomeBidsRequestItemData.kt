@@ -182,7 +182,8 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = truckSpecification.truckDispName + "(" + truckSpecification.defaultMG + " MT)"
+  fun truckDetail() = truckSpecification.truckDispName + "(" +
+      StringUtils.formatAmount(truckSpecification.defaultMG) + " MT)"
 
   /**
    * Trip display name for toolbar title
