@@ -44,6 +44,15 @@ object ColorProviderUtils {
   }
 
   /**
+   * Get promise date text color
+   */
+  @ColorRes
+  fun getPromiseDateColor(
+    timeDiff: Long
+  ) = if (timeDiff > 0) R.color.status_lost
+  else R.color.sub_heading_black
+
+  /**
    * Get bank transaction amount text color
    */
   @ColorRes

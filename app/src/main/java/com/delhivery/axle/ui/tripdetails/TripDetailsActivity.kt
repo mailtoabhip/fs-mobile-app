@@ -149,6 +149,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         title = t.first.tripDisplayName(t.second.tripStatus())
         binding.transaction = t.first
         binding.tripDetails = t.second
+        binding.textPromiseDate.setTextColor(ContextCompat.getColor(baseContext, t.second.requiredPromiseDateColor()))
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
         if (t.second.tripStatus != TripStatus.TruckArrived.statusKey) {

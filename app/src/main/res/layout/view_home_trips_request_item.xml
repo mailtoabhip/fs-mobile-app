@@ -11,6 +11,8 @@
         />
 
     <import type="androidx.core.content.ContextCompat" />
+    <import type="android.view.View" />
+    <import type="com.delhivery.axle.ui.bids.TripType" />
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
@@ -93,6 +95,20 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_driver_details"
           bind:drawableResId="@{ trip.requiredAtBg() }"
+          tools:text="Today"
+          />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="4sp"
+          android:text="@{trip.promiseDate()}"
+          android:visibility="@{ (trip.promiseDate == null || trip.promiseDate.isEmpty() || trip.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredPromiseDateColor()) }"
+          app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/text_date_time"
           tools:text="Today"
           />
 

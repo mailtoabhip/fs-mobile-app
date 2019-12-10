@@ -133,6 +133,20 @@
         android:inputType="number"
         />
 
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="@dimen/text_4sp"
+        android:text="Bid difference should be more that ₹50"
+        android:textColor="@color/status_lost"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="normal"
+        android:visibility="gone"
+        />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

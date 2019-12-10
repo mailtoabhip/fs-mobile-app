@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
@@ -15,6 +16,7 @@ import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import java.text.DecimalFormat
 import javax.inject.Inject
+import kotlin.math.abs
 
 /**
  * Bid Create/Edit dialog
@@ -48,6 +50,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       route = transaction.tripRoute()
+      binding.error.visibility = View.GONE
       transactionBid?.bidAmount?.let {
         binding.editAmount.setText(
             DecimalFormat("#########").format(it)
@@ -70,6 +73,12 @@ class BidDetailsCreateEditDialog @Inject constructor(
     try {
       val amount = Integer.parseInt(binding.editAmount.text.toString())
       if (amount > 0) {
+        if (transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50) {
+          val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
+          binding.editAmount.startAnimation(shake)
+          binding.error.visibility = View.VISIBLE
+          return
+        }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
