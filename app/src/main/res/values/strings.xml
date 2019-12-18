@@ -35,9 +35,9 @@
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
   <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
-  <string name="msg_dialog_invalid_num">You have entered an invalid phone number. Please try again. To become an Axle partner, please message us at axle-onboarding@delhivery.com</string>
-  <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please message us at  axle-support@delhivery.com</string>
-  <string name="msg_dialog_supplier_not_approved">Your KYC is not yet complete. Please reach out to us at axle-support@delhivery.com to get it completed</string>
+  <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
+  <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
+  <string name="msg_dialog_supplier_not_approved">Your KYC is not yet complete. To enable please call or message us</string>
   <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
   <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
   <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
@@ -51,6 +51,7 @@
   <string name="msg_file_upload_failed">File Upload Failed</string>
   <string name="msg_file_upload_successful">File Uploaded Successfully</string>
   <string name="msg_pick_image_intent_text">Pick Image</string>
+  <string name="msg_call_permission">Please provide permission to call</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -188,6 +189,7 @@
   <string name="label_utr_number">UTR Number</string>
   <string name="label_exit">EXIT</string>
   <string name="label_mail_us">MAIL US</string>
+  <string name="label_call_us">CALL US</string>
   <string name="label_get_started">GET STARTED</string>
   <string name="label_wallet_faq">VIEW MORE DETAILS</string>
   <string name="label_wallet_note">Note: On activating Axle Money, you will receive Advance amount in Axle Money instead of your bank account. You can transfer from Axle Money to your bank account easily anytime</string>
@@ -215,7 +217,6 @@
 
   <string name="not_available">Not available</string>
   <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
-  <string name="msg_call_permission">Please provide permission to call</string>
   <string name="label_next">NEXT</string>
   <string name="label_give_fuel_to">Give fuel to</string>
   <string name="label_transaction_remarks">Transaction Remarks</string>

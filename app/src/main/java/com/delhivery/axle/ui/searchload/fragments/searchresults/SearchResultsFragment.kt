@@ -19,8 +19,6 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.Config
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
@@ -57,8 +55,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private var saveToHistory: Boolean = false
 
   @Inject lateinit var dialogUtils: DialogUtils
-
-  @Inject lateinit var contactUtils: ContactUtils
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -182,40 +178,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            getString(string.label_exit), getString(string.label_mail_us),
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            getString(string.label_exit), getString(string.label_mail_us),
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }

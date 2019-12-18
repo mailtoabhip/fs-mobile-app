@@ -3,6 +3,7 @@ package com.delhivery.axle.utils
 import android.content.Intent
 import android.net.Uri
 import com.delhivery.axle.injection.scope.ActivityScope
+import com.delhivery.axle.utils.Config.AxleCallSupport
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -14,7 +15,7 @@ class ContactUtils @Inject constructor(private val activity: DaggerAppCompatActi
     body: String = "",
     receiver: String
   ): Boolean {
-    try {
+    return try {
       val emailIntent = Intent(
           Intent.ACTION_SENDTO, Uri.fromParts(
           "mailto", receiver, null
@@ -22,9 +23,20 @@ class ContactUtils @Inject constructor(private val activity: DaggerAppCompatActi
       )
       emailIntent.putExtra(Intent.EXTRA_SUBJECT, "")
       activity.startActivity(Intent.createChooser(emailIntent, null))
-      return true
+      true
     } catch (e: Exception) {
-      return false
+      false
     }
   }
+
+  fun callHelpline() = try {
+    val callIntent = Intent(Intent.ACTION_CALL).apply {
+      data = Uri.parse("tel:$AxleCallSupport")
+    }
+    activity.startActivity(callIntent)
+    true
+  } catch (e: Exception) {
+    false
+  }
+
 }

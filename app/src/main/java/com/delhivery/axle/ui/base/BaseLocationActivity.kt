@@ -69,7 +69,7 @@ abstract class BaseLocationActivity<B : ViewDataBinding, VM : BaseViewModel> : B
    */
   private fun requestLocationPermission() {
     globalPrefs.isLocationPermissionRequested = true
-    compositeDisposable += requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    compositeDisposable += requestPermission(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
         .onBackground()
         .subscribe { granted, error ->
           if (error == null && granted) {

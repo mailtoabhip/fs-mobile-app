@@ -164,8 +164,8 @@ data class HomeTripsItemData(
   fun isFuelBalanceAvailable(): Boolean {
     if (fuelCard != null) {
       try {
-        val activeAmount = fuelCard?.amount?.toInt() ?: 0
-        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0
+        val activeAmount = fuelCard?.amount?.toDouble() ?: 0.0
+        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0.0
         if (activeAmount < allowedAmount) {
           return true
         }
@@ -203,15 +203,15 @@ data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: S
 
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
-  @SerializedName("bid_price") val bidPrice: Int?,
-  @SerializedName("effective_price") val effectivePrice: Int?,
+  @SerializedName("bid_price") val bidPrice: Double?,
+  @SerializedName("effective_price") val effectivePrice: Double?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
 ) : Serializable {
 
   /**
    * @return formatted [bidPrice]
    */
-  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
+  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice ?: 0.0)
 }
 
 enum class TripStatus(
