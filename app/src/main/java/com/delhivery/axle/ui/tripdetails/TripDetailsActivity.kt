@@ -132,7 +132,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun refreshData() {
     binding.refreshing = true
     binding.error = false
-//    viewModel.tripHistory.clear()
     viewModel.tripHistory.clear()
     viewModel.paymentSummary.clear()
     viewModel.fetchTripDetails()
