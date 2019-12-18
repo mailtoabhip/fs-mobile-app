@@ -177,7 +177,7 @@
                 android:textColor="@color/heading_black"
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/id1"
-                app:layout_constraintTop_toBottomOf="@+id/label_advance"
+                app:layout_constraintTop_toBottomOf="@+id/label_advance_time"
                 tools:text="Paid on: 12-11-2019"
                 />
 

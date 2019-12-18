@@ -397,7 +397,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     tripChargesSummary.add(
         0, TripChargesResponse(
         "", ChargeType.Freight.charge_key,
-        0.0, binding.tripDetails?.bidDetails?.bidPrice?.toDouble() ?: 0.0,
+        0.0, binding.tripDetails?.bidDetails?.bidPrice ?: 0.0,
         "", ""
     )
     )

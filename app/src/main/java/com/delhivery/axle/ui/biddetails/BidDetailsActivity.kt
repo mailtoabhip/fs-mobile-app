@@ -22,6 +22,7 @@ import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -32,6 +33,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   init {
     hasInlineProgress = true
   }
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -244,7 +247,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }

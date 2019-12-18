@@ -218,7 +218,7 @@ class TripDetailsViewModel @Inject constructor(
                 advancePaid = true
                 val utrString = when {
                   advancePay.bankTransactionId.isNotNullOrEmpty() -> {
-                    advanceUTR = advancePay.bankTransactionId
+                    advanceUTR = "UTR No: ${advancePay.bankTransactionId}"
                     " with UTR no: ${advancePay.bankTransactionId}."
                   }
                   else -> {
@@ -344,7 +344,7 @@ class TripDetailsViewModel @Inject constructor(
             balancePaid = true
             val utrString = when {
               balancePay.bankTransactionId.isNotNullOrEmpty() -> {
-                balanceUTR = balancePay.bankTransactionId
+                balanceUTR = "UTR no: ${balancePay.bankTransactionId}"
                 " with UTR no: ${balancePay.bankTransactionId}."
               }
               else -> {

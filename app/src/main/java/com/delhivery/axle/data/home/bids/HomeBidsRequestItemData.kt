@@ -46,7 +46,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
-  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -191,8 +191,9 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = truckSpecification.truckDispName + "(" +
-      StringUtils.formatAmount(truckSpecification.defaultMG) + " MT)"
+  fun truckDetail() = truckSpecification?.let {
+    it.truckDispName + "(" + StringUtils.formatAmount(it.defaultMG) + " MT)"
+  }
 
   /**
    * Trip display name for toolbar title

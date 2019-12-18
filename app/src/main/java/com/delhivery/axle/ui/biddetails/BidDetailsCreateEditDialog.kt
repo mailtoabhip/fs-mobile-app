@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.WindowManager
@@ -133,9 +132,6 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.btnCancel.setOnClickListener { dismiss() }
   }
 
-  /**
-   * Submit amount
-   */
   private fun submit() {
     try {
       require(
@@ -154,9 +150,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
                 transactionBid.bidAmount - amount
             ) < 50
         ) {
-          //TODO: change this message to bid diff
-          throw IllegalArgumentException(
-              "*Error bid diff"
+          throw IllegalArgumentException("*Bid difference should be more that ₹50")
         }
         val event: String
         if (transactionBid == null) {
