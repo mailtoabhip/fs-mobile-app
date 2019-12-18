@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.WindowManager
@@ -19,6 +20,7 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
 import javax.inject.Inject
+import kotlin.math.abs
 
 /**
  * Bid Create/Edit dialog
@@ -121,7 +123,6 @@ class BidDetailsCreateEditDialog @Inject constructor(
           }
         }
       }
-
     })
 
     binding.btnConfirm.setOnClickListener {
@@ -141,12 +142,21 @@ class BidDetailsCreateEditDialog @Inject constructor(
           !(transaction.isPMTIndent() && pmtRate > userPrefs.maxPMTRate)
       ) { "*Rate should be less than ${userPrefs.maxPMTRate}/MT" }
       if (amount > 0) {
-        val costPerKm = pmtRate / transaction.distance
-        if (costPerKm > userPrefs.maxCostPerKM && !isChecked && transaction.isPMTIndent()) {
-          isChecked = true
+        if (transaction.isPMTIndent()) {
+          val costPerKm = pmtRate / transaction.distance
+          if (costPerKm > userPrefs.maxCostPerKM && !isChecked) {
+            isChecked = true
+            throw IllegalArgumentException(
+                "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
+            )
+          }
+        } else if (transactionBid?.bidAmount != null && abs(
+                transactionBid.bidAmount - amount
+            ) < 50
+        ) {
+          //TODO: change this message to bid diff
           throw IllegalArgumentException(
-              "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
-          )
+              "*Error bid diff"
         }
         val event: String
         if (transactionBid == null) {

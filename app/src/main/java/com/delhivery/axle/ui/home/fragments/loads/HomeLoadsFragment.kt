@@ -32,8 +32,6 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
-import com.delhivery.axle.utils.Config
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
@@ -67,7 +65,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   var visible = false
 
   @Inject lateinit var dialogUtils: DialogUtils
-  @Inject lateinit var contactUtils: ContactUtils
   @Inject lateinit var fcmUtils: FCMUtils
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -271,40 +268,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }

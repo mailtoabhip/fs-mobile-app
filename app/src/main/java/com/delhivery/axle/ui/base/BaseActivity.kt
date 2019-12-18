@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.base
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -19,13 +18,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
+import com.delhivery.axle.R.string
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.Config.AxleSupportEmail
+import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.ErrorUtils
 import com.delhivery.axle.utils.NavigationUtils
 import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.disposeAndClear
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -64,6 +68,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var errorUtils: ErrorUtils
   @Inject lateinit var analyticsUtil: AnalyticsUtil
   @Inject lateinit var dialogUtils: DialogUtils
+  @Inject lateinit var contactUtils: ContactUtils
   var notificationId: String = ""
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
@@ -187,6 +192,40 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     uiUtils.showNoInternetSnackbar()
   }
 
+  /**
+   * Call helpline
+   */
+  fun callHelpline() {
+    compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+            when (contactUtils.callHelpline()) {
+              false -> {
+                uiUtils.showSnackbar("Unable to place call")
+              }
+              else -> {
+              }
+            }
+          } else {
+            uiUtils.showSnackbar(getString(string.msg_call_permission))
+          }
+        }
+  }
+
+  /**
+   * Send emal
+   */
+  fun sendMail(email: String = AxleSupportEmail) {
+    when (contactUtils.openGmail(receiver = email)) {
+      false -> {
+        uiUtils.showSnackbar("Sorry...You don't have any mail app installed")
+      }
+      else -> {
+      }
+    }
+  }
+
   override fun onOptionsItemSelected(item: MenuItem?): Boolean =
     when (item?.itemId) {
       android.R.id.home -> {
@@ -197,26 +236,48 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     }
 
   /**
+   * Check permission granted
+   *
+   * @param permissions [Manifest.permission] as array of String
+   * @return Boolean
+   */
+  fun checkPermission(permissions: Array<String>): Boolean {
+    for (permission in permissions) {
+      val permCode = ContextCompat.checkSelfPermission(this, permission)
+      if (permCode == PackageManager.PERMISSION_DENIED) {
+        return false
+      }
+    }
+    return true
+  }
+
+  /**
    * Request Permission as Single<Boolean>
    *
-   * @param permission [Manifest.permission] as String
+   * @param permissions [Manifest.permission] as array of String
    * @return Single<Boolean> with result
    */
-  @SuppressLint("NewApi")
-  protected fun requestPermission(permission: String): Single<Boolean> {
+  fun requestPermission(permissions: Array<String> = arrayOf()): Single<Boolean> {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
       return Single.just(true)
     }
 
     permissionResultSubject = PublishSubject.create()
 
-    val permissionCode = ContextCompat.checkSelfPermission(this, permission)
+    var permissionCode = PackageManager.PERMISSION_DENIED
+    for (permission in permissions) {
+      permissionCode = ContextCompat.checkSelfPermission(this, permission)
+      if (permissionCode == PackageManager.PERMISSION_DENIED) {
+        break
+      }
+    }
+
     when (permissionCode) {
       PackageManager.PERMISSION_GRANTED -> {
         return Single.just(true)
       }
       else -> {
-        ActivityCompat.requestPermissions(this, arrayOf(permission), PERMISSION_REQ_CODE)
+        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQ_CODE)
       }
     }
     return permissionResultSubject.singleOrError()

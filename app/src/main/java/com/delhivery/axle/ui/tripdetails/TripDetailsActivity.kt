@@ -149,6 +149,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         title = t.first.tripDisplayName(t.second.tripStatus())
         binding.transaction = t.first
         binding.tripDetails = t.second
+        binding.textPromiseDate.setTextColor(
+            ContextCompat.getColor(baseContext, t.second.requiredPromiseDateColor())
+        )
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
         if (t.second.tripStatus != TripStatus.TruckArrived.statusKey &&
@@ -467,6 +470,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     if (advance > 0.0) {
       paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
+      if (viewModel.advancePaidTime.isNotEmpty()) {
+        paymentSummaryBinding.labelAdvanceTime.visibility = View.VISIBLE
+        paymentSummaryBinding.advancePaidOn = "Paid on: ${viewModel.advancePaidTime}"
+      }
+      if (viewModel.advanceUTR.isNotEmpty()) {
+        paymentSummaryBinding.labelAdvanceUtr.visibility = View.VISIBLE
+        paymentSummaryBinding.advanceUTR = viewModel.advanceUTR
+      }
+
       paymentSummaryBinding.advance = when (viewModel.advancePaid) {
         true -> {
           paymentSummaryBinding.labelAdvance.text = getString(string.label_advance_paid)
@@ -482,6 +494,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     val balance = (total * viewModel.userPrefs.tdsRate / 100).minus(advance)
+    if (viewModel.balancePaidTime.isNotEmpty()) {
+      paymentSummaryBinding.labelBalanceTime.visibility = View.VISIBLE
+      paymentSummaryBinding.balancePaidOn = "Paid on: ${viewModel.balancePaidTime}"
+    }
+    if (viewModel.balanceUTR.isNotEmpty()) {
+      paymentSummaryBinding.labelBalanceUtr.visibility = View.VISIBLE
+      paymentSummaryBinding.balanceUTR = viewModel.balanceUTR
+    }
     paymentSummaryBinding.balance = when (viewModel.balancePaid) {
       true -> {
         paymentSummaryBinding.labelBalance.text = getString(string.label_balance_paid)

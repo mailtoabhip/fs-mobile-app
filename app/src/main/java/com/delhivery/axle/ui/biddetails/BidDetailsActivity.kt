@@ -17,14 +17,11 @@ import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.axle.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.Config.AxleSupportEmail
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
-import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -35,9 +32,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   init {
     hasInlineProgress = true
   }
-
-  @Inject lateinit var contactUtils: ContactUtils
-  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -250,7 +244,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil
           ).show()
         }
       }
@@ -258,40 +252,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }

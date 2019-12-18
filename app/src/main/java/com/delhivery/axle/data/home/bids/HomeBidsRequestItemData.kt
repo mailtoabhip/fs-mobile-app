@@ -20,6 +20,10 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
+/**
+ *
+ * Transaction details
+ */
 data class HomeBidsRequestItemData(
   @SerializedName("material_type") val materialType: String,
   @SerializedName("pickup_location") val pickupLocation: String,
@@ -42,6 +46,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -186,7 +191,8 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = truckDisplayName
+  fun truckDetail() = truckSpecification.truckDispName + "(" +
+      StringUtils.formatAmount(truckSpecification.defaultMG) + " MT)"
 
   /**
    * Trip display name for toolbar title
@@ -231,6 +237,14 @@ data class HomeBidsRequestItemData(
   fun isPMTIndent() = commercialType?.toLowerCase() == "pmt"
 
 }
+
+/**
+ * Truck specification detail
+ */
+data class TruckSpecification(
+  @SerializedName("default_MG") val defaultMG: Double,
+  @SerializedName("truck_display_name") val truckDispName: String
+)
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

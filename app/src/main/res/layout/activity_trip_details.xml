@@ -31,6 +31,8 @@
         />
 
     <import type="android.view.View" />
+    <import type="com.delhivery.axle.ui.bids.TripType" />
+    <import type="androidx.core.content.ContextCompat" />
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -123,6 +125,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_vehicle_no"
                 tools:text="Ram kumar,+919090909090"
+                />
+
+            <TextView
+                android:id="@+id/text_promise_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:text="@{tripDetails.promiseDate()}"
+                android:visibility="@{ (tripDetails.promiseDate.isEmpty() || tripDetails.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_driver"
+                tools:text="Today"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -242,7 +258,7 @@
                 android:layout_marginTop="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center_vertical"
-                android:text="@{ transaction.truckTypeDetails() }"
+                android:text="@{ transaction.truckDetail() }"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"

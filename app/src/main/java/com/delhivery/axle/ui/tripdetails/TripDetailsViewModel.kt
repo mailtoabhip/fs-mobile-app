@@ -31,6 +31,9 @@ import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -68,9 +71,11 @@ class TripDetailsViewModel @Inject constructor(
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
 
   var balancePaid = false
-
+  var balancePaidTime: String = ""
+  var balanceUTR: String = ""
   var advancePaid = false
-
+  var advancePaidTime: String = ""
+  var advanceUTR: String = ""
   var bidDetail: TripBidDetails? = null
 
   /**
@@ -175,7 +180,7 @@ class TripDetailsViewModel @Inject constructor(
         }
 
         TripStatus.TruckArrived.statusKey -> {
-          if (!tripHistory.contains(TruckPlaced)) {
+          if (!tripHistory.contains(ReachedPickupPoint)) {
             tripHistory[ReachedPickupPoint] = TripHistoryItem(
                 ReachedPickupPoint,
                 "Reached Pickup Point",
@@ -186,7 +191,7 @@ class TripDetailsViewModel @Inject constructor(
         }
 
         TripStatus.TruckLoaded.statusKey -> {
-          if (!tripHistory.contains(TruckPlaced)) {
+          if (!tripHistory.contains(TruckLoaded)) {
             tripHistory[TruckLoaded] = TripHistoryItem(
                 TruckLoaded,
                 "Loading Completed",
@@ -211,9 +216,14 @@ class TripDetailsViewModel @Inject constructor(
               val advancePay = payments.firstOrNull { it.head == "cash_advance" }
               if (advancePay != null) {
                 advancePaid = true
-                val utrString = when (advancePay.bankTransactionId) {
-                  null -> "."
-                  else -> " with UTR no: ${advancePay.bankTransactionId}."
+                val utrString = when {
+                  advancePay.bankTransactionId.isNotNullOrEmpty() -> {
+                    advanceUTR = advancePay.bankTransactionId
+                    " with UTR no: ${advancePay.bankTransactionId}."
+                  }
+                  else -> {
+                    ""
+                  }
                 }
 
                 if (!tripHistory.contains(AdvancePaid)) {
@@ -225,6 +235,10 @@ class TripDetailsViewModel @Inject constructor(
                           "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                       )} has been paid$utrString",
                       history.timeStamp()
+                  )
+                  advancePaidTime = DateUtils.formatDate(
+                      DateUtils.parseDate(advancePay.updationTime, DatePatterns.OrionDateFormat),
+                      DatePatterns.SimpleDateFormat
                   )
                 }
               } else {
@@ -328,9 +342,14 @@ class TripDetailsViewModel @Inject constructor(
 
           if (balancePay != null) {
             balancePaid = true
-            val utrString = when (balancePay.bankTransactionId) {
-              null -> "."
-              else -> " with UTR no: ${balancePay.bankTransactionId}."
+            val utrString = when {
+              balancePay.bankTransactionId.isNotNullOrEmpty() -> {
+                balanceUTR = balancePay.bankTransactionId
+                " with UTR no: ${balancePay.bankTransactionId}."
+              }
+              else -> {
+                ""
+              }
             }
             if (!tripHistory.contains(BalancePaid)) {
               tripHistory.remove(BalancePending)
@@ -341,6 +360,10 @@ class TripDetailsViewModel @Inject constructor(
                       "%, .0f", balancePay.amount
                   )} has been paid$utrString",
                   balancePay.timeStamp()
+              )
+              balancePaidTime = DateUtils.formatDate(
+                  DateUtils.parseDate(balancePay.updationTime, DatePatterns.OrionDateFormat),
+                  DatePatterns.SimpleDateFormat
               )
             }
           } else {

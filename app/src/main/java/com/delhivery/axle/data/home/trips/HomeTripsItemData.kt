@@ -2,6 +2,7 @@ package com.delhivery.axle.data.home.trips
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import com.delhivery.axle.R
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.fuelcards.FuelCardData
@@ -10,13 +11,14 @@ import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.ColorProviderUtils
-import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.util.Calendar
 
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
@@ -40,6 +42,7 @@ data class HomeTripsItemData(
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   @SerializedName("pod_url") val podUrl: String? = "",
+  @SerializedName("promise_date") val promiseDate: String? = "",
   @SerializedName("actual_load") val load: Double? = 0.0,
   @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
   @SerializedName("truck_specifications") val truckSpecification: TruckSpecification?,
@@ -143,17 +146,26 @@ data class HomeTripsItemData(
   fun pmtRate() = "Rate: ₹ $vendorPmtRate PMT"
 
   /**
+   * @return promise date
+   */
+  fun promiseDate() = promiseDate?.let {
+    "PD: " + DateUtils.formatDate(
+        DateUtils.parseDate(it, OrionDateFormat), "dd-MMM-yyyy"
+    )
+  }
+
+  /**
    * Formatted required at
    */
   fun requiredAt() =
-    DateUtils.formatDate(DateUtils.parseDate(displayTime(), DatePatterns.OrionDateFormat), "dd MMM")
+    DateUtils.formatDate(DateUtils.parseDate(displayTime(), OrionDateFormat), "dd MMM")
 
   /**
    * Required at background as per designs
    */
   @DrawableRes
   fun requiredAtBg() =
-    DrawableProviderUtils.daysDiffBgDrawableRes(displayTime(), DatePatterns.OrionDateFormat)
+    DrawableProviderUtils.daysDiffBgDrawableRes(displayTime(), OrionDateFormat)
 
   /**
    * Required at text color as per status
@@ -163,13 +175,26 @@ data class HomeTripsItemData(
     ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
 
   /**
+   * Required at text color as per promise date
+   */
+  @ColorRes
+  fun requiredPromiseDateColor() = promiseDate?.let {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.HOUR, calendar.getActualMinimum(Calendar.HOUR))
+    calendar.set(Calendar.MINUTE, calendar.getActualMinimum(Calendar.MINUTE))
+    ColorProviderUtils.getPromiseDateColor(
+        (calendar.timeInMillis - DateUtils.parseDate(it, OrionDateFormat).time)
+    )
+  } ?: R.color.sub_heading_black
+
+  /**
    * Check if fuel balance is available or not
    */
   fun isFuelBalanceAvailable(): Boolean {
     if (fuelCard != null) {
       try {
-        val activeAmount = fuelCard?.amount?.toInt() ?: 0
-        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0
+        val activeAmount = fuelCard?.amount?.toDouble() ?: 0.0
+        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0.0
         if (activeAmount < allowedAmount) {
           return true
         }
@@ -230,15 +255,15 @@ data class TruckSpecification(
  */
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
-  @SerializedName("bid_price") val bidPrice: Int?,
-  @SerializedName("effective_price") val effectivePrice: Int?,
+  @SerializedName("bid_price") val bidPrice: Double?,
+  @SerializedName("effective_price") val effectivePrice: Double?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
 ) : Serializable {
 
   /**
    * @return formatted [bidPrice]
    */
-  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
+  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice ?: 0.0)
 }
 
 enum class TripStatus(

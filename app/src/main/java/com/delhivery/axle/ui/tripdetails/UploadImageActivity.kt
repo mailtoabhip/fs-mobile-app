@@ -1,11 +1,11 @@
 package com.delhivery.axle.ui.tripdetails
 
-import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -14,8 +14,6 @@ import android.provider.MediaStore.Audio.Media
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.BuildConfig
@@ -30,9 +28,7 @@ import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.PROPERTY_STATUS
-import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
-import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_SUCCESS
@@ -306,36 +302,18 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     val builder = AlertDialog.Builder(this)
     builder.setItems(items) { dialog, item ->
       when {
-        items[item] == "Take Photo" -> requestImageCapturePermissions(true)
-        items[item] == "Choose from Library" -> requestImageCapturePermissions(false)
+        items[item] == "Take Photo" ->
+          if (checkPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))) {
+            dispatchTakePictureIntent()
+          }
+        items[item] == "Choose from Library" ->
+          if (checkPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))) {
+            dispatchGalleryIntent()
+          }
         items[item] == "Cancel" -> dialog.dismiss()
       }
     }
     builder.show()
-  }
-
-  private fun requestImageCapturePermissions(isCamera: Boolean) {
-    this.isCamera = isCamera
-
-    val storagePermission =
-      ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    val cameraPermission =
-      ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-    if (storagePermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(
-          this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQCODE_STORAGE
-      )
-    } else if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(
-          this, arrayOf(Manifest.permission.CAMERA), REQCODE_CAMERA
-      )
-    } else {
-      if (isCamera) {
-        dispatchTakePictureIntent()
-      } else {
-        dispatchGalleryIntent()
-      }
-    }
   }
 
   private fun createImageFile(): File {
