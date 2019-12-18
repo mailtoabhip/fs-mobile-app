@@ -58,9 +58,11 @@ class BidDetailsCreateEditDialog @Inject constructor(
       route = transaction.tripRoute()
       if (transaction.isPMTIndent()) {
         binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
-        transactionBid?.pmtRate?.let {
+        transactionBid?.bidAmount.let {
           binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
-          binding.labelBid.text = "Your bid is: ${StringUtils.formatAmount(transactionBid.bidAmount)}"
+        }
+        transactionBid?.pmtRate?.let {
+          binding.labelBid.text = "Your bid is: ${StringUtils.formatAmount(transactionBid.pmtRate)}"
         }
       } else {
         binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)

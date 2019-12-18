@@ -104,12 +104,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     viewModel.paymentLiveData.observe(this, Observer {
       if (it) {
-        populateHistory(viewModel.tripHistory.toMutableList())
+        populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
     })
 
     binding.viewHistory.setOnClickListener {
-      populateHistory(viewModel.tripHistory.toMutableList())
+      populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
     }
 
     binding.viewSummary.setOnClickListener {
@@ -132,6 +132,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun refreshData() {
     binding.refreshing = true
     binding.error = false
+//    viewModel.tripHistory.clear()
     viewModel.tripHistory.clear()
     viewModel.paymentSummary.clear()
     viewModel.fetchTripDetails()
@@ -152,7 +153,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
         if (t.second.tripStatus != TripStatus.TruckArrived.statusKey &&
-            t.second.tripStatus != TripStatus.TruckConfirmed.statusKey) {
+            t.second.tripStatus != TripStatus.TruckConfirmed.statusKey
+        ) {
           viewModel.fetchPaymentSummary()
         } else {
           viewModel.fetchPayments()

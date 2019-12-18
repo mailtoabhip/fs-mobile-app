@@ -42,6 +42,7 @@ data class HomeTripsItemData(
   @SerializedName("pod_url") val podUrl: String? = "",
   @SerializedName("actual_load") val load: Double? = 0.0,
   @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
+  @SerializedName("truck_specifications") val truckSpecification: TruckSpecification?,
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
@@ -181,6 +182,11 @@ data class HomeTripsItemData(
     }
   }
 
+  /**
+   * @return true if indent type(pmt/ftl)
+   */
+  fun isPMTIndent() = truckSpecification?.sourcedAs?.toLowerCase() == "pmt"
+
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
@@ -209,6 +215,19 @@ data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: 
 data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: String) :
     Serializable
 
+/**
+ * Truck specifications
+ */
+data class TruckSpecification(
+  @SerializedName("default_MG") val advancePayout: Double?,
+  @SerializedName("max_capacity") val maxCapacity: Double?,
+  @SerializedName("min_capacity") val minCapacity: Double?,
+  @SerializedName("sourced_as") val sourcedAs: String?
+): Serializable
+
+/**
+ * Trip bid detail
+ */
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
   @SerializedName("bid_price") val bidPrice: Int?,

@@ -223,7 +223,7 @@ data class HomeBidsRequestItemData(
    */
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
       transactionBid?.bidAmount ?: 0.0
-  )}" + if (isPMTIndent()) " PMT" else ""
+  )}" + if (isPMTIndent()) " /MT" else ""
 
   /**
    * @return true if indent type(pmt/ftl)

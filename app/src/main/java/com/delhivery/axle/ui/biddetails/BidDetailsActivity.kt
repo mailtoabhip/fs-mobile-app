@@ -190,7 +190,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
 
                   val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
-                    StringUtils.formatAmount(state.userBid.pmtRate) + "/MT"
+                    StringUtils.formatAmount(state.userBid.bidAmount) + "/MT"
                   } else {
                     StringUtils.formatAmount(state.userBid.bidAmount)
                   }
@@ -221,7 +221,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             )
                 .apply {
                   val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-                    StringUtils.formatAmount(state.userBid.pmtRate) + "/MT"
+                    StringUtils.formatAmount(state.userBid.pmtRate?: 0.0) + "/MT"
                   } else {
                     StringUtils.formatAmount(state.userBid.bidAmount)
                   }

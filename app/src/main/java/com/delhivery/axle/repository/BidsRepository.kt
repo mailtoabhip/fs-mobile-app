@@ -19,20 +19,7 @@ class BidsRepository @Inject constructor(
   private val bidService: BidService,
   private val userPrefs: UserPrefs
 ) : BaseRepository() {
-
-  private fun createList(
-    t1: Pair<Int, List<TransactionBid>>,
-    t2: Pair<Int, List<TransactionBid>>,
-    t3: Pair<Int, List<TransactionBid>>
-  ): Pair<Triple<Int, Int, Int>, MutableList<TransactionBid>> {
-    val count = Triple(t1.first, t2.first, t3.first)
-    val list: MutableList<TransactionBid> = mutableListOf()
-    list.addAll(t1.second)
-    list.addAll(t2.second)
-    list.addAll(t3.second)
-    return Pair(count, list)
-  }
-
+  
   /**
    * Transaction Bids along with user bid and bid count
    *
@@ -44,6 +31,7 @@ class BidsRepository @Inject constructor(
         val userId = userRepository.userId()
         val lowestBid = (it.bids.minBy { b -> b.bidAmount })
         val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        //TODO: check this login for pairing lowest bid
         Triple(
             Pair(userBid, lowestBid?.pmtRate ?: lowestBid?.bidAmount ?: 0.0), it.bids, it.totalBids
         )
