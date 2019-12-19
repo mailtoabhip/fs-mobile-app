@@ -102,7 +102,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     })
 
-    viewModel.paymentLiveData.observe(this, Observer {
+    viewModel.historyLiveData.observe(this, Observer {
       if (it) {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -161,6 +161,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         } else {
           viewModel.fetchPayments()
         }
+        viewModel.fetchChargesSummary()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"

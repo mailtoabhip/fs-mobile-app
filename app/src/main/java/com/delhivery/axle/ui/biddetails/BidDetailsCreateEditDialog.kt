@@ -59,7 +59,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
       route = transaction.tripRoute()
       if (transaction.isPMTIndent()) {
         binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
-        transactionBid?.bidAmount.let {
+        transactionBid?.bidAmount?.let {
           binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
         }
         transactionBid?.pmtRate?.let {
@@ -74,18 +74,13 @@ class BidDetailsCreateEditDialog @Inject constructor(
     }
 
     binding.tilAmount.editText?.addTextChangedListener(object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) {
-        // Do nothing
-      }
-
+      override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
         s: CharSequence?,
         start: Int,
         count: Int,
         after: Int
-      ) {
-        // Do nothing
-      }
+      ) = Unit
 
       override fun onTextChanged(
         s: CharSequence?,
@@ -100,17 +95,18 @@ class BidDetailsCreateEditDialog @Inject constructor(
             val input = s.trim()
                 .toString()
                 .toInt()
-            amount = if (transaction.isPMTIndent()) {
+            if (transaction.isPMTIndent()) {
               pmtRate = input
-              (input * transaction.requestedCapacityMg).toInt()
+              if (pmtRate > userPrefs.maxPMTRate) {
+                throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
+              }
+              amount = (input * transaction.requestedCapacityMg).toInt()
+              binding.labelBid.text = "Your bid is: ₹ $amount"
             } else {
-              input
+              amount = input
             }
-            if (pmtRate > userPrefs.maxPMTRate) {
-              throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
-            }
-            binding.labelBid.text = "Your bid is: ₹ $amount"
           } catch (e: NumberFormatException) {
+
             binding.tilAmount.isErrorEnabled = true
             binding.tilAmount.error = "*Invalid Value"
             amount = 0
@@ -146,24 +142,21 @@ class BidDetailsCreateEditDialog @Inject constructor(
                 "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
             )
           }
-        } else if (transactionBid?.bidAmount != null && abs(
-                transactionBid.bidAmount - amount
-            ) < 50
-        ) {
-          throw IllegalArgumentException("*Bid difference should be more that ₹50")
-        }
+        } else require(
+            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50)
+        ) { "*Bid difference should be more that ₹50" }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
           dialogInterface.createBid(
               transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
-              transaction.commercialType ?: "", position
+              transaction.biddingType ?: "", position
           )
         } else {
           event = EVENT_EDIT_BID
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-              amount, pmtRate, transaction.commercialType ?: "", position
+              amount, pmtRate, transaction.biddingType ?: "", position
           )
         }
         // Capture event

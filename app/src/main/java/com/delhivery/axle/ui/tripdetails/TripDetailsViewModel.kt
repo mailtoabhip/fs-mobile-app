@@ -60,7 +60,7 @@ class TripDetailsViewModel @Inject constructor(
 
   /* trip details live data */
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
-  var paymentLiveData = MutableLiveData<Boolean>()
+  var historyLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
@@ -119,14 +119,12 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch history, charges and payments summary
    */
   fun fetchPaymentSummary() {
-    compositeDisposable += paymentRepository.historyChargesAndPayments(transactionId)
+    compositeDisposable += paymentRepository.historyAndPayments(transactionId)
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            processTrips(_res.first, _res.third)
-            paymentSummary.clear()
-            paymentSummary.addAll(_res.second)
-            paymentLiveData.postValue(true)
+            processTrips(_res.first, _res.second)
+            historyLiveData.postValue(true)
           } else {
             error.handle()
           }
@@ -142,10 +140,23 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error) {
             processTrips(_res.first, _res.second)
-            paymentSummary.clear()
-            paymentLiveData.postValue(true)
+            historyLiveData.postValue(true)
           } else {
             error.handle()
+          }
+        }
+  }
+
+  /**
+   * Fetch charges summary
+   */
+  fun fetchChargesSummary() {
+    compositeDisposable += paymentRepository.historyCharges(transactionId)
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            paymentSummary.clear()
+            paymentSummary.addAll(_res)
           }
         }
   }

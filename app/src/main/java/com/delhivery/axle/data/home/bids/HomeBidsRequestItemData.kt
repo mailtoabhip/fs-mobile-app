@@ -41,7 +41,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
-  @SerializedName("commercial_type") val commercialType: String? = "",
+  @SerializedName("bidding_type") val biddingType: String? = "ftl",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
@@ -235,7 +235,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if indent type(pmt/ftl)
    */
-  fun isPMTIndent() = commercialType?.toLowerCase() == "pmt"
+  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
 
 }
 
