@@ -2,7 +2,8 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
@@ -14,6 +15,8 @@ import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_EDIT_BID
 import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
 import javax.inject.Inject
 import kotlin.math.abs
@@ -27,11 +30,15 @@ class BidDetailsCreateEditDialog @Inject constructor(
   private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
   private val dialogInterface: BidDetailsCreateEditDialogInterface,
   private val position: Int = 0,
-  private val analyticsUtil: AnalyticsUtil
+  private val analyticsUtil: AnalyticsUtil,
+  private var userPrefs: UserPrefs
 ) : AlertDialog(context) {
 
   /* dialog binding */
   private lateinit var binding: DialogBidCreateEditBinding
+  private var amount = 0
+  private var pmtRate = 0
+  private var isChecked = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -50,42 +57,107 @@ class BidDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       route = transaction.tripRoute()
-      binding.error.visibility = View.GONE
-      transactionBid?.bidAmount?.let {
-        binding.editAmount.setText(
-            DecimalFormat("#########").format(it)
-        )
+      if (transaction.isPMTIndent()) {
+        binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
+        transactionBid?.bidAmount?.let {
+          binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
+        }
+        transactionBid?.pmtRate?.let {
+          binding.labelBid.text = "Your bid is: ${StringUtils.formatAmount(transactionBid.pmtRate)}"
+        }
+      } else {
+        binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
+        transactionBid?.bidAmount?.let {
+          binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
+        }
       }
     }
 
-    /* button click listeners */
+    binding.tilAmount.editText?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null) {
+          binding.tilAmount.error = null
+          binding.tilAmount.isErrorEnabled = false
+          try {
+            val input = s.trim()
+                .toString()
+                .toInt()
+            if (transaction.isPMTIndent()) {
+              pmtRate = input
+              if (pmtRate > userPrefs.maxPMTRate) {
+                throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
+              }
+              amount = (input * transaction.requestedCapacityMg).toInt()
+              binding.labelBid.text = "Your bid is: ₹ $amount"
+            } else {
+              amount = input
+            }
+          } catch (e: NumberFormatException) {
+
+            binding.tilAmount.isErrorEnabled = true
+            binding.tilAmount.error = "*Invalid Value"
+            amount = 0
+            binding.labelBid.text = ""
+          } catch (e: Exception) {
+            binding.tilAmount.isErrorEnabled = true
+            binding.tilAmount.error = e.message
+            amount = 0
+          }
+        }
+      }
+    })
+
     binding.btnConfirm.setOnClickListener {
       binding.editAmount.clearFocus()
       submit()
     }
+
     binding.btnCancel.setOnClickListener { dismiss() }
   }
 
-  /**
-   * Submit amount
-   */
   private fun submit() {
     try {
-      val amount = Integer.parseInt(binding.editAmount.text.toString())
+      require(
+          !(transaction.isPMTIndent() && pmtRate > userPrefs.maxPMTRate)
+      ) { "*Rate should be less than ${userPrefs.maxPMTRate}/MT" }
       if (amount > 0) {
-        if (transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50) {
-          val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-          binding.editAmount.startAnimation(shake)
-          binding.error.visibility = View.VISIBLE
-          return
-        }
+        if (transaction.isPMTIndent()) {
+          val costPerKm = pmtRate / transaction.distance
+          if (costPerKm > userPrefs.maxCostPerKM && !isChecked) {
+            isChecked = true
+            throw IllegalArgumentException(
+                "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
+            )
+          }
+        } else require(
+            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50)
+        ) { "*Bid difference should be more that ₹50" }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
-          dialogInterface.createBid(transaction.key(), amount, position)
+          dialogInterface.createBid(
+              transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
+              transaction.biddingType ?: "FTL", position
+          )
         } else {
           event = EVENT_EDIT_BID
-          dialogInterface.editBid(transaction.key(), transactionBid.key(), amount, position)
+          dialogInterface.editBid(
+              transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
+              amount, pmtRate, transaction.biddingType ?: "FTL", position
+          )
         }
         // Capture event
         analyticsUtil.trackEvent(
@@ -95,11 +167,13 @@ class BidDetailsCreateEditDialog @Inject constructor(
         )
         dismiss()
       } else {
-        throw Exception()
+        throw IllegalArgumentException("*Invalid amount")
       }
-    } catch (e: Exception) {
+    } catch (e: IllegalArgumentException) {
+      binding.tilAmount.isErrorEnabled = true
+      binding.tilAmount.error = e.message
       val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-      binding.editAmount.startAnimation(shake)
+      binding.tilAmount.startAnimation(shake)
     }
   }
 }
@@ -110,8 +184,11 @@ interface BidDetailsCreateEditDialogInterface {
    * Create bid
    */
   fun createBid(
+    isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
+    pmtRate: Int,
+    commercialType: String,
     position: Int = -1
   )
 
@@ -119,9 +196,12 @@ interface BidDetailsCreateEditDialogInterface {
    * Edit bid
    */
   fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
     bidAmount: Int,
+    pmtRate: Int,
+    commercialType: String,
     position: Int = -1
   )
 }

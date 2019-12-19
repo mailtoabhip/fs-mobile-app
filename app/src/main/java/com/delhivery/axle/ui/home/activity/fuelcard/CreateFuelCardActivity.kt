@@ -164,8 +164,8 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
           return
         }
 
-      val allowedFuel = (viewModel.trip.bidDetails?.bidPrice?.times(60)?.div(100)
-          ?: 0) - (viewModel.trip.fuelCard?.amount?.toInt() ?: 0)
+      val allowedFuel = viewModel.trip.bidDetails?.bidPrice?.toInt()?.times(60)?.div(100) ?: 0
+      - (viewModel.trip.fuelCard?.amount?.toInt() ?: 0)
       val minVal = min(allowedFuel, viewModel.balance)
       if (mAmount > minVal) {
         binding.tilAmount.requestFocus()

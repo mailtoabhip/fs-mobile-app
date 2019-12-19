@@ -134,13 +134,28 @@
             tools:text="Today"
             />
 
+        <TextView
+            android:id="@+id/text_capacity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@{request.requestedCapacityMg()}"
+            android:textColor="@color/status_lost"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="@{ request.isPMTIndent() ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="@+id/text_load_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_load_details"
+            tools:text="Today"
+            />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_truck_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/text_truck_details"
+            app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/text_truck_details"
+            app:layout_constraintTop_toTopOf="@+id/text_date_time"
             app:srcCompat="@{ request.truckTypeDrawableRes() }"
             />
 
@@ -154,6 +169,7 @@
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
             app:layout_constraintStart_toEndOf="@id/img_truck_type"
             app:layout_constraintTop_toTopOf="@id/text_date_time"
             tools:text="Goa Gao goa goa"
@@ -163,11 +179,11 @@
             android:id="@+id/text_load_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginTop="@dimen/size_6dp"
             android:fontFamily="sans-serif-medium"
             android:text="@{request.loadDetails()}"
             android:textColor="@color/colorAccent"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_date_time"
             tools:text="Goa goa goa"

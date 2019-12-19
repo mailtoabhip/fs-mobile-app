@@ -21,7 +21,7 @@ class PaymentRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
-   * Fetch Trip's history, charges and payments summary [TripChargesResponse]
+   * Fetch Trip's history, charges and payments summary
    */
   fun historyChargesAndPayments(
     transactionId: String
@@ -37,7 +37,7 @@ class PaymentRepository @Inject constructor(
     )
 
   /**
-   * Fetch Trip's history and payments summary [TripChargesResponse]
+   * Fetch Trip's history and payments summary
    */
   fun historyAndPayments(
     transactionId: String
@@ -50,6 +50,14 @@ class PaymentRepository @Inject constructor(
           Pair(t1, t2)
         }
     )
+
+  /**
+   * Fetch Trip's charges summary
+   */
+  fun historyCharges(
+    transactionId: String
+  ): Single<List<TripChargesResponse>> =
+    paymentService.chargesSummary(transactionId).convertResponse()
 
   /**
    * Get bulk transactions using ids

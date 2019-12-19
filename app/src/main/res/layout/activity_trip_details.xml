@@ -241,7 +241,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:fontFamily="sans-serif"
-                android:text="@{transaction.intermedinaryStops()}"
+                android:text="@{transaction.intermediaryStops()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
@@ -278,6 +278,36 @@
                 app:layout_constraintTop_toTopOf="@id/text_truck_details"
                 app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
                 tools:srcCompat="@drawable/ic_closed_truck"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:text="@{ tripDetails.load() }"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:visibility="@{tripDetails.isPMTIndent() &amp;&amp; tripDetails.load!=null? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_truck"
+                tools:text="Loaded Weight: 32MT"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:text="@{ tripDetails.pmtRate() }"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:visibility="@{tripDetails.isPMTIndent()? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_truck"
+                tools:text="PMT rate: Rs 4000 PMT"
                 />
 
           </androidx.constraintlayout.widget.ConstraintLayout>

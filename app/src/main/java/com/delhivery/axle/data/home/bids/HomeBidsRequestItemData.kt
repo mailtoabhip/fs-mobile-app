@@ -41,8 +41,12 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
-  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification,
+  @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
+  @SerializedName("pmt_rate") var pmtRate: Double,
+  @SerializedName("distance") var distance: Double,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -113,9 +117,14 @@ data class HomeBidsRequestItemData(
   fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
 
   /**
-   * @return intermedinaryStops string
+   * @return requested capacity
    */
-  fun intermedinaryStops(): String {
+  fun requestedCapacityMg() = "Capacity: $requestedCapacityMg MG"
+
+  /**
+   * @return intermediary Stops string
+   */
+  fun intermediaryStops(): String {
     val stopBuilder = StringBuilder()
     if (!TextUtils.isEmpty(stop1City)) {
       stopBuilder.append(StringUtils.capitalize(stop1City))
@@ -182,8 +191,9 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = truckSpecification.truckDispName + "(" +
-      StringUtils.formatAmount(truckSpecification.defaultMG) + " MT)"
+  fun truckDetail() = truckSpecification?.let {
+    it.truckDispName + "(" + StringUtils.formatAmount(it.defaultMG) + " MT)"
+  }
 
   /**
    * Trip display name for toolbar title
@@ -201,7 +211,7 @@ data class HomeBidsRequestItemData(
    */
   fun bidDifference(): String {
     if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
-      return transactionBid?.diffFromLowestBid(lowestBid!!) ?: ""
+      return transactionBid?.diffFromLowestBid(lowestBid!!, isPMTIndent()) ?: ""
     }
     return ""
   }
@@ -218,7 +228,15 @@ data class HomeBidsRequestItemData(
   /**
    * @return bid text
    */
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
+      transactionBid?.bidAmount ?: 0.0
+  )}" + if (isPMTIndent()) " /MT" else ""
+
+  /**
+   * @return true if indent type(pmt/ftl)
+   */
+  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
 }
 
 /**

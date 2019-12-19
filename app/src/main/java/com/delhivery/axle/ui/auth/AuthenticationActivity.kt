@@ -23,7 +23,6 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.Config.AxleOnboardingEmail
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.EVENT_OTP_RESEND
 import com.delhivery.axle.utils.EVENT_OTP_SEND
 import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
@@ -37,7 +36,6 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 /**
  * Authentication screen
@@ -50,8 +48,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun layoutId() = R.layout.activity_authentication
 
   override fun requireConnection() = true
-
-  @Inject lateinit var contactUtils: ContactUtils
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
@@ -72,7 +68,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* observe and update ui state */
     viewModel.stateLiveData.observe(this, StateObserver())
 
-    /* obvserve errors and update ui */
+    /* observe errors and update ui */
     viewModel.errorLiveData.observe(this, ErrorObserver())
 
     /* phone no edit button setup */
@@ -215,24 +211,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()
-            dialogUtils.showBasicConfirmDialog(
-                string.title_dialog_supplier_disabled,
+            dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,
                 string.msg_dialog_supplier_disabled,
-                "RETRY", "MAIL US",
-                {
-                  it.dismiss()
-                  navigationUtils.logout("Supplier disabled")
-                },
-                {
-                  when (contactUtils.openGmail(receiver = "axle-support@delhivery.com")) {
-                    false -> {
-                      it.dismiss()
-                      uiUtils.showToast("Sorry...You don't have any mail app installed")
-                    }
-                    else -> {
-                    }
-                  }
-                }
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
             )
           }
         }
@@ -253,23 +235,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         /* handle each error state */
         when (error.first) {
           InvalidPhoneNo -> {   //Invalid phone number functionality
-            dialogUtils.showBasicConfirmDialog(
-                string.title_dialog_invalid_num,
+            dialogUtils.showBasicConfirmDialog(string.title_dialog_invalid_num,
                 string.msg_dialog_invalid_num,
-                "RETRY", "MAIL US",
-                {
-                  it.dismiss()
-                },
-                {
-                  when (contactUtils.openGmail(receiver = AxleOnboardingEmail)) {
-                    false -> {
-                      it.dismiss()
-                      uiUtils.showToast("Sorry...You don't have any mail app installed")
-                    }
-                    else -> {
-                    }
-                  }
-                }
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail(AxleOnboardingEmail) }
             )
             binding.editPhoneNo.errorVibrate()
           }

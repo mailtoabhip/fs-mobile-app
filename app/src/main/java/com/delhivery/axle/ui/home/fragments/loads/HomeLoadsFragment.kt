@@ -32,8 +32,6 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
-import com.delhivery.axle.utils.Config
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
@@ -50,6 +48,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import javax.inject.Inject
 
@@ -66,8 +65,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   var visible = false
 
   @Inject lateinit var dialogUtils: DialogUtils
-  @Inject lateinit var contactUtils: ContactUtils
   @Inject lateinit var fcmUtils: FCMUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -259,7 +258,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
               ).show()
             }
           }
@@ -269,40 +268,16 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }

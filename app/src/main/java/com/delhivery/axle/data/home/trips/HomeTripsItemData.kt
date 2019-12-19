@@ -43,6 +43,9 @@ data class HomeTripsItemData(
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   @SerializedName("pod_url") val podUrl: String? = "",
   @SerializedName("promise_date") val promiseDate: String? = "",
+  @SerializedName("actual_load") val load: Double? = 0.0,
+  @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
+  @SerializedName("truck_specifications") val truckSpecification: TruckSpecification?,
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
@@ -58,6 +61,9 @@ data class HomeTripsItemData(
    */
   fun tripStatus() = TripType.byStatus(tripStatus)
 
+  /**
+   * @return payment advance/pending
+   */
   fun tripPayment() = when (tripStatus()) {
     AdvancePending -> {
       if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
@@ -85,24 +91,37 @@ data class HomeTripsItemData(
 
   }
 
-  override fun filter(query: String) =
-    vehicleDetails.vehicleNo.contains(query, true)
-        || destination.contains(query, true)
-        || (lr.isNotNullOrEmpty() && lr.contains(query, true))
-
+  /**
+   * @return formatted origin city
+   */
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
+  /**
+   * @return formatted destination city
+   */
   fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
+  /**
+   * @return formatted origin state
+   */
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
+  /**
+   * @return formatted destination state
+   */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
+  /**
+   * @return formatted display time
+   */
   private fun displayTime() = when (tripStatus) {
     TripStatus.TruckConfirmed.statusKey -> requiredOn
     else -> arrivalTime ?: requiredOn
   }
 
+  /**
+   * @return advance deduction flag
+   */
   fun advanceDeduction() = when (tripStatus()) {
     AdvancePending -> {
       autoAdvanceTransfer ?: false
@@ -115,6 +134,16 @@ data class HomeTripsItemData(
       }
     }
   }
+
+  /**
+   * @return formatted load
+   */
+  fun load() = "Loaded Weight: ${load}MT"
+
+  /**
+   * @return formatted pmt rate
+   */
+  fun pmtRate() = "Rate: ₹ $vendorPmtRate PMT"
 
   /**
    * @return promise date
@@ -164,8 +193,8 @@ data class HomeTripsItemData(
   fun isFuelBalanceAvailable(): Boolean {
     if (fuelCard != null) {
       try {
-        val activeAmount = fuelCard?.amount?.toInt() ?: 0
-        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0
+        val activeAmount = fuelCard?.amount?.toDouble() ?: 0.0
+        val allowedAmount = bidDetails?.bidPrice?.times(60)?.div(100) ?: 0.0
         if (activeAmount < allowedAmount) {
           return true
         }
@@ -177,6 +206,16 @@ data class HomeTripsItemData(
       return true
     }
   }
+
+  /**
+   * @return true if indent type(pmt/ftl)
+   */
+  fun isPMTIndent() = truckSpecification?.sourcedAs?.toLowerCase() == "pmt"
+
+  override fun filter(query: String) =
+    vehicleDetails.vehicleNo.contains(query, true)
+        || destination.contains(query, true)
+        || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
 }
 
@@ -201,17 +240,30 @@ data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: 
 data class TripVehicleDetails(@SerializedName("vehicle_number") val vehicleNo: String) :
     Serializable
 
+/**
+ * Truck specifications
+ */
+data class TruckSpecification(
+  @SerializedName("default_MG") val advancePayout: Double?,
+  @SerializedName("max_capacity") val maxCapacity: Double?,
+  @SerializedName("min_capacity") val minCapacity: Double?,
+  @SerializedName("sourced_as") val sourcedAs: String?
+): Serializable
+
+/**
+ * Trip bid detail
+ */
 data class TripBidDetails(
   @SerializedName("advance_payout") val advancePayout: Double?,
-  @SerializedName("bid_price") val bidPrice: Int?,
-  @SerializedName("effective_price") val effectivePrice: Int?,
+  @SerializedName("bid_price") val bidPrice: Double?,
+  @SerializedName("effective_price") val effectivePrice: Double?,
   @SerializedName("fuel_payout") val fuelPayout: Double?
 ) : Serializable {
 
   /**
    * @return formatted [bidPrice]
    */
-  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice?.toDouble() ?: 0.0)
+  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice ?: 0.0)
 }
 
 enum class TripStatus(
