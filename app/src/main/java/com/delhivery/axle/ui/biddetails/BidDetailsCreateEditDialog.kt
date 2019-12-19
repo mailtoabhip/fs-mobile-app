@@ -150,13 +150,13 @@ class BidDetailsCreateEditDialog @Inject constructor(
           event = EVENT_PLACE_BID
           dialogInterface.createBid(
               transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
-              transaction.biddingType ?: "", position
+              transaction.biddingType ?: "FTL", position
           )
         } else {
           event = EVENT_EDIT_BID
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-              amount, pmtRate, transaction.biddingType ?: "", position
+              amount, pmtRate, transaction.biddingType ?: "FTL", position
           )
         }
         // Capture event
