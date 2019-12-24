@@ -162,11 +162,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
-                  lowestBid = when (state.lowestAndUserBidPair) {
-                    null -> ""
-                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                        state.lowestAndUserBidPair.first?.bidAmount ?: 0.0
-                    )}" + if (state.isPMTIndent) "/MT" else ""
+                  state.lowestAndUserBidPair.second?.let {
+                    lowestBid = when (state.lowestAndUserBidPair) {
+                      null -> ""
+                      else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                          state.lowestAndUserBidPair.first?.bidAmount ?: 0.0
+                      )}" + if (state.isPMTIndent) "/MT" else ""
+                    }
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
