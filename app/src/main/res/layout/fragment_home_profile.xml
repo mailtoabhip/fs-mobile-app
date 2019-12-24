@@ -75,19 +75,19 @@
           android:gravity="center_horizontal"
           android:orientation="vertical"
           android:visibility="@{!loading &amp;&amp; !error  ? View.VISIBLE : View.GONE }"
-          tools:visibility="gone"
+          tools:visibility="visible"
           >
 
         <androidx.cardview.widget.CardView
             android:id="@+id/container_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             app:cardCornerRadius="@dimen/size_8dp"
             app:cardElevation="@dimen/size_4dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:layout_marginStart="@dimen/size_12dp"
-            android:layout_marginEnd="@dimen/size_12dp"
             >
 
           <androidx.constraintlayout.widget.ConstraintLayout
@@ -125,8 +125,8 @@
                 android:id="@+id/text_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:gravity="end"
                 android:text="@{name}"
@@ -144,8 +144,8 @@
                 android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="Company Name"
-                android:visibility="@{ (company.isEmpty()) ? View.GONE : View.VISIBLE }"
                 android:textColor="@color/heading_black"
+                android:visibility="@{ (company.isEmpty()) ? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_name"
                 />
@@ -158,8 +158,8 @@
                 android:fontFamily="sans-serif"
                 android:gravity="end"
                 android:text="@{company}"
-                android:visibility="@{ (company.isEmpty()) ? View.GONE : View.VISIBLE }"
                 android:textColor="@color/heading_black"
+                android:visibility="@{ (company.isEmpty()) ? View.GONE : View.VISIBLE }"
                 app:layout_constraintEnd_toEndOf="@+id/text_name"
                 app:layout_constraintStart_toEndOf="@+id/label_company"
                 app:layout_constraintTop_toTopOf="@+id/label_company"
@@ -282,10 +282,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             app:cardCornerRadius="@dimen/size_8dp"
             app:cardElevation="@dimen/size_4dp"
             >
@@ -331,10 +331,10 @@
             android:id="@+id/container_trip_meter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             app:cardCornerRadius="@dimen/size_8dp"
             app:cardElevation="@dimen/size_4dp"
             >
@@ -484,15 +484,14 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- your routes container -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/container_your_routes"
+            android:id="@+id/container_payment_terms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="@dimen/size_8dp"
             app:cardElevation="@dimen/size_4dp"
@@ -501,10 +500,58 @@
           <androidx.constraintlayout.widget.ConstraintLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingBottom="@dimen/size_16dp"
-              android:paddingEnd="@dimen/size_12dp"
               android:paddingStart="@dimen/size_16dp"
               android:paddingTop="@dimen/size_16dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:paddingBottom="@dimen/size_16dp"
+              >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Payment Terms"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_chevron_right_dark"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- your routes container -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_your_routes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_4dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingStart="@dimen/size_16dp"
+              android:paddingTop="@dimen/size_16dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:paddingBottom="@dimen/size_16dp"
               >
 
             <TextView
@@ -551,10 +598,10 @@
             android:id="@+id/container_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="@dimen/size_8dp"
             app:cardElevation="@dimen/size_4dp"
@@ -565,10 +612,10 @@
               android:layout_height="wrap_content"
               android:gravity="center_vertical"
               android:orientation="horizontal"
-              android:paddingBottom="@dimen/size_24dp"
-              android:paddingEnd="@dimen/size_12dp"
               android:paddingStart="@dimen/size_16dp"
               android:paddingTop="@dimen/size_24dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:paddingBottom="@dimen/size_24dp"
               >
 
             <TextView
@@ -597,21 +644,21 @@
       </androidx.appcompat.widget.LinearLayoutCompat>
 
       <include
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
           android:id="@+id/container_error"
           layout="@layout/view_warning_item"
-          tools:visibility="gone"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
           android:layout_marginTop="@dimen/size_64dp"
           android:visibility="@{ !loading &amp;&amp; error ? View.VISIBLE : View.GONE }"
+          tools:visibility="gone"
           />
 
       <include
+          layout="@layout/view_bid_details_loading_bids"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          layout="@layout/view_bid_details_loading_bids"
-          tools:visibility="visible"
           android:visibility="@{ loading ? View.VISIBLE : View.GONE }"
+          tools:visibility="gone"
           />
 
     </FrameLayout>

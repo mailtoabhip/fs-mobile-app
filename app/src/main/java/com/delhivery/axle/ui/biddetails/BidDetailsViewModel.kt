@@ -77,7 +77,7 @@ class BidDetailsViewModel @Inject constructor(
               _bRes.first.first == null -> {
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBid(
-                        _bRes.third, _bRes.second, _bRes.first.second, transaction.isPMTIndent()
+                        _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
                     )
                 )
                 bidPriceLiveData.postValue(null)
@@ -104,8 +104,7 @@ class BidDetailsViewModel @Inject constructor(
                 else -> {
                   transactionBidLiveData.postValue(
                       BidDetailsUserBidState_EditBid(
-                          _bRes.third, _bRes.second, _bRes.first.first!!,
-                          _bRes.first.second, transaction.isPMTIndent()
+                          _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
                       )
                   )
                   bidPriceLiveData.postValue(null)

@@ -11,6 +11,7 @@ data class TransactionBid(
   @SerializedName("bid_status") val _status: String,
   @SerializedName("trip_completed") val tripCompleted: Boolean,
   @SerializedName("supplier_name") val supplierName: String,
+  @SerializedName("bidding_type") val biddingType: String,
   @SerializedName("creation_date") val creationDate: String,
   @SerializedName("updation_date") val updationDate: String,
   @SerializedName("latest_bid") val bidAmount: Double,

@@ -31,9 +31,8 @@ class BidsRepository @Inject constructor(
         val userId = userRepository.userId()
         val lowestBid = (it.bids.minBy { b -> b.bidAmount })
         val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
-        //TODO: check this login for pairing lowest bid
         Triple(
-            Pair(userBid, lowestBid?.pmtRate ?: lowestBid?.bidAmount ?: 0.0), it.bids, it.totalBids
+            Pair(userBid, lowestBid), it.bids, it.totalBids
         )
       }!!
 

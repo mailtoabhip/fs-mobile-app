@@ -39,4 +39,17 @@ class ContactUtils @Inject constructor(private val activity: DaggerAppCompatActi
     false
   }
 
+  fun openURL(url: String): Boolean {
+    return try {
+      val intent = Intent(Intent.ACTION_VIEW)
+      var modifiedUrl = url
+      if (!url.startsWith("https://") && !url.startsWith("http://")) modifiedUrl = "http://$url"
+      intent.data = Uri.parse(modifiedUrl)
+      activity.startActivity(intent)
+      true
+    } catch (e: Exception) {
+      false
+    }
+  }
+
 }

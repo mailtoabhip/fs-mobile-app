@@ -69,6 +69,11 @@ enum class UrlConfig(
       "https://orion-iocl-api.delhivery.com",
       "https://orion-iocl-api.dev.delhivery.com",
       "https://orion-iocl-api.uat.delhivery.com"
+  ),
+  DashboardUrl(
+      "https://orion.delhivery.com",
+      "https://orion-dev.delhivery.com",
+      "https://orion-uat.delhivery.com"
   );
 
   /**

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.MonthlyEarning
+import com.delhivery.axle.config.UrlConfig.DashboardUrl
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -88,6 +89,12 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       binding.loading = true
       binding.executePendingBindings()
       viewModel.fetchTripMeter()
+    }
+
+    binding.containerPaymentTerms.setOnClickListener {
+      when (contactUtils.openURL("${DashboardUrl.url()}/#/paymentterms")) {
+        false -> uiUtils.showSnackbar("Could not open url")
+      }
     }
 
     viewModel.fetchTripMeter()

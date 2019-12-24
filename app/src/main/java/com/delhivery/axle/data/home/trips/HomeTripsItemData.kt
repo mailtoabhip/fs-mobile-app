@@ -138,12 +138,12 @@ data class HomeTripsItemData(
   /**
    * @return formatted load
    */
-  fun load() = "Loaded Weight: ${load}MT"
+  fun load() = load?.let { "Loaded Weight: ${load}MT" }
 
   /**
    * @return formatted pmt rate
    */
-  fun pmtRate() = "Rate: ₹ $vendorPmtRate PMT"
+  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ $vendorPmtRate PMT" }
 
   /**
    * @return promise date
@@ -248,7 +248,7 @@ data class TruckSpecification(
   @SerializedName("max_capacity") val maxCapacity: Double?,
   @SerializedName("min_capacity") val minCapacity: Double?,
   @SerializedName("sourced_as") val sourcedAs: String?
-): Serializable
+) : Serializable
 
 /**
  * Trip bid detail

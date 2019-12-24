@@ -207,7 +207,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 //    //handling if needed here
   }
 
-  override fun onAttachFragment(fragment: Fragment?) {
+  override fun onAttachFragment(fragment: Fragment) {
     super.onAttachFragment(fragment)
     when (fragment) {
       is SelectRouteDestinationFragment -> {
