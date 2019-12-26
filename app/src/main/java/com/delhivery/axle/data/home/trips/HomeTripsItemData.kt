@@ -44,6 +44,9 @@ data class HomeTripsItemData(
   @SerializedName("pod_url") val podUrl: String? = "",
   @SerializedName("promise_date") val promiseDate: String? = "",
   @SerializedName("actual_load") val load: Double? = 0.0,
+  @SerializedName("dead_weight") val deadWeight: Double? = 0.0,
+  @SerializedName("volumetric_weight") val volumetricWeight: Double? = 0.0,
+  @SerializedName("weight_used") val weightUsed: String? = "",
   @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
   @SerializedName("truck_specifications") val truckSpecification: TruckSpecification?,
   var payment: BulkPaymentItem? = null,
@@ -138,7 +141,10 @@ data class HomeTripsItemData(
   /**
    * @return formatted load
    */
-  fun load() = load?.let { "Loaded Weight: ${load}MT" }
+  fun load() = when (weightUsed?.toLowerCase()) {
+    "bill_on_max_weight" -> "EQW Weight: ${volumetricWeight}MT"
+    else -> "Loaded Weight: ${load}MT"
+  }
 
   /**
    * @return formatted pmt rate
