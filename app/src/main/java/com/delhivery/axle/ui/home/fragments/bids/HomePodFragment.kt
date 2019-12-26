@@ -68,7 +68,7 @@ class HomePodFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomePodViewMod
 
   override fun getViewModelClass() = HomePodViewModel::class.java
 
-  override fun layoutId() = R.layout.fragment_home_bids
+  override fun layoutId() = R.layout.fragment_home_pod
 
   /* RV adapter */
   private val adapter: HomeBidsRVAdapter by lazy {
