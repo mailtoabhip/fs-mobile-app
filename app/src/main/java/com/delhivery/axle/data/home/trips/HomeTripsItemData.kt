@@ -142,14 +142,16 @@ data class HomeTripsItemData(
    * @return formatted load
    */
   fun load() = when (weightUsed?.toLowerCase()) {
-    "bill_on_max_weight" -> "EQW Weight: ${volumetricWeight}MT"
-    else -> "Loaded Weight: ${load}MT"
+    "bill_on_max_weight" -> volumetricWeight?.let {
+      "EQW Weight: ${StringUtils.formatAmount(volumetricWeight)}MT"
+    }
+    else -> load?.let { "Loaded Weight: ${StringUtils.formatAmount(load)}MT" }
   }
 
   /**
    * @return formatted pmt rate
    */
-  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ $vendorPmtRate PMT" }
+  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ ${StringUtils.formatAmount(vendorPmtRate)} PMT" }
 
   /**
    * @return promise date
