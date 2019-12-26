@@ -4,14 +4,11 @@ import android.Manifest.permission.CAMERA
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import androidx.appcompat.widget.AppCompatImageView
@@ -34,6 +31,7 @@ import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_SUCCESS
+import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import java.io.FileInputStream
@@ -399,19 +397,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       }
     }
   }
-}
-
-private fun ContentResolver.getFileName(uri: Uri): String {
-  var name = ""
-  val returnCursor = this.query(uri, null, null, null, null)
-  if (returnCursor != null) {
-    val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-    returnCursor.moveToFirst()
-    name = returnCursor.getString(nameIndex)
-    returnCursor.close()
-  }
-
-  return name
 }
 
 /* intent keys */
