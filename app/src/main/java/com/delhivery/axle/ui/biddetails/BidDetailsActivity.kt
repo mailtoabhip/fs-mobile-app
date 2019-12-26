@@ -162,11 +162,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
-                  lowestBid = when (state.lowestBid) {
-                    0.0, null -> ""
-                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                        state.lowestBid
-                    )}" + if (state.isPMTIndent) "/MT" else ""
+                  state.lowestAndUserBidPair.second?.let {
+                    lowestBid = when (state.lowestAndUserBidPair) {
+                      null -> ""
+                      else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                          state.lowestAndUserBidPair.first?.bidAmount ?: 0.0
+                      )}" + if (state.isPMTIndent) "/MT" else ""
+                    }
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
@@ -175,24 +177,33 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
-                  lowestBid = when (state.lowestBid) {
-                    0.0, null -> ""
-                    else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                        state.lowestBid
-                    )}" + if (state.isPMTIndent) "/MT" else ""
-                  }
-                  if (state.bidsCount > 1) {
-                    textUserBidAmountDiff.text =
-                      state.userBid.diffFromLowestBid(state.lowestBid, state.isPMTIndent)
+                  val userBid = state.lowestAndUserBidPair.first
+                  val lowestTBid = state.lowestAndUserBidPair.second
+                  lowestTBid?.let {
+                    if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+                      lowestBid = when (it) {
+                        null -> ""
+                        else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                            it.bidAmount
+                        )}" + if (state.isPMTIndent) "/MT" else ""
+                      }
+                      if (state.bidsCount > 1) {
+                        textUserBidAmountDiff.text =
+                          userBid?.diffFromLowestBid(it.bidAmount, state.isPMTIndent)
+                      }
+                    }
                   }
 
-                  val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
-                    StringUtils.formatAmount(state.userBid.bidAmount) + "/MT"
-                  } else {
-                    StringUtils.formatAmount(state.userBid.bidAmount)
+                  userBid?.bidAmount?.let {
+                    val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
+                      StringUtils.formatAmount(it) + "/MT"
+                    } else {
+                      StringUtils.formatAmount(it)
+                    }
+                    textUserBidAmount.text = bid
                   }
-                  textUserBidAmount.text = bid
-                  btnEditBid.setOnClickListener { bidDialog(state.userBid) }
+
+                  btnEditBid.setOnClickListener { bidDialog(userBid) }
                 }
           }
           is BidDetailsUserBidState_LoadingBids -> {
@@ -218,7 +229,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             )
                 .apply {
                   val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-                    StringUtils.formatAmount(state.userBid.pmtRate?: 0.0) + "/MT"
+                    StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
                   } else {
                     StringUtils.formatAmount(state.userBid.bidAmount)
                   }

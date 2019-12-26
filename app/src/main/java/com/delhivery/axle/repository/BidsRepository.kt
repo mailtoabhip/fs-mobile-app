@@ -19,7 +19,7 @@ class BidsRepository @Inject constructor(
   private val bidService: BidService,
   private val userPrefs: UserPrefs
 ) : BaseRepository() {
-  
+
   /**
    * Transaction Bids along with user bid and bid count
    *
@@ -29,11 +29,21 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
-        val lowestBid = (it.bids.minBy { b -> b.bidAmount })
+        var hasPMT = false
+        var hasFTL = false
+        it.bids.forEach { it1 ->
+          when (it1.biddingType.toLowerCase()) {
+            "pmt" -> hasPMT = true
+            "ftl" -> hasFTL = true
+          }
+        }
+        var lowestBid: TransactionBid? = null
+        if ((hasPMT && !hasFTL) || (!hasPMT && hasFTL)) {
+          lowestBid = (it.bids.minBy { b -> b.bidAmount })
+        }
         val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
-        //TODO: check this login for pairing lowest bid
         Triple(
-            Pair(userBid, lowestBid?.pmtRate ?: lowestBid?.bidAmount ?: 0.0), it.bids, it.totalBids
+            Pair(userBid, lowestBid), it.bids, it.totalBids
         )
       }!!
 

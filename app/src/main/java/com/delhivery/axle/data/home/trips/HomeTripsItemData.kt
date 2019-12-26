@@ -149,7 +149,7 @@ data class HomeTripsItemData(
   /**
    * @return formatted pmt rate
    */
-  fun pmtRate() = "Rate: ₹ $vendorPmtRate PMT"
+  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ $vendorPmtRate PMT" }
 
   /**
    * @return promise date
