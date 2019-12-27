@@ -8,7 +8,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 abstract class BaseFilterableDataRVAdapter<
     D : BaseKeyTypeModel<out Any>,
     B : ViewDataBinding,
-    VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) : BaseDataRVAdapter<D, B, VH>(clickListener) {
+    VH : BaseViewHolder<*>>(clickListener: ItemClickListener<D>) : BaseDataRVAdapter<D, B, VH>(clickListener) {
 
   /* List of filtered items */
   private val filteredItems = mutableListOf<D>()

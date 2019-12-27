@@ -12,7 +12,7 @@ package com.delhivery.axle.utils.expandablerecyclerview.models
  * and children you see on the screen - to and from the full backing list of groups & their children
  */
 class ExpandableList(var groups: List<ExpandableGroup<*>>) {
-  var expandedGroupIndexes: BooleanArray
+  var expandedGroupIndexes: BooleanArray = BooleanArray(groups.size)
 
   /**
    * @return the total number visible rows
@@ -28,7 +28,6 @@ class ExpandableList(var groups: List<ExpandableGroup<*>>) {
 
   init {
 
-    expandedGroupIndexes = BooleanArray(groups.size)
     for (i in groups.indices) {
       expandedGroupIndexes[i] = false
     }

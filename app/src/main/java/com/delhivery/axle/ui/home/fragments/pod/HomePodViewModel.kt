@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.home.fragments.bids
+package com.delhivery.axle.ui.home.fragments.pod
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +16,13 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsHeaderItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsSearchItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_NoBids
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_TimeOut
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -154,7 +161,8 @@ class HomePodViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", transaction.transactionId)
                   }
-                  add(Pair(HomeBidsRequestItem(transaction), Add))
+                  add(Pair(
+                      HomeBidsRequestItem(transaction), Add))
                 }
               }
             }

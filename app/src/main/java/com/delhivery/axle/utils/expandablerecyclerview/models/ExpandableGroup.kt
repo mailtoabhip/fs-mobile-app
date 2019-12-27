@@ -66,12 +66,12 @@ open class ExpandableGroup<T : Parcelable> : Parcelable {
     }
   }
 
-  companion object CREATOR : Creator<ExpandableGroup> {
-    override fun createFromParcel(parcel: Parcel): ExpandableGroup {
-      return ExpandableGroup(parcel)
+  companion object CREATOR : Creator<ExpandableGroup<*>> {
+    override fun createFromParcel(parcel: Parcel): ExpandableGroup<*> {
+      return ExpandableGroup<Parcelable>(parcel)
     }
 
-    override fun newArray(size: Int): Array<ExpandableGroup?> {
+    override fun newArray(size: Int): Array<ExpandableGroup<*>?> {
       return arrayOfNulls(size)
     }
   }

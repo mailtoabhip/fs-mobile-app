@@ -16,7 +16,7 @@
         >
 
       <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/rv_bids"
+          android:id="@+id/rv_pod"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           />
@@ -33,6 +33,7 @@
         android:paddingStart="@dimen/size_56dp"
         android:paddingBottom="@dimen/size_16dp"
         android:singleLine="true"
+        android:visibility="gone"
         android:textColorHint="@color/color_hint"
         android:textSize="@dimen/text_16sp"
         bind:shadow="@{ @dimen/size_4dp }"

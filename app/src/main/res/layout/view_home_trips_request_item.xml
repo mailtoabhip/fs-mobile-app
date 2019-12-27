@@ -105,10 +105,10 @@
           android:lineSpacingExtra="4sp"
           android:text="@{trip.promiseDate()}"
           android:visibility="@{ (trip.promiseDate == null || trip.promiseDate.isEmpty() || trip.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
-          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredPromiseDateColor()) }"
           app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="@+id/text_date_time"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredPromiseDateColor()) }"
           tools:text="Today"
           />
 

@@ -52,11 +52,17 @@ object DrawableProviderUtils {
     date: String,
     format: String
   ): Int {
-    val diff = DateUtils.daysDiff(DateUtils.parseDate(date, format))
-    if (diff <= 0) {
-      return R.drawable.bg_date_today
+    return if (DateUtils.daysDiff(DateUtils.parseDate(date, format)) <= 0) {
+      R.drawable.bg_date_today
     } else {
-      return R.drawable.bg_date_tomorrow
+      R.drawable.bg_date_tomorrow
     }
+  }
+
+  @DrawableRes
+  fun expandedRes(flag: Boolean) = if (flag) {
+    R.drawable.ic_collapse
+  } else {
+    R.drawable.ic_expand
   }
 }

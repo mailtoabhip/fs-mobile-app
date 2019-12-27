@@ -7,4 +7,4 @@ import com.delhivery.axle.utils.expandablerecyclerview.models.ExpandableGroup
 /**
  * ViewHolder for [#items][ExpandableGroup]
  */
-class ChildViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+open class ChildViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

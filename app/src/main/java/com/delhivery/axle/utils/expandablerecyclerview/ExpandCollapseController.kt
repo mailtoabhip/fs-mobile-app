@@ -21,6 +21,7 @@ class ExpandCollapseController(
   private fun collapseGroup(listPosition: ExpandableListPosition) {
     expandableList.expandedGroupIndexes[listPosition.groupPos] = false
     listener?.onGroupCollapsed(
+        "",
         expandableList.getFlattenedGroupIndex(listPosition) + 1,
         expandableList.groups[listPosition.groupPos].itemCount
     )
@@ -34,6 +35,7 @@ class ExpandCollapseController(
   private fun expandGroup(listPosition: ExpandableListPosition) {
     expandableList.expandedGroupIndexes[listPosition.groupPos] = true
     listener?.onGroupExpanded(
+        "",
         expandableList.getFlattenedGroupIndex(listPosition) + 1,
         expandableList.groups[listPosition.groupPos].itemCount
     )

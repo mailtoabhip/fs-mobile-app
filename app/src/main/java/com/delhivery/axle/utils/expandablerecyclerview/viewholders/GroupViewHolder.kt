@@ -32,7 +32,7 @@ abstract class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
     this.listener = listener
   }
 
-  fun expand() {}
+  open fun expand() {}
 
-  fun collapse() {}
+  open fun collapse() {}
 }

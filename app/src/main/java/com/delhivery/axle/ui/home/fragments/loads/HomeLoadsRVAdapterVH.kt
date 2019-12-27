@@ -160,7 +160,7 @@ internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
     _interface: HomeLoadsRVAdapterInterface
   ) {
     val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
-    val searchString: Spannable = SpannableString(item.data.searchString)
+    val searchString = SpannableString(item.data.searchString)
     searchString.setSpan(
         colorSpan, searchString.length - 13,
         searchString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

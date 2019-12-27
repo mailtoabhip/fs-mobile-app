@@ -18,7 +18,7 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
     ExpandCollapseListener,
     OnGroupClickListener {
 
-  protected var expandableList: ExpandableList
+  private var expandableList = ExpandableList(groups)
   private val expandCollapseController: ExpandCollapseController
 
   private var groupClickListener: OnGroupClickListener? = null
@@ -33,7 +33,6 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
     get() = expandableList.groups
 
   init {
-    this.expandableList = ExpandableList(groups)
     this.expandCollapseController = ExpandCollapseController(expandableList, this)
   }
 
@@ -53,14 +52,14 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
     parent: ViewGroup,
     viewType: Int
   ): RecyclerView.ViewHolder {
-    when (viewType) {
+    return when (viewType) {
       ExpandableListPosition.GROUP -> {
         val gvh = onCreateGroupViewHolder(parent, viewType)
         gvh.setOnGroupClickListener(this)
-        return gvh
+        gvh
       }
       ExpandableListPosition.CHILD -> {
-        return onCreateChildViewHolder(parent, viewType)
+        onCreateChildViewHolder(parent, viewType)
       }
       else -> throw IllegalArgumentException("viewType is not valid")
     }
@@ -115,6 +114,7 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
    * @param itemCount the total number of children in the [ExpandableGroup]
    */
   override fun onGroupExpanded(
+    actionId: String,
     positionStart: Int,
     itemCount: Int
   ) {
@@ -140,6 +140,7 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
    * @param itemCount the total number of children in the [ExpandableGroup]
    */
   override fun onGroupCollapsed(
+    actionId: String,
     positionStart: Int,
     itemCount: Int
   ) {
@@ -313,6 +314,6 @@ abstract class ExpandableRecyclerViewAdapter<GVH : GroupViewHolder, CVH : ChildV
 
   companion object {
 
-    private val EXPAND_STATE_MAP = "expandable_recyclerview_adapter_expand_state_map"
+    private const val EXPAND_STATE_MAP = "expandable_recyclerview_adapter_expand_state_map"
   }
 }
