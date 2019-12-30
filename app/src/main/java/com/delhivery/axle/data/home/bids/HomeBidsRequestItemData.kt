@@ -119,7 +119,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return requested capacity
    */
-  fun requestedCapacityMg() = "Capacity: $requestedCapacityMg MG"
+  fun requestedCapacityMg() = "Guarantee: $requestedCapacityMg MT"
 
   /**
    * @return intermediary Stops string
@@ -192,7 +192,7 @@ data class HomeBidsRequestItemData(
    * Get truck details/type
    */
   fun truckDetail() = truckSpecification?.let {
-    it.truckDispName + "(" + StringUtils.formatAmount(it.defaultMG) + " MT)"
+    it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
   }
 
   /**

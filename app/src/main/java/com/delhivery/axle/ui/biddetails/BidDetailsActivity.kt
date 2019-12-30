@@ -166,7 +166,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     lowestBid = when (state.lowestAndUserBidPair) {
                       null -> ""
                       else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                          state.lowestAndUserBidPair.first?.bidAmount ?: 0.0
+                          state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
                       )}" + if (state.isPMTIndent) "/MT" else ""
                     }
                   }
