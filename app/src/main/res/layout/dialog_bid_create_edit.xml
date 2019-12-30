@@ -198,7 +198,7 @@
         android:textColor="@color/heading_black"
         android:textStyle="normal"
         android:visibility="@{request.isPMTIndent()? View.VISIBLE: View.GONE}"
-        tools:text="Your bid: ₹ rate * requested"
+        tools:text="Your minimum payout will be ₹ rate * requested"
         />
 
     <androidx.appcompat.widget.LinearLayoutCompat
