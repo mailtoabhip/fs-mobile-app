@@ -12,6 +12,9 @@ import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_CREDI
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_DEBIT
 import com.delhivery.axle.data.transactions.TransactionType.RECONCILIATION_DEBIT
 
+/**
+ * Helper class to set drawables/backgrounds
+ */
 object DrawableProviderUtils {
   /**
    * Get truck type drawable
@@ -53,10 +56,10 @@ object DrawableProviderUtils {
     format: String
   ): Int {
     val diff = DateUtils.daysDiff(DateUtils.parseDate(date, format))
-    if (diff <= 0) {
-      return R.drawable.bg_date_today
+    return if (diff <= 0) {
+      R.drawable.bg_date_today
     } else {
-      return R.drawable.bg_date_tomorrow
+      R.drawable.bg_date_tomorrow
     }
   }
 }
