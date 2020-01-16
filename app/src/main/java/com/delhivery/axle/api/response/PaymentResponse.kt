@@ -1,9 +1,9 @@
 package com.delhivery.axle.api.response
 
-import com.delhivery.axle.api.response.ChargeType.Damages
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
+import kotlin.math.abs
 
 /**
  * Created by saurabh
@@ -14,29 +14,48 @@ import com.google.gson.annotations.SerializedName
  *
  **
  */
-
 data class TripChargesResponse(
   @SerializedName("username") val username: String,
   @SerializedName("head") val head: String,
   @SerializedName("bill_client") val billClient: Double,
-  @SerializedName("pay_vendor") val payVendor: Double,
+  @SerializedName("pay_vendor") val payVendor: Double?,
+  @SerializedName("deduct_vendor") val deductVendor: Double?,
   @SerializedName("updation_date") val updationDate: String,
   @SerializedName("remarks") val remarks: String
 ) {
+  /**
+   * Return charge type
+   */
+  fun chargeType() = StringUtils.capitalize(head.replace("_", " "))
 
-  fun chargeType() = ChargeType.byTypeId(head).charge
-
-  fun charges() = when (head) {
-    Damages.charge_key -> "- ₹ ${StringUtils.formatAmount(payVendor)}"
-    else -> "₹ ${StringUtils.formatAmount(payVendor)}"
+  /**
+   * return charge
+   */
+  fun charges() = when {
+    payVendor != null && payVendor != 0.0 -> {
+      if (payVendor > 0) "₹ ${StringUtils.formatAmount(abs(payVendor))}"
+      else "- ₹ ${StringUtils.formatAmount(abs(payVendor))}"
+    }
+    deductVendor != null && deductVendor != 0.0 -> {
+      "- ₹ ${StringUtils.formatAmount(abs(deductVendor))}"
+    }
+    else -> {
+      ""
+    }
   }
 }
 
+/**
+ * Trip Payments Bulk Response
+ */
 data class TripPaymentsBulkResponse(
   @SerializedName("items") val payments: List<BulkPaymentItem>,
   @SerializedName("total") val total: Int
 )
 
+/**
+ * Bulk Payment Item
+ */
 data class BulkPaymentItem(
   @SerializedName("effective_price") val effectivePrice: Double,
   @SerializedName("advance_payout") val advancePayout: Double,
@@ -51,6 +70,9 @@ data class Payments(
   @SerializedName("fuel_advance") val fuelAdvance: Double
 )
 
+/**
+ * Trip Payments Response
+ */
 data class TripPaymentsResponse(
   @SerializedName("head") val head: String,
   @SerializedName("bank_transaction_id") val bankTransactionId: String,
