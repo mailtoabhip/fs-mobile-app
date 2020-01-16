@@ -398,28 +398,47 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     tripChargesSummary.add(
         0, TripChargesResponse(
         "", ChargeType.Freight.charge_key,
-        0.0, binding.tripDetails?.bidDetails?.bidPrice ?: 0.0,
-        "", ""
+        0.0, binding.tripDetails?.bidDetails?.bidPrice ?: 0.0, null, "", ""
     )
     )
 
     tripChargesSummary.forEach { _payment ->
-      if (_payment.payVendor > 0) {
+      if (_payment.payVendor != null && _payment.payVendor != 0.0) {
         ViewPaymentSummaryItemBinding.inflate(
             layoutInflater, paymentSummaryBinding.containerPayment, false
         )
             .apply {
               data = _payment
               seprator.visibility = View.GONE
-              if (_payment.head.compareTo(ChargeType.Damages.charge_key) == 0) {
-                textChargeValue.setTextColor(
-                    ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
-                )
+              if (_payment.payVendor < 0) {
                 total -= _payment.payVendor
+                textChargeValue.setTextColor(
+                    ContextCompat.getColor(
+                        this@TripDetailsActivity,
+                        R.color.status_lost
+                    )
+                )
               } else {
                 total += _payment.payVendor
               }
+              paymentSummaryBinding.containerPayment.addView(root)
+            }
+      }
 
+      if (_payment.deductVendor != null && _payment.deductVendor != 0.0) {
+        ViewPaymentSummaryItemBinding.inflate(
+            layoutInflater, paymentSummaryBinding.containerPayment, false
+        )
+            .apply {
+              data = _payment
+              seprator.visibility = View.GONE
+              textChargeValue.setTextColor(
+                  ContextCompat.getColor(
+                      this@TripDetailsActivity,
+                      R.color.status_lost
+                  )
+              )
+              total -= _payment.deductVendor
               paymentSummaryBinding.containerPayment.addView(root)
             }
       }
@@ -432,7 +451,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.VISIBLE
           data = TripChargesResponse(
               "", ChargeType.SubTotal.charge_key,
-              0.0, total,
+              0.0, total, null,
               "", ""
           )
           paymentSummaryBinding.containerPayment.addView(root)
@@ -445,7 +464,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.GONE
           data = TripChargesResponse(
               "", ChargeType.TDS.charge_key,
-              0.0, total * (100 - viewModel.userPrefs.tdsRate) / 100,
+              0.0, null, total * (100 - viewModel.userPrefs.tdsRate) / 100,
               "", ""
           )
           textChargeValue.setTextColor(
