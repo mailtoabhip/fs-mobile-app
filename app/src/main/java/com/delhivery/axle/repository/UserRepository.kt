@@ -66,7 +66,6 @@ class UserRepository @Inject constructor(
   }
 
   /**
-   *
    * Update user routes and get all routes
    */
   fun updateUserRoutes(routes: List<RouteMappingModel>) =

@@ -29,6 +29,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.CityCode, value).apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
 
+  /**
+   *  User phone number
+   */
   var phoneNumber: String?
     set(value) = editor.putString(PrefKeys.PhoneNumber, value).apply()
     get() = prefs.getString(PrefKeys.PhoneNumber, "")

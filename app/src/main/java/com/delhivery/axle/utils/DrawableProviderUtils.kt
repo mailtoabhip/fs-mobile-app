@@ -16,6 +16,7 @@ import com.delhivery.axle.data.transactions.TransactionType.RECONCILIATION_DEBIT
  * Helper class to set drawables/backgrounds
  */
 object DrawableProviderUtils {
+
   /**
    * Get truck type drawable
    */

@@ -19,6 +19,9 @@ data class UpdateUserRoutesRequest(
   @SerializedName("lane_preferences") val routes: List<RouteMappingModel>
 )
 
+/**
+ * Payload for update user access
+ */
 data class UpdateUserAccessRequest(
   @SerializedName("accessed_by_axle") val accessed: Boolean = true
 )
