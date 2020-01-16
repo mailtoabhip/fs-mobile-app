@@ -107,7 +107,6 @@ class BidDetailsCreateEditDialog @Inject constructor(
               amount = input
             }
           } catch (e: NumberFormatException) {
-
             binding.tilAmount.isErrorEnabled = true
             binding.tilAmount.error = "*Invalid Value"
             amount = 0

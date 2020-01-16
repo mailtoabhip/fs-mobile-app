@@ -181,7 +181,6 @@
           android:layout_marginTop="@dimen/size_4dp"
           android:background="@drawable/bg_form_edit"
           android:digits="0123456789"
-          android:maxLength="5"
           android:imeOptions="actionDone"
           android:inputType="number"
           android:textSize="@dimen/text_14sp"

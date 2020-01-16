@@ -151,7 +151,7 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch charges summary
    */
   fun fetchChargesSummary() {
-    compositeDisposable += paymentRepository.historyCharges("315760608842069")
+    compositeDisposable += paymentRepository.historyCharges(transactionId)
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {

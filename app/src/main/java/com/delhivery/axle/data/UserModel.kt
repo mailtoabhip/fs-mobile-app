@@ -49,6 +49,9 @@ data class UserModel(
     return _routes
   }
 
+  /**
+   * Returns tds value for user
+   */
   fun getTDS() = when (userType) {
     "individual" -> 99
     else -> 98
