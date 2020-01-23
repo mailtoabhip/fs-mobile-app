@@ -322,10 +322,13 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      REQCODE_UPLOAD_DOCKET, REQCODE_UPLOAD_POD -> {
+      REQCODE_UPLOAD_POD -> {
         if (resultCode == Activity.RESULT_OK) {
           refreshData()
         }
+      }
+      REQCODE_UPLOAD_DOCKET -> {
+        refreshData()
       }
     }
   }
