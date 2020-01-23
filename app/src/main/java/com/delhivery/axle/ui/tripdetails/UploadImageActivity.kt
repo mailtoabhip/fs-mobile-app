@@ -6,16 +6,15 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.provider.MediaStore.Audio.Media
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
@@ -32,8 +31,11 @@ import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_SUCCESS
+import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
@@ -57,7 +59,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
-  private var isCamera: Boolean = false
   private var mPhotoFile: File? = null
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
@@ -370,12 +371,22 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
       REQCODE_GALLERY_PHOTO -> {
         if (resultCode == Activity.RESULT_OK) {
-          val selectedImage = data?.data
           try {
-            mPhotoFile = fileCompressor.compressToFile(
-                File(getRealPathFromUri(selectedImage)),
-                localImageName
+            val selectedImage = data?.data
+            require(selectedImage != null)
+            val parcelFileDescriptor =
+              contentResolver?.openFileDescriptor(selectedImage, "r", null)
+            require(parcelFileDescriptor != null)
+            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+            require(
+                contentResolver != null && contentResolver?.getFileName(selectedImage) != null
             )
+            val imageScopedFile =
+              File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
+            val outputStream = FileOutputStream(imageScopedFile)
+            IOUtils.copy(inputStream, outputStream)
+
+            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
             if (mPhotoFile == null) {
               uiUtils.showToast(getString(R.string.msg_image_capture_failed))
               return
@@ -390,26 +401,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
         }
       }
     }
-  }
-
-  private fun getRealPathFromUri(uri: Uri?): String {
-    if (uri != null) {
-      var result: String? = null
-      val proj = arrayOf(Media.DATA)
-      val cursor = contentResolver.query(uri, proj, null, null, null)
-      if (cursor != null) {
-        if (cursor.moveToFirst()) {
-          val columnIndex = cursor.getColumnIndexOrThrow(proj[0])
-          result = cursor.getString(columnIndex)
-        }
-        cursor.close()
-      }
-      if (result == null) {
-        result = ""
-      }
-      return result
-    }
-    return ""
   }
 
 }

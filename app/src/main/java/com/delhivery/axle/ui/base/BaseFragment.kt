@@ -170,8 +170,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     permissionResultSubject = PublishSubject.create()
 
     activity?.let {
-      val permissionCode = ContextCompat.checkSelfPermission(it, permission)
-      when (permissionCode) {
+      when (ContextCompat.checkSelfPermission(it, permission)) {
         PackageManager.PERMISSION_GRANTED -> {
           return Single.just(true)
         }

@@ -52,6 +52,7 @@
   <string name="msg_file_upload_successful">File Uploaded Successfully</string>
   <string name="msg_pick_image_intent_text">Pick Image</string>
   <string name="msg_call_permission">Please provide permission to call</string>
+  <string name="storage_permission">Please provide storage permission</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -109,6 +110,7 @@
   <string name="label_nav_date">Date</string>
   <string name="label_nav_bids">Bids</string>
   <string name="label_nav_trips">Trips</string>
+  <string name="label_nav_pods">PODs</string>
   <string name="label_nav_alerts">Alerts</string>
   <string name="label_nav_payment">Axle Money</string>
   <string name="label_nav_profile">Profile</string>
@@ -208,6 +210,10 @@
   <string name="label_create_fuel_card">CREATE FUEL CARD</string>
   <string name="label_enter_number">Enter mobile number</string>
   <string name="label_fuel_faq">VIEW MORE DETAILS</string>
+  <string name="label_pod_pending">POD Status</string>
+  <string name="label_epod_pending">EPod Pending</string>
+  <string name="label_physical_pending">Physical POD Pending</string>
+  <string name="label_pod_dispatched">Dispatched</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

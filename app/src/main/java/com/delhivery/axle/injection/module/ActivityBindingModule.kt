@@ -9,6 +9,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
+import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -156,7 +157,13 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(
       modules = [AbsUploadImageActivityModule::class]
   )
-  internal abstract fun bindUploadImageActivity(): UploadImageActivity
+  internal abstract fun bindUploadImageActivity(): UploadImageActivity /* Upload image activity */
+
+  @ActivityScope
+  @ContributesAndroidInjector(
+      modules = [AbsDocketUpdateActivityModule::class]
+  )
+  internal abstract fun bindDocketUpdateActivity(): DocketUpdateActivity
 }
 
 /**
@@ -222,6 +229,9 @@ internal abstract class AbsWalletOnboardingActivityModule : ActivityModule<Walle
 
 @Module
 internal abstract class AbsUploadImageActivityModule : ActivityModule<UploadImageActivity>()
+
+@Module
+internal abstract class AbsDocketUpdateActivityModule : ActivityModule<DocketUpdateActivity>()
 
 /**
  * Activity Binds Module

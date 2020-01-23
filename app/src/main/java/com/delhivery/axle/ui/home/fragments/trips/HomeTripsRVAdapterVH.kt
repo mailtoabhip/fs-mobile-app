@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
-import androidx.databinding.ViewDataBinding
 import android.view.View
+import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
@@ -110,7 +110,6 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
       null -> null
       else -> item.data.inTransit
     }
-
 
     binding.completed = when (item.data.completed) {
       null -> null

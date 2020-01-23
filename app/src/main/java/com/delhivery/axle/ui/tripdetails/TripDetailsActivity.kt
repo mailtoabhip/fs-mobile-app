@@ -113,9 +113,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(
-          viewModel.paymentSummary.toMutableList()
-      )
+      populatePaymentSummary(viewModel.paymentSummary.toMutableList())
     }
 
     binding.containerError.btnAction.setOnClickListener {

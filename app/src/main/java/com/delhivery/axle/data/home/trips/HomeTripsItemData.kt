@@ -12,6 +12,7 @@ import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
+import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
@@ -37,6 +38,7 @@ data class HomeTripsItemData(
   @SerializedName("bid_details") val bidDetails: TripBidDetails?,
   @SerializedName("loading_location") val loadingLocation: String?,
   @SerializedName("reached_time") val reachedTime: String?,
+  @SerializedName("unloaded_time") val unloadingTime: String?,
   @SerializedName("required_on") val requiredOn: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
@@ -46,8 +48,14 @@ data class HomeTripsItemData(
   @SerializedName("actual_load") val load: Double? = 0.0,
   @SerializedName("vendor_pmt_rate") val vendorPmtRate: Double? = 0.0,
   @SerializedName("truck_specifications") val truckSpecification: TruckSpecification?,
+  @SerializedName("pod_dispatch_awb_number") val podDispatchAwbNumber: String?,
+  @SerializedName("pod_dispatch_docket_image") val podDispatchDocketImage: String?,
+  @SerializedName("pod_dispatch_date") val podDispatchDate: String?,
+  @SerializedName("status_update_info") val updateInfo: StatusUpdateInfo?,
   var payment: BulkPaymentItem? = null,
-  var fuelCard: FuelCardData? = null
+  var fuelCard: FuelCardData? = null,
+  var selected: Boolean = false,
+  var selectable: Boolean = false
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -161,6 +169,26 @@ data class HomeTripsItemData(
     DateUtils.formatDate(DateUtils.parseDate(displayTime(), OrionDateFormat), "dd MMM")
 
   /**
+   * Formatted required at
+   */
+  fun loadedAt() =
+    reachedTime?.let {
+      "Reached At: " + DateUtils.formatDate(
+          DateUtils.parseDate(it, OrionDateFormat), SimpleDateFormat
+      )
+    } ?: ""
+
+  /**
+   * Formatted required at
+   */
+  fun unloadedAt() =
+    unloadingTime?.let {
+      "Unloaded: " + DateUtils.formatDate(
+          DateUtils.parseDate(it, OrionDateFormat), SimpleDateFormat
+      )
+    } ?: ""
+
+  /**
    * Required at background as per designs
    */
   @DrawableRes
@@ -212,6 +240,16 @@ data class HomeTripsItemData(
    */
   fun isPMTIndent() = truckSpecification?.sourcedAs?.toLowerCase() == "pmt"
 
+  /**
+   * @return formatted lr number
+   */
+  fun lr() = lr.let { "LR: $it" }
+
+  /**
+   * @return pod action text
+   */
+  fun podActionText() = if (podUrl.isNullOrEmpty()) "Upload Epod" else "View Epod"
+
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
@@ -221,6 +259,8 @@ data class HomeTripsItemData(
 
 /* actions */
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
+const val HomeTripsRequestAction_UploadEpod = "upload_epod"
+const val HomeTripsRequestAction_UploadTracking = "upload_tracking"
 
 /**
  * Trip Driver details
@@ -265,6 +305,19 @@ data class TripBidDetails(
    */
   fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice ?: 0.0)
 }
+
+/**
+ * Status update info
+ */
+data class StatusUpdateInfo(@SerializedName("truck_loaded") val jan: ByUser? = null) : Serializable
+
+/**
+ * By userinfo
+ */
+data class ByUser(
+  @SerializedName("at") val time: String,
+  @SerializedName("by") val by: String
+) : Serializable
 
 enum class TripStatus(
   val statusKey: String,

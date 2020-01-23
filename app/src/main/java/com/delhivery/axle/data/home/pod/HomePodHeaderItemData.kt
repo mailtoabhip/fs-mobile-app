@@ -14,6 +14,6 @@ data class HomePodHeaderItemData(
 const val HomePodHeaderItemDataKey = "header"
 
 /* actions */
-const val HomePodHeaderAction_MyBids = "my_bids"
-const val HomePodHeaderAction_ConfirmedBids = "confirmed_bids"
-const val HomePodHeaderAction_LostBids = "lost_bids"
+const val HomePodHeaderAction_Epod = "epod"
+const val HomePodHeaderAction_Physical = "physical"
+const val HomePodHeaderAction_Dispactched = "dispatch"

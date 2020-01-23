@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
-
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+    <import type="android.view.View" />
   </data>
 
   <androidx.cardview.widget.CardView
@@ -22,6 +26,7 @@
       >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -32,58 +37,6 @@
         android:paddingBottom="@dimen/size_6dp"
         >
 
-      <androidx.appcompat.widget.AppCompatCheckBox
-          android:id="@+id/check_box"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:buttonTint="@color/black"
-          tools:ignore="UnusedAttribute"
-          android:visibility="gone"
-          />
-
-      <TextView
-          android:id="@+id/text_truck_details"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="@dimen/text_8sp"
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          tools:text="HR26"
-          />
-
-      <TextView
-          android:id="@+id/text_days_pending"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="@dimen/text_10sp"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintEnd_toStartOf="@+id/check_box"
-          app:layout_constraintTop_toTopOf="parent"
-          tools:text="12 days ageing"
-          tools:textColor="@color/status_active"
-          />
-
-      <TextView
-          android:id="@+id/text_lr"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
-          tools:text="LR: 9823222123"
-          />
-
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/img_forward"
           android:layout_width="wrap_content"
@@ -91,7 +44,7 @@
           android:layout_marginTop="@dimen/size_6dp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/text_lr"
+          app:layout_constraintTop_toTopOf="parent"
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
@@ -101,6 +54,7 @@
           android:layout_height="wrap_content"
           android:ellipsize="end"
           android:fontFamily="sans-serif"
+          android:text="@{trip.originCityName()}"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
@@ -115,6 +69,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
+          android:text="@{trip.originStateName()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
@@ -130,6 +85,7 @@
           android:layout_marginStart="@dimen/size_24dp"
           android:ellipsize="end"
           android:fontFamily="sans-serif"
+          android:text="@{trip.destinationCityName()}"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
@@ -144,6 +100,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
           android:fontFamily="sans-serif"
+          android:text="@{trip.destinationStateName()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
@@ -153,17 +110,64 @@
           />
 
       <TextView
+          android:id="@+id/text_truck_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_6dp"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_8sp"
+          android:text="@{trip.vehicleDetails.vehicleNo}"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/text_source_state"
+          tools:text="HR26"
+          />
+
+      <TextView
+          android:id="@+id/text_days_pending"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_10sp"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/text_lr"
+          tools:text="12 days ageing"
+          tools:textColor="@color/status_active"
+          />
+
+      <TextView
+          android:id="@+id/text_lr"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_6dp"
+          android:fontFamily="sans-serif"
+          android:text="@{trip.lr()}"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="normal"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+          tools:text="LR: 9823222123"
+          />
+
+      <TextView
           android:id="@+id/text_loading"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
+          android:layout_marginTop="@dimen/size_6dp"
+          android:layout_marginEnd="@dimen/size_4dp"
           android:fontFamily="sans-serif"
+          android:text="@{trip.loadedAt()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           app:layout_constraintEnd_toStartOf="@+id/text_unloading"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_destination_state"
+          app:layout_constraintTop_toBottomOf="@id/text_lr"
           tools:text="Loading: 04-05-2019"
           />
 
@@ -171,15 +175,16 @@
           android:id="@+id/text_unloading"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
+          android:layout_marginStart="@dimen/size_4dp"
           android:fontFamily="sans-serif"
           android:gravity="end"
+          android:text="@{trip.unloadedAt()}"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_14sp"
           android:textStyle="normal"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/text_loading"
-          app:layout_constraintTop_toBottomOf="@id/text_destination_state"
+          app:layout_constraintTop_toTopOf="@+id/text_loading"
           tools:text="Unloading: 04-05-2019"
           />
 
@@ -225,7 +230,7 @@
               android:layout_height="wrap_content"
               android:gravity="center_horizontal"
               android:maxLines="1"
-              android:text="Upload Epod"
+              android:text="@{trip.podActionText()}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
@@ -262,6 +267,35 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_selector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="@{trip.selectable? View.VISIBLE: View.GONE}"
+        tools:visibility="visible"
+        >
+
+      <androidx.appcompat.widget.AppCompatCheckBox
+          android:id="@+id/check_box"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:buttonTint="@color/black"
+          android:checked="@{trip.selected}"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:ignore="UnusedAttribute"
+          />
+
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          tools:visibility="gone"
+          android:background="@color/view_selected"
+          android:visibility="@{trip.selected?View.VISIBLE: View.GONE}"
+          />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.cardview.widget.CardView>

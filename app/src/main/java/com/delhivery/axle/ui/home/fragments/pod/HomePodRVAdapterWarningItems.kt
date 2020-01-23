@@ -1,27 +1,26 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
-import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
-import com.delhivery.axle.data.home.trips.HomeTripsWarningItemData
+import com.delhivery.axle.data.home.pod.HomePodWarningAction_NoTrips
+import com.delhivery.axle.data.home.pod.HomePodWarningItemData
 
 /**
  * No bids warning item, when no bids are found
  *
  * @Zeplin https://zpl.io/2pvmPol
  */
-val HomeTripsWarningItem_NoLoads = HomeTripsWarningItem(
-    HomeTripsWarningItemData(
+val HomePodWarningItem_NoLoads = HomePodWarningItem(
+    HomePodWarningItemData(
         "No Trips found",
         "Start bidding now !",
-        "View Available Load", HomeTripsWarningAction_NoLoads
+        "View Available Load", HomePodWarningAction_NoTrips
     )
 )
 
-val HomeTripsWarningItem_TimeOut = HomeTripsWarningItem(
-    HomeTripsWarningItemData(
+val HomePodWarningItem_TimeOut = HomePodWarningItem(
+    HomePodWarningItemData(
         "Session timed out!",
         "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",
-        "REFRESH", HomeTripsTimeOutAction
+        "REFRESH", HomePodWarningAction_NoTrips
     )
 )
 

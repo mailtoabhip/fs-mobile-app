@@ -8,6 +8,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
+import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
@@ -208,6 +209,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(UploadImageViewModel::class)
   abstract fun bindUploadImageViewModel(viewModel: UploadImageViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(DocketUpdateViewModel::class)
+  abstract fun bindDocketUpdateViewModel(viewModel: DocketUpdateViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

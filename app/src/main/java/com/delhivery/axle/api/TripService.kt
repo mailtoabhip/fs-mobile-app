@@ -1,6 +1,7 @@
 package com.delhivery.axle.api
 
 import com.delhivery.axle.api.request.PodRequest
+import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.api.response.TripsResponse
@@ -73,4 +74,12 @@ interface TripService {
   fun uploadPod(
     @Body request: PodRequest
   ): Single<BaseResponse<UploadPodResponse>>
+
+  /**
+   * Update pod dispatch details
+   */
+  @POST("pod_dispatch_detail")
+  fun updateDispatchDetails(
+    @Body request: UpdateDispatchRequest
+  ): Single<BaseResponse<List<String>>>
 }

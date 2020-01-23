@@ -1,56 +1,57 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionsResponse
-import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
-import com.delhivery.axle.exception.NoBidsFoundException
-import com.delhivery.axle.repository.BidsRepository
-import com.delhivery.axle.repository.TransactionsRepository
+import com.delhivery.axle.api.request.SearchRequest
+import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
+import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
+import com.delhivery.axle.repository.LoadCycleRepository
+import com.delhivery.axle.repository.UserRepository
+import com.delhivery.axle.repository.UserSearchLimit
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
-import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsHeaderItem
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsSearchItem
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_NoBids
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_TimeOut
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
-import com.delhivery.axle.utils.extensions.safeEquals
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
+import java.io.File
 import javax.inject.Inject
 
 /**
- * Created by saurabh
- * for Delhivery Private Limited
  **
  *
- * View model class for [HomeBidsFragment]
+ * View model class for [HomePodsFragment]
  *
  **
  */
 class HomePodViewModel @Inject constructor(
-  private val transactionsRepository: TransactionsRepository,
-  private val bidsRepository: BidsRepository
+  private val userRepository: UserRepository,
+  private val loadCycleRepository: LoadCycleRepository
 ) : BaseViewModel() {
 
-  var userBidsData =
-    MutableLiveData<List<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+  /* user trips live data */
+  var userPodsData =
+    MutableLiveData<List<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  var bidsCountLiveData = MutableLiveData<Int>()
-
+  /* bids count live data */
+  var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
+  val selectedLiveData = MutableLiveData<Int>()
+  var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+
+  var request = SearchRequest()
+  var status: TripStatus = TruckUnloaded
+  var selectable: Boolean = false
+  var dispatch: Boolean = false
+  var selectedTransactions = mutableListOf<String>()
+  var transactionId: String = ""
+  var podUrl: String = ""
+  var empty = true
 
   /* pagination params */
   var total = 0
@@ -58,39 +59,11 @@ class HomePodViewModel @Inject constructor(
   var hasMoreData = true
 
   /**
-   * Fetch bids summary
+   * Fetch trips
    */
-  fun fetchBidsSummary() {
-    compositeDisposable += bidsRepository.userBidsSummary()
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(
-                  Pair(
-                      HomeBidsHeaderItem(
-                          HomeBidsHeaderItemData(
-                              _res.myBids,
-                              _res.confirmedBids,
-                              _res.lostBids
-                          )
-                      ), Update
-                  )
-              )
-            }
-                .let { userBidsData.postValue(it) }
-          } else {
-            error.handle()
-          }
-        }
-  }
-
-  /**
-   * Fetch bids
-   */
-  fun fetchBids(paginate: Boolean = false) {
+  fun fetchTrips(paginate: Boolean = false) {
     if (!paginate) {
+      empty = true
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
@@ -98,93 +71,92 @@ class HomePodViewModel @Inject constructor(
 
     /* add progress if not paginating */
     if (paginate) {
-      Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
+      Pair(HomePodProgressItem(), AddUpdate).let { userPodsData.postValue(listOf(it)) }
     }
-
-    val statuses = mutableListOf<String>().apply {
-      add(BidType.ActiveBid.status.statusKey)
-      add(BidType.ConfirmedBid.status.statusKey)
-    }
-        .joinToString(separator = ",") { it }
 
     dataLoadingLiveData.postValue(true)
-
-    compositeDisposable += bidsRepository.userBids(offset, statuses)
-        .flatMap { _res ->
-          total = _res.first
-          bidsCountLiveData.postValue(total)
-          if (!paginate && total == 0) {
-            Single.error(NoBidsFoundException())
-          } else {
-            Single.zip(
-                transactionsRepository.bulkTransactions(_res.second),
-                bidsRepository.bulkLowestBidsForTransactions(_res.second),
-                BiFunction<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,
-                    Triple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>>> { t1, t2 ->
-                  Triple(t1.first, t1.second, t2)
-                })
-          }
-        }
+    request.offset = offset
+    request.limit = UserSearchLimit
+    if (status == EPodUploaded && dispatch)
+      request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
+    else request.tripStatus = status.statusKey
+    request.vendorId = userRepository.userId()
+    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            offset += _res.second.offset
-            hasMoreData = _res.second.hasNext
+            offset += _res.trips.size
+            hasMoreData = _res.hasNext
+            total = _res.total
 
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
+              add(Pair(HomePodProgressItem(), Remove))
 
-              /* edit route prefs, if fresh fetch n total == 0 */
+              /* empty view, if fresh fetch n total == 0 */
               if (!paginate && total == 0) {
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+                add(Pair(HomePodWarningItem_NoLoads, AddUpdate))
               }
               /* post all transactions mapped to bids as add */
               else {
-                add(Pair(HomeBidsSearchItem(), AddUpdate))
-
-                val bids = _res.first
-                val transactions = _res.second.transactions
-                for (transaction in transactions) {
-                  try {
-                    val lowestBid = _res.third.filter { b ->
-                      b.transactionId.safeEquals(
-                          transaction.transactionId
-                      )
-                    }[0]
-                    transaction.numBids = lowestBid.numBids
-                    transaction.lowestBid = lowestBid.minBid
-                    transaction.loadPricePercent = _res.second.loadPricePercent
-                    transaction.transactionBid = bids.filter { b ->
-                      b.transactionId.safeEquals(transaction.transactionId)
-                    }[0]
-                  } catch (e: Exception) {
-                    Log.d("No Bid found for: ", transaction.transactionId)
+                add(Pair(HomePodProgressItem(), Remove))
+                for (trip in _res.trips) {
+                  when (status) {
+                    TruckUnloaded -> {
+                      if (trip.podDispatchAwbNumber.isNullOrEmpty()) {
+                        empty = false
+                        trip.selectable = selectable
+                        add(Pair(HomePodTripItem(trip), Add))
+                      }
+                    }
+                    else -> {
+                      if (dispatch) {
+                        if (trip.podDispatchAwbNumber.isNotNullOrEmpty()) {
+                          empty = false
+                          add(Pair(HomePodTripItem(trip), Add))
+                        }
+                      } else {
+                        if (trip.podDispatchAwbNumber.isNullOrEmpty()) {
+                          empty = false
+                          add(Pair(HomePodTripItem(trip), Add))
+                        }
+                      }
+                    }
                   }
-                  add(Pair(
-                      HomeBidsRequestItem(transaction), Add))
                 }
+                if (empty)
+                  add(Pair(HomePodWarningItem_NoLoads, AddUpdate))
               }
             }
-                .let { userBidsData.postValue(it) }
+                .let { userPodsData.postValue(it) }
           } else {
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
-              /* remove search item */
-              add(Pair(HomeBidsSearchItem(), Remove))
-              if (error is NoBidsFoundException) {
-                /* add no bids warning item */
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              } else {
-                /* add api time out item */
-                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
-              }
+              add(Pair(HomePodProgressItem(), Remove))
+              /* add api time out item */
+              add(Pair(HomePodWarningItem_TimeOut, AddUpdate))
             }
-                .let { userBidsData.postValue(it) }
+                .let { userPodsData.postValue(it) }
           }
 
           dataLoadingLiveData.postValue(false)
+        }
+  }
+
+  /**
+   * Get delegation token for AWS
+   */
+  fun getDelegationToken(
+    awsPath: String,
+    file: File
+  ) {
+    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+          } else
+            error.handle()
         }
   }
 

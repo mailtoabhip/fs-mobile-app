@@ -2,15 +2,13 @@ package com.delhivery.axle.ui.home.fragments.pod
 
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsProgressItemData
-import com.delhivery.axle.data.home.pod.HomePodChildItemData
 import com.delhivery.axle.data.home.pod.HomePodHeaderItemData
-import com.delhivery.axle.data.home.pod.HomePodParentItemData
 import com.delhivery.axle.data.home.pod.HomePodSearchItemData
 import com.delhivery.axle.data.home.pod.HomePodTimeOutItemData
 import com.delhivery.axle.data.home.pod.HomePodWarningItemData
-import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Child
+import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Header
-import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Parent
+import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Search
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Timeout
@@ -22,11 +20,10 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Warning
 enum class HomePodRVAdapterItemType(val typeId: Int) {
   Header(0),
   Search(1),
-  Parent(2),
-  Child(3),
-  Warning(4),
-  Progress(5),
-  Timeout(6);
+  Pod(2),
+  Warning(3),
+  Progress(4),
+  Timeout(5);
 
   companion object {
     /**
@@ -61,16 +58,10 @@ class HomePodSearchItem(
 ) : BaseHomePodRVAdapterItem<HomePodSearchItemData>(Search, data)
 
 /**
- * Pod parent request item
+ * Pod trip request item
  */
-class HomePodParentItem(data: HomePodParentItemData) :
-    BaseHomePodRVAdapterItem<HomePodParentItemData>(Parent, data)
-
-/**
- * Pod cfild request item
- */
-class HomePodChildItem(data: HomePodChildItemData) :
-    BaseHomePodRVAdapterItem<HomePodChildItemData>(Child, data)
+class HomePodTripItem(data: HomeTripsItemData) :
+    BaseHomePodRVAdapterItem<HomeTripsItemData>(Pod, data)
 
 /**
  * Pod Warning/action item

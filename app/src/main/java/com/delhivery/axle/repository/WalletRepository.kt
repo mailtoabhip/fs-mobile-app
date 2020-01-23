@@ -33,8 +33,7 @@ class WalletRepository @Inject constructor(
   /**
    * Fetches wallet transactions
    */
-  fun fetchWalletTransactions() =
-    walletService.fetchWalletTransactions().convertResponse()
+  fun fetchWalletTransactions() = walletService.fetchWalletTransactions().convertResponse()
 
   /**
    * Tranfer [amount] from wallet to bank

@@ -15,4 +15,4 @@ data class HomePodWarningItemData(
 const val HomePodWarningItemDataKeyPrefix = "warning_"
 
 /* actions */
-const val HomePodWarningAction_NoBids = "no_bids"
+const val HomePodWarningAction_NoTrips = "no_pod_trips"

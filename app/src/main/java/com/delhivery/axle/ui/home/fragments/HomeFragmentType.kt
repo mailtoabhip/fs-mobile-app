@@ -19,9 +19,9 @@ enum class HomeFragmentType(
 ) {
   LoadsFragment(R.id.nav_loads, 0, HomeLoadsFragment._instance, "Loads Requests"),
   BidsFragment(R.id.nav_bids, 1, HomeBidsFragment._instance, "Bids & Requests"),
-  TripsFragment(R.id.nav_trips, 2, HomeTripsFragment._instance, "Ongoing Trips"),
-  PodFragment(R.id.nav_pod, 3, HomePodsFragment._instance, "POD"),
-//  Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
+  PodFragment(R.id.nav_pod, 2, HomePodsFragment._instance, "PODs"),
+  TripsFragment(R.id.nav_trips, 3, HomeTripsFragment._instance, "Ongoing Trips"),
+  //  Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
   ProfileFragment(R.id.nav_profile, 4, HomeProfileFragment._instance, "Profile");
 
   companion object {

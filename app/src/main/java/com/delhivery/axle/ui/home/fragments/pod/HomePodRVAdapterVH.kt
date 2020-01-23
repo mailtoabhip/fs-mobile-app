@@ -3,12 +3,16 @@ package com.delhivery.axle.ui.home.fragments.pod
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
-import com.delhivery.axle.data.home.pod.HomePodParentAction
-import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
+import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
+import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
+import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
+import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
-import com.delhivery.axle.databinding.ViewPodChildItemBinding
-import com.delhivery.axle.databinding.ViewPodParentItemBinding
+import com.delhivery.axle.databinding.ViewPodItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -47,24 +51,19 @@ abstract class BaseHomePodsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
 /**
  * Pod Header item view holder
  */
-internal class HomePodHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
-    BaseHomePodsRVAdapterViewHolder<ViewHomeBidsHeaderItemBinding, HomePodHeaderItem>(binding) {
+internal class HomePodHeaderItemVH(binding: ViewHomePodsHeaderItemBinding) :
+    BaseHomePodsRVAdapterViewHolder<ViewHomePodsHeaderItemBinding, HomePodHeaderItem>(binding) {
   override fun bind(
     item: HomePodHeaderItem,
     _interface: HomePodRVAdapterInterface
   ) {
-    binding.myBids = when (item.data.myBids) {
-      -1 -> ""
-      else -> item.data.myBids.toString() + " Bids"
-    }
-    binding.confirmedBids = when (item.data.confirmedBid) {
-      -1 -> ""
-      else -> item.data.confirmedBid.toString() + " Bids"
-    }
-    binding.lostBids = when (item.data.lostBids) {
-      -1 -> ""
-      else -> item.data.lostBids.toString() + " Bids"
-    }
+    binding.viewEpod.clickToAction(HomePodHeaderAction_Epod, item, adapterPosition, _interface)
+    binding.viewPhysicalPod.clickToAction(
+        HomePodHeaderAction_Physical, item, adapterPosition, _interface
+    )
+    binding.viewDispatched.clickToAction(
+        HomePodHeaderAction_Dispactched, item, adapterPosition, _interface
+    )
   }
 }
 
@@ -83,35 +82,30 @@ internal class HomePodSearchItemVH(binding: ViewHomeSearchItemBinding) :
 }
 
 /**
- * Pod parent item view holder
+ * Pod child item view holder
  */
-class HomePodParentItemVH(binding: ViewPodParentItemBinding) :
-    BaseHomePodsRVAdapterViewHolder<ViewPodParentItemBinding, HomePodParentItem>(binding) {
+class HomePodItemVH(binding: ViewPodItemBinding) :
+    BaseHomePodsRVAdapterViewHolder<ViewPodItemBinding, HomePodTripItem>(binding) {
   override fun bind(
-    item: HomePodParentItem,
+    item: HomePodTripItem,
     _interface: HomePodRVAdapterInterface
   ) {
     binding.trip = item.data
-    binding.root.clickToAction(HomePodParentAction, item, adapterPosition, _interface)
-  }
-}
+    binding.root.clickToAction(
+        HomeTripsRequestAction_ViewDetails, item, adapterPosition, _interface
+    )
 
-/**
- * Pod child item view holder
- */
-class HomePodChildItemVH(binding: ViewPodChildItemBinding) :
-    BaseHomePodsRVAdapterViewHolder<ViewPodChildItemBinding, HomePodChildItem>(binding) {
-  override fun bind(
-    item: HomePodChildItem,
-    _interface: HomePodRVAdapterInterface
-  ) {
-    binding.textTruckDetails.text = item.data.name
-    binding.btnEpod.setOnClickListener {
-      //upload epod for this trip
-    }
-    binding.btnCourier.setOnClickListener {
-      
-    }
+    binding.btnEpod.clickToAction(
+        HomeTripsRequestAction_UploadEpod, item, adapterPosition, _interface
+    )
+
+    binding.btnCourier.clickToAction(
+        HomeTripsRequestAction_UploadTracking, item, adapterPosition, _interface
+    )
+
+    binding.containerSelector.clickToAction(
+        HomeTripsRequestAction_UploadTracking, item, adapterPosition, _interface
+    )
   }
 }
 

@@ -71,9 +71,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   override fun layoutId() = R.layout.fragment_home_bids
 
   /* RV adapter */
-  private val adapter: HomeBidsRVAdapter by lazy {
-    HomeBidsRVAdapter(this)
-  }
+  private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
 
   override fun onViewCreated(
     view: View,
