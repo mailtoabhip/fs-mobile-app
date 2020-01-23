@@ -59,5 +59,6 @@ fun ContentResolver.getFileName(uri: Uri): String {
     name = returnCursor.getString(nameIndex)
     returnCursor.close()
   }
+
   return name
 }

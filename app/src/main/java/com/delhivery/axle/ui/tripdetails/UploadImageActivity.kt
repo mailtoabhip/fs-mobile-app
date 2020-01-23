@@ -374,15 +374,11 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           try {
             val selectedImage = data?.data
             require(selectedImage != null)
-            val parcelFileDescriptor =
-              contentResolver?.openFileDescriptor(selectedImage, "r", null)
+            val parcelFileDescriptor = contentResolver?.openFileDescriptor(selectedImage, "r", null)
             require(parcelFileDescriptor != null)
             val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-            require(
-                contentResolver != null && contentResolver?.getFileName(selectedImage) != null
-            )
-            val imageScopedFile =
-              File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
+            require(contentResolver != null && contentResolver?.getFileName(selectedImage) != null)
+            val imageScopedFile = File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
             val outputStream = FileOutputStream(imageScopedFile)
             IOUtils.copy(inputStream, outputStream)
 

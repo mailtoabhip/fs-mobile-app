@@ -63,7 +63,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
           binding.tilAmount.editText?.setText(DecimalFormat("#########").format(it))
         }
         transactionBid?.pmtRate?.let {
-          binding.labelBid.text = "Your bid is: ${StringUtils.formatAmount(transactionBid.pmtRate)}"
+          binding.labelBid.text =
+            "Your minimum payout will be ₹${StringUtils.formatAmount(transactionBid.pmtRate)}"
         }
       } else {
         binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
@@ -101,12 +102,11 @@ class BidDetailsCreateEditDialog @Inject constructor(
                 throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
               }
               amount = (input * transaction.requestedCapacityMg).toInt()
-              binding.labelBid.text = "Your bid is: ₹ $amount"
+              binding.labelBid.text = "Your minimum payout will be ₹ $amount"
             } else {
               amount = input
             }
           } catch (e: NumberFormatException) {
-
             binding.tilAmount.isErrorEnabled = true
             binding.tilAmount.error = "*Invalid Value"
             amount = 0
@@ -139,7 +139,9 @@ class BidDetailsCreateEditDialog @Inject constructor(
           if (costPerKm > userPrefs.maxCostPerKM && !isChecked) {
             isChecked = true
             throw IllegalArgumentException(
-                "*Are you sure to bid at ₹ ${StringUtils.formatDecimalAmount(costPerKm)} /MT/KM"
+                "*Are you sure you want to bid ₹ ${StringUtils.formatDecimalAmount(
+                    costPerKm
+                )} /MT/KM"
             )
           }
         } else require(

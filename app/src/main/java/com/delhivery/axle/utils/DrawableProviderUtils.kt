@@ -12,7 +12,11 @@ import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_CREDI
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_DEBIT
 import com.delhivery.axle.data.transactions.TransactionType.RECONCILIATION_DEBIT
 
+/**
+ * Helper class to set drawables/backgrounds
+ */
 object DrawableProviderUtils {
+
   /**
    * Get truck type drawable
    */
@@ -57,12 +61,5 @@ object DrawableProviderUtils {
     } else {
       R.drawable.bg_date_tomorrow
     }
-  }
-
-  @DrawableRes
-  fun expandedRes(flag: Boolean) = if (flag) {
-    R.drawable.ic_collapse
-  } else {
-    R.drawable.ic_expand
   }
 }
