@@ -3,10 +3,10 @@ package com.delhivery.axle.repository
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
 import com.delhivery.axle.api.request.PodRequest
+import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
-import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.utils.extensions.convertResponse
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -19,20 +19,6 @@ class TripsRepository @Inject constructor(
   private val tripsService: TripService,
   private val transactionService: TransactionService
 ) : BaseRepository() {
-
-  /**
-   * @status set null to fetch all trips or add any single trip status
-   * Get user trips
-   *
-   */
-  fun trips(
-    offset: Int = 0,
-    status: TripStatus? = null
-  ) = tripsService.tripsForStatuses(
-      userRepository.userId(), UserTripsLoadLimit,
-      offset, status?.statusKey
-  )
-      .convertResponse()
 
   /**
    * @status set null to fetch all trips or add any comma separated trip statuses
@@ -80,6 +66,13 @@ class TripsRepository @Inject constructor(
     transactionId: String,
     imageUrls: MutableList<String>
   ) = tripsService.uploadPod(PodRequest.getRequest(transactionId, imageUrls))
+
+  /**
+   * Update tracking details
+   */
+  fun updateDispatchDetails(
+    request: UpdateDispatchRequest
+  ) = tripsService.updateDispatchDetails(request).convertResponse()
 }
 
 /* User trips pagination load limit */

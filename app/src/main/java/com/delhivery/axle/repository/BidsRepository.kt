@@ -47,6 +47,9 @@ class BidsRepository @Inject constructor(
         )
       }!!
 
+  /**
+   * Add/Update bid for loads
+   */
   fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
       .convertResponse()
       .map {
@@ -56,6 +59,9 @@ class BidsRepository @Inject constructor(
         userBid
       }!!
 
+  /**
+   * Bulk call to fetch bids
+   */
   fun bidsForLoads(
     transactions: List<HomeBidsRequestItemData>
   ) = bidService.bidsForLoads(

@@ -21,3 +21,20 @@ data class PodRequest(
     ) = PodRequest(transactionId, paths)
   }
 }
+
+/**
+ * Payload to update dispatch detail
+ */
+data class UpdateDispatchRequest(
+  @SerializedName("data") val data: List<DispatchData>
+)
+
+/**
+ * Dispatch data
+ */
+data class DispatchData(
+  @SerializedName("trip_id") val transactionId: String,
+  @SerializedName("pod_dispatch_awb_number") val trakingNumber: String,
+  @SerializedName("pod_dispatch_docket_image") val imagePAth: String,
+  @SerializedName("pod_dispatch_date") val date: String
+)

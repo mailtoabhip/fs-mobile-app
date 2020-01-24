@@ -3,6 +3,9 @@ package com.delhivery.axle.utils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 object ColorProviderUtils {
 
@@ -74,5 +77,24 @@ object ColorProviderUtils {
     "processing", "pending" -> R.color.status_active
     "failed", "rejected" -> R.color.status_lost
     else -> R.color.status_confirmed
+  }
+
+  /**
+   * Get pod date diff text color
+   */
+  @ColorRes
+  fun getPODDateColor(
+    time: Date
+  ): Int {
+    val today = Calendar.getInstance()
+    today.set(Calendar.HOUR_OF_DAY, 0)
+    today.set(Calendar.MINUTE, 0)
+    val diffInMillisec = today.timeInMillis - time.time
+    val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
+        .toInt()
+    return when (daysDiff) {
+      in 0..9 -> R.color.status_confirmed
+      else -> R.color.status_lost
+    }
   }
 }

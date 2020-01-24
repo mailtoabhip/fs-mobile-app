@@ -113,9 +113,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(
-          viewModel.paymentSummary.toMutableList()
-      )
+      populatePaymentSummary(viewModel.paymentSummary.toMutableList())
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -571,9 +569,9 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Trip details intent
  */
 fun tripDetailsIntent(
-  _data: HomeTripsItemData,
+  transactionId: String,
   context: Context
 ) = Intent(context, TripDetailsActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, _data.key())
+  putExtra(TransactionIdIntentKey, transactionId)
 }
 

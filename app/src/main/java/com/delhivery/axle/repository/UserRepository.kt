@@ -32,7 +32,7 @@ class UserRepository @Inject constructor(
 
   /* JWT token */
   private val jwt by lazy {
-    JWT(userPrefs.jwtToken!!)
+    userPrefs.jwtToken?.let { JWT(it) }
   }
 
   /* user model cache */
@@ -45,7 +45,7 @@ class UserRepository @Inject constructor(
 //    when (BuildConfig.FLAVOR) {
 //      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
 //      else ->
-    (jwt.claims["sub"]?.asString()!!)
+    jwt?.let { (it.claims["sub"]?.asString()!!) } ?: ""
 //    }
 
   /**

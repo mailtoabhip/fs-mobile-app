@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/view_epod"
+        style="@style/view_header_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:paddingStart="@dimen/size_4dp"
+        android:paddingEnd="@dimen/size_4dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toStartOf="@id/view_physical_pod"
+        bind:layout_constraintStart_toStartOf="parent"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/action_btn_elevation }"
+        >
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="@string/label_epod_pending"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_12sp"
+          android:textStyle="normal"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/view_physical_pod"
+        style="@style/view_header_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:paddingStart="@dimen/size_4dp"
+        android:paddingEnd="@dimen/size_4dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toStartOf="@id/view_dispatched"
+        bind:layout_constraintStart_toEndOf="@id/view_epod"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/action_btn_elevation }"
+        >
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="@string/label_physical_pending"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_12sp"
+          android:textStyle="normal"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/view_dispatched"
+        style="@style/view_header_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_56dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:paddingStart="@dimen/size_4dp"
+        android:paddingEnd="@dimen/size_4dp"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toEndOf="parent"
+        bind:layout_constraintStart_toEndOf="@id/view_physical_pod"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/action_btn_elevation }"
+        >
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="@string/label_pod_dispatched"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_12sp"
+          android:textStyle="normal"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -56,8 +56,7 @@ object DrawableProviderUtils {
     date: String,
     format: String
   ): Int {
-    val diff = DateUtils.daysDiff(DateUtils.parseDate(date, format))
-    return if (diff <= 0) {
+    return if (DateUtils.daysDiff(DateUtils.parseDate(date, format)) <= 0) {
       R.drawable.bg_date_today
     } else {
       R.drawable.bg_date_tomorrow

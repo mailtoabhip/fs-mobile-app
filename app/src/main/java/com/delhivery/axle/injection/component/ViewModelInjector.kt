@@ -12,6 +12,7 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
+import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
@@ -111,6 +112,11 @@ interface ViewModelInjector {
    * Injects [HomeWalletViewModel]
    */
   fun inject(viewModel: HomeWalletViewModel)
+
+  /**
+   * Injects [HomePodViewModel]
+   */
+  fun inject(viewModel: HomePodViewModel)
 
   /**
    * Injects [BidsViewModel]

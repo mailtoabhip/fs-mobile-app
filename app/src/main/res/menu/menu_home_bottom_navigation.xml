@@ -12,6 +12,11 @@
       android:title="@string/label_nav_bids"/>
 
   <item
+      android:id="@+id/nav_pod"
+      android:icon="@drawable/ic_nav_trips"
+      android:title="@string/label_nav_pods"/>
+
+  <item
       android:id="@+id/nav_trips"
       android:icon="@drawable/ic_nav_trips"
       android:title="@string/label_nav_trips"/>

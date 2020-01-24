@@ -83,7 +83,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      /* remove user trips and fetch again */
       refreshData()
     }
 
@@ -153,7 +152,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         )
         context?.let {
           startActivity(
-              tripDetailsIntent(_item, it)
+              tripDetailsIntent(_item.key(), it)
           )
         }
       }

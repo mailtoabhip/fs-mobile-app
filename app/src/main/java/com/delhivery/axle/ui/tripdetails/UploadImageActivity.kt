@@ -59,7 +59,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
-  private var isCamera: Boolean = false
   private var mPhotoFile: File? = null
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
@@ -372,15 +371,17 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
       REQCODE_GALLERY_PHOTO -> {
         if (resultCode == Activity.RESULT_OK) {
-          val selectedImage = data?.data
-          require(selectedImage != null)
-          val parcelFileDescriptor = contentResolver.openFileDescriptor(selectedImage, "r", null)
-          require(parcelFileDescriptor != null)
-          val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-          val imageScopedFile = File(cacheDir, contentResolver.getFileName(selectedImage))
-          val outputStream = FileOutputStream(imageScopedFile)
-          IOUtils.copy(inputStream, outputStream)
           try {
+            val selectedImage = data?.data
+            require(selectedImage != null)
+            val parcelFileDescriptor = contentResolver?.openFileDescriptor(selectedImage, "r", null)
+            require(parcelFileDescriptor != null)
+            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+            require(contentResolver != null && contentResolver?.getFileName(selectedImage) != null)
+            val imageScopedFile = File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
+            val outputStream = FileOutputStream(imageScopedFile)
+            IOUtils.copy(inputStream, outputStream)
+
             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
             if (mPhotoFile == null) {
               uiUtils.showToast(getString(R.string.msg_image_capture_failed))
@@ -397,6 +398,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       }
     }
   }
+
 }
 
 /* intent keys */

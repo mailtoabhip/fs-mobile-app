@@ -74,6 +74,11 @@ enum class UrlConfig(
       "https://orion.delhivery.com",
       "https://orion-dev.delhivery.com",
       "https://orion-uat.delhivery.com"
+  ),
+  LoadCycleService(
+      "https://orion-load-fullcycle-api.delhivery.com",
+      "https://orion-load-fullcycle-api-dev.delhivery.com",
+      "https://orion-load-fullcycle-api-uat.delhivery.com"
   );
 
   /**

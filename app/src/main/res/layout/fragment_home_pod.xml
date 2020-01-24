@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data></data>
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      >
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        bind:layout_constraintEnd_toEndOf="parent"
+        bind:layout_constraintStart_toStartOf="parent"
+        >
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rv_pod"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/btn_save"
+        style="@style/view_header_background"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:visibility="gone"
+        bind:layout_constraintBottom_toBottomOf="parent"
+        bind:layout_constraintEnd_toEndOf="parent"
+        bind:layout_constraintStart_toStartOf="parent"
+        bind:shadow="@{ @dimen/action_btn_elevation }"
+        >
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center"
+          android:lineSpacingExtra="@dimen/text_6sp"
+          android:text="UPDATE"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_16sp"
+          android:textStyle="normal"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

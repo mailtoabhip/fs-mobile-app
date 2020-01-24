@@ -12,6 +12,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -41,6 +43,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     super.onCreate(savedInstanceState)
 
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
+    transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
+    notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -166,6 +170,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       val bundle = Bundle()
       if (!TextUtils.isEmpty(notificationId)) {
         bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
+        bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
+        bundle.putString(ARGS_TRANSACTION_IDS, transactions)
       }
       navigationUtils.navigate(it.java, true, bundle)
     }
