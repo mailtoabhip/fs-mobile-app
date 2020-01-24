@@ -125,11 +125,11 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     }
 
     binding.textDate.setOnClickListener {
-      dialogUtils.datePicker(listener = this, maxDate = 1)
+      dialogUtils.datePicker(listener = this, maxDate = 0)
     }
 
     binding.imgDate.setOnClickListener {
-      dialogUtils.datePicker(listener = this, maxDate = 1)
+      dialogUtils.datePicker(listener = this, maxDate = 0)
     }
 
     binding.btnSave.setOnClickListener {
