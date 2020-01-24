@@ -6,6 +6,7 @@ import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.pod.HomePodHeaderItemData
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
+import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewPodItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
@@ -18,6 +19,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Progress
+import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Search
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Warning
 
@@ -40,6 +42,7 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
+    Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
     else -> ViewPodItemBinding.inflate(inflater, parent, false)
   }
 
@@ -49,6 +52,7 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     is ViewWarningItemBinding -> HomePodWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomePodTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomePodProgressItemVH(binding)
+    is ViewHomeSearchItemBinding -> HomePodSearchItemVH(binding)
     else -> HomePodItemVH(binding as ViewPodItemBinding)
   }
 
@@ -61,6 +65,7 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
       is HomePodItemVH -> holder.bind(item as HomePodTripItem, _interface)
       is HomePodWarningItemVH -> holder.bind(item as HomePodWarningItem, _interface)
       is HomePodTimeOutItemVH -> holder.bind(item as HomePodTimeoutItem, _interface)
+      is HomePodSearchItemVH -> holder.bind(item as HomePodSearchItem, _interface)
     }
   }
 
@@ -71,7 +76,7 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomePodHeaderItem(HomePodHeaderItemData()), Update))
       add(Pair(HomePodProgressItem(), AddUpdate))
-      items.filter { it.type == Warning || it.type == Timeout || it.type == Pod }
+      items.filter { it.type == Warning || it.type == Timeout || it.type == Pod || it.type == Search }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

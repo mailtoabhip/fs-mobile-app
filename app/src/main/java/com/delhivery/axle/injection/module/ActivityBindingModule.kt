@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
+import com.delhivery.axle.ui.searchtrip.SearchActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
@@ -98,72 +99,56 @@ abstract class ActivityBindingModule {
 
   /* Trip details activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsTripDetailsActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsTripDetailsActivityModule::class])
   internal abstract fun bindTripDetailsActivity(): TripDetailsActivity
 
   /* Image view activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsImageViewActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsImageViewActivityModule::class])
   internal abstract fun bindImageViewActivity(): ImageViewActivity
 
   /* Transactions activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsTransactionsActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsTransactionsActivityModule::class])
   internal abstract fun bindTransactionsActivity(): TransactionsActivity
 
   /* Transaction Detail activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsTransactionDetailActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsTransactionDetailActivityModule::class])
   internal abstract fun bindTransactionDetailActivity(): TransactionDetailActivity
 
   /* Bank Transfer activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsBankTransferActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsBankTransferActivityModule::class])
   internal abstract fun bindBankTransferActivity(): BankTransferActivity
 
   /* Fuel Card activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsFuelCardActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsFuelCardActivityModule::class])
   internal abstract fun bindFuelCardActivity(): ActiveTripsActivity
 
   /* Create Fuel Card activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsCreateFuelCardActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsCreateFuelCardActivityModule::class])
   internal abstract fun bindCreateFuelCardActivity(): CreateFuelCardActivity
 
   /* Wallet onboarding activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsWalletOnboardingActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsWalletOnboardingActivityModule::class])
   internal abstract fun bindWalletOnboardingActivity(): WalletOnboardingActivity
 
   /* Upload image activity */
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsUploadImageActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsUploadImageActivityModule::class])
   internal abstract fun bindUploadImageActivity(): UploadImageActivity /* Upload image activity */
 
   @ActivityScope
-  @ContributesAndroidInjector(
-      modules = [AbsDocketUpdateActivityModule::class]
-  )
+  @ContributesAndroidInjector(modules = [AbsDocketUpdateActivityModule::class])
   internal abstract fun bindDocketUpdateActivity(): DocketUpdateActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchActivityModule::class])
+  internal abstract fun bindSearchActivity(): SearchActivity
 }
 
 /**
@@ -232,6 +217,9 @@ internal abstract class AbsUploadImageActivityModule : ActivityModule<UploadImag
 
 @Module
 internal abstract class AbsDocketUpdateActivityModule : ActivityModule<DocketUpdateActivity>()
+
+@Module
+internal abstract class AbsSearchActivityModule : ActivityModule<SearchActivity>()
 
 /**
  * Activity Binds Module

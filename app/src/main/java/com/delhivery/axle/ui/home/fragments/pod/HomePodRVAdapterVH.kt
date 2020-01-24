@@ -2,10 +2,10 @@ package com.delhivery.axle.ui.home.fragments.pod
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
+import com.delhivery.axle.data.home.pod.HomePodSearchAction_Search
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
@@ -76,8 +76,8 @@ internal class HomePodSearchItemVH(binding: ViewHomeSearchItemBinding) :
     item: HomePodSearchItem,
     _interface: HomePodRVAdapterInterface
   ) {
-    binding.editQuery.hint = "Origin / Destination"
-    binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, adapterPosition, _interface)
+    binding.editQuery.hint = "Vehicle/LR Number"
+    binding.editQuery.clickToAction(HomePodSearchAction_Search, item, adapterPosition, _interface)
   }
 }
 

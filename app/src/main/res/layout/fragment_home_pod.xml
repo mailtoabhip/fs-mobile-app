@@ -25,10 +25,29 @@
           />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+        android:id="@+id/edit_sticky_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_72dp"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:hint="Vehicle / LR"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:paddingStart="@dimen/size_56dp"
+        android:paddingBottom="@dimen/size_16dp"
+        android:textColorHint="@color/color_hint"
+        android:textSize="@dimen/text_16sp"
+        bind:layout_constraintEnd_toEndOf="parent"
+        bind:layout_constraintStart_toStartOf="parent"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
+
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/btn_save"
         style="@style/view_header_background"
-        tools:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginStart="@dimen/size_8dp"
@@ -38,6 +57,7 @@
         bind:layout_constraintEnd_toEndOf="parent"
         bind:layout_constraintStart_toStartOf="parent"
         bind:shadow="@{ @dimen/action_btn_elevation }"
+        tools:visibility="visible"
         >
 
       <TextView

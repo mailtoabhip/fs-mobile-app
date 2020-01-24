@@ -98,6 +98,7 @@ class HomePodViewModel @Inject constructor(
               }
               /* post all transactions mapped to bids as add */
               else {
+                add(Pair(HomePodSearchItem(), AddUpdate))
                 for (trip in _res.trips) {
                   when (status) {
                     TruckUnloaded -> {

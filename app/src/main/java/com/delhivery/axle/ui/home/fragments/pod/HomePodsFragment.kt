@@ -8,13 +8,17 @@ import android.os.Environment
 import android.text.TextUtils
 import android.view.View
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
+import com.delhivery.axle.data.home.pod.HomePodSearchAction_Search
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_NoTrips
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_TimeOut
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
@@ -25,12 +29,14 @@ import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.databinding.FragmentHomePodBinding
 import com.delhivery.axle.repository.UserTripsLoadLimit
+import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
+import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
 import com.delhivery.axle.utils.AWSUtils
@@ -69,9 +75,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
   override fun layoutId() = R.layout.fragment_home_pod
 
-  private val adapter: HomePodRVAdapter by lazy {
-    HomePodRVAdapter(this)
-  }
+  private val adapter: HomePodRVAdapter by lazy { HomePodRVAdapter(this) }
 
   override fun onViewCreated(
     view: View,
@@ -87,8 +91,14 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     binding.rvPod.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = this@HomePodsFragment.adapter
+      addOnScrollListener(HomePODRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
+
+    binding.editStickySearch.setOnClickListener {
+      handleAction(HomePodSearchAction_Search, 1, HomePodSearchItem())
+    }
+
 
     binding.btnSave.setOnClickListener {
       context?.let {
@@ -186,6 +196,10 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
           viewModel.dispatch = true
           refreshData()
         }
+      }
+
+      HomePodSearchAction_Search -> {
+        context?.let { startActivity(searchIntent(it)) }
       }
 
       HomePodWarningAction_NoTrips -> {
@@ -318,8 +332,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   private fun openFile(file: File) {
     try {
       require(context != null)
-      val uri =
-        FileProvider.getUriForFile(context!!, context!!.packageName + ".provider", file)
+      val uri = FileProvider.getUriForFile(context!!, "${context!!.packageName}.provider", file)
       val intent = Intent(Intent.ACTION_VIEW)
       if (file.toString().contains(".pdf")) {
         intent.setDataAndType(uri, "application/pdf")
@@ -369,6 +382,66 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData
+  }
+
+  inner class HomePODRVScrollListener(
+    private val stickyView: DelhiveryAnimatedSearchBar,
+    private val elevation: Float = 12f
+  ) : OnScrollListener() {
+
+    private var toolbarElevation = -1f
+
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int
+    ) {
+      super.onScrolled(recyclerView, dx, dy)
+
+      val layoutManager =
+        (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+      val _toolbarElevation = when (layoutManager.findFirstVisibleItemPosition()) {
+        0 -> {
+          stickyView.translationY = 0f
+          stickyView.visibility = View.GONE
+          stickyView.alpha = 0f
+          stickyView.setRatio(1f)
+          defToolbarElevation
+        }
+        1 -> {
+          stickyView.visibility = View.VISIBLE
+          val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
+          val viewTopGap = childView.height - stickyView.height * 1f
+          val viewTop = childView.top + viewTopGap
+          if (viewTop > 0) {
+            val factor = viewTop / viewTopGap
+            val invFactor = 1f - factor
+            stickyView.translationY = viewTop
+            stickyView.alpha = invFactor
+            ViewCompat.setElevation(stickyView, elevation * invFactor)
+          } else {
+            stickyView.translationY = stickyView.top * 1f
+            stickyView.alpha = 1f
+            ViewCompat.setElevation(stickyView, elevation)
+          }
+          val factor =
+            (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+          stickyView.setRatio((1 - factor))
+          factor * defToolbarElevation
+        }
+        else -> {
+          stickyView.visibility = View.VISIBLE
+          stickyView.translationY = 0f
+          stickyView.alpha = 1f
+          stickyView.setRatio(0f)
+          0f
+        }
+      }
+      if (_toolbarElevation != toolbarElevation) {
+        toolbarElevation = _toolbarElevation
+        toolbarElevationLiveData!!.postValue(toolbarElevation)
+      }
+    }
   }
 
 }

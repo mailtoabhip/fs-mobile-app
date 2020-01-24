@@ -33,6 +33,8 @@ import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -60,6 +62,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
   private var mPhotoFile: File? = null
+  private var isCamera: Boolean = false
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
@@ -304,17 +307,31 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     builder.setItems(items) { dialog, item ->
       when {
         items[item] == "Take Photo" ->
-          if (checkPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))) {
-            dispatchTakePictureIntent()
-          }
+          requestImageCapturePermissions(true)
         items[item] == "Choose from Library" ->
-          if (checkPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))) {
-            dispatchGalleryIntent()
-          }
+          requestImageCapturePermissions(false)
         items[item] == "Cancel" -> dialog.dismiss()
       }
     }
     builder.show()
+  }
+
+  private fun requestImageCapturePermissions(isCamera: Boolean) {
+    this.isCamera = isCamera
+    compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+            if (isCamera) {
+              dispatchTakePictureIntent()
+            } else {
+              dispatchGalleryIntent()
+            }
+          } else {
+            uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
+          }
+        }
+
   }
 
   private fun createImageFile(): File {
