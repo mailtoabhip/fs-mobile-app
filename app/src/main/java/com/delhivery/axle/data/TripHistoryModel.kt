@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName
  */
 data class TripHistoryModel(
   @SerializedName("action_time") val actionTime: String,
-  @SerializedName("trip_status") private val _tripStatus: String,
+  @SerializedName("trip_status") private val _tripStatus: String?,
   @SerializedName("user_name") val userName: String,
   @SerializedName("details") val details: TripHistoryDetail?
 ) {
@@ -22,7 +22,7 @@ data class TripHistoryModel(
   /**
    * Trip Status [TripStatus]
    */
-  fun status() = TripStatus.byKey(_tripStatus)
+  fun status() = TripStatus.byKey(_tripStatus ?: "unknown")
 
   /**
    * Compute epoch to action time

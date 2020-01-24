@@ -87,12 +87,13 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     })
 
     binding.btnSave.setOnClickListener {
-      val _route = RouteModel(route!!.origin, selectedStates.toMutableSet())
-      action(RouteUpdateAction(_route))
+      route?.let {
+        action(RouteUpdateAction(RouteModel(it.origin, selectedStates.toMutableSet())))
+      }
     }
 
     binding.imgEditOrigin.setOnClickListener {
-      action(RouteEditOriginAction(route!!))
+      route?.let { action(RouteEditOriginAction(it)) }
     }
 
   }
@@ -171,7 +172,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
     states.forEach { t: StateModel ->
       t.checked = false
-      val selected = route!!.destinations.contains(t)
+      val selected = route?.destinations?.contains(t)?: false
       t.checked = selected
       if (selected) {
         selectedStates.add(t)

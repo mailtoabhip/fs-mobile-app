@@ -144,9 +144,7 @@ class HomeBidsViewModel @Inject constructor(
                 for (transaction in transactions) {
                   try {
                     val lowestBid = _res.third.filter { b ->
-                      b.transactionId.safeEquals(
-                          transaction.transactionId
-                      )
+                      b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
                     transaction.numBids = lowestBid.numBids
                     transaction.lowestBid = lowestBid.minBid

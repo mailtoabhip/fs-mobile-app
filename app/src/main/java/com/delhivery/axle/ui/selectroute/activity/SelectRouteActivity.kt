@@ -220,7 +220,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         if (currentRoute != null) {
           fragment.route = currentRoute
         } else if (viewModel.routes.size > 0) {
-          fragment.route = viewModel.routes.get(0)
+          fragment.route = viewModel.routes[0]
         }
       }
     }
