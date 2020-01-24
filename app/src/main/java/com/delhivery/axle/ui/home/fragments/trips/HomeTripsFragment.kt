@@ -152,7 +152,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         )
         context?.let {
           startActivity(
-              tripDetailsIntent(_item, it)
+              tripDetailsIntent(_item.key(), it)
           )
         }
       }

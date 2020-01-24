@@ -109,6 +109,17 @@ object DateUtils {
     }
   }
 
+//  fun parsePodDate(
+//    date: String,
+//    format: String
+//  ): Date {
+//    var inputFormat: DateFormat = SimpleDateFormat("yyyy-dd-MM")
+//    var outputFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss")
+//    var inputDateStr = "2020-09-01"
+//    var out = inputFormat.parse(inputDateStr)
+//    return outputFormat.format(date)
+//  }
+
   /**
    * @return parse date string and days diff of [date] from today
    */

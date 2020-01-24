@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_NoTrips
+import com.delhivery.axle.data.home.pod.HomePodWarningAction_TimeOut
 import com.delhivery.axle.data.home.pod.HomePodWarningItemData
 
 /**
@@ -20,7 +21,7 @@ val HomePodWarningItem_TimeOut = HomePodWarningItem(
     HomePodWarningItemData(
         "Session timed out!",
         "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",
-        "REFRESH", HomePodWarningAction_NoTrips
+        "REFRESH", HomePodWarningAction_TimeOut
     )
 )
 

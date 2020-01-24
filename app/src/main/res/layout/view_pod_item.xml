@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
@@ -9,6 +10,7 @@
         type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
     <import type="android.view.View" />
+    <import type="androidx.core.content.ContextCompat" />
   </data>
 
   <androidx.cardview.widget.CardView
@@ -131,8 +133,8 @@
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="@dimen/text_10sp"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
+          android:text="@{trip.timeDiff()}"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.podTimeColor()) }"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="@+id/text_lr"
           tools:text="12 days ageing"
@@ -207,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintGuide_percent="0.45"
             />
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -216,24 +218,24 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/size_8dp"
-            android:layout_weight="1"
             android:background="@drawable/bg_load_action_btn"
             android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:fontFamily="sans-serif-medium"
               android:gravity="center_horizontal"
               android:maxLines="1"
               android:text="@{trip.podActionText()}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
               />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -244,24 +246,22 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/size_8dp"
-            android:layout_weight="1"
             android:background="@drawable/bg_load_action_btn"
             android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="parent"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:fontFamily="sans-serif-medium"
               android:gravity="center_horizontal"
-              android:maxLines="1"
-              android:text="Update Courier"
+              android:text="@{trip.docketActionText()}"
               android:textColor="@color/white"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
               />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -284,6 +284,7 @@
           android:layout_height="wrap_content"
           android:buttonTint="@color/black"
           android:checked="@{trip.selected}"
+          android:enabled="false"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           tools:ignore="UnusedAttribute"
@@ -292,9 +293,9 @@
       <View
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          tools:visibility="gone"
           android:background="@color/view_selected"
           android:visibility="@{trip.selected?View.VISIBLE: View.GONE}"
+          tools:visibility="gone"
           />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

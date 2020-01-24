@@ -15,7 +15,6 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -99,11 +98,10 @@ class HomePodViewModel @Inject constructor(
               }
               /* post all transactions mapped to bids as add */
               else {
-                add(Pair(HomePodProgressItem(), Remove))
                 for (trip in _res.trips) {
                   when (status) {
                     TruckUnloaded -> {
-                      if (trip.podDispatchAwbNumber.isNullOrEmpty()) {
+                      if (!trip.hasPODTracking()) {
                         empty = false
                         trip.selectable = selectable
                         add(Pair(HomePodTripItem(trip), Add))
@@ -111,12 +109,12 @@ class HomePodViewModel @Inject constructor(
                     }
                     else -> {
                       if (dispatch) {
-                        if (trip.podDispatchAwbNumber.isNotNullOrEmpty()) {
+                        if (trip.hasPODTracking()) {
                           empty = false
                           add(Pair(HomePodTripItem(trip), Add))
                         }
                       } else {
-                        if (trip.podDispatchAwbNumber.isNullOrEmpty()) {
+                        if (!trip.hasPODTracking()) {
                           empty = false
                           add(Pair(HomePodTripItem(trip), Add))
                         }
@@ -131,8 +129,6 @@ class HomePodViewModel @Inject constructor(
                 .let { userPodsData.postValue(it) }
           } else {
             mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomePodProgressItem(), Remove))
               /* add api time out item */
               add(Pair(HomePodWarningItem_TimeOut, AddUpdate))
             }

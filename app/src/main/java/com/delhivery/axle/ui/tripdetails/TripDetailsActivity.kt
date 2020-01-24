@@ -569,9 +569,9 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Trip details intent
  */
 fun tripDetailsIntent(
-  _data: HomeTripsItemData,
+  transactionId: String,
   context: Context
 ) = Intent(context, TripDetailsActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, _data.key())
+  putExtra(TransactionIdIntentKey, transactionId)
 }
 

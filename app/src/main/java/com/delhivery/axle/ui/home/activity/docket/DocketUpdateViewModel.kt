@@ -5,6 +5,7 @@ import com.delhivery.axle.api.request.DispatchData
 import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -22,6 +23,7 @@ class DocketUpdateViewModel @Inject constructor(
   private val tripsRepository: TripsRepository
 ) : BaseViewModel() {
 
+  var trip: HomeTripsItemData? = null
   var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
   var statusLiveData = MutableLiveData<Boolean>()
   var transactionIds = mutableListOf<String>()

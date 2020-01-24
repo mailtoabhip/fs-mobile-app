@@ -69,7 +69,10 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   @Inject lateinit var analyticsUtil: AnalyticsUtil
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var contactUtils: ContactUtils
-  var notificationId: String = ""
+  var notificationId = ""
+  var notificationType = ""
+  var transactions = ""
+  var transactionIds = listOf<String>()
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 

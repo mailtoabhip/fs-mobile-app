@@ -37,12 +37,12 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_gravity="center_horizontal"
-          android:layout_weight="1"
           android:gravity="center_horizontal"
           android:orientation="vertical"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
+          bind:visibility="visible"
           >
 
         <RelativeLayout
@@ -70,6 +70,83 @@
         </RelativeLayout>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/container_image_action"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="@+id/container_image"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/container_image"
+          bind:visibility="visible"
+          >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"
+            />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/btn_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:background="@drawable/bg_load_action_btn"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_horizontal"
+              android:maxLines="1"
+              android:text="VIEW PHOTO"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_14sp"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/btn_update"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:background="@drawable/bg_load_action_btn"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
+            >
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif-medium"
+              android:gravity="center_horizontal"
+              android:text="UPDATE PHOTO"
+              android:textColor="@color/white"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
 
       <androidx.appcompat.widget.AppCompatEditText
           android:id="@+id/text_tracking_number"

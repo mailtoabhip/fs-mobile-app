@@ -10,14 +10,18 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
@@ -41,6 +45,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
+    if (transactions.isNotEmpty())
+      transactionIds = transactions.split(",")
+          .map { it.trim() }
+    notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -76,7 +85,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     observeFragmentLiveData()
 
     if (notificationId.isNotEmpty()) {
-      markNotificationRead()
+      processNotification()
+    }
+  }
+
+  private fun processNotification() {
+    markNotificationRead()
+    when (notificationType) {
+      "submit_pod_notification" -> {
+        if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
+          startActivity(tripDetailsIntent(transactionIds[0], this))
+        } else {
+          fragmentAction(NavigateHomeFragmentAction(PodFragment))
+        }
+      }
+      else -> {
+        fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+      }
     }
   }
 
@@ -100,11 +125,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
+    notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
+    if (transactions.isNotEmpty())
+      transactionIds = transactions.split(",")
+          .map { it.trim() }
     viewModel.fromNotification = true
     if (notificationId.isNotEmpty()) {
-      markNotificationRead()
+      processNotification()
     }
-    fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+
   }
 
   override fun markNotificationRead() {

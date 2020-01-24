@@ -6,6 +6,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.fuelcards.FuelCardData
+import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
+import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
@@ -20,6 +22,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 data class HomeTripsItemData(
   @SerializedName("LR") val lr: String,
@@ -180,9 +184,9 @@ data class HomeTripsItemData(
    * Formatted required at
    */
   fun loadedAt() =
-    reachedTime?.let {
-      "Reached At: " + DateUtils.formatDate(
-          DateUtils.parseDate(it, OrionDateFormat), SimpleDateFormat
+    updateInfo?.loadedInfo?.let {
+      "Loaded: " + DateUtils.formatDate(
+          DateUtils.parseDate(it.time, OrionDateFormat), SimpleDateFormat
       )
     } ?: ""
 
@@ -256,7 +260,83 @@ data class HomeTripsItemData(
   /**
    * @return pod action text
    */
-  fun podActionText() = if (podUrl.isNullOrEmpty()) "Upload Epod" else "View Epod"
+  fun podActionText() = if (podUrl.isNullOrEmpty()) "UPLOAD EPOD" else "VIEW EPOD"
+
+  /**
+   * @return pod action text
+   */
+  fun docketActionText() =
+    if (!hasPODTracking()) "ADD COURIER DETAILS" else "UPDATE COURIER DETAILS"
+
+  private fun getDiff(
+    arrived: Date,
+    prefix: String
+  ): String {
+    val today = Calendar.getInstance()
+    val diffInMillisec = today.timeInMillis - arrived.time
+    val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
+        .toInt()
+    return if (daysDiff >= 1) "$prefix $daysDiff days"
+    else "$prefix${TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()} hrs"
+  }
+
+  /**
+   * Trip Status [TripStatus]
+   */
+  fun timeDiff() = when (tripStatus) {
+    TruckUnloaded.statusKey -> {
+      if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
+      else unloadingTime?.let {
+        getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
+      } ?: ""
+    }
+    EPodUploaded.statusKey -> {
+      if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
+      else updateInfo?.epodUploadInfo?.let {
+        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+      } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * Return pod dispatch status
+   */
+  fun hasPODTracking() = podDispatchAwbNumber.isNotNullOrEmpty()
+
+  /**
+   * Required at text color as per status
+   */
+  @ColorRes
+  fun podTimeColor() = when (tripStatus) {
+    TruckUnloaded.statusKey -> {
+      if (podDispatchDate.isNotNullOrEmpty()) {
+        ColorProviderUtils.getPODDateColor(
+            DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
+        )
+      } else unloadingTime?.let {
+        ColorProviderUtils.getPODDateColor(
+            DateUtils.parseDate(it, OrionDateFormat)
+        )
+      } ?: R.color.sub_heading_black
+    }
+    EPodUploaded.statusKey -> {
+      if (podDispatchDate.isNotNullOrEmpty()) {
+        ColorProviderUtils.getPODDateColor(
+            DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
+        )
+      } else updateInfo?.epodUploadInfo?.let {
+        ColorProviderUtils.getPODDateColor(
+            DateUtils.parseDate(it.time, OrionDateFormat)
+        )
+      } ?: R.color.sub_heading_black
+    }
+    else -> {
+      R.color.sub_heading_black
+    }
+  }
 
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
@@ -317,7 +397,10 @@ data class TripBidDetails(
 /**
  * Status update info
  */
-data class StatusUpdateInfo(@SerializedName("truck_loaded") val jan: ByUser? = null) : Serializable
+data class StatusUpdateInfo(
+  @SerializedName("truck_loaded") val loadedInfo: ByUser? = null,
+  @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null
+) : Serializable
 
 /**
  * By userinfo

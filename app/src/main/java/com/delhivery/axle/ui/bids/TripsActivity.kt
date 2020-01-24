@@ -138,7 +138,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_TRIP, _item.transactionId)
         )
-        startActivity(tripDetailsIntent(_item, this))
+        startActivity(tripDetailsIntent(_item.key(), this))
       }
       HomeTripsTimeOutAction -> {
         refreshData()

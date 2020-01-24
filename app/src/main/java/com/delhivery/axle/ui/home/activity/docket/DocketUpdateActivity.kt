@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -14,14 +13,14 @@ import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityUpdateDocketBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
@@ -35,9 +34,10 @@ import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
-import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.toDate
 import java.io.File
 import java.io.FileInputStream
@@ -76,12 +76,17 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
 
     /* validate intent */
     require(
-        !(intent == null || !intent.hasExtra(TransactionIdsIntentKey))
-    ) { "Required data $TransactionIdsIntentKey not found" }
+        !(intent == null || (!intent.hasExtra(TransactionIdsIntentKey) && !intent.hasExtra(
+            TripDataIntentKey
+        )))
+    ) { "Required data $TransactionIdsIntentKey or $TripDataIntentKey not found" }
 
-    /* set transaction id */
-    viewModel.transactionIds =
-      intent.getStringArrayListExtra(TransactionIdsIntentKey) ?: mutableListOf()
+    if (intent.hasExtra(TransactionIdsIntentKey))
+      viewModel.transactionIds =
+        intent.getStringArrayListExtra(TransactionIdsIntentKey) ?: mutableListOf()
+    if (intent.hasExtra(TripDataIntentKey)) {
+      viewModel.trip = intent.getSerializableExtra(TripDataIntentKey) as HomeTripsItemData
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -90,6 +95,13 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     setSupportActionBar(binding.toolbar)
     title = "Dispatch Details"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    if (viewModel.trip != null) {
+      viewModel.transactionIds.add(viewModel.trip!!.transactionId)
+      binding.textTrackingNumber.setText(viewModel.trip!!.podDispatchAwbNumber)
+      binding.textDate.text = viewModel.trip!!.podDispatchDate
+      binding.containerImage.visibility = View.INVISIBLE
+      binding.containerImageAction.visibility = View.VISIBLE
+    }
 
     viewModel.delegationLiveData.observe(this, Observer {
       uploadImage(it.first, it.second)
@@ -113,11 +125,11 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     }
 
     binding.textDate.setOnClickListener {
-      dialogUtils.datePicker(listener = this)
+      dialogUtils.datePicker(listener = this, maxDate = 1)
     }
 
     binding.imgDate.setOnClickListener {
-      dialogUtils.datePicker(listener = this)
+      dialogUtils.datePicker(listener = this, maxDate = 1)
     }
 
     binding.btnSave.setOnClickListener {
@@ -125,6 +137,17 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
       if (isValid()) {
         viewModel.updateDispatchDetails()
       }
+    }
+
+    binding.btnView.setOnClickListener {
+      startActivity(
+          imageViewIntent(this, viewModel.trip?.podDispatchDocketImage ?: "", "Docket Image")
+      )
+    }
+
+    binding.btnUpdate.setOnClickListener {
+      val imageName = "docket_" + System.currentTimeMillis()
+      captureImage(imageName, imageName)
     }
   }
 
@@ -198,25 +221,25 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
     this.isCamera = isCamera
+    compositeDisposable += requestPermission(
+        arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        )
+    )
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+            if (isCamera) {
+              dispatchTakePictureIntent()
+            } else {
+              dispatchGalleryIntent()
+            }
+          } else {
+            uiUtils.showSnackbar(getString(string.storage_camera_permission))
+          }
+        }
 
-    val storagePermission =
-      ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    val cameraPermission =
-      ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-    if (storagePermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(
-          this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-          REQCODE_STORAGE
-      )
-    } else if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQCODE_CAMERA)
-    } else {
-      if (isCamera) {
-        dispatchTakePictureIntent()
-      } else {
-        dispatchGalleryIntent()
-      }
-    }
   }
 
   private fun dispatchTakePictureIntent() {
@@ -264,6 +287,8 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   ) {
     val calendar = Calendar.getInstance()
     calendar.set(year, month, dayOfMonth)
+    calendar.set(Calendar.HOUR_OF_DAY, 23)
+    calendar.set(Calendar.MINUTE, 59)
     binding.textDate.text =
       "${calendar.get(Calendar.DAY_OF_MONTH)}-${calendar.get(Calendar.MONTH) + 1}-${calendar.get(
           Calendar.YEAR
@@ -274,6 +299,8 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   override fun onAWSSuccess(
     path: String
   ) {
+    binding.containerImage.visibility = View.VISIBLE
+    binding.containerImageAction.visibility = View.GONE
     uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
     viewModel.imageUrl = path
@@ -369,13 +396,16 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
 
 /* intent keys */
 private const val TransactionIdsIntentKey = "transaction_ids"
+private const val TripDataIntentKey = "trip_data"
 
 /**
  * Update docket intent
  */
 fun docketUpdateIntent(
   context: Context,
-  transactionIds: ArrayList<String>
+  transactionIds: ArrayList<String>? = null,
+  trip: HomeTripsItemData? = null
 ) = Intent(context, DocketUpdateActivity::class.java).apply {
-  putStringArrayListExtra(TransactionIdsIntentKey, transactionIds)
+  transactionIds?.let { putStringArrayListExtra(TransactionIdsIntentKey, transactionIds) }
+  trip?.let { putExtra(TripDataIntentKey, trip) }
 }

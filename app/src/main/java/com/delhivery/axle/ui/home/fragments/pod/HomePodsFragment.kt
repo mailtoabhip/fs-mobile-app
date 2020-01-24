@@ -16,6 +16,7 @@ import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_NoTrips
+import com.delhivery.axle.data.home.pod.HomePodWarningAction_TimeOut
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
@@ -27,6 +28,8 @@ import com.delhivery.axle.repository.UserTripsLoadLimit
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
@@ -91,7 +94,9 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       context?.let {
         val list = arrayListOf<String>()
         list.addAll(viewModel.selectedTransactions)
-        startActivityForResult(docketUpdateIntent(it, list), REQCODE_UPLOAD_DOCKET)
+        startActivityForResult(
+            docketUpdateIntent(context = it, transactionIds = list), REQCODE_UPLOAD_DOCKET
+        )
       }
     }
 
@@ -160,24 +165,34 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   ) {
     when (actionId) {
       HomePodHeaderAction_Epod -> {
-        viewModel.status = TruckUnloaded
-        viewModel.dispatch = false
-        refreshData()
+        if (!isLoadingData) {
+          viewModel.status = TruckUnloaded
+          viewModel.dispatch = false
+          refreshData()
+        }
       }
 
       HomePodHeaderAction_Physical -> {
-        viewModel.status = EPodUploaded
-        viewModel.dispatch = false
-        refreshData()
+        if (!isLoadingData) {
+          viewModel.status = EPodUploaded
+          viewModel.dispatch = false
+          refreshData()
+        }
       }
 
       HomePodHeaderAction_Dispactched -> {
-        viewModel.status = EPodUploaded
-        viewModel.dispatch = true
-        refreshData()
+        if (!isLoadingData) {
+          viewModel.status = EPodUploaded
+          viewModel.dispatch = true
+          refreshData()
+        }
       }
 
       HomePodWarningAction_NoTrips -> {
+        action(NavigateHomeFragmentAction(LoadsFragment))
+      }
+
+      HomePodWarningAction_TimeOut -> {
         refreshData()
       }
 
@@ -216,26 +231,34 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
       HomeTripsRequestAction_UploadTracking -> {
         val data = item.data as HomeTripsItemData
-        if (viewModel.selectable) {
-          if (data.selected) {
-            data.selected = false
-            viewModel.selectedTransactions.remove(data.transactionId)
-          } else {
+        when {
+          data.hasPODTracking() -> context?.let {
+            startActivityForResult(
+                docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+            )
+          }
+          viewModel.selectable -> {
+            if (data.selected) {
+              data.selected = false
+              viewModel.selectedTransactions.remove(data.transactionId)
+            } else {
+              data.selected = true
+              viewModel.selectedTransactions.add(data.transactionId)
+            }
+            adapter.notifyItemChanged(position)
+          }
+          else -> {
+            viewModel.selectable = true
+            adapter.itemsList()
+                .forEach { t ->
+                  if (t.type == Pod) {
+                    val trip = t.data as HomeTripsItemData
+                    trip.selectable = viewModel.selectable
+                  }
+                }
             data.selected = true
             viewModel.selectedTransactions.add(data.transactionId)
           }
-          adapter.notifyItemChanged(position)
-        } else {
-          viewModel.selectable = true
-          adapter.itemsList()
-              .forEach { t ->
-                if (t.type == Pod) {
-                  val trip = t.data as HomeTripsItemData
-                  trip.selectable = viewModel.selectable
-                }
-              }
-          data.selected = true
-          viewModel.selectedTransactions.add(data.transactionId)
         }
         binding.btnSave.visibility =
           if (viewModel.selectedTransactions.isEmpty()) View.GONE else View.VISIBLE
@@ -246,7 +269,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       HomeTripsRequestAction_ViewDetails -> {
         context?.let {
           val data = item.data as HomeTripsItemData
-          startActivity(tripDetailsIntent(data, it))
+          startActivity(tripDetailsIntent(data.key(), it))
         }
       }
     }

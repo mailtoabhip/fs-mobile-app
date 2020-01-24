@@ -58,13 +58,17 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     } else {
       Builder(this)
     }
-    val notificationId = remoteMessage.data["notification_service_notification_id"]?:""
+    val notificationId = remoteMessage.data["notification_service_notification_id"] ?: ""
+    val notificationType = remoteMessage.data["notification_type"] ?: ""
+    val transactions = remoteMessage.data["transaction_ids"] ?: ""
 
     remoteMessage.notification?.let {
       val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
       val intent = Intent(this, HomeActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         putExtra(ARGS_NOTIFICATION_ID, notificationId)
+        putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
+        putExtra(ARGS_TRANSACTION_IDS, transactions)
       }
       val pendingIntent = PendingIntent.getActivity(
           this, 0, intent, PendingIntent.FLAG_ONE_SHOT
@@ -106,4 +110,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
 private const val DEFAULT_NOTIFICATION_CHANNEL = "axle_notification_channel"
 const val ARGS_NOTIFICATION_ID = "args_notification_id"
+const val ARGS_TRANSACTION_IDS = "transaction_ids"
+const val ARGS_NOTIFICATION_TYPE = "notification_type"
 const val ARGS_NOTIFICATION_KEY = "notification_service_notification_id"

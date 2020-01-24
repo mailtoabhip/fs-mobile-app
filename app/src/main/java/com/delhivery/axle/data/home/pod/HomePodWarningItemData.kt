@@ -16,3 +16,4 @@ const val HomePodWarningItemDataKeyPrefix = "warning_"
 
 /* actions */
 const val HomePodWarningAction_NoTrips = "no_pod_trips"
+const val HomePodWarningAction_TimeOut = "time_out"
