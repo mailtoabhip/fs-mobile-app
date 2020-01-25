@@ -52,8 +52,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_form_edit"
             android:hint="Vehicle Number"
+            android:inputType="textCapCharacters"
+            android:digits="1234567890QWERTYUIOPASDFGHJKLZXCVBNM"
             android:imeOptions="actionDone"
-            android:inputType="textCapCharacters|textNoSuggestions"
             android:maxLines="1"
             android:text="@={item.vehicleNumber}"
             />

@@ -34,7 +34,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   fun getRequest(): JsonObject {
     val jsonObject = JsonObject()
     tripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("status_list", it) }
-    vehicleNumber?.let { if (it.isNotEmpty()) jsonObject.addProperty("vehicle_number", it) }
+    vehicleNumber?.let { if (it.isNotEmpty()) jsonObject.addProperty("vehicle_number", it.toUpperCase()) }
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
     offset?.let { jsonObject.addProperty("offset", it) }
@@ -44,9 +44,9 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
 
   fun getResultString(): String {
     var resultString = "$result trips with"
-    if (vehicleNumber != null) resultString = "$resultString Vehicle Number: $vehicleNumber,"
-    if (lr != null) resultString = "$resultString LR Number: $lr,"
-    return resultString.substring(0, resultString.length - 2)
+    vehicleNumber?.let { resultString = "$resultString Vehicle Number: $it," }
+    lr?.let { resultString = "$resultString LR Number: $it," }
+    return resultString.substring(0, resultString.length - 1)
   }
 
 }
