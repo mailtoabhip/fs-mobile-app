@@ -318,7 +318,7 @@ class TripDetailsViewModel @Inject constructor(
                 "Awaiting POD upload",
                 "Balance will be paid within 3 days of Physical POD verification"
             )
-          } else if (!tripHistory.contains(PODUploaded)) {
+          } else if (!tripHistory.contains(PODUploaded) && tripDetail.podUrl.isNotNullOrEmpty()) {
             tripHistory[PODUploaded] = TripHistoryItem(
                 PODUploaded,
                 "POD uploaded",
@@ -397,7 +397,7 @@ class TripDetailsViewModel @Inject constructor(
                 "Balance will be paid within 3 days of Physical POD verification"
             )
           } else {
-            if (!tripHistory.contains(PODUploaded)) {
+            if (!tripHistory.contains(PODUploaded) && tripDetail.podUrl.isNotNullOrEmpty()) {
               tripHistory[PODUploaded] = TripHistoryItem(
                   PODUploaded,
                   "POD uploaded",

@@ -75,7 +75,7 @@ class SearchedQueryItemVH(binding: ViewSearchedQueryItemBinding) :
 }
 
 /**
- * Search request item view holder
+ * Search data item view holder
  */
 class SearchDataItemVH(binding: ViewPodItemBinding) :
     BaseSearchRVAdapterViewHolder<ViewPodItemBinding, SearchDataItem>(binding) {
