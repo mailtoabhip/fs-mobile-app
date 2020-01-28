@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.home.activity.docket
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.request.DispatchData
 import com.delhivery.axle.api.request.UpdateDispatchRequest
