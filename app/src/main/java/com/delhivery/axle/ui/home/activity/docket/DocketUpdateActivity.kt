@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
@@ -294,6 +295,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
           Calendar.YEAR
       )}"
     viewModel.dateOfDispatch = DateUtils.formatDate(calendar.toDate(), DatePatterns.PODDateFormat)
+    Log.e("date" ,  viewModel.dateOfDispatch )
   }
 
   override fun onAWSSuccess(

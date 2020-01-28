@@ -292,8 +292,8 @@ data class HomeTripsItemData(
     }
     EPodUploaded.statusKey -> {
       if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
-      else updateInfo?.epodUploadInfo?.let {
-        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+      else unloadingTime?.let {
+        getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
       } ?: ""
     }
     else -> {
