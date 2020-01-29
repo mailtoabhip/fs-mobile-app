@@ -327,9 +327,9 @@ data class HomeTripsItemData(
         ColorProviderUtils.getPODDateColor(
             DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
         )
-      } else updateInfo?.epodUploadInfo?.let {
+      } else unloadingTime?.let {
         ColorProviderUtils.getPODDateColor(
-            DateUtils.parseDate(it.time, OrionDateFormat)
+            DateUtils.parseDate(it, OrionDateFormat)
         )
       } ?: R.color.sub_heading_black
     }

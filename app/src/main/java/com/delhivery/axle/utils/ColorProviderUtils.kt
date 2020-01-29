@@ -93,7 +93,7 @@ object ColorProviderUtils {
     val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
         .toInt()
     return when (daysDiff) {
-      in 0..9 -> R.color.status_confirmed
+      in 0..10 -> R.color.status_confirmed
       else -> R.color.status_lost
     }
   }
