@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.bids
 
-import androidx.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.repository.PaymentRepository
 import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -33,8 +33,9 @@ import javax.inject.Inject
  */
 class TripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
-  private val payementRepository: PaymentRepository
+  private val paymentRepository: PaymentRepository
 ) : BaseViewModel() {
+
   /* user trips live data */
   var userTripsData =
     MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -50,7 +51,7 @@ class TripsViewModel @Inject constructor(
   var offset = 0
 
   var trip: TripType = Unknown
-  var total: Int = 0
+  var total = 0
 
   /**
    * Fetch user trips
@@ -80,7 +81,7 @@ class TripsViewModel @Inject constructor(
           hasMoreData = t.hasNext
           total = t.total
           tripsCountLiveData.postValue(total)
-          payementRepository.bulkPaymentTransactions(t.trips)
+          paymentRepository.bulkPaymentTransactions(t.trips)
         }
         .onBackground()
         .subscribe { _res, error ->
@@ -102,8 +103,7 @@ class TripsViewModel @Inject constructor(
                   try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
-                    }
-                        .get(0)
+                    }[0]
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }

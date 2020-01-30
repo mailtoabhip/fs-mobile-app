@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="transaction"
+        type="com.delhivery.axle.data.transactions.TransactionsItemData"
+        />
+
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+
+    <import type="androidx.core.content.ContextCompat" />
+
+    <import type="android.view.View"/>
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="@color/colorBackground"
+      >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginBottom="@dimen/size_4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardCornerRadius="@dimen/size_6dp"
+        app:cardElevation="2dp"
+        >
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          >
+
+        <TextView
+            android:id="@+id/text_payee_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/sub_heading_black"
+            android:layout_marginBottom="@dimen/size_4dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_cashback"
+            app:layout_constraintStart_toEndOf="@+id/img_transaction"
+            android:text="@string/label_you_will_receive"
+            />
+
+        <TextView
+            android:id="@+id/text_cashback"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{transaction.cashback()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_transaction"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Cashback: ₹ 4000"
+            />
+
+        <TextView
+            android:id="@+id/id4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:fontFamily="sans-serif"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:textColor="@color/sub_heading_black"
+            app:layout_constraintStart_toEndOf="@+id/img_transaction"
+            app:layout_constraintTop_toBottomOf="@+id/text_cashback"
+            android:text="@string/label_when_the_trip_ends"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_transaction"
+            android:layout_width="@dimen/size_56dp"
+            android:layout_height="@dimen/size_56dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/text_16sp"
+            app:srcCompat="@drawable/ic_cashback"
+            android:padding="@dimen/size_8dp"
+            android:background="@drawable/bg_circular_boundary_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:layout_marginBottom="@dimen/size_4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardCornerRadius="@dimen/size_6dp"
+        app:cardElevation="2dp"
+        >
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/size_12dp"
+          >
+
+        <TextView
+            android:id="@+id/label_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_date_and_time"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="@{transaction.dateTime()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/label_date"
+            app:layout_constraintTop_toTopOf="@+id/label_date"
+            tools:text="qwertyuio"
+            />
+
+        <TextView
+            android:id="@+id/label_origin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_origin_city"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_date"
+            />
+
+        <TextView
+            android:id="@+id/text_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:textColor="@color/heading_black"
+            android:text="@{trip.originCityName()}"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_origin"
+            app:layout_constraintTop_toTopOf="@+id/label_origin"
+            tools:text="asdedfrf"
+            />
+
+        <TextView
+            android:id="@+id/label_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_destination_city"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_status"
+            />
+
+        <TextView
+            android:id="@+id/text_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="@{trip.destinationCityName()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_destination"
+            app:layout_constraintTop_toTopOf="@+id/label_destination"
+            tools:text="asdedfrf"
+            />
+
+        <TextView
+            android:id="@+id/label_mobile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_mobile_number"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_destination"
+            />
+
+        <TextView
+            android:id="@+id/text_mobile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{transaction.toAccNumber}"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_mobile"
+            app:layout_constraintTop_toTopOf="@+id/label_mobile"
+            tools:text="1234567890"
+            />
+
+        <TextView
+            android:id="@+id/label_vehicle_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_vehicle_number"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_mobile"
+            />
+
+        <TextView
+            android:id="@+id/text_vehicle_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="@{trip.vehicleDetails.vehicleNo}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_vehicle_number"
+            app:layout_constraintTop_toTopOf="@+id/label_vehicle_number"
+            tools:text="1234567890"
+            />
+
+        <TextView
+            android:id="@+id/label_vehicle_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_vehicle_type"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_vehicle_number"
+            />
+
+        <TextView
+            android:id="@+id/text_vehicle_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="@{trip.truckDisplayName}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_vehicle_type"
+            app:layout_constraintTop_toTopOf="@+id/label_vehicle_type"
+            tools:text="24MTX"
+            />
+
+        <TextView
+            android:id="@+id/label_transaction_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/label_transaction_status"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_vehicle_type"
+            />
+
+        <TextView
+            android:id="@+id/text_transaction_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{transaction.status()}"
+            bind:textColor="@{ ContextCompat.getColor(context, transaction.requiredStatusColor()) }"
+            android:textColor="@color/heading_black"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_transaction_status"
+            app:layout_constraintTop_toTopOf="@+id/label_transaction_status"
+            tools:text="Processed"
+            />
+
+        <TextView
+            android:id="@+id/label_transaction_remarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:visibility="@{ transaction.failedStatus().isEmpty() ? View.GONE : View.VISIBLE }"
+            android:text="@string/label_transaction_remarks"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_transaction_status"
+            />
+
+        <TextView
+            android:id="@+id/text_transaction_remarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{transaction.bankRemarks}"
+            android:textColor="@color/heading_black"
+            android:visibility="@{ transaction.failedStatus().isEmpty() ? View.GONE : View.VISIBLE }"
+            app:layout_constraintEnd_toEndOf="@+id/text_date"
+            app:layout_constraintStart_toEndOf="@+id/label_transaction_remarks"
+            app:layout_constraintTop_toTopOf="@+id/label_transaction_remarks"
+            tools:text="Processed"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

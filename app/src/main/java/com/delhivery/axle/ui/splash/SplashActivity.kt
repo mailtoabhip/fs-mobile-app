@@ -12,9 +12,11 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -23,6 +25,9 @@ import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
+/**
+ * Splash screen
+ */
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   init {
     StatusBarColor = Color.parseColor("#181818")
@@ -38,6 +43,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     super.onCreate(savedInstanceState)
 
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
+    transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
+    notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -114,7 +121,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     val remoteConfig = FirebaseRemoteConfig.getInstance()
     remoteConfig.setConfigSettingsAsync(configSettings)
 
-
     FirebaseRemoteConfig.getInstance()
         .fetchAndActivate()
         .addOnCompleteListener(
@@ -128,6 +134,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                   .toInt()
             } catch (e: Exception) {
               0
+            }
+
+            try {
+              viewModel.savePMTValidation(
+                  remoteConfig.getString("max_pmt_rate").toInt(),
+                  remoteConfig.getString("max_cost_per_km").toInt()
+              )
+            } catch (e: NumberFormatException) {
+              //Do Nothing
             }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
@@ -155,6 +170,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       val bundle = Bundle()
       if (!TextUtils.isEmpty(notificationId)) {
         bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
+        bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
+        bundle.putString(ARGS_TRANSACTION_IDS, transactions)
       }
       navigationUtils.navigate(it.java, true, bundle)
     }

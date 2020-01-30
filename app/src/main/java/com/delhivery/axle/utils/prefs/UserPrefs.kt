@@ -29,6 +29,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.CityCode, value).apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
 
+  /**
+   *  User phone number
+   */
   var phoneNumber: String?
     set(value) = editor.putString(PrefKeys.PhoneNumber, value).apply()
     get() = prefs.getString(PrefKeys.PhoneNumber, "")
@@ -59,7 +62,42 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var userName: String
     set(value) = editor.putString(PrefKeys.UserName, value).apply()
-    get() = prefs.getString(PrefKeys.UserName, "No name") ?: "No name"
+    get() = prefs.getString(PrefKeys.UserName, "") ?: ""
+
+  /**
+   *Bank name
+   */
+  var bankName: String
+    set(value) = editor.putString(PrefKeys.BankName, value).apply()
+    get() = prefs.getString(PrefKeys.BankName, "") ?: ""
+
+  /**
+   *  Pancard
+   */
+  var pancard: String
+    set(value) = editor.putString(PrefKeys.Pancard, value).apply()
+    get() = prefs.getString(PrefKeys.Pancard, "") ?: ""
+
+  /**
+   *  Ifsc code
+   */
+  var ifscCode: String
+    set(value) = editor.putString(PrefKeys.IfscCode, value).apply()
+    get() = prefs.getString(PrefKeys.IfscCode, "") ?: ""
+
+  /**
+   *  Company Name
+   */
+  var companyName: String
+    set(value) = editor.putString(PrefKeys.CompanyName, value).apply()
+    get() = prefs.getString(PrefKeys.CompanyName, "") ?: ""
+
+  /**
+   *  Account Number
+   */
+  var accNumber: String
+    set(value) = editor.putString(PrefKeys.AccountNumber, value).apply()
+    get() = prefs.getString(PrefKeys.AccountNumber, "") ?: ""
 
   /**
    *  Has edited routes flag
@@ -83,7 +121,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
   /**
-   *  Supplier enabled flag
+   *  Is test user flag
    */
   var isTestUser: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsTestUser, value).apply()
@@ -97,6 +135,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
   /**
+   *  Wallet opted in
+   */
+  var walletActivated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.WalletActive, value).apply()
+    get() = prefs.getBoolean(PrefKeys.WalletActive, false)
+
+  /**
    *  Opened from notification flag
    */
   var fromNotification: Boolean
@@ -104,12 +149,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.FromNotification, false)
 
   /**
+   *  Max PMT rate
+   */
+  var maxPMTRate: Int
+    set(value) = editor.putInt(PrefKeys.MaxPMTRate, value).apply()
+    get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MIN_VALUE)
+
+  /**
+   *  Max cost per km
+   */
+  var maxCostPerKM: Int
+    set(value) = editor.putInt(PrefKeys.MaxCostPerKM, value).apply()
+    get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
     editor.remove(PrefKeys.JWTToken)
         .apply()
-    editor.remove(PrefKeys.CityCode)
+    editor.remove(PrefKeys.OnboardingStatus)
+        .apply()
+    editor.remove(PrefKeys.SupplierEnabled)
+        .apply()
+    editor.remove(PrefKeys.IsTestUser)
         .apply()
     editor.remove(PrefKeys.RouteUpdate)
         .apply()
@@ -121,11 +184,23 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.UserName)
         .apply()
-    editor.remove(PrefKeys.OnboardingStatus)
+    editor.remove(PrefKeys.BankName)
         .apply()
-    editor.remove(PrefKeys.SupplierEnabled)
+    editor.remove(PrefKeys.AccountNumber)
         .apply()
-    editor.remove(PrefKeys.IsTestUser)
+    editor.remove(PrefKeys.CompanyName)
+        .apply()
+    editor.remove(PrefKeys.PhoneNumber)
+        .apply()
+    editor.remove(PrefKeys.IfscCode)
+        .apply()
+    editor.remove(PrefKeys.Pancard)
+        .apply()
+    editor.remove(PrefKeys.CityCode)
+        .apply()
+    editor.remove(PrefKeys.MaxPMTRate)
+        .apply()
+    editor.remove(PrefKeys.MaxCostPerKM)
         .apply()
   }
 
@@ -135,6 +210,17 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     supplierEnabled = user.supplierEnabled
     isTestUser = user.testUser
     tdsRate = user.getTDS()
+    bankName = user.bank ?: ""
+    companyName = user.companyName ?: ""
+    phoneNumber = user.phoneNo
+    ifscCode = user.ifscCode ?: ""
+    pancard = user.panCardNo ?: ""
+    accNumber = user.accNumber()
+    cityCode = if (user.hasRoutes()) {
+      user.userRoutes()[0].origin.cityId
+    } else {
+      user.baseCityCode
+    }
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -157,12 +243,20 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val HasLoggedIn = "has_logged_in"
     const val TdsRate = "tds_rate"
     const val UserName = "user_name"
+    const val Pancard = "pan_card"
+    const val BankName = "bank_name"
+    const val IfscCode = "ifsc"
+    const val CompanyName = "company_name"
+    const val AccountNumber = "acc_num"
     const val HadEditedRoutes = "has_edited_routes"
     const val OnboardingStatus = "onboarding_status"
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
     const val FCMTokenGenerated = "fcm_token_generated"
+    const val WalletActive = "wallet_active"
     const val FromNotification = "from_notification"
+    const val MaxPMTRate = "max_pmt_rate"
+    const val MaxCostPerKM = "max_cost_per_km"
   }
 }
 

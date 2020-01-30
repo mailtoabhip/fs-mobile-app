@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [HomeTripsRVAdapter]
+ */
 enum class HomeTripsRVAdapterItemType(val typeId: Int) {
   Header(0),
   Search(1),
@@ -26,8 +29,7 @@ enum class HomeTripsRVAdapterItemType(val typeId: Int) {
     /**
      * Get [HomeTripsRVAdapterItemType] by typeId
      */
-    fun byTypeId(typeId: Int) =
-      HomeTripsRVAdapterItemType.values().filter { typeId == it.typeId }.firstOrNull()
+    fun byTypeId(typeId: Int) = values().firstOrNull { typeId == it.typeId }
   }
 }
 

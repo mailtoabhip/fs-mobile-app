@@ -3,6 +3,8 @@ package com.delhivery.axle.utils
 import androidx.annotation.IntRange
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.toCalendar
+import com.google.gson.internal.bind.util.ISO8601Utils
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -54,6 +56,39 @@ object DateUtils {
   }
 
   /**
+   * @return Formatted ISO date to [format] in UTC
+   */
+  fun formatISODateToUTC(
+    date: String,
+    format: String
+  ): String {
+    return try {
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.timeZone = TimeZone.getTimeZone("UTC")
+      dateFormatter.format(ISO8601Utils.parse(date, ParsePosition(0)))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ""
+    }
+  }
+
+  /**
+   * @return Format ISO date to [format]
+   */
+  fun formatISODate(
+    date: String,
+    format: String
+  ): String {
+    return try {
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.format(ISO8601Utils.parse(date, ParsePosition(0)))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ""
+    }
+  }
+
+  /**
    * Parse date from formatted date string using format specified
    *
    * @param date formatted [String] date
@@ -74,8 +109,19 @@ object DateUtils {
     }
   }
 
+//  fun parsePodDate(
+//    date: String,
+//    format: String
+//  ): Date {
+//    var inputFormat: DateFormat = SimpleDateFormat("yyyy-dd-MM")
+//    var outputFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss")
+//    var inputDateStr = "2020-09-01"
+//    var out = inputFormat.parse(inputDateStr)
+//    return outputFormat.format(date)
+//  }
+
   /**
-   * Calculate days diff from today
+   * @return parse date string and days diff of [date] from today
    */
   fun daysDiff(date: Date): Int {
     val cal = date.toCalendar()
@@ -83,6 +129,9 @@ object DateUtils {
     return cal[Calendar.DAY_OF_YEAR] - now[Calendar.DAY_OF_YEAR]
   }
 
+  /**
+   * @return days diff of [date] string from today
+   */
   fun daysDiffStr(
     date: String,
     format: String
@@ -111,7 +160,10 @@ object DateUtils {
     return daysDiffStr(requiredOn)
   }
 
-  fun convertToRelativeTimeStamp(actionTime: String?=""): String {
+  /**
+   * @return time stamp relative to current time
+   */
+  fun convertToRelativeTimeStamp(actionTime: String? = ""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(
           actionTime!!, DatePatterns.OrionDateFormat
@@ -120,20 +172,16 @@ object DateUtils {
         val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
         val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
         val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
-        if (days > 0) {
-          if (days <= 3) {
-            "$days day ago"
-          } else {
-            formatDate(
+        when {
+          days > 0 -> when {
+            days <= 3 -> "$days day ago"
+            else -> formatDate(
                 parseDate(actionTime, DatePatterns.OrionDateFormat), DatePatterns.SimpleDateFormat
             )
           }
-        } else if (hours > 0) {
-          "$hours hr $mins min ago"
-        } else if (mins > 0) {
-          "$mins min $secs s ago"
-        } else {
-          "Just now"
+          hours > 0 -> "$hours hr $mins min ago"
+          mins > 0 -> "$mins min $secs s ago"
+          else -> "Just now"
         }
       }
     } else {
@@ -147,5 +195,6 @@ object DateUtils {
  */
 object DatePatterns {
   const val SimpleDateFormat = "dd MMM yyyy"
+  const val PODDateFormat = "yyyy-MM-dd"
   const val OrionDateFormat = "yyyy-MM-dd'T'hh:mm:ss"
 }

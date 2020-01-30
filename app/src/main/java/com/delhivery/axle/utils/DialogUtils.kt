@@ -27,14 +27,29 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
    */
   fun datePicker(
     listener: DatePickerDialog.OnDateSetListener,
-    calendar: Calendar = Calendar.getInstance()
+    calendar: Calendar = Calendar.getInstance(),
+    minDate: Int = Int.MIN_VALUE,
+    maxDate: Int = Int.MAX_VALUE
   ) {
-    DatePickerDialog(
-        activity.baseContext, -1, listener,
+    val picker = DatePickerDialog(
+        activity, 0, listener,
         calendar[Calendar.YEAR],
         calendar[Calendar.MONTH],
         calendar[Calendar.DAY_OF_MONTH]
-    ).show()
+    )
+    if (minDate != Int.MIN_VALUE) {
+      val cal = Calendar.getInstance()
+      cal.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+      cal.add(Calendar.DATE, minDate)
+      picker.datePicker.minDate = cal.timeInMillis
+    }
+    if (maxDate != Int.MAX_VALUE) {
+      val cal = Calendar.getInstance()
+      cal.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
+      cal.add(Calendar.DATE, maxDate)
+      picker.datePicker.maxDate = cal.timeInMillis
+    }
+    picker.show()
   }
 
   /**
@@ -115,7 +130,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
   fun showErrorDialog(
     error: String,
     dismissTimeout: Long = -1
-  ): () -> Unit = {
+  ) {
     val dialog = ErrorDialog(activity, error, dismissTimeout)
     dialog.setOwnerActivity(activity)
     if (!activity.isFinishing)

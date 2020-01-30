@@ -27,32 +27,23 @@ class AnalyticsUtil @Inject constructor(
   val TAG = "Firebase events"
 
   private fun getAnalyticsObject(): FirebaseAnalytics? {
-    try {
-      return FirebaseAnalytics.getInstance(activity.applicationContext)
+    return try {
+      FirebaseAnalytics.getInstance(activity.applicationContext)
     } catch (e: Exception) {
-      return null
+      null
     }
   }
-
-  fun setUserPhone(phone: String) {
-    val analytics = getAnalyticsObject()
-    if (analytics != null) {
-      analytics.setUserProperty(CUSTOM_PHONE_NUMBER, phone)
-    }
-  }
-
+  
   fun trackEvent(
     event: String,
-    properties: List<String>,
-    values: List<String>
+    properties: List<String> = mutableListOf(),
+    values: List<String> = mutableListOf()
   ) {
     val analytics = getAnalyticsObject()
     if (analytics != null) {
       val bundle = Bundle()
-      var index = 0
-      for (property in properties) {
+      for ((index, property) in properties.withIndex()) {
         bundle.putString(property, values[index])
-        index++
       }
       Log.i(TAG, event)
       if (!TextUtils.isEmpty(userPrefs.phoneNumber)) {
@@ -63,43 +54,49 @@ class AnalyticsUtil @Inject constructor(
   }
 }
 
-val EVENT_PLACE_BID = "bid_place"
-val EVENT_ACCEPT_BID = "bid_accept"
-val EVENT_EDIT_BID = "bid_edit"
-val EVENT_SEARCH_LOAD = "search_load"
-val EVENT_SEARCH_SAVED_LOAD = "search_saved_load"
-val EVENT_SEARCH_LOCAL = "search_local"
-val EVENT_SEARCH_ERROR = "search_error"
-val EVENT_LIST_HEADER = "list_header"
-val EVENT_LIST_ITEM = "list_item"
-val EVENT_EDIT_ROUTE = "edit_route"
-val EVENT_TRIP_STATUS_HISTORY = "trip_status_history"
-val EVENT_PAYMENT_SUMMARY = "trip_payment_summary"
-val EVENT_OTP_SEND = "otp_send"
-val EVENT_OTP_RESEND = "otp_resend"
-val EVENT_OTP_VERIFIED = "otp_verify"
+const val EVENT_PLACE_BID = "bid_place"
+const val EVENT_ACCEPT_BID = "bid_accept"
+const val EVENT_EDIT_BID = "bid_edit"
+const val EVENT_SEARCH_LOAD = "search_load"
+const val EVENT_SEARCH_SAVED_LOAD = "search_saved_load"
+const val EVENT_SEARCH_LOCAL = "search_local"
+const val EVENT_SEARCH_ERROR = "search_error"
+const val EVENT_LIST_HEADER = "list_header"
+const val EVENT_LIST_ITEM = "list_item"
+const val EVENT_EDIT_ROUTE = "edit_route"
+const val EVENT_TRIP_STATUS_HISTORY = "trip_status_history"
+const val EVENT_PAYMENT_SUMMARY = "trip_payment_summary"
+const val EVENT_OTP_SEND = "otp_send"
+const val EVENT_OTP_RESEND = "otp_resend"
+const val EVENT_OTP_VERIFIED = "otp_verify"
+const val EVENT_POD_VIEWED = "pod_view"
+const val EVENT_POD_UPLOAD= "pod_upload"
+const val EVENT_CALL_HELPLINE= "helpline"
 
-val PROPERTY_TRANSACTION_ID = "transaction_id"
-val PROPERTY_ORIGIN = "origin"
-val PROPERTY_DESTINATION = "destination"
-val PROPERTY_TRUCK_TYPE = "truck_type"
-val PROPERTY_NUM_RESULTS = "num_result"
-val PROPERTY_TRANSACTION_TYPE = "type"
-val PROPERTY_SOURCE = "source"
-val PROPERTY_ITEM = "item"
+const val PROPERTY_TRANSACTION_ID = "transaction_id"
+const val PROPERTY_ORIGIN = "origin"
+const val PROPERTY_DESTINATION = "destination"
+const val PROPERTY_TRUCK_TYPE = "truck_type"
+const val PROPERTY_NUM_RESULTS = "num_result"
+const val PROPERTY_TRANSACTION_TYPE = "type"
+const val PROPERTY_SOURCE = "source"
+const val PROPERTY_ITEM = "item"
+const val PROPERTY_STATUS = "status"
 
-val VALUE_BID = "bid"
-val VALUE_TRIP = "trip"
-val VALUE_LOAD = "load"
-val VALUE_ACTIVE = "active"
-val VALUE_CONFIRMED = "confirmed"
-val VALUE_LOST = "lost"
-val VALUE_LOAD_INFO = "info_load"
-val VALUE_NO_RESULTS = "no_results"
-val VALUE_PROFILE = "profile"
-val VALUE_ADVANCE_PENDING = "advance pending"
-val VALUE_BALANCE_PENDING = "balance pending"
-val VALUE_INTRANSIT = "intransit"
-val VALUE_COMPLETED = "completed"
+const val VALUE_BID = "bid"
+const val VALUE_TRIP = "trip"
+const val VALUE_LOAD = "load"
+const val VALUE_ACTIVE = "active"
+const val VALUE_CONFIRMED = "confirmed"
+const val VALUE_LOST = "lost"
+const val VALUE_LOAD_INFO = "info_load"
+const val VALUE_NO_RESULTS = "no_results"
+const val VALUE_PROFILE = "profile"
+const val VALUE_ADVANCE_PENDING = "advance pending"
+const val VALUE_BALANCE_PENDING = "balance pending"
+const val VALUE_INTRANSIT = "intransit"
+const val VALUE_COMPLETED = "completed"
+const val VALUE_SUCCESS = "success"
+const val VALUE_FAILURE = "failure"
 
-val CUSTOM_PHONE_NUMBER = "phone_number"
+const val CUSTOM_PHONE_NUMBER = "phone_number"

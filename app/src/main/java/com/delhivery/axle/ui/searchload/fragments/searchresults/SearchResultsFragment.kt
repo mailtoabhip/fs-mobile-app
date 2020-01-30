@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.Config
@@ -37,8 +38,12 @@ import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * Search results screen
+ */
 class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBinding, SearchResultsViewModel>(),
     SearchLoadsRVAdapterInterface {
 
@@ -54,7 +59,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   @Inject lateinit var dialogUtils: DialogUtils
 
-  @Inject lateinit var contactUtils: ContactUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -84,20 +89,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           .apply {
             when {
               it != null -> {
-                (_adapter.itemsList()
-                    .get(it.first).data as HomeBidsRequestItemData).transactionBid = it.second
+                (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
+                  it.second
                 _adapter.notifyItemChanged(it.first)
               }
             }
           }
     })
 
-    /* transform observe search results */
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-        /* add all transactions */
         if (it.isNullOrEmpty()) {
-          //TODO: add warning item
+          add(Pair(SearchLoadWarningItem_NoLoad, Add))
         } else {
           it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
         }
@@ -106,16 +109,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         .observe(this, SearchResultsObserver())
   }
 
-  /**
-   * Setup spinners
-   */
   private fun setupSpinners() {
     binding.spinnerTruckType.isEnabled = false
     binding.spinnerTruckType.isClickable = false
-    /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
-
-    }
+    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
   }
 
   /**
@@ -138,9 +135,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.origin = origin
     binding.destination = destination
     val pos = when (type) {
-      "Closed" -> 0
-      "Open" -> 1
-      else -> 2
+      "Closed" -> 1
+      "Open" -> 2
+      "Trailer" -> 3
+      else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
     viewModel.searchLoad(origin, destination, type)
@@ -175,7 +173,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
               ).show()
             }
           }
@@ -185,40 +183,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = Config.AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }
@@ -233,18 +207,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
-      val event: String
-      var numResults = 0
-
-      when (saveToHistory) {
+      val event: String = when (saveToHistory) {
         true -> {
-          event = EVENT_SEARCH_LOAD
+          EVENT_SEARCH_LOAD
         }
         false -> {
-          event = EVENT_SEARCH_SAVED_LOAD
+          EVENT_SEARCH_SAVED_LOAD
         }
       }
 
+      val numResults: Int
       if (t == null) {
         numResults = 0
         //error

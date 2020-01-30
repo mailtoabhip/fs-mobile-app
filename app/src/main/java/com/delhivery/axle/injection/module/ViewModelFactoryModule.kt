@@ -7,17 +7,26 @@ import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
-import com.delhivery.axle.ui.home.HomeViewModel
+import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
+import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
+import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
+import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardViewModel
+import com.delhivery.axle.ui.home.activity.home.HomeViewModel
+import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsViewModel
+import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
-import com.delhivery.axle.ui.home.fragments.payment.HomePaymentViewModel
+import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
+import com.delhivery.axle.ui.searchtrip.SearchViewModel
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
 import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailViewModel
@@ -27,6 +36,7 @@ import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
+import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import com.delhivery.axle.utils.ViewModelFactory
 import dagger.Binds
 import dagger.Module
@@ -41,9 +51,6 @@ import dagger.multibindings.IntoMap
 @Module
 abstract class ViewModelFactoryModule {
 
-  /**
-   * Onboarding
-   */
   @Binds
   @IntoMap
   @ViewModelScope(SplashViewModel::class)
@@ -59,7 +66,6 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(OnboardingViewModel::class)
   abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
 
-  /* Select route */
   @Binds
   @IntoMap
   @ViewModelScope(SelectRouteWelcomeViewModel::class)
@@ -90,13 +96,11 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(SelectRouteDetailViewModel::class)
   abstract fun bindRouteDetailViewModel(selectRouteDetailViewModel: SelectRouteDetailViewModel): ViewModel
 
-  /* Home */
   @Binds
   @IntoMap
   @ViewModelScope(HomeViewModel::class)
   abstract fun bindHomeViewModel(homeViewModel: HomeViewModel): ViewModel
 
-  /* Home fragments */
   @Binds
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
@@ -114,11 +118,6 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(HomePaymentViewModel::class)
-  abstract fun bindHomePaymentViewModel(homePaymentViewModel: HomePaymentViewModel): ViewModel
-
-  @Binds
-  @IntoMap
   @ViewModelScope(HomeAlertsViewModel::class)
   abstract fun bindHomeAlertsViewModel(homeAlertsViewModel: HomeAlertsViewModel): ViewModel
 
@@ -127,13 +126,16 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(HomeProfileViewModel::class)
   abstract fun bindHomeProfileViewModel(homeProfileViewModel: HomeProfileViewModel): ViewModel
 
-  /* Bids */
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomePodViewModel::class)
+  abstract fun bindHomePodViewModel(viewModel: HomePodViewModel): ViewModel
+
   @Binds
   @IntoMap
   @ViewModelScope(BidsViewModel::class)
   abstract fun bindBidsViewModel(bidsViewModel: BidsViewModel): ViewModel
 
-  /* Bids */
   @Binds
   @IntoMap
   @ViewModelScope(TripsViewModel::class)
@@ -144,7 +146,6 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(BidDetailsViewModel::class)
   abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
 
-  /* Search load */
   @Binds
   @IntoMap
   @ViewModelScope(SearchLoadViewModel::class)
@@ -169,6 +170,56 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ImageViewModel::class)
   abstract fun bindImageViewModel(imageViewModel: ImageViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeWalletViewModel::class)
+  abstract fun bindHomeWalletViewModel(viewModel: HomeWalletViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionsViewModel::class)
+  abstract fun bindTransactionsViewModel(viewModel: TransactionsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionDetailViewModel::class)
+  abstract fun bindTransactionsDetailiewModel(viewModel: TransactionDetailViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BankTransferViewModel::class)
+  abstract fun bindBankTransferViewwModel(viewModel: BankTransferViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ActiveTripsViewModel::class)
+  abstract fun bindTripsFuelCardViewwModel(viewModel: ActiveTripsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(CreateFuelCardViewModel::class)
+  abstract fun bindCreateFuelCardViewwModel(viewModel: CreateFuelCardViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(WalletOnboardingViewModel::class)
+  abstract fun bindWalletOnboardingViewwModel(viewModel: WalletOnboardingViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(UploadImageViewModel::class)
+  abstract fun bindUploadImageViewModel(viewModel: UploadImageViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(DocketUpdateViewModel::class)
+  abstract fun bindDocketUpdateViewModel(viewModel: DocketUpdateViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchViewModel::class)
+  abstract fun bindSearchViewModel(viewModel: SearchViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

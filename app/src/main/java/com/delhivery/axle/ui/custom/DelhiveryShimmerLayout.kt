@@ -7,11 +7,14 @@ import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.delhivery.axle.R
 
+/**
+ * Shimmer layout
+ */
 class DelhiveryShimmerLayout(
   context: Context,
   attrs: AttributeSet?

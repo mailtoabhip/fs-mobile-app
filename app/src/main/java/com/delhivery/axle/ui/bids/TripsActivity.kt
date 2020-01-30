@@ -63,9 +63,9 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    if (intent == null || !intent.hasExtra(IntentExtraTripTypeKey)) {
-      throw IllegalArgumentException("$IntentExtraTripTypeKey intent key missing")
-    }
+    require(
+        !(intent == null || !intent.hasExtra(IntentExtraTripTypeKey))
+    ) { "$IntentExtraTripTypeKey intent key missing" }
 
     /* get bid type from intent */
     viewModel.trip =
@@ -138,7 +138,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_TRIP, _item.transactionId)
         )
-        startActivity(tripDetailsIntent(_item, this))
+        startActivity(tripDetailsIntent(_item.key(), this))
       }
       HomeTripsTimeOutAction -> {
         refreshData()

@@ -8,11 +8,13 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.ui.home.HomeActivity
-import com.delhivery.axle.utils.FCMUtils
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.NavigationUtils
 import javax.inject.Inject
 
+/**
+ * Base Fragment for home fragments
+ */
 abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<B, VM>() {
 
   /* toolbar elevation Live Data */
@@ -23,7 +25,7 @@ abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseF
   @Inject lateinit var navigationUtils: NavigationUtils
 
   /* elevation default value */
-  protected val defToolbarElevation: Float  by lazy {
+  protected val defToolbarElevation: Float by lazy {
     resources.getDimension(R.dimen.toolbar_elevation)
   }
 

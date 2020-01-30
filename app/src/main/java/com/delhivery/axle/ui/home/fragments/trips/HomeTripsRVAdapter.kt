@@ -21,6 +21,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.TripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Warning
 
+/**
+ * RV Adapter for [HomeTripsFragment]
+ */
 class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     BaseFilterableDataRVAdapter<BaseHomeTripsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
@@ -75,7 +78,7 @@ class HomeTripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeTripsHeaderItem(), AddUpdate))
       add(Pair(HomeTripsProgressItem(), AddUpdate))
-      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout }
+      items.filter { it.type == TripItem || it.type == Warning || it.type == Timeout || it.type == Search }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

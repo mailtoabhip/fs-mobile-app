@@ -20,8 +20,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
     targetSdkVersion 29
-    versionCode 12
-    versionName "1.11"
+    versionCode 18
+    versionName "1.17"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -42,6 +42,12 @@ android {
     development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
+      resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resConfigs "en", "xxhdpi"
+    }
+    uat {
+      dimension "vanilla"
+      resValue "string", "app_name", "Stage Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
       resConfigs "en", "xxhdpi"
     }
@@ -106,8 +112,8 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   //Android support libs
-  implementation 'androidx.appcompat:appcompat:1.0.2'
-  implementation 'androidx.recyclerview:recyclerview:1.0.0'
+  implementation 'androidx.appcompat:appcompat:1.1.0'
+  implementation 'androidx.recyclerview:recyclerview:1.1.0'
   implementation 'com.google.android.material:material:1.0.0'
   implementation 'androidx.cardview:cardview:1.0.0'
 
@@ -163,12 +169,15 @@ dependencies {
   implementation 'com.auth0.android:jwtdecode:1.2.0'
 
   //Firebase
-  implementation 'com.google.firebase:firebase-core:17.2.0'
-  implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.0'
-  implementation 'com.google.firebase:firebase-config:19.0.1'
-  implementation 'com.google.firebase:firebase-messaging:20.0.0'
-
-  //Firebase crashlytics
+  implementation 'com.google.firebase:firebase-core:17.2.1'
+  implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.2'
+  implementation 'com.google.firebase:firebase-config:19.0.3'
+  implementation 'com.google.firebase:firebase-messaging:20.0.1'
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+  //AWS sdk
+  implementation 'com.amazonaws:aws-android-sdk-s3:2.15+'
+  implementation('com.amazonaws:aws-android-sdk-mobile-client:2.15+@aar') { transitive = true }
+  implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.15+@aar')
 }
 apply plugin: 'com.google.gms.google-services'

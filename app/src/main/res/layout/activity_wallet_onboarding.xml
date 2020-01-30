@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/white"
+      android:orientation="vertical"
+      >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@color/white"
+          android:padding="@dimen/size_8dp"
+          >
+
+        <RelativeLayout
+            android:id="@+id/view_bullet1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/container_step_1"
+            app:layout_constraintEnd_toStartOf="@+id/container_step_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_step_1"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="@dimen/size_18dp"
+              android:layout_height="@dimen/size_18dp"
+              android:background="@drawable/bg_bullet"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:text="1"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_12sp"
+              />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_step_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_white_boundary"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_8dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_bullet1"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_weight="0.2"
+              app:srcCompat="@drawable/ic_vehicle_loaded"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:layout_weight="0.8"
+              android:text="Truck Loaded"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:fontFamily="sans-serif-medium"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:id="@+id/view_connect_1"
+            android:layout_width="@dimen/size_2dp"
+            android:layout_height="0dp"
+            android:background="@color/heading_black"
+            app:layout_constraintBottom_toTopOf="@+id/view_bullet2"
+            app:layout_constraintEnd_toEndOf="@+id/view_bullet1"
+            app:layout_constraintStart_toStartOf="@+id/view_bullet1"
+            app:layout_constraintTop_toBottomOf="@+id/view_bullet1"
+            />
+
+        <RelativeLayout
+            android:id="@+id/view_bullet2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/container_step_2"
+            app:layout_constraintEnd_toStartOf="@+id/container_step_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_step_2"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="@dimen/size_18dp"
+              android:layout_height="@dimen/size_18dp"
+              android:background="@drawable/bg_bullet"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:text="2"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_12sp"
+              />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_step_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_white_boundary"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_8dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_bullet2"
+            app:layout_constraintTop_toBottomOf="@+id/container_step_1"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_weight="0.2"
+              app:srcCompat="@drawable/ic_money_in_wallet"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:layout_weight="0.8"
+              android:text="Advance received in Axle wallet"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:fontFamily="sans-serif-medium"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:id="@+id/view_connect_2"
+            android:layout_width="@dimen/size_2dp"
+            android:layout_height="0dp"
+            android:background="@color/heading_black"
+            app:layout_constraintBottom_toTopOf="@+id/view_bullet3"
+            app:layout_constraintEnd_toEndOf="@+id/view_bullet2"
+            app:layout_constraintStart_toStartOf="@+id/view_bullet2"
+            app:layout_constraintTop_toBottomOf="@+id/view_bullet2"
+            />
+
+        <RelativeLayout
+            android:id="@+id/view_bullet3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/container_step_3"
+            app:layout_constraintEnd_toStartOf="@+id/container_step_3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_step_3"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="@dimen/size_18dp"
+              android:layout_height="@dimen/size_18dp"
+              android:background="@drawable/bg_bullet"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:text="3"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_12sp"
+              />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_step_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_white_boundary"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_8dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_bullet3"
+            app:layout_constraintTop_toBottomOf="@+id/container_step_2"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_weight="0.2"
+              app:srcCompat="@drawable/ic_fuel_credit"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:layout_weight="0.8"
+              android:text="Purchase Fuel Credit for Driver"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:fontFamily="sans-serif-medium"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <View
+            android:id="@+id/view_connect_3"
+            android:layout_width="@dimen/size_2dp"
+            android:layout_height="0dp"
+            android:background="@color/heading_black"
+            app:layout_constraintBottom_toTopOf="@+id/view_bullet4"
+            app:layout_constraintEnd_toEndOf="@+id/view_bullet3"
+            app:layout_constraintStart_toStartOf="@+id/view_bullet3"
+            app:layout_constraintTop_toBottomOf="@+id/view_bullet3"
+            />
+
+        <RelativeLayout
+            android:id="@+id/view_bullet4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/container_step_4"
+            app:layout_constraintEnd_toStartOf="@+id/container_step_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/container_step_4"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="@dimen/size_18dp"
+              android:layout_height="@dimen/size_18dp"
+              android:background="@drawable/bg_bullet"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:text="4"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_12sp"
+              />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_step_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_white_boundary"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_8dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_bullet4"
+            app:layout_constraintTop_toBottomOf="@+id/container_step_3"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_weight="0.2"
+              app:srcCompat="@drawable/ic_money_to_bank"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:layout_weight="0.8"
+              android:text="Transfer the remaining amount to Bank"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:fontFamily="sans-serif-medium"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_step_5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:background="@drawable/bg_all_round_corner_white_boundary"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_8dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container_step_4"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_weight="0.2"
+              app:srcCompat="@drawable/ic_cashback"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:layout_marginStart="@dimen/size_16dp"
+              android:layout_weight="0.8"
+              android:text="Get 3% cashback on fuel once the trip ends"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              app:fontFamily="sans-serif-medium"
+              />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_understand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_48dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:text="I understand the flow for Axle Wallet"
+            app:layout_constraintBottom_toTopOf="@+id/btn_activate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container_step_5"
+            />
+
+        <TextView
+            android:id="@+id/btn_activate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_black_selector"
+            android:gravity="center"
+            android:paddingTop="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_16dp"
+            android:text="@string/label_get_started"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

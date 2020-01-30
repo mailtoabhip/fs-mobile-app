@@ -2,6 +2,9 @@ package com.delhivery.axle.api.request
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Payload for [RequestOTP]
+ */
 data class RequestOTP(@SerializedName("phone_number") val phoneNo: String) {
   companion object {
     /**
@@ -14,6 +17,9 @@ data class RequestOTP(@SerializedName("phone_number") val phoneNo: String) {
   }
 }
 
+/**
+ * Payload for [OTPLoginRequest]
+ */
 data class OTPLoginRequest(
   @SerializedName("phone_number") val phoneNo: String,
   @SerializedName("otp") val otp: String

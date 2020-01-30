@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
-    <import type="com.delhivery.axle.ui.auth.AuthenticationUIState"/>
+    <import type="com.delhivery.axle.ui.auth.AuthenticationUIState" />
     <variable
         name="viewModel"
         type="com.delhivery.axle.ui.auth.AuthenticationViewModel"
@@ -38,10 +38,10 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:paddingBottom="@dimen/size_24dp"
-          android:paddingEnd="@dimen/size_16dp"
           android:paddingStart="@dimen/size_24dp"
           android:paddingTop="@dimen/size_24dp"
+          android:paddingEnd="@dimen/size_16dp"
+          android:paddingBottom="@dimen/size_24dp"
           android:visibility="gone"
           bind:visibility="@{ state == AuthenticationUIState.PhoneNo }"
           >
@@ -81,17 +81,17 @@
               android:id="@+id/edit_phone_no"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginBottom="16dp"
-              android:layout_marginEnd="@dimen/size_8dp"
               android:layout_marginStart="@dimen/size_10dp"
               android:layout_marginTop="@dimen/size_16dp"
+              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginBottom="16dp"
               android:background="@drawable/bg_login_edit"
               android:digits="1234567890"
               android:imeOptions="actionDone"
               android:inputType="phone"
               android:maxLength="10"
-              android:paddingEnd="@dimen/size_8dp"
               android:paddingStart="@dimen/size_8dp"
+              android:paddingEnd="@dimen/size_8dp"
               android:text="@={ viewModel.phoneNo }"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_20sp"
@@ -100,19 +100,19 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_send_otp"
+            style="@style/ActionButton"
             android:layout_width="match_parent"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_8dp"
             android:text="@string/action_send_otp"
             bind:shadow="@{ @dimen/action_btn_elevation }"
-            style="@style/ActionButton"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_8dp"
             android:fontFamily="sans-serif"
             android:gravity="center_horizontal"
             android:letterSpacing="0.01"
@@ -132,8 +132,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_8dp"
             android:fontFamily="sans-serif"
             android:gravity="center_horizontal"
             android:letterSpacing="0.01"
@@ -150,10 +150,10 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:paddingBottom="@dimen/size_24dp"
-          android:paddingEnd="@dimen/size_16dp"
           android:paddingStart="@dimen/size_24dp"
           android:paddingTop="@dimen/size_24dp"
+          android:paddingEnd="@dimen/size_16dp"
+          android:paddingBottom="@dimen/size_24dp"
           bind:visibility="@{ state == AuthenticationUIState.OTP }"
           >
 
@@ -193,12 +193,12 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_resend_otp"
+            style="@style/ActionButton"
             android:layout_width="match_parent"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_8dp"
             android:text="@string/action_resend_otp"
             bind:shadow="@{ @dimen/action_btn_elevation }"
-            style="@style/ActionButton"
             />
 
       </androidx.appcompat.widget.LinearLayoutCompat>

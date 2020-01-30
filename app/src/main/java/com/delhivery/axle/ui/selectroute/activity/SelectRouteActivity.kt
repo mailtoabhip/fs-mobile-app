@@ -11,7 +11,7 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.ActivitySelectRouteBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
-import com.delhivery.axle.ui.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.AddNewRoute
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
@@ -38,6 +38,9 @@ import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListFra
 import com.delhivery.axle.utils.LocationFlowState
 import com.google.android.material.snackbar.Snackbar
 
+/**
+ * Handles route updation
+ */
 class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, SelectRouteViewModel>() {
 
   override fun getViewModelClass() = SelectRouteViewModel::class.java
@@ -89,15 +92,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
         if (!it.third.isNullOrEmpty()) {
           val routeModel = it.third.get(0)
-          currentRoute = RouteModel(
-              CityModel(routeModel.origin.city, routeModel.origin.cityId)
-          )
-          currentRoute?.destinations = it.third.get(0)
-              .destinations
+          currentRoute = RouteModel(CityModel(routeModel.origin.city, routeModel.origin.cityId))
+          currentRoute?.destinations = it.third[0].destinations
         } else {
-          currentRoute = RouteModel(
-              CityModel(it.first, it.second)
-          )
+          currentRoute = RouteModel(CityModel(it.first, it.second))
         }
         _fragment.route = currentRoute
         _fragment.populateRoute()
@@ -144,10 +142,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           currentRoute?.destinations = destinations.toMutableSet()
           viewModel.updateUserRoutes(
               currentRoute!!.expandLocations()
-          ) { _routeUpdateSuccess ->
-            if (_routeUpdateSuccess) {
-              viewModel.fetchUser { _userUpdateSuccess ->
-                when (_userUpdateSuccess) {
+          ) { routeUpdateSuccess ->
+            if (routeUpdateSuccess) {
+              viewModel.fetchUser { userUpdateSuccess ->
+                when (userUpdateSuccess) {
                   true -> {
                     setResult(Activity.RESULT_OK)
                     finish()
@@ -172,7 +170,9 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       LoadRequests -> {
         when (flowType) {
-          AddNewRoute -> navigationUtils.navigate(HomeActivity::class.java, true)
+          AddNewRoute -> navigationUtils.navigate(
+              HomeActivity::class.java, true
+          )
           EditRoute -> finish()
         }
       }
@@ -188,6 +188,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
 
           viewModel.updateUserRoutes(_routes) { _success ->
+            viewModel.setRoutesUpdated(route)
             finish()
           }
         }
@@ -195,6 +196,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       EditOrigin -> {
         (action as RouteEditOriginAction).apply {
           currentRoute = route
+          viewModel.setRoutesUpdated(route)
           navigate(OriginCityFragment)
         }
       }
@@ -205,7 +207,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 //    //handling if needed here
   }
 
-  override fun onAttachFragment(fragment: Fragment?) {
+  override fun onAttachFragment(fragment: Fragment) {
     super.onAttachFragment(fragment)
     when (fragment) {
       is SelectRouteDestinationFragment -> {
@@ -218,7 +220,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         if (currentRoute != null) {
           fragment.route = currentRoute
         } else if (viewModel.routes.size > 0) {
-          fragment.route = viewModel.routes.get(0)
+          fragment.route = viewModel.routes[0]
         }
       }
     }

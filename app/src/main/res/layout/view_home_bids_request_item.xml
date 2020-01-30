@@ -177,7 +177,7 @@
           android:id="@+id/text_bid_status"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
+          android:fontFamily="sans-serif-medium"
           android:gravity="end"
           android:text="@{request.bidStatus().status}"
           android:textSize="@dimen/text_16sp"

@@ -14,6 +14,9 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Sea
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
 
+/**
+ * RV item type for [HomeLoadsRVAdapter]
+ */
 enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Request(0),
   Progress(1),

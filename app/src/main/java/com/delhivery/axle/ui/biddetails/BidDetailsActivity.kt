@@ -17,22 +17,24 @@ import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.axle.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.Config.AxleSupportEmail
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * Bid detail screen
+ */
 class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
 
   init {
     hasInlineProgress = true
   }
 
-  @Inject lateinit var contactUtils: ContactUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -44,8 +46,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     super.onCreate(savedInstanceState)
 
     /* validate intent */
-    if (intent == null || !intent.hasExtra(TransactionIdIntentKey)) {
-      throw IllegalArgumentException("Required data $TransactionIdIntentKey not found")
+    try {
+      require(
+          !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
+      ) { "Required data $TransactionIdIntentKey not found" }
+    } catch (e: Exception) {
+      finish()
     }
 
     /* set transaction id */
@@ -57,7 +63,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Axle"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* setup live data observers */
@@ -72,14 +77,27 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
-        binding.textTargetPrice.text = binding.transaction?.bidAmount()
+          binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }
       }
     })
 
-    /* fetch transaction details */
+    binding.containerError.btnAction.setOnClickListener {
+      refreshData()
+    }
+
+    binding.refreshLayout.setOnRefreshListener {
+      refreshData()
+    }
+
+    refreshData()
+  }
+
+  private fun refreshData() {
+    binding.error = false
     viewModel.fetchTransactionDetails()
+    binding.executePendingBindings()
   }
 
   /**
@@ -89,13 +107,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
-          true -> uiUtils.showDelhiveryProgress(
-              "Getting details", "This usually takes few seconds to load. please be patient.",
-              "This usually takes few seconds to load. please be patient."
-          )
-          false -> uiUtils.hideDelhiveryProgress()
+          true -> {
+            binding.refreshLayout.isRefreshing = true
+            binding.refreshing = true
+          }
+          false -> {
+            binding.refreshLayout.isRefreshing = false
+          }
         }
       }
+      binding.executePendingBindings()
     }
   }
 
@@ -104,10 +125,21 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
-      t?.let { _transaction ->
-        binding.transaction = _transaction
-        title = _transaction.tripDisplayName()
+      binding.refreshing = false
+      if (t != null) {
+        t.let { _transaction ->
+          binding.error = false
+          binding.transaction = _transaction
+          title = _transaction.tripDisplayName()
+        }
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Time Out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
       }
+      binding.executePendingBindings()
     }
   }
 
@@ -130,9 +162,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
-                  lowestBid = when (state.lowestBid) {
-                    0.0, null -> ""
-                    else -> "Lowest Bid - ${state.lowestBid}"
+                  state.lowestAndUserBidPair.second?.let {
+                    lowestBid = when (state.lowestAndUserBidPair) {
+                      null -> ""
+                      else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                          state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
+                      )}" + if (state.isPMTIndent) "/MT" else ""
+                    }
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
                 }
@@ -141,19 +177,33 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   bidsRecieved = state.bidsCount
-                  lowestBid = when (state.lowestBid) {
-                    0.0, null -> ""
-                    else -> "Lowest Bid - ${state.lowestBid}"
+                  val userBid = state.lowestAndUserBidPair.first
+                  val lowestTBid = state.lowestAndUserBidPair.second
+                  lowestTBid?.let {
+                    if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+                      lowestBid = when (it) {
+                        null -> ""
+                        else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                            it.bidAmount
+                        )}" + if (state.isPMTIndent) "/MT" else ""
+                      }
+                      if (state.bidsCount > 1) {
+                        textUserBidAmountDiff.text =
+                          userBid?.diffFromLowestBid(it.bidAmount, state.isPMTIndent)
+                      }
+                    }
                   }
-                  if (state.bidsCount > 1) {
-                    textUserBidAmountDiff.text =
-                      state.userBid.diffFromLowestBid(state.lowestBid)
+
+                  userBid?.bidAmount?.let {
+                    val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
+                      StringUtils.formatAmount(it) + "/MT"
+                    } else {
+                      StringUtils.formatAmount(it)
+                    }
+                    textUserBidAmount.text = bid
                   }
-                  val bid = getString(string.label_user_bid_amount) + StringUtils.formatAmount(
-                      state.userBid.bidAmount
-                  )
-                  textUserBidAmount.text = bid
-                  btnEditBid.setOnClickListener { bidDialog(state.userBid) }
+
+                  btnEditBid.setOnClickListener { bidDialog(userBid) }
                 }
           }
           is BidDetailsUserBidState_LoadingBids -> {
@@ -178,9 +228,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
-                  val bidText = getString(string.msg_your_bid) + StringUtils.formatAmount(
-                      state.userBid.bidAmount
-                  )
+                  val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                    StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                  } else {
+                    StringUtils.formatAmount(state.userBid.bidAmount)
+                  }
                   textUserHighestBid.text = bidText
                 }
           }
@@ -206,7 +258,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }
@@ -214,40 +266,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_not_approved,
             string.msg_dialog_supplier_not_approved,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
             string.title_dialog_supplier_disabled,
             string.msg_dialog_supplier_disabled,
-            "EXIT", "MAIL US",
-            {
-              it.dismiss()
-            },
-            {
-              when (contactUtils.openGmail(receiver = AxleSupportEmail)) {
-                false -> {
-                  it.dismiss()
-                  uiUtils.showToast("Sorry...You don't have any mail app installed")
-                }
-                else -> {
-                }
-              }
-            }
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }

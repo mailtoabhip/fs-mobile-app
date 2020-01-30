@@ -3,12 +3,15 @@ package com.delhivery.axle.injection.module
 import android.content.Context
 import com.delhivery.axle.api.BidService
 import com.delhivery.axle.api.CityService
+import com.delhivery.axle.api.FuelService
+import com.delhivery.axle.api.LoadCycleService
 import com.delhivery.axle.api.NotificationService
 import com.delhivery.axle.api.PaymentService
 import com.delhivery.axle.api.TransactionService
 import com.delhivery.axle.api.TripService
 import com.delhivery.axle.api.UMSService
 import com.delhivery.axle.api.UserService
+import com.delhivery.axle.api.WalletService
 import com.delhivery.axle.api.WarehouseService
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
@@ -183,4 +186,39 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.NotificationService).create(
       NotificationService::class.java
   )
+
+  /**
+   * Provide [WalletService]
+   */
+  @Provides
+  @Singleton
+  fun provideWalletService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.WalletService).create(
+      WalletService::class.java
+  )
+
+  /**
+   * Provide [FuelService]
+   */
+  @Provides
+  @Singleton
+  fun provideFuelService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.FuelService).create(
+      FuelService::class.java
+  )
+
+  /**
+   * Provide [LoadCycleService]
+   */
+  @Provides
+  @Singleton
+  fun provideLoadCycleService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) =
+    getRetrofit(gson, okHttpClient, UrlConfig.LoadCycleService).create(LoadCycleService::class.java)
 }

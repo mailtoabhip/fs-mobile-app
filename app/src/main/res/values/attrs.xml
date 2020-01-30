@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="DelhiveryOTPViewEditText">
-    <attr format="boolean" name="state_error"/>
+    <attr format="boolean" name="state_error" />
   </declare-styleable>
 
   <declare-styleable name="DelhiveryOnboardingArcView">
     <attr format="enum" name="direction">
-      <enum name="top" value="0"/>
-      <enum name="bottom" value="1"/>
+      <enum name="top" value="0" />
+      <enum name="bottom" value="1" />
     </attr>
   </declare-styleable>
 
   <declare-styleable name="DelhiveryAutoFitTextView">
     <!-- Minimum size of the text. -->
-    <attr format="dimension" name="minTextSize"/>
+    <attr format="dimension" name="minTextSize" />
     <!-- Amount of precision used to calculate the correct text size to fit within its
     bounds. Lower precision is more precise and takes more time. -->
-    <attr format="float" name="precision"/>
+    <attr format="float" name="precision" />
     <!-- Defines whether to automatically resize text to fit to the view's bounds. -->
-    <attr format="boolean" name="sizeToFit"/>
+    <attr format="boolean" name="sizeToFit" />
+  </declare-styleable>
+
+  <declare-styleable name="DelhiveryTextInputLayout">
+    <attr format="boolean" name="error_state" />
+    <attr format="string" name="error_message" />
+    <attr format="string" name="max_val" />
+    <attr format="string" name="min_value" />
+    <attr format="integer" name="min_length" />
+    <attr format="integer" name="max_length" />
   </declare-styleable>
 </resources>

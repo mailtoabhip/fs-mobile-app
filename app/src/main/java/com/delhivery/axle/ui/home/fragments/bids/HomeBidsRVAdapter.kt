@@ -23,6 +23,9 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Searc
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
 
+/**
+ * RV adapter for [HomeBidsFragment]
+ */
 class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     BaseFilterableDataRVAdapter<BaseHomeBidsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
@@ -76,9 +79,8 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
-      add(Pair(HomeBidsSearchItem(), Remove))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
-      items.filter { it.type == Request || it.type == Warning || it.type == Timeout }
+      items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

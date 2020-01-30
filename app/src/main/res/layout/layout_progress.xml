@@ -22,7 +22,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_all_round_corner_black"
+        android:background="@drawable/bg_all_round_corner_grey"
         android:elevation="@dimen/size_4dp"
         android:gravity="center"
         android:orientation="vertical"

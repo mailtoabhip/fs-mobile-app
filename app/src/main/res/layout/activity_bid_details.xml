@@ -9,15 +9,28 @@
         name="viewModel"
         type="com.delhivery.axle.ui.biddetails.BidDetailsViewModel"
         />
+
     <variable
         name="transaction"
         type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
+
+    <variable
+        name="refreshing"
+        type="Boolean"
+        />
+
+    <variable
+        name="error"
+        type="Boolean"
+        />
+
     <import type="android.view.View" />
   </data>
+
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:animateLayoutChanges="true"
       android:orientation="vertical"
       >
@@ -30,198 +43,255 @@
         bind:shadow="@{ @dimen/size_4dp }"
         />
 
-    <ScrollView
+    <include
+        android:id="@+id/container_error"
+        layout="@layout/view_warning_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:layout_gravity="center_vertical"
+        android:visibility="@{error ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
+        />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="@{!error ? View.VISIBLE : View.GONE }"
+        tools:visibility="visible"
         >
-      <androidx.appcompat.widget.LinearLayoutCompat
+
+      <androidx.core.widget.NestedScrollView
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
+          android:layout_height="match_parent"
+          android:fillViewport="true"
           >
 
-        <!-- details container -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:padding="@dimen/size_24dp"
-            bind:shadow="@{ @dimen/size_2dp }"
+            android:orientation="vertical"
+            android:visibility="@{!refreshing &amp;&amp; !error ? View.VISIBLE : View.GONE }"
+            tools:visibility="visible"
             >
 
-          <TextView
-              android:id="@+id/text_from_label"
-              android:layout_width="wrap_content"
+          <!-- details container -->
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:fontFamily="sans-serif"
-              android:text="@string/label_from"
-              android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toTopOf="parent"
-              />
+              android:background="@color/colorPrimary"
+              android:padding="@dimen/size_24dp"
+              bind:shadow="@{ @dimen/size_2dp }"
+              >
 
-          <TextView
-              android:id="@+id/text_source"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_2dp"
-              android:fontFamily="sans-serif"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_16sp"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_from_label"
-              bind:htmlText="@{ @string/label_city_state(transaction.originCityName(), transaction.originStateName()) }"
-              tools:text="Panjim, Goa"
-              />
+            <TextView
+                android:id="@+id/text_from_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_from"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
-          <TextView
-              android:id="@+id/text_to_label"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_16dp"
-              android:fontFamily="sans-serif"
-              android:text="@string/label_to"
-              android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_source"
-              />
+            <TextView
+                android:id="@+id/text_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_2dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:text="@{transaction.originCityState()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_from_label"
+                tools:text="Panjim, Goa"
+                />
 
-          <TextView
-              android:id="@+id/text_destination"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_2dp"
-              android:fontFamily="sans-serif"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_16sp"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_to_label"
-              bind:htmlText="@{ @string/label_city_state(transaction.destinationCityName(), transaction.destinationStateName()) }"
-              tools:text="Andheri east, Mumbai, Maharashtra"
-              />
+            <TextView
+                android:id="@+id/text_to_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_to"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_source"
+                />
 
-          <TextView
-              android:id="@+id/text_date_time"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_16dp"
-              android:lineSpacingExtra="@dimen/text_4sp"
-              android:text="@{ transaction.requiredAt() }"
-              android:textColor="@color/white"
-              android:textSize="@dimen/text_12sp"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_destination"
-              bind:drawableResId="@{ transaction.requiredAtBg() }"
-              tools:background="@drawable/bg_date_today"
-              tools:text="TODAY"
-              />
+            <TextView
+                android:id="@+id/text_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_2dp"
+                android:fontFamily="sans-serif"
+                android:text="@{transaction.destinationCityState()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_to_label"
+                tools:text="Andheri east, Mumbai, Maharashtra"
+                />
 
-          <TextView
-              android:id="@+id/text_truck_details"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:fontFamily="sans-serif"
-              android:gravity="center_vertical"
-              android:text="@{ transaction.truckTypeDetails() }"
-              android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
-              app:layout_constraintBottom_toBottomOf="@id/text_date_time"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintTop_toTopOf="@id/text_date_time"
-              tools:text="Closed truck (32ft)"
-              />
+            <TextView
+                android:id="@+id/text_via_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_via"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_destination"
+                />
 
-          <androidx.appcompat.widget.AppCompatImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginEnd="@dimen/size_8dp"
-              app:layout_constraintBottom_toBottomOf="@id/text_truck_details"
-              app:layout_constraintEnd_toStartOf="@id/text_truck_details"
-              app:layout_constraintTop_toTopOf="@id/text_truck_details"
-              app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
-              tools:srcCompat="@drawable/ic_closed_truck"
-              />
+            <TextView
+                android:id="@+id/text_via_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_2dp"
+                android:fontFamily="sans-serif"
+                android:text="@{transaction.intermediaryStops()}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_via_label"
+                tools:text="Mumbai(Maharashtra), Jaipur(Rajasthan)"
+                />
 
-          <TextView
-              android:id="@+id/text_load_details"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_24dp"
-              android:fontFamily="sans-serif"
-              android:gravity="end"
-              android:text="@{ transaction.loadDetails() }"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_16sp"
-              android:textStyle="bold"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_date_time"
-              tools:text="Load: Pharmaceuticals"
-              />
+            <TextView
+                android:id="@+id/text_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:text="@{ transaction.requiredAt() }"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_via_destination"
+                bind:drawableResId="@{ transaction.requiredAtBg() }"
+                tools:background="@drawable/bg_date_today"
+                tools:text="TODAY"
+                />
 
-          <TextView
-              android:id="@+id/text_target_price_label"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_24dp"
-              android:fontFamily="sans-serif"
-              android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_12sp"
-              android:textStyle="normal"
-              android:visibility="gone"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_load_details"
-              />
+            <TextView
+                android:id="@+id/text_truck_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:text="@{ transaction.truckDetail() }"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/text_date_time"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_date_time"
+                tools:text="Closed truck (32ft)"
+                />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_truck_details"
+                app:layout_constraintEnd_toStartOf="@id/text_truck_details"
+                app:layout_constraintTop_toTopOf="@id/text_truck_details"
+                app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
+                tools:srcCompat="@drawable/ic_closed_truck"
+                />
+
+            <TextView
+                android:id="@+id/text_load_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{ transaction.loadDetails() }"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_date_time"
+                tools:text="Load: Pharmaceuticals"
+                />
+
+            <TextView
+                android:id="@+id/text_target_price_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_load_details"
+                />
+
+            <TextView
+                android:id="@+id/text_target_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.01"
+                android:lineSpacingExtra="-4sp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_24sp"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
+                tools:text="₹ 23900.00"
+                />
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+          <!-- bidding completed text -->
           <TextView
-              android:id="@+id/text_target_price"
-              android:layout_width="wrap_content"
+              android:id="@+id/text_bid_ended"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_4dp"
+              android:layout_marginBottom="@dimen/size_4dp"
+              android:background="@color/colorPrimary"
               android:fontFamily="sans-serif-medium"
-              android:letterSpacing="0.01"
-              android:lineSpacingExtra="-4sp"
-              android:textColor="@color/black"
-              android:textSize="@dimen/text_24sp"
+              android:gravity="center_horizontal"
+              android:padding="@dimen/size_14dp"
+              android:text="@string/label_bidding_ended"
+              android:textColor="#59181818"
+              android:textSize="@dimen/text_16sp"
               android:textStyle="normal"
               android:visibility="gone"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
-              tools:text="₹ 23900.00"
+              bind:shadow="@{ @dimen/size_2dp }"
               />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- bidding completed text -->
-        <TextView
-            android:id="@+id/text_bid_ended"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_4dp"
-            android:background="@color/colorPrimary"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/size_14dp"
-            android:text="@string/label_bidding_ended"
-            android:textColor="#59181818"
-            android:textSize="@dimen/text_16sp"
-            android:textStyle="normal"
-            android:visibility="gone"
-            bind:shadow="@{ @dimen/size_2dp }"
-            />
+          <!-- actions container -->
+          <FrameLayout
+              android:id="@+id/container_actions"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="@dimen/size_4dp"
+              />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <!-- actions container -->
-        <FrameLayout
-            android:id="@+id/container_actions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/size_4dp"
-            />
-      </androidx.appcompat.widget.LinearLayoutCompat>
-    </ScrollView>
+      </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
   </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

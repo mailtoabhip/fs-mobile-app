@@ -142,14 +142,8 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
     msg: String,
     duration: Int = Snackbar.LENGTH_SHORT
   ) {
-//        if (snackbar != null) {
-//            if (!snackbar!!.isShownOrQueued) {
-//                snackbar!!.show()
-//            }
-//        } else {
     snackbar = Snackbar.make(activityRoot, msg, duration)
     snackbar!!.show()
-//        }
   }
 
   /**

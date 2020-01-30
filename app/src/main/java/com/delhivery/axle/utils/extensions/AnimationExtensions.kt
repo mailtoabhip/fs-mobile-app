@@ -4,8 +4,8 @@ import android.animation.Animator
 import android.animation.Animator.AnimatorListener
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.view.View
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -13,7 +13,7 @@ import com.github.florent37.kotlin.pleaseanimate.please
 /**
  * Show error vibration with error state for [DelhiveryOTPViewEditText]
  */
-fun View.errorVibrate(start: Boolean = true) = resources.getDimension(R.dimen.distance_otp_vibrate)
+fun View.errorVibrate(start: Boolean = true): ObjectAnimator = resources.getDimension(R.dimen.distance_otp_vibrate)
     .let { distance ->
       ObjectAnimator.ofFloat(
           this, "translationX", 0f, distance, -distance, distance, -distance, 0f

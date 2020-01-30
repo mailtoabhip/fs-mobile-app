@@ -2,7 +2,9 @@ package com.delhivery.axle.ui.home.fragments.profile
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.response.MonthlyEarning
+import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.repository.TransactionsRepository
+import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -12,10 +14,13 @@ import javax.inject.Inject
 
 class HomeProfileViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
-  private val userPrefs: UserPrefs
+  private val userRepository: UserRepository,
+  val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
+
+  var userLiveData = MutableLiveData<UserModel>()
 
   fun fetchTripMeter() {
     compositeDisposable += transactionsRepository.transactionTripMeter()
@@ -41,7 +46,7 @@ class HomeProfileViewModel @Inject constructor(
                 .toSortedMap()
             tripEarningLiveData.postValue(earningMap)
           } else {
-            error.handle()
+            tripEarningLiveData.postValue(null)
           }
         }
   }
@@ -49,4 +54,5 @@ class HomeProfileViewModel @Inject constructor(
   fun logout() {
     userPrefs.clearPrefs()
   }
+
 }

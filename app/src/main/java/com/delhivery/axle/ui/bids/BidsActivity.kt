@@ -28,6 +28,9 @@ import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_BID
 
+/**
+ * Bid listing screen basis [BidType]
+ */
 class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     HomeBidsRVAdapterInterface {
 

@@ -9,6 +9,9 @@ import com.delhivery.axle.utils.prefs.GlobalPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * View model for [SplashActivity]]
+ */
 class SplashViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
   private val globalPrefs: GlobalPrefs,
@@ -23,5 +26,16 @@ class SplashViewModel @Inject constructor(
     !globalPrefs.isOnboardingCompleted -> Onboarding
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
     else -> Auth
+  }
+
+  /**
+   * Save PMT values from Firebase Config
+   */
+  fun savePMTValidation(
+    maxRate: Int,
+    maxCostPerKM: Int
+  ) {
+    userPrefs.maxPMTRate = maxRate
+    userPrefs.maxCostPerKM = maxCostPerKM
   }
 }

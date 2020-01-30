@@ -1,14 +1,12 @@
 package com.delhivery.axle.ui.selectroute.fragments.detail
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.StateModelList
@@ -89,12 +87,13 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     })
 
     binding.btnSave.setOnClickListener {
-      val _route = RouteModel(route!!.origin, selectedStates.toMutableSet())
-      action(RouteUpdateAction(_route))
+      route?.let {
+        action(RouteUpdateAction(RouteModel(it.origin, selectedStates.toMutableSet())))
+      }
     }
 
     binding.imgEditOrigin.setOnClickListener {
-      action(RouteEditOriginAction(route!!))
+      route?.let { action(RouteEditOriginAction(it)) }
     }
 
   }
@@ -128,11 +127,11 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   }
 
   override fun onCreateOptionsMenu(
-    menu: Menu?,
-    inflater: MenuInflater?
+    menu: Menu,
+    inflater: MenuInflater
   ) {
     super.onCreateOptionsMenu(menu, inflater)
-    inflater?.inflate(R.menu.menu_delete, menu)
+    inflater.inflate(R.menu.menu_delete, menu)
   }
 
   fun hide() {
@@ -173,7 +172,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
     states.forEach { t: StateModel ->
       t.checked = false
-      val selected = route!!.destinations.contains(t)
+      val selected = route?.destinations?.contains(t)?: false
       t.checked = selected
       if (selected) {
         selectedStates.add(t)

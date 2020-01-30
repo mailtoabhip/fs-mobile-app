@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="balance"
+        type="String"
+        />
+
+    <variable
+        name="active"
+        type="Boolean"
+        />
+
+    <variable
+        name="error"
+        type="Boolean"
+        />
+
+    <variable
+        name="loading"
+        type="Boolean"
+        />
+
+    <import type="android.view.View" />
+  </data>
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/white"
+      >
+
+    <LinearLayout
+        android:id="@+id/container_activate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="@{ !loading &amp;&amp; !active &amp;&amp; !error ? View.VISIBLE : View.GONE }"
+        android:weightSum="1"
+        tools:visibility="visible"
+        >
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="0.8"
+          >
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/pager_indicator"
+            />
+
+        <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator
+            android:id="@+id/pager_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_alignParentBottom="true"
+            />
+
+      </RelativeLayout>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/btn_activate"
+          android:layout_width="wrap_content"
+          android:layout_height="0dp"
+          android:layout_weight="0.2"
+          android:layout_gravity="end"
+          android:orientation="horizontal"
+          android:paddingBottom="@dimen/size_16dp"
+          >
+
+        <TextView
+            android:id="@+id/text_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="end"
+            android:padding="@dimen/size_16dp"
+            android:text="@string/label_next"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/img_next"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_next"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="@id/text_next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_next"
+            app:srcCompat="@drawable/ic_arrow_forward_black"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_wallet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        android:visibility="@{!loading &amp;&amp; active &amp;&amp; !error  ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
+        >
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_wallet"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          >
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <TextView
+                android:id="@+id/text_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="-2sp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_24sp"
+                app:layout_constraintStart_toStartOf="@+id/id2"
+                app:layout_constraintTop_toBottomOf="@+id/id2"
+                tools:text="₹ 23900.00"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/id1"
+                android:layout_width="@dimen/size_56dp"
+                android:layout_height="@dimen/size_56dp"
+                android:layout_marginStart="@dimen/size_32dp"
+                android:layout_marginTop="@dimen/size_32dp"
+                android:background="@drawable/bg_circular_boundary_black"
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_wallet"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/id2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:text="@string/label_your_balance"
+                app:layout_constraintStart_toEndOf="@+id/id1"
+                app:layout_constraintTop_toTopOf="@+id/id1"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/view_transaction_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text="@string/label_view_transaction_summary"
+                android:textColor="@color/heading_black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_balance"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:text="@string/label_transfer_amount"
+            android:textColor="@color/heading_black"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_fuel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_fuel"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_circular_boundary_black"
+                android:paddingTop="@dimen/size_10dp"
+                android:paddingBottom="@dimen/size_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fuel"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_fuel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_fuel_credit"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_fuel"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_bank"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_bank"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_circular_boundary_black"
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_bank"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_bank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_bank"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_bank"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_fast_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_6dp"
+            app:cardElevation="2dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              >
+
+            <TextView
+                android:id="@+id/sublabel_fast_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:text="@string/label_coming_soon"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
+                app:layout_constraintTop_toBottomOf="@+id/label_fast_tag"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_fast_tag"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_circular_boundary_disable"
+                android:paddingTop="@dimen/size_10dp"
+                android:paddingBottom="@dimen/size_10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_card"
+                app:tint="@color/transparent_grey"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_forward_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_fast_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/label_fastag"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/sublabel_fast_tag"
+                app:layout_constraintStart_toEndOf="@+id/img_fast_tag"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/container_error"
+        layout="@layout/view_warning_item"
+        android:visibility="@{ !loading &amp;&amp; error ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
+        />
+
+    <include
+        layout="@layout/view_bid_details_loading_bids"
+        android:visibility="@{ loading ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
+        />
+
+  </FrameLayout>
+
+</layout>

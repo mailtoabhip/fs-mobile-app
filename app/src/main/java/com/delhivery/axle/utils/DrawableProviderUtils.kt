@@ -2,8 +2,21 @@ package com.delhivery.axle.utils
 
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.data.transactions.TransactionChannel
+import com.delhivery.axle.data.transactions.TransactionChannel.HPCL
+import com.delhivery.axle.data.transactions.TransactionChannel.IOCL
+import com.delhivery.axle.data.transactions.TransactionType
+import com.delhivery.axle.data.transactions.TransactionType.ADVANCE_CREDIT
+import com.delhivery.axle.data.transactions.TransactionType.DEBIT
+import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_CREDIT
+import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_DEBIT
+import com.delhivery.axle.data.transactions.TransactionType.RECONCILIATION_DEBIT
 
+/**
+ * Helper class to set drawables/backgrounds
+ */
 object DrawableProviderUtils {
+
   /**
    * Get truck type drawable
    */
@@ -15,6 +28,27 @@ object DrawableProviderUtils {
   }
 
   /**
+   * Get transaction type drawable
+   */
+  @DrawableRes
+  fun transactionTypeDrawableRes(
+    type: TransactionType,
+    channel: TransactionChannel
+  ) = when (type) {
+    DEBIT -> {
+      when (channel) {
+        IOCL -> R.drawable.ic_fuel
+        HPCL -> R.drawable.ic_fuel
+        else -> R.drawable.ic_bank
+      }
+    }
+    ADVANCE_CREDIT -> R.drawable.ic_rupee_indian
+    PETRO_CASHBACK_CREDIT, PETRO_CASHBACK_DEBIT -> R.drawable.ic_fuel
+    RECONCILIATION_DEBIT -> R.drawable.ic_wallet
+    else -> R.drawable.ic_wallet
+  }
+
+  /**
    * Get days diff background
    */
   @DrawableRes
@@ -22,11 +56,10 @@ object DrawableProviderUtils {
     date: String,
     format: String
   ): Int {
-    val diff = DateUtils.daysDiff(DateUtils.parseDate(date, format))
-    if (diff <= 0) {
-      return R.drawable.bg_date_today
+    return if (DateUtils.daysDiff(DateUtils.parseDate(date, format)) <= 0) {
+      R.drawable.bg_date_today
     } else {
-      return R.drawable.bg_date_tomorrow
+      R.drawable.bg_date_tomorrow
     }
   }
 }

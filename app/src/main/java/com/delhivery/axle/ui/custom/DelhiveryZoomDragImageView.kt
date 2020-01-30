@@ -7,6 +7,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 
+/**
+ * Custom implementation of [AppCompatImageView] with zoom/drag/rotate features
+ */
 class DelhiveryZoomDragImageView(
   internal var context: Context,
   attr: AttributeSet

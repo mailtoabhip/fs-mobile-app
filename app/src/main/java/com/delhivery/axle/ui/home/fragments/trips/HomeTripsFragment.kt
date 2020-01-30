@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
@@ -40,6 +41,7 @@ import com.delhivery.axle.utils.PROPERTY_ITEM
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.REQCODE_NO_TRIPS
 import com.delhivery.axle.utils.VALUE_ADVANCE_PENDING
 import com.delhivery.axle.utils.VALUE_BALANCE_PENDING
 import com.delhivery.axle.utils.VALUE_COMPLETED
@@ -81,7 +83,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      /* remove user trips and fetch again */
       refreshData()
     }
 
@@ -96,20 +97,20 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     adapter.setItems(getStaticItems())
 
     /* observe and update adapter items */
-    viewModel.userTripsData.observe(this, Observer {
+    viewModel.userTripsData.reobserve(this, Observer {
       it?.let { _items ->
         adapter.operation(_items)
       }
     })
 
-    viewModel.tripsCountLiveData.observe(this, Observer {
+    viewModel.tripsCountLiveData.reobserve(this, Observer {
       _title = when (it) {
-        0, null -> "Ongoing Trips"
-        else -> "Ongoing Trips(" + it + ")"
+        0, null -> getString(string.label_ongoing_trips)
+        else -> "${getString(string.label_ongoing_trips)}($it)"
       }
     })
 
-    viewModel.dataLoadingLiveData.observe(this, Observer {
+    viewModel.dataLoadingLiveData.reobserve(this, Observer {
       isLoadingData = it ?: false
     })
 
@@ -126,9 +127,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   }
 
   private fun refreshData() {
-    /* remove user transactions */
     adapter.resetStaticData()
-    /* fetch again */
     fetchTripsData()
   }
 
@@ -153,7 +152,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         )
         context?.let {
           startActivity(
-              tripDetailsIntent(_item, it)
+              tripDetailsIntent(_item.key(), it)
           )
         }
       }
@@ -186,7 +185,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
         }
         valueAnimator.start()
 
-        stickyView.postDelayed(Runnable {
+        stickyView.postDelayed({
           stickyView.requestFocus()
           uiUtils.toggleKeyboard(false)
           toolbarElevationLiveData!!.postValue(0f)
@@ -200,7 +199,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_ADVANCE_PENDING)
         )
-        startActivityForResult(userTripsIntent(context!!, AdvancePending), REQUESTCODE_NOTRIPS)
+        startActivityForResult(userTripsIntent(context!!, AdvancePending), REQCODE_NO_TRIPS)
       }
 
       HomeTripsHeaderAction_BalancePending -> {
@@ -210,7 +209,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_BALANCE_PENDING)
         )
-        startActivityForResult(userTripsIntent(context!!, BalancePending), REQUESTCODE_NOTRIPS)
+        startActivityForResult(userTripsIntent(context!!, BalancePending), REQCODE_NO_TRIPS)
       }
 
       HomeTripsHeaderAction_InTransit -> {
@@ -220,7 +219,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_INTRANSIT)
         )
-        startActivityForResult(userTripsIntent(context!!, InTransit), REQUESTCODE_NOTRIPS)
+        startActivityForResult(userTripsIntent(context!!, InTransit), REQCODE_NO_TRIPS)
       }
 
       HomeTripsHeaderAction_Completed -> {
@@ -230,7 +229,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_COMPLETED)
         )
-        startActivityForResult(userTripsIntent(context!!, Completed), REQUESTCODE_NOTRIPS)
+        startActivityForResult(userTripsIntent(context!!, Completed), REQCODE_NO_TRIPS)
       }
 
       HomeTripsWarningAction_NoLoads -> {
@@ -254,7 +253,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      REQUESTCODE_NOTRIPS -> {
+      REQCODE_NO_TRIPS -> {
         if (resultCode == Activity.RESULT_OK) {
           action(NavigateHomeFragmentAction(LoadsFragment))
         }
@@ -335,5 +334,3 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
   }
 }
-
-private val REQUESTCODE_NOTRIPS = 12345

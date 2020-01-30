@@ -3,6 +3,7 @@ package com.delhivery.axle.repository
 import com.delhivery.axle.api.BidService
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
+import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -19,19 +20,6 @@ class BidsRepository @Inject constructor(
   private val userPrefs: UserPrefs
 ) : BaseRepository() {
 
-  private fun createList(
-    t1: Pair<Int, List<TransactionBid>>,
-    t2: Pair<Int, List<TransactionBid>>,
-    t3: Pair<Int, List<TransactionBid>>
-  ): Pair<Triple<Int, Int, Int>, MutableList<TransactionBid>> {
-    val count = Triple(t1.first, t2.first, t3.first)
-    val list: MutableList<TransactionBid> = mutableListOf()
-    list.addAll(t1.second)
-    list.addAll(t2.second)
-    list.addAll(t3.second)
-    return Pair(count, list)
-  }
-
   /**
    * Transaction Bids along with user bid and bid count
    *
@@ -41,12 +29,27 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
-        val lowest = (it.bids.minBy { b -> b.bidAmount })?.bidAmount ?: 0.0
-        val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
-            .firstOrNull()
-        Triple(Pair(userBid, lowest), it.bids, it.totalBids)
+        var hasPMT = false
+        var hasFTL = false
+        it.bids.forEach { it1 ->
+          when (it1.biddingType.toLowerCase()) {
+            "pmt" -> hasPMT = true
+            "ftl" -> hasFTL = true
+          }
+        }
+        var lowestBid: TransactionBid? = null
+        if ((hasPMT && !hasFTL) || (!hasPMT && hasFTL)) {
+          lowestBid = (it.bids.minBy { b -> b.bidAmount })
+        }
+        val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        Triple(
+            Pair(userBid, lowestBid), it.bids, it.totalBids
+        )
       }!!
 
+  /**
+   * Add/Update bid for loads
+   */
   fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
       .convertResponse()
       .map {
@@ -56,6 +59,9 @@ class BidsRepository @Inject constructor(
         userBid
       }!!
 
+  /**
+   * Bulk call to fetch bids
+   */
   fun bidsForLoads(
     transactions: List<HomeBidsRequestItemData>
   ) = bidService.bidsForLoads(
@@ -71,20 +77,30 @@ class BidsRepository @Inject constructor(
    * Create Bid
    */
   fun createBid(
+    isPMT: Boolean,
     transactionId: String,
-    amount: Int
-  ) = CreateTransactionBidRequest(
-      transactionId, userRepository.userId(), userPrefs.userName, amount, userPrefs.isTestUser
+    amount: Int,
+    pmtRate: Int,
+    commercialType: String
+  ) = CreateTransactionBidRequest.getRequest(
+      isPMT, transactionId, userRepository.userId(),
+      "${userPrefs.userName} ${userPrefs.pancard}",
+      amount, pmtRate, commercialType, userPrefs.isTestUser
   ).let { bidService.createTransactionBid(it) }
 
   /**
    * Edit bid
    */
   fun editBid(
+    isPMT: Boolean,
     transactionId: String,
     bidId: String,
-    amount: Int
-  ) = UpdateTransactionBidRequest(transactionId, bidId, amount, userRepository.userId())
+    amount: Int,
+    commercialType: String,
+    pmtRate: Int
+  ) = UpdateTransactionBidRequest.getRequest(
+      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType
+  )
       .let { bidService.updateTransactionBid(it) }
 
   /**
@@ -115,7 +131,7 @@ class BidsRepository @Inject constructor(
   fun userBidsSummary() = bidService.userBidsSummary(userRepository.userId()).convertResponse()
 
   /**
-   * Get lowest bid for [transactionIds]
+   * Get lowest bid for transactionIds
    */
   fun bulkLowestBidsForTransactions(bids: List<TransactionBid>) =
     bids.joinToString(separator = ",") { it.transactionId }

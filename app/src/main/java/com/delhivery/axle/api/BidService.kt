@@ -14,6 +14,9 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Query
 
+/**
+ * Handle network calls to Bid Service
+ */
 interface BidService {
 
   /**

@@ -9,6 +9,7 @@ import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.utils.extensions.convertResponse
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,9 +21,9 @@ class PaymentRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
-   * Fetch Trip's charges summary [TripChargesResponse]
+   * Fetch Trip's history, charges and payments summary
    */
-  fun chargesSummary(
+  fun historyChargesAndPayments(
     transactionId: String
   ): Single<Triple<List<TripHistoryModel>, List<TripChargesResponse>, List<TripPaymentsResponse>>> =
     Single.zip(
@@ -34,6 +35,29 @@ class PaymentRepository @Inject constructor(
           Triple(t1, t2, t3)
         }
     )
+
+  /**
+   * Fetch Trip's history and payments summary
+   */
+  fun historyAndPayments(
+    transactionId: String
+  ): Single<Pair<List<TripHistoryModel>, List<TripPaymentsResponse>>> =
+    Single.zip(
+        tripsService.tripHistory(transactionId).convertResponse(),
+        paymentService.tripPayments(transactionId).convertResponse(),
+        BiFunction<List<TripHistoryModel>, List<TripPaymentsResponse>,
+            Pair<List<TripHistoryModel>, List<TripPaymentsResponse>>> { t1, t2 ->
+          Pair(t1, t2)
+        }
+    )
+
+  /**
+   * Fetch Trip's charges summary
+   */
+  fun historyCharges(
+    transactionId: String
+  ): Single<List<TripChargesResponse>> =
+    paymentService.chargesSummary(transactionId).convertResponse()
 
   /**
    * Get bulk transactions using ids

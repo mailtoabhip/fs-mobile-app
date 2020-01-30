@@ -10,15 +10,17 @@
         type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
 
-    <import type="androidx.core.content.ContextCompat"/>
+    <import type="androidx.core.content.ContextCompat" />
+    <import type="android.view.View" />
+    <import type="com.delhivery.axle.ui.bids.TripType" />
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_6dp"
-      android:layout_marginEnd="@dimen/size_8dp"
       android:layout_marginStart="@dimen/size_8dp"
       android:layout_marginTop="@dimen/size_6dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_6dp"
       android:clickable="true"
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -97,6 +99,20 @@
           />
 
       <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="4sp"
+          android:text="@{trip.promiseDate()}"
+          android:visibility="@{ (trip.promiseDate == null || trip.promiseDate.isEmpty() || trip.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
+          app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/text_date_time"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredPromiseDateColor()) }"
+          tools:text="Today"
+          />
+
+      <TextView
           android:id="@+id/text_driver_details"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -125,6 +141,7 @@
           android:id="@+id/text_source_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:text="@{ trip.originCityName() }"
           android:textColor="@color/heading_black"
@@ -155,6 +172,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/size_24dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:text="@{ trip.destinationCityName() }"
           android:textColor="@color/heading_black"

@@ -6,15 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Pagination scroll listener
  */
-abstract class PaginationScrollListener(private val pageSize: Int) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+abstract class PaginationScrollListener(private val pageSize: Int) : RecyclerView.OnScrollListener() {
   override fun onScrolled(
-    recyclerView: androidx.recyclerview.widget.RecyclerView,
+    recyclerView: RecyclerView,
     dx: Int,
     dy: Int
   ) {
     super.onScrolled(recyclerView, dx, dy)
-    if (recyclerView.layoutManager is androidx.recyclerview.widget.LinearLayoutManager) {
-      (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager?)?.apply {
+    if (recyclerView.layoutManager is LinearLayoutManager) {
+      (recyclerView.layoutManager as LinearLayoutManager?)?.apply {
         val visibleItemCount = childCount
         val totalItemCount = itemCount
         val firstVisible = findFirstVisibleItemPosition()

@@ -13,6 +13,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * View model for [SearchLoadFragment]
+ */
 class SearchLoadFragmentViewModel @Inject constructor(
   private val appDB: AppDatabase,
   private val cityService: CityService

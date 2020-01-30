@@ -7,47 +7,78 @@ import com.delhivery.axle.BuildConfig
  */
 enum class UrlConfig(
   private val prod: String,
-  private val dev: String
+  private val dev: String,
+  private val uat: String
 ) {
   UMS(
       "https://api-ums.delhivery.com",
+      "https://api-stage-ums.delhivery.com",
       "https://api-stage-ums.delhivery.com"
   ),
   BidService(
       "https://orion-bid-api.delhivery.com",
-      "https://orion-bid-api-dev.delhivery.com"
+      "https://orion-bid-api-dev.delhivery.com",
+      "https://orion-bid-api-uat.delhivery.com"
   ),
   UserService(
       "https://orion-user-api.delhivery.com",
-      "https://orion-user-api-dev.delhivery.com"
+      "https://orion-user-api-dev.delhivery.com",
+      "https://orion-user-api-uat.delhivery.com"
   ),
   TransactionService(
       "http://orion-transaction-api.delhivery.com",
-      "http://orion-transaction-api-dev.delhivery.com"
+      "http://orion-transaction-api-dev.delhivery.com",
+      "http://orion-transaction-api-uat.delhivery.com"
   ),
   TripService(
       "https://orion-trip-api.delhivery.com",
-      "https://orion-trip-api-dev.delhivery.com"
+      "https://orion-trip-api-dev.delhivery.com",
+      "http://orion-trip-api-uat.delhivery.com"
   ),
   PaymentService(
       "https://orion-payment-api.delhivery.com",
-      "https://orion-payment-api-dev.delhivery.com"
+      "https://orion-payment-api-dev.delhivery.com",
+      "https://orion-payment-api-uat.delhivery.com"
   ),
   CityService(
       "https://orion-city-api.delhivery.com",
-      "https://orion-city-api-dev.delhivery.com"
+      "https://orion-city-api-dev.delhivery.com",
+      "https://orion-city-api-uat.delhivery.com"
   ),
   WarehouseService(
       "https://orion-warehouse-api.delhivery.com",
-      "https://orion-warehouse-api-dev.delhivery.com"
+      "https://orion-warehouse-api-dev.delhivery.com",
+      "https://orion-warehouse-api-uat.delhivery.com"
+  ),
+  WalletService(
+      "https://orion-wallet-api.delhivery.com",
+      "https://orion-wallet-api-dev.delhivery.com",
+      "https://orion-wallet-api-uat.delhivery.com"
   ),
   ImageService(
       "https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/",
-      "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/"
+      "https://e4l81arqid.execute-api.ap-southeast-1.amazonaws.com/poc/",
+      "https://szrwunpnp9.execute-api.us-east-1.amazonaws.com/default/"
   ),
   NotificationService(
       "https://orion-notification-api.delhivery.com",
-      "https://orion-notification-api-dev.delhivery.com"
+      "https://orion-notification-api-dev.delhivery.com",
+      "https://orion-notification-api-uat.delhivery.com"
+  ),
+  FuelService(
+      "https://orion-iocl-api.delhivery.com",
+      "https://orion-iocl-api.dev.delhivery.com",
+      "https://orion-iocl-api.uat.delhivery.com"
+  ),
+  DashboardUrl(
+      "https://orion.delhivery.com",
+      "https://orion-dev.delhivery.com",
+      "https://orion-uat.delhivery.com"
+  ),
+  LoadCycleService(
+      "https://orion-load-fullcycle-api.delhivery.com",
+      "https://orion-load-fullcycle-api-dev.delhivery.com",
+      "https://orion-load-fullcycle-api-uat.delhivery.com"
   );
 
   /**
@@ -56,6 +87,7 @@ enum class UrlConfig(
   fun url() =
     when (BuildConfig.FLAVOR) {
       "development" -> dev
+      "uat" -> uat
       else -> prod
     }
 }

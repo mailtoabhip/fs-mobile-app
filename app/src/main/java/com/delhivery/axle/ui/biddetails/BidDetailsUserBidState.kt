@@ -23,7 +23,8 @@ data class BidDetailsUserBidState_PlaceBidFirst(val bidsCount: Int = 0) : BidDet
 data class BidDetailsUserBidState_PlaceBid(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val lowestBid: Double
+  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_place_bid)
 
 /**
@@ -32,8 +33,8 @@ data class BidDetailsUserBidState_PlaceBid(
 data class BidDetailsUserBidState_EditBid(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val userBid: TransactionBid,
-  val lowestBid: Double
+  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
 
 /**
@@ -57,5 +58,6 @@ data class BidDetailsUserBidState_ConfirmedBid(
  */
 data class BidDetailsUserBidState_RejectedBid(
   val acceptedBid: TransactionBid,
-  val userBid: TransactionBid
+  val userBid: TransactionBid,
+  val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_rejected_bid)

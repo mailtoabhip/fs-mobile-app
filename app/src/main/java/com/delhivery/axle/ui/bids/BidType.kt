@@ -2,6 +2,9 @@ package com.delhivery.axle.ui.bids
 
 import com.delhivery.axle.data.bids.TransactionBidStatus
 
+/**
+ *  Enum to hold various Bid types
+ */
 enum class BidType(
   val typeId: Int,
   val status: TransactionBidStatus,

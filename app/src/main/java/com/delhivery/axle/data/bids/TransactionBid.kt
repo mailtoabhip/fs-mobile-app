@@ -11,9 +11,11 @@ data class TransactionBid(
   @SerializedName("bid_status") val _status: String,
   @SerializedName("trip_completed") val tripCompleted: Boolean,
   @SerializedName("supplier_name") val supplierName: String,
+  @SerializedName("bidding_type") val biddingType: String,
   @SerializedName("creation_date") val creationDate: String,
   @SerializedName("updation_date") val updationDate: String,
   @SerializedName("latest_bid") val bidAmount: Double,
+  @SerializedName("freight_cost") val pmtRate: Double? = null,
   @SerializedName("id") val id: String,
   @SerializedName("transaction_id") val transactionId: String
 ) : BaseKeyTypeModel<String>() {
@@ -32,13 +34,27 @@ data class TransactionBid(
     }
   }
 
-  fun diffFromLowestBid(lowestBid: Double) = (lowestBid - bidAmount).let { _diff ->
-    if (_diff.toInt() == 0) return "(Your Bid is same as lowest bid)"
-    when (_diff > 0) {
-      true -> "less"
-      false -> "more"
-    }.let { _x ->
-      "(Your Bid is ₹ ${StringUtils.formatAmount(abs(_diff))} $_x than lowest bid)"
+  /**
+   * @return diff from lowest bid
+   */
+  fun diffFromLowestBid(
+    lowestBid: Double,
+    isPMTIndent: Boolean
+  ): String {
+    val bid: Double
+    val bidText = if (isPMTIndent) {
+      bid = bidAmount
+      "PMT Bid"
+    } else {
+      bid = bidAmount
+      "Bid"
+    }
+    return if (bid > lowestBid) {
+      "(Your $bidText is ₹ ${StringUtils.formatAmount(
+          abs((bid - lowestBid))
+      )} more than lowest $bidText)"
+    } else {
+      "(Your $bidText is same as lowest $bidText)"
     }
   }
 
@@ -48,6 +64,9 @@ data class TransactionBid(
   fun status() = TransactionBidStatus.byStatusKey(_status)
 }
 
+/**
+ * Enum for Bid status
+ */
 enum class TransactionBidStatus(
   val statusKey: String,
   val status: String
@@ -59,9 +78,9 @@ enum class TransactionBidStatus(
 
   companion object {
     /**
-     * Status by response keyg
+     * Status by response key
      */
     fun byStatusKey(_status: String) =
-      values().filter { it.statusKey.safeEquals(_status) }.firstOrNull() ?: Open
+      values().firstOrNull { it.statusKey.safeEquals(_status) } ?: Open
   }
 }

@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.home.bids
 
+import android.text.TextUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -16,8 +17,13 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
+/**
+ *
+ * Transaction details
+ */
 data class HomeBidsRequestItemData(
   @SerializedName("material_type") val materialType: String,
   @SerializedName("pickup_location") val pickupLocation: String,
@@ -29,9 +35,18 @@ data class HomeBidsRequestItemData(
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
+  @SerializedName("intermediary_stop1") val stop1City: String,
+  @SerializedName("intermediary_stop1_state") val stop1State: String,
+  @SerializedName("intermediary_stop2") val stop2City: String,
+  @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
+  @SerializedName("pmt_rate") var pmtRate: Double,
+  @SerializedName("distance") var distance: Double,
+  @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -47,18 +62,89 @@ data class HomeBidsRequestItemData(
     0.0
   }
 
-  fun targetPriceString() = "₹ ${StringUtils.formatAmount(target())}"
-
+  /**
+   * @return formatted origin city name
+   */
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
+  /**
+   * @return formatted destination city name
+   */
   fun destinationCityName() = StringUtils.capitalize(destination) ?: ""
 
+  /**
+   * @return formatted origin state name
+   */
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
+  /**
+   * @return formatted destination state name
+   */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
-  fun pickUpLocationName() = StringUtils.capitalize(pickupLocation) ?: ""
+  /**
+   * @return formatted origin city, state
+   */
+  fun originCityState() = originCityName() + ", " + originStateName()
 
+  /**
+   * @return formatted destination city, state
+   */
+  fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+
+  /**
+   * @return intermediary stops
+   */
+  fun tripRoute(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+        .append(" - ")
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append(" - ")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(StringUtils.capitalize(stop2City))
+          .append(" - ")
+    }
+    stopBuilder.append(destinationCityName())
+    return stopBuilder.toString()
+  }
+
+  /**
+   * @return is trips is multi drop
+   */
+  fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
+
+  /**
+   * @return requested capacity
+   */
+  fun requestedCapacityMg() = "Guarantee: $requestedCapacityMg MT"
+
+  /**
+   * @return intermediary Stops string
+   */
+  fun intermediaryStops(): String {
+    val stopBuilder = StringBuilder()
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append("(")
+          .append(StringUtils.capitalize(stop1State))
+          .append(")")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(", ")
+          .append(StringUtils.capitalize(stop2City))
+          .append("(")
+          .append(StringUtils.capitalize(stop2State))
+          .append(")")
+    }
+    return stopBuilder.toString()
+  }
+
+  /**
+   * @return formatted bid amount
+   */
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
       Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
@@ -68,12 +154,18 @@ data class HomeBidsRequestItemData(
     ""
   }
 
+  /**
+   * @return bid label
+   */
   fun amountLabel() = when (bidStatus()) {
     Open, Rejected -> "Your Bid"
     Accepted -> "Confirmed Price"
     else -> ""
   }
 
+  /**
+   * @return truckTypeDrawable basis [truckType]
+   */
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
@@ -99,7 +191,9 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckTypeDetails() = truckDisplayName
+  fun truckDetail() = truckSpecification?.let {
+    it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+  }
 
   /**
    * Trip display name for toolbar title
@@ -112,21 +206,46 @@ data class HomeBidsRequestItemData(
       else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
     }
 
+  /**
+   * @return bid difference
+   */
   fun bidDifference(): String {
     if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
-      return transactionBid?.diffFromLowestBid(lowestBid!!) ?: ""
+      return transactionBid?.diffFromLowestBid(lowestBid!!, isPMTIndent()) ?: ""
     }
     return ""
   }
 
+  /**
+   * @return bid status
+   */
   fun bidStatus() = TransactionBidStatus.byStatusKey(transactionBid?._status ?: "na")
 
   override fun filter(query: String) =
     origin.contains(query, true) || destination.contains(query, true)
         || originState.contains(query, true) || destinationState.contains(query, true)
 
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(transactionBid?.bidAmount ?: 0.0)}"
+  /**
+   * @return bid text
+   */
+  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
+      transactionBid?.bidAmount ?: 0.0
+  )}" + if (isPMTIndent()) " /MT" else ""
+
+  /**
+   * @return true if indent type(pmt/ftl)
+   */
+  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
 }
+
+/**
+ * Truck specification detail
+ */
+data class TruckSpecification(
+  @SerializedName("default_MG") val defaultMG: Double,
+  @SerializedName("truck_display_name") val truckDispName: String
+)
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

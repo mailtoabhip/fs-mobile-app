@@ -24,6 +24,9 @@ import retrofit2.HttpException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
+/**
+ * View model for [AuthenticationActivity]
+ */
 class AuthenticationViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,
   private val userRepository: UserRepository,
@@ -91,12 +94,6 @@ class AuthenticationViewModel @Inject constructor(
         .flatMap { _otpRes ->
           userRepository.getUser(false)
               .map {
-                userPrefs.saveUser(it)
-                if (it.hasRoutes()) {
-                  userPrefs.cityCode = it.userRoutes()[0].origin.cityId
-                } else {
-                  userPrefs.cityCode = it.baseCityCode
-                }
                 val msg = if (_otpRes.second.isNotNullOrEmpty()) {
                   _otpRes.second
                 } else {
@@ -128,6 +125,9 @@ class AuthenticationViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Mark notification as read
+   */
   fun markNotificationRead(id: String) {
     compositeDisposable += notificationRepository.markNotificationRead(id)
         .onBackground()

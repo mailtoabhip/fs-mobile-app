@@ -34,4 +34,6 @@ object StringUtils {
 
   fun formatAmount(num: Double): String = DecimalFormat("##,##,##,###").format(num) ?: ""
 
+  fun formatDecimalAmount(num: Double): String = DecimalFormat("##,##,##,###.##").format(num) ?: ""
+
 }

@@ -12,19 +12,19 @@
       android:title="@string/label_nav_bids"/>
 
   <item
+      android:id="@+id/nav_pod"
+      android:icon="@drawable/ic_nav_trips"
+      android:title="@string/label_nav_pods"/>
+
+  <item
       android:id="@+id/nav_trips"
       android:icon="@drawable/ic_nav_trips"
       android:title="@string/label_nav_trips"/>
 
-  <!--<item-->
-  <!--android:id="@+id/nav_payments"-->
-  <!--android:icon="@drawable/ic_nav_payment"-->
-  <!--android:title="@string/label_nav_payment"/>-->
-
-  <!--<item-->
-  <!--android:id="@+id/nav_alerts"-->
-  <!--android:icon="@drawable/ic_nav_alerts"-->
-  <!--android:title="@string/label_nav_alerts"/>-->
+<!--  <item-->
+<!--      android:id="@+id/nav_wallet"-->
+<!--      android:icon="@drawable/ic_nav_payment"-->
+<!--      android:title="@string/label_nav_payment" />-->
 
   <item
       android:id="@+id/nav_profile"

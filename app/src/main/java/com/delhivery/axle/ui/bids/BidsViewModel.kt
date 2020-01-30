@@ -27,6 +27,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
+/**
+ * View model for [BidsActivity]
+ */
 class BidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val transactionsRepository: TransactionsRepository
@@ -107,8 +110,13 @@ class BidsViewModel @Inject constructor(
                 var index = 0
                 for (transaction in transactions) {
                   try {
-                    transaction.numBids = _res.third[index].numBids
-                    transaction.lowestBid = _res.third[index].minBid
+                    val lowestBid = _res.third.filter { b ->
+                      b.transactionId.safeEquals(
+                          transaction.transactionId
+                      )
+                    }[0]
+                    transaction.numBids = lowestBid.numBids
+                    transaction.lowestBid = lowestBid.minBid
                     transaction.loadPricePercent = _res.second.loadPricePercent
                     index++
                     transaction.transactionBid = bids.filter { b ->

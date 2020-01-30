@@ -11,14 +11,14 @@
         type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
         />
 
-    <import type="android.view.View"/>
+    <import type="android.view.View" />
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_12dp"
-      android:layout_marginEnd="@dimen/size_2dp"
       android:layout_marginStart="@dimen/size_2dp"
+      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginBottom="@dimen/size_12dp"
       android:clickable="true"
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -39,10 +39,10 @@
           android:layout_height="wrap_content"
           android:clickable="false"
           android:focusable="false"
-          android:paddingBottom="@dimen/size_8dp"
-          android:paddingEnd="@dimen/size_16dp"
           android:paddingStart="@dimen/size_16dp"
           android:paddingTop="@dimen/size_12dp"
+          android:paddingEnd="@dimen/size_16dp"
+          android:paddingBottom="@dimen/size_8dp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           >
@@ -51,6 +51,7 @@
             android:id="@+id/text_source_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:fontFamily="sans-serif"
             android:text="@{request.originCityName()}"
             android:textColor="@color/heading_black"
@@ -81,6 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_24dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif"
             android:text="@{request.destinationCityName()}"
             android:textColor="@color/heading_black"
@@ -132,13 +134,28 @@
             tools:text="Today"
             />
 
+        <TextView
+            android:id="@+id/text_capacity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@{request.requestedCapacityMg()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="@{ request.isPMTIndent() ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="@+id/text_load_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_load_details"
+            tools:text="Today"
+            />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_truck_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/text_truck_details"
+            app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/text_truck_details"
+            app:layout_constraintTop_toTopOf="@+id/text_date_time"
             app:srcCompat="@{ request.truckTypeDrawableRes() }"
             />
 
@@ -148,10 +165,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_8dp"
             android:fontFamily="sans-serif"
-            android:text="@{request.truckTypeDetails()}"
+            android:text="@{request.truckDetail()}"
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
             app:layout_constraintStart_toEndOf="@id/img_truck_type"
             app:layout_constraintTop_toTopOf="@id/text_date_time"
             tools:text="Goa Gao goa goa"
@@ -161,11 +179,11 @@
             android:id="@+id/text_load_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginTop="@dimen/size_6dp"
             android:fontFamily="sans-serif-medium"
             android:text="@{request.loadDetails()}"
             android:textColor="@color/colorAccent"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_date_time"
             tools:text="Goa goa goa"
@@ -187,10 +205,10 @@
             android:layout_height="wrap_content"
             android:background="@color/bid_placed_green"
             android:gravity="center"
-            android:paddingBottom="@dimen/size_14dp"
             android:paddingLeft="@dimen/size_16dp"
-            android:paddingRight="@dimen/size_16dp"
             android:paddingTop="@dimen/size_16dp"
+            android:paddingRight="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_14dp"
             android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
             tools:visibility="gone"
             >
@@ -247,10 +265,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/size_8dp"
-            android:paddingEnd="@dimen/size_16dp"
             android:paddingStart="@dimen/size_16dp"
             android:paddingTop="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_8dp"
             android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
             tools:visibility="visible"
             >
@@ -259,8 +277,8 @@
               android:id="@+id/btn_bid"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
-              android:layout_weight="1"
               android:layout_gravity="center_vertical"
+              android:layout_weight="1"
               android:background="@drawable/bg_load_action_btn"
               android:gravity="center_vertical"
               >
