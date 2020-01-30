@@ -92,11 +92,16 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
   private fun searchTrips(data: SearchRequest? = null) {
     val vehicleNumber = data?.vehicleNumber
     val lrNumber = data?.lr
-    if (vehicleNumber.isNullOrEmpty() && lrNumber.isNullOrEmpty()) {
+    if(!vehicleNumber.isNullOrEmpty() && !lrNumber.isNullOrEmpty()){
+      viewModel.request = SearchRequest(vehicleNumber = vehicleNumber, lr = lrNumber)
+    }else if(!vehicleNumber.isNullOrEmpty()){
+      viewModel.request = SearchRequest(vehicleNumber = vehicleNumber)
+    }else if(!lrNumber.isNullOrEmpty()){
+      viewModel.request = SearchRequest(lr = lrNumber)
+    }else{
       uiUtils.showSnackbar("Please enter search parameters")
       return
     }
-    viewModel.request = SearchRequest(vehicleNumber = vehicleNumber, lr = lrNumber)
     adapter.refresh()
     uiUtils.toggleKeyboard()
     viewModel.searchTrips()
