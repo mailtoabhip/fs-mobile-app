@@ -273,6 +273,8 @@ data class HomeTripsItemData(
     prefix: String
   ): String {
     val today = Calendar.getInstance()
+    today.set(Calendar.HOUR_OF_DAY, 0)
+    today.set(Calendar.MINUTE, 0)
     val diffInMillisec = today.timeInMillis - arrived.time
     val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
         .toInt()
