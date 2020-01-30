@@ -9,9 +9,7 @@ import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.AdvancePending
-import com.delhivery.axle.ui.bids.TripType.BalancePending
-import com.delhivery.axle.ui.bids.TripType.Completed
+import com.delhivery.axle.ui.bids.TripType.*
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
@@ -21,8 +19,7 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 data class HomeTripsItemData(
@@ -286,21 +283,15 @@ data class HomeTripsItemData(
    * Trip Status [TripStatus]
    */
   fun timeDiff() = when (tripStatus) {
-    TruckUnloaded.statusKey -> {
-      if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
-      else unloadingTime?.let {
-        getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
-      } ?: ""
-    }
-    EPodUploaded.statusKey -> {
-      if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
-      else unloadingTime?.let {
-        getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
-      } ?: ""
-    }
-    else -> {
-      ""
-    }
+      TruckUnloaded.statusKey, EPodUploaded.statusKey -> {
+          if (podDispatchDate.isNotNullOrEmpty()) "Courier Date: $podDispatchDate"
+          else unloadingTime?.let {
+              getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
+          } ?: ""
+      }
+      else -> {
+          ""
+      }
   }
 
   /**
@@ -313,31 +304,20 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun podTimeColor() = when (tripStatus) {
-    TruckUnloaded.statusKey -> {
-      if (podDispatchDate.isNotNullOrEmpty()) {
-        ColorProviderUtils.getPODDateColor(
-            DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
-        )
-      } else unloadingTime?.let {
-        ColorProviderUtils.getPODDateColor(
-            DateUtils.parseDate(it, OrionDateFormat)
-        )
-      } ?: R.color.sub_heading_black
-    }
-    EPodUploaded.statusKey -> {
-      if (podDispatchDate.isNotNullOrEmpty()) {
-        ColorProviderUtils.getPODDateColor(
-            DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
-        )
-      } else unloadingTime?.let {
-        ColorProviderUtils.getPODDateColor(
-            DateUtils.parseDate(it, OrionDateFormat)
-        )
-      } ?: R.color.sub_heading_black
-    }
-    else -> {
-      R.color.sub_heading_black
-    }
+      TruckUnloaded.statusKey, EPodUploaded.statusKey -> {
+          if (podDispatchDate.isNotNullOrEmpty()) {
+              ColorProviderUtils.getPODDateColor(
+                      DateUtils.parseDate(podDispatchDate!!, OrionDateFormat)
+              )
+          } else unloadingTime?.let {
+              ColorProviderUtils.getPODDateColor(
+                      DateUtils.parseDate(it, OrionDateFormat)
+              )
+          } ?: R.color.sub_heading_black
+      }
+      else -> {
+          R.color.sub_heading_black
+      }
   }
 
   override fun filter(query: String) =
