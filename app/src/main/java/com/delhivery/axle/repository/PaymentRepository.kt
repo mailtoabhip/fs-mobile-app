@@ -10,7 +10,6 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.utils.extensions.convertResponse
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function3
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,22 +18,6 @@ class PaymentRepository @Inject constructor(
   private val paymentService: PaymentService,
   private val tripsService: TripService
 ) : BaseRepository() {
-
-  /**
-   * Fetch Trip's history, charges and payments summary
-   */
-  fun historyChargesAndPayments(
-    transactionId: String
-  ): Single<Triple<List<TripHistoryModel>, List<TripChargesResponse>, List<TripPaymentsResponse>>> =
-    Single.zip(
-        tripsService.tripHistory(transactionId).convertResponse(),
-        paymentService.chargesSummary(transactionId).convertResponse(),
-        paymentService.tripPayments(transactionId).convertResponse(),
-        Function3<List<TripHistoryModel>, List<TripChargesResponse>, List<TripPaymentsResponse>,
-            Triple<List<TripHistoryModel>, List<TripChargesResponse>, List<TripPaymentsResponse>>> { t1, t2, t3 ->
-          Triple(t1, t2, t3)
-        }
-    )
 
   /**
    * Fetch Trip's history and payments summary

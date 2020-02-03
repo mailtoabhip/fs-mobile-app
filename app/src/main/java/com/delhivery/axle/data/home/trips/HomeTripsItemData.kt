@@ -59,6 +59,9 @@ data class HomeTripsItemData(
   @SerializedName("pod_dispatch_docket_image") val podDispatchDocketImage: String?,
   @SerializedName("pod_dispatch_date") val podDispatchDate: String?,
   @SerializedName("status_update_info") val updateInfo: StatusUpdateInfo?,
+  @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
+  @SerializedName("damage_pending") val damagePending: Boolean? = false,
+  @SerializedName("detention_pending") val detentionPending: Boolean? = false,
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -393,6 +396,9 @@ data class ByUser(
   @SerializedName("by") val by: String
 ) : Serializable
 
+/**
+ * Trip status enum
+ */
 enum class TripStatus(
   val statusKey: String,
   val status: String

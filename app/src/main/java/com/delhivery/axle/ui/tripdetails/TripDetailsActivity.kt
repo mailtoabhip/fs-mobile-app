@@ -13,9 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.ChargeType
 import com.delhivery.axle.api.response.TripChargesResponse
+import com.delhivery.axle.api.response.TripPaymentsResponse
 import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
@@ -24,6 +24,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
+import com.delhivery.axle.databinding.ViewPaymentBreakupItemBinding
 import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
@@ -103,7 +104,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
 
     viewModel.historyLiveData.observe(this, Observer {
-      if (it) {
+      if (!viewModel.chargesSummary.isNullOrEmpty() &&
+          viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
+      ) {
+        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+      } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
     })
@@ -113,7 +118,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(viewModel.paymentSummary.toMutableList())
+      populatePaymentSummary(viewModel.chargesSummary.toMutableList())
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -131,7 +136,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.refreshing = true
     binding.error = false
     viewModel.tripHistory.clear()
-    viewModel.paymentSummary.clear()
+    viewModel.chargesSummary.clear()
+    viewModel.paymentsSummary.clear()
     viewModel.fetchTripDetails()
     binding.executePendingBindings()
   }
@@ -152,13 +158,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         )
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
-        if (t.second.tripStatus != TripStatus.TruckArrived.statusKey &&
-            t.second.tripStatus != TripStatus.TruckConfirmed.statusKey
-        ) {
-          viewModel.fetchPaymentSummary()
-        } else {
-          viewModel.fetchPayments()
-        }
+        viewModel.fetchPaymentSummary()
         viewModel.fetchChargesSummary()
       } else {
         binding.error = true
@@ -375,7 +375,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   }
 
   private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
-    // Capture event
     analyticsUtil.trackEvent(
         EVENT_PAYMENT_SUMMARY,
         mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
@@ -400,44 +399,56 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     )
     )
 
-    tripChargesSummary.forEach { _payment ->
-      if (_payment.payVendor != null && _payment.payVendor != 0.0) {
+    tripChargesSummary.forEach { charge ->
+      if (charge.payVendor != null && charge.payVendor != 0.0) {
         ViewPaymentSummaryItemBinding.inflate(
             layoutInflater, paymentSummaryBinding.containerPayment, false
         )
             .apply {
-              data = _payment
-              seprator.visibility = View.GONE
-              if (_payment.payVendor < 0) {
-                total -= _payment.payVendor
+              if (viewModel.tripDetail.chargesUpdated == true ||
+                  (charge.head == "loading_charge" && viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey &&
+                      viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey) ||
+                  charge.head == "freight"
+              ) {
+                data = charge
+                seprator.visibility = View.GONE
+                if (charge.payVendor < 0) {
+                  total -= charge.payVendor
+                  textChargeValue.setTextColor(
+                      ContextCompat.getColor(
+                          this@TripDetailsActivity,
+                          R.color.status_lost
+                      )
+                  )
+                } else {
+                  total += charge.payVendor
+                }
+                paymentSummaryBinding.containerPayment.addView(root)
+              }
+            }
+      }
+
+      if (charge.deductVendor != null && charge.deductVendor != 0.0) {
+        ViewPaymentSummaryItemBinding.inflate(
+            layoutInflater, paymentSummaryBinding.containerPayment, false
+        )
+            .apply {
+              if (viewModel.tripDetail.chargesUpdated == true || (charge.head == "loading_charge" &&
+                      viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey &&
+                      viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey) ||
+                  charge.head == "freight"
+              ) {
+                data = charge
+                seprator.visibility = View.GONE
                 textChargeValue.setTextColor(
                     ContextCompat.getColor(
                         this@TripDetailsActivity,
                         R.color.status_lost
                     )
                 )
-              } else {
-                total += _payment.payVendor
+                total -= charge.deductVendor
+                paymentSummaryBinding.containerPayment.addView(root)
               }
-              paymentSummaryBinding.containerPayment.addView(root)
-            }
-      }
-
-      if (_payment.deductVendor != null && _payment.deductVendor != 0.0) {
-        ViewPaymentSummaryItemBinding.inflate(
-            layoutInflater, paymentSummaryBinding.containerPayment, false
-        )
-            .apply {
-              data = _payment
-              seprator.visibility = View.GONE
-              textChargeValue.setTextColor(
-                  ContextCompat.getColor(
-                      this@TripDetailsActivity,
-                      R.color.status_lost
-                  )
-              )
-              total -= _payment.deductVendor
-              paymentSummaryBinding.containerPayment.addView(root)
             }
       }
     }
@@ -475,63 +486,69 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     paymentSummaryBinding.total =
       "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
 
-    val advance =
-      when (binding.tripDetails?.advanceDeduction()) {
-        true -> {
-          (viewModel.bidDetail?.advancePayout?.times(viewModel.userPrefs.tdsRate))?.div(100)
-              ?: 0.0
-        }
-        else -> {
-          viewModel.bidDetail?.advancePayout ?: 0.0
-        }
-      }
+    var advance = viewModel.bidDetail?.advancePayout ?: 0.0
 
-    if (advance > 0.0) {
-      paymentSummaryBinding.containerAdvance.visibility = View.VISIBLE
-      if (viewModel.advancePaidTime.isNotEmpty()) {
-        paymentSummaryBinding.labelAdvanceTime.visibility = View.VISIBLE
-        paymentSummaryBinding.advancePaidOn = "Paid on: ${viewModel.advancePaidTime}"
-      }
-      if (viewModel.advanceUTR.isNotEmpty()) {
-        paymentSummaryBinding.labelAdvanceUtr.visibility = View.VISIBLE
-        paymentSummaryBinding.advanceUTR = viewModel.advanceUTR
-      }
-
-      paymentSummaryBinding.advance = when (viewModel.advancePaid) {
-        true -> {
-          paymentSummaryBinding.labelAdvance.text = getString(string.label_advance_paid)
-          "₹ ${StringUtils.formatAmount(advance)}"
-        }
-        false -> {
-          paymentSummaryBinding.labelAdvance.text = getString(string.label_advance_pending)
-          "₹ ${StringUtils.formatAmount(advance)}"
-        }
+    if (viewModel.paymentsSummary.isEmpty()) {
+      viewModel.paymentsSummary.apply {
+        add(0, TripPaymentsResponse("advance_pending", "", advance, ""))
+        add(
+            1, TripPaymentsResponse(
+            "balance_pending", "",
+            total.minus(advance), "",
+            when {
+              viewModel.tripDetail.damagePending == true -> "Damage Pending"
+              viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+              else -> ""
+            }
+        )
+        )
       }
     } else {
-      paymentSummaryBinding.containerAdvance.visibility = View.GONE
+      val paymentMap = viewModel.paymentsSummary.map { it.head to it }
+          .toMap()
+          .toMutableMap()
+      val advancePayment = paymentMap["cash_advance"]
+      paymentMap.remove("cash_advance")
+      val loadingPayment = paymentMap["loading_charge"]
+      paymentMap.remove("loading_charge")
+      advancePayment?.let { it ->
+        loadingPayment?.let { it1 ->
+          advancePayment.amount += it1.amount
+        }
+        it.head = "advance_paid"
+        paymentMap["advance_paid"] = it
+      }
+      if (!viewModel.balancePaid) {
+        if (advancePayment != null)
+          advance = advancePayment.amount
+        paymentMap["balance_pending"] = TripPaymentsResponse(
+            "balance_pending", "",
+            total.minus(advance), "", when {
+          viewModel.tripDetail.damagePending == true -> "Damage Pending"
+          viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+          else -> ""
+        }
+        )
+      }
+      viewModel.paymentsSummary.apply {
+        clear()
+        addAll(paymentMap.values)
+      }
     }
 
-    val balance = (total * viewModel.userPrefs.tdsRate / 100).minus(advance)
-    if (viewModel.balancePaidTime.isNotEmpty()) {
-      paymentSummaryBinding.labelBalanceTime.visibility = View.VISIBLE
-      paymentSummaryBinding.balancePaidOn = "Paid on: ${viewModel.balancePaidTime}"
+    viewModel.paymentsSummary.forEach { _payment ->
+      ViewPaymentBreakupItemBinding.inflate(
+          layoutInflater, paymentSummaryBinding.containerPaymentBreakup, false
+      )
+          .apply {
+            _payment.amount = _payment.amount.times(viewModel.userPrefs.tdsRate)
+                .div(100)
+            data = _payment
+            paymentSummaryBinding.containerPaymentBreakup.addView(root)
+          }
     }
-    if (viewModel.balanceUTR.isNotEmpty()) {
-      paymentSummaryBinding.labelBalanceUtr.visibility = View.VISIBLE
-      paymentSummaryBinding.balanceUTR = viewModel.balanceUTR
-    }
-    paymentSummaryBinding.balance = when (viewModel.balancePaid) {
-      true -> {
-        paymentSummaryBinding.labelBalance.text = getString(string.label_balance_paid)
-        "₹ ${StringUtils.formatAmount(balance)}"
-      }
-      false -> {
-        paymentSummaryBinding.labelBalance.text = getString(string.label_balance_pending)
-        "₹ ${StringUtils.formatAmount(balance)}"
-      }
-    }
+
     paymentSummaryBinding.containerTotal.visibility = View.VISIBLE
-
     binding.containerHistory.addView(paymentSummaryBinding.root)
   }
 

@@ -135,153 +135,16 @@
               tools:text="Rs 3500.00"
               />
 
-          <androidx.constraintlayout.widget.ConstraintLayout
-              android:id="@+id/container_advance"
-              android:layout_width="match_parent"
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:id="@+id/container_payment_breakup"
+              android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_6dp"
-              android:orientation="horizontal"
+              android:orientation="vertical"
+              app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/label_total"
-              >
-
-            <View
-                android:id="@+id/id1"
-                android:layout_width="@dimen/size_8dp"
-                android:layout_height="@dimen/size_8dp"
-                android:background="@drawable/bg_circle"
-                app:layout_constraintBottom_toBottomOf="@id/label_advance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/label_advance"
-                />
-
-            <TextView
-                android:id="@+id/label_advance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                app:layout_constraintStart_toEndOf="@+id/id1"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Advance Paid"
-                />
-
-            <TextView
-                android:id="@+id/label_advance_utr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:text="@{advanceUTR}"
-                android:textColor="@color/heading_black"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/id1"
-                app:layout_constraintTop_toBottomOf="@+id/label_advance_time"
-                tools:text="Paid on: 12-11-2019"
-                />
-
-            <TextView
-                android:id="@+id/label_advance_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:text="@{advancePaidOn}"
-                android:textColor="@color/heading_black"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/id1"
-                app:layout_constraintTop_toBottomOf="@+id/label_advance"
-                tools:text="Paid on: 12-11-2019"
-                />
-
-            <TextView
-                android:id="@+id/text_advance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@{advance}"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/label_advance"
-                tools:text="Rs 1750.00"
-                />
-
-          </androidx.constraintlayout.widget.ConstraintLayout>
-
-          <androidx.constraintlayout.widget.ConstraintLayout
-              android:id="@+id/container_balance"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@+id/container_advance"
-              >
-
-            <View
-                android:id="@+id/id2"
-                android:layout_width="@dimen/size_8dp"
-                android:layout_height="@dimen/size_8dp"
-                android:background="@drawable/bg_circle"
-                app:layout_constraintBottom_toBottomOf="@id/label_balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/label_balance"
-                />
-
-            <TextView
-                android:id="@+id/label_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:layout_marginTop="@dimen/size_6dp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                app:layout_constraintStart_toEndOf="@+id/id2"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Balance Paid"
-                />
-
-            <TextView
-                android:id="@+id/label_balance_utr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:text="@{balancePaidOn}"
-                android:textColor="@color/heading_black"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/id2"
-                app:layout_constraintTop_toBottomOf="@+id/label_balance"
-                tools:text="Paid on: 12-11-2019"
-                />
-
-            <TextView
-                android:id="@+id/label_balance_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_4dp"
-                android:text="@{balanceUTR}"
-                android:textColor="@color/heading_black"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/id2"
-                app:layout_constraintTop_toBottomOf="@+id/label_balance_utr"
-                tools:text="Paid on: 12-11-2019"
-                />
-
-            <TextView
-                android:id="@+id/text_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@{balance}"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/label_balance"
-                tools:text="Rs 1750.00"
-                />
-
-          </androidx.constraintlayout.widget.ConstraintLayout>
+              />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

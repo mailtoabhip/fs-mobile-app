@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.response
 
+import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
@@ -31,7 +32,7 @@ data class TripChargesResponse(
   /**
    * return charge
    */
-  fun charges() = when {
+  fun charge() = when {
     payVendor != null && payVendor != 0.0 -> {
       if (payVendor > 0) "₹ ${StringUtils.formatAmount(abs(payVendor))}"
       else "- ₹ ${StringUtils.formatAmount(abs(payVendor))}"
@@ -64,23 +65,45 @@ data class BulkPaymentItem(
   @SerializedName("transaction_id") val transactionId: String
 )
 
-data class Payments(
-  @SerializedName("total_amount") val totalAmount: Double,
-  @SerializedName("cash_advance") val cashAdvance: Double,
-  @SerializedName("fuel_advance") val fuelAdvance: Double
-)
-
 /**
  * Trip Payments Response
  */
 data class TripPaymentsResponse(
-  @SerializedName("head") val head: String,
+  @SerializedName("head") var head: String,
   @SerializedName("bank_transaction_id") val bankTransactionId: String,
-  @SerializedName("amount") val amount: Double,
-  @SerializedName("updation_date") val updationTime: String
+  @SerializedName("amount") var amount: Double,
+  @SerializedName("updation_date") val updationTime: String,
+  @SerializedName("remarks")  var remark: String? = ""
 ) {
 
+  /**
+   * Return charge type
+   */
+  fun chargeType() = StringUtils.capitalize(head.replace("_", " "))
+
+  /**
+   * Return charge
+   */
+  fun charge() = "₹ ${StringUtils.formatAmount(amount)}"
+
+  /**
+   * Relative Time stamp
+   */
   fun timeStamp() = DateUtils.convertToRelativeTimeStamp(updationTime)
+
+  /**
+   * Time Stamp
+   */
+  fun dateTime() =
+    "Paid on: " + DateUtils.formatDate(
+        DateUtils.parseDate(updationTime, DatePatterns.OrionDateFormat),
+        DatePatterns.SimpleDateFormat
+    )
+
+  /**
+   * Bank transaction number
+   */
+  fun utr() = "UTR no: ${bankTransactionId}"
 
 }
 
