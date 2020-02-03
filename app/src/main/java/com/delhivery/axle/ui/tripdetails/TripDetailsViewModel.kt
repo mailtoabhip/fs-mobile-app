@@ -62,10 +62,12 @@ class TripDetailsViewModel @Inject constructor(
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
   var historyLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
+  var chargesLiveData = MutableLiveData<Boolean>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   /* payment summary */
-  var paymentSummary = mutableListOf<TripChargesResponse>()
+  var chargesSummary = mutableListOf<TripChargesResponse>()
+  var paymentsSummary = mutableListOf<TripPaymentsResponse>()
 
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
@@ -116,25 +118,9 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch history, charges and payments summary
+   * Fetch history and payments summary
    */
   fun fetchPaymentSummary() {
-    compositeDisposable += paymentRepository.historyAndPayments(transactionId)
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            processTrips(_res.first, _res.second)
-            historyLiveData.postValue(true)
-          } else {
-            error.handle()
-          }
-        }
-  }
-
-  /**
-   * Fetch history And Payments summary
-   */
-  fun fetchPayments() {
     compositeDisposable += paymentRepository.historyAndPayments(transactionId)
         .onBackground()
         .subscribe { _res, error ->
@@ -155,8 +141,9 @@ class TripDetailsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            paymentSummary.clear()
-            paymentSummary.addAll(_res)
+            chargesSummary.clear()
+            chargesSummary.addAll(_res)
+            chargesLiveData.postValue(!chargesSummary.isNullOrEmpty())
           }
         }
   }
@@ -165,6 +152,9 @@ class TripDetailsViewModel @Inject constructor(
     histories: List<TripHistoryModel>,
     payments: List<TripPaymentsResponse>
   ) {
+    paymentsSummary.clear()
+    paymentsSummary.addAll(payments)
+
     for ((index, history) in histories.withIndex()) {
       when (history.status().statusKey) {
         TripStatus.TruckConfirmed.statusKey -> {
@@ -242,8 +232,8 @@ class TripDetailsViewModel @Inject constructor(
                   tripHistory[AdvancePaid] = TripHistoryItem(
                       AdvancePaid,
                       "Advance Paid",
-                      "Advance payment of ₹ ${String.format(
-                          "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                      "Advance payment of ₹${String.format(
+                          "%,.0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                       )} has been paid$utrString",
                       history.timeStamp()
                   )
@@ -259,8 +249,8 @@ class TripDetailsViewModel @Inject constructor(
                       AdvancePending,
                       "Advance Pending",
                       "Advance payment of " +
-                          "₹ ${String.format(
-                              "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                          "₹${String.format(
+                              "%,.0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                           )}" +
                           " has been initiated"
                   )
@@ -367,8 +357,8 @@ class TripDetailsViewModel @Inject constructor(
               tripHistory[BalancePaid] = TripHistoryItem(
                   BalancePaid,
                   "Balance Paid",
-                  "Balance payment of ₹ ${String.format(
-                      "%, .0f", balancePay.amount
+                  "Balance payment of ₹${String.format(
+                      "%,.0f", balancePay.amount
                   )} has been paid$utrString",
                   balancePay.timeStamp()
               )
