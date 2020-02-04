@@ -3,9 +3,9 @@ package com.delhivery.axle.ui.home.fragments.trips
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
+import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsHeaderItemBinding
@@ -101,9 +101,9 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
       else -> item.data.advancePending
     }
 
-    binding.balacenPending = when (item.data.balancePending) {
+    binding.podPending = when (item.data.podPending) {
       null -> null
-      else -> item.data.balancePending
+      else -> item.data.podPending
     }
 
     binding.inTransit = when (item.data.inTransit) {
@@ -117,7 +117,7 @@ internal class HomeTripsHeaderItemVH(binding: ViewHomeTripsHeaderItemBinding) :
     }
 
     binding.viewAdvancePending.clickToAction(HomeTripsHeaderAction_AdvancePending, item, _interface)
-    binding.viewBalancePending.clickToAction(HomeTripsHeaderAction_BalancePending, item, _interface)
+    binding.viewPodPending.clickToAction(HomeTripsHeaderAction_PODPending, item, _interface)
     binding.viewInTransit.clickToAction(HomeTripsHeaderAction_InTransit, item, _interface)
     binding.viewCompleted.clickToAction(HomeTripsHeaderAction_Completed, item, _interface)
   }
