@@ -134,11 +134,27 @@
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="@dimen/text_10sp"
           android:text="@{trip.timeDiff()}"
-          bind:textColor="@{ ContextCompat.getColor(context, trip.podTimeColor()) }"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="@+id/text_lr"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.podTimeColor()) }"
           tools:text="12 days ageing"
           tools:textColor="@color/status_active"
+          />
+
+      <TextView
+          android:id="@+id/text_rejection_remark"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="end"
+          android:lineSpacingExtra="@dimen/text_10sp"
+          android:text="@{trip.epodRejectionRemark}"
+          android:textColor="@color/status_lost"
+          android:visibility="@{trip.epodRejectionRemark==null || trip.epodRejectionRemark.isEmpty()? View.GONE: View.VISIBLE}"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/img_forward"
+          app:layout_constraintTop_toTopOf="@+id/text_truck_details"
+          tools:text="12 days ageing"
           />
 
       <TextView
@@ -218,12 +234,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/size_8dp"
-            android:background="@drawable/bg_load_action_btn"
             android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            bind:drawableResId="@{ trip.podDrawable() }"
             bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 

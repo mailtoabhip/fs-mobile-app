@@ -62,6 +62,8 @@ data class HomeTripsItemData(
   @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
+  @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
+  @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -263,7 +265,33 @@ data class HomeTripsItemData(
   /**
    * @return pod action text
    */
-  fun podActionText() = if (podUrl.isNullOrEmpty()) "UPLOAD EPOD" else "VIEW EPOD"
+  fun podActionText() = when (tripStatus) {
+    TruckUnloaded.statusKey -> {
+      if (epodRejectionRemark.isNotNullOrEmpty()) PODStatus.REJECT.status else if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD.status else PODStatus.VIEWPOD.status
+    }
+    EPodUploaded.statusKey -> {
+      if (isEpodVerified == false) PODStatus.REVIEW.status else PODStatus.VIEWPOD.status
+    }
+    else -> if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD.status else PODStatus.VIEWPOD.status
+  }
+
+  /**
+   * Required at pod background
+   */
+  fun podDrawable() = when (podActionText()) {
+    PODStatus.REJECT.status -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.REJECT)
+    }
+    PODStatus.UPLOAD.status -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.UPLOAD)
+    }
+    PODStatus.REVIEW.status -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.REVIEW)
+    }
+    else -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.VIEWPOD)
+    }
+  }
 
   /**
    * @return pod action text
@@ -329,6 +357,16 @@ data class HomeTripsItemData(
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
+}
+
+enum class PODStatus(
+  val status: String,
+  val key: Int
+) {
+  REJECT("REJECTED", 1),
+  UPLOAD("UPLOAD EPOD", 2),
+  REVIEW("UNDER REVIEW", 3),
+  VIEWPOD("VIEW EPOD", 4);
 }
 
 /* actions */
