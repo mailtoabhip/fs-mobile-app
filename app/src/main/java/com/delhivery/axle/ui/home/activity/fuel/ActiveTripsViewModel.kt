@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.FuelRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
-import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.fuelcards.FuelCardData
@@ -26,9 +26,9 @@ import javax.inject.Inject
  * Viewmodel for [ActiveTripsActivity]
  */
 class ActiveTripsViewModel @Inject constructor(
-  private val tripsRepository: TripsRepository,
   private val fuelRepository: FuelRepository,
-  private val loadCycleRepository: LoadCycleRepository
+  private val loadCycleRepository: LoadCycleRepository,
+  private val userRepository: UserRepository
 ) : BaseViewModel() {
 
   private lateinit var cards: List<FuelCardData>
@@ -64,6 +64,7 @@ class ActiveTripsViewModel @Inject constructor(
 
     request.offset = offset
     request.limit = UserSearchLimit
+    request.vendorId = userRepository.userId()
     request.tripStatus = trip.status.joinToString(separator = ",") { it }
     request.updatedAfter = DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())

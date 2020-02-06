@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.ExpenseRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderItemData
@@ -34,6 +35,7 @@ import javax.inject.Inject
 class HomeTripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val loadCycleRepository: LoadCycleRepository,
+  private val userRepository: UserRepository,
   private val expenseRepository: ExpenseRepository
 ) : BaseViewModel() {
 
@@ -110,6 +112,7 @@ class HomeTripsViewModel @Inject constructor(
     request.offset = offset
     request.limit = UserSearchLimit
     request.tripStatus = statuses
+    request.vendorId = userRepository.userId()
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .flatMap { t ->
           offset += t.trips.size
