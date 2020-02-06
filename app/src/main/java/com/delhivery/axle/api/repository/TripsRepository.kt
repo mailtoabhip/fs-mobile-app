@@ -21,21 +21,6 @@ class TripsRepository @Inject constructor(
 ) : BaseRepository() {
 
   /**
-   * @status set null to fetch all trips or add any comma separated trip statuses
-   * Get user trips for multiple statuses
-   *
-   */
-  fun trips(
-    offset: Int = 0,
-    statuses: String,
-    updatedAfter: String? = null
-  ) = tripsService.tripsForStatuses(
-      userRepository.userId(), UserTripsLoadLimit,
-      offset, statuses, updatedAfter
-  )
-      .convertResponse()
-
-  /**
    * Complete trip details with transaction and trip history
    */
   fun tripAndTransactionDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =

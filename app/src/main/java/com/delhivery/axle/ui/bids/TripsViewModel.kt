@@ -3,7 +3,9 @@ package com.delhivery.axle.ui.bids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.ExpenseRepository
-import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -33,8 +35,8 @@ import javax.inject.Inject
  **
  */
 class TripsViewModel @Inject constructor(
-  private val tripsRepository: TripsRepository,
-  private val expenseRepository: ExpenseRepository
+  private val expenseRepository: ExpenseRepository,
+  private val loadCycleRepository: LoadCycleRepository
 ) : BaseViewModel() {
 
   /* user trips live data */
@@ -51,6 +53,7 @@ class TripsViewModel @Inject constructor(
   var hasMoreData = true
   var offset = 0
 
+  var request = SearchRequest()
   var tripType: TripType = Unknown
   var total = 0
 
@@ -72,9 +75,10 @@ class TripsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += tripsRepository.trips(
-        offset, tripType.status.joinToString(separator = ",") { it }
-    )
+    request.offset = offset
+    request.limit = UserSearchLimit
+    request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .flatMap { t ->
           offset += t.trips.size
           hasMoreData = t.hasNext

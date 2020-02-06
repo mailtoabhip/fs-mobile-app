@@ -12,6 +12,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var offset: Int? = null
   var vehicleNumber: String? = null
   var lr: String? = null
+  var updatedAfter: String? = null
   var limit: Int? = null
   var result: Int? = null
 
@@ -37,6 +38,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     vehicleNumber?.let { if (it.isNotEmpty()) jsonObject.addProperty("vehicle_number", it.toUpperCase()) }
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
+    updatedAfter?.let { if (it.isNotEmpty()) jsonObject.addProperty("updated_after", it) }
     offset?.let { jsonObject.addProperty("offset", it) }
     limit?.let { jsonObject.addProperty("limit", it) }
     return jsonObject

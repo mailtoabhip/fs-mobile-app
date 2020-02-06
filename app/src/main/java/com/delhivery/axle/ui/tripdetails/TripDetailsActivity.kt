@@ -414,6 +414,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 seprator.visibility = View.GONE
                 if (charge.payVendor < 0) {
                   total -= charge.payVendor
+                  textChargeType.setTextColor(
+                      ContextCompat.getColor(
+                          this@TripDetailsActivity,
+                          R.color.status_lost
+                      )
+                  )
                   textChargeValue.setTextColor(
                       ContextCompat.getColor(
                           this@TripDetailsActivity,
@@ -502,8 +508,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             "balance_pending", "",
             total.minus(advance), "",
             when {
-              viewModel.tripDetail.damagePending == true -> "Damage Pending"
-              viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+              viewModel.tripDetail.damagePending == true -> "Damage Issue"
+              viewModel.tripDetail.detentionPending == true -> "Detention Issue"
               else -> ""
             }
         )
@@ -530,8 +536,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         paymentMap["balance_pending"] = TripPaymentsResponse(
             "balance_pending", "",
             total.minus(advance), "", when {
-          viewModel.tripDetail.damagePending == true -> "Damage Pending"
-          viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+          viewModel.tripDetail.damagePending == true -> "Damage Issue"
+          viewModel.tripDetail.detentionPending == true -> "Detention Issue"
           else -> ""
         }
         )
