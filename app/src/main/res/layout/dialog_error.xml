@@ -32,7 +32,6 @@
           android:text="@string/label_error"
           android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           tools:text="Error"
           />
 

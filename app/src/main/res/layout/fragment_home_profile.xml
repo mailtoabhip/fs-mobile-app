@@ -103,8 +103,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_supplier_details"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -303,8 +301,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Physical POD Postal Address"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -317,7 +313,6 @@
                 android:text="Delhivery Pvt Ltd, Ground floor, Edificio Da Menezes E Silva, Sangolda, Near Holy Family Church, Goa 403501"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/id1"
                 />
@@ -352,8 +347,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_trip_meter"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -367,7 +360,6 @@
                 android:text="@string/label_card_subheading_trip_meter"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/id1"
                 />
@@ -400,7 +392,6 @@
                     android:text="This Month"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_10sp"
-                    android:textStyle="normal"
                     />
 
                 <TextView
@@ -423,7 +414,6 @@
                     android:text="@{currentMonth.count()}"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_12sp"
-                    android:textStyle="normal"
                     tools:text="35 trips"
                     />
 
@@ -450,7 +440,6 @@
                     android:text="Last Month"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_10sp"
-                    android:textStyle="normal"
                     />
 
                 <TextView
@@ -473,7 +462,6 @@
                     android:text="@{lastMonth.count()}"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_12sp"
-                    android:textStyle="normal"
                     tools:text="34 trips"
                     />
               </androidx.appcompat.widget.LinearLayoutCompat>
@@ -512,8 +500,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Payment Terms"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -561,8 +547,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_your_routes"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -576,7 +560,6 @@
                 android:text="@string/msg_view_edit_route_prefs"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_your_routes"
                 />
@@ -624,8 +607,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/action_logout_from_app"
                 android:textColor="#de000000"
-                android:textSize="14sp"
-                android:textStyle="normal"
                 />
 
             <View

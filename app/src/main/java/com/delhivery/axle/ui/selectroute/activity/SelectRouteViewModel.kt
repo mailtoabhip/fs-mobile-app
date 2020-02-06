@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.selectroute.activity
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
-import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground

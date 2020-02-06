@@ -1,4 +1,4 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest

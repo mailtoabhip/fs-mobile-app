@@ -36,7 +36,6 @@
         android:text="@string/msg_you_lost_bid"
         android:textColor="#181818"
         android:textSize="@dimen/text_16sp"
-        android:textStyle="normal"
         />
 
     <TextView
@@ -50,7 +49,6 @@
         android:lineSpacingExtra="@dimen/text_8sp"
         android:textColor="#181818"
         android:textSize="@dimen/text_12sp"
-        android:textStyle="normal"
         tools:text="(₹ 5000.00 more than target price)"
         />
 
@@ -66,7 +64,6 @@
         android:lineSpacingExtra="@dimen/text_8sp"
         android:textColor="#181818"
         android:textSize="@dimen/text_12sp"
-        android:textStyle="normal"
         tools:text="Your bid: ₹ 26200.00"
         />
   </androidx.appcompat.widget.LinearLayoutCompat>

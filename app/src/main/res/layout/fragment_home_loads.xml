@@ -89,7 +89,6 @@
                 android:text="Route preference not added"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_16sp"
-                android:textStyle="normal"
                 />
 
             <TextView
@@ -102,7 +101,6 @@
                 android:text="Add route details to see loads in your area"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>

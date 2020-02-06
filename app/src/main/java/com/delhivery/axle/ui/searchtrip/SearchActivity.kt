@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchAction_ResetTrip
 import com.delhivery.axle.api.request.SearchAction_SearchTrip
 import com.delhivery.axle.api.request.SearchRequest
@@ -21,7 +22,6 @@ import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.search.SearchTimeOutAction
 import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchBinding
-import com.delhivery.axle.repository.UserSearchLimit
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
@@ -266,7 +266,9 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(UserSearchLimit) {
+  inner class PaginationInterface : PaginationScrollListener(
+      UserSearchLimit
+  ) {
     override fun loadMore() = viewModel.searchTrips(true)
 
     override fun hasMore() = viewModel.hasMoreData

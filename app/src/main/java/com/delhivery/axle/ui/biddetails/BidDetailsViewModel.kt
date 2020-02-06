@@ -1,13 +1,13 @@
 package com.delhivery.axle.ui.biddetails
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.repository.BidsRepository
-import com.delhivery.axle.repository.TransactionsRepository
-import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground

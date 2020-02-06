@@ -2,9 +2,9 @@ package com.delhivery.axle.ui.home.activity.fuel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.FuelRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.data.fuelcards.FuelCardData
-import com.delhivery.axle.repository.FuelRepository
-import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add

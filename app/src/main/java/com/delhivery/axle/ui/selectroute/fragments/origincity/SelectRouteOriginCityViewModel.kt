@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.selectroute.fragments.origincity
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.UserService
+import com.delhivery.axle.api.service.UserService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.convertResponse

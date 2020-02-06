@@ -25,13 +25,13 @@
         android:layout_width="@dimen/size_8dp"
         android:layout_height="@dimen/size_8dp"
         android:background="@drawable/bg_circle"
-        app:layout_constraintBottom_toBottomOf="@id/label_head"
+        app:layout_constraintBottom_toBottomOf="@id/label_advance_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/label_head"
+        app:layout_constraintTop_toTopOf="@id/label_advance_title"
         />
 
     <TextView
-        android:id="@+id/label_head"
+        android:id="@+id/label_advance_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_4dp"
@@ -44,7 +44,7 @@
         />
 
     <TextView
-        android:id="@+id/label_utr"
+        android:id="@+id/label_advance_utr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_4dp"
@@ -52,12 +52,12 @@
         android:textColor="@color/heading_black"
         android:visibility="@{data.bankTransactionId == null ||data.bankTransactionId.isEmpty()?View.GONE: View.VISIBLE}"
         app:layout_constraintStart_toEndOf="@+id/id1"
-        app:layout_constraintTop_toBottomOf="@+id/label_time"
+        app:layout_constraintTop_toBottomOf="@+id/label_advance_time"
         tools:text="UTR: 1234567890"
         />
 
     <TextView
-        android:id="@+id/label_time"
+        android:id="@+id/label_advance_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_4dp"
@@ -65,7 +65,7 @@
         android:textColor="@color/heading_black"
         android:visibility="@{data.bankTransactionId == null ||data.bankTransactionId.isEmpty()?View.GONE: View.VISIBLE}"
         app:layout_constraintStart_toEndOf="@+id/id1"
-        app:layout_constraintTop_toBottomOf="@+id/label_head"
+        app:layout_constraintTop_toBottomOf="@+id/label_advance_title"
         tools:text="Paid on: 12-11-2019"
         />
 
@@ -91,7 +91,7 @@
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/label_head"
+        app:layout_constraintTop_toTopOf="@+id/label_advance_title"
         tools:text="Rs 1750.00"
         />
 
