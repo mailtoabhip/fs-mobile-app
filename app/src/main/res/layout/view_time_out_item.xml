@@ -46,7 +46,6 @@
         android:text="@{ title }"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
-        android:textStyle="normal"
         tools:text="heading"
         />
 
@@ -63,7 +62,6 @@
         android:text="@{ subTitle }"
         android:textColor="@color/sub_heading_black"
         android:textSize="@dimen/text_12sp"
-        android:textStyle="normal"
         tools:text="sub heading"
         />
 

@@ -2,8 +2,8 @@ package com.delhivery.axle.utils
 
 import android.content.Intent
 import android.os.Bundle
+import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.injection.scope.ActivityScope
-import com.delhivery.axle.repository.AuthenticationRepository
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment

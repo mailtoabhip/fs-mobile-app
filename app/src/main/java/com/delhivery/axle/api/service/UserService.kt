@@ -1,4 +1,4 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest

@@ -2,18 +2,19 @@ package com.delhivery.axle.ui.bids
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.repository.PaymentRepository
-import com.delhivery.axle.repository.TripsRepository
+import com.delhivery.axle.api.repository.ExpenseRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.ui.bids.TripType.Unknown
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.trips.HomeCompletedTripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsSearchItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
 import com.delhivery.axle.utils.extensions.not
@@ -33,7 +34,7 @@ import javax.inject.Inject
  */
 class TripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
-  private val paymentRepository: PaymentRepository
+  private val expenseRepository: ExpenseRepository
 ) : BaseViewModel() {
 
   /* user trips live data */
@@ -50,15 +51,13 @@ class TripsViewModel @Inject constructor(
   var hasMoreData = true
   var offset = 0
 
-  var trip: TripType = Unknown
+  var tripType: TripType = Unknown
   var total = 0
 
   /**
    * Fetch user trips
    */
-  fun fetchTrips(
-    paginate: Boolean
-  ) {
+  fun fetchTrips(paginate: Boolean) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -74,14 +73,14 @@ class TripsViewModel @Inject constructor(
     dataLoadingLiveData.postValue(true)
 
     compositeDisposable += tripsRepository.trips(
-        offset, trip.status.joinToString(separator = ",") { it }
+        offset, tripType.status.joinToString(separator = ",") { it }
     )
         .flatMap { t ->
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
           tripsCountLiveData.postValue(total)
-          paymentRepository.bulkPaymentTransactions(t.trips)
+          expenseRepository.bulkExpense(t.trips)
         }
         .onBackground()
         .subscribe { _res, error ->
@@ -94,7 +93,6 @@ class TripsViewModel @Inject constructor(
 
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
-                add(Pair(HomeTripsSearchItem(), Remove))
                 add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
               }
               /* post all trips with their respective payments as add */
@@ -107,7 +105,11 @@ class TripsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                  add(Pair(HomeTripsItem(trip), Add))
+                  if (trip.tripStatus() == Completed) {
+                    add(Pair(HomeCompletedTripItem(trip), Add))
+                  } else {
+                    add(Pair(HomeTripsItem(trip), Add))
+                  }
                 }
               }
             }
@@ -118,8 +120,6 @@ class TripsViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
-              /* remove search item */
-              add(Pair(HomeTripsSearchItem(), Remove))
               /* add api time out item */
               add(Pair(HomeTripsWarningItem_TimeOut, AddUpdate))
             }

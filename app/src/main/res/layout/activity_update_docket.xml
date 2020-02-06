@@ -221,7 +221,6 @@
             android:text="UPDATE"
             android:textColor="@color/white"
             android:textSize="@dimen/text_16sp"
-            android:textStyle="normal"
             />
 
       </androidx.appcompat.widget.LinearLayoutCompat>

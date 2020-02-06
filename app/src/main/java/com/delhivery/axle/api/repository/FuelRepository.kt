@@ -1,7 +1,7 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
-import com.delhivery.axle.api.FuelService
+import com.delhivery.axle.api.service.FuelService
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject

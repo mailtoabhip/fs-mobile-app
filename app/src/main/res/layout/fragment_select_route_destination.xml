@@ -38,7 +38,6 @@
         android:text="@{ @string/label_from_state(origin.state) }"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
-        android:textStyle="normal"
         />
 
     <TextView
@@ -50,8 +49,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_select_route_destinations"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         />
 
     <RelativeLayout

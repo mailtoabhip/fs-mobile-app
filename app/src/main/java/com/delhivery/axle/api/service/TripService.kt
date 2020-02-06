@@ -1,4 +1,4 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest

@@ -52,8 +52,7 @@
         android:letterSpacing="0.04"
         android:text="@string/label_powered_by_delhivery"
         android:textColor="#59ffffff"
-        android:textSize="12sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_12sp"
         />
 
     <View

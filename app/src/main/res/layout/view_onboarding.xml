@@ -31,7 +31,6 @@
         android:text="@{ title }"
         android:textColor="#de000000"
         android:textSize="20sp"
-        android:textStyle="normal"
         tools:text="Welcome to Axle!"
         />
 
@@ -44,8 +43,6 @@
         android:lineSpacingExtra="5sp"
         android:text="@{ message }"
         android:textColor="#99000000"
-        android:textSize="14sp"
-        android:textStyle="normal"
         tools:text="Glad to see that you have taken the right step towards the digitising logistics. We ensure you the best possible loads across the country."
         />
 

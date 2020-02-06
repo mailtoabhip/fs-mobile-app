@@ -1,4 +1,4 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
 /**
  * Base Repository

@@ -120,8 +120,6 @@
                 android:lineSpacingMultiplier="1.2"
                 android:text="@{ tripDetails.formattedDriverDetails() }"
                 android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_vehicle_no"
                 tools:text="Ram kumar,+919090909090"
@@ -172,7 +170,6 @@
                 android:text="@string/label_from"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -200,7 +197,6 @@
                 android:text="@string/label_to"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_source"
                 />
@@ -229,7 +225,6 @@
                 android:text="@string/label_via"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_destination"
@@ -334,7 +329,6 @@
                 android:text="@string/label_lr_number"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -362,7 +356,6 @@
                 android:text="@string/label_pickup_location"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
@@ -375,8 +368,6 @@
                 android:layout_marginEnd="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintEnd_toStartOf="@+id/id2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/id3"
@@ -419,8 +410,6 @@
                   android:paddingBottom="@dimen/size_16dp"
                   android:text="@string/label_status_history"
                   android:textColor="@color/black"
-                  android:textSize="@dimen/text_14sp"
-                  android:textStyle="normal"
                   />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -446,8 +435,6 @@
                   android:paddingBottom="@dimen/size_16dp"
                   android:text="@string/label_payment_summary"
                   android:textColor="@color/transparent_grey"
-                  android:textSize="@dimen/text_14sp"
-                  android:textStyle="normal"
                   />
             </androidx.appcompat.widget.LinearLayoutCompat>
           </androidx.appcompat.widget.LinearLayoutCompat>

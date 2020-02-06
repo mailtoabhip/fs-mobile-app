@@ -218,8 +218,6 @@
         android:lineSpacingExtra="4sp"
         android:text="@string/label_your_recent_search"
         android:textColor="@color/sub_heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         />
   </RelativeLayout>
 </layout>

@@ -2,16 +2,18 @@ package com.delhivery.axle.ui.home.fragments.trips
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.ExpenseRepository
+import com.delhivery.axle.api.repository.PaymentRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderItemData
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.repository.PaymentRepository
-import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -29,7 +31,8 @@ import javax.inject.Inject
  */
 class HomeTripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
-  private val payementRepository: PaymentRepository
+  private val payementRepository: PaymentRepository,
+  private val expenseRepository: ExpenseRepository
 ) : BaseViewModel() {
 
   /* user trips live data */
@@ -107,7 +110,7 @@ class HomeTripsViewModel @Inject constructor(
           hasMoreData = t.hasNext
           total = t.total
           tripsCountLiveData.postValue(total)
-          payementRepository.bulkPaymentTransactions(t.trips)
+          expenseRepository.bulkExpense(t.trips)
         }
         .onBackground()
         .subscribe { _res, error ->
@@ -130,12 +133,15 @@ class HomeTripsViewModel @Inject constructor(
                   try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
-                    }
-                        .get(0)
+                    }[0]
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                  add(Pair(HomeTripsItem(trip), Add))
+                  if (trip.tripStatus() == Completed) {
+                    add(Pair(HomeCompletedTripItem(trip), Add))
+                  } else {
+                    add(Pair(HomeTripsItem(trip), Add))
+                  }
                 }
               }
             }
