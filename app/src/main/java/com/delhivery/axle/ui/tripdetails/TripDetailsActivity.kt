@@ -440,6 +440,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               ) {
                 data = charge
                 seprator.visibility = View.GONE
+                textChargeType.setTextColor(
+                    ContextCompat.getColor(
+                        this@TripDetailsActivity,
+                        R.color.status_lost
+                    )
+                )
                 textChargeValue.setTextColor(
                     ContextCompat.getColor(
                         this@TripDetailsActivity,
