@@ -24,6 +24,7 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -38,7 +39,8 @@ import javax.inject.Inject
 class TripsViewModel @Inject constructor(
   private val expenseRepository: ExpenseRepository,
   private val loadCycleRepository: LoadCycleRepository,
-  private val userRepository: UserRepository
+  private val userRepository: UserRepository,
+  private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   /* user trips live data */
@@ -105,6 +107,7 @@ class TripsViewModel @Inject constructor(
               /* post all trips with their respective payments as add */
               else {
                 for (trip in trips) {
+                  trip.tds = userPrefs.tdsRate
                   try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)

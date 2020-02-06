@@ -116,54 +116,14 @@
           />
 
       <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/container_total"
+          android:id="@+id/container_advance"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_8dp"
           android:padding="@dimen/size_4dp"
-          app:layout_constraintEnd_toStartOf="@+id/container_advance"
+          app:layout_constraintEnd_toStartOf="@+id/container_balance"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_date_time"
-          >
-
-        <TextView
-            android:id="@+id/label_total_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center_horizontal"
-            android:text="Total"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/text_total"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@{trip.bidDetails.bidPrice()}"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label_total_title"
-            tools:text="Rs 1750.00"
-            />
-
-      </androidx.constraintlayout.widget.ConstraintLayout>
-
-      <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/container_advance"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:padding="@dimen/size_4dp"
-          app:layout_constraintEnd_toStartOf="@+id/container_balance"
-          app:layout_constraintStart_toEndOf="@+id/container_total"
-          app:layout_constraintTop_toTopOf="@id/container_total"
           >
 
         <TextView
@@ -220,7 +180,7 @@
           android:padding="@dimen/size_4dp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/container_advance"
-          app:layout_constraintTop_toTopOf="@+id/container_total"
+          app:layout_constraintTop_toTopOf="@+id/container_advance"
           >
 
         <TextView

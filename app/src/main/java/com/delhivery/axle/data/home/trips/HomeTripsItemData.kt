@@ -64,7 +64,8 @@ data class HomeTripsItemData(
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
-  var selectable: Boolean = false
+  var selectable: Boolean = false,
+  var tds: Int
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -347,6 +348,7 @@ data class HomeTripsItemData(
         amount += loadingChargePayment.amount
       }
     }
+    amount = amount * tds / 100
     return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
   }
 
@@ -364,15 +366,16 @@ data class HomeTripsItemData(
       date = balancePayment.dateTime()
       amount = balancePayment.amount
     }
+    amount = amount * tds / 100
     return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
   }
 
   /**
    * Pending text
    */
-  fun pending() = if (detentionPending == true) "Detention Pending"
+  fun pending() = if (detentionPending == true) "Detention Issue"
   else {
-    if (damagePending == true) "Damage Pending" else ""
+    if (damagePending == true) "Damage Issue" else ""
   }
 
   override fun filter(query: String) =
