@@ -316,7 +316,13 @@ data class HomeTripsItemData(
       if (payment != null) {
         val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
         val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
         var amount = bidDetails?.bidPrice ?: 0.0
+        if (!intermittentPayment.isNullOrEmpty()) {
+          intermittentPayment.forEach {
+            amount -= it.amount
+          }
+        }
         if (advancePayment != null) {
           amount -= advancePayment.amount
           if (loadingChargePayment != null) {
