@@ -498,7 +498,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     paymentSummaryBinding.total =
       "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
 
-    var advance = viewModel.bidDetail?.advancePayout ?: 0.0
+    val advance = viewModel.bidDetail?.advancePayout ?: 0.0
 
     if (viewModel.paymentsSummary.isEmpty()) {
       viewModel.paymentsSummary.apply {
@@ -516,32 +516,55 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         )
       }
     } else {
-      val paymentMap = viewModel.paymentsSummary.map { it.head to it }
-          .toMap()
-          .toMutableMap()
-      val advancePayment = paymentMap["cash_advance"]
-      paymentMap.remove("cash_advance")
-      val loadingPayment = paymentMap["loading_charge"]
-      paymentMap.remove("loading_charge")
+      val paymentMap = mutableMapOf<String, TripPaymentsResponse>()
+      val advancePayment = viewModel.paymentsSummary.find { it.head == "cash_advance" }
+      val loadingPayment = viewModel.paymentsSummary.find { it.head == "loading_charge" }
+      var totalAdvance = 0.0
       advancePayment?.let { it ->
+        totalAdvance += advancePayment.amount
         loadingPayment?.let { it1 ->
-          advancePayment.amount += it1.amount
+          totalAdvance += it1.amount
         }
         it.head = "advance_paid"
+        it.amount = totalAdvance
         paymentMap["advance_paid"] = it
       }
-      if (!viewModel.balancePaid) {
-        if (advancePayment != null)
-          advance = advancePayment.amount
+
+      val intermittentPayment = viewModel.paymentsSummary.filter { it.head == "intermittent" }
+      if (!intermittentPayment.isNullOrEmpty()) {
+        intermittentPayment.forEachIndexed { index, intermittentPayout ->
+          val head = intermittentPayout.head + " " + index
+          paymentMap[head] = intermittentPayout
+        }
+      }
+
+      val partialBalancePayment =
+        viewModel.paymentsSummary.find { it.head == "partial_balance_payment" }
+      partialBalancePayment?.let {
+        paymentMap["partial_balance_payment"] = it
+      }
+
+      val balancePayment = viewModel.paymentsSummary.find { it.head == "balance_payment" }
+      if (balancePayment != null) {
+        paymentMap["balance_payment"] = balancePayment
+      } else {
+        var paid = 0.0
+        advancePayment?.let {
+          paid += advancePayment.amount
+        }
+        loadingPayment?.let {
+          paid += loadingPayment.amount
+        }
         paymentMap["balance_pending"] = TripPaymentsResponse(
             "balance_pending", "",
-            total.minus(advance), "", when {
+            total.minus(paid), "", when {
           viewModel.tripDetail.damagePending == true -> "Damage Issue"
           viewModel.tripDetail.detentionPending == true -> "Detention Issue"
           else -> ""
         }
         )
       }
+
       viewModel.paymentsSummary.apply {
         clear()
         addAll(paymentMap.values)

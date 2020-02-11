@@ -358,14 +358,52 @@ data class HomeTripsItemData(
   fun balance(): Triple<String, String, String> {
     var status = "Balance Pending"
     var date = ""
-    var amount = bidDetails?.bidPrice?.minus(bidDetails.advancePayout ?: 0.0) ?: 0.0
-    val balancePayment = payment?.payments?.find { it.head == "balance_payment" }
-
-    if (balancePayment != null) {
-      status = "Balance Paid"
-      date = balancePayment.dateTime()
-      amount = balancePayment.amount
+    var amount = bidDetails?.bidPrice ?: 0.0
+    var advance = 0.0
+    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+    if (advancePayment != null) {
+      advance += advancePayment.amount
+      if (loadingChargePayment != null) {
+        advance += loadingChargePayment.amount
+      }
+    } else {
+      advance = bidDetails?.advancePayout ?: 0.0
     }
+
+    val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
+    val partialBalancePayment = payment?.payments?.find { it.head == "partial_balance_payment" }
+    val balancePayment = payment?.payments?.find { it.head == "balance_payment" }
+    var charges = 0.0
+    payment?.charges?.forEach { charge ->
+      charge.payVendor?.let {
+        if (charge.payVendor < 0) {
+          charges += charge.payVendor
+        } else {
+          charges -= charge.payVendor
+        }
+      }
+      charge.deductVendor?.let {
+        charges += charge.deductVendor
+      }
+    }
+    amount -= (advance + charges)
+
+    var interPayments = 0.0
+    if (!intermittentPayment.isNullOrEmpty()) {
+      intermittentPayment.forEach { interPayments += it.amount }
+    }
+    partialBalancePayment?.let {
+      interPayments += it.amount
+    }
+    amount -= interPayments
+
+    balancePayment?.let {
+      status = "Balance Paid"
+      date = it.dateTime()
+      amount = it.amount
+    }
+
     amount = amount * tds / 100
     return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
   }
@@ -466,6 +504,9 @@ enum class TripStatus(
   TruckReached("truck_reached", "Reached Destination"),
   TruckUnloaded("truck_unloaded", "Truck Unloaded"),
   EPodUploaded("epod_uploaded", "EPod Uploaded"),
+  InvoiceInProgress("invoice_inprogress", "Invoice Progress"),
+  Invoiced("invoiced", "Invoiced"),
+  InvoicFailed("invoice_failed", "Invoice Failed"),
   Unknown("unknown", "Unknown");
 
   companion object {
