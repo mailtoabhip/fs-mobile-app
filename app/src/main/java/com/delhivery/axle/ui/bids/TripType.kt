@@ -3,6 +3,9 @@ package com.delhivery.axle.ui.bids
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.In_Transit
+import com.delhivery.axle.data.home.trips.TripStatus.InvoicFailed
+import com.delhivery.axle.data.home.trips.TripStatus.InvoiceInProgress
+import com.delhivery.axle.data.home.trips.TripStatus.Invoiced
 import com.delhivery.axle.data.home.trips.TripStatus.TripCompleted
 import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
 import com.delhivery.axle.data.home.trips.TripStatus.TruckConfirmed
@@ -39,7 +42,12 @@ enum class TripType(
       2, listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey),
       "Balance Pending", "Balance Pending trips "
   ),
-  Completed(3, listOf(TripCompleted.statusKey), "Completed", "Completed trips"),
+  Completed(
+      3, listOf(
+      TripCompleted.statusKey, InvoiceInProgress.statusKey, Invoiced.statusKey,
+      InvoicFailed.statusKey
+  ), "Completed", "Completed trips"
+  ),
   ActiveForFuel(4, listOf(In_Transit.statusKey), "Active", " Active trips");
 
   /**
@@ -60,7 +68,7 @@ enum class TripType(
       TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey -> AdvancePending
       TruckReached.statusKey, In_Transit.statusKey -> InTransit
       TruckUnloaded.statusKey, EPodUploaded.statusKey -> BalancePending
-      TripCompleted.statusKey -> Completed
+      TripCompleted.statusKey, InvoiceInProgress.statusKey, Invoiced.statusKey, InvoicFailed.statusKey -> Completed
       else -> Unknown
     }
 
