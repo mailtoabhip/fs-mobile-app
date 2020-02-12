@@ -265,27 +265,27 @@ data class HomeTripsItemData(
   /**
    * @return pod action text
    */
-  fun podActionText() = when (tripStatus) {
+  fun podAction() = when (tripStatus) {
     TruckUnloaded.statusKey -> {
-      if (epodRejectionRemark.isNotNullOrEmpty()) PODStatus.REJECT.status else if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD.status else PODStatus.VIEWPOD.status
+      if (epodRejectionRemark.isNotNullOrEmpty()) PODStatus.REJECT else if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD else PODStatus.VIEWPOD
     }
     EPodUploaded.statusKey -> {
-      if (isEpodVerified == false) PODStatus.REVIEW.status else PODStatus.VIEWPOD.status
+      if (isEpodVerified == null || isEpodVerified == false) PODStatus.REVIEW else PODStatus.VIEWPOD
     }
-    else -> if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD.status else PODStatus.VIEWPOD.status
+    else -> if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD else PODStatus.VIEWPOD
   }
 
   /**
    * Required at pod background
    */
-  fun podDrawable() = when (podActionText()) {
-    PODStatus.REJECT.status -> {
+  fun podDrawable() = when (podAction()) {
+    PODStatus.REJECT -> {
       DrawableProviderUtils.podDrawableRes(PODStatus.REJECT)
     }
-    PODStatus.UPLOAD.status -> {
+    PODStatus.UPLOAD -> {
       DrawableProviderUtils.podDrawableRes(PODStatus.UPLOAD)
     }
-    PODStatus.REVIEW.status -> {
+    PODStatus.REVIEW -> {
       DrawableProviderUtils.podDrawableRes(PODStatus.REVIEW)
     }
     else -> {

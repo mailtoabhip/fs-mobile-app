@@ -215,14 +215,12 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
         val data = item.data as HomeTripsItemData
         viewModel.transactionId = data.transactionId
         viewModel.podUrl = data.podUrl ?: ""
-        when (data.podActionText()) {
-          PODStatus.UPLOAD.status, PODStatus.REJECT.status -> {
-            if (data.podUrl.isNullOrEmpty()) {
-              context?.let {
-                startActivityForResult(
-                    uploadImageIntent(it, data.transactionId), REQCODE_UPLOAD_POD
-                )
-              }
+        when (data.podAction()) {
+          PODStatus.UPLOAD, PODStatus.REJECT -> {
+            context?.let {
+              startActivityForResult(
+                  uploadImageIntent(it, data.transactionId), REQCODE_UPLOAD_POD
+              )
             }
           }
           else -> {
