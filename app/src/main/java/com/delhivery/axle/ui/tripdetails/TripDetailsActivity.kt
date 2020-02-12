@@ -527,8 +527,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           totalAdvance += it1.amount
         }
         paymentMap["advance_paid"] = TripPaymentsResponse(
-            "advance_paid", it.bankTransactionId,
-            totalAdvance, it.updationTime, it.remark ?: ""
+            "advance_paid", it.bankTransactionId ?: "",
+            totalAdvance, it.updationTime ?: "", it.remark ?: ""
         )
       }
 
@@ -540,8 +540,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           interPayments += intermittentPayout.amount
           paymentMap[head] = intermittentPayout
           paymentMap[head] = TripPaymentsResponse(
-              head, intermittentPayout.bankTransactionId,
-              intermittentPayout.amount, intermittentPayout.updationTime,
+              head, intermittentPayout.bankTransactionId?:"",
+              intermittentPayout.amount, intermittentPayout.updationTime?:"",
               intermittentPayout.remark ?: ""
           )
         }
@@ -552,16 +552,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       partialBalancePayment?.let {
         interPayments += it.amount
         paymentMap["partial_balance_payment"] = TripPaymentsResponse(
-            "partial_balance_payment", it.bankTransactionId,
-            totalAdvance, it.updationTime, it.remark ?: ""
+            "partial_balance_payment", it.bankTransactionId?:"",
+            totalAdvance, it.updationTime?:"", it.remark ?: ""
         )
       }
 
       val balancePayment = viewModel.paymentsSummary.find { it.head == "balance_payment" }
       if (balancePayment != null) {
         paymentMap["balance_paid"] = TripPaymentsResponse(
-            "balance_paid", balancePayment.bankTransactionId,
-            balancePayment.amount, balancePayment.updationTime, balancePayment.remark ?: ""
+            "balance_paid", balancePayment.bankTransactionId?:"",
+            balancePayment.amount, balancePayment.updationTime?:"", balancePayment.remark ?: ""
         )
       } else {
         paymentMap["balance_pending"] = TripPaymentsResponse(
