@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
@@ -23,9 +23,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
-import com.delhivery.axle.repository.UserTripsLoadLimit
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
-import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.ui.bids.TripType.InTransit
 import com.delhivery.axle.ui.bids.userTripsIntent
