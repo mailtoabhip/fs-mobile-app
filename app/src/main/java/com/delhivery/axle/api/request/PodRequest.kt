@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
  * Payload for upload POD
  */
 data class PodRequest(
-  @SerializedName("pod_files") val paths: List<String>,
+  @SerializedName("pod_image_urls") val paths: List<String>,
   @SerializedName("action") val action: String = "pod_uploaded",
   @SerializedName("originator") val originator: String = "axle-app"
 ) {
