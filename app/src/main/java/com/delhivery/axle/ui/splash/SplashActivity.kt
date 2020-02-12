@@ -13,6 +13,7 @@ import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
 import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
@@ -45,6 +46,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
     transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
+    preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -172,6 +174,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
         bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
         bundle.putString(ARGS_TRANSACTION_IDS, transactions)
+        bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
       }
       navigationUtils.navigate(it.java, true, bundle)
     }

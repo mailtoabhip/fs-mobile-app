@@ -19,8 +19,6 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.Config
-import com.delhivery.axle.utils.ContactUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
@@ -157,7 +155,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item, it)) }
+        context?.let { startActivity(bidDetailsIntent(_item.key(), it)) }
       }
     }
   }
