@@ -5,7 +5,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeTripsHeaderItemData(
   val advancePending: Summary? = null,
-  val balancePending: Summary? = null,
+  val podPending: Summary? = null,
   val inTransit: Summary? = null,
   val completed: Summary? = null
 ) : BaseKeyTypeModel<String>() {
@@ -18,5 +18,5 @@ const val HomeTripsHeaderItemDataKey = "header"
 /* actions */
 const val HomeTripsHeaderAction_AdvancePending = "advance_pending"
 const val HomeTripsHeaderAction_InTransit = "in_transit"
-const val HomeTripsHeaderAction_BalancePending = "balance_pending"
+const val HomeTripsHeaderAction_PODPending = "pod_pending"
 const val HomeTripsHeaderAction_Completed = "completed"

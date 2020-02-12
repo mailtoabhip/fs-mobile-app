@@ -14,7 +14,7 @@
         type="com.delhivery.axle.api.response.Summary"
         />
     <variable
-        name="balacenPending"
+        name="podPending"
         type="com.delhivery.axle.api.response.Summary"
         />
     <variable
@@ -33,18 +33,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingEnd="@dimen/size_4dp"
         android:paddingStart="@dimen/size_4dp"
+        android:paddingEnd="@dimen/size_4dp"
         >
 
       <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/view_advance_pending"
+          style="@style/view_header_background"
           android:layout_width="wrap_content"
           android:layout_height="@dimen/size_56dp"
-          android:layout_marginEnd="@dimen/size_4dp"
           android:layout_marginStart="@dimen/size_4dp"
+          android:layout_marginEnd="@dimen/size_4dp"
           bind:shadow="@{ @dimen/action_btn_elevation }"
-          style="@style/view_header_background"
           >
 
         <TextView
@@ -78,9 +78,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
             android:text="@{advancePending.amount()}"
@@ -95,12 +95,12 @@
 
       <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/view_in_transit"
+          style="@style/view_header_background"
           android:layout_width="wrap_content"
           android:layout_height="@dimen/size_56dp"
-          android:layout_marginEnd="@dimen/size_4dp"
           android:layout_marginStart="@dimen/size_4dp"
+          android:layout_marginEnd="@dimen/size_4dp"
           bind:shadow="@{ @dimen/action_btn_elevation }"
-          style="@style/view_header_background"
           >
 
         <TextView
@@ -134,9 +134,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_16dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
             android:textColor="@color/white"
@@ -149,13 +149,13 @@
       </androidx.constraintlayout.widget.ConstraintLayout>
 
       <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/view_balance_pending"
+          android:id="@+id/view_pod_pending"
+          style="@style/view_header_background"
           android:layout_width="wrap_content"
           android:layout_height="@dimen/size_56dp"
-          android:layout_marginEnd="@dimen/size_4dp"
           android:layout_marginStart="@dimen/size_4dp"
+          android:layout_marginEnd="@dimen/size_4dp"
           bind:shadow="@{ @dimen/action_btn_elevation }"
-          style="@style/view_header_background"
           >
 
         <TextView
@@ -165,7 +165,7 @@
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="@dimen/text_6sp"
             android:minWidth="@dimen/size_80dp"
-            android:text="@string/label_balance_pending"
+            android:text="@string/label_pod_pending"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -178,7 +178,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@{balacenPending.count()}"
+            android:text="@{podPending.count()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -189,12 +189,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
-            android:text="@{balacenPending.amount()}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             android:textStyle="bold"
@@ -206,12 +205,12 @@
 
       <androidx.constraintlayout.widget.ConstraintLayout
           android:id="@+id/view_completed"
+          style="@style/view_header_background"
           android:layout_width="wrap_content"
           android:layout_height="56dp"
-          android:layout_marginEnd="@dimen/size_4dp"
           android:layout_marginStart="@dimen/size_4dp"
+          android:layout_marginEnd="@dimen/size_4dp"
           bind:shadow="@{ @dimen/action_btn_elevation }"
-          style="@style/view_header_background"
           >
 
         <TextView
@@ -221,7 +220,7 @@
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="@dimen/text_6sp"
             android:minWidth="@dimen/size_80dp"
-            android:text="@string/label_complete"
+            android:text="@string/label_pod_received"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -245,9 +244,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/size_16dp"
             android:fontFamily="sans-serif-medium"
             android:minWidth="@dimen/size_36dp"
             android:textColor="@color/white"

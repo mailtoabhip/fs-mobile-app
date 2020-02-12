@@ -211,10 +211,12 @@
   <string name="label_create_fuel_card">CREATE FUEL CARD</string>
   <string name="label_enter_number">Enter mobile number</string>
   <string name="label_fuel_faq">VIEW MORE DETAILS</string>
-  <string name="label_pod_pending">POD Status</string>
+  <string name="label_pod_status">POD Status</string>
   <string name="label_epod_pending">EPod Pending</string>
   <string name="label_physical_pending">Physical POD Pending</string>
   <string name="label_pod_dispatched">Dispatched</string>
+  <string name="label_pod_pending">POD Pending</string>
+  <string name="label_pod_received">POD Received</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

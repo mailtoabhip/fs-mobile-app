@@ -120,8 +120,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
     viewModel.tripsCountLiveData.reobserve(this, Observer {
       _title = when (it) {
-        0, null -> getString(string.label_pod_pending)
-        else -> "${getString(string.label_pod_pending)}($it)"
+        0, null -> getString(string.label_pod_status)
+        else -> "${getString(string.label_pod_status)}($it)"
       }
     })
 
