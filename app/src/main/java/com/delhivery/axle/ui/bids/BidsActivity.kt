@@ -140,7 +140,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
 
-        startActivity(bidDetailsIntent(_item, this))
+        startActivity(bidDetailsIntent(_item.key(), this))
       }
 
       HomeBidsTimeOutAction ->
