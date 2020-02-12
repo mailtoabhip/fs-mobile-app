@@ -1,10 +1,10 @@
 package com.delhivery.axle.ui.home.fragments.profile
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.data.UserModel
-import com.delhivery.axle.repository.TransactionsRepository
-import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground

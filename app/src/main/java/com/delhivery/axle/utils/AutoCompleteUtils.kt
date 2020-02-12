@@ -1,6 +1,6 @@
 package com.delhivery.axle.utils
 
-import com.delhivery.axle.api.CityService
+import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText

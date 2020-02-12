@@ -52,7 +52,6 @@
           android:text="@{ @string/msg_bids_received_till_now(bidsRecieved) }"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           tools:text="23 bids recieved till now"
           />
 
@@ -67,7 +66,6 @@
           android:text="@{lowestBid}"
           android:textColor="#e0e0e0"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           tools:text="Lowest Bid Placed- 34000"
           />
 
@@ -90,8 +88,6 @@
             android:letterSpacing="0.01"
             android:lineSpacingExtra="@dimen/text_4sp"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="normal"
             tools:text="You have bid: ₹ 21500.00"
             />
 
@@ -106,7 +102,6 @@
             android:lineSpacingExtra="@dimen/text_8sp"
             android:textColor="#99ffffff"
             android:textSize="@dimen/text_10sp"
-            android:textStyle="normal"
             tools:text="(₹ 2400.00 less than target price)"
             />
       </androidx.appcompat.widget.LinearLayoutCompat>

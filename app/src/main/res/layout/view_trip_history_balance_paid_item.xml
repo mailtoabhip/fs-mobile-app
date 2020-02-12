@@ -37,8 +37,6 @@
           android:fontFamily="sans-serif-medium"
           android:text="@{ history.heading }"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           tools:text="Load picked up"
           />
 
@@ -52,7 +50,6 @@
           android:text="@{ history.actionTime }"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           tools:text="2 min ago"
           />
 
@@ -66,7 +63,6 @@
           android:text="@{ history.subHeading }"
           android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           tools:text="The load has been picked up from the origin"
           />
 

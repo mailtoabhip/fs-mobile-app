@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsProgressItemData
 import com.delhivery.axle.data.home.trips.HomeTripsSearchItemData
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutItemData
 import com.delhivery.axle.data.home.trips.HomeTripsWarningItemData
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.CompletedTrip
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType.Search
@@ -21,9 +22,10 @@ enum class HomeTripsRVAdapterItemType(val typeId: Int) {
   Header(0),
   Search(1),
   TripItem(2),
-  Progress(3),
-  Warning(4),
-  Timeout(5);
+  CompletedTrip(3),
+  Progress(4),
+  Warning(5),
+  Timeout(6);
 
   companion object {
     /**
@@ -54,6 +56,12 @@ class HomeTripsSearchItem(data: HomeTripsSearchItemData = HomeTripsSearchItemDat
  */
 class HomeTripsItem(data: HomeTripsItemData) :
     BaseHomeTripsRVAdapterItem<HomeTripsItemData>(TripItem, data)
+
+/**
+ * Completed Trip item
+ */
+class HomeCompletedTripItem(data: HomeTripsItemData) :
+    BaseHomeTripsRVAdapterItem<HomeTripsItemData>(CompletedTrip, data)
 
 /**
  * Inline progress item

@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.databinding.ViewCompletedTripItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsProgressItemBinding
@@ -65,6 +66,19 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
     BaseHomeTripsRVAdapterViewHolder<ViewHomeTripsRequestItemBinding, HomeTripsItem>(binding) {
   override fun bind(
     item: HomeTripsItem,
+    _interface: HomeTripsRVAdapterInterface
+  ) {
+    binding.trip = item.data
+  }
+}
+
+/**
+ * Completed Trip item view holder
+ */
+internal class HomeCompletedTripItemVH(binding: ViewCompletedTripItemBinding) :
+    BaseHomeTripsRVAdapterViewHolder<ViewCompletedTripItemBinding, HomeCompletedTripItem>(binding) {
+  override fun bind(
+    item: HomeCompletedTripItem,
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.trip = item.data

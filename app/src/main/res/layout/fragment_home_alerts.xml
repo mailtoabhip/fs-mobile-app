@@ -33,8 +33,7 @@
         android:lineSpacingExtra="2sp"
         android:text="@string/label_coming_soon"
         android:textColor="#181818"
-        android:textSize="16sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_16sp"
         />
 
     <TextView
@@ -49,8 +48,7 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/msg_alerts_under_dev"
         android:textColor="#181818"
-        android:textSize="12sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_12sp"
         />
 
   </androidx.appcompat.widget.LinearLayoutCompat>

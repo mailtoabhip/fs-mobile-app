@@ -202,6 +202,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
         .apply()
+    editor.commit()
   }
 
   fun saveUser(user: UserModel) {

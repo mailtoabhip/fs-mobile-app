@@ -1,6 +1,6 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.WarehouseService
+import com.delhivery.axle.api.service.WarehouseService
 import com.delhivery.axle.utils.extensions.convertResponse
 import javax.inject.Inject
 import javax.inject.Singleton

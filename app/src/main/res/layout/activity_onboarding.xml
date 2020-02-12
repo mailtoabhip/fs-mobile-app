@@ -54,7 +54,6 @@
           android:text="@string/action_skip"
           android:textColor="@color/color_hint"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           />
 
       <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator

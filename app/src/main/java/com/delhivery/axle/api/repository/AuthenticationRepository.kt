@@ -1,9 +1,9 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
-import com.delhivery.axle.api.UMSService
 import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.RequestOTP
+import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs

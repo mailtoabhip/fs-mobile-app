@@ -1,4 +1,4 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.WarehouseDetailResponse

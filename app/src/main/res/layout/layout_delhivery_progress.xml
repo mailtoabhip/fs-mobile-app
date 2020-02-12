@@ -52,7 +52,6 @@
           android:text="@{ title }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
           tools:text="Logging you in.."
           />
 
@@ -65,8 +64,6 @@
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@{ message }"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           tools:text="This usually takes few seconds to load. please be patient."
           />
     </LinearLayout>
@@ -81,8 +78,6 @@
         android:lineSpacingExtra="@dimen/text_4sp"
         android:text="@{ @string/msg_loading_pro_tip(tip) }"
         android:textColor="@color/sub_heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         android:visibility="invisible"
         tools:text="Pro tip:\nSome tip regarding how to bid, or whats to be considered while bidding. "
         />

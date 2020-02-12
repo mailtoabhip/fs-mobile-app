@@ -1,4 +1,4 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.RequestOTP

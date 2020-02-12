@@ -182,7 +182,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         )
 
         context?.let {
-          startActivity(bidDetailsIntent(_item, it))
+          startActivity(bidDetailsIntent(_item.key(), it))
         }
       }
 

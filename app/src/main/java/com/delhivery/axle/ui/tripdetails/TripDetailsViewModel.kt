@@ -2,6 +2,10 @@ package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.PaymentRepository
+import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.WarehouseRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
@@ -26,10 +30,6 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.repository.PaymentRepository
-import com.delhivery.axle.repository.TripsRepository
-import com.delhivery.axle.repository.UserRepository
-import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils

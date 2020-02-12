@@ -173,7 +173,7 @@
             />
 
         <TextView
-            android:id="@+id/label_utr"
+            android:id="@+id/label_advance_utr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
@@ -198,7 +198,7 @@
             android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="@+id/text_acc_num"
             app:layout_constraintStart_toEndOf="@+id/label_status"
-            app:layout_constraintTop_toTopOf="@+id/label_utr"
+            app:layout_constraintTop_toTopOf="@+id/label_advance_utr"
             tools:text="1234567890"
             />
 

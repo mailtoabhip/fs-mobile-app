@@ -57,7 +57,6 @@
             android:text="@string/label_advance_pending"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -114,7 +113,6 @@
             android:text="@string/label_in_transit"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -170,7 +168,6 @@
             android:text="@string/label_pod_pending"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -226,7 +223,6 @@
             android:text="@string/label_pod_received"
             android:textColor="@color/white"
             android:textSize="@dimen/text_10sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />

@@ -22,7 +22,6 @@
         android:text="@string/label_add_nearby_locations"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_20sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -36,8 +35,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_add_nearby_locations"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/id1"
         />
@@ -51,8 +48,6 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/msg_add_nearby_locations_deselect"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/id2"
         />

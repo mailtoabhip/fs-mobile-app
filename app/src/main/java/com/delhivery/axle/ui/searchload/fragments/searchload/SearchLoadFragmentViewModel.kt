@@ -2,7 +2,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.CityService
+import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity

@@ -3,7 +3,7 @@ package com.delhivery.axle.data.home.trips
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.BulkPaymentItem
+import com.delhivery.axle.api.response.ExpenseData
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
@@ -11,7 +11,6 @@ import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.ui.bids.TripType.BalancePending
-import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
@@ -62,10 +61,11 @@ data class HomeTripsItemData(
   @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
-  var payment: BulkPaymentItem? = null,
+  var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
-  var selectable: Boolean = false
+  var selectable: Boolean = false,
+  var tds: Int
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -78,36 +78,6 @@ data class HomeTripsItemData(
    * Trip Status [TripStatus]
    */
   fun tripStatus() = TripType.byStatus(tripStatus)
-
-  /**
-   * @return payment advance/pending
-   */
-  fun tripPayment() = when (tripStatus()) {
-    AdvancePending -> {
-      if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout ?: 0.0)}"
-      } else {
-        ""
-      }
-    }
-    BalancePending -> {
-      if (payment != null && payment!!.bidPrice > 0.0 && payment!!.advancePayout > 0.0) {
-        val balance = payment!!.bidPrice.minus(payment!!.advancePayout)
-        "₹ ${StringUtils.formatAmount(balance)}"
-      } else {
-        ""
-      }
-    }
-    Completed -> {
-      if (payment != null && payment!!.bidPrice > 0) {
-        "₹ ${StringUtils.formatAmount(payment!!.bidPrice)}"
-      } else {
-        ""
-      }
-    }
-    else -> ""
-
-  }
 
   /**
    * @return formatted origin city
@@ -324,6 +294,134 @@ data class HomeTripsItemData(
     }
   }
 
+  /**
+   * Trip route
+   */
+  fun route(): String {
+    return originCityName() + " - " + destinationCityName()
+  }
+
+  /**
+   * @return payment advance/pending
+   */
+  fun tripPayment() = when (tripStatus()) {
+    AdvancePending -> {
+      if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
+        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout ?: 0.0)}"
+      } else {
+        ""
+      }
+    }
+    BalancePending -> {
+      if (payment != null) {
+        val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+        val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
+        var amount = bidDetails?.bidPrice ?: 0.0
+        if (!intermittentPayment.isNullOrEmpty()) {
+          intermittentPayment.forEach {
+            amount -= it.amount
+          }
+        }
+        if (advancePayment != null) {
+          amount -= advancePayment.amount
+          if (loadingChargePayment != null) {
+            amount -= loadingChargePayment.amount
+          }
+        }
+        "₹ ${StringUtils.formatAmount(amount)}"
+      } else {
+        ""
+      }
+    }
+    else -> ""
+  }
+
+  /**
+   * Advance payment status, payment date and utr triplet
+   */
+  fun advance(): Triple<String, String, String> {
+    var status = "Advance Pending"
+    var date = ""
+    var amount = bidDetails?.advancePayout ?: 0.0
+    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+    if (advancePayment != null) {
+      status = "Advance Paid"
+      date = advancePayment.dateTime()
+      amount = advancePayment.amount
+      if (loadingChargePayment != null) {
+        amount += loadingChargePayment.amount
+      }
+    }
+    amount = amount * tds / 100
+    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
+  }
+
+  /**
+   * Balance payment status, payment date and utr triplet
+   */
+  fun balance(): Triple<String, String, String> {
+    var status = "Balance Pending"
+    var date = ""
+    var amount = bidDetails?.bidPrice ?: 0.0
+    var advance = 0.0
+    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+    if (advancePayment != null) {
+      advance += advancePayment.amount
+      if (loadingChargePayment != null) {
+        advance += loadingChargePayment.amount
+      }
+    } else {
+      advance = bidDetails?.advancePayout ?: 0.0
+    }
+
+    val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
+    val partialBalancePayment = payment?.payments?.find { it.head == "partial_balance_payment" }
+    val balancePayment = payment?.payments?.find { it.head == "balance_payment" }
+    var charges = 0.0
+    payment?.charges?.forEach { charge ->
+      charge.payVendor?.let {
+        if (charge.payVendor < 0) {
+          charges += charge.payVendor
+        } else {
+          charges -= charge.payVendor
+        }
+      }
+      charge.deductVendor?.let {
+        charges += charge.deductVendor
+      }
+    }
+    amount -= (advance + charges)
+
+    var interPayments = 0.0
+    if (!intermittentPayment.isNullOrEmpty()) {
+      intermittentPayment.forEach { interPayments += it.amount }
+    }
+    partialBalancePayment?.let {
+      interPayments += it.amount
+    }
+    amount -= interPayments
+
+    balancePayment?.let {
+      status = "Balance Paid"
+      date = it.dateTime()
+      amount = it.amount
+    }
+
+    amount = amount * tds / 100
+    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
+  }
+
+  /**
+   * Pending text
+   */
+  fun pending() = if (detentionPending == true) "Detention Issue"
+  else {
+    if (damagePending == true) "Damage Issue" else ""
+  }
+
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
@@ -377,7 +475,7 @@ data class TripBidDetails(
   /**
    * @return formatted [bidPrice]
    */
-  fun bidPrice() = "₹ " + StringUtils.formatAmount(bidPrice ?: 0.0)
+  fun bidPrice() = "₹ ${StringUtils.formatAmount(bidPrice ?: 0.0)}"
 }
 
 /**
@@ -412,6 +510,9 @@ enum class TripStatus(
   TruckReached("truck_reached", "Reached Destination"),
   TruckUnloaded("truck_unloaded", "Truck Unloaded"),
   EPodUploaded("epod_uploaded", "EPod Uploaded"),
+  InvoiceInProgress("invoice_inprogress", "Invoice Progress"),
+  Invoiced("invoiced", "Invoiced"),
+  InvoicFailed("invoice_failed", "Invoice Failed"),
   Unknown("unknown", "Unknown");
 
   companion object {

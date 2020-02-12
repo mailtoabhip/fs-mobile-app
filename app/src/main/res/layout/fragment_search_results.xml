@@ -52,7 +52,6 @@
           android:text="@{ origin.cityName() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           />
@@ -65,8 +64,6 @@
           android:fontFamily="sans-serif"
           android:text="@{ origin.stateName() }"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />
@@ -80,7 +77,6 @@
           android:text="@{ destination.cityName() }"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toEndOf="@id/img_forward"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           />
@@ -93,8 +89,6 @@
           android:fontFamily="sans-serif"
           android:text="@{ destination.stateName() }"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="@id/text_destination_city"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />

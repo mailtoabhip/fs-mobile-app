@@ -1,10 +1,10 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.PaymentService
-import com.delhivery.axle.api.TripService
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.service.PaymentService
+import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.utils.extensions.convertResponse
