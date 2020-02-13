@@ -10,18 +10,26 @@
         />
 
     <variable
+        name="podAction"
+        type="com.delhivery.axle.data.home.trips.PODStatus"
+        />
+
+    <variable
         name="focusView"
         type="Boolean"
         />
+
+    <import type="com.delhivery.axle.data.home.trips.PODStatus" />
+    <import type="android.view.View" />
 
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_4dp"
-      android:layout_marginEnd="@dimen/size_8dp"
       android:layout_marginStart="@dimen/size_8dp"
       android:layout_marginTop="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_4dp"
       app:cardCornerRadius="@dimen/size_8dp"
       app:cardElevation="@dimen/size_2dp"
       >
@@ -30,10 +38,10 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/size_16dp"
-        android:paddingEnd="@dimen/size_16dp"
         android:paddingStart="@dimen/size_16dp"
         android:paddingTop="@dimen/size_12dp"
+        android:paddingEnd="@dimen/size_16dp"
+        android:paddingBottom="@dimen/size_16dp"
         >
 
       <TextView
@@ -72,24 +80,48 @@
           tools:text="The load has been picked up from the origin"
           />
 
-      <TextView
-          android:id="@+id/text_action"
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
           android:layout_below="@+id/text_status_exp"
+          android:layout_alignParentEnd="true"
           android:layout_marginTop="@dimen/size_20dp"
-          android:fontFamily="sans-serif"
-          android:paddingBottom="@dimen/size_4dp"
-          android:paddingStart="@dimen/size_24dp"
-          android:paddingEnd="@dimen/size_24dp"
-          android:paddingTop="@dimen/size_4dp"
-          android:text="VIEW POD"
-          android:textColor="@{ history.getHeadingTextColor(focusView, context ) }"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="bold"
-          />
+          android:orientation="horizontal"
+          >
 
+        <TextView
+            android:id="@+id/text_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:paddingStart="@dimen/size_24dp"
+            android:paddingTop="@dimen/size_4dp"
+            android:paddingEnd="@dimen/size_24dp"
+            android:paddingBottom="@dimen/size_4dp"
+            android:text="VIEW POD"
+            android:textColor="@{ history.getHeadingTextColor(focusView, context ) }"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/text_reupload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:paddingStart="@dimen/size_24dp"
+            android:paddingTop="@dimen/size_4dp"
+            android:paddingEnd="@dimen/size_24dp"
+            android:paddingBottom="@dimen/size_4dp"
+            android:text="REUPLOAD POD"
+            android:textColor="@{ history.getHeadingTextColor(focusView, context ) }"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            android:visibility="@{podAction != null &amp;&amp; podAction == PODStatus.REJECT? View.VISIBLE: View.GONE}"
+            tools:visibility="gone"
+            />
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
     </RelativeLayout>
   </androidx.cardview.widget.CardView>
 </layout>

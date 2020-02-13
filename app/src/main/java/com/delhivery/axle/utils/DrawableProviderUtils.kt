@@ -2,6 +2,9 @@ package com.delhivery.axle.utils
 
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.trips.PODStatus
+import com.delhivery.axle.data.home.trips.PODStatus.REJECT
+import com.delhivery.axle.data.home.trips.PODStatus.REVIEW
 import com.delhivery.axle.data.transactions.TransactionChannel
 import com.delhivery.axle.data.transactions.TransactionChannel.HPCL
 import com.delhivery.axle.data.transactions.TransactionChannel.IOCL
@@ -62,4 +65,22 @@ object DrawableProviderUtils {
       R.drawable.bg_date_tomorrow
     }
   }
+
+  /**
+   * Get pod drawable
+   */
+  fun podDrawableRes(type: PODStatus): Int {
+    return when (type) {
+      REJECT -> {
+        R.drawable.bg_pod_reject
+      }
+      REVIEW -> {
+        R.drawable.bg_pod_under_review
+      }
+      else -> {
+        R.drawable.bg_load_action_btn
+      }
+    }
+  }
+
 }

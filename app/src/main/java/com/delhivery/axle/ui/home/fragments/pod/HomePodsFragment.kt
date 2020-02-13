@@ -26,6 +26,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.databinding.FragmentHomePodBinding
@@ -214,32 +215,36 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
         val data = item.data as HomeTripsItemData
         viewModel.transactionId = data.transactionId
         viewModel.podUrl = data.podUrl ?: ""
-        if (data.podUrl.isNullOrEmpty()) {
-          context?.let {
-            startActivityForResult(
-                uploadImageIntent(it, data.transactionId), REQCODE_UPLOAD_POD
-            )
+        when (data.podAction()) {
+          PODStatus.UPLOAD, PODStatus.REJECT -> {
+            context?.let {
+              startActivityForResult(
+                  uploadImageIntent(it, data.transactionId), REQCODE_UPLOAD_POD
+              )
+            }
           }
-        } else {
-          compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-              .onBackground()
-              .subscribe { granted, error ->
-                if (error == null && granted) {
-                  uiUtils.showSnackbar("Downloading POD....")
-                  val file = getFile()
-                  if (file != null && !TextUtils.isEmpty(data.podUrl)) {
-                    uiUtils.showProgress()
-                    data.podUrl.let {
-                      viewModel.podUrl = it
-                      viewModel.getDelegationToken(it, file)
+          else -> {
+            compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onBackground()
+                .subscribe { granted, error ->
+                  if (error == null && granted) {
+                    uiUtils.showSnackbar("Downloading POD....")
+                    val file = getFile()
+                    if (file != null && !TextUtils.isEmpty(data.podUrl)) {
+                      uiUtils.showProgress()
+                      data.podUrl?.let {
+                        viewModel.podUrl = it
+                        viewModel.getDelegationToken(it, file)
+                      }
+                    } else {
+                      uiUtils.showSnackbar("Can't process POD")
                     }
                   } else {
-                    uiUtils.showSnackbar("Can't process POD")
+                    uiUtils.showSnackbar(getString(string.storage_permission))
                   }
-                } else {
-                  uiUtils.showSnackbar(getString(string.storage_permission))
                 }
-              }
+          }
+
         }
       }
 

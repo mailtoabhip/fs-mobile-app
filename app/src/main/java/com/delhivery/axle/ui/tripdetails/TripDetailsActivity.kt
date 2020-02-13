@@ -232,9 +232,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   focusView = background != R.color.white
                 }
                 setHistory(item)
+                podAction = viewModel.tripDetail.podAction()
                 textAction.setOnClickListener {
                   if (viewModel.tripDetail.podUrl.isNotNullOrEmpty())
                     requestStoragePermission()
+                }
+                textReupload.setOnClickListener {
+                  it.post {
+                    startActivityForResult(
+                        uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD
+                    )
+                  }
                 }
                 binding.containerHistory.addView(root)
               }

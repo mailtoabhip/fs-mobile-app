@@ -105,12 +105,14 @@ class AuthenticationViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            userPrefs.hasLoggedIn = true
             if (!_res.third.supplierEnabled) {
+              userPrefs.hasLoggedIn = false
               Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+              userPrefs.hasLoggedIn = true
               LoadRequest
             } else {
+              userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
               SelectRoute
             }

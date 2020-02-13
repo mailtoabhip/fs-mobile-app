@@ -61,6 +61,9 @@ data class HomeTripsItemData(
   @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
+  @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
+  @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
+  var payment: BulkPaymentItem? = null,
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -233,7 +236,33 @@ data class HomeTripsItemData(
   /**
    * @return pod action text
    */
-  fun podActionText() = if (podUrl.isNullOrEmpty()) "UPLOAD EPOD" else "VIEW EPOD"
+  fun podAction() = when (tripStatus) {
+    TruckUnloaded.statusKey -> {
+      if (epodRejectionRemark.isNotNullOrEmpty()) PODStatus.REJECT else if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD else PODStatus.VIEWPOD
+    }
+    EPodUploaded.statusKey -> {
+      if (isEpodVerified == null || isEpodVerified == false) PODStatus.REVIEW else PODStatus.VIEWPOD
+    }
+    else -> if (podUrl.isNullOrEmpty()) PODStatus.UPLOAD else PODStatus.VIEWPOD
+  }
+
+  /**
+   * Required at pod background
+   */
+  fun podDrawable() = when (podAction()) {
+    PODStatus.REJECT -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.REJECT)
+    }
+    PODStatus.UPLOAD -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.UPLOAD)
+    }
+    PODStatus.REVIEW -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.REVIEW)
+    }
+    else -> {
+      DrawableProviderUtils.podDrawableRes(PODStatus.VIEWPOD)
+    }
+  }
 
   /**
    * @return pod action text
@@ -427,6 +456,16 @@ data class HomeTripsItemData(
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
+}
+
+enum class PODStatus(
+  val status: String,
+  val key: Int
+) {
+  REJECT("REJECTED", 1),
+  UPLOAD("UPLOAD EPOD", 2),
+  REVIEW("UNDER REVIEW", 3),
+  VIEWPOD("VIEW EPOD", 4);
 }
 
 /* actions */
