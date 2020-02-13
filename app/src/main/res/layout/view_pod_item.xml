@@ -139,7 +139,6 @@
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:gravity="end"
-          android:lineSpacingExtra="@dimen/text_10sp"
           android:text="@{trip.podRemarksOrPayment()}"
           android:textColor="@color/status_lost"
           app:layout_constraintEnd_toEndOf="parent"
@@ -152,12 +151,12 @@
           android:id="@+id/text_lr"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_6dp"
           android:fontFamily="sans-serif"
           android:text="@{trip.lr()}"
+          android:layout_marginTop="@dimen/size_6dp"
           android:textColor="@color/sub_heading_black"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+          app:layout_constraintTop_toBottomOf="@+id/text_rejection_remark"
           tools:text="LR: 9823222123"
           />
 
