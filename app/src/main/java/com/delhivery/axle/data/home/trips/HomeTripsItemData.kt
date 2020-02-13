@@ -63,7 +63,6 @@ data class HomeTripsItemData(
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
-  var payment: BulkPaymentItem? = null,
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,

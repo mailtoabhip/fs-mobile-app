@@ -4,8 +4,6 @@ import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
-import com.delhivery.axle.api.response.UploadPodResponse
-import com.delhivery.axle.api.response.TripsResponse
 import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import io.reactivex.Single
