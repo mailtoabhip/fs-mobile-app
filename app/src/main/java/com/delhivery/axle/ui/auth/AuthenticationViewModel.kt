@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.auth
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.repository.AuthenticationRepository
-import com.delhivery.axle.repository.NotificationRepository
-import com.delhivery.axle.repository.UserRepository
+import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.api.repository.NotificationRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled

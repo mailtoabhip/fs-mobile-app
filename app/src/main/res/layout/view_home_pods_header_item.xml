@@ -33,7 +33,6 @@
           android:text="@string/label_epod_pending"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -62,7 +61,6 @@
           android:text="@string/label_physical_pending"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -91,7 +89,6 @@
           android:text="@string/label_pod_dispatched"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,6 +1,6 @@
 package com.delhivery.axle.ui.splash
 
-import com.delhivery.axle.repository.AuthenticationRepository
+import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home

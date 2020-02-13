@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
@@ -29,7 +30,6 @@ import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.databinding.FragmentHomePodBinding
-import com.delhivery.axle.repository.UserTripsLoadLimit
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
@@ -121,8 +121,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
     viewModel.tripsCountLiveData.reobserve(this, Observer {
       _title = when (it) {
-        0, null -> getString(string.label_pod_pending)
-        else -> "${getString(string.label_pod_pending)}($it)"
+        0, null -> getString(string.label_pod_status)
+        else -> "${getString(string.label_pod_status)}($it)"
       }
     })
 
@@ -381,7 +381,9 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
+  inner class PaginationInterface : PaginationScrollListener(
+      UserTripsLoadLimit
+  ) {
     override fun loadMore() = viewModel.fetchTrips(true)
 
     override fun hasMore() = viewModel.hasMoreData

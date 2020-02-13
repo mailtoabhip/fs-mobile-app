@@ -1,6 +1,6 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.LoadCycleService
+import com.delhivery.axle.api.service.LoadCycleService
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import javax.inject.Inject

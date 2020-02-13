@@ -2,9 +2,12 @@ package com.delhivery.axle.ui.home.activity.fuel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.FuelRepository
+import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.fuelcards.FuelCardData
-import com.delhivery.axle.repository.FuelRepository
-import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -23,8 +26,9 @@ import javax.inject.Inject
  * Viewmodel for [ActiveTripsActivity]
  */
 class ActiveTripsViewModel @Inject constructor(
-  private val tripsRepository: TripsRepository,
-  private val fuelRepository: FuelRepository
+  private val fuelRepository: FuelRepository,
+  private val loadCycleRepository: LoadCycleRepository,
+  private val userRepository: UserRepository
 ) : BaseViewModel() {
 
   private lateinit var cards: List<FuelCardData>
@@ -34,6 +38,7 @@ class ActiveTripsViewModel @Inject constructor(
   var total = 0
   var trip: TripType = ActiveForFuel
   var optinDate = ""
+  var request = SearchRequest()
 
   var tripsLiveData =
     MutableLiveData<List<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -57,10 +62,12 @@ class ActiveTripsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += tripsRepository.trips(
-        offset, trip.status.joinToString(separator = ",") { it },
-        DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
-    )
+    request.offset = offset
+    request.limit = UserSearchLimit
+    request.vendorId = userRepository.userId()
+    request.tripStatus = trip.status.joinToString(separator = ",") { it }
+    request.updatedAfter = DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
+    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {

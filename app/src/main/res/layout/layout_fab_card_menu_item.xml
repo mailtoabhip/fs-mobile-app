@@ -29,8 +29,6 @@
       android:paddingTop="12dp"
       android:text="@{ text }"
       android:textColor="@color/colorAccent"
-      android:textSize="14sp"
-      android:textStyle="normal"
       android:visibility="invisible"
       tools:text="Sort by:"
       />

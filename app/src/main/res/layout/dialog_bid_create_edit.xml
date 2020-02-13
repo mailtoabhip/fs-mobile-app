@@ -42,7 +42,6 @@
           android:text="@string/label_place_bid"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
@@ -60,7 +59,6 @@
           android:text="@string/label_multi_stop"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           android:visibility="@{request.multiDrop ? View.VISIBLE : View.GONE }"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/id2"
@@ -78,7 +76,6 @@
           android:text="@string/label_pmt"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           android:visibility="@{request.isPMTIndent() ? View.VISIBLE : View.GONE }"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
@@ -95,8 +92,6 @@
         android:lineSpacingExtra="@dimen/text_14sp"
         android:text="@{ route }"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         tools:text="GA - MH"
         />
 
@@ -195,7 +190,6 @@
         android:fontFamily="sans-serif"
         android:lineSpacingExtra="@dimen/text_4sp"
         android:textColor="@color/heading_black"
-        android:textStyle="normal"
         android:visibility="@{request.isPMTIndent()? View.VISIBLE: View.GONE}"
         tools:text="Your minimum payout will be ₹ rate * requested"
         />

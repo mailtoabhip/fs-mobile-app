@@ -18,6 +18,7 @@ import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
@@ -32,8 +33,8 @@ import com.delhivery.axle.utils.VALUE_TRIP
  * for Delhivery Private Limited
  **
  *
- * Displays listing of all trips of a particular type on basis of selected header from
- * [HomeTripsFragment].
+ * Displays listing of all trips of a particular type on
+ * basis of trip status
  *
  **
  */
@@ -57,18 +58,22 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   /* rv adapter */
   private val adapter by lazy {
-    TripsRVAdapter(this)
+    HomeTripsRVAdapter(this)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    require(
-        !(intent == null || !intent.hasExtra(IntentExtraTripTypeKey))
-    ) { "$IntentExtraTripTypeKey intent key missing" }
+    try {
+      require(
+          !(intent == null || !intent.hasExtra(IntentExtraTripTypeKey))
+      ) { "$IntentExtraTripTypeKey intent key missing" }
+    } catch (e: IllegalArgumentException) {
+      finish()
+    }
 
     /* get bid type from intent */
-    viewModel.trip =
+    viewModel.tripType =
       TripType.byTypeId(intent.getIntExtra(IntentExtraTripTypeKey, TripType.Unknown.typeId))
   }
 
@@ -77,7 +82,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = viewModel.trip.toolbarTitle()
+    title = viewModel.tripType.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     viewModel.progressLiveData.observe(
@@ -104,7 +109,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     })
 
     viewModel.tripsCountLiveData.observe(this, Observer {
-      title = viewModel.trip.toolbarTitle(it ?: 0)
+      title = viewModel.tripType.toolbarTitle(it ?: 0)
     })
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
@@ -119,9 +124,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   }
 
   private fun refreshData() {
-    /* remove user transactions */
-    adapter.resetStaticData()
-    /* fetch again */
+    adapter.setItems(getStaticItems())
     viewModel.fetchTrips(false)
   }
 
@@ -131,14 +134,14 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   ) {
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
-        val _item = item.data as HomeTripsItemData
+        val data = item.data as HomeTripsItemData
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_TRIP, _item.transactionId)
+            mutableListOf(VALUE_TRIP, data.transactionId)
         )
-        startActivity(tripDetailsIntent(_item.key(), this))
+        startActivity(tripDetailsIntent(data.key(), this))
       }
       HomeTripsTimeOutAction -> {
         refreshData()

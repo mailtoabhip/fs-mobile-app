@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.activity.bank
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.response.WalletData
-import com.delhivery.axle.repository.WalletRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground

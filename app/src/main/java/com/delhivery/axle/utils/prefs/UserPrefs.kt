@@ -153,7 +153,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var maxPMTRate: Int
     set(value) = editor.putInt(PrefKeys.MaxPMTRate, value).apply()
-    get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MIN_VALUE)
+    get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MAX_VALUE)
 
   /**
    *  Max cost per km
@@ -202,6 +202,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
         .apply()
+    editor.commit()
   }
 
   fun saveUser(user: UserModel) {

@@ -53,8 +53,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_pickup_location_city_based"
         android:textColor="@color/sub_heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         />
 
   </androidx.appcompat.widget.LinearLayoutCompat>

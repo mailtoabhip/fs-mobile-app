@@ -41,7 +41,6 @@
           android:text="@string/action_add_more_route"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

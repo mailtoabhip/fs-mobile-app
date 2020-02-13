@@ -64,7 +64,6 @@
         android:text="@{ @string/msg_select_route_welcome_user(viewModel.username) }"
         android:textColor="@color/off_white"
         android:textSize="@dimen/text_24sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Welcome\nMahinder Singh pal"
@@ -80,8 +79,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_glad_to_onboard"
         android:textColor="@color/off_white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="@id/text_welcome_user"
         app:layout_constraintTop_toBottomOf="@id/text_welcome_user"
         />
@@ -107,7 +104,6 @@
           android:text="@string/label_which_routes_you_serve"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
           />
 
       <TextView
@@ -118,8 +114,6 @@
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/msg_select_route_pref_to_load"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           />
 
       <androidx.appcompat.widget.AppCompatButton
@@ -145,7 +139,6 @@
           android:text="@string/action_skip_select_routes"
           android:textColor="@color/color_hint"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
     </androidx.appcompat.widget.LinearLayoutCompat>
   </androidx.constraintlayout.widget.ConstraintLayout>

@@ -422,6 +422,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 seprator.visibility = View.GONE
                 if (charge.payVendor < 0) {
                   total -= charge.payVendor
+                  textChargeType.setTextColor(
+                      ContextCompat.getColor(
+                          this@TripDetailsActivity,
+                          R.color.status_lost
+                      )
+                  )
                   textChargeValue.setTextColor(
                       ContextCompat.getColor(
                           this@TripDetailsActivity,
@@ -448,6 +454,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               ) {
                 data = charge
                 seprator.visibility = View.GONE
+                textChargeType.setTextColor(
+                    ContextCompat.getColor(
+                        this@TripDetailsActivity,
+                        R.color.status_lost
+                    )
+                )
                 textChargeValue.setTextColor(
                     ContextCompat.getColor(
                         this@TripDetailsActivity,
@@ -494,57 +506,88 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     paymentSummaryBinding.total =
       "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
 
-    var advance = viewModel.bidDetail?.advancePayout ?: 0.0
+    val advance = viewModel.bidDetail?.advancePayout ?: 0.0
 
+    val payments = mutableListOf<TripPaymentsResponse>()
     if (viewModel.paymentsSummary.isEmpty()) {
-      viewModel.paymentsSummary.apply {
+      payments.apply {
         add(0, TripPaymentsResponse("advance_pending", "", advance, ""))
         add(
             1, TripPaymentsResponse(
             "balance_pending", "",
             total.minus(advance), "",
             when {
-              viewModel.tripDetail.damagePending == true -> "Damage Pending"
-              viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+              viewModel.tripDetail.damagePending == true -> "Damage Issue"
+              viewModel.tripDetail.detentionPending == true -> "Detention Issue"
               else -> ""
             }
         )
         )
       }
     } else {
-      val paymentMap = viewModel.paymentsSummary.map { it.head to it }
-          .toMap()
-          .toMutableMap()
-      val advancePayment = paymentMap["cash_advance"]
-      paymentMap.remove("cash_advance")
-      val loadingPayment = paymentMap["loading_charge"]
-      paymentMap.remove("loading_charge")
+      val paymentMap = mutableMapOf<String, TripPaymentsResponse>()
+      val advancePayment = viewModel.paymentsSummary.find { it.head == "cash_advance" }
+      val loadingPayment = viewModel.paymentsSummary.find { it.head == "loading_charge" }
+      var totalAdvance = 0.0
       advancePayment?.let { it ->
+        totalAdvance += advancePayment.amount
         loadingPayment?.let { it1 ->
-          advancePayment.amount += it1.amount
+          totalAdvance += it1.amount
         }
-        it.head = "advance_paid"
-        paymentMap["advance_paid"] = it
+        paymentMap["advance_paid"] = TripPaymentsResponse(
+            "advance_paid", it.bankTransactionId ?: "",
+            totalAdvance, it.updationTime ?: "", it.remark ?: ""
+        )
       }
-      if (!viewModel.balancePaid) {
-        if (advancePayment != null)
-          advance = advancePayment.amount
+
+      var interPayments = 0.0
+      val intermittentPayments = viewModel.paymentsSummary.filter { it.head == "intermittent" }
+      if (!intermittentPayments.isNullOrEmpty()) {
+        intermittentPayments.forEachIndexed { index, intermittentPayout ->
+          val head = intermittentPayout.head + " " + (index + 1)
+          interPayments += intermittentPayout.amount
+          paymentMap[head] = intermittentPayout
+          paymentMap[head] = TripPaymentsResponse(
+              head, intermittentPayout.bankTransactionId ?: "",
+              intermittentPayout.amount, intermittentPayout.updationTime ?: "",
+              intermittentPayout.remark ?: ""
+          )
+        }
+      }
+
+      val partialBalancePayment =
+        viewModel.paymentsSummary.find { it.head == "partial_balance_payment" }
+      partialBalancePayment?.let {
+        interPayments += it.amount
+        paymentMap["partial_balance_payment"] = TripPaymentsResponse(
+            "partial_balance_payment", it.bankTransactionId ?: "",
+            totalAdvance, it.updationTime ?: "", it.remark ?: ""
+        )
+      }
+
+      val balancePayment = viewModel.paymentsSummary.find { it.head == "balance_payment" }
+      if (balancePayment != null) {
+        paymentMap["balance_paid"] = TripPaymentsResponse(
+            "balance_paid", balancePayment.bankTransactionId ?: "",
+            balancePayment.amount, balancePayment.updationTime ?: "", balancePayment.remark ?: ""
+        )
+      } else {
         paymentMap["balance_pending"] = TripPaymentsResponse(
             "balance_pending", "",
-            total.minus(advance), "", when {
-          viewModel.tripDetail.damagePending == true -> "Damage Pending"
-          viewModel.tripDetail.detentionPending == true -> "Detention Pending"
+            total.minus(totalAdvance + interPayments), "", when {
+          viewModel.tripDetail.damagePending == true -> "Damage Issue"
+          viewModel.tripDetail.detentionPending == true -> "Detention Issue"
           else -> ""
         }
         )
       }
-      viewModel.paymentsSummary.apply {
-        clear()
+
+      payments.apply {
         addAll(paymentMap.values)
       }
     }
 
-    viewModel.paymentsSummary.forEach { _payment ->
+    payments.forEach { _payment ->
       ViewPaymentBreakupItemBinding.inflate(
           layoutInflater, paymentSummaryBinding.containerPaymentBreakup, false
       )

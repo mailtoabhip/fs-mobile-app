@@ -73,6 +73,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   var notificationType = ""
   var transactions = ""
   var transactionIds = listOf<String>()
+  var preferredTransactionId = ""
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 

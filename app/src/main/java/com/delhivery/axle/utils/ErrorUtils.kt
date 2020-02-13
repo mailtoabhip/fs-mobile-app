@@ -1,12 +1,12 @@
 package com.delhivery.axle.utils
 
 import com.delhivery.axle.BuildConfig
+import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.response.ErrorResponseBody
 import com.delhivery.axle.exception.HttpErrorCode
 import com.delhivery.axle.exception.HttpErrorCode.Forbidden
 import com.delhivery.axle.exception.HttpErrorCode.Unauthorized
 import com.delhivery.axle.injection.scope.ActivityScope
-import com.delhivery.axle.repository.AuthenticationRepository
 import com.google.gson.Gson
 import dagger.android.support.DaggerAppCompatActivity
 import retrofit2.HttpException
