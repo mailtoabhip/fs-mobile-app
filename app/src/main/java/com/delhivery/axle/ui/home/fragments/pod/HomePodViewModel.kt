@@ -15,10 +15,13 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import java.io.File
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -76,10 +79,17 @@ class HomePodViewModel @Inject constructor(
     dataLoadingLiveData.postValue(true)
     request.offset = offset
     request.limit = UserSearchLimit
-    if (status == EPodUploaded && dispatch)
-      request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
-    else request.tripStatus = status.statusKey
     request.vendorId = userRepository.userId()
+    if (status == TruckUnloaded) {
+      val cal = Calendar.getInstance()
+      cal.add(Calendar.DATE, -15)
+      cal.set(Calendar.HOUR_OF_DAY, 0)
+      cal.set(Calendar.MINUTE, 0)
+      cal.set(Calendar.SECOND, 0)
+      DateUtils.formatDate(cal.time, OrionDateFormat)
+      request.value = DateUtils.formatDate(cal.time, OrionDateFormat)
+    } else if (status == EPodUploaded)
+      request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
         .subscribe { _res, error ->

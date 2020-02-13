@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.request
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class SearchRequest() : BaseKeyTypeModel<String>() {
@@ -14,6 +15,9 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var lr: String? = null
   var limit: Int? = null
   var result: Int? = null
+  var column: String? = "unloaded"
+  var operator: String? = "gte"
+  var value: String? = null
 
   constructor(
     vehicleNumber: String? = null,
@@ -34,11 +38,24 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   fun getRequest(): JsonObject {
     val jsonObject = JsonObject()
     tripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("status_list", it) }
-    vehicleNumber?.let { if (it.isNotEmpty()) jsonObject.addProperty("vehicle_number", it.toUpperCase()) }
+    vehicleNumber?.let {
+      if (it.isNotEmpty()) jsonObject.addProperty(
+          "vehicle_number", it.toUpperCase()
+      )
+    }
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
     offset?.let { jsonObject.addProperty("offset", it) }
     limit?.let { jsonObject.addProperty("limit", it) }
+    value?.let {
+      val jsonArray = JsonArray()
+      val rangeJsonObject = JsonObject()
+      rangeJsonObject.addProperty("column", column)
+      rangeJsonObject.addProperty("operator", operator)
+      rangeJsonObject.addProperty("value", value)
+      jsonArray.add(rangeJsonObject)
+      jsonObject.add("range_filters", jsonArray)
+    }
     return jsonObject
   }
 
