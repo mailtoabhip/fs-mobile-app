@@ -82,14 +82,17 @@ class HomePodViewModel @Inject constructor(
     request.vendorId = userRepository.userId()
     if (status == TruckUnloaded) {
       val cal = Calendar.getInstance()
-      cal.add(Calendar.DATE, -15)
+      cal.add(Calendar.DATE, -14)
       cal.set(Calendar.HOUR_OF_DAY, 0)
       cal.set(Calendar.MINUTE, 0)
       cal.set(Calendar.SECOND, 0)
       DateUtils.formatDate(cal.time, OrionDateFormat)
+      request.tripStatus = status.statusKey
       request.value = DateUtils.formatDate(cal.time, OrionDateFormat)
-    } else if (status == EPodUploaded)
+    } else if (status == EPodUploaded) {
       request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
+      request.value = null
+    }
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
         .subscribe { _res, error ->

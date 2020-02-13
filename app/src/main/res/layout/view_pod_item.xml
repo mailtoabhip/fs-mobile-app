@@ -10,6 +10,7 @@
         type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
     <import type="android.view.View" />
+    <import type="com.delhivery.axle.data.home.trips.TripStatus" />
     <import type="androidx.core.content.ContextCompat" />
   </data>
 
@@ -139,9 +140,8 @@
           android:fontFamily="sans-serif-medium"
           android:gravity="end"
           android:lineSpacingExtra="@dimen/text_10sp"
-          android:text="@{trip.epodRejectionRemark}"
+          android:text="@{trip.podRemarksOrPayment()}"
           android:textColor="@color/status_lost"
-          android:visibility="@{trip.epodRejectionRemark==null || trip.epodRejectionRemark.isEmpty()? View.GONE: View.VISIBLE}"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/img_forward"
           app:layout_constraintTop_toTopOf="@+id/text_truck_details"

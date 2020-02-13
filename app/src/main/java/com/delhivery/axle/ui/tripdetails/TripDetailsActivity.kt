@@ -561,7 +561,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         interPayments += it.amount
         paymentMap["partial_balance_payment"] = TripPaymentsResponse(
             "partial_balance_payment", it.bankTransactionId ?: "",
-            totalAdvance, it.updationTime ?: "", it.remark ?: ""
+            it.amount, it.updationTime ?: "", it.remark ?: ""
         )
       }
 

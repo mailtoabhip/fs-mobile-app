@@ -450,6 +450,17 @@ data class HomeTripsItemData(
     if (damagePending == true) "Damage Issue" else ""
   }
 
+  /**
+   * pod remarks or partial payment status
+   */
+  fun podRemarksOrPayment() = if (chargesUpdated != null && chargesUpdated == true) {
+    "Partial Balance Approved"
+  } else if (tripStatus == TruckUnloaded.statusKey && epodRejectionRemark.isNotNullOrEmpty()) {
+    epodRejectionRemark
+  } else {
+    ""
+  }
+
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
