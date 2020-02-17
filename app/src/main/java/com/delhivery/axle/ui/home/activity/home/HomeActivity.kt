@@ -105,6 +105,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       "preferred_supplier_notification" -> {
         startActivity(bidDetailsIntent(preferredTransactionId, this))
       }
+      "reject_pod_notification" -> {
+        startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
       }

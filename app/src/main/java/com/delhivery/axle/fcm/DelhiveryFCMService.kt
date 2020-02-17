@@ -113,6 +113,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 private const val DEFAULT_NOTIFICATION_CHANNEL = "axle_notification_channel"
 const val ARGS_NOTIFICATION_ID = "args_notification_id"
 const val ARGS_TRANSACTION_IDS = "transaction_ids"
-const val ARGS_PREFERRED_TRANSACTION_ID = "preferred_transaction_id"
+const val ARGS_PREFERRED_TRANSACTION_ID = "transaction_id"
 const val ARGS_NOTIFICATION_TYPE = "notification_type"
 const val ARGS_NOTIFICATION_KEY = "notification_service_notification_id"
