@@ -63,6 +63,7 @@ data class HomeTripsItemData(
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
+  @SerializedName("lr_details") val lrDetails: MutableList<LRDetails> = mutableListOf(),
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -230,7 +231,15 @@ data class HomeTripsItemData(
   /**
    * @return formatted lr number
    */
-  fun lr() = lr.let { "LR: $it" }
+  fun lr() = if (lr.isNotNullOrEmpty()) {
+    "LR: $lr"
+  } else if (!lrDetails.isNullOrEmpty()) {
+    val lrString = StringBuilder()
+    lrDetails.forEach { lrString.append(it.lr) }
+    "LR: ${lrString.toString()}"
+  } else {
+    ""
+  }
 
   /**
    * @return pod action text
@@ -542,6 +551,26 @@ data class ByUser(
   @SerializedName("at") val time: String,
   @SerializedName("by") val by: String
 ) : Serializable
+
+/**
+ * LR details
+ */
+data class LRDetails(
+  @SerializedName("lr") val lr: String,
+  @SerializedName("lr_date") val lrDate: String,
+  @SerializedName("invoice_details") var invoice: List<InvoiceDetails>
+)
+
+/**
+ * Invoice details
+ */
+data class InvoiceDetails(
+  @SerializedName("invoice_number") var invoiceNumber: String? = null,
+  @SerializedName("ewaybill_number") var ewaybillNumber: String? = null,
+  @SerializedName("invoice_amount") var invoiceAmount: Double? = null,
+  @SerializedName("weight_in_mt") var actualLoad: Double? = null,
+  @SerializedName("volumetric_weight") var volumetricWeight: Double? = null
+)
 
 /**
  * Trip status enum

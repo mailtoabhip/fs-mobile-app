@@ -636,7 +636,7 @@ private const val TransactionIdIntentKey = "transaction_id"
 /**
  * Trip details intent
  */
-fun  tripDetailsIntent(
+fun tripDetailsIntent(
   transactionId: String,
   context: Context
 ) = Intent(context, TripDetailsActivity::class.java).apply {
