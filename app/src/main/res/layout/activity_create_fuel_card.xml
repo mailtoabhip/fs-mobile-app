@@ -110,7 +110,7 @@
                 android:padding="@dimen/size_12dp"
                 >
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/label_active_status"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                   app:layout_constraintTop_toTopOf="parent"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/label_active_amount"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
                   />
 
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/label_fuel_partner"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                   app:layout_constraintBottom_toBottomOf="@+id/img_fuel_partner"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_truck_details"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -201,7 +201,7 @@
                   tools:text="HR26 1234"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_source_city"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
                   tools:text="Panjim"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_source_state"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                   tools:text="GOA"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_destination_city"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -241,7 +241,7 @@
                   tools:text="Andheri East"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_destination_state"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -288,7 +288,7 @@
                 android:padding="@dimen/size_12dp"
                 >
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/id1"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -384,7 +384,7 @@
                 android:padding="@dimen/size_12dp"
                 >
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/btn_create"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -401,7 +401,7 @@
                   app:layout_constraintTop_toBottomOf="@+id/til_amount"
                   />
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/btn_fuel_faq"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -475,7 +475,7 @@
             app:srcCompat="@drawable/ic_empty_box"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_40dp"
@@ -488,7 +488,7 @@
             android:text="Session timed out!"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/size_24dp"
@@ -568,7 +568,7 @@
                 android:text="Fuel Card Processed"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_phone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -581,7 +581,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/amount"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_phone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -598,7 +598,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -611,7 +611,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_phone"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -657,7 +657,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/label_tip_1"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_tip_1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -682,7 +682,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/text_cashback"
                 app:layout_constraintEnd_toStartOf="@+id/text_cashback"
                 />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_cashback"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -697,7 +697,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/label_tip_1"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_back"
                 android:layout_width="match_parent"
                 android:text="@string/label_go_back"
@@ -712,7 +712,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/btn_transaction_summary"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_transaction_summary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -791,7 +791,7 @@
                 android:text="Fuel Card creation failed"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id8"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -804,7 +804,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/id7"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id9"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -821,7 +821,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id10"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -834,7 +834,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/id9"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id11"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -851,7 +851,7 @@
                 tools:text="Rs 10.00"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_retry"
                 android:layout_width="match_parent"
                 android:text="RETRY"

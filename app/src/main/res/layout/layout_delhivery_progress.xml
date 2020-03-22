@@ -26,7 +26,7 @@
       android:paddingStart="@dimen/size_48dp"
       >
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -41,7 +41,7 @@
           android:layout_marginBottom="@dimen/size_24dp"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
           tools:text="Logging you in.."
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_16dp"
@@ -66,9 +66,9 @@
           android:textColor="@color/heading_black"
           tools:text="This usually takes few seconds to load. please be patient."
           />
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

@@ -85,7 +85,7 @@
               bind:shadow="@{ @dimen/size_2dp }"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_from_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                 tools:text="Panjim, Goa"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_to_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_source"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                 tools:text="Andheri east, Mumbai, Maharashtra"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_destination"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                 tools:text="Mumbai(Maharashtra), Jaipur(Rajasthan)"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_date_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                 tools:text="TODAY"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_truck_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
                 tools:srcCompat="@drawable/ic_closed_truck"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_load_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                 tools:text="Load: Pharmaceuticals"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -240,7 +240,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_load_details"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -258,7 +258,7 @@
           </androidx.constraintlayout.widget.ConstraintLayout>
 
           <!-- bidding completed text -->
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_bid_ended"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"

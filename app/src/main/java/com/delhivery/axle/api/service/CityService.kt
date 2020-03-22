@@ -25,7 +25,7 @@ interface CityService {
    */
   @GET("/cities/list")
   fun getAllCities(
-    @Query("limit") limit: Int = 3000
+    @Query("limit") limit: Int = 20000
   ): Single<BaseResponse<CitiesResponse>>
 
 }

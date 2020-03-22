@@ -47,7 +47,7 @@
           bind:shadow="@{ @dimen/action_btn_elevation }"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_advance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
@@ -103,7 +103,7 @@
           bind:shadow="@{ @dimen/action_btn_elevation }"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
@@ -158,7 +158,7 @@
           bind:shadow="@{ @dimen/action_btn_elevation }"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_transit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
@@ -213,7 +213,7 @@
           bind:shadow="@{ @dimen/action_btn_elevation }"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -241,7 +241,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"

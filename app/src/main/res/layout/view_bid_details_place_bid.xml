@@ -35,7 +35,7 @@
         app:srcCompat="@drawable/ic_place_bid"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_12dp"
@@ -51,7 +51,7 @@
         tools:text="23 bids recieved till now"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_2dp"
@@ -64,7 +64,7 @@
         android:textSize="@dimen/text_12sp"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_2dp"

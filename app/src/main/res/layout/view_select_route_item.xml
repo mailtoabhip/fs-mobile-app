@@ -37,7 +37,7 @@
           app:srcCompat="@drawable/ic_route"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/size_18dp"
@@ -57,7 +57,7 @@
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="0.75"

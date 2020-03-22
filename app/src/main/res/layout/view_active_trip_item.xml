@@ -43,7 +43,7 @@
           app:layout_constraintTop_toTopOf="parent"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_truck_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             tools:text="HR26 1234"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_driver_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
             app:srcCompat="@drawable/ic_arrow_forward_black"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_source_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             tools:text="Panjim"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_source_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
             tools:text="GOA"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
             tools:text="Andheri East"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
             android:paddingStart="@dimen/size_16dp"
             >
 
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:maxLines="1"
@@ -165,7 +165,7 @@
               android:textSize="@dimen/text_14sp"
               />
 
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_amount_given"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -201,7 +201,7 @@
               android:gravity="center_vertical"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"

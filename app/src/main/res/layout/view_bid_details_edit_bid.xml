@@ -39,7 +39,7 @@
           app:srcCompat="@drawable/ic_place_bid"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_12dp"
@@ -55,7 +55,7 @@
           tools:text="23 bids recieved till now"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_2dp"
@@ -78,7 +78,7 @@
           android:orientation="vertical"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_user_bid_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             tools:text="You have bid: ₹ 21500.00"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_user_bid_amount_diff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

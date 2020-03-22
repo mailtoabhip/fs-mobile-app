@@ -34,7 +34,7 @@
         app:srcCompat="@{icon}"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
@@ -47,7 +47,7 @@
         tools:text="Welcome to Axle!"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -59,7 +59,7 @@
         tools:text="Glad to see that you have taken the right step towards the digitising logistics. We ensure you the best possible loads across the country."
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/btn_faq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

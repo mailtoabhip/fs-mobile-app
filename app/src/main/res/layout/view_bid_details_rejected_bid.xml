@@ -25,7 +25,7 @@
         android:background="@drawable/bg_circle_primary"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_18dp"
@@ -38,7 +38,7 @@
         android:textSize="@dimen/text_16sp"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_bid_amout_diff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         tools:text="(₹ 5000.00 more than target price)"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_user_highest_bid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
