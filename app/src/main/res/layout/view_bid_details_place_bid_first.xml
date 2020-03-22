@@ -23,7 +23,7 @@
         app:srcCompat="@drawable/ic_place_bid_first"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_14dp"
@@ -38,7 +38,7 @@
         android:textSize="@dimen/text_16sp"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"

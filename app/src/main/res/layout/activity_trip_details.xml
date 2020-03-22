@@ -94,7 +94,7 @@
               bind:shadow="@{ @dimen/size_2dp }"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_vehicle_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 tools:text="DL 4S FG 2134"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_driver"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                 tools:text="Ram kumar,+919090909090"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_promise_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
               bind:shadow="@{ @dimen/size_2dp }"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_from_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -174,7 +174,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,11 +188,11 @@
                 tools:text="Panjim, Goa"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_to_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_to"
                 android:textColor="@color/sub_heading_black"
@@ -201,7 +201,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_source"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -216,11 +216,11 @@
                 tools:text="Andheri east, Mumbai, Maharashtra"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_via"
                 android:textColor="@color/sub_heading_black"
@@ -230,7 +230,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_destination"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -245,12 +245,12 @@
                 tools:text="Mumbai(Maharashtra), Jaipur(Rajasthan)"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_truck_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_12dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center_vertical"
                 android:text="@{ transaction.truckDetail() }"
@@ -275,10 +275,11 @@
                 tools:srcCompat="@drawable/ic_closed_truck"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center_vertical"
                 android:text="@{ tripDetails.load() }"
@@ -290,10 +291,10 @@
                 tools:text="Loaded Weight: 32MT"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center_vertical"
                 android:text="@{ tripDetails.pmtRate() }"
@@ -305,70 +306,52 @@
                 tools:text="PMT rate: Rs 4000 PMT"
                 />
 
-          </androidx.constraintlayout.widget.ConstraintLayout>
-
-          <!-- Pickup location -->
-          <androidx.constraintlayout.widget.ConstraintLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_4dp"
-              android:background="@color/colorPrimary"
-              android:orientation="vertical"
-              android:paddingStart="@dimen/size_24dp"
-              android:paddingTop="@dimen/size_16dp"
-              android:paddingEnd="@dimen/size_24dp"
-              android:paddingBottom="@dimen/size_16dp"
-              bind:shadow="@{ @dimen/size_2dp }"
-              >
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_lr_number"
                 android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
+                android:layout_marginStart="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@{ tripDetails.lr() }"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/id1"
+                app:layout_constraintStart_toEndOf="@+id/id1"
+                app:layout_constraintTop_toTopOf="@+id/id1"
                 tools:text="000000"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/label_pickup_location"
                 android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/id2"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_warehouse"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_4dp"
-                android:layout_marginEnd="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/heading_black"
-                app:layout_constraintEnd_toStartOf="@+id/id2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/id3"
                 tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
@@ -398,7 +381,7 @@
                 android:background="@drawable/bg_selector_trip_detail_tab"
                 >
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_status_history"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -423,7 +406,7 @@
                 android:background="@drawable/bg_selector_trip_detail_tab"
                 >
 
-              <TextView
+              <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_payment_summary"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"

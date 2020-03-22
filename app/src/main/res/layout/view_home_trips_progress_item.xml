@@ -35,7 +35,7 @@
           android:paddingTop="12dp"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
             app:layout_constraintTop_toTopOf="@+id/id2"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -44,7 +44,7 @@
         android:paddingBottom="@dimen/size_16dp"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_status"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
           tools:text="Load picked up"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_epoch"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
           tools:text="2 min ago"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_status_exp"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
           android:orientation="horizontal"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
             android:textStyle="bold"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_reupload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

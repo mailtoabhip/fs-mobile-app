@@ -12,7 +12,7 @@
         type="Boolean"
         />
   </data>
-  <TextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/text_menu_item"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

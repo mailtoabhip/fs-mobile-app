@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/sublabel"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
           app:layout_constraintBottom_toTopOf="@+id/time"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/time"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

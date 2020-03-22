@@ -24,7 +24,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -52,7 +52,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -80,7 +80,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"

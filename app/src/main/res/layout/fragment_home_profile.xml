@@ -96,7 +96,7 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/id5"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -135,7 +135,7 @@
                 tools:text="qwertyuio"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_company"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -148,7 +148,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_name"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_company"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -164,7 +164,7 @@
                 tools:text="asdedfrf"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_mobile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_company"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_mobile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
                 tools:text="asdedfrf"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_bank"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_mobile"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_bank"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -218,7 +218,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_ifsc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -230,7 +230,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_bank"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_ifsc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_pan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -257,7 +257,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_ifsc"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_vehicle_type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -295,7 +295,7 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -305,7 +305,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_4dp"
@@ -340,7 +340,7 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -351,7 +351,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -384,7 +384,7 @@
                   app:layout_constraintTop_toTopOf="parent"
                   >
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -394,7 +394,7 @@
                     android:textSize="@dimen/text_10sp"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -406,7 +406,7 @@
                     tools:text="₹ 345000"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -432,7 +432,7 @@
                   app:layout_constraintTop_toTopOf="parent"
                   >
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -442,7 +442,7 @@
                     android:textSize="@dimen/text_10sp"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -454,7 +454,7 @@
                     tools:text="₹ 345000"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -494,7 +494,7 @@
               android:paddingBottom="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -540,7 +540,7 @@
               android:paddingBottom="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_your_routes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -551,7 +551,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_your_routes_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -601,7 +601,7 @@
               android:paddingBottom="@dimen/size_24dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"

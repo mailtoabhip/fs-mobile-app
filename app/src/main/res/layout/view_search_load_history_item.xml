@@ -38,7 +38,7 @@
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_source_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
           tools:text="Panjim"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_source_state"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
           tools:text="Andheri East"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_state"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

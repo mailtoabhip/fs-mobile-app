@@ -36,7 +36,7 @@
         android:padding="@dimen/size_16dp"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_truck_details"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
           tools:text="HR26"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_route"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
           tools:text="Ajmer - Goa"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_trip_status"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
           tools:textColor="@color/status_active"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_start_date"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
           tools:text="Start Date"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_end_date"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
           tools:text="End Date"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_date_time"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
           app:layout_constraintTop_toBottomOf="@id/text_date_time"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_advance_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
             tools:text="Advance Paid"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_advance_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
             tools:text="On: 12-11-2019"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_advance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -183,7 +183,7 @@
           app:layout_constraintTop_toTopOf="@+id/container_advance"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_balance_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
             tools:text="Balance Paid"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_balance_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
             tools:text="On: 12-11-2019"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_balance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -228,7 +228,7 @@
             tools:text="Rs 1750.00"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_remark"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

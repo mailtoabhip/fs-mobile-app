@@ -66,7 +66,7 @@
               android:padding="@dimen/size_12dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_bank_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 tools:text="State bank of india"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_acc_num"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_bank_name"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_acc_num"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_owner_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_acc_num"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_owner_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                 tools:text="qwertyuio"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_balance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_owner_name"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_balance"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                   />
             </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_transfer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -317,7 +317,7 @@
                 tools:text="Transferred initiated"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/acc_num"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -330,7 +330,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/label_transaction"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_acc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -347,7 +347,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -360,7 +360,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_acc"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -376,7 +376,7 @@
                 tools:text="Processing"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -390,7 +390,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_status"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_back"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -405,7 +405,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/btn_transaction_summary"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_transaction_summary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

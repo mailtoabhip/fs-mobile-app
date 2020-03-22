@@ -9,7 +9,7 @@
         type="String"
         />
   </data>
-  <LinearLayout
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="@android:color/white"
@@ -23,7 +23,7 @@
         android:layout_gravity="center_vertical"
         android:orientation="horizontal"
         >
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_title"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
           />
     </FrameLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16dp"
@@ -64,5 +64,5 @@
         android:text="@string/action_dismiss"
         style="@style/ActionButton"
         />
-  </LinearLayout>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
