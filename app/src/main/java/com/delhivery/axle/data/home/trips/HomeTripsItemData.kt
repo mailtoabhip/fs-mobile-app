@@ -235,8 +235,8 @@ data class HomeTripsItemData(
     "LR: $lr"
   } else if (!lrDetails.isNullOrEmpty()) {
     val lrString = StringBuilder()
-    lrDetails.forEach { lrString.append(it.lr) }
-    "LR: ${lrString.toString()}"
+    lrDetails.forEach { lrString.append(it.lr).append(", ") }
+    "LR: ${lrString.substring(0, lrString.length - 2)}"
   } else {
     ""
   }

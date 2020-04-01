@@ -327,7 +327,6 @@
                 android:text="@{ tripDetails.lr() }"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_14sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/id1"
                 app:layout_constraintTop_toTopOf="@+id/id1"
                 tools:text="000000"
