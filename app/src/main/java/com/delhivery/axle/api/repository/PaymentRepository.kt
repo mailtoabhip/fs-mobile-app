@@ -3,6 +3,7 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.response.BulkPaymentItem
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.service.ExpenseService
 import com.delhivery.axle.api.service.PaymentService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.TripHistoryModel
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class PaymentRepository @Inject constructor(
   private val paymentService: PaymentService,
+  private val expenseService: ExpenseService,
   private val tripsService: TripService
 ) : BaseRepository() {
 
@@ -39,8 +41,8 @@ class PaymentRepository @Inject constructor(
    */
   fun historyCharges(
     transactionId: String
-  ): Single<List<TripChargesResponse>> =
-    paymentService.chargesSummary(transactionId).convertResponse()
+  ): Single<Map<String, List<TripChargesResponse>>> =
+    expenseService.charges(transactionId).convertResponse()
 
   /**
    * Get bulk transactions using ids

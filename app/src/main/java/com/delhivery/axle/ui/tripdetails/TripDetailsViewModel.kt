@@ -62,7 +62,6 @@ class TripDetailsViewModel @Inject constructor(
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
   var historyLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
-  var chargesLiveData = MutableLiveData<Boolean>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   /* payment summary */
@@ -142,8 +141,13 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error) {
             chargesSummary.clear()
-            chargesSummary.addAll(_res)
-            chargesLiveData.postValue(!chargesSummary.isNullOrEmpty())
+            _res.values?.let {
+              for (charge in it) {
+                chargesSummary.addAll(charge)
+              }
+            }
+          } else {
+            error?.handle()
           }
         }
   }
