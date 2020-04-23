@@ -1,6 +1,8 @@
 package com.delhivery.axle.api.request
 
 import com.delhivery.axle.data.RouteMappingModel
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -17,7 +19,31 @@ data class UpdateUserBaseCityRequest(
  */
 data class UpdateUserRoutesRequest(
   @SerializedName("lane_preferences") val routes: List<RouteMappingModel>
-)
+) {
+
+  fun getRequest(): JsonObject {
+    val jsonObject = JsonObject()
+    val jsonArray = JsonArray()
+    routes.forEach {
+      val json = JsonObject()
+      val originjson = JsonObject()
+      it.origin.city.let { it1 -> originjson.addProperty("city", it1) }
+      it.origin.orion_db_city_code?.let { it1 -> originjson.addProperty("city_id", it1) }
+      it.origin.cityId.let { it1 -> originjson.addProperty("gn_city_code", it1) }
+      json.add("origin", originjson)
+
+      val destinationjson = JsonObject()
+      it.destination.state.let { it1 -> destinationjson.addProperty("state", it1) }
+      it.destination.stateId?.let { it1 -> destinationjson.addProperty("state_id", it1) }
+      it.destination.gnStateCode.let { it1 -> destinationjson.addProperty("gn_state_code", it1) }
+      json.add("destination", destinationjson)
+      jsonArray.add(json)
+    }
+
+    jsonObject.add("lane_preferences", jsonArray)
+    return jsonObject
+  }
+}
 
 /**
  * Payload for update user access

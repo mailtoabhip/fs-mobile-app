@@ -1,15 +1,15 @@
 package com.delhivery.axle.data.home.routes
 
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.StateModel
+import com.delhivery.axle.data.UserCity
 
 /**
  * Route model
  */
 data class RouteModel(
-  var origin: CityModel,
+  var origin: UserCity,
   var destinations: MutableSet<StateModel> = mutableSetOf()
 ) : BaseKeyTypeModel<String>() {
 

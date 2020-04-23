@@ -2,10 +2,11 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.data.CitiesResponse
-import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.SearchCitiesResponse
+import com.google.gson.JsonObject
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 /**
  * Handle network calls to City Service
@@ -15,17 +16,17 @@ interface CityService {
   /**
    * Search cities
    */
-  @GET("/cities")
+  @POST("/cities/suggestion/v1/")
   fun searchCities(
-    @Query("city_prefix") query: String
-  ): Single<BaseResponse<List<CityModel>>>
+    @Body request: JsonObject
+  ): Single<BaseResponse<CitiesResponse>>
 
   /**
    * Get all cities
    */
-  @GET("/cities/list")
+  @POST("/cities/v1/")
   fun getAllCities(
-    @Query("limit") limit: Int = 20000
-  ): Single<BaseResponse<CitiesResponse>>
+    @Body request: JsonObject
+  ): Single<BaseResponse<SearchCitiesResponse>>
 
 }

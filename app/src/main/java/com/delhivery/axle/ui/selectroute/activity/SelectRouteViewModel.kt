@@ -19,7 +19,8 @@ class SelectRouteViewModel @Inject constructor(
   private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
-  var routesLiveData = MutableLiveData<Triple<String, String, MutableList<RouteModel>>>()
+  var routesLiveData =
+    MutableLiveData<Pair<Triple<String, String, String>, MutableList<RouteModel>>>()
 
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
@@ -34,7 +35,9 @@ class SelectRouteViewModel @Inject constructor(
         .subscribe { _user, error ->
           if (!error) {
             routes.addAll(_user.userRoutes())
-            routesLiveData.postValue(Triple(_user.baseCity, _user.baseCityCode, routes))
+            routesLiveData.postValue(
+                Pair(Triple(_user.baseCity, _user.baseCityCode, _user.baseCityGnCode), routes)
+            )
           } else {
             error.handle()
           }

@@ -72,7 +72,7 @@ data class TripPaymentsResponse(
   @SerializedName("head") var head: String,
   @SerializedName("bank_transaction_id") val bankTransactionId: String,
   @SerializedName("amount") var amount: Double,
-  @SerializedName("updation_date") val updationTime: String,
+  @SerializedName("transfer_time") val updationTime: String,
   @SerializedName("remarks") var remark: String? = ""
 ) {
 

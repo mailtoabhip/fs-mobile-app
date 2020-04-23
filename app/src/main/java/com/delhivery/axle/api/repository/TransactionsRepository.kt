@@ -19,7 +19,7 @@ class TransactionsRepository @Inject constructor(
    * Get user transactions
    */
   fun fetchLoadBoardTransactions(offset: Int) = transactionService.loadBoardTransactions(
-      userRepository.userId(), userPrefs.cityCode ?: "",
+      userRepository.userId(), userPrefs.cityCode ?: "", userPrefs.gnCityCode ?: "",
       offset, UserTripsLoadLimit
   ).convertResponse()
 
@@ -28,11 +28,13 @@ class TransactionsRepository @Inject constructor(
    */
   fun searchTransactions(
     offset: Int,
-    source: String,
+    source: String?,
+    gnSourceCode: String,
     destination: String?,
+    gnDestinationCode: String?,
     truckType: String?
   ) = transactionService.transactions(
-      offset, Requested.statusId, source, destination, truckType
+      offset, Requested.statusId, source, gnSourceCode, destination, gnDestinationCode, truckType
   ).convertResponse()
 
   /**

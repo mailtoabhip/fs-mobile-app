@@ -165,14 +165,14 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
 
   fun populateRoute() {
     binding.textOriginCityName.text =
-      route?.origin?.cityState() ?: getString(R.string.not_available)
+      route?.origin?.cityName() ?: getString(R.string.not_available)
 
     adapter.clearItems()
     selectedStates.clear()
 
     states.forEach { t: StateModel ->
       t.checked = false
-      val selected = route?.destinations?.contains(t)?: false
+      val selected = route?.destinations?.contains(t) ?: false
       t.checked = selected
       if (selected) {
         selectedStates.add(t)

@@ -1,13 +1,14 @@
 package com.delhivery.axle.data
 
 import com.delhivery.axle.data.home.routes.RouteModel
+import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 /**
  * Route mapping model
  */
 data class RouteMappingModel(
-  @SerializedName("origin") val origin: CityModel,
+  @SerializedName("origin") val origin: UserCity,
   @SerializedName("destination") val destination: StateModel
 )
 
@@ -23,4 +24,14 @@ fun List<RouteMappingModel>.toRoutes(): MutableList<RouteModel> {
     routes[it.origin.key()]!!.destinations.add(it.destination)
   }
   return routes.values.toMutableList()
+}
+
+data class UserCity(
+  @SerializedName("city") val city: String,
+  @SerializedName("gn_city_code") val cityId: String,
+  @SerializedName("city_id") val orion_db_city_code: String? = ""
+) : BaseKeyTypeModel<String>() {
+  override fun key() = cityId
+
+  fun cityName() = StringUtils.capitalize(city) ?: ""
 }
