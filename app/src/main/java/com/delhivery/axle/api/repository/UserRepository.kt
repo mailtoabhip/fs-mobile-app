@@ -69,7 +69,7 @@ class UserRepository @Inject constructor(
    * Update user routes and get all routes
    */
   fun updateUserRoutes(routes: List<RouteMappingModel>) =
-    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes))
+    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes).getRequest())
 
   /**
    * Update app access flag

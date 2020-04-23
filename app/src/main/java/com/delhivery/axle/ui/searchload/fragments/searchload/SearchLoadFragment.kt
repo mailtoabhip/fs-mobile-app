@@ -52,46 +52,31 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     binding.btnRetry.setOnClickListener {
       binding.warningItem.visibility = View.GONE
       binding.warningItem.alpha = 0f
-      viewModel.fetchCities()
+      //      viewModel.fetchCities()
     }
 
-    viewModel.citiesLiveData.observe(this, Observer {
-      /* animate open */
-      if (it.isNullOrEmpty()) {
-        toggleVisibility(true)
-        binding.arcView.animate(RevealOpen) {
-          please {
-            animate(binding.warningItem).toBe {
-              visible()
-            }
-          }.setStartDelay(300)
-              .start()
-        }
-      } else {
-        toggleVisibility(false)
-        binding.arcView.animate(RevealOpen) {
-          please {
-            animate(binding.containerHistory) toBe {
-              visible()
-            }
-            animate(binding.textHistoryTitle) toBe {
-              visible()
-            }
-            animate(binding.containerSearchLoadHeaderForm) toBe {
-              visible()
-            }
-            animate(binding.warningItem).toBe {
-              invisible()
-            }
-          }.setStartDelay(300)
-              .start()
-        }
+    binding.editOriginCity.setText("")
+    binding.editDestinationCity.setText("")
 
-        setupSearchScreen(it)
-      }
-    })
-
-    viewModel.fetchCities()
+    toggleVisibility(false)
+    binding.arcView.animate(RevealOpen) {
+      please {
+        animate(binding.containerHistory) toBe {
+          visible()
+        }
+        animate(binding.textHistoryTitle) toBe {
+          visible()
+        }
+        animate(binding.containerSearchLoadHeaderForm) toBe {
+          visible()
+        }
+        animate(binding.warningItem).toBe {
+          invisible()
+        }
+      }.setStartDelay(300)
+          .start()
+    }
+    setupSearchScreen()
   }
 
   private fun toggleVisibility(toggle: Boolean) {
@@ -117,13 +102,19 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     autoCompleteUtils.clearDisposable()
   }
 
-  private fun setupSearchScreen(cities: List<CityModel>) {
-    autoCompleteUtils.autoCompleteCity(binding.editOriginCity, cities) {
+  override fun onDestroy() {
+    super.onDestroy()
+    origin = null
+    destination = null
+  }
+
+  private fun setupSearchScreen() {
+    autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
       origin = it
       binding.editDestinationCity.requestFocus()
     }
 
-    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity, cities) {
+    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
       destination = it
       uiUtils.toggleKeyboard()
     }

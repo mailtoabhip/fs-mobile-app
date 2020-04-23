@@ -13,6 +13,7 @@ data class UserModel(
   @SerializedName("name") var name: String,
   @SerializedName("base_city") var baseCity: String,
   @SerializedName("base_city_code") var baseCityCode: String,
+  @SerializedName("base_gn_city_code") var baseCityGnCode: String,
   @SerializedName("user_type") var userType: String?,
   @SerializedName("phone_no") var phoneNo: String?,
   @SerializedName("company_name") var companyName: String?,

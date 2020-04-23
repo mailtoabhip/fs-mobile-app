@@ -30,6 +30,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.CityCode, null)
 
   /**
+   *  Base/Origin City Code
+   */
+  var gnCityCode: String?
+    set(value) = editor.putString(PrefKeys.GNCityCode, value).apply()
+    get() = prefs.getString(PrefKeys.GNCityCode, null)
+
+  /**
    *  User phone number
    */
   var phoneNumber: String?
@@ -198,6 +205,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.CityCode)
         .apply()
+    editor.remove(PrefKeys.GNCityCode)
+        .apply()
     editor.remove(PrefKeys.MaxPMTRate)
         .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
@@ -218,9 +227,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     pancard = user.panCardNo ?: ""
     accNumber = user.accNumber()
     cityCode = if (user.hasRoutes()) {
-      user.userRoutes()[0].origin.cityId
+      user.userRoutes()[0].origin.orion_db_city_code
     } else {
       user.baseCityCode
+    }
+    gnCityCode = if (user.hasRoutes()) {
+      user.userRoutes()[0].origin.cityId
+    } else {
+      user.baseCityGnCode
     }
   }
 
@@ -239,6 +253,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
     const val CityCode = "city_code"
+    const val GNCityCode = "gn_city_code"
     const val RouteUpdate = "route_update"
     const val PhoneNumber = "phone_number"
     const val HasLoggedIn = "has_logged_in"

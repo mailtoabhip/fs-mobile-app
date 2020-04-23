@@ -10,6 +10,8 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -21,10 +23,11 @@ class SearchLoadFragmentViewModel @Inject constructor(
   private val cityService: CityService
 ) : BaseViewModel() {
 
-  /* search results live data */
   var citiesLiveData = MutableLiveData<List<CityModel>>()
 
-  /* search load history live data */
+  /**
+   * Search load history live data
+   */
   fun searchLoadHistoryLiveData() = appDB.searchHistoryDao().latestSearchEntries()
 
   /**
@@ -49,6 +52,9 @@ class SearchLoadFragmentViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Delete from history
+   */
   fun deleteSearchResult(entry: SearchLoadHistoryEntity) {
     compositeDisposable += Single.fromCallable {
       appDB.searchHistoryDao()
@@ -64,13 +70,28 @@ class SearchLoadFragmentViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Fetch all cities
+   */
   fun fetchCities() {
-    compositeDisposable += cityService.getAllCities()
+    val jsonObject = JsonObject()
+    jsonObject.addProperty("all", true)
+    jsonObject.addProperty("primary", true)
+    val jsonArray = JsonArray()
+    jsonArray.add("city_code")
+    jsonArray.add("city")
+    jsonArray.add("orion_db_city_code")
+    jsonObject.add("source_fields", jsonArray)
+    compositeDisposable += cityService.getAllCities(jsonObject)
         .onBackground()
         .progress()
         .subscribe { _res, _ ->
           if (_res != null) {
-            citiesLiveData.postValue(_res.responseData?.cities ?: listOf())
+            val converted = mutableListOf<CityModel>()
+            _res.responseData?.cities?.forEach { it ->
+              converted.add(CityModel(it.city, it.dbCityCode ?: "", it.cityId, state = it.state))
+            }
+            citiesLiveData.postValue(converted)
           } else {
             citiesLiveData.postValue(null)
           }

@@ -5,7 +5,7 @@
   <data>
     <variable
         name="origin"
-        type="com.delhivery.axle.data.CityModel"
+        type="com.delhivery.axle.data.UserCity"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -35,7 +35,7 @@
         android:layout_marginStart="@dimen/size_24dp"
         android:layout_marginTop="@dimen/size_6dp"
         android:fontFamily="sans-serif-medium"
-        android:text="@{ @string/label_from_state(origin.state) }"
+        android:text="@{ @string/label_from_state(origin.city) }"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
         />

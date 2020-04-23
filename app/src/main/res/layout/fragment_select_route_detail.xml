@@ -76,7 +76,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             android:hint="Origin City"
-            android:text="@{route.origin.cityState()}"
+            android:text="@{route.origin.city}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/img_edit_origin"
             app:layout_constraintStart_toEndOf="@id/img_gps"
