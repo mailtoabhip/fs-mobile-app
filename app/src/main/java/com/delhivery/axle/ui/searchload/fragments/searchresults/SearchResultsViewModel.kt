@@ -44,8 +44,7 @@ class SearchResultsViewModel @Inject constructor(
   ) {
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.orion_db_city_code, origin.cityId, destination?.orion_db_city_code,
-        destination?.cityId, type.toLowerCase()
+        0, origin.orion_db_city_code, destination?.orion_db_city_code, type.toLowerCase()
     )
         .flatMap { t ->
           this.loadPricePercent = t.loadPricePercent

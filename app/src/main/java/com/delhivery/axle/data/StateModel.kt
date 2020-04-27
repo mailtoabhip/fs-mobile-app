@@ -18,11 +18,11 @@ data class StateModel(
      */
     fun idFromName(name: String): String {
       val state = StateModelList.firstOrNull { it.state.contains(name, true) }
-      return state?.gnStateCode ?: state?.stateId ?: state?.state?.substring(0, 3) ?: ""
+      return state?.stateId ?: state?.state?.substring(0, 3) ?: ""
     }
   }
 
-  fun stateString() = "${state}(${gnStateCode})"
+  fun stateString() = "${state}(${stateId})"
 
   override fun equals(other: Any?): Boolean {
     return (other as StateModel).state.toLowerCase()

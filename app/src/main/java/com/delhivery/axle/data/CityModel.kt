@@ -6,13 +6,11 @@ import com.google.gson.annotations.SerializedName
 
 data class CityModel(
   @SerializedName("city") val city: String,
-  @SerializedName("city_code") val cityId: String,
   @SerializedName("orion_db_city_code") val orion_db_city_code: String? = "",
   @SerializedName("district") val district: String? = "",
-  @SerializedName("state") val state: String? = "",
-  @SerializedName("gn_state_code") val gnStateCode: String? = ""
+  @SerializedName("state") val state: String? = ""
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = cityId
+  override fun key() = orion_db_city_code ?: ""
 
   fun cityName() = StringUtils.capitalize(city) ?: ""
 
@@ -26,15 +24,15 @@ data class CityModel(
         .toString()
     StateModelList.toMutableList()
         .forEach { stateModel ->
-          if (stateModel.gnStateCode.compareTo(code) == 0) {
+          if (stateModel.stateId.compareTo(code) == 0) {
             sb.append(", ")
-                .append(stateModel.gnStateCode)
+                .append(stateModel.stateId)
           }
         }
     return sb.toString()
   }
 
-  fun getUserCity() = UserCity(city, cityId, orion_db_city_code)
+  fun getUserCity() = UserCity(city, orion_db_city_code)
 
 }
 
@@ -65,10 +63,9 @@ fun List<CityModel>.names() =
 data class SearchCityModel(
   @SerializedName("city") val city: String,
   @SerializedName("state") val state: String,
-  @SerializedName("city_id") val cityId: String,
   @SerializedName("orion_db_city_code") val dbCityCode: String? = ""
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = cityId
+  override fun key() = dbCityCode ?: ""
 
   fun cityName() = StringUtils.capitalize(city)
 

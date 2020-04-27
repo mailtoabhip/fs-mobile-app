@@ -89,7 +89,7 @@ class SearchLoadFragmentViewModel @Inject constructor(
           if (_res != null) {
             val converted = mutableListOf<CityModel>()
             _res.responseData?.cities?.forEach { it ->
-              converted.add(CityModel(it.city, it.dbCityCode ?: "", it.cityId, state = it.state))
+              converted.add(CityModel(it.city, it.dbCityCode ?: "", state = it.state))
             }
             citiesLiveData.postValue(converted)
           } else {

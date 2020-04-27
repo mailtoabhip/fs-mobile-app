@@ -182,7 +182,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
-          city = getString(string.label_anywhere), cityId = "",
+          city = getString(string.label_anywhere),
           state = getString(string.label_anywhere)
       ),
           truckType
