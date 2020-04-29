@@ -20,7 +20,7 @@ class SelectRouteViewModel @Inject constructor(
 ) : BaseViewModel() {
 
   var routesLiveData =
-    MutableLiveData<Pair<Triple<String, String, String>, MutableList<RouteModel>>>()
+    MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
 
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
@@ -36,7 +36,7 @@ class SelectRouteViewModel @Inject constructor(
           if (!error) {
             routes.addAll(_user.userRoutes())
             routesLiveData.postValue(
-                Pair(Triple(_user.baseCity, _user.baseCityCode, _user.baseCityGnCode), routes)
+                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
             )
           } else {
             error.handle()
@@ -89,6 +89,6 @@ class SelectRouteViewModel @Inject constructor(
    */
   fun setRoutesUpdated(route: RouteModel) {
     userPrefs.routeUpdate = true
-    userPrefs.cityCode = route.origin.cityId
+    userPrefs.cityCode = route.origin.orion_db_city_code
   }
 }

@@ -95,7 +95,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           currentRoute = RouteModel(routeModel.origin)
           currentRoute?.destinations = it.second[0].destinations
         } else {
-          currentRoute = RouteModel(UserCity(it.first.first, it.first.third, it.first.second))
+          currentRoute = RouteModel(UserCity(it.first.first, it.first.second))
         }
         _fragment.route = currentRoute
         _fragment.populateRoute()

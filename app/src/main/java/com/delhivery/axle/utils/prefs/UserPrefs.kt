@@ -231,11 +231,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     } else {
       user.baseCityCode
     }
-    gnCityCode = if (user.hasRoutes()) {
-      user.userRoutes()[0].origin.cityId
-    } else {
-      user.baseCityGnCode
-    }
   }
 
   fun canBid() = if (supplierEnabled) {

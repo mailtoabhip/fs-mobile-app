@@ -29,13 +29,11 @@ data class UpdateUserRoutesRequest(
       val originjson = JsonObject()
       it.origin.city.let { it1 -> originjson.addProperty("city", it1) }
       it.origin.orion_db_city_code?.let { it1 -> originjson.addProperty("city_id", it1) }
-      it.origin.cityId.let { it1 -> originjson.addProperty("gn_city_code", it1) }
       json.add("origin", originjson)
 
       val destinationjson = JsonObject()
       it.destination.state.let { it1 -> destinationjson.addProperty("state", it1) }
       it.destination.stateId?.let { it1 -> destinationjson.addProperty("state_id", it1) }
-      it.destination.gnStateCode.let { it1 -> destinationjson.addProperty("gn_state_code", it1) }
       json.add("destination", destinationjson)
       jsonArray.add(json)
     }

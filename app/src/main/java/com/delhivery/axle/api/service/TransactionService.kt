@@ -22,9 +22,7 @@ interface TransactionService {
     @Query("offset") offset: Int,
     @Query("status") status: String?,
     @Query("origin_city_code") source: String? = null,
-    @Query("origin_gn_city_code") gnCityCode: String? = null,
     @Query("destination_city_code") destination: String? = null,
-    @Query("destination_gn_city_code") gnDestinationCode: String? = null,
     @Query("truck_type") truckType: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String = "yes"
   ): Single<BaseResponse<TransactionsResponse>>
@@ -36,7 +34,6 @@ interface TransactionService {
   fun loadBoardTransactions(
     @Query("sp_id") userId: String,
     @Query("city_code") cityCode: String,
-    @Query("gn_city_code") gnCityCode: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
     @Query("axle_current_week_loads") currWeekLoads: String = "yes"
