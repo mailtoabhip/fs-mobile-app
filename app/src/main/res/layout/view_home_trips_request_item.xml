@@ -82,7 +82,7 @@
           android:id="@+id/text_date_time"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_16dp"
+          android:layout_marginTop="@dimen/size_12dp"
           android:lineSpacingExtra="4sp"
           android:text="@{trip.requiredAt()}"
           android:textColor="@color/white"

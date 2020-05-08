@@ -64,6 +64,8 @@ data class HomeTripsItemData(
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
   @SerializedName("lr_details") val lrDetails: MutableList<LRDetails> = mutableListOf(),
+  @SerializedName("speed") var speed: String?,
+  @SerializedName("tat_minutes") var tatMinutes: String?,
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -144,11 +146,16 @@ data class HomeTripsItemData(
   /**
    * @return promise date
    */
-  fun promiseDate() = promiseDate?.let {
-    "PD: " + DateUtils.formatDate(
-        DateUtils.parseDate(it, OrionDateFormat), "dd-MMM-yyyy"
-    )
-  }
+  fun promiseDate() =
+    promiseDate?.let {
+      val format = when {
+        isExpress() -> "dd-MMM-yyyy hh:mm"
+        else -> "dd-MMM-yyyy"
+      }
+      "PD: " + DateUtils.formatDate(
+          DateUtils.parseDate(it, OrionDateFormat), format
+      )
+    } ?: ""
 
   /**
    * Formatted required at
@@ -235,7 +242,10 @@ data class HomeTripsItemData(
     "LR: $lr"
   } else if (!lrDetails.isNullOrEmpty()) {
     val lrString = StringBuilder()
-    lrDetails.forEach { lrString.append(it.lr).append(", ") }
+    lrDetails.forEach {
+      lrString.append(it.lr)
+          .append(", ")
+    }
     "LR: ${lrString.substring(0, lrString.length - 2)}"
   } else {
     ""
@@ -469,6 +479,11 @@ data class HomeTripsItemData(
   } else {
     ""
   }
+
+  /**
+   * @return true if speed is express
+   */
+  fun isExpress() = speed?.compareTo("EXP") == 0
 
   override fun filter(query: String) =
     vehicleDetails.vehicleNo.contains(query, true)

@@ -47,6 +47,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
   @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
+  @SerializedName("speed") var speed: String?,
+  @SerializedName("tat_minutes") var tatMinutes: String?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -54,7 +56,7 @@ data class HomeBidsRequestItemData(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
+  fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 
   fun target() = if (targetPrice > 0 && loadPricePercent > 0) {
     targetPrice * loadPricePercent / 100
@@ -236,6 +238,34 @@ data class HomeBidsRequestItemData(
    * @return true if indent type(pmt/ftl)
    */
   fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
+  /**
+   * @return true if speed is express
+   */
+  fun isExpress() = speed?.compareTo("EXP") == 0
+
+  /**
+   * @return expressText with tat
+   */
+  fun expressText(showNum: Boolean): String {
+    val sb = StringBuilder()
+    if(showNum)
+      sb.append("1. ")
+    sb.append("Express")
+    if (tatMinutes != null) {
+      val tat = tatMinutes?.toDouble() ?: 0.0
+      if (tat > 60) {
+        sb.append("(")
+            .append(tat / 60)
+            .append(" hrs)")
+      } else {
+        sb.append("(")
+            .append(tat)
+            .append(" min)")
+      }
+    }
+    return sb.toString()
+  }
 
 }
 
