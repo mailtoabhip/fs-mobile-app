@@ -19,154 +19,185 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    *  JWT Token
    */
   var jwtToken: String?
-    set(value) = editor.putString(PrefKeys.JWTToken, value).apply()
+    set(value) = editor.putString(PrefKeys.JWTToken, value)
+        .apply()
     get() = prefs.getString(PrefKeys.JWTToken, null)
 
   /**
    *  Base/Origin City Code
    */
   var cityCode: String?
-    set(value) = editor.putString(PrefKeys.CityCode, value).apply()
+    set(value) = editor.putString(PrefKeys.CityCode, value)
+        .apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
 
   /**
    *  Base/Origin City Code
    */
   var gnCityCode: String?
-    set(value) = editor.putString(PrefKeys.GNCityCode, value).apply()
+    set(value) = editor.putString(PrefKeys.GNCityCode, value)
+        .apply()
     get() = prefs.getString(PrefKeys.GNCityCode, null)
 
   /**
    *  User phone number
    */
   var phoneNumber: String?
-    set(value) = editor.putString(PrefKeys.PhoneNumber, value).apply()
+    set(value) = editor.putString(PrefKeys.PhoneNumber, value)
+        .apply()
     get() = prefs.getString(PrefKeys.PhoneNumber, "")
 
   /**
    * Routes update flag
    */
   var routeUpdate: Boolean
-    set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.RouteUpdate, false)
 
   /**
    *  LoggedIn flag
    */
   var hasLoggedIn: Boolean
-    set(value) = editor.putBoolean(PrefKeys.HasLoggedIn, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.HasLoggedIn, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.HasLoggedIn, false)
 
   /**
    *  TDS rate
    */
   var tdsRate: Int
-    set(value) = editor.putInt(PrefKeys.TdsRate, value).apply()
+    set(value) = editor.putInt(PrefKeys.TdsRate, value)
+        .apply()
     get() = prefs.getInt(PrefKeys.TdsRate, 99)
+
+  /**
+   * updated tds rate
+   */
+  var updatedTdsRate: Double
+    set(value) = editor.putFloat(PrefKeys.UpdateTdsRate, value.toFloat())
+        .apply()
+    get() = prefs.getFloat(PrefKeys.UpdateTdsRate, 99.25F)
+        .toDouble()
 
   /**
    *  Username
    */
   var userName: String
-    set(value) = editor.putString(PrefKeys.UserName, value).apply()
+    set(value) = editor.putString(PrefKeys.UserName, value)
+        .apply()
     get() = prefs.getString(PrefKeys.UserName, "") ?: ""
 
   /**
    *Bank name
    */
   var bankName: String
-    set(value) = editor.putString(PrefKeys.BankName, value).apply()
+    set(value) = editor.putString(PrefKeys.BankName, value)
+        .apply()
     get() = prefs.getString(PrefKeys.BankName, "") ?: ""
 
   /**
    *  Pancard
    */
   var pancard: String
-    set(value) = editor.putString(PrefKeys.Pancard, value).apply()
+    set(value) = editor.putString(PrefKeys.Pancard, value)
+        .apply()
     get() = prefs.getString(PrefKeys.Pancard, "") ?: ""
 
   /**
    *  Ifsc code
    */
   var ifscCode: String
-    set(value) = editor.putString(PrefKeys.IfscCode, value).apply()
+    set(value) = editor.putString(PrefKeys.IfscCode, value)
+        .apply()
     get() = prefs.getString(PrefKeys.IfscCode, "") ?: ""
 
   /**
    *  Company Name
    */
   var companyName: String
-    set(value) = editor.putString(PrefKeys.CompanyName, value).apply()
+    set(value) = editor.putString(PrefKeys.CompanyName, value)
+        .apply()
     get() = prefs.getString(PrefKeys.CompanyName, "") ?: ""
 
   /**
    *  Account Number
    */
   var accNumber: String
-    set(value) = editor.putString(PrefKeys.AccountNumber, value).apply()
+    set(value) = editor.putString(PrefKeys.AccountNumber, value)
+        .apply()
     get() = prefs.getString(PrefKeys.AccountNumber, "") ?: ""
 
   /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
-    set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.HadEditedRoutes, false)
 
   /**
    *  Supplier onbaording status
    */
   var onboardingStatus: String
-    set(value) = editor.putString(PrefKeys.OnboardingStatus, value).apply()
+    set(value) = editor.putString(PrefKeys.OnboardingStatus, value)
+        .apply()
     get() = prefs.getString(PrefKeys.OnboardingStatus, "na") ?: "na"
 
   /**
    *  Supplier enabled flag
    */
   var supplierEnabled: Boolean
-    set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
   /**
    *  Is test user flag
    */
   var isTestUser: Boolean
-    set(value) = editor.putBoolean(PrefKeys.IsTestUser, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.IsTestUser, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.IsTestUser, false)
 
   /**
    *  Device FCM Token
    */
   var fcmTokenGenerated: Boolean
-    set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
   /**
    *  Wallet opted in
    */
   var walletActivated: Boolean
-    set(value) = editor.putBoolean(PrefKeys.WalletActive, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.WalletActive, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.WalletActive, false)
 
   /**
    *  Opened from notification flag
    */
   var fromNotification: Boolean
-    set(value) = editor.putBoolean(PrefKeys.FromNotification, value).apply()
+    set(value) = editor.putBoolean(PrefKeys.FromNotification, value)
+        .apply()
     get() = prefs.getBoolean(PrefKeys.FromNotification, false)
 
   /**
    *  Max PMT rate
    */
   var maxPMTRate: Int
-    set(value) = editor.putInt(PrefKeys.MaxPMTRate, value).apply()
+    set(value) = editor.putInt(PrefKeys.MaxPMTRate, value)
+        .apply()
     get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MAX_VALUE)
 
   /**
    *  Max cost per km
    */
   var maxCostPerKM: Int
-    set(value) = editor.putInt(PrefKeys.MaxCostPerKM, value).apply()
+    set(value) = editor.putInt(PrefKeys.MaxCostPerKM, value)
+        .apply()
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
   /**
@@ -188,6 +219,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.HasLoggedIn)
         .apply()
     editor.remove(PrefKeys.TdsRate)
+        .apply()
+    editor.remove(PrefKeys.UpdateTdsRate)
         .apply()
     editor.remove(PrefKeys.UserName)
         .apply()
@@ -219,7 +252,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     onboardingStatus = user.onboardingStatus ?: "na"
     supplierEnabled = user.supplierEnabled
     isTestUser = user.testUser
-    tdsRate = user.getTDS()
+    tdsRate = user.getTDSSubtractor()
+    updatedTdsRate =
+      if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
     bankName = user.bank ?: ""
     companyName = user.companyName ?: ""
     phoneNumber = user.phoneNo
@@ -253,6 +288,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val PhoneNumber = "phone_number"
     const val HasLoggedIn = "has_logged_in"
     const val TdsRate = "tds_rate"
+    const val UpdateTdsRate = "updated_tds_rate"
     const val UserName = "user_name"
     const val Pancard = "pan_card"
     const val BankName = "bank_name"

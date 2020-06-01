@@ -112,9 +112,8 @@ object DateUtils {
   /**
    * @return parse date string and days diff of [date] from today
    */
-  fun daysDiff(date: Date): Int {
+  fun daysDiff(date: Date, now: Calendar = Calendar.getInstance()): Int {
     val cal = date.toCalendar()
-    val now = Calendar.getInstance()
     return cal[Calendar.DAY_OF_YEAR] - now[Calendar.DAY_OF_YEAR]
   }
 
@@ -144,9 +143,7 @@ object DateUtils {
     date: String,
     format: String
   ): String {
-    val requiredOn = parseDate(date, format)
-    val reqTime = formatDate(requiredOn, "hh:mm a")
-    return daysDiffStr(requiredOn)
+    return daysDiffStr(parseDate(date, format))
   }
 
   /**

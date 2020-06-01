@@ -13,9 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.ChargeType
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
 import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
@@ -365,10 +365,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       val uri =
         FileProvider.getUriForFile(this, applicationContext.packageName + ".provider", file)
       val intent = Intent(Intent.ACTION_VIEW)
-      if (file.toString().contains(".pdf")) {
+      if (file.toString()
+              .contains(".pdf")
+      ) {
         intent.setDataAndType(uri, "application/pdf")
-      } else if (file.toString().contains(".jpg") ||
-          file.toString().contains(".jpeg") || file.toString().contains(".png")
+      } else if (file.toString()
+              .contains(".jpg") ||
+          file.toString()
+              .contains(".jpeg") || file.toString()
+              .contains(".png")
       ) {
         intent.setDataAndType(uri, "image/jpeg")
       } else {
@@ -402,8 +407,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     var total = 0.0
     tripChargesSummary.add(
         0, TripChargesResponse(
-        "", ChargeType.Freight.charge_key,
-        0.0, binding.tripDetails?.bidDetails?.bidPrice ?: 0.0, null, "", ""
+        "", ChargeType.Freight.charge_key, 0.0,
+        binding.tripDetails?.bidDetails?.bidPrice ?: 0.0, null, "", ""
     )
     )
 
@@ -414,8 +419,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         )
             .apply {
               if (viewModel.tripDetail.chargesUpdated == true ||
-                  (charge.head == "loading_charge" && viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey &&
-                      viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey) ||
+                  (charge.head == "loading_charge" && (viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey ||
+                      viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey)) ||
                   charge.head == "freight"
               ) {
                 data = charge
@@ -448,8 +453,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         )
             .apply {
               if (viewModel.tripDetail.chargesUpdated == true || (charge.head == "loading_charge" &&
-                      viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey &&
-                      viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey) ||
+                      (viewModel.tripDetail.tripStatus != TripStatus.TruckArrived.statusKey ||
+                          viewModel.tripDetail.tripStatus != TripStatus.TruckLoaded.statusKey)) ||
                   charge.head == "freight"
               ) {
                 data = charge
@@ -486,57 +491,45 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           paymentSummaryBinding.containerPayment.addView(root)
         }
 
-    ViewPaymentSummaryItemBinding.inflate(
-        layoutInflater, paymentSummaryBinding.containerPayment, false
-    )
-        .apply {
-          seprator.visibility = View.GONE
-          data = TripChargesResponse(
-              "", ChargeType.TDS.charge_key,
-              0.0, null, total * (100 - viewModel.userPrefs.tdsRate) / 100,
-              "", ""
-          )
-          textChargeValue.setTextColor(
-              ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
-          )
-
-          paymentSummaryBinding.containerPayment.addView(root)
-        }
-
-    paymentSummaryBinding.total =
-      "₹ ${StringUtils.formatAmount(total * viewModel.userPrefs.tdsRate / 100)}"
-
+    var tds = 0.0
     val advance = viewModel.bidDetail?.advancePayout ?: 0.0
 
     val payments = mutableListOf<TripPaymentsResponse>()
     if (viewModel.paymentsSummary.isEmpty()) {
-      payments.apply {
-        add(0, TripPaymentsResponse("advance_pending", "", advance, ""))
-        add(
-            1, TripPaymentsResponse(
-            "balance_pending", "",
-            total.minus(advance), "",
-            when {
-              viewModel.tripDetail.damagePending == true -> "Damage Issue"
-              viewModel.tripDetail.detentionPending == true -> "Detention Issue"
-              else -> ""
-            }
-        )
-        )
-      }
+      val advancePayment = TripPaymentsResponse("advance_pending", "", advance, "")
+      tds += advancePayment.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+      payments.add(0, advancePayment)
+
+      val pending = TripPaymentsResponse(
+          "balance_pending", "",
+          total.minus(advance), "",
+          when {
+            viewModel.tripDetail.damagePending == true -> "Damage Issue"
+            viewModel.tripDetail.detentionPending == true -> "Detention Issue"
+            else -> ""
+          }
+      )
+      tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+      payments.add(1, pending)
     } else {
       val paymentMap = mutableMapOf<String, TripPaymentsResponse>()
       val advancePayment = viewModel.paymentsSummary.find { it.head == "cash_advance" }
       val loadingPayment = viewModel.paymentsSummary.find { it.head == "loading_charge" }
       var totalAdvance = 0.0
       advancePayment?.let { it ->
-        totalAdvance += advancePayment.amount
+        totalAdvance += it.amount
         loadingPayment?.let { it1 ->
           totalAdvance += it1.amount
+          if (it1.amount > 0) {
+            tds += it1.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+          }
+        }
+        if (it.amount > 0) {
+          tds += it.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
         }
         paymentMap["advance_paid"] = TripPaymentsResponse(
-            "advance_paid", it.bankTransactionId ?: "",
-            totalAdvance, it.updationTime ?: "", it.remark ?: ""
+            "advance_paid", it.bankTransactionId?:"",
+            totalAdvance, it.transferTime ?: "", it.remark ?: ""
         )
       }
 
@@ -545,11 +538,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!intermittentPayments.isNullOrEmpty()) {
         intermittentPayments.forEachIndexed { index, intermittentPayout ->
           val head = intermittentPayout.head + " " + (index + 1)
+          if (intermittentPayout.amount > 0) {
+            tds += intermittentPayout.getTDS(
+                viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate
+            )
+          }
           interPayments += intermittentPayout.amount
           paymentMap[head] = intermittentPayout
           paymentMap[head] = TripPaymentsResponse(
               head, intermittentPayout.bankTransactionId ?: "",
-              intermittentPayout.amount, intermittentPayout.updationTime ?: "",
+              intermittentPayout.amount, intermittentPayout.transferTime ?: "",
               intermittentPayout.remark ?: ""
           )
         }
@@ -561,18 +559,23 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         interPayments += it.amount
         paymentMap["partial_balance_payment"] = TripPaymentsResponse(
             "partial_balance_payment", it.bankTransactionId ?: "",
-            it.amount, it.updationTime ?: "", it.remark ?: ""
+            it.amount, it.transferTime ?: "", it.remark ?: ""
         )
+        if (it.amount > 0)
+          tds += it.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
       }
 
       val balancePayment = viewModel.paymentsSummary.find { it.head == "balance_payment" }
       if (balancePayment != null) {
         paymentMap["balance_paid"] = TripPaymentsResponse(
-            "balance_paid", balancePayment.bankTransactionId ?: "",
-            balancePayment.amount, balancePayment.updationTime ?: "", balancePayment.remark ?: ""
+            "balance_paid", balancePayment.bankTransactionId,
+            balancePayment.amount, balancePayment.transferTime ?: "", balancePayment.remark ?: ""
+        )
+        if (balancePayment.amount > 0) tds += balancePayment.getTDS(
+            viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate
         )
       } else {
-        paymentMap["balance_pending"] = TripPaymentsResponse(
+        val pending = TripPaymentsResponse(
             "balance_pending", "",
             total.minus(totalAdvance + interPayments), "", when {
           viewModel.tripDetail.damagePending == true -> "Damage Issue"
@@ -580,7 +583,26 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           else -> ""
         }
         )
+        paymentMap["balance_pending"] = pending
+
+        if (pending.amount > 0)
+          tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
       }
+
+      ViewPaymentSummaryItemBinding.inflate(
+          layoutInflater, paymentSummaryBinding.containerPayment, false
+      )
+          .apply {
+            seprator.visibility = View.GONE
+            data = TripChargesResponse("", ChargeType.TDS.charge_key, 0.0, null, tds, "", "")
+            textChargeValue.setTextColor(
+                ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
+            )
+
+            paymentSummaryBinding.containerPayment.addView(root)
+          }
+
+      paymentSummaryBinding.total = "₹ ${StringUtils.formatAmount((total - tds))}"
 
       payments.apply {
         addAll(paymentMap.values)
@@ -592,8 +614,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           layoutInflater, paymentSummaryBinding.containerPaymentBreakup, false
       )
           .apply {
-            _payment.amount = _payment.amount.times(viewModel.userPrefs.tdsRate)
-                .div(100)
+            _payment.amount = _payment.amount - _payment.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
             data = _payment
             paymentSummaryBinding.containerPaymentBreakup.addView(root)
           }
