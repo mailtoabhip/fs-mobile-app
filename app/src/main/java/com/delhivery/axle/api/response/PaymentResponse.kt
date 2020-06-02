@@ -4,6 +4,7 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
+import java.util.Calendar
 import kotlin.math.abs
 
 /**
@@ -72,7 +73,7 @@ data class TripPaymentsResponse(
   @SerializedName("head") var head: String,
   @SerializedName("bank_transaction_id") val bankTransactionId: String,
   @SerializedName("amount") var amount: Double,
-  @SerializedName("transfer_time") val updationTime: String,
+  @SerializedName("transfer_time") val transferTime: String?,
   @SerializedName("remarks") var remark: String? = ""
 ) {
 
@@ -89,45 +90,74 @@ data class TripPaymentsResponse(
   /**
    * Relative Time stamp
    */
-  fun timeStamp() = DateUtils.convertToRelativeTimeStamp(updationTime)
+  fun timeStamp() = transferTime?.let { DateUtils.convertToRelativeTimeStamp(it) } ?: ""
 
   /**
    * Time Stamp
    */
   fun dateTime() =
-    "Paid on: " + DateUtils.formatDate(
-        DateUtils.parseDate(updationTime, DatePatterns.OrionDateFormat),
-        DatePatterns.SimpleDateFormat
-    )
+    transferTime?.let {
+      "Paid on: " + DateUtils.formatDate(
+          DateUtils.parseDate(it, DatePatterns.OrionDateFormat),
+          DatePatterns.SimpleDateFormat
+      )
+    } ?: ""
 
   /**
    * Bank transaction number
    */
-  fun utr() = "UTR no: ${bankTransactionId}"
+  fun utr() = "UTR no: $bankTransactionId"
 
-}
+  /**
+   * Get tds
+   */
+  fun getTDS(
+    tdsRate: Int,
+    updatedTdsRate: Double
+  ): Double {
+    val tdsRelaxadtionDate = Calendar.getInstance()
+    tdsRelaxadtionDate.set(Calendar.DAY_OF_MONTH, 16)
+    tdsRelaxadtionDate.set(Calendar.MONTH, 4)
+    tdsRelaxadtionDate.set(Calendar.YEAR, 2020)
+    tdsRelaxadtionDate.set(Calendar.HOUR, 23)
+    tdsRelaxadtionDate.set(Calendar.MINUTE, 59)
+    if (amount > 0) {
+      if (DateUtils.daysDiff(
+              DateUtils.parseDate(transferTime ?: "", DatePatterns.OrionDateFormat),
+              tdsRelaxadtionDate
+          ) > 0
+      ) {
+        return (amount * (100 - updatedTdsRate) / 100)
+      } else {
+        return (amount * (100 - tdsRate) / 100)
+      }
+    } else {
+      return 0.0
+    }
+  }
 
-enum class ChargeType(
-  val charge_key: String,
-  val charge: String
-) {
-  Freight("freight", "Freight"),
-  Loading("loading_charge", "Loading Charge"),
-  Unloading("unloading_charge", "Unloading Charge"),
-  DetentionOrigin("detention_charge_origin", "Detention(Origin)"),
-  DetentionDestination("detention_charge_destination", "Detention(Destination)"),
-  Rto("rto", "RTO"),
-  Damages("damage", "Damages"),
-  ExtraRun("extra_run", "Extra Run"),
-  TDS("tds", "TDS"),
-  SubTotal("sub_total", "Sub Total"),
-  Unknown("misc", "Miscellaneous");
+  enum class ChargeType(
+    val charge_key: String,
+    val charge: String
+  ) {
+    Freight("freight", "Freight"),
+    Loading("loading_charge", "Loading Charge"),
+    Unloading("unloading_charge", "Unloading Charge"),
+    DetentionOrigin("detention_charge_origin", "Detention(Origin)"),
+    DetentionDestination("detention_charge_destination", "Detention(Destination)"),
+    Rto("rto", "RTO"),
+    Damages("damage", "Damages"),
+    ExtraRun("extra_run", "Extra Run"),
+    TDS("tds", "TDS"),
+    SubTotal("sub_total", "Sub Total"),
+    Unknown("misc", "Miscellaneous");
 
-  companion object {
-    /**
-     * Get [ChargeType] by type id
-     */
-    fun byTypeId(charge: String) =
-      values().filter { it.charge_key == charge }.firstOrNull() ?: Unknown
+    companion object {
+      /**
+       * Get [ChargeType] by type id
+       */
+      fun byTypeId(charge: String) =
+        values().firstOrNull { it.charge_key == charge } ?: Unknown
+    }
   }
 }

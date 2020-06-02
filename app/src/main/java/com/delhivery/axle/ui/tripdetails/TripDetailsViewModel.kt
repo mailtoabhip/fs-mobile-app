@@ -241,10 +241,12 @@ class TripDetailsViewModel @Inject constructor(
                       )} has been paid$utrString",
                       history.timeStamp()
                   )
-                  advancePaidTime = DateUtils.formatDate(
-                      DateUtils.parseDate(advancePay.updationTime, DatePatterns.OrionDateFormat),
-                      DatePatterns.SimpleDateFormat
-                  )
+                  advancePaidTime = advancePay.transferTime?.let {
+                    DateUtils.formatDate(
+                        DateUtils.parseDate(it, DatePatterns.OrionDateFormat),
+                        DatePatterns.SimpleDateFormat
+                    )
+                  } ?: ""
                 }
               } else {
                 advancePaid = false
@@ -366,10 +368,12 @@ class TripDetailsViewModel @Inject constructor(
                   )} has been paid$utrString",
                   balancePay.timeStamp()
               )
-              balancePaidTime = DateUtils.formatDate(
-                  DateUtils.parseDate(balancePay.updationTime, DatePatterns.OrionDateFormat),
-                  DatePatterns.SimpleDateFormat
-              )
+              balancePaidTime = balancePay.transferTime?.let {
+                DateUtils.formatDate(
+                    DateUtils.parseDate(balancePay.transferTime, DatePatterns.OrionDateFormat),
+                    DatePatterns.SimpleDateFormat
+                )
+              } ?: ""
             }
           } else {
             balancePaid = false

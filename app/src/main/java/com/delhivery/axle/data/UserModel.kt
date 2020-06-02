@@ -53,7 +53,7 @@ data class UserModel(
   /**
    * Returns tds value for user
    */
-  fun getTDS() = when (userType) {
+  fun getTDSSubtractor() = when (userType) {
     "individual" -> 99
     else -> 98
   }
