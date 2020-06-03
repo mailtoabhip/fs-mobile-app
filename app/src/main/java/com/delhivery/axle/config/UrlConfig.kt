@@ -27,7 +27,7 @@ enum class UrlConfig(
   ),
   TransactionService(
       "http://orion-transaction-api.delhivery.com",
-      "http://orion-transaction-api-dev.delhivery.com",
+      "https://orion-transaction-api-dev.delhivery.com",
       "http://orion-transaction-api-uat.delhivery.com"
   ),
   TripService(
