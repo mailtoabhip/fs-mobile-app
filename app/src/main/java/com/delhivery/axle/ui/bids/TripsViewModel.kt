@@ -108,6 +108,7 @@ class TripsViewModel @Inject constructor(
               else {
                 for (trip in trips) {
                   trip.tds = userPrefs.tdsRate
+                  trip.updatedTds = userPrefs.updatedTdsRate
                   try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)

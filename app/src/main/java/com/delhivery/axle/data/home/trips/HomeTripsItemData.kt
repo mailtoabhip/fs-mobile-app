@@ -70,7 +70,8 @@ data class HomeTripsItemData(
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
   var selectable: Boolean = false,
-  var tds: Int
+  var tds: Int,
+  var updatedTds: Double
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -390,6 +391,7 @@ data class HomeTripsItemData(
   fun advance(): Triple<String, String, String> {
     var status = "Advance Pending"
     var date = ""
+    var totaltds = 0.0
     var amount = bidDetails?.advancePayout ?: 0.0
     val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
     val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
@@ -397,11 +399,13 @@ data class HomeTripsItemData(
       status = "Advance Paid"
       date = advancePayment.dateTime()
       amount = advancePayment.amount
+      totaltds += advancePayment.getTDS(tds, updatedTds)
       if (loadingChargePayment != null) {
         amount += loadingChargePayment.amount
+        totaltds += loadingChargePayment.getTDS(tds, updatedTds)
       }
     }
-    amount = amount * tds / 100
+    amount -= totaltds
     return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
   }
 
@@ -413,6 +417,7 @@ data class HomeTripsItemData(
     var date = ""
     var amount = bidDetails?.bidPrice ?: 0.0
     var advance = 0.0
+
     val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
     val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
     if (advancePayment != null) {
@@ -444,20 +449,22 @@ data class HomeTripsItemData(
 
     var interPayments = 0.0
     if (!intermittentPayment.isNullOrEmpty()) {
-      intermittentPayment.forEach { interPayments += it.amount }
+      intermittentPayment.forEach {
+        interPayments += (it.amount)
+      }
     }
     partialBalancePayment?.let {
-      interPayments += it.amount
+      interPayments += (it.amount)
     }
-    amount -= interPayments
+    amount -= (interPayments)
+    amount = amount * (updatedTds) / 100
 
     balancePayment?.let {
       status = "Balance Paid"
       date = it.dateTime()
-      amount = it.amount
+      amount = it.amount - it.getTDS(tds, updatedTds)
     }
 
-    amount = amount * tds / 100
     return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
   }
 
