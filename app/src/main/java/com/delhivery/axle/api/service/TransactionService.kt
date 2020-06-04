@@ -60,7 +60,7 @@ interface TransactionService {
   /**
    * Fetch trip meter details
    */
-  @GET("/transactions/tripmeter/{sp_id}")
+  @GET("/transactions/tripmeter/{sp_id}/")
   fun transactionsTripMeter(
     @Path("sp_id") userId: String
   ): Single<BaseResponse<TripMeterResponse>>
