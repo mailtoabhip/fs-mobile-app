@@ -12,6 +12,7 @@ import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.api.service.UserService
+import com.delhivery.axle.api.service.UtilityService
 import com.delhivery.axle.api.service.WalletService
 import com.delhivery.axle.api.service.WarehouseService
 import com.delhivery.axle.config.UrlConfig
@@ -54,7 +55,8 @@ class NetworkModule {
    */
   @Provides
   @Singleton
-  fun provideGson(): Gson = GsonBuilder().setLenient().create()
+  fun provideGson(): Gson = GsonBuilder().setLenient()
+      .create()
 
   /**
    * Provide Http(OKHttp) client
@@ -97,7 +99,8 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ): UMSService = getRetrofit(gson, okHttpClient, UrlConfig.UMS).create(
-      UMSService::class.java)
+      UMSService::class.java
+  )
 
   /**
    * Bid service
@@ -108,7 +111,8 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(
-      BidService::class.java)
+      BidService::class.java
+  )
 
   /**
    * Provide [UserService]
@@ -119,7 +123,8 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.UserService).create(
-      UserService::class.java)
+      UserService::class.java
+  )
 
   /**
    * Provide [CityService]
@@ -130,7 +135,8 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.CityService).create(
-      CityService::class.java)
+      CityService::class.java
+  )
 
   /**
    * Provide [TransactionService]
@@ -226,7 +232,8 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) =
     getRetrofit(gson, okHttpClient, UrlConfig.LoadCycleService).create(
-        LoadCycleService::class.java)
+        LoadCycleService::class.java
+    )
 
   /**
    * Provide [ExpenseService]
@@ -238,5 +245,18 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) =
     getRetrofit(gson, okHttpClient, UrlConfig.ExpenseService).create(
-        ExpenseService::class.java)
+        ExpenseService::class.java
+    )
+
+  /**
+   * Provide [UtilityService]
+   */
+  @Provides
+  @Singleton
+  fun provideUtilityService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.UtilityService).create(
+      UtilityService::class.java
+  )
 }

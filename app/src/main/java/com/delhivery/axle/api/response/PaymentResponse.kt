@@ -17,12 +17,10 @@ import kotlin.math.abs
  **
  */
 data class TripChargesResponse(
-  @SerializedName("username") val username: String,
-  @SerializedName("head") val head: String,
-  @SerializedName("bill_client") val billClient: Double,
+  @SerializedName("charge_head_ref") val head: String,
   @SerializedName("pay_vendor") val payVendor: Double?,
   @SerializedName("deduct_vendor") val deductVendor: Double?,
-  @SerializedName("updation_date") val updationDate: String,
+  @SerializedName("updation_date") val updationDate: String? = null,
   @SerializedName("remarks") val remarks: String
 ) {
   /**

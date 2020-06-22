@@ -80,6 +80,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.transactionId = "315900507667065"
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -159,7 +160,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPaymentSummary()
-        viewModel.fetchChargesSummary()
+        viewModel.fetchChargeSummary()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -407,8 +408,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     var total = 0.0
     tripChargesSummary.add(
         0, TripChargesResponse(
-        "", ChargeType.Freight.charge_key, 0.0,
-        binding.tripDetails?.bidDetails?.bidPrice ?: 0.0, null, "", ""
+        ChargeType.Freight.charge_key, binding.tripDetails?.bidDetails?.bidPrice ?: 0.0,
+        0.0, null, ""
     )
     )
 
@@ -484,9 +485,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         .apply {
           seprator.visibility = View.VISIBLE
           data = TripChargesResponse(
-              "", ChargeType.SubTotal.charge_key,
-              0.0, total, null,
-              "", ""
+              ChargeType.SubTotal.charge_key, total,
+              0.0, null, ""
           )
           paymentSummaryBinding.containerPayment.addView(root)
         }
@@ -528,7 +528,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           tds += it.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
         }
         paymentMap["advance_paid"] = TripPaymentsResponse(
-            "advance_paid", it.bankTransactionId?:"",
+            "advance_paid", it.bankTransactionId ?: "",
             totalAdvance, it.transferTime ?: "", it.remark ?: ""
         )
       }
@@ -594,7 +594,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       )
           .apply {
             seprator.visibility = View.GONE
-            data = TripChargesResponse("", ChargeType.TDS.charge_key, 0.0, null, tds, "", "")
+            data = TripChargesResponse(ChargeType.TDS.charge_key, null, tds, "", "")
             textChargeValue.setTextColor(
                 ContextCompat.getColor(this@TripDetailsActivity, R.color.status_lost)
             )
@@ -604,9 +604,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
       paymentSummaryBinding.total = "₹ ${StringUtils.formatAmount((total - tds))}"
 
-      payments.apply {
-        addAll(paymentMap.values)
-      }
+      payments.apply { addAll(paymentMap.values) }
     }
 
     payments.forEach { _payment ->
@@ -614,7 +612,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           layoutInflater, paymentSummaryBinding.containerPaymentBreakup, false
       )
           .apply {
-            _payment.amount = _payment.amount - _payment.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+            _payment.amount = _payment.amount - _payment.getTDS(
+                viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate
+            )
             data = _payment
             paymentSummaryBinding.containerPaymentBreakup.addView(root)
           }
