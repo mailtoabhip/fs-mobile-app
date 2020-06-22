@@ -80,7 +80,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
-    viewModel.transactionId = "315900507667065"
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
