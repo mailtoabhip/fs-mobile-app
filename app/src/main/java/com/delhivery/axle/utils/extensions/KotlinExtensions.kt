@@ -12,6 +12,13 @@ import android.provider.OpenableColumns
 fun String?.isNotNullOrEmpty(): Boolean = this != null && isNotEmpty()
 
 /**
+ * Check if collection is not null and not blank either
+ *
+ * @return [Boolean]
+ */
+fun Collection<Any>?.isNotEmpty(): Boolean = this != null && !isEmpty()
+
+/**
  * Operator extension for ! or not()
  * if boolean then ! equals variable is false
  * else true if null

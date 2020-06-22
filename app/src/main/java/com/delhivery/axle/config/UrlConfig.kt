@@ -84,6 +84,11 @@ enum class UrlConfig(
       "https://orion-expense-api.delhivery.com",
       "https://orion-expense-api.dev.delhivery.com",
       "https://orion-expense-api-uat.delhivery.com"
+  ),
+  UtilityService(
+      "https://orion-utility-api.delhivery.com",
+      "https://orion-utility-api-dev.delhivery.com",
+      "https://orion-utility-api-uat.delhivery.com"
   );
 
   /**

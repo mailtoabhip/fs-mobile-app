@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PaymentRepository
 import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UtilityRepository
 import com.delhivery.axle.api.repository.WarehouseRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.TripChargesResponse
@@ -33,11 +34,14 @@ import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import java.io.File
 import javax.inject.Inject
 
@@ -48,6 +52,7 @@ class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val paymentRepository: PaymentRepository,
   private val warehouseRepository: WarehouseRepository,
+  private val utilityRepository: UtilityRepository,
   private var userRepository: UserRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
@@ -135,16 +140,23 @@ class TripDetailsViewModel @Inject constructor(
   /**
    * Fetch charges summary
    */
-  fun fetchChargesSummary() {
-    compositeDisposable += paymentRepository.historyCharges(transactionId)
+  fun fetchChargeSummary() {
+    val jsonObject = JsonObject()
+    val jsonArray = JsonArray()
+    jsonArray.add(transactionId)
+    jsonObject.add("trip_ids", jsonArray)
+    compositeDisposable += utilityRepository.fetchCharges(jsonObject)
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
             chargesSummary.clear()
-            _res.values?.let {
-              for (charge in it) {
-                chargesSummary.addAll(charge)
-              }
+            if (_res?.values?.isNotEmpty() == true) {
+              _res.values.toMutableList()
+                  .let {
+                    for (charge in it[0].vendorCharges) {
+                      chargesSummary.add(charge)
+                    }
+                  }
             }
           } else {
             error?.handle()

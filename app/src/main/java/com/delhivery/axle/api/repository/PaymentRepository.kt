@@ -1,9 +1,7 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.response.BulkPaymentItem
-import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
-import com.delhivery.axle.api.service.ExpenseService
 import com.delhivery.axle.api.service.PaymentService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.TripHistoryModel
@@ -17,7 +15,6 @@ import javax.inject.Singleton
 @Singleton
 class PaymentRepository @Inject constructor(
   private val paymentService: PaymentService,
-  private val expenseService: ExpenseService,
   private val tripsService: TripService
 ) : BaseRepository() {
 
@@ -28,21 +25,15 @@ class PaymentRepository @Inject constructor(
     transactionId: String
   ): Single<Pair<List<TripHistoryModel>, List<TripPaymentsResponse>>> =
     Single.zip(
-        tripsService.tripHistory(transactionId).convertResponse(),
-        paymentService.tripPayments(transactionId).convertResponse(),
+        tripsService.tripHistory(transactionId)
+            .convertResponse(),
+        paymentService.tripPayments(transactionId)
+            .convertResponse(),
         BiFunction<List<TripHistoryModel>, List<TripPaymentsResponse>,
             Pair<List<TripHistoryModel>, List<TripPaymentsResponse>>> { t1, t2 ->
           Pair(t1, t2)
         }
     )
-
-  /**
-   * Fetch Trip's charges summary
-   */
-  fun historyCharges(
-    transactionId: String
-  ): Single<Map<String, List<TripChargesResponse>>> =
-    expenseService.charges(transactionId).convertResponse()
 
   /**
    * Get bulk transactions using ids
@@ -51,7 +42,8 @@ class PaymentRepository @Inject constructor(
     trips: List<HomeTripsItemData>
   ): Single<Pair<List<HomeTripsItemData>, List<BulkPaymentItem>>> =
     paymentService.bulkTransactions(
-        trips.map { it.transactionId }.joinToString(",") { it }
+        trips.map { it.transactionId }
+            .joinToString(",") { it }
     )
         .convertResponse()
         .map { Pair(trips, it.payments) }
