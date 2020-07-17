@@ -1,6 +1,7 @@
 package com.delhivery.axle.data.home.bids
 
 import android.text.TextUtils
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -43,6 +44,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
@@ -62,6 +64,15 @@ data class HomeBidsRequestItemData(
     targetPrice * loadPricePercent / 100
   } else {
     0.0
+  }
+
+  /**
+   * if trip is Multidrop
+   */
+  fun setMutidrop() = if (isMultidrop != null && isMultidrop == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**
@@ -243,6 +254,8 @@ data class HomeBidsRequestItemData(
    * @return true if speed is express
    */
   fun isExpress() = speed?.compareTo("EXP") == 0
+
+
 
   /**
    * @return expressText with tat

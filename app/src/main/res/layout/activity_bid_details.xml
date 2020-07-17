@@ -212,10 +212,23 @@
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_is_multidrop"
+                android:text="Multidrop"
+                android:visibility="@{transaction.setMutidrop()}"
+                android:fontFamily="sans-serif"
+                android:padding="@dimen/size_8dp"
+                android:background="@drawable/bg_gradient_blue"
+                android:layout_marginTop="@dimen/size_12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_load_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_marginTop="@dimen/size_12dp"
                 android:fontFamily="sans-serif"
                 android:gravity="end"
                 android:text="@{ transaction.loadDetails() }"
@@ -223,7 +236,7 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_date_time"
+                app:layout_constraintTop_toBottomOf="@+id/text_is_multidrop"
                 tools:text="Load: Pharmaceuticals"
                 />
 

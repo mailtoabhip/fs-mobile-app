@@ -149,6 +149,36 @@
                 />
           </androidx.constraintlayout.widget.ConstraintLayout>
 
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/colorPrimary"
+              android:paddingStart="@dimen/size_4dp"
+              android:paddingTop="@dimen/size_4dp"
+              android:paddingEnd="@dimen/size_4dp"
+              android:paddingBottom="@dimen/size_4dp"
+              bind:shadow="@{ @dimen/size_2dp }"
+              >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Multidrop"
+                android:background="@drawable/bg_gradient_blue"
+                android:paddingStart="@dimen/size_4dp"
+                android:textAlignment="center"
+                android:paddingEnd="@dimen/size_4dp"
+                android:paddingTop="@dimen/size_4dp"
+                android:paddingBottom="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:visibility="@{tripDetails.setMutidrop()}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
           <!-- trip details container -->
           <androidx.constraintlayout.widget.ConstraintLayout
               android:layout_width="match_parent"
