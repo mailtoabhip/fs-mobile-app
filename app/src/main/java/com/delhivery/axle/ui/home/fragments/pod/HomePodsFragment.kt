@@ -244,7 +244,6 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
                   }
                 }
           }
-
         }
       }
 
