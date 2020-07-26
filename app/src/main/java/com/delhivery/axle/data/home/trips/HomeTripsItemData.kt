@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.home.trips
 
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
@@ -62,6 +63,7 @@ data class HomeTripsItemData(
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
+  @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
   @SerializedName("lr_details") val lrDetails: MutableList<LRDetails> = mutableListOf(),
   @SerializedName("speed") var speed: String?,
@@ -74,6 +76,15 @@ data class HomeTripsItemData(
   var updatedTds: Double
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
+
+  /**
+   * if trip is Multidrop
+   */
+  fun setMutidrop() = if (isMultidrop != null && isMultidrop == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
 
   /**
    * Formatted driver details as per UI
