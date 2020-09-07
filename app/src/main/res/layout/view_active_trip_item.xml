@@ -100,11 +100,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif"
-            android:text="@{trip.originStateName()}"
+            android:text="@{trip.originDistrictState()}"
             android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="GOA"
+            tools:text="Panjim, GOA"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -127,11 +127,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif"
-            android:text="@{trip.destinationStateName()}"
+            android:text="@{trip.destinationDistrictState()}"
             android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="@id/text_destination_city"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Mumbai"
+            tools:text="Thane, Mumbai"
             />
 
       </androidx.constraintlayout.widget.ConstraintLayout>

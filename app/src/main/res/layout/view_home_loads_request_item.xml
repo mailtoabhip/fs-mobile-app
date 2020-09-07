@@ -67,11 +67,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif"
-            android:text="@{request.originStateName()}"
+            android:text="@{request.originDistrictState()}"
             android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Goa"
+            tools:text="North GOa, Goa"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -95,11 +95,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
             android:fontFamily="sans-serif"
-            android:text="@{request.destinationStateName()}"
+            android:text="@{request.destinationDistrictState()}"
             android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="@id/text_destination_city"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Goa"
+            tools:text="North Goa, Goa"
             />
 
         <androidx.appcompat.widget.AppCompatImageView
