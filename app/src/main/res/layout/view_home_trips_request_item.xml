@@ -144,18 +144,40 @@
           tools:text="Panjim"
           />
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_source_state"
-          android:layout_width="wrap_content"
+      <LinearLayout
+          android:id="@+id/til_state"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{trip.originDistrictState()}"
-          android:textColor="@color/sub_heading_black"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Panjim, GOA"
-          />
+          android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_source_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.originDistrictState()}"
+            android:textColor="@color/sub_heading_black"
+            android:layout_weight="1"
+            tools:text="Panjim, GOA"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_destination_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.destinationDistrictState()}"
+            android:textColor="@color/sub_heading_black"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="Thane, Mumbai"
+            />
+
+      </LinearLayout>
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_city"
@@ -173,21 +195,8 @@
           />
 
       <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_destination_state"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{trip.destinationDistrictState()}"
-          android:textColor="@color/sub_heading_black"
-          app:layout_constraintStart_toStartOf="@id/text_destination_city"
-          app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Thane, Mumbai"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_is_multidrop"
-          android:layout_marginTop="4dp"
+          android:layout_marginTop="@dimen/size_8dp"
           android:background="@drawable/bg_gradient_blue"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -198,7 +207,7 @@
           android:text="Multidrop"
           android:visibility="@{trip.setMutidrop()}"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/text_source_state"/>
+          app:layout_constraintTop_toBottomOf="@+id/til_state"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.cardview.widget.CardView>

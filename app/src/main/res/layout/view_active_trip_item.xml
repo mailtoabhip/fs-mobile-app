@@ -94,18 +94,39 @@
             tools:text="Panjim"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_source_state"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:fontFamily="sans-serif"
-            android:text="@{trip.originDistrictState()}"
-            android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Panjim, GOA"
-            />
+            android:orientation="horizontal">
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_source_state"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:layout_weight="1"
+              android:text="@{trip.originDistrictState()}"
+              android:textColor="@color/sub_heading_black"
+              tools:text="Panjim, GOA"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_destination_state"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:gravity="center"
+              android:text="@{trip.destinationDistrictState()}"
+              android:textColor="@color/sub_heading_black"
+              android:layout_weight="1"
+              tools:text="Thane, Mumbai"
+              />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination_city"
@@ -119,19 +140,6 @@
             app:layout_constraintStart_toEndOf="@id/img_forward"
             app:layout_constraintTop_toTopOf="@id/img_forward"
             tools:text="Andheri East"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_destination_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:fontFamily="sans-serif"
-            android:text="@{trip.destinationDistrictState()}"
-            android:textColor="@color/sub_heading_black"
-            app:layout_constraintStart_toStartOf="@id/text_destination_city"
-            app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Thane, Mumbai"
             />
 
       </androidx.constraintlayout.widget.ConstraintLayout>
