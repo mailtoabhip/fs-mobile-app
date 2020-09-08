@@ -205,12 +205,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:fontFamily="sans-serif"
-                android:text="@{transaction.originCityState()}"
+                android:text="@{transaction.originDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_from_label"
-                tools:text="Panjim, Goa"
+                tools:text="North Goa, Panjim, Goa"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -233,7 +233,7 @@
                 android:layout_marginTop="@dimen/size_2dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
-                android:text="@{transaction.destinationCityState()}"
+                android:text="@{transaction.destinationDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 app:layout_constraintStart_toStartOf="parent"

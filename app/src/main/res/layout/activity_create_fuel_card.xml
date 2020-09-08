@@ -81,7 +81,7 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:visibility="@{ !fetching &amp;&amp; !error ? View.VISIBLE : View.GONE }"
-          tools:visibility="gone"
+          tools:visibility="visible"
           >
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -97,7 +97,7 @@
               android:layout_margin="@dimen/size_8dp"
               android:clickable="true"
               android:focusable="true"
-              android:visibility="gone"
+              android:visibility="visible"
               android:foreground="?attr/selectableItemBackgroundBorderless"
               app:cardCornerRadius="@dimen/size_6dp"
               app:cardElevation="2dp"
@@ -214,18 +214,46 @@
                   tools:text="Panjim"
                   />
 
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/text_source_state"
-                  android:layout_width="wrap_content"
+              <LinearLayout
+                  android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_4dp"
-                  android:fontFamily="sans-serif"
-                  android:text="@{trip.originStateName()}"
-                  android:textColor="@color/sub_heading_black"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintTop_toBottomOf="@id/text_source_city"
-                  tools:text="GOA"
-                  />
+                  android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_source_state"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:gravity="start"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@{trip.originDistrictState()}"
+                    android:textColor="@color/sub_heading_black"
+                    tools:text="Panjim, GOA"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_destination_state"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:layout_marginLeft="@dimen/size_8dp"
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:maxWidth="200dip"
+                    android:text="@{trip.destinationDistrictState()}"
+                    android:textColor="@color/sub_heading_black"
+                    android:layout_marginEnd="@dimen/size_4dp"
+                    tools:text="Thane, Mumbai"
+                    />
+
+              </LinearLayout>
 
               <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_destination_city"
@@ -239,19 +267,6 @@
                   app:layout_constraintStart_toEndOf="@id/img_forward"
                   app:layout_constraintTop_toTopOf="@id/img_forward"
                   tools:text="Andheri East"
-                  />
-
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/text_destination_state"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_4dp"
-                  android:fontFamily="sans-serif"
-                  android:text="@{trip.destinationStateName()}"
-                  android:textColor="@color/sub_heading_black"
-                  app:layout_constraintStart_toStartOf="@id/text_destination_city"
-                  app:layout_constraintTop_toBottomOf="@id/text_source_city"
-                  tools:text="Mumbai"
                   />
 
               <androidx.appcompat.widget.AppCompatImageView
@@ -461,7 +476,7 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:gravity="center"
-          tools:visibility="visible"
+          tools:visibility="gone"
           android:visibility="@{ !fetching &amp;&amp; error ? View.VISIBLE : View.GONE }"
           android:layout_marginTop="@dimen/size_64dp"
           android:orientation="vertical"

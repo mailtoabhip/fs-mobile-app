@@ -68,6 +68,8 @@ data class HomeTripsItemData(
   @SerializedName("lr_details") val lrDetails: MutableList<LRDetails> = mutableListOf(),
   @SerializedName("speed") var speed: String?,
   @SerializedName("tat_minutes") var tatMinutes: String?,
+  @SerializedName("origin_district") val originDistrict: String?,
+  @SerializedName("destination_district") val destinationDistrict: String?,
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -115,6 +117,34 @@ data class HomeTripsItemData(
    * @return formatted destination state
    */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
+
+  /**
+   * @return formatted origin district
+   */
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return formatted destination district
+   */
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return origin district and state name
+   */
+  fun originDistrictState() = if (originDistrictName().isNotNullOrEmpty()) {
+    originDistrictName() + ", " + originStateName()
+  } else {
+    originStateName()
+  }
+
+  /**
+   * @return destination district and state name
+   */
+  fun destinationDistrictState() = if (destinationDistrictName().isNotNullOrEmpty()) {
+    destinationDistrictName() + ", " + destinationStateName()
+  } else {
+    destinationStateName()
+  }
 
   /**
    * @return formatted display time

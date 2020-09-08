@@ -51,6 +51,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
   @SerializedName("speed") var speed: String?,
   @SerializedName("tat_minutes") var tatMinutes: String?,
+  @SerializedName("origin_district") val originDistrict: String?,
+  @SerializedName("destination_district") val destinationDistrict: String?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -96,14 +98,50 @@ data class HomeBidsRequestItemData(
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
   /**
-   * @return formatted origin city, state
+   * @return formatted origin district name
    */
-  fun originCityState() = originCityName() + ", " + originStateName()
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return formatted destination district name
+   */
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return origin district and state name
+   */
+  fun originDistrictState() = if(originDistrictName().isNotNullOrEmpty()) {
+    originDistrictName() + ", " + originStateName()
+  } else {
+    originStateName()
+  }
+
+  /**
+   * @return destination district and state name
+   */
+  fun destinationDistrictState() = if(destinationDistrictName().isNotNullOrEmpty()) {
+    destinationDistrictName() + ", " + destinationStateName()
+  } else {
+    destinationStateName()
+  }
+
+  /**
+   * @return formatted origin district, city, state
+   */
+  fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
+    originCityName() + ", " + originDistrictName() + ", " + originStateName()
+  } else {
+    originCityName() + ", " + originStateName()
+  }
 
   /**
    * @return formatted destination city, state
    */
-  fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+  fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
+    destinationCityName() + ", " + destinationDistrictName() + ", " + destinationStateName()
+  } else {
+    destinationCityName() + ", " + destinationStateName()
+  }
 
   /**
    * @return intermediary stops

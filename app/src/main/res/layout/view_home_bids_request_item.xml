@@ -62,19 +62,45 @@
           tools:text="Goa"
           />
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_source_state"
-          android:layout_width="wrap_content"
+      <LinearLayout
+          android:id="@+id/til_state"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.originStateName()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_12sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Goa"
-          />
+          android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_source_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:text="@{request.originDistrictState()}"
+            android:paddingEnd="@dimen/size_8dp"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_12sp"
+            tools:text="North Goa, Goa"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_destination_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:layout_weight="1"
+            android:paddingEnd="@dimen/size_8dp"
+            android:paddingStart="@dimen/size_8dp"
+            android:text="@{request.destinationDistrictState()}"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:gravity="center"
+            tools:text="North Goa, Goa"
+            />
+
+      </LinearLayout>
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_city"
@@ -91,20 +117,6 @@
           />
 
       <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_destination_state"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{request.destinationStateName()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_12sp"
-          app:layout_constraintStart_toStartOf="@id/text_destination_city"
-          app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Goa"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_date_time"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -114,7 +126,7 @@
           android:textColor="@color/white"
           android:textSize="@dimen/text_10sp"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_source_state"
+          app:layout_constraintTop_toBottomOf="@id/til_state"
           bind:drawableResId="@{ request.requiredAtBg() }"
           tools:text="Today"
           />
