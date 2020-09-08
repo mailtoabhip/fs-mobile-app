@@ -99,7 +99,7 @@
           android:lineSpacingExtra="10sp"
           android:text="@{ trip.unloadedAt()}"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/text_start_date"
+          app:layout_constraintTop_toBottomOf="@+id/text_date_time"
           tools:text="End Date"
           />
 
@@ -123,7 +123,7 @@
           android:padding="@dimen/size_4dp"
           app:layout_constraintEnd_toStartOf="@+id/container_balance"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_date_time"
+          app:layout_constraintTop_toBottomOf="@id/text_end_date"
           >
 
         <androidx.appcompat.widget.AppCompatTextView
