@@ -51,8 +51,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
   @SerializedName("speed") var speed: String?,
   @SerializedName("tat_minutes") var tatMinutes: String?,
-  @SerializedName("origin_district") val originDistrict: String,
-  @SerializedName("destination_district") val destinationDistrict: String,
+  @SerializedName("origin_district") val originDistrict: String?,
+  @SerializedName("destination_district") val destinationDistrict: String?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -100,12 +100,12 @@ data class HomeBidsRequestItemData(
   /**
    * @return formatted origin district name
    */
-  fun originDistrictName() = StringUtils.capitalize(originDistrict) ?: ""
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) ?: "" }
 
   /**
    * @return formatted destination district name
    */
-  fun destinationDistrictName() = StringUtils.capitalize(destinationDistrict) ?: ""
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) ?: "" }
 
   /**
    * @return origin district and state name
