@@ -121,12 +121,12 @@ data class HomeTripsItemData(
   /**
    * @return formatted origin district
    */
-  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) ?: "" }
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) } ?: ""
 
   /**
    * @return formatted destination district
    */
-  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) ?: "" }
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) } ?: ""
 
   /**
    * @return origin district and state name

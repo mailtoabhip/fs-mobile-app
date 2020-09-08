@@ -100,12 +100,12 @@ data class HomeBidsRequestItemData(
   /**
    * @return formatted origin district name
    */
-  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) ?: "" }
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) } ?: ""
 
   /**
    * @return formatted destination district name
    */
-  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) ?: "" }
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) } ?: ""
 
   /**
    * @return origin district and state name
