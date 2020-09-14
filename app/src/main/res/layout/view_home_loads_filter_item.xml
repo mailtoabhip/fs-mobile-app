@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="title"
+        type="String"
+        />
+
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <Switch
+          android:id="@+id/toggle_express"
+          android:text="@string/express"
+          android:padding="@dimen/size_8dp"
+          android:layout_alignParentEnd="true"
+          android:switchPadding="@dimen/size_8dp"
+          android:textColor="@color/black"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

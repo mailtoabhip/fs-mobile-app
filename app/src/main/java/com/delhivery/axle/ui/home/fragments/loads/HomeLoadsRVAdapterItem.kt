@@ -2,11 +2,13 @@ package com.delhivery.axle.ui.home.fragments.loads
 
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsProgressItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsSearchItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Filters
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
@@ -23,7 +25,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Search(2),
   Warning(3),
   Timeout(4),
-  Info(5);
+  Info(5),
+  Filters(6);
 
   companion object {
     /**
@@ -84,3 +87,9 @@ class HomeLoadsInfoItem(
       "To get more relevant loads - change your \n preferences here!"
   )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsInfoItemData>(Info, data)
+
+/**
+ * Filter item
+ */
+class HomeLoadsFilterItem(data: HomeLoadsFilterItemData) :
+    BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)

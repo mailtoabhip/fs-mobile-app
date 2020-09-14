@@ -20,6 +20,7 @@ import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlin.math.exp
 
 /**
  * Created by saurabh
@@ -83,7 +84,7 @@ class HomeLoadsViewModel @Inject constructor(
   /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(paginate: Boolean = false) {
+  fun fetchUserTransactions(paginate: Boolean = false, express: String = "") {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -96,7 +97,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, express)
         .flatMap { t ->
           offset = t.offset
           total = t.total
