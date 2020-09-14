@@ -19,6 +19,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
@@ -250,7 +251,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
       HomeLoadsFilterAction -> {
         //express = if (isChecked) "EXP" else ""
-
+        val data = item.data as HomeLoadsFilterItemData
         refreshData()
       }
     }

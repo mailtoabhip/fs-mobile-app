@@ -11,6 +11,11 @@
         type="String"
         />
 
+    <variable
+        name="actionLabel"
+        type="String"
+        />
+
   </data>
 
   <androidx.appcompat.widget.LinearLayoutCompat
