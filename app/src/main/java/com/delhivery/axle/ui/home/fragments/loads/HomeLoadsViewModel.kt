@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -20,6 +21,7 @@ import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlin.math.exp
 
 /**
  * Created by saurabh
@@ -83,7 +85,7 @@ class HomeLoadsViewModel @Inject constructor(
   /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(paginate: Boolean = false) {
+  fun fetchUserTransactions(paginate: Boolean = false, express: String = "", isExpress: Boolean = false) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -96,7 +98,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, express)
         .flatMap { t ->
           offset = t.offset
           total = t.total
@@ -119,6 +121,7 @@ class HomeLoadsViewModel @Inject constructor(
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
+                add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
                 for (load in loads.toMutableList()) {
                   try {
                     load.loadPricePercent = loadPricePercent
@@ -133,7 +136,7 @@ class HomeLoadsViewModel @Inject constructor(
                 }
 
                 if (!hasMoreData) {
-                  add(Pair(HomeLoadsInfoItem(), Add))
+                  add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
               }
             }

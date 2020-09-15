@@ -24,7 +24,8 @@ interface TransactionService {
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_type") truckType: String? = null,
-    @Query("axle_current_week_loads") currWeekLoads: String = "yes"
+    @Query("axle_current_week_loads") currWeekLoads: String = "yes",
+    @Query("apply_100km_logic") nearby100kmcities: Boolean = true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -36,7 +37,8 @@ interface TransactionService {
     @Query("city_code") cityCode: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
-    @Query("axle_current_week_loads") currWeekLoads: String = "yes"
+    @Query("axle_current_week_loads") currWeekLoads: String = "yes",
+    @Query("speed") speed: String
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
