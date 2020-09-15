@@ -120,6 +120,7 @@ class HomeLoadsViewModel @Inject constructor(
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
+                add(Pair(HomeLoadsFilterItem(), AddUpdate))
                 for (load in loads.toMutableList()) {
                   try {
                     load.loadPricePercent = loadPricePercent

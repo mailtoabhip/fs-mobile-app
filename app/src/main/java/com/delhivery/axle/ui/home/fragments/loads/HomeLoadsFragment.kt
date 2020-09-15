@@ -250,8 +250,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsFilterAction -> {
-        //express = if (isChecked) "EXP" else ""
         val data = item.data as HomeLoadsFilterItemData
+        if (data.actionLabel.isEmpty()) {
+          data.actionLabel = "express"
+          express = "EXP"
+        } else {
+          data.actionLabel = ""
+          express = ""
+        }
         refreshData()
       }
     }

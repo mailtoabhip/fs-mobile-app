@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
@@ -142,7 +143,7 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
     item: HomeLoadsFilterItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-    binding.toggleExpress.clickToAction(item.data.actionId, item, _interface)
+    binding.tilExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
   }
 }
 

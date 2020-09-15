@@ -91,5 +91,9 @@ class HomeLoadsInfoItem(
 /**
  * Filter item
  */
-class HomeLoadsFilterItem(data: HomeLoadsFilterItemData) :
-    BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)
+class HomeLoadsFilterItem(
+  data: HomeLoadsFilterItemData = HomeLoadsFilterItemData(
+      "",
+      ""
+  )
+) : BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)
