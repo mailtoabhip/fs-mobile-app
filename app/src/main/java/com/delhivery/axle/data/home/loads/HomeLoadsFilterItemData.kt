@@ -3,10 +3,9 @@ package com.delhivery.axle.data.home.loads
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeLoadsFilterItemData(
-  var actionLabel: Boolean,
-  val actionId: String
+  var actionLabel: Boolean
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = HomeLoadsFilterItemDataKeyPrefix + actionId
+  override fun key() = HomeLoadsFilterItemDataKeyPrefix
 }
 
 /* unique key for filter */

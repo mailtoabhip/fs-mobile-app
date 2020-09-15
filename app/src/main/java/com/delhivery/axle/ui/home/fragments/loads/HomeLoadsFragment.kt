@@ -251,7 +251,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsFilterAction -> {
-        val data = item.data as HomeLoadsFilterItemData
         if (isExpress) {
           isExpress = false
           express = ""
@@ -260,7 +259,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           express = "EXP"
         }
         refreshData()
-        //adapter.notifyDataSetChanged()
       }
     }
   }

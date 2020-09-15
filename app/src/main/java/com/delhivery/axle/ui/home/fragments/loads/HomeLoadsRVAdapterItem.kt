@@ -93,7 +93,6 @@ class HomeLoadsInfoItem(
  */
 class HomeLoadsFilterItem(
   data: HomeLoadsFilterItemData = HomeLoadsFilterItemData(
-      false,
-      ""
+      false
   )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)

@@ -121,7 +121,7 @@ class HomeLoadsViewModel @Inject constructor(
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
-                add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress, "")), AddUpdate))
+                add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
                 for (load in loads.toMutableList()) {
                   try {
                     load.loadPricePercent = loadPricePercent
@@ -136,7 +136,7 @@ class HomeLoadsViewModel @Inject constructor(
                 }
 
                 if (!hasMoreData) {
-                  add(Pair(HomeLoadsInfoItem(), Add))
+                  add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
               }
             }
