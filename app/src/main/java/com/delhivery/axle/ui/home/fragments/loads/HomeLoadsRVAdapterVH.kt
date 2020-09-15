@@ -143,6 +143,11 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
     item: HomeLoadsFilterItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
+    if (item.data.actionLabel) {
+      binding.toggleRemovedMark.visibility = View.VISIBLE
+    } else {
+      binding.toggleRemovedMark.visibility = View.GONE
+    }
     binding.tilExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
   }
 }

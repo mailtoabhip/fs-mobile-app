@@ -67,6 +67,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   var scrollDist = 0
   var visible = false
   var express = ""
+  var isExpress = false
 
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
@@ -193,7 +194,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private fun refreshData() {
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, express)
+    viewModel.fetchUserTransactions(false, express, isExpress)
   }
 
   override fun handleAction(
@@ -251,14 +252,15 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
       HomeLoadsFilterAction -> {
         val data = item.data as HomeLoadsFilterItemData
-        if (data.actionLabel.isEmpty()) {
-          data.actionLabel = "express"
-          express = "EXP"
-        } else {
-          data.actionLabel = ""
+        if (isExpress) {
+          isExpress = false
           express = ""
+        } else {
+          isExpress = true
+          express = "EXP"
         }
         refreshData()
+        //adapter.notifyDataSetChanged()
       }
     }
   }
@@ -431,7 +433,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, express)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
 
     override fun hasMore() = viewModel.hasMoreData
 
