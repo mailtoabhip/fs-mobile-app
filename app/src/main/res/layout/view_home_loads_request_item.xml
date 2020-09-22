@@ -284,7 +284,7 @@
             android:paddingRight="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_14dp"
             android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
-            tools:visibility="gone"
+            tools:visibility="visible"
             >
 
           <androidx.appcompat.widget.AppCompatImageView
@@ -310,12 +310,24 @@
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              app:layout_constraintEnd_toStartOf="@+id/img_bid_up_arrow"
               app:layout_constraintStart_toEndOf="@+id/img_tick"
               app:layout_constraintTop_toTopOf="parent"
               autofit:minTextSize="@dimen/text_10sp"
               tools:text="Bid successufully placed for 235000"
               />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/img_bid_up_arrow"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:srcCompat="@drawable/ic_baseline_arrow_upward_24"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toEndOf="@+id/text_bid_amount"
+              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              app:layout_constraintTop_toTopOf="parent"
+              android:visibility="@{request.setLowestBidImage()}"
+              tools:visibility="visible"/>
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_edit"
@@ -327,7 +339,7 @@
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toEndOf="@+id/text_bid_amount"
+              app:layout_constraintStart_toEndOf="@+id/img_bid_up_arrow"
               app:layout_constraintTop_toTopOf="parent"
               app:srcCompat="@drawable/ic_arrow_forward_black"
               />
@@ -344,7 +356,7 @@
             android:paddingEnd="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_8dp"
             android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
-            tools:visibility="visible"
+            tools:visibility="gone"
             >
 
           <androidx.appcompat.widget.LinearLayoutCompat

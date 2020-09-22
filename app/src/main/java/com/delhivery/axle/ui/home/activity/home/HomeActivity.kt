@@ -95,18 +95,21 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     markNotificationRead()
     when (notificationType) {
-      "submit_pod_notification" -> {
+      SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
           startActivity(tripDetailsIntent(transactionIds[0], this))
         } else {
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
       }
-      "preferred_supplier_notification" -> {
+      PREFERRED_SUPPLIER_NOTIFICATION -> {
         startActivity(bidDetailsIntent(preferredTransactionId, this))
       }
-      "reject_pod_notification" -> {
+      REJECT_POD_NOTIFICATION -> {
         startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
+      LOWEST_BID_NOTIFICATION -> {
+        startActivity(bidDetailsIntent(preferredTransactionId, this))
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -201,3 +204,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 interface TitleProvider {
   val title: CharSequence
 }
+
+private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
+private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
+private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
+private const val LOWEST_BID_NOTIFICATION = "xyz"

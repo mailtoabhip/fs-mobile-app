@@ -281,7 +281,26 @@ data class HomeBidsRequestItemData(
    */
   fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
       transactionBid?.bidAmount ?: 0.0
-  )}" + if (isPMTIndent()) " /MT" else ""
+  )}" + if (isPMTIndent()) " /MT" else "" + lowestbidDifference()
+
+  /**
+   * @return lowest bid difference
+   */
+  fun lowestbidDifference() = if (transactionBid?.bidAmount!! > lowestBid!!) {
+    " (${StringUtils.formatAmount(transactionBid?.bidAmount!! - lowestBid!!)})"
+  } else {
+    ""
+  }
+
+  /**
+   * @return set image if supplier bid is more than lowest bid
+   */
+  fun setLowestBidImage() = if (transactionBid?.bidAmount!! > lowestBid!!) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
 
   /**
    * @return true if indent type(pmt/ftl)
