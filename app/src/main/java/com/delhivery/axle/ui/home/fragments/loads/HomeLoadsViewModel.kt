@@ -116,9 +116,9 @@ class HomeLoadsViewModel @Inject constructor(
             Single.zip(
                 bidsRepository.bidsForLoads(t.transactions),
                 bidsRepository.bulkLowestBidsForLoads(t.transactions),
-                BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, List<LowestBidResponse>,
+                BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
                     Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
-                  Triple(t1.first, t1.second, t2)
+                  Triple(t1.first, t1.second, t2.second)
                 })
           }
         }

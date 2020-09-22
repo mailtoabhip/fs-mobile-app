@@ -208,4 +208,4 @@ interface TitleProvider {
 private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
 private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
-private const val LOWEST_BID_NOTIFICATION = "xyz"
+private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
