@@ -145,8 +145,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
             )
           }
         } else require(
-            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50)
-        ) { "*Bid difference should be more that ₹50" }
+            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
+        ) { "*Bid difference should be more that ₹500" }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
