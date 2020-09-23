@@ -310,24 +310,59 @@
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintEnd_toStartOf="@+id/img_bid_up_arrow"
+              app:layout_constraintEnd_toStartOf="@+id/view_lowest_bid_info"
               app:layout_constraintStart_toEndOf="@+id/img_tick"
               app:layout_constraintTop_toTopOf="parent"
               autofit:minTextSize="@dimen/text_10sp"
               tools:text="Bid successufully placed for 235000"
               />
 
-          <androidx.appcompat.widget.AppCompatImageView
-              android:id="@+id/img_bid_up_arrow"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              app:srcCompat="@drawable/ic_baseline_arrow_upward_24"
-              app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintStart_toEndOf="@+id/text_bid_amount"
-              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/view_lowest_bid_info"
               app:layout_constraintTop_toTopOf="parent"
-              android:visibility="@{request.setLowestBidImage()}"
-              tools:visibility="visible"/>
+              android:layout_marginEnd="@dimen/size_16dp"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_lowest_bid_difference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textStyle="bold"
+                android:textColor="@color/colorDelhiveryRed"
+                android:text="@{request.lowestbidDifference()}"
+                app:layout_constraintEnd_toStartOf="@+id/img_bid_up_arrow"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_bid_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_baseline_arrow_upward_24"
+                android:visibility="@{request.setLowestBidImage()}"
+                app:layout_constraintStart_toEndOf="@id/text_lowest_bid_difference"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="visible"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_close_bracket"
+                android:text=")"
+                android:textColor="@color/colorDelhiveryRed"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                visibility="@{request.setCloseText()}"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_bid_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_edit"
@@ -339,7 +374,6 @@
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toEndOf="@+id/img_bid_up_arrow"
               app:layout_constraintTop_toTopOf="parent"
               app:srcCompat="@drawable/ic_arrow_forward_black"
               />
