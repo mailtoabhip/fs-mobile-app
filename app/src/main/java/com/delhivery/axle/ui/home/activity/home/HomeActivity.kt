@@ -109,7 +109,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       LOWEST_BID_NOTIFICATION -> {
-        startActivity(bidDetailsIntent(preferredTransactionId, this))
+        if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
+          startActivity(bidDetailsIntent(transactionIds[0], this))
+        } else {
+          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+        }
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
