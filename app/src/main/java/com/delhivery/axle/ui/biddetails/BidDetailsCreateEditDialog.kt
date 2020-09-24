@@ -103,6 +103,10 @@ class BidDetailsCreateEditDialog @Inject constructor(
               }
               amount = (input * transaction.requestedCapacityMg).toInt()
               binding.labelBid.text = "Your minimum payout will be ₹ $amount"
+
+              if (abs((input * transaction.requestedCapacityMg) - (transactionBid?.pmtRate ?: 0.0)) < 500) {
+                throw Exception( "*Bid difference should be more that ₹500")
+              }
             } else {
               amount = input
             }
