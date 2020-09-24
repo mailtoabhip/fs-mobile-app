@@ -106,7 +106,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
 
               if (transactionBid != null) {
                 if (abs((input * transaction.requestedCapacityMg) - (transactionBid?.pmtRate ?: 0.0)) < 500) {
-                  throw Exception( "*Bid difference should be more that ₹500")
+                  throw Exception( "*Bid difference should be more than ₹500")
                 }
               }
             } else {
@@ -152,7 +152,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
           }
         } else require(
             !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
-        ) { "*Bid difference should be more that ₹500" }
+        ) { "*Bid difference should be more than ₹500" }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID
