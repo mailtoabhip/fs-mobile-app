@@ -143,6 +143,7 @@ class HomeLoadsViewModel @Inject constructor(
                       b.transactionId.safeEquals(load.transactionId)
                     }[0]
                     load.lowestBid = lowestBid.minBid
+                    load.numBids = lowestBid.numBids
                     load.loadPricePercent = loadPricePercent
                     load.transactionBid =
                       bids.filter { b ->
