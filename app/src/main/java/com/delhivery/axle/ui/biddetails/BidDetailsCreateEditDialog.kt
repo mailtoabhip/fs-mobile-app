@@ -103,6 +103,12 @@ class BidDetailsCreateEditDialog @Inject constructor(
               }
               amount = (input * transaction.requestedCapacityMg).toInt()
               binding.labelBid.text = "Your minimum payout will be ₹ $amount"
+
+              if (transactionBid != null) {
+                if (abs((input * transaction.requestedCapacityMg) - (transactionBid?.pmtRate ?: 0.0)) < 500) {
+                  throw Exception( "*Bid difference should be more than ₹500")
+                }
+              }
             } else {
               amount = input
             }
@@ -145,8 +151,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
             )
           }
         } else require(
-            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 50)
-        ) { "*Bid difference should be more that ₹50" }
+            !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
+        ) { "*Bid difference should be more than ₹500" }
         val event: String
         if (transactionBid == null) {
           event = EVENT_PLACE_BID

@@ -138,6 +138,18 @@ class BidsRepository @Inject constructor(
     bids.joinToString(separator = ",") { it.transactionId }
         .let { bidService.bulkLowestBidsForTransactions(it) }
         .convertResponse()
+
+  /**
+   * Get lowest bid for loads
+   */
+  fun bulkLowestBidsForLoads(transactions: List<HomeBidsRequestItemData>) =
+    bidService.bulkLowestBidsForTransactions(
+        transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+    )
+        .convertResponse()
+        .map {
+          Pair(transactions, it)
+        }!!
 }
 
 /* User bids pagination load limit */
