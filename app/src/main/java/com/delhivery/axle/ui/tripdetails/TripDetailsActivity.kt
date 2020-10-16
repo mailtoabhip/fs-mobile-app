@@ -499,16 +499,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       tds += advancePayment.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
       payments.add(0, advancePayment)
 
-      val pending = TripPaymentsResponse(
-          "balance_pending", "",
-          total.minus(advance), "",
-          when {
-            viewModel.tripDetail.damagePending == true -> "Damage Issue"
-            viewModel.tripDetail.detentionPending == true -> "Detention Issue"
-            else -> ""
-          }
-      )
-      tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+//      val pending = TripPaymentsResponse(
+//          "balance_pending", "",
+//          total.minus(advance), "",
+//          when {
+//            viewModel.tripDetail.damagePending == true -> "Damage Issue"
+//            viewModel.tripDetail.detentionPending == true -> "Detention Issue"
+//            else -> ""
+//          }
+//      )
+      //tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
       //payments.add(1, pending)
     } else {
       val paymentMap = mutableMapOf<String, TripPaymentsResponse>()
