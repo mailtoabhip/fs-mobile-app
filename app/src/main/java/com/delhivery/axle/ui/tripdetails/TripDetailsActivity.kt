@@ -509,7 +509,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
       )
       tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
-      payments.add(1, pending)
+      //payments.add(1, pending)
     } else {
       val paymentMap = mutableMapOf<String, TripPaymentsResponse>()
       val advancePayment = viewModel.paymentsSummary.find { it.head == "cash_advance" }
@@ -573,20 +573,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         if (balancePayment.amount > 0) tds += balancePayment.getTDS(
             viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate
         )
-      } else {
-        val pending = TripPaymentsResponse(
-            "balance_pending", "",
-            total.minus(totalAdvance + interPayments), "", when {
-          viewModel.tripDetail.damagePending == true -> "Damage Issue"
-          viewModel.tripDetail.detentionPending == true -> "Detention Issue"
-          else -> ""
-        }
-        )
-        paymentMap["balance_pending"] = pending
-
-        if (pending.amount > 0)
-          tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
       }
+//      } else {
+//        val pending = TripPaymentsResponse(
+//            "balance_pending", "",
+//            total.minus(totalAdvance + interPayments), "", when {
+//          viewModel.tripDetail.damagePending == true -> "Damage Issue"
+//          viewModel.tripDetail.detentionPending == true -> "Detention Issue"
+//          else -> ""
+//        }
+//        )
+//        paymentMap["balance_pending"] = pending
+//
+//        if (pending.amount > 0)
+//          tds += pending.getTDS(viewModel.userPrefs.tdsRate, viewModel.userPrefs.updatedTdsRate)
+//      }
 
       ViewPaymentSummaryItemBinding.inflate(
           layoutInflater, paymentSummaryBinding.containerPayment, false

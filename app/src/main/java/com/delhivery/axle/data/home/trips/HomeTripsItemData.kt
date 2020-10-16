@@ -99,6 +99,15 @@ data class HomeTripsItemData(
   fun tripStatus() = TripType.byStatus(tripStatus)
 
   /**
+   * Trip status visibility
+   */
+  fun tripStatusVisibility() = if (tripStatus == "truck_unloaded" || tripStatus == "epod_uploaded") {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  /**
    * @return formatted origin city
    */
   fun originCityName() = StringUtils.capitalize(origin) ?: ""
@@ -401,28 +410,28 @@ data class HomeTripsItemData(
         ""
       }
     }
-    BalancePending -> {
-      if (payment != null) {
-        val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
-        val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
-        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
-        var amount = bidDetails?.bidPrice ?: 0.0
-        if (!intermittentPayment.isNullOrEmpty()) {
-          intermittentPayment.forEach {
-            amount -= it.amount
-          }
-        }
-        if (advancePayment != null) {
-          amount -= advancePayment.amount
-          if (loadingChargePayment != null) {
-            amount -= loadingChargePayment.amount
-          }
-        }
-        "₹ ${StringUtils.formatAmount(amount)}"
-      } else {
-        ""
-      }
-    }
+//    BalancePending -> {
+//      if (payment != null) {
+//        val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+//        val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+//        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
+//        var amount = bidDetails?.bidPrice ?: 0.0
+//        if (!intermittentPayment.isNullOrEmpty()) {
+//          intermittentPayment.forEach {
+//            amount -= it.amount
+//          }
+//        }
+//        if (advancePayment != null) {
+//          amount -= advancePayment.amount
+//          if (loadingChargePayment != null) {
+//            amount -= loadingChargePayment.amount
+//          }
+//        }
+//        "₹ ${StringUtils.formatAmount(amount)}"
+//      } else {
+//        ""
+//      }
+//    }
     else -> ""
   }
 
