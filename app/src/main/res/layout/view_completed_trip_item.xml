@@ -179,6 +179,7 @@
           android:layout_height="wrap_content"
           android:padding="@dimen/size_4dp"
           app:layout_constraintEnd_toEndOf="parent"
+          android:visibility="@{trip.balance_tile_visibility()}"
           app:layout_constraintStart_toEndOf="@+id/container_advance"
           app:layout_constraintTop_toTopOf="@+id/container_advance"
           >

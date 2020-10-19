@@ -60,6 +60,7 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+          android:visibility="@{trip.tripStatusVisibility()}"
           tools:text="Load picked up"
           tools:textColor="@color/status_active"
           />
