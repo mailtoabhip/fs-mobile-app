@@ -567,7 +567,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       val balancePayment = viewModel.paymentsSummary.find { it.head == "balance_payment" }
       if (balancePayment != null) {
         paymentMap["balance_paid"] = TripPaymentsResponse(
-            "balance_paid", balancePayment.bankTransactionId,
+            "balance_paid", balancePayment.bankTransactionId ?: "",
             balancePayment.amount, balancePayment.transferTime ?: "", balancePayment.remark ?: ""
         )
         if (balancePayment.amount > 0) tds += balancePayment.getTDS(
