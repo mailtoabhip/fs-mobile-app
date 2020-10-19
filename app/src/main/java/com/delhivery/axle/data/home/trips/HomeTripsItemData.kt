@@ -519,6 +519,15 @@ data class HomeTripsItemData(
   }
 
   /**
+   * balance visibility
+   */
+  fun balance_tile_visibility() = if (balance().first == "Balance Paid") {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
    * Pending text
    */
   fun pending() = if (detentionPending == true) "Detention Issue"
