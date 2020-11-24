@@ -514,7 +514,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           var lrText = "Recovery Against LR:"
           lrText += payment.lr_nos?.get(0)
           if(payment.lr_nos.size > 1){
-            lrText += "+"+ (payment.lr_nos.size - 1) +" more"
+            lrText += " +"+ (payment.lr_nos.size - 1) +" more"
           }
           textChargeType.text = lrText
           textChargeValue.text = payment.amount.toString()
