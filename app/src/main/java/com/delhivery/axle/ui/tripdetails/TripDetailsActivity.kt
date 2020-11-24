@@ -394,6 +394,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   private fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
 
+  private fun redirectToLRsTrip(transactionId: String){
+    startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
+  }
 
   private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
     analyticsUtil.trackEvent(
@@ -518,6 +521,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
           textChargeType.text = lrText
           textChargeValue.text = payment.amount.toString()
+          textChargeType.setOnClickListener{
+            if(payment.transactionId != viewModel.transactionId) {
+              redirectToLRsTrip(payment.transactionId)
+            }
+          }
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,
                   R.color.status_lost
