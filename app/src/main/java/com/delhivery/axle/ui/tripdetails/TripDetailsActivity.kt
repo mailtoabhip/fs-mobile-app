@@ -135,6 +135,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.paymentsSummary.clear()
     viewModel.chargesListSummary.clear()
     viewModel.newPaymentSummary.clear()
+    viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeDN.clear()
     viewModel.fetchTripDetails()
     viewModel.fetchChargeListSummary()
     viewModel.fetchDNListSummary()
@@ -410,13 +412,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             layoutInflater, binding.containerHistory, false
     )
 
-    var netPayable = 0;
+    viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeDN.clear()
+
+    var netPayable = 0
     tripSummary.forEach{charge ->
       if(charge.chargeAmount != 0 && charge.action == "pay"){
         netPayable += charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentPositive, false).apply {
           seprator.visibility = View.GONE
-          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords();
+          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
           textChargeValue.text = charge.chargeAmount.toString()
           textChargeValue.setTextColor(ContextCompat.getColor(
@@ -429,11 +434,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           ))
           paymentSummaryBinding.containerPaymentPositive.addView(root)
         }
-      }else if(charge.chargeAmount != 0 && charge.action == "deducted"){
+      }else if(charge.chargeAmount != 0 && charge.action == "deduct"){
         netPayable -= charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentNegative, false).apply {
           seprator.visibility = View.GONE
-          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords();
+          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
           textChargeValue.text = charge.chargeAmount.toString()
           textChargeValue.setTextColor(ContextCompat.getColor(
@@ -458,8 +463,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             R.color.status_confirmed
     ))
 
-    var paymentDone = 0
-
     paymentSummary.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0){
           if(payment.paymentType  == "payment"){
@@ -470,6 +473,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
 
+    var paymentDone = 0
     viewModel.newPaymentTypePayment.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
@@ -501,11 +505,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
+    var paymentRecovery = 0
     viewModel.newPaymentTypeDN.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
           seprator.visibility = View.GONE
-          paymentDone -= payment.amount
+          paymentRecovery += payment.amount
           var lrText = "Recovery Against LR:"
           lrText += payment.lr_nos?.get(0)
           textChargeType.text = lrText
@@ -523,7 +528,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.pendingPayment = (netPayable - paymentDone).toString()
+    paymentSummaryBinding.pendingPayment = (netPayable - paymentDone - paymentRecovery).toString()
     paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
