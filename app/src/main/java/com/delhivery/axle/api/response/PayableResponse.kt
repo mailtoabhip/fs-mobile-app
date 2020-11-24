@@ -12,9 +12,9 @@ data class ChargesResponse(
         @SerializedName("action") val action: String,
         @SerializedName("updated_by") val updatedBy: String,
         @SerializedName("charge_head_ref") val chargeHeadRef: String,
-        @SerializedName("balance_amount") val balanceAmount: Int,
+        @SerializedName("balance_amount") val balanceAmount: Double,
         @SerializedName("charge_uuid") val chargeUuid: String,
-        @SerializedName("charge_amount") val chargeAmount: Int
+        @SerializedName("charge_amount") val chargeAmount: Double
 )
 
 data class DNResponse(
@@ -22,11 +22,11 @@ data class DNResponse(
         @SerializedName("status") val status: String,
         @SerializedName("invoice_no") val invoiceNo: String,
         @SerializedName("dn_id") val dnId: String,
-        @SerializedName("leftover_amount") val leftoverAmount: Int,
+        @SerializedName("leftover_amount") val leftoverAmount: Double,
         @SerializedName("trip_id") val tripId: String,
         @SerializedName("created_at") val createdAt: String,
-        @SerializedName("amount") val amount: Int,
-        @SerializedName("balance_amount") val balanceAmount: Int,
+        @SerializedName("amount") val amount: Double,
+        @SerializedName("balance_amount") val balanceAmount: Double,
         @SerializedName("payee") val payee: String,
         @SerializedName("updated_by") val updatedBy: String,
         @SerializedName("description") val description: String,

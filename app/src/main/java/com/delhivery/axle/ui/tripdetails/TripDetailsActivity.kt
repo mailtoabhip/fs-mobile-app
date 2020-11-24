@@ -418,9 +418,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.newPaymentTypePayment.clear()
     viewModel.newPaymentTypeDN.clear()
 
-    var netPayable = 0
+    var netPayable = 0.0
     tripSummary.forEach{charge ->
-      if(charge.chargeAmount != 0 && charge.action == "pay"){
+      if(charge.chargeAmount != 0.0 && charge.action == "pay"){
         netPayable += charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentPositive, false).apply {
           seprator.visibility = View.GONE
@@ -437,7 +437,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           ))
           paymentSummaryBinding.containerPaymentPositive.addView(root)
         }
-      }else if(charge.chargeAmount != 0 && charge.action == "deduct"){
+      }else if(charge.chargeAmount != 0.0 && charge.action == "deduct"){
         netPayable -= charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentNegative, false).apply {
           seprator.visibility = View.GONE
@@ -467,7 +467,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     ))
 
     paymentSummary.forEach{ payment ->
-      if(payment.status == "success" && payment.amount != 0){
+      if(payment.status == "success" && payment.amount != 0.0){
           if(payment.paymentType  == "payment"){
             viewModel.newPaymentTypePayment.add(payment)
           }else if(payment.paymentType == "dn"){
@@ -476,9 +476,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
 
-    var paymentDone = 0
+    var paymentDone = 0.0
     viewModel.newPaymentTypePayment.forEach{ payment ->
-      if(payment.status == "success" && payment.amount != 0){
+      if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
           seprator.visibility = View.GONE
           paymentDone += payment.amount
@@ -508,9 +508,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    var paymentRecovery = 0
+    var paymentRecovery = 0.0
     viewModel.newPaymentTypeDN.forEach{ payment ->
-      if(payment.status == "success" && payment.amount != 0){
+      if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
           seprator.visibility = View.GONE
           paymentRecovery += payment.amount

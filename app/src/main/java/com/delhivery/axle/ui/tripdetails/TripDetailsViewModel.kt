@@ -85,7 +85,7 @@ class TripDetailsViewModel @Inject constructor(
   var bidDetail: TripBidDetails? = null
 
   var tripType: String = ""
-  var paymentRecovery: Int = 0
+  var paymentRecovery: Double = 0.0
 
   /**
    * Fetch trip details
@@ -152,7 +152,7 @@ class TripDetailsViewModel @Inject constructor(
             .subscribe{
               _res, error ->
               if(!error){
-                paymentRecovery = 0
+                paymentRecovery = 0.0
                 if(_res.isNotEmpty() == true){
                   _res.let {
                     for (dn in _res){

@@ -77,7 +77,7 @@ data class  PaymentsResponse(
         @SerializedName("transfer_time") val transferTime: String?,
         @SerializedName("utr_number") val utrNumber: String?,
         @SerializedName("remarks") val remarks: String? = "",
-        @SerializedName("amount") val amount: Int,
+        @SerializedName("amount") val amount: Double,
         @SerializedName("payment_type") val paymentType: String,
         @SerializedName("updation_date") val updationDate: String,
         @SerializedName("payment_mode") val paymentMode: String?,
