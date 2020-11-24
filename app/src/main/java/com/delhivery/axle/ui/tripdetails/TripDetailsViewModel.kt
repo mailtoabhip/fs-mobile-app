@@ -69,6 +69,8 @@ class TripDetailsViewModel @Inject constructor(
   var paymentsSummary = mutableListOf<TripPaymentsResponse>()
 
   var newPaymentSummary = mutableListOf<PaymentsResponse>()
+  var newPaymentTypePayment = mutableListOf<PaymentsResponse>()
+  var newPaymentTypeDN = mutableListOf<PaymentsResponse>()
   var chargesListSummary = mutableListOf<ChargesResponse>()
 
   /* trip history */
@@ -200,6 +202,8 @@ class TripDetailsViewModel @Inject constructor(
               _res, error ->
               if(!error){
                 newPaymentSummary.clear()
+                newPaymentTypePayment.clear()
+                newPaymentTypeDN.clear()
                 if(_res.isNotEmpty() == true){
                   _res.let {
                     for (charge in _res){

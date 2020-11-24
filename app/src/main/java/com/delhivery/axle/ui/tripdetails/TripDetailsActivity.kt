@@ -461,46 +461,63 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     var paymentDone = 0
 
     paymentSummary.forEach{ payment ->
-      if(payment.status == "success" && payment.amount != 0 && payment.paymentMode != "automatic"){
+      if(payment.status == "success" && payment.amount != 0){
+          if(payment.paymentType  == "payment"){
+            viewModel.newPaymentTypePayment.add(payment)
+          }else if(payment.paymentType == "dn"){
+            viewModel.newPaymentTypeDN.add(payment)
+          }
+        }
+      }
+
+    viewModel.newPaymentTypePayment.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
           seprator.visibility = View.GONE
           paymentDone += payment.amount
-          if(payment.paymentType  == "payment"){
-            var utr = "UTR: "+payment.utrNumber+", "
-            var day = payment.updationDate.substring(8,10)
-            if(day[0] == '0'){
-              day = payment.updationDate.substring(9,10)
-            }
-            var month = payment.updationDate.substring(5,7)
-            if(month[0] == '0'){
-              month = payment.updationDate.substring(6,7)
-            }
-            month = DateUtils.getMonth(month.toInt())
-            utr += "$day $month"
-            textChargeType.text = utr
-            textChargeValue.text = payment.amount.toString()
-            textChargeValue.setTextColor(ContextCompat.getColor(
-                    this@TripDetailsActivity,
-                    R.color.status_confirmed
-            ))
-            textChargeConst.setTextColor(ContextCompat.getColor(
-                    this@TripDetailsActivity,
-                    R.color.status_confirmed
-            ))
-          }else if(payment.paymentType == "dn"){
-            var lrText = "Recovery Against LR:"
-            lrText += payment.lr_nos?.get(0)
-            textChargeType.text = lrText
-            textChargeValue.text = payment.amount.toString()
-            textChargeValue.setTextColor(ContextCompat.getColor(
-                    this@TripDetailsActivity,
-                    R.color.status_lost
-            ))
-            textChargeConst.setTextColor(ContextCompat.getColor(
-                    this@TripDetailsActivity,
-                    R.color.status_lost
-            ))
+          var utr = "UTR: "+payment.utrNumber+", "
+          var day = payment.updationDate.substring(8,10)
+          if(day[0] == '0'){
+            day = payment.updationDate.substring(9,10)
           }
+          var month = payment.updationDate.substring(5,7)
+          if(month[0] == '0'){
+            month = payment.updationDate.substring(6,7)
+          }
+          month = DateUtils.getMonth(month.toInt())
+          utr += "$day $month"
+          textChargeType.text = utr
+          textChargeValue.text = payment.amount.toString()
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          paymentSummaryBinding.containerPayment.addView(root)
+        }
+      }
+    }
+
+    viewModel.newPaymentTypeDN.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0){
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
+          seprator.visibility = View.GONE
+          paymentDone += payment.amount
+          var lrText = "Recovery Against LR:"
+          lrText += payment.lr_nos?.get(0)
+          textChargeType.text = lrText
+          textChargeValue.text = payment.amount.toString()
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
           paymentSummaryBinding.containerPayment.addView(root)
         }
       }
