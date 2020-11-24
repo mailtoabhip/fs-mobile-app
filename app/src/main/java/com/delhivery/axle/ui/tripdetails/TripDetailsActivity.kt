@@ -505,7 +505,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
           seprator.visibility = View.GONE
-          paymentDone += payment.amount
+          paymentDone -= payment.amount
           var lrText = "Recovery Against LR:"
           lrText += payment.lr_nos?.get(0)
           textChargeType.text = lrText
@@ -523,9 +523,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    var pendingRecovery = viewModel.paymentRecovery
-
-    paymentSummaryBinding.pendingPayment = (netPayable - paymentDone - pendingRecovery).toString()
+    paymentSummaryBinding.pendingPayment = (netPayable - paymentDone).toString()
     paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -535,7 +533,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             R.color.status_confirmed
     ))
 
-    paymentSummaryBinding.pendingRecovery = pendingRecovery.toString()
+    paymentSummaryBinding.pendingRecovery = viewModel.paymentRecovery.toString()
     paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_lost
