@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.PaymentsResponse
 import com.delhivery.axle.api.response.TripPaymentsBulkResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
 import io.reactivex.Single
@@ -30,5 +31,15 @@ interface PaymentService {
   fun bulkTransactions(
     @Query("transaction_ids") transactionIds: String
   ): Single<BaseResponse<TripPaymentsBulkResponse>>
+
+  /**
+   * New Payments
+    */
+
+  @GET("payments/{transactionId}/")
+  fun payments(
+          @Path("transactionId") transactionId: String
+  ): Single<BaseResponse<List<PaymentsResponse>>>
+
 
 }

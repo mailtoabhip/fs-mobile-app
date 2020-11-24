@@ -65,6 +65,27 @@ data class BulkPaymentItem(
 )
 
 /**
+ * New Payments Response
+ */
+
+data class  PaymentsResponse(
+        @SerializedName("status") val status: String,
+        @SerializedName("username") val username: String,
+        @SerializedName("head") val head: String,
+        @SerializedName("oracle_unique_id") val oracleUniqueId: String,
+        @SerializedName("uuid") val uuid: String?,
+        @SerializedName("transfer_time") val transferTime: String?,
+        @SerializedName("utr_number") val utrNumber: String?,
+        @SerializedName("remarks") val remarks: String? = "",
+        @SerializedName("amount") val amount: Int,
+        @SerializedName("payment_type") val paymentType: String,
+        @SerializedName("updation_date") val updationDate: String,
+        @SerializedName("payment_mode") val paymentMode: String?,
+        @SerializedName("lr_nos") val lr_nos: List<String>,
+        @SerializedName("transaction_id") val transactionId: String? = ""
+)
+
+/**
  * Trip Payments Response
  */
 data class TripPaymentsResponse(
