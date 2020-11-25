@@ -18,18 +18,16 @@ data class ChargesResponse(
 )
 
 data class DNResponse(
-        @SerializedName("booked_in_oracle") val bookedInOracle: Boolean,
-        @SerializedName("status") val status: String,
-        @SerializedName("invoice_no") val invoiceNo: String,
+        @SerializedName("description") val description: String,
         @SerializedName("dn_id") val dnId: String,
-        @SerializedName("leftover_amount") val leftoverAmount: Double,
-        @SerializedName("trip_id") val tripId: String,
+        @SerializedName("created_by") val createdBy: String,
+        @SerializedName("updated_by") val updatedBy: String,
+        @SerializedName("booked_in_oracle") val bookedInOracle: Boolean,
+        @SerializedName("invoice_no") val invoiceNo: String,
+        @SerializedName("balance_amount") val balanceAmount: Double,
         @SerializedName("created_at") val createdAt: String,
         @SerializedName("amount") val amount: Double,
-        @SerializedName("balance_amount") val balanceAmount: Double,
-        @SerializedName("payee") val payee: String,
-        @SerializedName("updated_by") val updatedBy: String,
-        @SerializedName("description") val description: String,
         @SerializedName("updated_at") val updatedAt: String,
-        @SerializedName("created_by") val createdBy: String
+        @SerializedName("payee") val payee: String,
+        @SerializedName("status") val status: String
 )

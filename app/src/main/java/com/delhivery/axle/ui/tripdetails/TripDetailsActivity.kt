@@ -139,7 +139,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.newPaymentTypeDN.clear()
     viewModel.fetchTripDetails()
     viewModel.fetchChargeListSummary()
-    viewModel.fetchDNListSummary()
     viewModel.fetchNewPaymentSummary()
     binding.executePendingBindings()
   }
@@ -164,7 +163,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchChargeSummary()
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
-        viewModel.fetchDNListSummary()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"

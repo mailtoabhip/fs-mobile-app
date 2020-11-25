@@ -86,6 +86,7 @@ class TripDetailsViewModel @Inject constructor(
 
   var tripType: String = ""
   var paymentRecovery: Double = 0.0
+  var payeeId: String = ""
 
   /**
    * Fetch trip details
@@ -145,8 +146,8 @@ class TripDetailsViewModel @Inject constructor(
    */
   fun fetchDNListSummary(){
     val jsonObject = JsonObject()
-    val jsonElement = JsonPrimitive(transactionId)
-    jsonObject.add("trip_id",jsonElement)
+    val jsonElement = JsonPrimitive(payeeId)
+    jsonObject.add("payee",jsonElement)
     compositeDisposable += payableRepository.fetchDNList(jsonObject)
             .onBackground()
             .subscribe{
@@ -178,11 +179,16 @@ class TripDetailsViewModel @Inject constructor(
             .subscribe{
               _res, error ->
               if(!error){
+                payeeId = ""
                 chargesListSummary.clear()
                 if(_res.isNotEmpty() == true){
                   _res.let {
                     for (charge in _res){
                       chargesListSummary.add(charge)
+                      payeeId = charge.payeeId
+                    }
+                    if(payeeId != "") {
+                      fetchDNListSummary()
                     }
                   }
                 }
