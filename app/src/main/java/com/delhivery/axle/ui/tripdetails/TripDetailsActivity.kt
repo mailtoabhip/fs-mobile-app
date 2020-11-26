@@ -424,7 +424,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.GONE
           var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
-          textChargeValue.text = charge.chargeAmount.toString()
+          textChargeValue.text = String.format("%.2f",charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,
                   R.color.status_confirmed
@@ -441,7 +441,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.GONE
           var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
-          textChargeValue.text = charge.chargeAmount.toString()
+          textChargeValue.text = String.format("%.2f",charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,
                   R.color.status_lost
@@ -454,7 +454,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
     }
-    paymentSummaryBinding.netPayable = netPayable.toString()
+    paymentSummaryBinding.netPayable = String.format("%.2f",netPayable)
     paymentSummaryBinding.textNetPayable.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -492,7 +492,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           month = DateUtils.getMonth(month.toInt())
           utr += "$day $month"
           textChargeType.text = utr
-          textChargeValue.text = payment.amount.toString()
+          textChargeValue.text = String.format("%.2f",payment.amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,
                   R.color.status_confirmed
@@ -518,7 +518,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             lrText += " +"+ (payment.lr_nos.size - 1) +" more"
           }
           textChargeType.text = lrText
-          textChargeValue.text = payment.amount.toString()
+          textChargeValue.text = String.format("%.2f",payment.amount)
           textChargeType.setOnClickListener{
             if(payment.transactionId != viewModel.transactionId) {
               redirectToLRsTrip(payment.transactionId)
@@ -537,7 +537,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.pendingPayment = (netPayable - paymentDone - paymentRecovery).toString()
+    paymentSummaryBinding.pendingPayment = String.format("%.2f",(netPayable - paymentDone - paymentRecovery))
     paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -547,7 +547,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             R.color.status_confirmed
     ))
 
-    paymentSummaryBinding.pendingRecovery = viewModel.paymentRecovery.toString()
+    paymentSummaryBinding.pendingRecovery = String.format("%.2f",viewModel.paymentRecovery)
     paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_lost
