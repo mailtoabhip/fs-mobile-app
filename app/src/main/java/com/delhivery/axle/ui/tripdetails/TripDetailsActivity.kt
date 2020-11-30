@@ -7,12 +7,15 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.ChargesResponse
+import com.delhivery.axle.api.response.PaymentsResponse
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
@@ -23,28 +26,11 @@ import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.databinding.ActivityTripDetailsBinding
-import com.delhivery.axle.databinding.ViewPaymentBreakupItemBinding
-import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
-import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
-import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
-import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
-import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
-import com.delhivery.axle.utils.EVENT_POD_VIEWED
-import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
-import com.delhivery.axle.utils.PROPERTY_STATUS
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.REQCODE_STORAGE
-import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
-import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.VALUE_FAILURE
-import com.delhivery.axle.utils.VALUE_LOAD
-import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import javax.inject.Inject
@@ -81,6 +67,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -108,7 +95,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
-        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+        if(viewModel.tripType == "Completed"){
+          populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+        }else{
+          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -123,7 +114,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      //populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+//      if(viewModel.tripType == "Completed"){
+//        populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+//      }else{
+//        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+//      }
       startConsolidatedPage()
     }
 
@@ -144,7 +139,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.tripHistory.clear()
     viewModel.chargesSummary.clear()
     viewModel.paymentsSummary.clear()
+    viewModel.chargesListSummary.clear()
+    viewModel.newPaymentSummary.clear()
+    viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeDN.clear()
     viewModel.fetchTripDetails()
+    viewModel.fetchChargeListSummary()
+    viewModel.fetchNewPaymentSummary()
     binding.executePendingBindings()
   }
 
@@ -166,6 +167,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPaymentSummary()
         viewModel.fetchChargeSummary()
+        viewModel.fetchChargeListSummary()
+        viewModel.fetchNewPaymentSummary()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -391,6 +394,179 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     } catch (e: java.lang.Exception) {
       uiUtils.showSnackbar("No application found which can open the file")
     }
+  }
+
+  private fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
+
+  private fun redirectToLRsTrip(transactionId: String){
+    startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
+  }
+
+  private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
+    analyticsUtil.trackEvent(
+            EVENT_PAYMENT_SUMMARY,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
+    binding.progressHistory.root.visibility = View.GONE
+    binding.viewSummary.isSelected = true
+    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
+    binding.viewHistory.isSelected = false
+    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
+
+    binding.containerHistory.removeAllViews()
+    val paymentSummaryBinding = ViewNewTripPaymentSummaryBinding.inflate(
+            layoutInflater, binding.containerHistory, false
+    )
+
+    viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeDN.clear()
+
+    var netPayable = 0.0
+    tripSummary.forEach{charge ->
+      if(charge.chargeAmount != 0.0 && charge.action == "pay"){
+        netPayable += charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentPositive, false).apply {
+          seprator.visibility = View.GONE
+          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
+          textChargeType.text = chargeText
+          textChargeValue.text = String.format("%.2f",charge.chargeAmount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          paymentSummaryBinding.containerPaymentPositive.addView(root)
+        }
+      }else if(charge.chargeAmount != 0.0 && charge.action == "deduct"){
+        netPayable -= charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentNegative, false).apply {
+          seprator.visibility = View.GONE
+          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
+          textChargeType.text = chargeText
+          textChargeValue.text = String.format("%.2f",charge.chargeAmount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          paymentSummaryBinding.containerPaymentNegative.addView(root)
+        }
+      }
+    }
+    paymentSummaryBinding.netPayable = String.format("%.2f",netPayable)
+    paymentSummaryBinding.textNetPayable.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+    paymentSummaryBinding.textChargeNetPayable.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+    paymentSummary.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+          if(payment.paymentType  == "payment"){
+            viewModel.newPaymentTypePayment.add(payment)
+          }else if(payment.paymentType == "dn"){
+            viewModel.newPaymentTypeDN.add(payment)
+          }
+        }
+      }
+
+    var paymentDone = 0.0
+    viewModel.newPaymentTypePayment.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
+          seprator.visibility = View.GONE
+          paymentDone += payment.amount
+          var utr = "UTR: "+payment.utrNumber+", "
+          var day = payment.updationDate.substring(8,10)
+          if(day[0] == '0'){
+            day = payment.updationDate.substring(9,10)
+          }
+          var month = payment.updationDate.substring(5,7)
+          if(month[0] == '0'){
+            month = payment.updationDate.substring(6,7)
+          }
+          month = DateUtils.getMonth(month.toInt())
+          utr += "$day $month"
+          textChargeType.text = utr
+          textChargeValue.text = String.format("%.2f",payment.amount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          paymentSummaryBinding.containerPayment.addView(root)
+        }
+      }
+    }
+
+    var paymentRecovery = 0.0
+    viewModel.newPaymentTypeDN.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
+          seprator.visibility = View.GONE
+          paymentRecovery += payment.amount
+          var lrText = "Recovery Against LR:"
+          lrText += payment.lr_nos?.get(0)
+          if(payment.lr_nos.size > 1){
+            lrText += " +"+ (payment.lr_nos.size - 1) +" more"
+          }
+          textChargeType.text = lrText
+          textChargeValue.text = String.format("%.2f",payment.amount)
+          textChargeType.setOnClickListener{
+            if(payment.transactionId != viewModel.transactionId) {
+              redirectToLRsTrip(payment.transactionId)
+            }
+          }
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          textChargeConst.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          paymentSummaryBinding.containerPayment.addView(root)
+        }
+      }
+    }
+
+    paymentSummaryBinding.pendingPayment = String.format("%.2f",(netPayable - paymentDone - paymentRecovery))
+    paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+    paymentSummaryBinding.textChargePendingPayment.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+    paymentSummaryBinding.pendingRecovery = String.format("%.2f",viewModel.paymentRecovery)
+    paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+    paymentSummaryBinding.textChargePendingRecovery.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+
+    paymentSummaryBinding.containerNetPayable.visibility = View.VISIBLE
+    paymentSummaryBinding.containerPendingPayment.visibility = View.VISIBLE
+    paymentSummaryBinding.containerPendingRecovery.visibility = View.VISIBLE
+    binding.containerHistory.addView(paymentSummaryBinding.root)
   }
 
   private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
@@ -659,14 +835,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
+private const val IntentExtraTripTypeKey = "trip_type"
 
 /**
  * Trip details intent
  */
 fun tripDetailsIntent(
   transactionId: String,
-  context: Context
+  context: Context,
+  tripType: String = ""
 ) = Intent(context, TripDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  putExtra(IntentExtraTripTypeKey, tripType)
 }
 

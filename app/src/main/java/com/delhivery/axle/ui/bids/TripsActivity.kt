@@ -27,6 +27,7 @@ import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_TRIP
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 
 /**
  * Created by saurabh
@@ -141,7 +142,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_TRIP, data.transactionId)
         )
-        startActivity(tripDetailsIntent(data.key(), this))
+        startActivity(tripDetailsIntent(data.key(), this, viewModel.tripType.typeText))
       }
       HomeTripsTimeOutAction -> {
         refreshData()
