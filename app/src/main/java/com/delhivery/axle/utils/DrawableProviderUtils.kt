@@ -83,4 +83,28 @@ object DrawableProviderUtils {
     }
   }
 
+  /**
+   * Expandable resource for consolidated recycler view
+   */
+
+  @DrawableRes
+  fun expandedRes(flag: Boolean) = if (flag) {
+    R.drawable.ic_collapse
+  } else {
+    R.drawable.ic_expand
+  }
+
+  /**
+   * Expandable resource for consolidated recycler view
+   */
+
+  @DrawableRes
+  fun expandedResLedger(flag: Boolean) = if (flag) {
+    R.drawable.ic_add_black_24dp
+  } else {
+    R.drawable.ic_baseline_remove_24
+  }
+
+
+
 }

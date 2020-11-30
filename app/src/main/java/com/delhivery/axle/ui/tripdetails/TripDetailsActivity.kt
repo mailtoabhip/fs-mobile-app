@@ -30,6 +30,7 @@ import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
@@ -117,8 +118,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
     }
 
+    fun startConsolidatedPage(){
+      startActivity(consolidatedPageIntent(this))
+    }
+
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+      //populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+      startConsolidatedPage()
     }
 
     binding.containerError.btnAction.setOnClickListener {
