@@ -1,24 +1,24 @@
 package com.delhivery.axle.ui.ledger
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import com.delhivery.axle.databinding.ActivityConsolidatedPageBinding
-import com.delhivery.axle.ui.base.BaseActivity
-import com.google.android.material.navigation.NavigationView
 import com.delhivery.axle.R
-import androidx.lifecycle.Observer
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.data.ledger.ConsolidatedMonthItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedMonthItemData
+import com.delhivery.axle.databinding.ActivityConsolidatedPageBinding
+import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.MonthDialog
 import com.delhivery.axle.ui.dialogs.MonthSelectorDialog
+import com.delhivery.axle.ui.dialogs.YearDialog
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 
 
-class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, ConsolidatedPageViewModel>(), ConsolidatedPageRVAdapterInterface, NavigationView.OnNavigationItemSelectedListener {
+class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, ConsolidatedPageViewModel>(), ConsolidatedPageRVAdapterInterface, NavigationView.OnNavigationItemSelectedListener, MonthDialog.MonthDialogListener, YearDialog.YearDialogListener {
     override fun getViewModelClass() = ConsolidatedPageViewModel::class.java
 
     override fun layoutId() = R.layout.activity_consolidated_page
@@ -36,6 +36,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
             //Something to be written
+            refreshData()
         }
 
         binding.rvConsolidatedLedger.apply {
@@ -43,20 +44,20 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             adapter = this@ConsolidatedPageActivity.adapter
         }
 
-        binding.isLoadedNow= false
+        if(viewModel.isLoadedNow){
+            var dialog = MonthDialog()
+            dialog.show(supportFragmentManager, "MonthDialog")
+            viewModel.isLoadedNow = false
 
-        binding.downloadIcon.setOnClickListener{
-            openDownloadPopup()
         }
+        ///viewModel.initiateMonths()
 
-        viewModel.initiateMonths()
-
-        viewModel.loadsLiveData.observe(this, Observer {
-            binding.error = false
-            it?.let { _items ->
-                adapter.operation(_items)
-            }
-        })
+//        viewModel.loadsLiveData.observe(this, Observer {
+//            binding.error = false
+//            it?.let { _items ->
+//                adapter.operation(_items)
+//            }
+//        })
 
     }
 
@@ -64,11 +65,23 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         TODO("Not yet implemented")
     }
 
+    override fun onMonthClick(selectedMonth: Int) {
+        uiUtils.showSnackbar(""+selectedMonth,Snackbar.LENGTH_LONG)
+        viewModel.selectedMonth = selectedMonth
+
+        var dialog = YearDialog()
+        dialog.show(supportFragmentManager,"YearDialog")
+    }
+
+    override fun onYearClick(selectedYear: Int) {
+        viewModel.selectedYear = selectedYear
+        viewModel.initiateLedgerData()
+    }
+
     override fun handleAction(actionId: String, position: Int, item: BaseConsolidatedPageRVAdapterItem<*>) {
         when (actionId){
             ConsolidatedMonthItemAction -> {
                 val data = item.data as ConsolidatedMonthItemData
-                viewModel.initiateLedgerData(data)
                 adapter.toggle(position,data)
             }
 
@@ -83,11 +96,9 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         TODO("Not yet implemented")
     }
 
-    private fun openDownloadPopup(){
-        var dialog = MonthSelectorDialog()
-        dialog.show(supportFragmentManager,"MonthSelectorDialog")
-    }
+    private fun refreshData(){
 
+    }
 }
 
 private const val RandomKey = "RandomKey"
