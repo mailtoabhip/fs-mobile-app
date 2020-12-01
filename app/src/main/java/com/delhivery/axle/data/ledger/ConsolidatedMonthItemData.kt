@@ -7,6 +7,7 @@ import com.delhivery.axle.utils.StringUtils
 
 class ConsolidatedMonthItemData(
         val month: String,
+        val monthId: Int,
         var ledgerData: List<ConsolidatedLedgerItemData>,
         var expanded: Boolean = false
 ) : BaseKeyTypeModel<String>() {

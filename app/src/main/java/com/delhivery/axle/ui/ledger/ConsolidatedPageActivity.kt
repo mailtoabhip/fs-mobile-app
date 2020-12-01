@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.ledger
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,8 @@ import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.data.ledger.ConsolidatedMonthItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedMonthItemData
+import com.delhivery.axle.ui.dialogs.MonthSelectorDialog
+import com.google.android.material.snackbar.Snackbar
 
 
 class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, ConsolidatedPageViewModel>(), ConsolidatedPageRVAdapterInterface, NavigationView.OnNavigationItemSelectedListener {
@@ -40,8 +43,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             adapter = this@ConsolidatedPageActivity.adapter
         }
 
-        binding.isLoadedNow= true
+        binding.isLoadedNow= false
 
+        binding.downloadIcon.setOnClickListener{
+            openDownloadPopup()
+        }
 
         viewModel.initiateMonths()
 
@@ -62,6 +68,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         when (actionId){
             ConsolidatedMonthItemAction -> {
                 val data = item.data as ConsolidatedMonthItemData
+                viewModel.initiateLedgerData(data)
                 adapter.toggle(position,data)
             }
 
@@ -75,6 +82,12 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         TODO("Not yet implemented")
     }
+
+    private fun openDownloadPopup(){
+        var dialog = MonthSelectorDialog()
+        dialog.show(supportFragmentManager,"MonthSelectorDialog")
+    }
+
 }
 
 private const val RandomKey = "RandomKey"
