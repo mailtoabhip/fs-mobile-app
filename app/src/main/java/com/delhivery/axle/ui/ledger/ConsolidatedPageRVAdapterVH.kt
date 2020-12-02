@@ -1,14 +1,20 @@
 package com.delhivery.axle.ui.ledger
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedMonthItemAction
-import com.delhivery.axle.databinding.*
+import com.delhivery.axle.databinding.LayoutDeductionViewBinding
+import com.delhivery.axle.databinding.ViewConsolidatedPageLedgerItemBinding
+import com.delhivery.axle.databinding.ViewConsolidatedPageMonthItemBinding
+import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
+import com.delhivery.axle.databinding.ViewProgressItemBinding
+import com.delhivery.axle.databinding.ViewTimeOutItemBinding
+import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
-
 
 abstract class BaseConsolidatedPageRVAdapterViewHolder<out B : ViewDataBinding,
         IT : BaseConsolidatedPageRVAdapterItem<*>>(binding: B) : BaseViewHolder<B>(binding){
@@ -58,21 +64,26 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
         binding.ledger = item.data
         val deductions = binding.deductionsContainer
         var index = 0
-        val deductionText = binding.textDeductions
-        val deductionTextValue = binding.textDeductionsValue
 
-        for(i in item.data.deductions){
-            if(deductionText.parent != null){
-                (deductionText.parent as ViewGroup).removeAllViews()
+        if(item.data.expanded) {
+            deductions.visibility =View.VISIBLE
+            deductions.removeAllViews()
+            for (i in item.data.deductions) {
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val deductionBinding = LayoutDeductionViewBinding.inflate(inflater)
+                deductionBinding.textDeductions.text = item.data.getDeductionsTitle(index)
+                deductionBinding.textDeductionsValue.text = item.data.getDeductionsAmount(index)
+                if(item.data.deductions[index]["deduction_type"] == "dn_deduction"){
+                    deductionBinding.root.setOnClickListener {
+                        // open activity
+                    }
+                }
+                deductions.addView(deductionBinding.root)
+                index +=1
             }
-            if(deductionTextValue.parent != null){
-                (deductionTextValue.parent as ViewGroup).removeAllViews()
-            }
-            deductionText.text = item.data.getDeductionsTitle(index)
-            deductionTextValue.text = item.data.getDeductionsAmount(index)
-            deductions.addView(deductionText)
-            deductions.addView(deductionTextValue)
-            index += 1
+        }else{
+            deductions.visibility =View.GONE
+            deductions.removeAllViews()
         }
 
 
