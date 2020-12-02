@@ -127,10 +127,9 @@ class HomeTripsViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
-
               val trips = _res.first
               val payments = _res.second
-
+              Log.d("Resssss trips",""+trips)
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
                 add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))

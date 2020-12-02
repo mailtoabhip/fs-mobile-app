@@ -4,199 +4,182 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
     <data>
+        <variable
+            name="error"
+            type="Boolean" />
+        <variable
+            name="errorMsg"
+            type="String" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent_grey"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:orientation="vertical"
+        android:paddingStart="@dimen/size_24dp"
+        android:paddingTop="@dimen/size_24dp"
+        android:paddingEnd="@dimen/size_24dp"
+        android:paddingBottom="@dimen/size_4dp"
         >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="@dimen/text_12sp"
+                android:text="Select Duration"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_16sp"
+                tools:text="Error"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="@dimen/size_2dp"
+                app:srcCompat="@drawable/ic_close_black"
+                />
+        </FrameLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:orientation="horizontal">
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_20dp"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From"
+                    android:textSize="@dimen/text_16sp"
+                    android:fontFamily="sans-serif-medium"
+                    />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_start_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:hint="Start Date"
+                    android:paddingVertical="@dimen/size_10dp"
+                    android:paddingHorizontal="@dimen/size_2dp"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    android:textAlignment="center"
+                    android:background="@drawable/bg_white_all_corner_black"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_20dp"
+
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To"
+                    android:textSize="@dimen/text_16sp"
+                    android:fontFamily="sans-serif-medium"
+                    />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="End Date"
+                    android:focusable="false"
+                    android:paddingVertical="@dimen/size_10dp"
+                    android:paddingHorizontal="@dimen/size_2dp"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    android:textAlignment="center"
+                    android:background="@drawable/bg_white_all_corner_black"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_email_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Email ID"
+            android:paddingVertical="@dimen/size_10dp"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:textAlignment="center"
+            android:background="@drawable/bg_white_all_corner_black"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/error_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:text="Dummy"
+            android:textAlignment="center"
+            android:textColor="@color/status_lost"
+            android:visibility="gone"
+            />
+
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_16dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:paddingStart="@dimen/size_24dp"
-            android:paddingTop="@dimen/size_12dp"
-            android:paddingEnd="@dimen/size_24dp"
-            android:paddingBottom="@dimen/size_4dp"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:layout_marginBottom="@dimen/size_24dp"
+            android:gravity="center"
             >
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="horizontal"
-                    >
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_12sp"
-                        android:text="@string/label_error"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="@dimen/text_16sp"
-                        tools:text="Select Months"
-                        />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/btn_close"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:padding="@dimen/size_2dp"
-                        app:srcCompat="@drawable/ic_close_black"
-                        />
-                </FrameLayout>
-
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="@dimen/size_16dp"-->
-<!--                >-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/id1"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:fontFamily="sans-serif-medium"-->
-<!--                    android:lineSpacingExtra="@dimen/text_8sp"-->
-<!--                    android:text="@string/label_place_bid"-->
-<!--                    android:textColor="@color/heading_black"-->
-<!--                    android:textSize="@dimen/text_16sp"-->
-<!--                    android:textStyle="normal"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    />-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/view_pmt"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@drawable/bg_gradient_blue"-->
-<!--                    android:lineSpacingExtra="@dimen/text_8sp"-->
-<!--                    android:paddingStart="@dimen/size_8dp"-->
-<!--                    android:paddingEnd="@dimen/size_8dp"-->
-<!--                    android:text="@string/label_pmt"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="@dimen/text_16sp"-->
-<!--                    android:textStyle="normal"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    />-->
-
-<!--                <androidx.appcompat.widget.AppCompatAutoCompleteTextView-->
-<!--                    android:id="@+id/autocomplete_supplier"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@drawable/bg_form_edit"-->
-<!--                    android:hint="Add supplier"-->
-<!--                    android:layout_marginTop="@dimen/size_8dp"-->
-<!--                    android:inputType="textPersonName|textNoSuggestions"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/id1"-->
-<!--                    />-->
-
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/til_amount"-->
-<!--                    style="@style/TextInputLayoutAppearance"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="@dimen/size_8dp"-->
-<!--                    android:hint="Enter bid amount"-->
-<!--                    app:errorEnabled="true"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/autocomplete_supplier"-->
-<!--                    >-->
-
-<!--                    <androidx.appcompat.widget.AppCompatEditText-->
-<!--                        android:id="@+id/edit_amount"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:background="@drawable/bg_form_edit"-->
-<!--                        android:imeOptions="actionDone"-->
-<!--                        android:inputType="number"-->
-<!--                        />-->
-
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/label_bid"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="@dimen/size_8dp"-->
-<!--                    android:fontFamily="sans-serif"-->
-<!--                    android:lineSpacingExtra="@dimen/text_4sp"-->
-<!--                    android:textColor="@color/heading_black"-->
-<!--                    android:textStyle="normal"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/til_amount"-->
-<!--                    tools:text="Minimum payout will be: ₹ rate * requested"-->
-<!--                    />-->
-
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/prepaid"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_download"
+                style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium"
-                android:layout_marginTop="@dimen/size_6dp"
-                android:lineSpacingExtra="@dimen/text_8sp"
-                android:text="Hello"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_16sp"
-                android:textStyle="normal"
-                android:visibility="gone"
+                android:layout_gravity="start"
+                android:text="Download"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_14sp"
                 />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
+            <View
+                android:layout_width="@dimen/size_16dp"
+                android:layout_height="0dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_email"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
-                android:gravity="end"
-                >
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_cancel"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:text="@android:string/cancel"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_14sp"
-                    />
-
-                <View
-                    android:layout_width="@dimen/size_16dp"
-                    android:layout_height="0dp"
-                    />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_confirm"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:text="@string/action_confirm"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_14sp"
-                    />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                android:layout_gravity="end"
+                android:text="Email"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_14sp"
+                />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>

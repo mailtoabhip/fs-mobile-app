@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.response
 
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.google.gson.annotations.SerializedName
 
 data class ChargesResponse(
@@ -33,13 +34,7 @@ data class DNResponse(
 )
 
 data class ConsolidatedLedgerResponse(
-        @SerializedName("payment_event") val paymentEvent: String,
-        @SerializedName("invoice_id") val invoiceId: String,
-        @SerializedName("payment_type") val paymentType: String,
-        @SerializedName("deductions") val deductions: Map<String,Double>,
-        @SerializedName("utr") val utr: String,
-        @SerializedName("payment_success_date") val paymentSuccessDate: String,
-        @SerializedName("lrs") val lrs: List<String>,
-        @SerializedName("trip_id") val tripId: String,
-        @SerializedName("amount") val amount: Double
+        @SerializedName("count") val total: Int,
+        @SerializedName("has_next") val hasNext: Boolean,
+        @SerializedName("results") val ledgers: List<ConsolidatedLedgerItemData>
 )

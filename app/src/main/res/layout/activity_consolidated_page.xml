@@ -9,10 +9,6 @@
             type="Boolean"
             />
 
-        <variable
-            name="isLoadedNow"
-            type="Boolean"
-            />
         <import type="android.view.View" />
     </data>
 
@@ -22,28 +18,13 @@
         android:background="@android:color/white"
         android:orientation="vertical"
         >
-        <androidx.appcompat.widget.LinearLayoutCompat
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="wrap_content"
-                android:layout_weight=".90"
-                android:layout_height="@dimen/height_toolbar"
-                android:background="@android:color/white"
-                />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/download_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_baseline_save_alt_24"
-                android:layout_gravity="center"
-                android:layout_weight=".10"/>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -55,11 +36,66 @@
                 android:layout_height="match_parent"
                 >
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/id1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_6dp"
+                    android:background="@drawable/spinner_border"
+                    android:visibility="@{error? View.GONE: View.VISIBLE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/spinner_showing"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/size_4dp"
+                        android:dropDownSelector="@color/colorAccent"
+                        android:gravity="top"
+                        android:spinnerMode="dialog"
+                        android:textColor="@color/white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    app:layout_constraintBottom_toTopOf="@+id/refresh_layout"
+                    app:layout_constraintTop_toBottomOf="@id/id1">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_request_statement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/size_4dp"
+                        android:dropDownSelector="@color/colorAccent"
+                        android:gravity="bottom"
+                        android:textSize="@dimen/text_16sp"
+                        android:spinnerMode="dialog"
+                        android:text="Request Statement"
+                        android:textColor="@color/status_active"
+                        />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/refresh_layout"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/size_8dp"
+                    android:layout_marginTop="@dimen/size_18dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/id1"
                     >
@@ -75,16 +111,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <include
-                android:id="@+id/layout_month_selector"
-                layout="@layout/dialog_month_selector"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="@{isLoadedNow? View.VISIBLE: View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible"
-                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

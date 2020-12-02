@@ -4,8 +4,17 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PayableRepository
+import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
+import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
+import com.delhivery.axle.data.ledger.ConsolidatedProgressItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+
+import com.delhivery.axle.utils.extensions.not
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import java.util.*
 import javax.inject.Inject
 import com.google.gson.JsonArray
@@ -17,12 +26,25 @@ import java.text.SimpleDateFormat
 class ConsolidatedPageViewModel @Inject constructor(
         private val payableRepository: PayableRepository
 ) : BaseViewModel() {
-    var loadsLiveData = MutableLiveData<List<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var ledgerLiveData = MutableLiveData<List<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+    var dataLoadingLiveData = MutableLiveData<Boolean>()
 
     var selectedMonth = -1
     var selectedYear = -1
 
+    var currentStartMonth = -1
+    var currentStartYear = -1
+
+    var currentEndMonth = -1
+    var currentEndYear = -1
+
     var isLoadedNow : Boolean = true
+
+    var hasMoreData = true
+    var offset = 0
+    var total = 0
+
 
     @SuppressLint("SimpleDateFormat")
     fun generateDateString(type: String, monthNumber: Int, year: String): String {
@@ -54,56 +76,77 @@ class ConsolidatedPageViewModel @Inject constructor(
         val startObject = JsonObject()
         val endObject = JsonObject()
 
-        startObject.add("column", JsonPrimitive("invoice_date"))
+        startObject.add("column", JsonPrimitive("pmt_success_dt"))
         startObject.add("value", JsonPrimitive(startDate))
         startObject.add("operator", JsonPrimitive("gte"))
 
-        endObject.add("column", JsonPrimitive("invoice_date"))
+        endObject.add("column", JsonPrimitive("pmt_success_dt"))
         endObject.add("value", JsonPrimitive(endDate))
         endObject.add("operator", JsonPrimitive("lte"))
 
         rangeFilterArray.add(startObject)
         rangeFilterArray.add(endObject)
 
+        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
         root.add("range_filters", rangeFilterArray)
-        root.add("limit", JsonPrimitive(100))
-        root.add("offset", JsonPrimitive(0))
+        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
+        root.add("offset", JsonPrimitive(offset))
 
         return root
     }
 
-//    private fun fetchLedgerData(jsonObject: JsonObject) {
-//        compositeDisposable += payableRepository.fetchConsolidatedLedgerList(jsonObject)
-//                .onBackground()
-//                .subscribe{
-//                    _res,error ->
-//                    if(!error){
-//                        if(_res.isNotEmpty()){
-//                            Log.d("Result from API",""+_res)
-//                        }
-////                        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
-////                            add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()),Remove))
-////                            for(key in ledgers){
-////                                add(
-////                                        Pair(
-////                                                ConsolidatedPageLedgerItem(
-////                                                        ConsolidatedLedgerItemData("some_id", listOf() )
-////                                                ),Add
-////                                        )
-////                                )
-////                            }
-////                        }.let {ledgerLiveData.postValue(it)}
-//                    }
-//                }
-//
-//    }
+    private fun fetchLedgerData(jsonObject: JsonObject) {
+        compositeDisposable += payableRepository.fetchConsolidatedLedgerList(jsonObject)
+                .onBackground()
+                .subscribe{
+                    _res,error ->
+                    if(!error){
+                        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
+                            add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
+                            if (total == 0) {
+                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
+                            }else{
+//                                for(ledger in _res){
+//                                    add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger)),DataRVAdapterOperationType.Add))
+//                                }
+                                Log.d("Ledgersssssss resp",""+_res)
+                            }
+                        }.let {ledgerLiveData.postValue(it)}
+                    }
+                    else {
+                        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                            /* remove progress item */
+                            add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
+                            /* add api time out item */
+                            add(Pair(ConsolidatedPageTimeoutItem(HomeLoadsTimeOutItemData("TimeOut","Something went wrong","Close","")), DataRVAdapterOperationType.AddUpdate))
+                        }.let { ledgerLiveData.postValue(it) }
+                    }
 
-    fun initiateLedgerData(){
-        val year = 2020+selectedYear
-        val startDate = generateDateString("startDate",selectedMonth,year.toString())
-        val endDate = generateDateString("endDate",selectedMonth,year.toString())
+                    dataLoadingLiveData.postValue(false)
+                }
+
+    }
+
+    fun initiateLedgerData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, paginate: Boolean = false){
+        val startYear = 2020+startYear
+        val endYear = 2020+endYear
+        val startDate = generateDateString("startDate",startMonth,startYear.toString())
+        val endDate = generateDateString("endDate",endMonth,endYear.toString())
         val jsonObject = generateLedgerPayload(startDate,endDate)
 
-        //fetchLedgerData(jsonObject)
+        Log.d("Payload mere ye ka",""+jsonObject)
+
+        if (!paginate) {
+            offset = 0
+        } else if (paginate && !hasMoreData) {
+            return
+        }
+
+        /* add progress if not paginating */
+        if (paginate) {
+            Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
+        }
+
+        fetchLedgerData(jsonObject)
     }
 }

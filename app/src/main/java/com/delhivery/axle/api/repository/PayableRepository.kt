@@ -26,7 +26,14 @@ class PayableRepository @Inject constructor(
             payload: JsonObject
     ) = payableService.fetchDNList(payload).convertResponse()
 
+    /**
+     * Get Consolidated Ledger List
+     */
     fun fetchConsolidatedLedgerList(
             payload: JsonObject
     ) = payableService.fetchConsolidatedLedgerList(payload).convertResponse()
 }
+
+
+/* User trips pagination load limit */
+const val UserSearchLimitConsolidatedAPI = 20
