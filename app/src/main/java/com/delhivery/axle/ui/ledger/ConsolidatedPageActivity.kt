@@ -147,8 +147,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         var startMonth = 3
                         var startYear = endYear
 
-                        if (endmonth[0] == '0') {
-                            formattedEndMonth = formatted.substring(1).toInt()
+                        if (endmonth.length == 2 && endmonth[0] == '0') {
+                            formattedEndMonth = endmonth.substring(1).toInt()
                         }
                         if (formattedEndMonth <= 2) {
                             startYear = endYear - 1
