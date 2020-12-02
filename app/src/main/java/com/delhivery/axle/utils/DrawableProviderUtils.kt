@@ -100,9 +100,10 @@ object DrawableProviderUtils {
 
   @DrawableRes
   fun expandedResLedger(flag: Boolean) = if (flag) {
-    R.drawable.ic_add_black_24dp
-  } else {
     R.drawable.ic_baseline_remove_24
+  } else {
+    R.drawable.ic_add_black_24dp
+
   }
 
 

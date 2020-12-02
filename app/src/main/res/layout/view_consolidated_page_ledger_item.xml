@@ -39,13 +39,6 @@
             android:orientation="vertical"
             >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginBottom="@dimen/size_10dp"
-                android:layout_height="0.5dp"
-                android:background="@color/transparent_grey"
-                />
-
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -59,7 +52,7 @@
                     android:layout_weight=".90"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-black"
-                    android:text="@{ledger.key()}"
+                    android:text="@{ledger.getTitle}"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     tools:text="Advance - LR 287328"
@@ -71,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="@{ledger.key()}"
+                    android:text="@{ledger.getAmount}"
                     android:layout_weight=".05"
                     android:textColor="@color/status_confirmed"
                     android:textSize="@dimen/text_16sp"
@@ -85,7 +78,7 @@
                     android:layout_weight=".05"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_add_black_24dp"
+                    app:srcCompat="@{ledger.expandedResource()}"
                     />
 
 
@@ -99,7 +92,7 @@
                 android:layout_weight=".80"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
-                android:text="@{ledger.key()}"
+                android:text="@{ledger.getUTR}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 tools:text="UTR: 27372"
@@ -112,17 +105,18 @@
                 android:layout_weight=".80"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
-                android:text="@{ledger.key()}"
+                android:text="@{ledger.paymentSuccessDate}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 tools:text="5th November 2020, 7:10am"
                 />
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/deductions_parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="@{ledger.isExpanded?View.VISIBLE:View.GONE}"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:padding="@dimen/size_6dp"
                 android:background="@drawable/bg_grey_all_corner_black">
@@ -134,14 +128,14 @@
                     android:layout_weight=".80"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-black"
-                    android:text="@{ledger.key()}"
+                    android:text="Deductions made:"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
-                    tools:text="Deductions made:"
                     />
 
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/deductions_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -153,7 +147,7 @@
                         android:layout_weight=".90"
                         android:ellipsize="end"
                         android:fontFamily="sans-serif"
-                        android:text="@{ledger.key()}"
+                        android:text=""
                         android:textColor="@color/heading_black"
                         android:textSize="@dimen/text_16sp"
                         tools:text="TDS (@1.5%)"
@@ -165,9 +159,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
-                        android:text="@{ledger.key()}"
+                        android:text=""
                         android:layout_weight=".10"
-                        android:textColor="@color/status_confirmed"
+                        android:textColor="@color/status_lost"
                         android:textSize="@dimen/text_16sp"
                         app:layout_constraintEnd_toEndOf="@id/text_LR_main"
                         tools:text="(750)" />
@@ -176,13 +170,6 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/size_10dp"
-                android:layout_height="0.5dp"
-                android:background="@color/transparent_grey"
-                />
-
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

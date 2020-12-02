@@ -81,7 +81,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = viewModel.selectedYear
                         viewModel.currentEndMonth = viewModel.selectedMonth
                         viewModel.currentEndMonth = viewModel.selectedYear
-                        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear,false)
+                        //viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear,false)
                     } else if (option.key == 1) {
                         viewModel.currentStartMonth = viewModel.selectedMonth
                         viewModel.currentStartYear = viewModel.selectedYear
@@ -170,17 +170,12 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         }
         ///viewModel.initiateMonths()
 
-//        viewModel.loadsLiveData.observe(this, Observer {
-//            binding.error = false
-//            it?.let { _items ->
-//                adapter.operation(_items)
-//            }
-//        })
-
-//        viewModel.dataLoadingLiveData.observe(this, Observer {
-//            isLoadingData = it ?: false
-//        })
-
+        viewModel.ledgerLiveData.observe(this, androidx.lifecycle.Observer {
+            it?.let {
+                _items ->
+                adapter.operation(_items)
+            }
+        })
     }
 
     override fun onItemClicked(item: BaseConsolidatedPageRVAdapterItem<*>, position: Int) {
@@ -202,14 +197,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     override fun handleAction(actionId: String, position: Int, item: BaseConsolidatedPageRVAdapterItem<*>) {
         when (actionId){
-            ConsolidatedMonthItemAction -> {
-                val data = item.data as ConsolidatedMonthItemData
-                adapter.toggle(position, data)
-            }
 
             ConsolidatedLedgerItemAction -> {
                 val data = item.data as ConsolidatedLedgerItemData
-                uiUtils.showSnackbar("Action Item Clicked $data")
+                adapter.toggle(position,data)
+                uiUtils.showSnackbar("Action Item Clicked? "+data.expanded)
             }
         }
     }

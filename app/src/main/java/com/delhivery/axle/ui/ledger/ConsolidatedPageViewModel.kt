@@ -76,12 +76,32 @@ class ConsolidatedPageViewModel @Inject constructor(
         val startObject = JsonObject()
         val endObject = JsonObject()
 
+//        startObject.add("column", JsonPrimitive("pmt_success_dt"))
+//        startObject.add("value", JsonPrimitive(startDate))
+//        startObject.add("operator", JsonPrimitive("gte"))
+//
+//        endObject.add("column", JsonPrimitive("pmt_success_dt"))
+//        endObject.add("value", JsonPrimitive(endDate))
+//        endObject.add("operator", JsonPrimitive("lte"))
+//
+//        rangeFilterArray.add(startObject)
+//        rangeFilterArray.add(endObject)
+//
+//        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
+//        root.add("range_filters", rangeFilterArray)
+//        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
+//        root.add("offset", JsonPrimitive(offset))
+
+
+        var start = "2020-10-31T18:30:00"
+        var end = "2020-11-30T18:29:59"
+
         startObject.add("column", JsonPrimitive("pmt_success_dt"))
-        startObject.add("value", JsonPrimitive(startDate))
+        startObject.add("value", JsonPrimitive(start))
         startObject.add("operator", JsonPrimitive("gte"))
 
         endObject.add("column", JsonPrimitive("pmt_success_dt"))
-        endObject.add("value", JsonPrimitive(endDate))
+        endObject.add("value", JsonPrimitive(end))
         endObject.add("operator", JsonPrimitive("lte"))
 
         rangeFilterArray.add(startObject)
@@ -89,8 +109,7 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
         root.add("range_filters", rangeFilterArray)
-        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
-        root.add("offset", JsonPrimitive(offset))
+
 
         return root
     }
@@ -103,15 +122,15 @@ class ConsolidatedPageViewModel @Inject constructor(
                     if(!error){
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
-                            if (total == 0) {
-                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
-                            }else{
-//                                for(ledger in _res){
-//                                    add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger)),DataRVAdapterOperationType.Add))
-//                                }
-                                Log.d("Ledgersssssss resp",""+_res)
-                            }
+//                            if (total == 0) {
+//                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
+//                            }else{
+                                for(ledger in _res){
+                                    add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId)),DataRVAdapterOperationType.Add))
+                                }
+//                            }
                         }.let {ledgerLiveData.postValue(it)}
+
                     }
                     else {
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -134,8 +153,6 @@ class ConsolidatedPageViewModel @Inject constructor(
         val endDate = generateDateString("endDate",endMonth,endYear.toString())
         val jsonObject = generateLedgerPayload(startDate,endDate)
 
-        Log.d("Payload mere ye ka",""+jsonObject)
-
         if (!paginate) {
             offset = 0
         } else if (paginate && !hasMoreData) {
@@ -147,6 +164,8 @@ class ConsolidatedPageViewModel @Inject constructor(
             Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         }
 
-        fetchLedgerData(jsonObject)
+        if(selectedMonth != -1 && selectedYear != -1) {
+            fetchLedgerData(jsonObject)
+        }
     }
 }

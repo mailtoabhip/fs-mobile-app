@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
+import com.delhivery.axle.data.ledger.LedgerData
 import com.google.gson.annotations.SerializedName
 
 data class ChargesResponse(
@@ -38,3 +39,9 @@ data class ConsolidatedLedgerResponse(
         @SerializedName("has_next") val hasNext: Boolean,
         @SerializedName("results") val ledgers: List<ConsolidatedLedgerItemData>
 )
+
+//data class TempConsolidatedLedgerResponse(
+//        //@SerializedName("success") val success: Boolean,
+//        @SerializedName("data") val data: ConsolidatedLedgerItemData
+//        //@SerializedName("count") val count: Int
+//)

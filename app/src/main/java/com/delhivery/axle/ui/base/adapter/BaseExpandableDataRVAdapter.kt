@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.base.adapter
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
-import com.delhivery.axle.data.ledger.ConsolidatedMonthItemData
 import com.delhivery.axle.ui.base.BaseViewHolder
 
 abstract class BaseExpandableDataRVAdapter<
@@ -13,24 +12,24 @@ abstract class BaseExpandableDataRVAdapter<
 BaseConsolidatedPageFilterableDataRVAdapter<D, B, VH>(clickListener){
     fun toggle(
             position: Int,
-            data: ConsolidatedMonthItemData
+            data: ConsolidatedLedgerItemData
     ){
         if(data.expanded){
             data.expanded = false
-            onGroupCollapse(position, data.ledgerData)
+            onGroupCollapse(position,data)
         }else{
             data.expanded = true
-            onGroupExpand(position,data.ledgerData)
+            onGroupExpand(position,data)
         }
     }
 
     abstract fun onGroupExpand(
             position: Int,
-            ledgers: List<ConsolidatedLedgerItemData>
+            ledgers: ConsolidatedLedgerItemData
     )
 
     abstract fun onGroupCollapse(
             position: Int,
-            ledgers: List<ConsolidatedLedgerItemData>
+            ledgers: ConsolidatedLedgerItemData
     )
 }

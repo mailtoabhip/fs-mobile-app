@@ -1,9 +1,7 @@
 package com.delhivery.axle.api.service
 
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.ChargesResponse
-import com.delhivery.axle.api.response.ConsolidatedLedgerResponse
-import com.delhivery.axle.api.response.DNResponse
+import com.delhivery.axle.api.response.*
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -21,6 +19,9 @@ interface PayableService {
     @POST("list_dns")
     fun fetchDNList(@Body payload: JsonObject): Single<BaseResponse<List<DNResponse>>>
 
+//    @POST("list_consolidated_payments")
+//    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<ConsolidatedLedgerResponse>>
+
     @POST("list_consolidated_payments")
-    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<ConsolidatedLedgerResponse>>
+    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<List<ConsolidatedLedgerItemData>>>
 }
