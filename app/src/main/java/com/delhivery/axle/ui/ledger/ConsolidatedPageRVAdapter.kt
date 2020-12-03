@@ -33,24 +33,11 @@ BaseExpandableDataRVAdapter<BaseConsolidatedPageRVAdapterItem<*>, ViewDataBindin
     }
 
     override fun onGroupExpand(position: Int, ledgers: ConsolidatedLedgerItemData) {
-//        items.addAll(position + 1, mutableListOf<BaseConsolidatedPageRVAdapterItem<*>>().apply {
-//            for (data in ledgers) {
-//                add(ConsolidatedPageLedgerItem(data))
-//            }
-//        })
         notifyItemChanged(position)
-//        notifyItemRangeInserted(position + 1, ledgers.size)
-//        notifyItemRangeChanged(position + ledgers.size, items.size - 1)
     }
 
     override fun onGroupCollapse(position: Int, ledgers: ConsolidatedLedgerItemData) {
-//        for (data in ledgers) {
-//            items.removeAt(position + 1)
-//        }
         notifyItemChanged(position)
-//        notifyItemRangeRemoved(position + 1, ledgers.size)
-//        notifyItemRangeChanged(position + 1, items.size - 1)
-
     }
 
     override fun createVH(binding: ViewDataBinding) = when (binding) {

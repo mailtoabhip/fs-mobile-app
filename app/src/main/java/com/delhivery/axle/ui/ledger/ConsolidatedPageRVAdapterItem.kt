@@ -6,9 +6,7 @@ import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
 import com.delhivery.axle.data.home.trips.HomeTripsSearchItemData
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
-import com.delhivery.axle.data.ledger.ConsolidatedMonthItemData
 import com.delhivery.axle.data.ledger.ConsolidatedProgressItemData
-import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Month
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Search
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Ledger
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Warning
@@ -19,7 +17,6 @@ import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Timeout
 enum class ConsolidatedPageRVAdapterItemType(val typeId: Int){
     Header(0),
     Search(1),
-    Month(2),
     Ledger(3),
     Warning(4),
     Progress(5),
@@ -36,12 +33,6 @@ abstract class BaseConsolidatedPageRVAdapterItem< D: BaseKeyTypeModel<String>>(
 ) : BaseKeyTypeModel<String>(){
     override fun key() = data.key()
 }
-
-/**
- * Consolidated Page Month request Item
- * */
-class ConsolidatedPageMonthItem(data: ConsolidatedMonthItemData) :
-        BaseConsolidatedPageRVAdapterItem<ConsolidatedMonthItemData>(Month, data)
 
 /**
  * Consolidated Page Ledger request Item

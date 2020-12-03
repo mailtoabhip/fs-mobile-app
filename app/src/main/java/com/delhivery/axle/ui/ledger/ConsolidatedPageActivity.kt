@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.ledger.*
@@ -35,6 +36,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     private val adapter: ConsolidatedPageRVAdapter by lazy { ConsolidatedPageRVAdapter(this) }
     private val ledgerSpinnerAdapter: LedgerSpinnerAdapter by lazy { LedgerSpinnerAdapter() }
 
+    var isLoadingData = true
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -43,7 +46,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
-            //Something to be written
             refreshData()
         }
 
@@ -162,12 +164,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 }
             }
         }
-        if(viewModel.isLoadedNow){
-            var dialog = MonthDialog()
-            dialog.show(supportFragmentManager, "MonthDialog")
-            viewModel.isLoadedNow = false
-
-        }
 
         viewModel.ledgerLiveData.observe(this, androidx.lifecycle.Observer {
             it?.let {
@@ -175,6 +171,21 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 adapter.operation(_items)
             }
         })
+
+        viewModel.dataLoadingLiveData.observe(this, androidx.lifecycle.Observer {
+            isLoadingData = it ?: false
+        })
+
+        openPopups()
+    }
+
+    fun openPopups(){
+        if(viewModel.isLoadedNow){
+            var dialog = MonthDialog()
+            dialog.show(supportFragmentManager, "MonthDialog")
+            viewModel.isLoadedNow = false
+
+        }
     }
 
     override fun onItemClicked(item: BaseConsolidatedPageRVAdapterItem<*>, position: Int) {
@@ -182,7 +193,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     override fun onMonthClick(selectedMonth: Int) {
-        uiUtils.showSnackbar("" + selectedMonth, Snackbar.LENGTH_LONG)
         viewModel.selectedMonth = selectedMonth
 
         var dialog = YearDialog()
@@ -200,7 +210,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             ConsolidatedLedgerItemAction -> {
                 val data = item.data as ConsolidatedLedgerItemData
                 adapter.toggle(position,data)
-                uiUtils.showSnackbar("Action Item Clicked? "+data.expanded)
             }
         }
     }
@@ -210,7 +219,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     private fun refreshData(){
-        viewModel.isLoadedNow = true
+        viewModel.ledgerLiveData = MutableLiveData()
+        viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, false)
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
@@ -218,8 +228,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         override fun hasMore() = viewModel.hasMoreData
 
-        //override fun isLoading() = isLoadingData
-        override fun isLoading() = false
+        override fun isLoading() = isLoadingData
     }
 }
 

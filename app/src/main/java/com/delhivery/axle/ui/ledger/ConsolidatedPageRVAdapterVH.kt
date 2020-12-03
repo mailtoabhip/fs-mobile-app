@@ -3,10 +3,10 @@ package com.delhivery.axle.ui.ledger
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
-import com.delhivery.axle.data.ledger.ConsolidatedMonthItemAction
 import com.delhivery.axle.databinding.LayoutDeductionViewBinding
 import com.delhivery.axle.databinding.ViewConsolidatedPageLedgerItemBinding
 import com.delhivery.axle.databinding.ViewConsolidatedPageMonthItemBinding
@@ -15,6 +15,7 @@ import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 
 abstract class BaseConsolidatedPageRVAdapterViewHolder<out B : ViewDataBinding,
         IT : BaseConsolidatedPageRVAdapterItem<*>>(binding: B) : BaseViewHolder<B>(binding){
@@ -45,17 +46,6 @@ abstract class BaseConsolidatedPageRVAdapterViewHolder<out B : ViewDataBinding,
 }
 
 /**
- * Consolidated Page Month Item View Holder
- * */
-class ConsolidatedPageMonthItemVH(binding: ViewConsolidatedPageMonthItemBinding):
-        BaseConsolidatedPageRVAdapterViewHolder<ViewConsolidatedPageMonthItemBinding, ConsolidatedPageMonthItem>(binding){
-    override fun bind(item: ConsolidatedPageMonthItem, _interface: ConsolidatedPageRVAdapterInterface) {
-        binding.itemRequest = item.data
-        binding.root.clickToAction(ConsolidatedMonthItemAction, item, adapterPosition, _interface)
-    }
-}
-
-/**
  * Consolidated Page Ledger Item View Holder
  * */
 class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBinding):
@@ -65,6 +55,9 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
         val deductions = binding.deductionsContainer
         var index = 0
 
+        binding.textLRMain.setOnClickListener{
+            startActivity(binding.deductionsContainer.context, tripDetailsIntent(item.data.tripId,binding.deductionsContainer.context),null)
+        }
         if(item.data.expanded) {
             deductions.visibility =View.VISIBLE
             deductions.removeAllViews()
@@ -76,6 +69,7 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
                 if(item.data.deductions[index]["deduction_type"] == "dn_deduction"){
                     deductionBinding.root.setOnClickListener {
                         // open activity
+                        startActivity(binding.deductionsContainer.context, tripDetailsIntent(item.data.tripId,binding.deductionsContainer.context),null)
                     }
                 }
                 deductions.addView(deductionBinding.root)
