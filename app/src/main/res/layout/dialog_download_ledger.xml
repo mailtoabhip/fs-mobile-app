@@ -64,7 +64,7 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/size_20dp"
+                android:layout_marginHorizontal="@dimen/size_10dp"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -72,34 +72,43 @@
                     android:layout_height="wrap_content"
                     android:text="From"
                     android:textSize="@dimen/text_16sp"
+                    android:layout_gravity="center"
                     android:fontFamily="sans-serif-medium"
                     />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_start_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:hint="Start Date"
                     android:paddingVertical="@dimen/size_10dp"
-                    android:paddingHorizontal="@dimen/size_2dp"
+                    android:paddingHorizontal="@dimen/size_8dp"
                     android:layout_marginTop="@dimen/size_2dp"
+                    android:textSize="@dimen/size_16dp"
+                    android:fontFamily="sans-serif-medium"
                     android:textAlignment="center"
                     android:background="@drawable/bg_white_all_corner_black"
                     />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="@dimen/size_4dp"
+                app:srcCompat="@drawable/ic_calendar"/>
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/size_20dp"
-
+                android:layout_marginHorizontal="@dimen/size_10dp"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="To"
                     android:textSize="@dimen/text_16sp"
                     android:fontFamily="sans-serif-medium"
@@ -107,14 +116,16 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_end_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:hint="End Date"
                     android:focusable="false"
                     android:paddingVertical="@dimen/size_10dp"
-                    android:paddingHorizontal="@dimen/size_2dp"
+                    android:paddingHorizontal="@dimen/size_8dp"
                     android:layout_marginTop="@dimen/size_2dp"
                     android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:fontFamily="sans-serif-medium"
                     android:background="@drawable/bg_white_all_corner_black"
                     />
 
@@ -128,6 +139,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Email ID"
+            android:textSize="@dimen/size_16dp"
+            android:fontFamily="sans-serif-medium"
             android:paddingVertical="@dimen/size_10dp"
             android:layout_marginTop="@dimen/size_18dp"
             android:textAlignment="center"
@@ -161,8 +174,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:text="Download"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
+                android:paddingHorizontal="@dimen/size_12dp"
                 android:textSize="@dimen/text_14sp"
+                android:background="@drawable/bg_all_round_corner_black"
                 />
 
             <View
@@ -177,8 +192,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="Email"
-                android:textColor="@color/colorAccent"
+                android:paddingHorizontal="@dimen/size_12dp"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_14sp"
+                android:background="@drawable/bg_all_round_corner_black"
                 />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

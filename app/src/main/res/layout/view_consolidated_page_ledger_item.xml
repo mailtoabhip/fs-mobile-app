@@ -30,6 +30,57 @@
         >
 
 
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_LR_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".90"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-black"
+            android:text="@{ledger.getTitle}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            tools:text="Advance - LR 287328"
+            />
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_LR_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".05"
+            android:fontFamily="sans-serif"
+            android:text="@{ledger.getAmount}"
+            android:textColor="@color/status_confirmed"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintEnd_toEndOf="@id/text_LR_main"
+            tools:text="+ Rs.49,250"
+            />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/toggle_LR"
+            android:layout_width="@dimen/size_20dp"
+            android:layout_height="@dimen/size_20dp"
+            android:layout_weight=".05"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@{ledger.expandedResource()}"
+            />
+
+
+
+
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_UTR"
           android:layout_width="wrap_content"
@@ -57,51 +108,6 @@
           tools:text="5th November 2020, 7:10am"
           />
 
-      <androidx.appcompat.widget.LinearLayoutCompat
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          >
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/toggle_LR"
-            android:layout_width="@dimen/size_20dp"
-            android:layout_height="@dimen/size_20dp"
-            android:layout_weight=".05"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@{ledger.expandedResource()}"
-            />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_LR_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight=".05"
-            android:fontFamily="sans-serif"
-            android:text="@{ledger.getAmount}"
-            android:textColor="@color/status_confirmed"
-            android:textSize="@dimen/text_16sp"
-            app:layout_constraintEnd_toEndOf="@id/text_LR_main"
-            tools:text="+ Rs.49,250"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_LR_main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight=".90"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-black"
-            android:text="@{ledger.getTitle}"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            tools:text="Advance - LR 287328"
-            />
-
-
-      </androidx.appcompat.widget.LinearLayoutCompat>
 
       <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/deductions_parent"
@@ -112,6 +118,7 @@
           android:padding="@dimen/size_6dp"
           android:visibility="@{ledger.isExpanded?View.VISIBLE:View.GONE}"
           tools:visibility="visible"
+          android:background="@drawable/bg_grey_all_corner_black"
           >
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -130,9 +137,7 @@
             android:id="@+id/deductions_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
             android:orientation="vertical"
-            android:padding="@dimen/size_6dp"
             android:visibility="@{ledger.isExpanded?View.VISIBLE:View.GONE}"
             ></androidx.appcompat.widget.LinearLayoutCompat>
 

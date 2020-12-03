@@ -168,7 +168,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             viewModel.isLoadedNow = false
 
         }
-        ///viewModel.initiateMonths()
 
         viewModel.ledgerLiveData.observe(this, androidx.lifecycle.Observer {
             it?.let {

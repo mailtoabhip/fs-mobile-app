@@ -35,9 +35,9 @@ data class DNResponse(
 )
 
 data class ConsolidatedLedgerResponse(
-        @SerializedName("count") val total: Int,
-        @SerializedName("has_next") val hasNext: Boolean,
-        @SerializedName("results") val ledgers: List<ConsolidatedLedgerItemData>
+        @SerializedName("count") val total: Double,
+        @SerializedName("success") val success: Boolean,
+        @SerializedName("data") val ledgers: List<ConsolidatedLedgerItemData>
 )
 
 //data class TempConsolidatedLedgerResponse(

@@ -17,6 +17,14 @@ class DownloadLedgerDialog(context: Context) : AlertDialog(context) {
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
 
+    var startDate = -1
+    var startMonth = -1
+    var startYear = -1
+
+    var endDate = -1
+    var endMonth = -1
+    var endYear = -1
+
     /* dismiss timeout disposable */
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +71,17 @@ class DownloadLedgerDialog(context: Context) : AlertDialog(context) {
         val datePickerDialog = DatePickerDialog(context, {
             view, year, monthOfYear, dayOfMonth ->
                 if(editTextType == "start"){
-                    binding.editStartDate.setText("$dayOfMonth/$monthOfYear/$year")
+                    startDate = dayOfMonth
+                    startMonth = monthOfYear
+                    startYear = year
+                    var month = monthOfYear + 1
+                    binding.editStartDate.setText("$dayOfMonth/$month/$year")
                 } else if(editTextType == "end"){
-                    binding.editEndDate.setText("$dayOfMonth/$monthOfYear/$year")
+                    endDate = dayOfMonth
+                    endMonth = monthOfYear
+                    endYear = year
+                    var month = monthOfYear + 1
+                    binding.editEndDate.setText("$dayOfMonth/$month/$year")
                 }
         }, year, month, day)
 

@@ -115,11 +115,13 @@ class ConsolidatedPageViewModel @Inject constructor(
     }
 
     private fun fetchLedgerData(jsonObject: JsonObject) {
+        Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         compositeDisposable += payableRepository.fetchConsolidatedLedgerList(jsonObject)
                 .onBackground()
                 .subscribe{
                     _res,error ->
                     if(!error){
+                        Log.d("Hello",""+_res)
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
 //                            if (total == 0) {
