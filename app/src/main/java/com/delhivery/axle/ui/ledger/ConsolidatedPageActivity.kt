@@ -194,8 +194,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     override fun onMonthClick(selectedMonth: Int) {
         viewModel.selectedMonth = selectedMonth
-
         var dialog = YearDialog()
+        dialog.isCancelable = false
         dialog.show(supportFragmentManager, "YearDialog")
     }
 

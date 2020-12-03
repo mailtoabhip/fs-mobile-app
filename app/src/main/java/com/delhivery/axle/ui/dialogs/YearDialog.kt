@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
@@ -30,8 +31,9 @@ class YearDialog : DialogFragment() {
 
         calculateYears()
 
-
-        //return showYearDialog()
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
 
         return activity?.let {
             val builder = AlertDialog.Builder(it)

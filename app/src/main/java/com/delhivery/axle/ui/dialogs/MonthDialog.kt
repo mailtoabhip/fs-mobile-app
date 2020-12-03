@@ -2,15 +2,10 @@ package com.delhivery.axle.ui.dialogs
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
+import android.view.Window
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
-import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MonthDialog: DialogFragment() {
 
@@ -37,6 +32,11 @@ class MonthDialog: DialogFragment() {
     var selectedMonth = -1 // Where we track the selected items
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         return activity?.let {
             val builder = AlertDialog.Builder(it)
