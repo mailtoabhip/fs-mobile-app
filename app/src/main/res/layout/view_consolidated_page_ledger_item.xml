@@ -86,10 +86,11 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_weight=".80"
+          android:layout_marginTop="@dimen/size_4dp"
           android:ellipsize="end"
-          android:fontFamily="sans-serif"
+          android:fontFamily="sans-serif-medium"
           android:text="@{ledger.getUTR}"
-          android:textColor="@color/heading_black"
+          android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_16sp"
           tools:text="UTR: 27372"
           />
@@ -101,9 +102,9 @@
           android:layout_height="wrap_content"
           android:layout_weight=".80"
           android:ellipsize="end"
-          android:fontFamily="sans-serif"
-          android:text="@{ledger.paymentSuccessDate}"
-          android:textColor="@color/heading_black"
+          android:fontFamily="sans-serif-medium"
+          android:text="@{ledger.getPaymentDate()}"
+          android:textColor="@color/sub_heading_black"
           android:textSize="@dimen/text_16sp"
           tools:text="5th November 2020, 7:10am"
           />
@@ -138,8 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="@{ledger.isExpanded?View.VISIBLE:View.GONE}"
-            ></androidx.appcompat.widget.LinearLayoutCompat>
+            android:visibility="@{ledger.isExpanded?View.VISIBLE:View.GONE}" />
 
       </androidx.appcompat.widget.LinearLayoutCompat>
 

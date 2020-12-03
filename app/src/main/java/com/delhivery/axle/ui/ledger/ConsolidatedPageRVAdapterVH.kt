@@ -9,7 +9,6 @@ import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
 import com.delhivery.axle.databinding.LayoutDeductionViewBinding
 import com.delhivery.axle.databinding.ViewConsolidatedPageLedgerItemBinding
-import com.delhivery.axle.databinding.ViewConsolidatedPageMonthItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding

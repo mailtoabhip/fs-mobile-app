@@ -1,14 +1,12 @@
 package com.delhivery.axle.data.ledger
 
-import android.os.Parcel
-import android.os.Parcelable
-import android.os.Parcelable.Creator
 import androidx.annotation.DrawableRes
-import com.delhivery.axle.api.response.ConsolidatedLedgerResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
 
 data class ConsolidatedLedgerItemData(
         @SerializedName("payment_event") val paymentEvent: String,
@@ -20,7 +18,7 @@ data class ConsolidatedLedgerItemData(
         @SerializedName("pmt_success_dt") val paymentSuccessDate: String,
         @SerializedName("utr_number") val utrNumber: String?,
         @SerializedName("month") val month: String,
-        @SerializedName("deductions") val deductions: List<Map<String,Any>>,
+        @SerializedName("deductions") val deductions: List<Map<String, Any>>,
         @SerializedName("invoice_id") val invoiceId: String,
         var expanded: Boolean = false
 
@@ -29,7 +27,7 @@ data class ConsolidatedLedgerItemData(
     override fun key() = tripId
 
     public fun getTitle():String{
-        var capitalizeEvent = paymentEvent.substring(0,1).toUpperCase() + paymentEvent.substring(1)
+        var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1)
         var isLRs = false
         if(lrs.size > 1){
             isLRs = true
@@ -63,8 +61,22 @@ data class ConsolidatedLedgerItemData(
     }
 
     public fun getPaymentDate():String{
+        var year = paymentSuccessDate.substring(0, 4)
+        var month = paymentSuccessDate.substring(5, 7).toInt()
+        var date = paymentSuccessDate.substring(8, 10)
+        var time = paymentSuccessDate.substring(11, 16)
 
-        return ""
+        var monthString = DateFormatSymbols().months[month - 1]
+
+
+        try {
+            val sdf = SimpleDateFormat("H:mm")
+            val dateObj = sdf.parse(time)
+            time = SimpleDateFormat("hh:mm a").format(dateObj)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return "$date $monthString $year, $time"
     }
 
     public fun isExpanded() = expanded
@@ -81,9 +93,9 @@ data class ConsolidatedLedgerItemData(
 enum class LedgerSpinnerOptions(val option: String, val key: Int, val value: String){
     DEFAULT("Recent Transactions", 0, "recent_transactions"),
     CURRENT_MONTH("Current Month", 1, "current_month"),
-    PREVIOUS_MONTH("Previous Month", 2,"previous_month"),
-    LAST_3_MONTH("Last 3 Months", 3,"last_3_months"),
-    LAST_6_MONTH("Last 6 Months", 4,"last_6_months"),
-    CURRENT_FIN_YEAR("Current Financial Year", 5,"current_financial_year")
+    PREVIOUS_MONTH("Previous Month", 2, "previous_month"),
+    LAST_3_MONTH("Last 3 Months", 3, "last_3_months"),
+    LAST_6_MONTH("Last 6 Months", 4, "last_6_months"),
+    CURRENT_FIN_YEAR("Current Financial Year", 5, "current_financial_year")
 }
 const val ConsolidatedLedgerItemAction = "toggle_ledger"
