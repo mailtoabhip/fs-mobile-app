@@ -35,5 +35,5 @@ class PayableRepository @Inject constructor(
 }
 
 
-/* User trips pagination load limit */
+/* User consolidated pagination load limit */
 const val UserSearchLimitConsolidatedAPI = 20

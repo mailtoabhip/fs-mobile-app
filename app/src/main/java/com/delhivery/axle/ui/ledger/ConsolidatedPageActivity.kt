@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.ledger.*
 import com.delhivery.axle.databinding.ActivityConsolidatedPageBinding
@@ -223,7 +224,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, false)
     }
 
-    inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
+    inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
         override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, true)
 
         override fun hasMore() = viewModel.hasMoreData
