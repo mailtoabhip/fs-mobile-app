@@ -22,6 +22,9 @@ interface PayableService {
     @POST("list_consolidated_payments")
     fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<ConsolidatedLedgerResponse>>
 
-//    @POST("list_consolidated_payments")
-//    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<List<ConsolidatedLedgerItemData>>>
+    @POST("download_vendor_ledger")
+    fun downloadVendorLedger(@Body payload: JsonObject): Single<BaseResponse<DownloadLedgerResponse>>
+
+    @POST("email_vendor_ledger")
+    fun emailVendorLedger(@Body payload: JsonObject): Single<BaseResponse<EmailLedgerResponse>>
 }

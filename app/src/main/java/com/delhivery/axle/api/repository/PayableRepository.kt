@@ -32,6 +32,22 @@ class PayableRepository @Inject constructor(
     fun fetchConsolidatedLedgerList(
             payload: JsonObject
     ) = payableService.fetchConsolidatedLedgerList(payload).convertResponse()
+
+    /**
+     * Email Ledger
+     */
+    fun emailVendorLedger(
+            payload: JsonObject
+    ) = payableService.emailVendorLedger(payload).convertResponse()
+
+    /**
+     * Download Ledger
+     */
+    fun downloadVendorLedger(
+            payload: JsonObject
+    ) = payableService.downloadVendorLedger(payload).convertResponse()
+
+
 }
 
 

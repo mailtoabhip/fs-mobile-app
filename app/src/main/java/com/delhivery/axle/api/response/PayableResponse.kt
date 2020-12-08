@@ -39,8 +39,11 @@ data class ConsolidatedLedgerResponse(
         @SerializedName("consolidated") val ledgers: List<ConsolidatedLedgerItemData>
 )
 
-//data class TempConsolidatedLedgerResponse(
-//        //@SerializedName("success") val success: Boolean,
-//        @SerializedName("data") val data: ConsolidatedLedgerItemData
-//        //@SerializedName("count") val count: Int
-//)
+data class DownloadLedgerResponse(
+        @SerializedName("url") val url: String,
+        @SerializedName("bucket") val bucket: String
+)
+
+data class EmailLedgerResponse(
+        @SerializedName("message") val message: String
+)
