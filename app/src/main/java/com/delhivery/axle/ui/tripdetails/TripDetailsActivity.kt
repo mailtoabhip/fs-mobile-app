@@ -1,14 +1,18 @@
 package com.delhivery.axle.ui.tripdetails
 
 import android.Manifest
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -26,12 +30,33 @@ import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.databinding.*
+import com.delhivery.axle.databinding.ActivityTripDetailsBinding
+import com.delhivery.axle.databinding.ViewNewPaymentSummaryItemBinding
+import com.delhivery.axle.databinding.ViewNewTripPaymentSummaryBinding
+import com.delhivery.axle.databinding.ViewPaymentBreakupItemBinding
+import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
+import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
+import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
+import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
+import com.delhivery.axle.utils.EVENT_POD_VIEWED
+import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
+import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.REQCODE_STORAGE
+import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.VALUE_FAILURE
+import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import io.opencensus.internal.Utils
 import java.io.File
 import javax.inject.Inject
 
@@ -44,6 +69,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   init {
     hasInlineProgress = true
   }
+
+  var downloadID = 0.toLong()
 
   override fun getViewModelClass() = TripDetailsViewModel::class.java
 
@@ -68,6 +95,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
+
+    registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -133,6 +162,57 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     refreshData()
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    unregisterReceiver(onDownloadComplete);
+  }
+
+  private fun downloadMe() {
+
+    val direct = File(getExternalFilesDir(null), "/Ledger")
+
+    if (!direct.exists()) {
+      direct.mkdirs()
+    }
+
+    val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+    val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/orion_ar/oracle_reports/failed_invoices_report_applied_2020-10-16T15:17:17.423456.csv")
+    val request = DownloadManager.Request(
+        downloadUri
+    )
+
+
+  // TODO: add file name as month for which download requested
+    val filename = "Ledger.csv"
+    val path = "/Axle App/$filename"
+    request.setAllowedNetworkTypes(
+        DownloadManager.Request.NETWORK_WIFI or
+            DownloadManager.Request.NETWORK_MOBILE
+    )
+        .setTitle("Ledger Download")
+        .setDescription("Downloading...")
+        .setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOCUMENTS,
+            path
+        )
+        .setNotificationVisibility(View.VISIBLE)
+
+    downloadID = mgr.enqueue(request)
+  }
+
+  private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+    override fun onReceive(
+      context: Context,
+      intent: Intent
+    ) {
+      val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+      if (downloadID === id) {
+        uiUtils.showToast("File downloaded")
+      }
+    }
+  }
+
   private fun refreshData() {
     binding.refreshing = true
     binding.error = false
@@ -146,7 +226,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fetchTripDetails()
     viewModel.fetchChargeListSummary()
     viewModel.fetchNewPaymentSummary()
-    binding.executePendingBindings()
+    binding.executePendingBindings()git
+    downloadMe()
   }
 
   /**
