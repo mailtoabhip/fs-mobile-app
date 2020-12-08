@@ -91,11 +91,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
-        if(viewModel.tripType == "Completed"){
+//        if(viewModel.tripType == "Completed"){
           populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
-        }else{
-          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
-        }
+//        }else{
+//          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+//        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -106,11 +106,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      if(viewModel.tripType == "Completed"){
+//      if(viewModel.tripType == "Completed"){
         populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
-      }else{
-        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
-      }
+//      }else{
+//        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+//      }
     }
 
     binding.containerError.btnAction.setOnClickListener {
