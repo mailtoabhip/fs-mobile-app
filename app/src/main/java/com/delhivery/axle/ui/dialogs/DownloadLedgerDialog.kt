@@ -13,7 +13,10 @@ import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DownloadLedgerDialog(context: Context) : AlertDialog(context) {
+class DownloadLedgerDialog(
+        context: Context,
+        private val dialogInterface: DownloadLedgerInterface
+) : AlertDialog(context) {
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
 
@@ -111,6 +114,7 @@ class DownloadLedgerDialog(context: Context) : AlertDialog(context) {
             Log.d("DownloadDialog","Please select valid dates")
         }else{
             //download report
+            dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
         }
     }
 
@@ -129,6 +133,12 @@ class DownloadLedgerDialog(context: Context) : AlertDialog(context) {
 
         }else{
             //email report
+            dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
         }
     }
+}
+
+interface DownloadLedgerInterface{
+    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String)
+    fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int)
 }

@@ -9,6 +9,7 @@ import com.delhivery.axle.config.UrlConfig.DashboardUrl
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.DialogUtils
@@ -55,12 +56,13 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         binding.error = false
         updateTripMeter(t)
       } else {
-        binding.error = true
-        binding.containerError.title = "Session Timed out"
-        binding.containerError.subTitle =
-          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
-              " Kindly refresh."
-        binding.containerError.actionLabel = "REFRESH"
+        binding.error = false
+//        binding.containerError.title = "Session Timed out"
+//        binding.containerError.subTitle =
+//          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
+//              " Kindly refresh."
+//        binding.containerError.actionLabel = "REFRESH"
+        updateTripMeter(t)
       }
       binding.executePendingBindings()
     })
@@ -94,6 +96,12 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     binding.containerPaymentTerms.setOnClickListener {
       when (contactUtils.openURL("${DashboardUrl.url()}/#/paymentterms")) {
         false -> uiUtils.showSnackbar("Could not open url")
+      }
+    }
+
+    binding.containerYourMoney.setOnClickListener{
+      context?.let {
+        startActivity(consolidatedPageIntent(it))
       }
     }
 

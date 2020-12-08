@@ -57,7 +57,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         }
 
         binding.textRequestStatement.setOnClickListener{
-            val dialog = DownloadLedgerDialog(this)
+            val dialog = DownloadLedgerDialog(this, viewModel)
             dialog.setOwnerActivity(this)
             if (!this.isFinishing)
                 dialog.show()

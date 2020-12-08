@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PayableRepository
-import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.data.ledger.ConsolidatedProgressItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.dialogs.DownloadLedgerInterface
 
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat
 
 class ConsolidatedPageViewModel @Inject constructor(
         private val payableRepository: PayableRepository
-) : BaseViewModel() {
+) : BaseViewModel(), DownloadLedgerInterface {
     var ledgerLiveData = MutableLiveData<List<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var dataLoadingLiveData = MutableLiveData<Boolean>()
@@ -38,6 +38,9 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     var currentEndMonth = -1
     var currentEndYear = -1
+
+    var ledgerStartDate = -1
+    var ledgerEndDate = -1
 
     var isLoadedNow : Boolean = true
 
@@ -55,19 +58,35 @@ class ConsolidatedPageViewModel @Inject constructor(
         val calendar = Calendar.getInstance()
         calendar.set(fullYear, monthNumber, 1)
 
-        val endDay = calendar.getActualMaximum(Calendar.DATE)
+        var endDay = calendar.getActualMaximum(Calendar.DATE).toString()
+        var startDay = "01"
 
         var month = "" + (monthNumber + 1)
         if (month.length == 1) {
             month = "0$month"
         }
 
+        var finalDate = ""
         if (type == "startDate") {
-            return "$fullYear-$month-01T00:00:00"
+            if(ledgerStartDate != -1){
+                startDay = ledgerStartDate.toString()
+                if(startDay.length == 1){
+                    startDay = "0$startDay"
+                }
+                ledgerStartDate = -1
+            }
+            finalDate = "" + fullYear + "-" + month + "-" + startDay + "T00:00:00"
         } else if (type == "endDate") {
-            return "" + fullYear + "-" + month + "-" + endDay + "T23:59:59"
+            if(ledgerEndDate != -1){
+                endDay = ledgerEndDate.toString()
+                if(endDay.length == 1){
+                    endDay = "0$startDay"
+                }
+                ledgerEndDate = -1
+            }
+            finalDate = "" + fullYear + "-" + month + "-" + endDay + "T23:59:59"
         }
-        return ""
+        return finalDate
     }
 
     private fun generateLedgerPayload(startDate: String, endDate: String): JsonObject {
@@ -170,5 +189,31 @@ class ConsolidatedPageViewModel @Inject constructor(
         if(selectedMonth != -1 && selectedYear != -1) {
             fetchLedgerData(jsonObject)
         }
+    }
+
+    fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
+        val startRange = generateDateString("startDate",startMonth,startYear.toString())
+        val endRange = generateDateString("endDate",endMonth,endYear.toString())
+        val jsonObject = generateLedgerPayload(startRange,endRange)
+
+        if (type == "email"){
+            //call email API with jsonObject
+        }else if(type == "download"){
+            //call download API with jsonObject
+        }
+    }
+
+    override fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String) {
+        Log.d("Email->","$startDate-$startMonth-$startYear---->$email")
+        ledgerStartDate = startDate
+        ledgerEndDate = endDate
+        initiateDownloadAndEmail("email", startMonth,startYear, endMonth, endYear)
+    }
+
+    override fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int) {
+        Log.d("Download->","$endDate-$endMonth-$endYear")
+        ledgerStartDate = startDate
+        ledgerEndDate = endDate
+        initiateDownloadAndEmail("download", startMonth,startYear, endMonth, endYear)
     }
 }
