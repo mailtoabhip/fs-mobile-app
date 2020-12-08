@@ -4,9 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
+import com.delhivery.axle.data.ledger.ConsolidatedProgressItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.adapter.BaseExpandableDataRVAdapter
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsHeaderItem
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Search
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Ledger
 import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterItemType.Warning
@@ -58,5 +64,22 @@ BaseExpandableDataRVAdapter<BaseConsolidatedPageRVAdapterItem<*>, ViewDataBindin
             is ConsolidatedPageTimeOutItemVH -> holder.bind(item as ConsolidatedPageTimeoutItem, _interface)
             is ConsolidatedPageProgressItemVH -> holder.bind(item as ConsolidatedPageProgressItem, _interface)
         }
+    }
+
+    public fun refreshPage(){
+        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate))
+//            items.filter {
+//                it.type == HomeTripsRVAdapterItemType.TripItem || it.type == HomeTripsRVAdapterItemType.CompletedTrip || it.type == HomeTripsRVAdapterItemType.Warning ||
+//                        it.type == HomeTripsRVAdapterItemType.Timeout || it.type == HomeTripsRVAdapterItemType.Search
+//            }
+//                    .map { Pair(it, DataRVAdapterOperationType.Remove) }
+//                    .let {
+//                        addAll(it)
+//                    }
+        }
+                .let {
+                    operation(it)
+                }
     }
 }

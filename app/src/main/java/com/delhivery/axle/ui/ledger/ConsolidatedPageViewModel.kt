@@ -127,7 +127,7 @@ class ConsolidatedPageViewModel @Inject constructor(
 //                            if (total == 0) {
 //                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
 //                            }else{
-                                for(ledger in _res){
+                                for(ledger in _res.ledgers){
                                     add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId)),DataRVAdapterOperationType.Add))
                                 }
 //                            }
@@ -142,7 +142,6 @@ class ConsolidatedPageViewModel @Inject constructor(
                             add(Pair(ConsolidatedPageTimeoutItem(HomeLoadsTimeOutItemData("TimeOut","Something went wrong","Close","")), DataRVAdapterOperationType.AddUpdate))
                         }.let { ledgerLiveData.postValue(it) }
                     }
-
                     dataLoadingLiveData.postValue(false)
                 }
 

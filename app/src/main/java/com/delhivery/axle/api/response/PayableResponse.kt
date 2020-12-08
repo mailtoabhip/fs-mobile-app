@@ -36,7 +36,7 @@ data class DNResponse(
 
 data class ConsolidatedLedgerResponse(
         @SerializedName("count") val count: Int,
-        @SerializedName("data") val ledgers: List<ConsolidatedLedgerItemData>
+        @SerializedName("consolidated") val ledgers: List<ConsolidatedLedgerItemData>
 )
 
 //data class TempConsolidatedLedgerResponse(

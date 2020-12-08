@@ -19,9 +19,9 @@ interface PayableService {
     @POST("list_dns")
     fun fetchDNList(@Body payload: JsonObject): Single<BaseResponse<List<DNResponse>>>
 
-//    @POST("list_consolidated_payments")
-//    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<ConsolidatedLedgerResponse>>
-
     @POST("list_consolidated_payments")
-    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<List<ConsolidatedLedgerItemData>>>
+    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<ConsolidatedLedgerResponse>>
+
+//    @POST("list_consolidated_payments")
+//    fun fetchConsolidatedLedgerList(@Body payload: JsonObject): Single<BaseResponse<List<ConsolidatedLedgerItemData>>>
 }
