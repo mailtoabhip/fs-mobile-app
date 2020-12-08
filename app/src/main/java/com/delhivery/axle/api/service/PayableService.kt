@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ChargesResponse
+import com.delhivery.axle.api.response.CollectionResponse
 import com.delhivery.axle.api.response.DNResponse
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -19,4 +20,7 @@ interface PayableService {
 
     @POST("list_dns")
     fun fetchDNList(@Body payload: JsonObject): Single<BaseResponse<List<DNResponse>>>
+
+    @POST("list_collections")
+    fun  fetchCollectionList(@Body payload: JsonObject): Single<BaseResponse<List<CollectionResponse>>>
 }

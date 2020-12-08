@@ -37,6 +37,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import kotlinx.android.synthetic.main.view_transaction_item.view.*
 import java.io.File
 import javax.inject.Inject
 
@@ -86,6 +87,7 @@ class TripDetailsViewModel @Inject constructor(
 
   var tripType: String = ""
   var paymentRecovery: Double = 0.0
+  var collections: Double = 0.0
   var payeeId: String = ""
 
   /**
@@ -146,7 +148,7 @@ class TripDetailsViewModel @Inject constructor(
    */
   fun fetchDNListSummary(){
     val jsonObject = JsonObject()
-    val jsonElement = JsonPrimitive(payeeId)
+    val jsonElement = JsonPrimitive("ums::user::c2e9f45c-98ce-11e9-aa26-0ea6b7374536")
     jsonObject.add("payee",jsonElement)
     compositeDisposable += payableRepository.fetchDNList(jsonObject)
             .onBackground()
@@ -168,11 +170,39 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
+   * Fetch Collections summary
+   */
+
+  fun fetchCollectionSummary(){
+    val jsonObject = JsonObject()
+    val jsonElement = JsonPrimitive("101137")
+    jsonObject.add("trip_id",jsonElement)
+    compositeDisposable += payableRepository.fetchCollectionList(jsonObject)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                collections = 0.0
+                if(_res.isNotEmpty() == true){
+                  _res.let{
+                    for (collection in _res) {
+                      collections += collection.amount
+                    }
+                  }
+                }else{
+                  error?.handle()
+                }
+              }
+            }
+  }
+
+
+  /**
    * Fetch Charges List summary
    */
   fun fetchChargeListSummary(){
     val jsonObject = JsonObject()
-    val jsonElement = JsonPrimitive(transactionId)
+    val jsonElement = JsonPrimitive("101048")
     jsonObject.add("trip_id",jsonElement)
     compositeDisposable += payableRepository.fetchChargesList(jsonObject)
             .onBackground()
@@ -202,7 +232,7 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch Payment summary
    */
   fun fetchNewPaymentSummary(){
-    compositeDisposable += paymentRepository.payments(transactionId)
+    compositeDisposable += paymentRepository.payments("101048")
             .onBackground()
             .subscribe{
               _res, error ->
@@ -229,7 +259,7 @@ class TripDetailsViewModel @Inject constructor(
   fun fetchChargeSummary() {
     val jsonObject = JsonObject()
     val jsonArray = JsonArray()
-    jsonArray.add(transactionId)
+    jsonArray.add("101048")
     jsonObject.add("trip_ids", jsonArray)
     compositeDisposable += utilityRepository.fetchCharges(jsonObject)
         .onBackground()
