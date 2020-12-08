@@ -226,7 +226,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fetchTripDetails()
     viewModel.fetchChargeListSummary()
     viewModel.fetchNewPaymentSummary()
-    binding.executePendingBindings()git
+    binding.executePendingBindings()
     downloadMe()
   }
 
