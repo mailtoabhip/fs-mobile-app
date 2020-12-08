@@ -220,7 +220,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     private fun refreshData(){
-        adapter.refreshPage()
         viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, false)
     }
 

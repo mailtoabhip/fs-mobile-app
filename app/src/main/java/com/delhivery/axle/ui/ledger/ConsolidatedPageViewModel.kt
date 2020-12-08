@@ -41,7 +41,7 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     var isLoadedNow : Boolean = true
 
-    var hasMoreData = true
+    var hasMoreData = false
     var offset = 0
     var total = 0
 
@@ -124,13 +124,14 @@ class ConsolidatedPageViewModel @Inject constructor(
                         Log.d("Hello",""+_res)
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
-//                            if (total == 0) {
-//                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
-//                            }else{
+                            if (_res.count == 0) {
+                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
+                            }else{
+                                total = _res.count
                                 for(ledger in _res.ledgers){
                                     add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId)),DataRVAdapterOperationType.Add))
                                 }
-//                            }
+                            }
                         }.let {ledgerLiveData.postValue(it)}
 
                     }
@@ -164,6 +165,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         if (paginate) {
             Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         }
+        dataLoadingLiveData.postValue(true)
 
         if(selectedMonth != -1 && selectedYear != -1) {
             fetchLedgerData(jsonObject)

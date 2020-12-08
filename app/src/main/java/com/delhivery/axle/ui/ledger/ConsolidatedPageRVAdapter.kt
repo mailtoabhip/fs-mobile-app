@@ -65,21 +65,4 @@ BaseExpandableDataRVAdapter<BaseConsolidatedPageRVAdapterItem<*>, ViewDataBindin
             is ConsolidatedPageProgressItemVH -> holder.bind(item as ConsolidatedPageProgressItem, _interface)
         }
     }
-
-    public fun refreshPage(){
-        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate))
-//            items.filter {
-//                it.type == HomeTripsRVAdapterItemType.TripItem || it.type == HomeTripsRVAdapterItemType.CompletedTrip || it.type == HomeTripsRVAdapterItemType.Warning ||
-//                        it.type == HomeTripsRVAdapterItemType.Timeout || it.type == HomeTripsRVAdapterItemType.Search
-//            }
-//                    .map { Pair(it, DataRVAdapterOperationType.Remove) }
-//                    .let {
-//                        addAll(it)
-//                    }
-        }
-                .let {
-                    operation(it)
-                }
-    }
 }
