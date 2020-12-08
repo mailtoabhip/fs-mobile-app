@@ -487,7 +487,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     paymentSummary.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
-          if(payment.paymentType  == "payment"){
+          if(payment.paymentType  == "payment" || payment.paymentType == null){
             viewModel.newPaymentTypePayment.add(payment)
           }else if(payment.paymentType == "dn"){
             viewModel.newPaymentTypeDN.add(payment)
@@ -501,7 +501,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
           paymentDone += payment.amount
-          var head = payment.head.capitalizeWords()
+          var head = payment.head.replace("_"," ").capitalizeWords()
           if(head == "Intermittent"){
             head = "In-transit"
           }

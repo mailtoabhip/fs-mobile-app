@@ -45,7 +45,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Rs."
                 android:textColor="@color/heading_black"
-                android:layout_marginStart="@dimen/size_140dp"
+                android:layout_marginStart="@dimen/size_180dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
