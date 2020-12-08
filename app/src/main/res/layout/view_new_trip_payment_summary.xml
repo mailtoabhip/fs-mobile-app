@@ -17,6 +17,21 @@
             />
 
         <variable
+            name="isWaivedOff"
+            type="Boolean"
+            />
+
+        <variable
+            name="waivedOffLabel"
+            type="String"
+            />
+
+        <variable
+            name="waivedOffAmount"
+            type="String"
+            />
+
+        <variable
             name="totalPaymentMade"
             type="String"
             />
@@ -192,7 +207,69 @@
                         />
 
 
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="@dimen/size_180dp"
+                        android:layout_height="@dimen/size_20dp"
+                        app:layout_constraintTop_toTopOf="@+id/text_total_deduction"
+                        app:layout_constraintStart_toStartOf="@+id/text_total_deduction"
+                        app:layout_constraintEnd_toEndOf="@+id/text_total_deduction"
+                        app:layout_constraintBottom_toBottomOf="@+id/text_total_deduction"
+                        android:background="@drawable/fg_diagonal_strike"
+                        android:visibility="@{isWaivedOff ? View.VISIBLE : View.GONE}"
+                        />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-6dp"
+                    android:layout_marginBottom="@dimen/size_6dp"
+                    android:visibility="@{isWaivedOff ? View.VISIBLE : View.GONE}"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_waived_off"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@{waivedOffLabel}"
+                        android:textColor="@color/status_active"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="(Rs.100 have been waived off !)"
+                        />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_charge_waived_off"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Rs."
+                        android:textColor="@color/status_lost"
+                        android:layout_marginStart="@dimen/size_140dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_waived_off"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@{waivedOffAmount}"
+                        android:textColor="@color/status_lost"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Rs 3500.00"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

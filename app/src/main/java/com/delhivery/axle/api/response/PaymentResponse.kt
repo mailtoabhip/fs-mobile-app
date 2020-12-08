@@ -74,6 +74,8 @@ data class  PaymentsResponse(
         @SerializedName("head") val head: String,
         @SerializedName("oracle_unique_id") val oracleUniqueId: String,
         @SerializedName("uuid") val uuid: String?,
+        @SerializedName("dn_id") val dnId: String?,
+        @SerializedName("dn_type") var dnType: String?,
         @SerializedName("transfer_time") val transferTime: String?,
         @SerializedName("utr_number") val utrNumber: String?,
         @SerializedName("remarks") val remarks: String? = "",

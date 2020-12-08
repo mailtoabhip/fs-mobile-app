@@ -501,7 +501,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
           paymentDone += payment.amount
-          var utr = "UTR: "+payment.utrNumber+", "
+          var head = payment.head.capitalizeWords()
+          if(head == "Intermittent"){
+            head = "In-transit"
+          }
+          var utr = ""+head+" UTR: "+payment.utrNumber+", "
           var day = payment.updationDate.substring(8,10)
           if(day[0] == '0'){
             day = payment.updationDate.substring(9,10)
@@ -527,14 +531,31 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
+    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions,false).apply {
+      var tdsObj = TDS(chargeTotal)
+      var tds = tdsObj.getTDS(1,0.75)
+      deductionTotal += tds
+      textChargeType.text = "TDS"
+      textChargeValue.text = String.format("%.2f",tds)
+      textChargeValue.setTextColor(ContextCompat.getColor(
+              this@TripDetailsActivity,
+              R.color.status_lost
+      ))
+      textChargeConst.setTextColor(ContextCompat.getColor(
+              this@TripDetailsActivity,
+              R.color.status_lost
+      ))
+      paymentSummaryBinding.containerNegativeDeductions.addView(root)
+    }
+
     viewModel.newPaymentTypeDN.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
           deductionTotal += payment.amount
-          var lrText = "Recovery Against LR:"
-          lrText += payment.lr_nos?.get(0)
-          if(payment.lr_nos.size > 1){
+          var lrText = "Recovery against "+payment.dnType+": \n"
+          lrText += "LR "+payment.lr_nos?.get(0) +" (UTR: "+payment.utrNumber+")"
+          if(!payment.lr_nos.isNullOrEmpty() && payment.lr_nos.size > 1){
             lrText += " +"+ (payment.lr_nos.size - 1) +" more"
           }
           textChargeType.text = lrText
@@ -557,23 +578,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions,false).apply {
-      var tdsObj = TDS(chargeTotal)
-      var tds = tdsObj.getTDS(1,0.75)
-      deductionTotal += tds
-      textChargeType.text = "TDS"
-      textChargeValue.text = String.format("%.2f",tds)
-      textChargeValue.setTextColor(ContextCompat.getColor(
-              this@TripDetailsActivity,
-              R.color.status_lost
-      ))
-      textChargeConst.setTextColor(ContextCompat.getColor(
-              this@TripDetailsActivity,
-              R.color.status_lost
-      ))
-      paymentSummaryBinding.containerNegativeDeductions.addView(root)
-    }
-
     paymentSummaryBinding.totalDeduction = String.format("%.2f",deductionTotal)
     paymentSummaryBinding.textTotalDeduction.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
@@ -583,6 +587,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             this@TripDetailsActivity,
             R.color.status_lost
     ))
+
+    if(viewModel.collections != 0.0){
+      paymentSummaryBinding.isWaivedOff = true
+      paymentSummaryBinding.waivedOffAmount = String.format("%.2f",deductionTotal - viewModel.collections)
+      paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
+    }
 
     paymentSummaryBinding.totalPaymentMade = String.format("%.2f",paymentDone)
     paymentSummaryBinding.textTotalPaymentsMade.setTextColor(ContextCompat.getColor(
