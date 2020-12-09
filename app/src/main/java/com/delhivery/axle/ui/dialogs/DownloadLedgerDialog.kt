@@ -78,13 +78,13 @@ class DownloadLedgerDialog(
                     startMonth = monthOfYear
                     startYear = year
                     var month = monthOfYear + 1
-                    binding.editStartDate.setText("$dayOfMonth/$month/$year")
+                    binding.editStartDate.setText("$dayOfMonth/$month/${year.toString().substring(2)}")
                 } else if(editTextType == "end"){
                     endDate = dayOfMonth
                     endMonth = monthOfYear
                     endYear = year
                     var month = monthOfYear + 1
-                    binding.editEndDate.setText("$dayOfMonth/$month/$year")
+                    binding.editEndDate.setText("$dayOfMonth/$month/${year.toString().substring(2)}")
                 }
         }, year, month, day)
 
@@ -115,8 +115,8 @@ class DownloadLedgerDialog(
         }else{
             //download report
             dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
+            dismissDialog()
         }
-        dismissDialog()
     }
 
     private fun emailDialog(){
@@ -135,8 +135,8 @@ class DownloadLedgerDialog(
         }else{
             //email report
             dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
+            dismissDialog()
         }
-        dismissDialog()
     }
 }
 

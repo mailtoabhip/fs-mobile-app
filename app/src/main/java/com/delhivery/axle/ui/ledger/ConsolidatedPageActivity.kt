@@ -75,6 +75,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             dialog.setOwnerActivity(this)
             if (!this.isFinishing)
                 dialog.show()
+            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
 
         binding.spinnerShowing.apply {
@@ -152,7 +154,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = endMonth
                         viewModel.currentEndMonth = endYear
-                        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear,false)
+                        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
                     }
                     else if(option.key == 5) {
 
@@ -221,7 +223,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     override fun onItemClicked(item: BaseConsolidatedPageRVAdapterItem<*>, position: Int) {
-        TODO("Not yet implemented")
+        return
     }
 
     override fun onMonthClick(selectedMonth: Int) {
@@ -233,7 +235,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     override fun onYearClick(selectedYear: Int) {
         viewModel.selectedYear = selectedYear
-        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear,viewModel.selectedMonth, viewModel.selectedYear,false)
+        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear, false)
     }
 
     override fun handleAction(actionId: String, position: Int, item: BaseConsolidatedPageRVAdapterItem<*>) {
@@ -241,21 +243,21 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
             ConsolidatedLedgerItemAction -> {
                 val data = item.data as ConsolidatedLedgerItemData
-                adapter.toggle(position,data)
+                adapter.toggle(position, data)
             }
         }
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     private fun refreshData(){
-        viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, false)
+        //viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, false)
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
-        override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth,viewModel.currentStartYear,viewModel.currentEndMonth,viewModel.currentEndYear, true)
+        override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, true)
 
         override fun hasMore() = viewModel.hasMoreData
 
@@ -293,7 +295,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 .setNotificationVisibility(View.VISIBLE)
 
         downloadID = mgr.enqueue(request)
-        filePath = Uri.parse(Environment.DIRECTORY_DOCUMENTS+path)
+        filePath = Uri.parse(Environment.DIRECTORY_DOCUMENTS + path)
     }
 
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
