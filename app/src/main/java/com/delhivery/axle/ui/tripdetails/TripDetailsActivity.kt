@@ -138,17 +138,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
     }
 
-    fun startConsolidatedPage(){
-      startActivity(consolidatedPageIntent(this))
-    }
-
     binding.viewSummary.setOnClickListener {
 //      if(viewModel.tripType == "Completed"){
-//        populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+        populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
 //      }else{
 //        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
 //      }
-      startConsolidatedPage()
     }
 
     binding.containerError.btnAction.setOnClickListener {

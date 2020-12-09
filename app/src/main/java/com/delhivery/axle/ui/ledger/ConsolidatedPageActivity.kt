@@ -177,6 +177,10 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
             isLoadingData = it ?: false
         })
 
+        viewModel.emailLoadingLiveData.observe(this, androidx.lifecycle.Observer {
+            uiUtils.showSnackbar(""+it,Snackbar.LENGTH_LONG)
+        })
+
         openPopups()
     }
 

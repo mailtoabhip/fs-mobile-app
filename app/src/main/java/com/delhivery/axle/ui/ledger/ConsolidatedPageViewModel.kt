@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PayableRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
@@ -24,11 +25,14 @@ import java.text.SimpleDateFormat
 
 
 class ConsolidatedPageViewModel @Inject constructor(
-        private val payableRepository: PayableRepository
+        private val payableRepository: PayableRepository,
+        private val userRepository: UserRepository
 ) : BaseViewModel(), DownloadLedgerInterface {
     var ledgerLiveData = MutableLiveData<List<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+    var emailLoadingLiveData = MutableLiveData<String>()
 
     var selectedMonth = -1
     var selectedYear = -1
@@ -89,7 +93,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         return finalDate
     }
 
-    private fun generateLedgerPayload(startDate: String, endDate: String): JsonObject {
+    private fun generatePayloadConsolidatedLedger(startDate: String, endDate: String): JsonObject {
         val root = JsonObject()
         val rangeFilterArray = JsonArray()
         val startObject = JsonObject()
@@ -106,7 +110,7 @@ class ConsolidatedPageViewModel @Inject constructor(
 //        rangeFilterArray.add(startObject)
 //        rangeFilterArray.add(endObject)
 //
-//        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
+//        root.add("payee_id", JsonPrimitive(userRepository.userId()))
 //        root.add("range_filters", rangeFilterArray)
 //        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
 //        root.add("offset", JsonPrimitive(offset))
@@ -133,6 +137,41 @@ class ConsolidatedPageViewModel @Inject constructor(
         return root
     }
 
+    private fun generatePayloadEmailLedger(startDate: String, endDate: String, email: String): JsonObject {
+        val root = JsonObject()
+        val rangeFilterArray = JsonArray()
+        val startObject = JsonObject()
+        val endObject = JsonObject()
+
+        startObject.add("column", JsonPrimitive("pmt_success_dt"))
+        startObject.add("value", JsonPrimitive(startDate))
+        startObject.add("operator", JsonPrimitive("gte"))
+
+        endObject.add("column", JsonPrimitive("pmt_success_dt"))
+        endObject.add("value", JsonPrimitive(endDate))
+        endObject.add("operator", JsonPrimitive("lte"))
+
+        rangeFilterArray.add(startObject)
+        rangeFilterArray.add(endObject)
+
+        root.add("payee_id", JsonPrimitive(userRepository.userId()))
+        root.add("range_filters", rangeFilterArray)
+        root.add("email_id", JsonPrimitive(email))
+
+        return root
+    }
+
+    private fun emailVendorLedger(jsonObject: JsonObject){
+        compositeDisposable += payableRepository.emailVendorLedger(jsonObject)
+                .onBackground()
+                .subscribe{
+                    _res,error ->
+                    if(!error){
+                        emailLoadingLiveData.postValue(_res.message)
+                    }
+                }
+
+    }
     private fun fetchLedgerData(jsonObject: JsonObject) {
         Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         compositeDisposable += payableRepository.fetchConsolidatedLedgerList(jsonObject)
@@ -140,7 +179,6 @@ class ConsolidatedPageViewModel @Inject constructor(
                 .subscribe{
                     _res,error ->
                     if(!error){
-                        Log.d("Hello",""+_res)
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
                             if (_res.count == 0) {
@@ -172,7 +210,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         val endYear = 2020+endYear
         val startDate = generateDateString("startDate",startMonth,startYear.toString())
         val endDate = generateDateString("endDate",endMonth,endYear.toString())
-        val jsonObject = generateLedgerPayload(startDate,endDate)
+        val jsonObject = generatePayloadConsolidatedLedger(startDate,endDate)
 
         if (!paginate) {
             offset = 0
@@ -191,13 +229,13 @@ class ConsolidatedPageViewModel @Inject constructor(
         }
     }
 
-    fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
+    fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, email: String = ""){
         val startRange = generateDateString("startDate",startMonth,startYear.toString())
         val endRange = generateDateString("endDate",endMonth,endYear.toString())
-        val jsonObject = generateLedgerPayload(startRange,endRange)
 
-        if (type == "email"){
-            //call email API with jsonObject
+        if (type == "email" && email != ""){
+            val jsonObject = generatePayloadEmailLedger(startRange,endRange,email)
+            emailVendorLedger(jsonObject)
         }else if(type == "download"){
             //call download API with jsonObject
         }
@@ -207,7 +245,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         Log.d("Email->","$startDate-$startMonth-$startYear---->$email")
         ledgerStartDate = startDate
         ledgerEndDate = endDate
-        initiateDownloadAndEmail("email", startMonth,startYear, endMonth, endYear)
+        initiateDownloadAndEmail("email", startMonth,startYear, endMonth, endYear,email)
     }
 
     override fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int) {

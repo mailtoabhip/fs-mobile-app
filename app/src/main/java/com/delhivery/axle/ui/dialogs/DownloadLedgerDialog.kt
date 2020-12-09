@@ -135,6 +135,7 @@ class DownloadLedgerDialog(
             //email report
             dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
         }
+        dismissDialog()
     }
 }
 
