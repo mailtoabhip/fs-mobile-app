@@ -81,7 +81,7 @@
                         android:layout_margin="@dimen/size_4dp"
                         android:dropDownSelector="@color/colorAccent"
                         android:gravity="bottom"
-                        android:textSize="@dimen/text_16sp"
+                        android:textSize="@dimen/text_14sp"
                         android:spinnerMode="dialog"
                         android:text="Request Statement"
                         android:textColor="@color/status_active"

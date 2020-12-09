@@ -45,7 +45,7 @@
             android:fontFamily="sans-serif-black"
             android:text="@{ledger.getTitle}"
             android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
+            android:textSize="@dimen/text_14sp"
             tools:text="Advance - LR 287328"
             />
 
@@ -59,7 +59,7 @@
             android:fontFamily="sans-serif"
             android:text="@{ledger.getAmount}"
             android:textColor="@color/status_confirmed"
-            android:textSize="@dimen/text_16sp"
+            android:textSize="@dimen/text_14sp"
             app:layout_constraintEnd_toEndOf="@id/text_LR_main"
             tools:text="+ Rs.49,250"
             />
@@ -91,7 +91,7 @@
           android:fontFamily="sans-serif-medium"
           android:text="@{ledger.getUTR}"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_16sp"
+          android:textSize="@dimen/text_14sp"
           tools:text="UTR: 27372"
           />
 
@@ -105,7 +105,7 @@
           android:fontFamily="sans-serif-medium"
           android:text="@{ledger.getPaymentDate()}"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_16sp"
+          android:textSize="@dimen/text_14sp"
           tools:text="5th November 2020, 7:10am"
           />
 
@@ -131,7 +131,7 @@
             android:fontFamily="sans-serif-black"
             android:text="Deductions made:"
             android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
+            android:textSize="@dimen/text_14sp"
             />
 
         <androidx.appcompat.widget.LinearLayoutCompat
