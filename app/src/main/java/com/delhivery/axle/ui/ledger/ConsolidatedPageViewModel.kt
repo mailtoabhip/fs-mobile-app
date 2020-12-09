@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PayableRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.response.DownloadLedgerResponse
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
@@ -33,6 +34,8 @@ class ConsolidatedPageViewModel @Inject constructor(
     var dataLoadingLiveData = MutableLiveData<Boolean>()
 
     var emailLoadingLiveData = MutableLiveData<String>()
+
+    var downloadLoadingLiveData = MutableLiveData<DownloadLedgerResponse>()
 
     var selectedMonth = -1
     var selectedYear = -1
@@ -137,7 +140,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         return root
     }
 
-    private fun generatePayloadEmailLedger(startDate: String, endDate: String, email: String): JsonObject {
+    private fun generatePayloadDownloadEmailLedger(startDate: String, endDate: String, email: String = ""): JsonObject {
         val root = JsonObject()
         val rangeFilterArray = JsonArray()
         val startObject = JsonObject()
@@ -156,9 +159,24 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         root.add("payee_id", JsonPrimitive(userRepository.userId()))
         root.add("range_filters", rangeFilterArray)
-        root.add("email_id", JsonPrimitive(email))
+
+        if(email != "") {
+            root.add("email_id", JsonPrimitive(email))
+        }
 
         return root
+    }
+
+    private fun downloadVendorLedger(jsonObject: JsonObject){
+        compositeDisposable += payableRepository.downloadVendorLedger(jsonObject)
+                .onBackground()
+                .subscribe{
+                    _res,error ->
+                    if(!error){
+                        Log.d("DOwnload response",""+_res)
+                        downloadLoadingLiveData.postValue(_res)
+                    }
+                }
     }
 
     private fun emailVendorLedger(jsonObject: JsonObject){
@@ -167,6 +185,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                 .subscribe{
                     _res,error ->
                     if(!error){
+                        Log.d("Email response",""+_res)
                         emailLoadingLiveData.postValue(_res.message)
                     }
                 }
@@ -234,10 +253,11 @@ class ConsolidatedPageViewModel @Inject constructor(
         val endRange = generateDateString("endDate",endMonth,endYear.toString())
 
         if (type == "email" && email != ""){
-            val jsonObject = generatePayloadEmailLedger(startRange,endRange,email)
+            val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange,email)
             emailVendorLedger(jsonObject)
         }else if(type == "download"){
-            //call download API with jsonObject
+            val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange)
+            downloadVendorLedger(jsonObject)
         }
     }
 
