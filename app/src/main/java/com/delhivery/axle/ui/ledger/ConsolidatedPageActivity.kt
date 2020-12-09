@@ -1,16 +1,19 @@
 package com.delhivery.axle.ui.ledger
 
-import android.content.Context
-import android.content.Intent
+import android.app.DownloadManager
+import android.content.*
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
-import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
-import com.delhivery.axle.api.repository.UserTripsLoadLimit
-import com.delhivery.axle.data.ledger.*
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
+import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
 import com.delhivery.axle.databinding.ActivityConsolidatedPageBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
@@ -19,6 +22,7 @@ import com.delhivery.axle.ui.dialogs.YearDialog
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,6 +43,15 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     var isLoadingData = true
 
+    var downloadID = 0.toLong()
+
+    var filePath = Uri.parse("")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -58,6 +71,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         binding.textRequestStatement.setOnClickListener{
             val dialog = DownloadLedgerDialog(this, viewModel)
+            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
             dialog.setOwnerActivity(this)
             if (!this.isFinishing)
                 dialog.show()
@@ -90,7 +104,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = viewModel.selectedYear
                         viewModel.currentEndMonth = viewModel.selectedMonth
                         viewModel.currentEndMonth = viewModel.selectedYear
-                        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear,false)
+                        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear, false)
                     } else if (option.key == 2) {
                         var month = viewModel.selectedMonth;
                         var year = viewModel.selectedYear;
@@ -104,7 +118,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = year
                         viewModel.currentEndMonth = month
                         viewModel.currentEndMonth = year
-                        viewModel.initiateLedgerData(month, year, month, year,false)
+                        viewModel.initiateLedgerData(month, year, month, year, false)
                     }else if(option.key == 3){
                         var startMonth = 0
                         var startYear = viewModel.selectedYear
@@ -121,7 +135,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = endMonth
                         viewModel.currentEndMonth = endYear
-                        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear,false)
+                        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
                     }else if(option.key == 4){
                         var startMonth = 0
                         var startYear = viewModel.selectedYear
@@ -160,15 +174,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = formattedEndMonth
                         viewModel.currentEndMonth = endYear
-                        viewModel.initiateLedgerData(startMonth, startYear, formattedEndMonth, endYear,false)
+                        viewModel.initiateLedgerData(startMonth, startYear, formattedEndMonth, endYear, false)
                     }
                 }
             }
         }
 
         viewModel.ledgerLiveData.observe(this, androidx.lifecycle.Observer {
-            it?.let {
-                _items ->
+            it?.let { _items ->
                 adapter.operation(_items)
             }
         })
@@ -178,12 +191,26 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         })
 
         viewModel.emailLoadingLiveData.observe(this, androidx.lifecycle.Observer {
-            uiUtils.showSnackbar(""+it,Snackbar.LENGTH_LONG)
+            uiUtils.showSnackbar("" + it, Snackbar.LENGTH_LONG)
+        })
+
+        viewModel.downloadLoadingLiveData.observe(this, androidx.lifecycle.Observer {
+            downloadLedger()
+        })
+
+        viewModel.downloadPressed.observe(this, androidx.lifecycle.Observer {
+            if (it) {
+                uiUtils.showToast("Downloading File...")
+            }
         })
 
         openPopups()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(onDownloadComplete)
+    }
     fun openPopups(){
         if(viewModel.isLoadedNow){
             var dialog = MonthDialog()
@@ -233,6 +260,72 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         override fun hasMore() = viewModel.hasMoreData
 
         override fun isLoading() = isLoadingData
+    }
+
+    private fun downloadLedger() {
+
+        val direct = File(getExternalFilesDir(null), "/Ledger")
+
+        if (!direct.exists()) {
+            direct.mkdirs()
+        }
+
+        val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+        val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/oracle-mis/applied/applied_2019-12-05_1575540958332.xlsx")
+        val request = DownloadManager.Request(
+                downloadUri
+        )
+
+        // TODO: add file name as month for which download requested
+        val filename = "Ledger.xlsx"
+        val path = "/Axle App/$filename"
+        request.setAllowedNetworkTypes(
+                DownloadManager.Request.NETWORK_WIFI or
+                        DownloadManager.Request.NETWORK_MOBILE
+        )
+                .setTitle("Ledger Download")
+                .setDescription("Downloading...")
+                .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_DOCUMENTS,
+                        path
+                )
+                .setNotificationVisibility(View.VISIBLE)
+
+        downloadID = mgr.enqueue(request)
+        filePath = Uri.parse(Environment.DIRECTORY_DOCUMENTS+path)
+    }
+
+    private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(
+                context: Context,
+                intent: Intent
+        ) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadID === id) {
+                uiUtils.showToast("File downloaded")
+                openExcel()
+            }
+        }
+    }
+
+    private fun openExcel(){
+        val newintent = Intent(Intent.ACTION_VIEW)
+        val newPath = Uri.parse(this.getExternalFilesDir(null).toString() + filePath)
+        newintent.setDataAndType(newPath, "application/vnd.ms-excel")
+        newintent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        try {
+            startActivity(newintent)
+        } catch (e: ActivityNotFoundException) {
+            uiUtils.showToast("No Application Available to View Excel")
+        }
+
+//        val file = File(this.getExternalFilesDir(null).toString() + filePath)
+//        uiUtils.showSnackbar(""+file,Snackbar.LENGTH_LONG)
+//        val intent = Intent(Intent.ACTION_VIEW)
+//        intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-excel")
+//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//        startActivity(intent)
     }
 }
 

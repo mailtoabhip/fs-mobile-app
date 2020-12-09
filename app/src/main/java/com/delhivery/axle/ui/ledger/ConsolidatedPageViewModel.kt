@@ -37,6 +37,8 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     var downloadLoadingLiveData = MutableLiveData<DownloadLedgerResponse>()
 
+    var downloadPressed = MutableLiveData<Boolean>()
+
     var selectedMonth = -1
     var selectedYear = -1
 
@@ -272,6 +274,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         Log.d("Download->","$endDate-$endMonth-$endYear")
         ledgerStartDate = startDate
         ledgerEndDate = endDate
+        downloadPressed.postValue(true)
         initiateDownloadAndEmail("download", startMonth,startYear, endMonth, endYear)
     }
 }

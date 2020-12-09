@@ -67,7 +67,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     hasInlineProgress = true
   }
 
-  var downloadID = 0.toLong()
 
   override fun getViewModelClass() = TripDetailsViewModel::class.java
 
@@ -93,7 +92,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
 
-    registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -156,53 +154,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   override fun onDestroy() {
     super.onDestroy()
-    unregisterReceiver(onDownloadComplete);
-  }
-
-  private fun downloadMe() {
-
-    val direct = File(getExternalFilesDir(null), "/Ledger")
-
-    if (!direct.exists()) {
-      direct.mkdirs()
-    }
-
-    val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-    val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/orion_ar/oracle_reports/failed_invoices_report_applied_2020-10-16T15:17:17.423456.csv")
-    val request = DownloadManager.Request(
-        downloadUri
-    )
-
-
-  // TODO: add file name as month for which download requested
-    val filename = "Ledger.csv"
-    val path = "/Axle App/$filename"
-    request.setAllowedNetworkTypes(
-        DownloadManager.Request.NETWORK_WIFI or
-            DownloadManager.Request.NETWORK_MOBILE
-    )
-        .setTitle("Ledger Download")
-        .setDescription("Downloading...")
-        .setDestinationInExternalPublicDir(
-            Environment.DIRECTORY_DOCUMENTS,
-            path
-        )
-        .setNotificationVisibility(View.VISIBLE)
-
-    downloadID = mgr.enqueue(request)
-  }
-
-  private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
-    override fun onReceive(
-      context: Context,
-      intent: Intent
-    ) {
-      val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-      if (downloadID === id) {
-        uiUtils.showToast("File downloaded")
-      }
-    }
   }
 
   private fun refreshData() {
@@ -220,7 +171,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fetchNewPaymentSummary()
     viewModel.fetchCollectionSummary()
     binding.executePendingBindings()
-    downloadMe()
   }
 
   /**

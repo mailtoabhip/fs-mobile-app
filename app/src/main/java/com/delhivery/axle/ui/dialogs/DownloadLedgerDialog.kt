@@ -116,6 +116,7 @@ class DownloadLedgerDialog(
             //download report
             dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
         }
+        dismissDialog()
     }
 
     private fun emailDialog(){
