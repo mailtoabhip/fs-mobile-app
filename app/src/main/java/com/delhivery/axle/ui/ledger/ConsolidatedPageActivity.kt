@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.ledger
 
+import android.Manifest
 import android.app.DownloadManager
 import android.content.*
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -9,6 +11,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
@@ -20,6 +24,7 @@ import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
 import com.delhivery.axle.ui.dialogs.MonthDialog
 import com.delhivery.axle.ui.dialogs.YearDialog
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
@@ -202,7 +207,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         viewModel.downloadPressed.observe(this, androidx.lifecycle.Observer {
             if (it) {
-                uiUtils.showToast("Downloading File...")
+                requestStoragePermission()
             }
         })
 
@@ -266,11 +271,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     private fun downloadLedger() {
 
-        val direct = File(getExternalFilesDir(null), "/Ledger")
-
-        if (!direct.exists()) {
-            direct.mkdirs()
-        }
+//        val direct = File(getExternalFilesDir(null), "/Ledger")
+//
+//        if (!direct.exists()) {
+//            direct.mkdirs()
+//        }
 
         val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -313,21 +318,28 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     private fun openExcel(){
         val newintent = Intent(Intent.ACTION_VIEW)
-        val newPath = Uri.parse(this.getExternalFilesDir(null).toString() + filePath)
-        newintent.setDataAndType(newPath, "application/vnd.ms-excel")
+        newintent.setDataAndType(filePath, "application/vnd.ms-excel")
         newintent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        newintent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         try {
             startActivity(newintent)
         } catch (e: ActivityNotFoundException) {
             uiUtils.showToast("No Application Available to View Excel")
         }
+    }
 
-//        val file = File(this.getExternalFilesDir(null).toString() + filePath)
-//        uiUtils.showSnackbar(""+file,Snackbar.LENGTH_LONG)
-//        val intent = Intent(Intent.ACTION_VIEW)
-//        intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-excel")
-//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-//        startActivity(intent)
+    private fun requestStoragePermission() {
+        val storagePermission =
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    REQCODE_STORAGE
+            )
+        } else {
+            uiUtils.showSnackbar("Downloading File...")
+        }
     }
 }
 
