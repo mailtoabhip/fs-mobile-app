@@ -27,6 +27,13 @@ class PayableRepository @Inject constructor(
     ) = payableService.fetchDNList(payload).convertResponse()
 
     /**
+     * Get Collection List
+     */
+    fun fetchCollectionList(
+            payload: JsonObject
+    ) = payableService.fetchCollectionList(payload).convertResponse()
+
+    /**
      * Get Consolidated Ledger List
      */
     fun fetchConsolidatedLedgerList(

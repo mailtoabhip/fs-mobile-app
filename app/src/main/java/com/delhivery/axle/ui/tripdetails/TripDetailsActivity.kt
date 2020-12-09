@@ -18,10 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.ChargesResponse
-import com.delhivery.axle.api.response.PaymentsResponse
-import com.delhivery.axle.api.response.TripChargesResponse
-import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
 import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.BalancePaid
@@ -124,11 +121,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
-        if(viewModel.tripType == "Completed"){
+//        if(viewModel.tripType == "Completed"){
           populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
-        }else{
-          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
-        }
+//        }else{
+//          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+//        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -221,6 +218,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fetchTripDetails()
     viewModel.fetchChargeListSummary()
     viewModel.fetchNewPaymentSummary()
+    viewModel.fetchCollectionSummary()
     binding.executePendingBindings()
     downloadMe()
   }
@@ -245,6 +243,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchChargeSummary()
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
+        viewModel.fetchCollectionSummary()
+
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -498,13 +498,33 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.newPaymentTypePayment.clear()
     viewModel.newPaymentTypeDN.clear()
 
-    var netPayable = 0.0
+    var chargeTotal = 0.0
+    var deductionTotal = 0.0
     tripSummary.forEach{charge ->
       if(charge.chargeAmount != 0.0 && charge.action == "pay"){
-        netPayable += charge.chargeAmount
-        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentPositive, false).apply {
+        chargeTotal += charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPositiveCharges, false).apply {
           seprator.visibility = View.GONE
-          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
+          var chargeText = ""
+          var chargeDays = -1
+          when (charge.chargeHeadRef) {
+              "detention_charge_origin" -> {
+                chargeText = "Loading Detention"
+                chargeDays = charge.days
+              }
+              "detention_charge_destination" -> {
+                chargeText = "Unloading Detention"
+                chargeDays = charge.days
+              }
+              else -> {
+                chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
+              }
+          }
+          if(chargeDays == 1){
+            chargeText += "(1 day)"
+          }else if(chargeDays != null && chargeDays != -1 && chargeDays != 0){
+            chargeText += "($chargeDays days)"
+          }
           textChargeType.text = chargeText
           textChargeValue.text = String.format("%.2f",charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
@@ -515,11 +535,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   this@TripDetailsActivity,
                   R.color.status_confirmed
           ))
-          paymentSummaryBinding.containerPaymentPositive.addView(root)
+          paymentSummaryBinding.containerPositiveCharges.addView(root)
         }
       }else if(charge.chargeAmount != 0.0 && charge.action == "deduct"){
-        netPayable -= charge.chargeAmount
-        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentNegative, false).apply {
+        deductionTotal += charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
           var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
@@ -532,23 +552,24 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                   this@TripDetailsActivity,
                   R.color.status_lost
           ))
-          paymentSummaryBinding.containerPaymentNegative.addView(root)
+          paymentSummaryBinding.containerNegativeDeductions.addView(root)
         }
       }
     }
-    paymentSummaryBinding.netPayable = String.format("%.2f",netPayable)
-    paymentSummaryBinding.textNetPayable.setTextColor(ContextCompat.getColor(
+    paymentSummaryBinding.totalCharges = String.format("%.2f",chargeTotal)
+    paymentSummaryBinding.textTotalCharges.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
     ))
-    paymentSummaryBinding.textChargeNetPayable.setTextColor(ContextCompat.getColor(
+    paymentSummaryBinding.textChargeTotalCharges.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
     ))
 
+
     paymentSummary.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
-          if(payment.paymentType  == "payment"){
+          if(payment.paymentType  == "payment" || payment.paymentType == null){
             viewModel.newPaymentTypePayment.add(payment)
           }else if(payment.paymentType == "dn"){
             viewModel.newPaymentTypeDN.add(payment)
@@ -559,10 +580,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     var paymentDone = 0.0
     viewModel.newPaymentTypePayment.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
-        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
           paymentDone += payment.amount
-          var utr = "UTR: "+payment.utrNumber+", "
+          var head = payment.head.replace("_"," ").capitalizeWords()
+          if(head == "Intermittent"){
+            head = "In-transit"
+          }
+          var utr = ""+head+" UTR: "+payment.utrNumber+", "
           var day = payment.updationDate.substring(8,10)
           if(day[0] == '0'){
             day = payment.updationDate.substring(9,10)
@@ -583,20 +608,36 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                  this@TripDetailsActivity,
                   R.color.status_confirmed
           ))
-          paymentSummaryBinding.containerPayment.addView(root)
+          paymentSummaryBinding.containerPaymentsMade.addView(root)
         }
       }
     }
 
-    var paymentRecovery = 0.0
+    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions,false).apply {
+      var tdsObj = TDS(chargeTotal)
+      var tds = tdsObj.getTDS(1,0.75)
+      deductionTotal += tds
+      textChargeType.text = "TDS"
+      textChargeValue.text = String.format("%.2f",tds)
+      textChargeValue.setTextColor(ContextCompat.getColor(
+              this@TripDetailsActivity,
+              R.color.status_lost
+      ))
+      textChargeConst.setTextColor(ContextCompat.getColor(
+              this@TripDetailsActivity,
+              R.color.status_lost
+      ))
+      paymentSummaryBinding.containerNegativeDeductions.addView(root)
+    }
+
     viewModel.newPaymentTypeDN.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
-        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPayment, false).apply {
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
-          paymentRecovery += payment.amount
-          var lrText = "Recovery Against LR:"
-          lrText += payment.lr_nos?.get(0)
-          if(payment.lr_nos.size > 1){
+          deductionTotal += payment.amount
+          var lrText = "Recovery against "+payment.dnType+": \n"
+          lrText += "LR "+payment.lr_nos?.get(0) +" (UTR: "+payment.utrNumber+")"
+          if(!payment.lr_nos.isNullOrEmpty() && payment.lr_nos.size > 1){
             lrText += " +"+ (payment.lr_nos.size - 1) +" more"
           }
           textChargeType.text = lrText
@@ -614,12 +655,44 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                  this@TripDetailsActivity,
                   R.color.status_lost
           ))
-          paymentSummaryBinding.containerPayment.addView(root)
+          paymentSummaryBinding.containerNegativeDeductions.addView(root)
         }
       }
     }
 
-    paymentSummaryBinding.pendingPayment = String.format("%.2f",(netPayable - paymentDone - paymentRecovery))
+    paymentSummaryBinding.totalDeduction = String.format("%.2f",deductionTotal)
+    paymentSummaryBinding.textTotalDeduction.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+    paymentSummaryBinding.textChargeTotalDeduction.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+
+    if(viewModel.collections != 0.0){
+      paymentSummaryBinding.isWaivedOff = true
+      paymentSummaryBinding.waivedOffAmount = String.format("%.2f",deductionTotal - viewModel.collections)
+      paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
+    }
+
+    paymentSummaryBinding.totalPaymentMade = String.format("%.2f",paymentDone)
+    paymentSummaryBinding.textTotalPaymentsMade.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+    paymentSummaryBinding.textChargeTotalPaymentsMade.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+    var pendingPayment = chargeTotal - deductionTotal - paymentDone - viewModel.paymentRecovery + viewModel.collections
+
+    if(pendingPayment < 0){
+      pendingPayment = 0.0
+    }
+
+    paymentSummaryBinding.pendingPayment = String.format("%.2f",pendingPayment)
     paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -639,7 +712,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             R.color.status_lost
     ))
 
-    paymentSummaryBinding.containerNetPayable.visibility = View.VISIBLE
+    paymentSummaryBinding.containerTotalCharges.visibility = View.VISIBLE
+    paymentSummaryBinding.containerTotalDeduction.visibility = View.VISIBLE
+    paymentSummaryBinding.containerTotalPaymentsMade.visibility = View.VISIBLE
     paymentSummaryBinding.containerPendingPayment.visibility = View.VISIBLE
     paymentSummaryBinding.containerPendingRecovery.visibility = View.VISIBLE
     binding.containerHistory.addView(paymentSummaryBinding.root)
