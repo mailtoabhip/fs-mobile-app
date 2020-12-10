@@ -65,4 +65,18 @@ BaseExpandableDataRVAdapter<BaseConsolidatedPageRVAdapterItem<*>, ViewDataBindin
             is ConsolidatedPageProgressItemVH -> holder.bind(item as ConsolidatedPageProgressItem, _interface)
         }
     }
+
+    fun resetStaticData() {
+        mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                  //add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate))
+            items.filter { it.type == Ledger || it.type == Warning || it.type == Timeout }
+                    .map { Pair(it, DataRVAdapterOperationType.Remove) }
+                    .let {
+                        addAll(it)
+                    }
+        }
+                .let {
+                    operation(it)
+                }
+    }
 }

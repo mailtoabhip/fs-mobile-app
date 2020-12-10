@@ -188,6 +188,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         }
 
         viewModel.ledgerLiveData.observe(this, androidx.lifecycle.Observer {
+            binding.refreshLayout.isRefreshing = false
             it?.let { _items ->
                 adapter.operation(_items)
             }
@@ -258,7 +259,9 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     private fun refreshData(){
-        //viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, false)
+        binding.refreshLayout.isRefreshing = true
+        adapter.resetStaticData()
+        viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, false)
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
