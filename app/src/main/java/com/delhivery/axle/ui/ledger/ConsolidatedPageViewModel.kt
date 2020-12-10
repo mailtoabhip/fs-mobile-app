@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.PayableRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
 import com.delhivery.axle.api.response.DownloadLedgerResponse
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
@@ -104,39 +105,39 @@ class ConsolidatedPageViewModel @Inject constructor(
         val startObject = JsonObject()
         val endObject = JsonObject()
 
-//        startObject.add("column", JsonPrimitive("pmt_success_dt"))
-//        startObject.add("value", JsonPrimitive(startDate))
-//        startObject.add("operator", JsonPrimitive("gte"))
-//
-//        endObject.add("column", JsonPrimitive("pmt_success_dt"))
-//        endObject.add("value", JsonPrimitive(endDate))
-//        endObject.add("operator", JsonPrimitive("lte"))
-//
-//        rangeFilterArray.add(startObject)
-//        rangeFilterArray.add(endObject)
-//
-//        root.add("payee_id", JsonPrimitive(userRepository.userId()))
-//        root.add("range_filters", rangeFilterArray)
-//        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
-//        root.add("offset", JsonPrimitive(offset))
-
-
-        var start = "2020-10-31T18:30:00"
-        var end = "2020-11-30T18:29:59"
-
         startObject.add("column", JsonPrimitive("pmt_success_dt"))
-        startObject.add("value", JsonPrimitive(start))
+        startObject.add("value", JsonPrimitive(startDate))
         startObject.add("operator", JsonPrimitive("gte"))
 
         endObject.add("column", JsonPrimitive("pmt_success_dt"))
-        endObject.add("value", JsonPrimitive(end))
+        endObject.add("value", JsonPrimitive(endDate))
         endObject.add("operator", JsonPrimitive("lte"))
 
         rangeFilterArray.add(startObject)
         rangeFilterArray.add(endObject)
 
-        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
+        root.add("payee_id", JsonPrimitive(userRepository.userId()))
         root.add("range_filters", rangeFilterArray)
+        root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
+        root.add("offset", JsonPrimitive(offset))
+
+
+//        var start = "2020-10-31T18:30:00"
+//        var end = "2020-11-30T18:29:59"
+//
+//        startObject.add("column", JsonPrimitive("pmt_success_dt"))
+//        startObject.add("value", JsonPrimitive(start))
+//        startObject.add("operator", JsonPrimitive("gte"))
+//
+//        endObject.add("column", JsonPrimitive("pmt_success_dt"))
+//        endObject.add("value", JsonPrimitive(end))
+//        endObject.add("operator", JsonPrimitive("lte"))
+//
+//        rangeFilterArray.add(startObject)
+//        rangeFilterArray.add(endObject)
+//
+//        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
+//        root.add("range_filters", rangeFilterArray)
 
 
         return root

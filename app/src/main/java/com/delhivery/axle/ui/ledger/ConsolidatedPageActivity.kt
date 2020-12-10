@@ -50,8 +50,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     var downloadID = 0.toLong()
 
-    var filePath = Uri.parse("")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
@@ -274,12 +272,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     private fun downloadLedger() {
 
-//        val direct = File(getExternalFilesDir(null), "/Ledger")
-//
-//        if (!direct.exists()) {
-//            direct.mkdirs()
-//        }
-
         val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/oracle-mis/applied/applied_2019-12-05_1575540958332.xlsx")
@@ -300,10 +292,10 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         Environment.DIRECTORY_DOCUMENTS,
                         path
                 )
-                .setNotificationVisibility(View.VISIBLE)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
 
         downloadID = mgr.enqueue(request)
-        filePath = Uri.parse(Environment.DIRECTORY_DOCUMENTS + path)
     }
 
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
@@ -313,21 +305,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         ) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID === id) {
-                uiUtils.showToast("File downloaded")
-                openExcel()
+                uiUtils.showToast("File downloaded, please check notification.")
             }
-        }
-    }
-
-    private fun openExcel(){
-        val newintent = Intent(Intent.ACTION_VIEW)
-        newintent.setDataAndType(filePath, "application/vnd.ms-excel")
-        newintent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        newintent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        try {
-            startActivity(newintent)
-        } catch (e: ActivityNotFoundException) {
-            uiUtils.showToast("No Application Available to View Excel")
         }
     }
 
@@ -341,7 +320,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                     REQCODE_STORAGE
             )
         } else {
-            uiUtils.showSnackbar("Downloading File...")
+            uiUtils.showToast("Downloading File...")
         }
     }
 }
