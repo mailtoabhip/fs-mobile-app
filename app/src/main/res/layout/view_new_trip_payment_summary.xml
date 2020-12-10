@@ -116,7 +116,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="Rs."
                     android:textColor="@color/heading_black"
-                    android:layout_marginStart="@dimen/size_180dp"
+                    android:layout_marginStart="@dimen/size_160dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -170,7 +170,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_total_deduction"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/size_240dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="Total Deductions"
@@ -187,7 +187,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="Rs."
                         android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_180dp"
+                        android:layout_marginStart="@dimen/size_160dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -231,7 +231,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_waived_off"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/size_240dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="@{waivedOffLabel}"
@@ -249,7 +249,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="Rs."
                         android:textColor="@color/status_lost"
-                        android:layout_marginStart="@dimen/size_180dp"
+                        android:layout_marginStart="@dimen/size_160dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -306,7 +306,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_total_payments_made"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/size_240dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="Total Payments Made"
@@ -323,7 +323,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="Rs."
                         android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_180dp"
+                        android:layout_marginStart="@dimen/size_160dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -369,7 +369,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_pending_payment"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/size_240dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="Pending Payment"
@@ -386,7 +386,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="Rs."
                         android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_180dp"
+                        android:layout_marginStart="@dimen/size_160dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -436,7 +436,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/label_pending_recovery"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/size_240dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:text="Pending Recovery (for future txns)"
@@ -453,7 +453,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:text="Rs."
                         android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_180dp"
+                        android:layout_marginStart="@dimen/size_160dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

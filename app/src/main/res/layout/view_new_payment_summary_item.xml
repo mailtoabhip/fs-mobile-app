@@ -28,7 +28,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_charge_type"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/size_240dp"
                 android:layout_height="wrap_content"
                 android:text="sample charge"
                 android:textColor="@color/heading_black"
@@ -42,10 +42,9 @@
                 android:id="@+id/text_charge_const"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
                 android:text="Rs."
                 android:textColor="@color/heading_black"
-                android:layout_marginStart="@dimen/size_180dp"
+                android:layout_marginStart="@dimen/size_160dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
