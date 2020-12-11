@@ -201,7 +201,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         })
 
         viewModel.downloadLoadingLiveData.observe(this, androidx.lifecycle.Observer {
-            downloadLedger()
+            downloadLedger(it.url)
         })
 
         viewModel.downloadPressed.observe(this, androidx.lifecycle.Observer {
@@ -270,11 +270,12 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         override fun isLoading() = isLoadingData
     }
 
-    private fun downloadLedger() {
+    private fun downloadLedger(url: String) {
 
         val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-        val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/oracle-mis/applied/applied_2019-12-05_1575540958332.xlsx")
+        //val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/oracle-mis/applied/applied_2019-12-05_1575540958332.xlsx")
+        val downloadUri = Uri.parse(url)
         val request = DownloadManager.Request(
                 downloadUri
         )
