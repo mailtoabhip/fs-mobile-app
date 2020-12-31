@@ -46,7 +46,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     super.onViewCreated(view, savedInstanceState)
 
     binding.error = false
-    binding.loading = true
+    binding.loading = false
     binding.executePendingBindings()
 
     viewModel.tripEarningLiveData.reobserve(this, Observer { t ->
@@ -79,6 +79,10 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
     }
 
+    binding.containerYourTeam.setOnClickListener {
+
+    }
+
     binding.containerLogout.setOnClickListener { it.post { confirmLogout() } }
 
     binding.containerTripMeter.setOnClickListener {
@@ -97,7 +101,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
     }
 
-    viewModel.fetchTripMeter()
+    //viewModel.fetchTripMeter()
   }
 
   private fun updateTripMeter(t: Map<Int, MonthlyEarning?>?) {

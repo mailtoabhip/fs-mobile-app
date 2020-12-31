@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="request"
+        type="com.delhivery.axle.data.UserModel"
+        />
+
+    <import type="android.view.View" />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_2dp"
+      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        >
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/admin_text"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/size_20dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:textSize="@dimen/size_16dp"
+            android:textStyle="bold"
+            tools:text="<Supplier Name> (You)"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/size_20dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:textSize="@dimen/size_16dp"
+            tools:text="9876543210"/>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/admin_text"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:layout_marginEnd="@dimen/size_20dp"
+          android:layout_marginTop="@dimen/size_20dp"
+          android:layout_marginBottom="@dimen/size_20dp"
+          android:layout_marginStart="@dimen/size_20dp"
+          android:background="@drawable/bg_login_edit"
+          android:padding="@dimen/size_8dp"
+          android:textColor="@color/black"
+          android:textStyle="bold"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          tools:text="Admin"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.cardview.widget.CardView>
+
+</layout>

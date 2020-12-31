@@ -13,6 +13,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * Handle network calls to User Service
@@ -70,5 +71,16 @@ interface UserService {
     @Path("user_id") userId: String,
     @Body payload: UpdateUserFCMTokenRequest
   ): Single<BaseMessageResponse>
+
+  /**
+   * Get team member's detail
+   */
+  @GET("/users/supplypartners")
+  fun getTeamMembers(
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int,
+    @Query("inc_all_users") includeAllUsers: Boolean,
+    @Query("sp_id") sp_id: String
+  ): Single<BaseResponse<List<UserModel>>>
 
 }

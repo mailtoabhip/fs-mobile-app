@@ -146,6 +146,7 @@
   <string name="label_payment_summary">Payment Summary</string>
   <string name="label_no_bids_found">No bids found</string>
   <string name="label_your_routes">Your Routes</string>
+  <string name="label_your_team">Your Team Members</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
   <string name="label_bidding_ended">Bidding ended</string>
