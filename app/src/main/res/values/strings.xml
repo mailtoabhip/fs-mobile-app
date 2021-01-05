@@ -237,6 +237,7 @@
   <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
   <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
   <string name="express">Express</string>
+  <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
