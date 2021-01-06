@@ -2,6 +2,8 @@ package com.delhivery.axle.ui.team
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
+import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewTeamMemberAdminItemBinding
@@ -74,7 +76,7 @@ class TeamMembersAdminUserItemVH(binding: ViewTeamMemberAdminItemBinding) :
     item: TeamMemberAdminUserItem,
     _interface: TeamMembersRVAdapterInterface
   ) {
-
+    binding.user = item.data
   }
 }
 
@@ -89,7 +91,9 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
     item: TeamMemberSubUserItem,
     _interface: TeamMembersRVAdapterInterface
   ) {
-
+    binding.user = item.data
+    binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
+    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
   }
 }
 

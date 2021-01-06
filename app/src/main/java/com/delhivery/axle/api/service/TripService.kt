@@ -29,7 +29,7 @@ interface TripService {
   /**
    * Trip details
    */
-  @PATCH("trips/{transactionId}/")
+  @PATCH("trips/actions/{transactionId}/")
   fun updateTrip(
     @Path("transactionId") transactionId: String,
     @Body request: PodRequest

@@ -63,3 +63,7 @@ data class UpdateUserFCMTokenRequest(
     fun getRequest(fcmToken: String) = UpdateUserFCMTokenRequest(fcmToken)
   }
 }
+
+/* actions */
+const val EditTeamMemberAction_Edit = "edit_member"
+const val DeleteTeamMemberAction_Delete = "delete_member"

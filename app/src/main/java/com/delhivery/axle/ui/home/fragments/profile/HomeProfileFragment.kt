@@ -11,6 +11,8 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.ui.team.teamMembersIntent
+import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.PROPERTY_SOURCE
@@ -65,22 +67,36 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       binding.executePendingBindings()
     })
 
+//    binding.containerYourRoutes.setOnClickListener {
+//      // Capture event
+//      analyticsUtil.trackEvent(
+//          EVENT_EDIT_ROUTE,
+//          mutableListOf(PROPERTY_SOURCE),
+//          mutableListOf(VALUE_PROFILE)
+//      )
+//      it.post {
+//        startActivityForResult(
+//            selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
+//        )
+//      }
+//    }
+
     binding.containerYourRoutes.setOnClickListener {
-      // Capture event
-      analyticsUtil.trackEvent(
-          EVENT_EDIT_ROUTE,
-          mutableListOf(PROPERTY_SOURCE),
-          mutableListOf(VALUE_PROFILE)
-      )
-      it.post {
-        startActivityForResult(
-            selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
-        )
+      context?.let {
+        startActivity(userRoutesIntent(it))
       }
     }
 
-    binding.containerYourTeam.setOnClickListener {
+    if (viewModel.userPrefs.isParent) {
+      binding.containerYourTeam.visibility = View.VISIBLE
+    } else {
+      binding.containerYourTeam.visibility = View.GONE
+    }
 
+    binding.containerYourTeam.setOnClickListener {
+      context?.let {
+        startActivity(teamMembersIntent(it))
+      }
     }
 
     binding.containerLogout.setOnClickListener { it.post { confirmLogout() } }
@@ -101,7 +117,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
     }
 
-    //viewModel.fetchTripMeter()
+    viewModel.fetchTripMeter()
   }
 
   private fun updateTripMeter(t: Map<Int, MonthlyEarning?>?) {

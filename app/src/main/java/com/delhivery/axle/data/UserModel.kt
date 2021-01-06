@@ -34,6 +34,7 @@ data class UserModel(
   @SerializedName("bank_name") var bank: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
+  @SerializedName("is_deleted") var isDeleted: Boolean = false,
   @SerializedName("test_user") var testUser: Boolean = false,
   @SerializedName("designation") var designation: String?
 ) : BaseKeyTypeModel<String>(), Serializable {

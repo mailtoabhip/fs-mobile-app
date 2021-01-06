@@ -35,6 +35,7 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
@@ -118,9 +119,12 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     }
 
     binding.routesBanner.setOnClickListener {
-      startActivity(
-          selectRouteIntent(it.context, EditRoute)
-      )
+//      startActivity(
+//          selectRouteIntent(it.context, EditRoute)
+//      )
+      context?.let {
+        startActivity(userRoutesIntent(it))
+      }
     }
 
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
@@ -229,8 +233,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_SOURCE),
             mutableListOf(VALUE_LOAD_INFO)
         )
+//        context?.let {
+//          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
+//        }
         context?.let {
-          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
+          startActivity(userRoutesIntent(it))
         }
       }
 
@@ -241,8 +248,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_SOURCE),
             mutableListOf(VALUE_NO_RESULTS)
         )
+//        context?.let {
+//          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
+//        }
         context?.let {
-          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
+          startActivity(userRoutesIntent(it))
         }
       }
 

@@ -34,7 +34,7 @@ interface TransactionService {
   @GET("/transactions/loadboard/")
   fun loadBoardTransactions(
     @Query("sp_id") userId: String,
-    @Query("city_code") cityCode: String,
+    //@Query("city_code") cityCode: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
     @Query("axle_current_week_loads") currWeekLoads: String = "yes",

@@ -271,11 +271,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ifscCode = user.ifscCode ?: ""
     pancard = user.panCardNo ?: ""
     accNumber = user.accNumber()
-    cityCode = if (user.hasRoutes()) {
-      user.userRoutes()[0].origin.orion_db_city_code
-    } else {
-      user.baseCityCode
-    }
+//    cityCode = if (user.hasRoutes()) {
+//      user.userRoutes()[0].origin.orion_db_city_code
+//    } else {
+//      user.baseCityCode
+//    }
+    cityCode = user.baseCityCode
     isParent = user.isParent()
   }
 

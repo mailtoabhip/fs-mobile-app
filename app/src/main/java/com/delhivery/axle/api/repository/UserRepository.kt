@@ -13,6 +13,7 @@ import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -93,5 +94,17 @@ class UserRepository @Inject constructor(
    * Get team members
    */
   fun getUserTeamMembers(offset: Int, limit: Int, includeAllUsers: Boolean, sp_id: String) =
-    userService.getTeamMembers(offset, limit, includeAllUsers, sp_id)
+    userService.getTeamMembers(offset, limit, includeAllUsers, sp_id).convertResponse()
+
+  /**
+   * Create secondary user
+   */
+  fun createSecondaryUser(jsonObject: JsonObject) =
+    userService.createSecondaryUser(jsonObject).convertResponse()
+
+  /**
+   * Update secondary user
+   */
+  fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
+    userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
 }

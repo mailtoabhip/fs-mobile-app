@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
@@ -114,6 +115,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         } else {
           fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
         }
+      }
+      LANE_PREFERENCE_UPDATE_NOTIFICATION -> {
+        startActivity(userRoutesIntent(this))
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -213,3 +217,4 @@ private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
 private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
 private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
+private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"

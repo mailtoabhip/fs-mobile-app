@@ -13,7 +13,7 @@ import com.delhivery.axle.ui.team.TeamMembersRVAdapterItemType.Progress
  */
 
 /**
- * RV item type for []
+ * RV item type for [TeamMembersRVAdapter]
  */
 enum class TeamMembersRVAdapterItemType(val typeId: Int) {
   AdminUser(0),
@@ -29,7 +29,7 @@ enum class TeamMembersRVAdapterItemType(val typeId: Int) {
 }
 
 /**
- * Base Home loads type adapter item
+ * Base team member type adapter item
  */
 abstract class BaseTeamMembersRVAdapterItem<D : BaseKeyTypeModel<String>>(
   val type: TeamMembersRVAdapterItemType,
@@ -45,7 +45,7 @@ class TeamMemberAdminUserItem(data: UserModel) :
     BaseTeamMembersRVAdapterItem<UserModel>(AdminUser, data)
 
 /**
- * Team Member admin user item
+ * Team Member child user item
  */
 class TeamMemberSubUserItem(data: UserModel) :
     BaseTeamMembersRVAdapterItem<UserModel>(SubUser, data)

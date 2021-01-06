@@ -19,8 +19,8 @@ class TransactionsRepository @Inject constructor(
    * Get user transactions
    */
   fun fetchLoadBoardTransactions(offset: Int, speed: String) = transactionService.loadBoardTransactions(
-      userRepository.userId(), userPrefs.cityCode ?: "", offset, UserTripsLoadLimit, "", speed
-  ).convertResponse()
+      userRepository.userId(), offset, UserTripsLoadLimit, "", speed
+  ).convertResponse()  //userPrefs.cityCode ?: "",
 
   /**
    * Search [TransactionStatus.Requested] transactions

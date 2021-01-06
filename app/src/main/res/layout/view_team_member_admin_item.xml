@@ -7,7 +7,7 @@
     >
   <data>
     <variable
-        name="request"
+        name="user"
         type="com.delhivery.axle.data.UserModel"
         />
 
@@ -45,16 +45,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:text="@{user.name}"
             android:layout_marginStart="@dimen/size_20dp"
             android:layout_marginTop="@dimen/size_16dp"
             android:textSize="@dimen/size_16dp"
             android:textStyle="bold"
-            tools:text="<Supplier Name> (You)"/>
+            tools:text="Supplier Name (You)"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:text="@{user.phoneNo}"
             android:layout_marginStart="@dimen/size_20dp"
             android:layout_marginTop="@dimen/size_8dp"
             android:textSize="@dimen/size_16dp"
@@ -71,6 +73,7 @@
           android:layout_marginTop="@dimen/size_20dp"
           android:layout_marginBottom="@dimen/size_20dp"
           android:layout_marginStart="@dimen/size_20dp"
+          android:text="Admin"
           android:background="@drawable/bg_login_edit"
           android:padding="@dimen/size_8dp"
           android:textColor="@color/black"
