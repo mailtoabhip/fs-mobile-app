@@ -56,6 +56,7 @@ data class HomeTripsItemData(
   @SerializedName("pod_dispatch_docket_image") val podDispatchDocketImage: String?,
   @SerializedName("pod_dispatch_date") val podDispatchDate: String?,
   @SerializedName("status_update_info") val updateInfo: StatusUpdateInfo?,
+  @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
   var payment: BulkPaymentItem? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,

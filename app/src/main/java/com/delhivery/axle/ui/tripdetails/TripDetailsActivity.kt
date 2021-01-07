@@ -23,11 +23,7 @@ import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.databinding.ActivityTripDetailsBinding
-import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
-import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
-import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
-import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
@@ -113,7 +109,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(viewModel.paymentSummary.toMutableList())
+      if(viewModel.tripDetail.isApReconPending == true){
+        populateIsApReconPendingPage()
+      }else{
+        populatePaymentSummary(viewModel.paymentSummary.toMutableList())
+      }
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -188,6 +188,27 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.executePendingBindings()
       }
     }
+  }
+
+  private fun populateIsApReconPendingPage(){
+    analyticsUtil.trackEvent(
+            EVENT_PAYMENT_SUMMARY,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
+    binding.progressHistory.root.visibility = View.GONE
+    binding.viewSummary.isSelected = true
+    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
+    binding.viewHistory.isSelected = false
+    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
+
+    binding.containerHistory.removeAllViews()
+    val paymentSummaryBinding = ViewApReconPendingBinding.inflate(
+            layoutInflater, binding.containerHistory, false
+    )
+    paymentSummaryBinding.containerApText.visibility = View.VISIBLE
+    binding.containerHistory.addView(paymentSummaryBinding.root)
+
   }
 
   private fun populateHistory(history: MutableList<TripHistoryItem>) {

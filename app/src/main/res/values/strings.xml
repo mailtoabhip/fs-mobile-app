@@ -232,6 +232,7 @@
   <string name="label_via">Via</string>
   <string name="label_multi_stop">Multi-Stop</string>
   <string name="label_pmt">PMT</string>
+  <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
