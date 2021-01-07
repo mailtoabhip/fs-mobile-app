@@ -109,23 +109,11 @@ object DateUtils {
     }
   }
 
-//  fun parsePodDate(
-//    date: String,
-//    format: String
-//  ): Date {
-//    var inputFormat: DateFormat = SimpleDateFormat("yyyy-dd-MM")
-//    var outputFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss")
-//    var inputDateStr = "2020-09-01"
-//    var out = inputFormat.parse(inputDateStr)
-//    return outputFormat.format(date)
-//  }
-
   /**
    * @return parse date string and days diff of [date] from today
    */
-  fun daysDiff(date: Date): Int {
+  fun daysDiff(date: Date, now: Calendar = Calendar.getInstance()): Int {
     val cal = date.toCalendar()
-    val now = Calendar.getInstance()
     return cal[Calendar.DAY_OF_YEAR] - now[Calendar.DAY_OF_YEAR]
   }
 
@@ -155,9 +143,7 @@ object DateUtils {
     date: String,
     format: String
   ): String {
-    val requiredOn = parseDate(date, format)
-    val reqTime = formatDate(requiredOn, "hh:mm a")
-    return daysDiffStr(requiredOn)
+    return daysDiffStr(parseDate(date, format))
   }
 
   /**

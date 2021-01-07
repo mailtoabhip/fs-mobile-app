@@ -60,7 +60,7 @@
         tools:visibility="visible"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -69,7 +69,6 @@
           android:text="UPDATE"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

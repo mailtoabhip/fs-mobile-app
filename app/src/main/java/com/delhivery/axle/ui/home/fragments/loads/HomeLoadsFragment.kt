@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.CompoundButton
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -17,6 +18,8 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
@@ -63,6 +66,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
+  var express = ""
+  var isExpress = false
 
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
@@ -189,7 +194,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private fun refreshData() {
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions()
+    viewModel.fetchUserTransactions(false, express, isExpress)
   }
 
   override fun handleAction(
@@ -206,7 +211,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(data, it)) }
+        context?.let { startActivity(bidDetailsIntent(data.key(), it)) }
       }
 
       HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> {
@@ -242,6 +247,17 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsTimeOutAction -> {
+        refreshData()
+      }
+
+      HomeLoadsFilterAction -> {
+        if (isExpress) {
+          isExpress = false
+          express = ""
+        } else {
+          isExpress = true
+          express = "EXP"
+        }
         refreshData()
       }
     }
@@ -415,7 +431,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
 
     override fun hasMore() = viewModel.hasMoreData
 

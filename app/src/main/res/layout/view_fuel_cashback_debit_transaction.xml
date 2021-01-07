@@ -46,7 +46,7 @@
           android:padding="@dimen/size_12dp"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_payee_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
           android:padding="@dimen/size_12dp"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_acc_num"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
             app:layout_constraintTop_toBottomOf="@+id/id2"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_acc_num"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
             tools:text="1234567890"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_owner_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_acc_num"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_owner_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -172,8 +172,8 @@
             tools:text="qwertyuio"
             />
 
-        <TextView
-            android:id="@+id/label_utr"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_advance_utr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
@@ -185,7 +185,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_owner_name"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_utr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
             tools:text="1234567890"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_utr"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -231,7 +231,7 @@
             tools:text="asdedfrf"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_destination"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_origin"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -260,7 +260,7 @@
             tools:text="asdedfrf"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -274,7 +274,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_destination"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -47,7 +47,7 @@
           android:layout_height="wrap_content"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_payee_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             android:text="@string/label_you_will_receive"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_cashback"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             tools:text="Cashback: ₹ 4000"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/id4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
           android:padding="@dimen/size_12dp"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -157,7 +157,7 @@
             tools:text="qwertyuio"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_origin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_date"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
             tools:text="asdedfrf"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_destination"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_status"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
             tools:text="asdedfrf"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_mobile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -228,7 +228,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_destination"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_mobile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
             tools:text="1234567890"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_vehicle_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -257,7 +257,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_mobile"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_vehicle_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -273,7 +273,7 @@
             tools:text="1234567890"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_vehicle_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -286,7 +286,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_vehicle_number"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_vehicle_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -302,7 +302,7 @@
             tools:text="24MTX"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_transaction_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -316,7 +316,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_vehicle_type"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_transaction_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -333,7 +333,7 @@
             tools:text="Processed"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/label_transaction_remarks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -349,7 +349,7 @@
             app:layout_constraintTop_toBottomOf="@+id/text_transaction_status"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_transaction_remarks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

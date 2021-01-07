@@ -37,7 +37,7 @@
         style="@style/view_header_background"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -45,10 +45,9 @@
           android:text="@string/label_active_bids"
           android:textColor="@color/white"
           android:textSize="@dimen/text_10sp"
-          android:textStyle="normal"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
@@ -74,7 +73,7 @@
         style="@style/view_header_background"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -82,10 +81,9 @@
           android:text="@string/label_confirmed_bids"
           android:textColor="@color/white"
           android:textSize="@dimen/text_10sp"
-          android:textStyle="normal"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"
@@ -111,7 +109,7 @@
         style="@style/view_header_background"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -119,10 +117,9 @@
           android:text="@string/label_lost_bids"
           android:textColor="@color/white"
           android:textSize="@dimen/text_10sp"
-          android:textStyle="normal"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_4dp"

@@ -62,7 +62,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
   private var mPhotoFile: File? = null
-  private var isCamera: Boolean = false
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
@@ -193,7 +192,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     file: File
   ) {
     uiUtils.showProgress()
-    val awsPath = "trips/vendor_pod/${viewModel.transactionId}/" + uploadImageName + ".jpg"
+    val awsPath = "trips/temp/vendor_pod/${viewModel.transactionId}/" + uploadImageName + ".jpg"
     awsUtils.startUpload(delegationToken, awsPath, file, this)
     viewModel.imagePaths.add(file.path)
   }
@@ -317,7 +316,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   }
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
-    this.isCamera = isCamera
     compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))
         .onBackground()
         .subscribe { granted, error ->

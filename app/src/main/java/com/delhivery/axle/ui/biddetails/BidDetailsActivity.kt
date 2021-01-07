@@ -289,8 +289,8 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Bid details intent
  */
 fun bidDetailsIntent(
-  _data: HomeBidsRequestItemData,
+  transactionId: String,
   context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, _data.key())
+  putExtra(TransactionIdIntentKey, transactionId)
 }

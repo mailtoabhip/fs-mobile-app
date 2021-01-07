@@ -2,6 +2,11 @@ package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.PaymentRepository
+import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UtilityRepository
+import com.delhivery.axle.api.repository.WarehouseRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.TripChargesResponse
 import com.delhivery.axle.api.response.TripPaymentsResponse
@@ -26,18 +31,17 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
-import com.delhivery.axle.repository.PaymentRepository
-import com.delhivery.axle.repository.TripsRepository
-import com.delhivery.axle.repository.UserRepository
-import com.delhivery.axle.repository.WarehouseRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import java.io.File
 import javax.inject.Inject
 
@@ -48,6 +52,7 @@ class TripDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val paymentRepository: PaymentRepository,
   private val warehouseRepository: WarehouseRepository,
+  private val utilityRepository: UtilityRepository,
   private var userRepository: UserRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
@@ -65,7 +70,8 @@ class TripDetailsViewModel @Inject constructor(
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   /* payment summary */
-  var paymentSummary = mutableListOf<TripChargesResponse>()
+  var chargesSummary = mutableListOf<TripChargesResponse>()
+  var paymentsSummary = mutableListOf<TripPaymentsResponse>()
 
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
@@ -116,7 +122,7 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch history, charges and payments summary
+   * Fetch history and payments summary
    */
   fun fetchPaymentSummary() {
     compositeDisposable += paymentRepository.historyAndPayments(transactionId)
@@ -132,31 +138,28 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch history And Payments summary
-   */
-  fun fetchPayments() {
-    compositeDisposable += paymentRepository.historyAndPayments(transactionId)
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            processTrips(_res.first, _res.second)
-            historyLiveData.postValue(true)
-          } else {
-            error.handle()
-          }
-        }
-  }
-
-  /**
    * Fetch charges summary
    */
-  fun fetchChargesSummary() {
-    compositeDisposable += paymentRepository.historyCharges(transactionId)
+  fun fetchChargeSummary() {
+    val jsonObject = JsonObject()
+    val jsonArray = JsonArray()
+    jsonArray.add(transactionId)
+    jsonObject.add("trip_ids", jsonArray)
+    compositeDisposable += utilityRepository.fetchCharges(jsonObject)
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            paymentSummary.clear()
-            paymentSummary.addAll(_res)
+            chargesSummary.clear()
+            if (_res?.values?.isNotEmpty() == true) {
+              _res.values.toMutableList()
+                  .let {
+                    for (charge in it[0].vendorCharges) {
+                      chargesSummary.add(charge)
+                    }
+                  }
+            }
+          } else {
+            error?.handle()
           }
         }
   }
@@ -165,6 +168,9 @@ class TripDetailsViewModel @Inject constructor(
     histories: List<TripHistoryModel>,
     payments: List<TripPaymentsResponse>
   ) {
+    paymentsSummary.clear()
+    paymentsSummary.addAll(payments)
+
     for ((index, history) in histories.withIndex()) {
       when (history.status().statusKey) {
         TripStatus.TruckConfirmed.statusKey -> {
@@ -242,15 +248,17 @@ class TripDetailsViewModel @Inject constructor(
                   tripHistory[AdvancePaid] = TripHistoryItem(
                       AdvancePaid,
                       "Advance Paid",
-                      "Advance payment of ₹ ${String.format(
-                          "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                      "Advance payment of ₹${String.format(
+                          "%,.0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                       )} has been paid$utrString",
                       history.timeStamp()
                   )
-                  advancePaidTime = DateUtils.formatDate(
-                      DateUtils.parseDate(advancePay.updationTime, DatePatterns.OrionDateFormat),
-                      DatePatterns.SimpleDateFormat
-                  )
+                  advancePaidTime = advancePay.transferTime?.let {
+                    DateUtils.formatDate(
+                        DateUtils.parseDate(it, DatePatterns.OrionDateFormat),
+                        DatePatterns.SimpleDateFormat
+                    )
+                  } ?: ""
                 }
               } else {
                 advancePaid = false
@@ -259,8 +267,8 @@ class TripDetailsViewModel @Inject constructor(
                       AdvancePending,
                       "Advance Pending",
                       "Advance payment of " +
-                          "₹ ${String.format(
-                              "%, .0f", (tripDetail.bidDetails?.advancePayout ?: 0)
+                          "₹${String.format(
+                              "%,.0f", (tripDetail.bidDetails?.advancePayout ?: 0)
                           )}" +
                           " has been initiated"
                   )
@@ -367,15 +375,17 @@ class TripDetailsViewModel @Inject constructor(
               tripHistory[BalancePaid] = TripHistoryItem(
                   BalancePaid,
                   "Balance Paid",
-                  "Balance payment of ₹ ${String.format(
-                      "%, .0f", balancePay.amount
+                  "Balance payment of ₹${String.format(
+                      "%,.0f", balancePay.amount
                   )} has been paid$utrString",
                   balancePay.timeStamp()
               )
-              balancePaidTime = DateUtils.formatDate(
-                  DateUtils.parseDate(balancePay.updationTime, DatePatterns.OrionDateFormat),
-                  DatePatterns.SimpleDateFormat
-              )
+              balancePaidTime = balancePay.transferTime?.let {
+                DateUtils.formatDate(
+                    DateUtils.parseDate(balancePay.transferTime, DatePatterns.OrionDateFormat),
+                    DatePatterns.SimpleDateFormat
+                )
+              } ?: ""
             }
           } else {
             balancePaid = false

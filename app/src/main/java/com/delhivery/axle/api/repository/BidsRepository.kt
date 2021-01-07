@@ -1,9 +1,9 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.BidService
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BidSummaryResponse
+import com.delhivery.axle.api.service.BidService
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -121,7 +121,8 @@ class BidsRepository @Inject constructor(
   fun userBids(
     offset: Int,
     statuses: String
-  ) = bidService.bidsForStatuses(userRepository.userId(), UserBidsLoadLimit, offset, statuses)
+  ) = bidService.bidsForStatuses(userRepository.userId(),
+      UserBidsLoadLimit, offset, statuses)
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
 
@@ -137,6 +138,18 @@ class BidsRepository @Inject constructor(
     bids.joinToString(separator = ",") { it.transactionId }
         .let { bidService.bulkLowestBidsForTransactions(it) }
         .convertResponse()
+
+  /**
+   * Get lowest bid for loads
+   */
+  fun bulkLowestBidsForLoads(transactions: List<HomeBidsRequestItemData>) =
+    bidService.bulkLowestBidsForTransactions(
+        transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+    )
+        .convertResponse()
+        .map {
+          Pair(transactions, it)
+        }!!
 }
 
 /* User bids pagination load limit */

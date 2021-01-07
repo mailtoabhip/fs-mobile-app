@@ -8,7 +8,7 @@
       android:focusableInTouchMode="true"
       >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/edit_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

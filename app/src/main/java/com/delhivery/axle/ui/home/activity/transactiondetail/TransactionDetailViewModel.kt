@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.home.activity.transactiondetail
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.FuelRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.transactions.TransactionChannel
@@ -16,8 +18,6 @@ import com.delhivery.axle.data.transactions.TransactionType.PETRO_CASHBACK_DEBIT
 import com.delhivery.axle.data.transactions.TransactionType.PETRO_REFUND_CREDIT
 import com.delhivery.axle.data.transactions.TransactionType.RECONCILIATION_DEBIT
 import com.delhivery.axle.data.transactions.TransactionsItemData
-import com.delhivery.axle.repository.FuelRepository
-import com.delhivery.axle.repository.TripsRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionState
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateAdvanceAutoDebit

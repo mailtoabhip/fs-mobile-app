@@ -1,13 +1,13 @@
-package com.delhivery.axle.api
+package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
-import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.UserModel
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -41,7 +41,7 @@ interface UserService {
   @PATCH("/users/supplypartners/{user_id}/")
   fun updateUserRoutes(
     @Path("user_id") userId: String,
-    @Body payload: UpdateUserRoutesRequest
+    @Body payload: JsonObject
   ): Single<Any>
 
   /**

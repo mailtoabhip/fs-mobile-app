@@ -1,11 +1,11 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
-import com.delhivery.axle.api.UMSService
-import com.delhivery.axle.api.UserService
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
+import com.delhivery.axle.api.service.UMSService
+import com.delhivery.axle.api.service.UserService
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
@@ -69,7 +69,7 @@ class UserRepository @Inject constructor(
    * Update user routes and get all routes
    */
   fun updateUserRoutes(routes: List<RouteMappingModel>) =
-    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes))
+    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes).getRequest())
 
   /**
    * Update app access flag

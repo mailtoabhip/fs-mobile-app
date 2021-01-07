@@ -50,7 +50,7 @@
         app:layout_constraintTop_toBottomOf="@id/center_view"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_welcome_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,13 +64,12 @@
         android:text="@{ @string/msg_select_route_welcome_user(viewModel.username) }"
         android:textColor="@color/off_white"
         android:textSize="@dimen/text_24sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Welcome\nMahinder Singh pal"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_glad_to_onboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,8 +79,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_glad_to_onboard"
         android:textColor="@color/off_white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="@id/text_welcome_user"
         app:layout_constraintTop_toBottomOf="@id/text_welcome_user"
         />
@@ -100,17 +97,16 @@
         app:layout_constraintStart_toStartOf="parent"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:text="@string/label_which_routes_you_serve"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_12dp"
@@ -118,8 +114,6 @@
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/msg_select_route_pref_to_load"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           />
 
       <androidx.appcompat.widget.AppCompatButton
@@ -131,7 +125,7 @@
           style="@style/ActionButton"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_skip"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -145,7 +139,6 @@
           android:text="@string/action_skip_select_routes"
           android:textColor="@color/color_hint"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
     </androidx.appcompat.widget.LinearLayoutCompat>
   </androidx.constraintlayout.widget.ConstraintLayout>

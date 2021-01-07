@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.UserCity
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.ActivitySelectRouteBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
@@ -90,12 +90,12 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
       if (_fragment is SelectRouteDetailFragment && it != null) {
 
-        if (!it.third.isNullOrEmpty()) {
-          val routeModel = it.third.get(0)
-          currentRoute = RouteModel(CityModel(routeModel.origin.city, routeModel.origin.cityId))
-          currentRoute?.destinations = it.third[0].destinations
+        if (!it.second.isNullOrEmpty()) {
+          val routeModel = it.second[0]
+          currentRoute = RouteModel(routeModel.origin)
+          currentRoute?.destinations = it.second[0].destinations
         } else {
-          currentRoute = RouteModel(CityModel(it.first, it.second))
+          currentRoute = RouteModel(UserCity(it.first.first, it.first.second))
         }
         _fragment.route = currentRoute
         _fragment.populateRoute()
@@ -128,10 +128,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         (action as OriginSelectedAction).apply {
           when (currentRoute) {
             null -> {
-              currentRoute = RouteModel(origin)
+              currentRoute = RouteModel(origin.getUserCity())
             }
             else -> {
-              currentRoute?.origin = origin
+              currentRoute?.origin = origin.getUserCity()
             }
           }
           navigate(DestinationFragment)

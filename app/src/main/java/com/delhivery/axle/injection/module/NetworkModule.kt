@@ -1,18 +1,20 @@
 package com.delhivery.axle.injection.module
 
 import android.content.Context
-import com.delhivery.axle.api.BidService
-import com.delhivery.axle.api.CityService
-import com.delhivery.axle.api.FuelService
-import com.delhivery.axle.api.LoadCycleService
-import com.delhivery.axle.api.NotificationService
-import com.delhivery.axle.api.PaymentService
-import com.delhivery.axle.api.TransactionService
-import com.delhivery.axle.api.TripService
-import com.delhivery.axle.api.UMSService
-import com.delhivery.axle.api.UserService
-import com.delhivery.axle.api.WalletService
-import com.delhivery.axle.api.WarehouseService
+import com.delhivery.axle.api.service.BidService
+import com.delhivery.axle.api.service.CityService
+import com.delhivery.axle.api.service.ExpenseService
+import com.delhivery.axle.api.service.FuelService
+import com.delhivery.axle.api.service.LoadCycleService
+import com.delhivery.axle.api.service.NotificationService
+import com.delhivery.axle.api.service.PaymentService
+import com.delhivery.axle.api.service.TransactionService
+import com.delhivery.axle.api.service.TripService
+import com.delhivery.axle.api.service.UMSService
+import com.delhivery.axle.api.service.UserService
+import com.delhivery.axle.api.service.UtilityService
+import com.delhivery.axle.api.service.WalletService
+import com.delhivery.axle.api.service.WarehouseService
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
@@ -53,7 +55,8 @@ class NetworkModule {
    */
   @Provides
   @Singleton
-  fun provideGson(): Gson = GsonBuilder().setLenient().create()
+  fun provideGson(): Gson = GsonBuilder().setLenient()
+      .create()
 
   /**
    * Provide Http(OKHttp) client
@@ -95,7 +98,9 @@ class NetworkModule {
   fun provideHQService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ): UMSService = getRetrofit(gson, okHttpClient, UrlConfig.UMS).create(UMSService::class.java)
+  ): UMSService = getRetrofit(gson, okHttpClient, UrlConfig.UMS).create(
+      UMSService::class.java
+  )
 
   /**
    * Bid service
@@ -105,7 +110,9 @@ class NetworkModule {
   fun provideBidService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(BidService::class.java)
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(
+      BidService::class.java
+  )
 
   /**
    * Provide [UserService]
@@ -115,7 +122,9 @@ class NetworkModule {
   fun provideOrionDataService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.UserService).create(UserService::class.java)
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.UserService).create(
+      UserService::class.java
+  )
 
   /**
    * Provide [CityService]
@@ -125,7 +134,9 @@ class NetworkModule {
   fun provideCityService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.CityService).create(CityService::class.java)
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.CityService).create(
+      CityService::class.java
+  )
 
   /**
    * Provide [TransactionService]
@@ -220,5 +231,32 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ) =
-    getRetrofit(gson, okHttpClient, UrlConfig.LoadCycleService).create(LoadCycleService::class.java)
+    getRetrofit(gson, okHttpClient, UrlConfig.LoadCycleService).create(
+        LoadCycleService::class.java
+    )
+
+  /**
+   * Provide [ExpenseService]
+   */
+  @Provides
+  @Singleton
+  fun provideExpenseService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) =
+    getRetrofit(gson, okHttpClient, UrlConfig.ExpenseService).create(
+        ExpenseService::class.java
+    )
+
+  /**
+   * Provide [UtilityService]
+   */
+  @Provides
+  @Singleton
+  fun provideUtilityService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.UtilityService).create(
+      UtilityService::class.java
+  )
 }

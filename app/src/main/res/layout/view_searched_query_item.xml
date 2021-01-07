@@ -54,7 +54,7 @@
           tools:text="19 trips with search parameter"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/btn_reset"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

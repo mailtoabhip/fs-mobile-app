@@ -85,7 +85,7 @@
               bind:shadow="@{ @dimen/size_2dp }"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_from_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,27 +93,26 @@
                 android:text="@string/label_from"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
-                android:text="@{transaction.originCityState()}"
+                android:text="@{transaction.originDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_from_label"
-                tools:text="Panjim, Goa"
+                tools:text="North Goa, Panjim, Goa"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_to_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -122,18 +121,17 @@
                 android:text="@string/label_to"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_source"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:fontFamily="sans-serif"
-                android:text="@{transaction.destinationCityState()}"
+                android:text="@{transaction.destinationDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -141,7 +139,7 @@
                 tools:text="Andheri east, Mumbai, Maharashtra"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -150,13 +148,12 @@
                 android:text="@string/label_via"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 android:visibility="@{transaction.isMultiDrop() ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_destination"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_via_destination"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -171,7 +168,7 @@
                 tools:text="Mumbai(Maharashtra), Jaipur(Rajasthan)"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_date_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -187,7 +184,7 @@
                 tools:text="TODAY"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_truck_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -214,11 +211,24 @@
                 tools:srcCompat="@drawable/ic_closed_truck"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_is_multidrop"
+                android:text="Multidrop"
+                android:visibility="@{transaction.setMutidrop()}"
+                android:fontFamily="sans-serif"
+                android:padding="@dimen/size_8dp"
+                android:background="@drawable/bg_gradient_blue"
+                android:layout_marginTop="@dimen/size_12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_load_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_marginTop="@dimen/size_12dp"
                 android:fontFamily="sans-serif"
                 android:gravity="end"
                 android:text="@{ transaction.loadDetails() }"
@@ -226,11 +236,11 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_date_time"
+                app:layout_constraintTop_toBottomOf="@+id/text_is_multidrop"
                 tools:text="Load: Pharmaceuticals"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -238,13 +248,12 @@
                 android:fontFamily="sans-serif"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_load_details"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -254,7 +263,6 @@
                 android:lineSpacingExtra="-4sp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_24sp"
-                android:textStyle="normal"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_target_price_label"
@@ -263,7 +271,7 @@
           </androidx.constraintlayout.widget.ConstraintLayout>
 
           <!-- bidding completed text -->
-          <TextView
+          <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_bid_ended"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -275,7 +283,6 @@
               android:text="@string/label_bidding_ended"
               android:textColor="#59181818"
               android:textSize="@dimen/text_16sp"
-              android:textStyle="normal"
               android:visibility="gone"
               bind:shadow="@{ @dimen/size_2dp }"
               />

@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.selectroute.fragments.origincity
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentSelectRouteOriginCityBinding
 import com.delhivery.axle.ui.selectroute.fragments.OriginSelectedAction
@@ -21,10 +21,8 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
 
   override fun layoutId() = R.layout.fragment_select_route_origin_city
 
-  @Inject
-  lateinit var autoCompleteUtils: AutoCompleteUtils
-  @Inject
-  lateinit var locationUtils: LocationUtils
+  @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+  @Inject lateinit var locationUtils: LocationUtils
 
   override fun onViewCreated(
     view: View,

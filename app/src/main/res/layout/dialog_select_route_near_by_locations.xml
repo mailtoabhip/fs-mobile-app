@@ -13,7 +13,7 @@
       android:paddingTop="@dimen/size_24dp"
       >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/id1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,12 +22,11 @@
         android:text="@string/label_add_nearby_locations"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_20sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/id2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,13 +35,11 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_add_nearby_locations"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/id1"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/id3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,8 +48,6 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/msg_add_nearby_locations_deselect"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/id2"
         />

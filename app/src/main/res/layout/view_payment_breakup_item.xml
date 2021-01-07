@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="data"
+        type="com.delhivery.axle.api.response.TripPaymentsResponse"
+        />
+    <import type="android.view.View" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/containertext_start_date"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/size_6dp"
+      android:orientation="horizontal"
+      app:layout_constraintStart_toStartOf="parent"
+      >
+
+    <View
+        android:id="@+id/id1"
+        android:layout_width="@dimen/size_8dp"
+        android:layout_height="@dimen/size_8dp"
+        android:background="@drawable/bg_circle"
+        app:layout_constraintBottom_toBottomOf="@id/labeltext_start_date_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/labeltext_start_date_title"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labeltext_start_date_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_4dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@{data.chargeType()}"
+        android:textColor="@color/heading_black"
+        app:layout_constraintStart_toEndOf="@+id/id1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Advance Paid"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labeltext_start_date_utr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_4dp"
+        android:text="@{data.utr()}"
+        android:textColor="@color/heading_black"
+        android:visibility="@{data.bankTransactionId == null ||data.bankTransactionId.isEmpty()?View.GONE: View.VISIBLE}"
+        app:layout_constraintStart_toEndOf="@+id/id1"
+        app:layout_constraintTop_toBottomOf="@+id/labeltext_start_date_time"
+        tools:text="UTR: 1234567890"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labeltext_start_date_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_4dp"
+        android:text="@{data.dateTime()}"
+        android:textColor="@color/heading_black"
+        android:visibility="@{data.bankTransactionId == null ||data.bankTransactionId.isEmpty()?View.GONE: View.VISIBLE}"
+        app:layout_constraintStart_toEndOf="@+id/id1"
+        app:layout_constraintTop_toBottomOf="@+id/labeltext_start_date_title"
+        tools:text="Paid on: 12-11-2019"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/label_remarks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_4dp"
+        android:text="@{data.remark}"
+        android:textColor="@color/heading_black"
+        android:visibility="@{data.remark == null ||data.remark.isEmpty()?View.GONE: View.VISIBLE}"
+        app:layout_constraintStart_toEndOf="@+id/id1"
+        app:layout_constraintTop_toBottomOf="@+id/labeltext_start_date_utr"
+        tools:text="Remarks"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/texttext_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@{data.charge()}"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/labeltext_start_date_title"
+        tools:text="Rs 1750.00"
+        />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

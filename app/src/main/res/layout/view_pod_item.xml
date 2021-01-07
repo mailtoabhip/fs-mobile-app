@@ -10,6 +10,7 @@
         type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
         />
     <import type="android.view.View" />
+    <import type="com.delhivery.axle.data.home.trips.TripStatus" />
     <import type="androidx.core.content.ContextCompat" />
   </data>
 
@@ -50,7 +51,7 @@
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_source_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -58,29 +59,50 @@
           android:fontFamily="sans-serif"
           android:text="@{trip.originCityName()}"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           tools:text="Panjim"
           />
 
-      <TextView
-          android:id="@+id/text_source_state"
-          android:layout_width="wrap_content"
+      <LinearLayout
+          android:id="@+id/til_state"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{trip.originStateName()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="GOA"
-          />
+          android:orientation="horizontal">
 
-      <TextView
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_source_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.originDistrictState()}"
+            android:paddingEnd="@dimen/size_8dp"
+            android:textColor="@color/sub_heading_black"
+            android:layout_weight="1"
+            tools:text="Panjim, GOA"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_destination_state"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:paddingEnd="@dimen/size_8dp"
+            android:paddingStart="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.destinationDistrictState()}"
+            android:textColor="@color/sub_heading_black"
+            android:layout_weight="1"
+            tools:text="Thane, Mumbai"
+            />
+
+      </LinearLayout>
+
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -89,29 +111,12 @@
           android:fontFamily="sans-serif"
           android:text="@{trip.destinationCityName()}"
           android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toEndOf="@id/img_forward"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           tools:text="Andheri East"
           />
 
-      <TextView
-          android:id="@+id/text_destination_state"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_4dp"
-          android:fontFamily="sans-serif"
-          android:text="@{trip.destinationStateName()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="@id/text_destination_city"
-          app:layout_constraintTop_toBottomOf="@id/text_source_city"
-          tools:text="Mumbai"
-          />
-
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_truck_details"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -121,42 +126,81 @@
           android:text="@{trip.vehicleDetails.vehicleNo}"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/text_source_state"
+          app:layout_constraintTop_toBottomOf="@+id/til_state"
           tools:text="HR26"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
+
+          android:id="@+id/text_multidrop"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Multidrop"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:layout_marginBottom="@dimen/size_4dp"
+          android:background="@drawable/bg_gradient_blue"
+          android:paddingStart="@dimen/size_4dp"
+          android:textAlignment="center"
+          android:paddingEnd="@dimen/size_4dp"
+          android:paddingTop="@dimen/size_4dp"
+          android:paddingBottom="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:visibility="@{trip.setMutidrop()}"
+          app:layout_constraintTop_toBottomOf="@+id/text_truck_details"
+          app:layout_constraintLeft_toLeftOf="parent" />
+
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_days_pending"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="@dimen/text_10sp"
           android:text="@{trip.timeDiff()}"
-          bind:textColor="@{ ContextCompat.getColor(context, trip.podTimeColor()) }"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="@+id/text_lr"
+          app:layout_constraintTop_toBottomOf="@+id/text_truck_details"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.podTimeColor()) }"
           tools:text="12 days ageing"
           tools:textColor="@color/status_active"
           />
 
-      <TextView
-          android:id="@+id/text_lr"
-          android:layout_width="wrap_content"
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_rejection_remark"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_6dp"
-          android:fontFamily="sans-serif"
-          android:text="@{trip.lr()}"
-          android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
-          tools:text="LR: 9823222123"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="end"
+          android:text="@{trip.podRemarksOrPayment()}"
+          android:textColor="@color/status_lost"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/img_forward"
+          app:layout_constraintTop_toTopOf="@+id/text_truck_details"
+          tools:text="12 days ageing"
           />
 
-      <TextView
+      <LinearLayout
+          android:id="@+id/container_lr"
+          android:layout_marginTop="@dimen/size_8dp"
+          app:layout_constraintTop_toBottomOf="@+id/text_days_pending"
+          app:layout_constraintStart_toStartOf="parent"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_lr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@{trip.lr()}"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:textColor="@color/sub_heading_black"
+            tools:text="LR: 9823222123"
+            />
+
+      </LinearLayout>
+
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_loading"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -165,15 +209,13 @@
           android:fontFamily="sans-serif"
           android:text="@{trip.loadedAt()}"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintEnd_toStartOf="@+id/text_unloading"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/text_lr"
+          app:layout_constraintTop_toBottomOf="@id/container_lr"
           tools:text="Loading: 04-05-2019"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_unloading"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -182,8 +224,6 @@
           android:gravity="end"
           android:text="@{trip.unloadedAt()}"
           android:textColor="@color/sub_heading_black"
-          android:textSize="@dimen/text_14sp"
-          android:textStyle="normal"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/text_loading"
           app:layout_constraintTop_toTopOf="@+id/text_loading"
@@ -218,12 +258,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/size_8dp"
-            android:background="@drawable/bg_load_action_btn"
             android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            bind:drawableResId="@{ trip.podDrawable() }"
             bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
@@ -233,7 +273,7 @@
               android:fontFamily="sans-serif-medium"
               android:gravity="center_horizontal"
               android:maxLines="1"
-              android:text="@{trip.podActionText()}"
+              android:text="@{trip.podAction().status}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_14sp"
               />

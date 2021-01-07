@@ -1,10 +1,10 @@
 package com.delhivery.axle.ui.tripdetails
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
-import com.delhivery.axle.repository.TripsRepository
-import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground

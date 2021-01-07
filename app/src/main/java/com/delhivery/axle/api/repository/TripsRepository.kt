@@ -1,10 +1,10 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.TransactionService
-import com.delhivery.axle.api.TripService
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.TripSummaryResponse
+import com.delhivery.axle.api.service.TransactionService
+import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -19,21 +19,6 @@ class TripsRepository @Inject constructor(
   private val tripsService: TripService,
   private val transactionService: TransactionService
 ) : BaseRepository() {
-
-  /**
-   * @status set null to fetch all trips or add any comma separated trip statuses
-   * Get user trips for multiple statuses
-   *
-   */
-  fun trips(
-    offset: Int = 0,
-    statuses: String,
-    updatedAfter: String? = null
-  ) = tripsService.tripsForStatuses(
-      userRepository.userId(), UserTripsLoadLimit,
-      offset, statuses, updatedAfter
-  )
-      .convertResponse()
 
   /**
    * Complete trip details with transaction and trip history
@@ -65,7 +50,7 @@ class TripsRepository @Inject constructor(
   fun uploadPod(
     transactionId: String,
     imageUrls: MutableList<String>
-  ) = tripsService.uploadPod(PodRequest.getRequest(transactionId, imageUrls))
+  ) = tripsService.updateTrip(transactionId, PodRequest.getRequest(imageUrls))
 
   /**
    * Update tracking details

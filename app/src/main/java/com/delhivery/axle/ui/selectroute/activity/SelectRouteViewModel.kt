@@ -1,9 +1,9 @@
 package com.delhivery.axle.ui.selectroute.activity
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
-import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -19,7 +19,8 @@ class SelectRouteViewModel @Inject constructor(
   private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
-  var routesLiveData = MutableLiveData<Triple<String, String, MutableList<RouteModel>>>()
+  var routesLiveData =
+    MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
 
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
@@ -34,7 +35,9 @@ class SelectRouteViewModel @Inject constructor(
         .subscribe { _user, error ->
           if (!error) {
             routes.addAll(_user.userRoutes())
-            routesLiveData.postValue(Triple(_user.baseCity, _user.baseCityCode, routes))
+            routesLiveData.postValue(
+                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+            )
           } else {
             error.handle()
           }
@@ -86,6 +89,6 @@ class SelectRouteViewModel @Inject constructor(
    */
   fun setRoutesUpdated(route: RouteModel) {
     userPrefs.routeUpdate = true
-    userPrefs.cityCode = route.origin.cityId
+    userPrefs.cityCode = route.origin.orion_db_city_code
   }
 }

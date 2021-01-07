@@ -1,6 +1,7 @@
-package com.delhivery.axle.repository
+package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.TransactionService
+import com.delhivery.axle.api.repository.TransactionStatus.Requested
+import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -17,9 +18,8 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun fetchLoadBoardTransactions(offset: Int) = transactionService.loadBoardTransactions(
-      userRepository.userId(), userPrefs.cityCode ?: "",
-      offset, UserTripsLoadLimit
+  fun fetchLoadBoardTransactions(offset: Int, speed: String) = transactionService.loadBoardTransactions(
+      userRepository.userId(), userPrefs.cityCode ?: "", offset, UserTripsLoadLimit, "", speed
   ).convertResponse()
 
   /**
@@ -27,11 +27,11 @@ class TransactionsRepository @Inject constructor(
    */
   fun searchTransactions(
     offset: Int,
-    source: String,
+    source: String?,
     destination: String?,
     truckType: String?
   ) = transactionService.transactions(
-      offset, TransactionStatus.Requested.statusId, source, destination, truckType
+      offset, Requested.statusId, source, destination, truckType
   ).convertResponse()
 
   /**

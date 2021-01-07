@@ -26,8 +26,8 @@ enum class UrlConfig(
       "https://orion-user-api-uat.delhivery.com"
   ),
   TransactionService(
-      "http://orion-transaction-api.delhivery.com",
-      "http://orion-transaction-api-dev.delhivery.com",
+      "https://orion-transaction-api.delhivery.com",
+      "https://orion-transaction-api-dev.delhivery.com",
       "http://orion-transaction-api-uat.delhivery.com"
   ),
   TripService(
@@ -79,6 +79,16 @@ enum class UrlConfig(
       "https://orion-load-fullcycle-api.delhivery.com",
       "https://orion-load-fullcycle-api-dev.delhivery.com",
       "https://orion-load-fullcycle-api-uat.delhivery.com"
+  ),
+  ExpenseService(
+      "https://orion-expense-api.delhivery.com",
+      "https://orion-expense-api.dev.delhivery.com",
+      "https://orion-expense-api-uat.delhivery.com"
+  ),
+  UtilityService(
+      "https://orion-utility-api.delhivery.com",
+      "https://orion-utility-api-dev.delhivery.com",
+      "https://orion-utility-api-uat.delhivery.com"
   );
 
   /**
