@@ -149,9 +149,7 @@ class TripDetailsViewModel @Inject constructor(
   fun fetchDNListSummary(){
     val jsonObject = JsonObject()
     val payee = JsonPrimitive(payeeId)
-    val status = JsonPrimitive("created")
     jsonObject.add("payee",payee)
-    jsonObject.add("status",status)
     compositeDisposable += payableRepository.fetchDNList(jsonObject)
             .onBackground()
             .subscribe{

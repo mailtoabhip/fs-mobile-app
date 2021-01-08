@@ -90,7 +90,7 @@ class ConsolidatedPageViewModel @Inject constructor(
             if(ledgerEndDate != -1){
                 endDay = ledgerEndDate.toString()
                 if(endDay.length == 1){
-                    endDay = "0$startDay"
+                    endDay = "0$endDay"
                 }
                 ledgerEndDate = -1
             }
