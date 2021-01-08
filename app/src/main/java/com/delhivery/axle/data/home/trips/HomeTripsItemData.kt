@@ -70,7 +70,6 @@ data class HomeTripsItemData(
   @SerializedName("tat_minutes") var tatMinutes: String?,
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
-  @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
   var payment: ExpenseData? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,

@@ -123,11 +123,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-        if(viewModel.tripDetail.isApReconPending == true){
-          populateIsApReconPendingPage()
-        }else{
-          populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
-        }
+      populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -415,27 +411,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   private fun redirectToLRsTrip(transactionId: String){
     startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
-  }
-
-  private fun populateIsApReconPendingPage(){
-    analyticsUtil.trackEvent(
-            EVENT_PAYMENT_SUMMARY,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_LOAD, viewModel.transactionId)
-    )
-    binding.progressHistory.root.visibility = View.GONE
-    binding.viewSummary.isSelected = true
-    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
-    binding.viewHistory.isSelected = false
-    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
-
-    binding.containerHistory.removeAllViews()
-    val paymentSummaryBinding = ViewApReconPendingBinding.inflate(
-            layoutInflater, binding.containerHistory, false
-    )
-    paymentSummaryBinding.containerApText.visibility = View.VISIBLE
-    binding.containerHistory.addView(paymentSummaryBinding.root)
-
   }
 
   private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
