@@ -31,20 +31,8 @@ import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
-import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
-import com.delhivery.axle.utils.EVENT_POD_VIEWED
-import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
-import com.delhivery.axle.utils.PROPERTY_STATUS
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.REQCODE_STORAGE
-import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
-import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.VALUE_FAILURE
-import com.delhivery.axle.utils.VALUE_LOAD
-import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import javax.inject.Inject
@@ -108,7 +96,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
-        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+        if(viewModel.isApReconPending){
+          populateIsApReconPendingPage()
+        }else{
+          populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -119,7 +111,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      if(viewModel.tripDetail.isApReconPending == true){
+      if(viewModel.isApReconPending){
         populateIsApReconPendingPage()
       }else{
         populatePaymentSummary(viewModel.chargesSummary.toMutableList())
