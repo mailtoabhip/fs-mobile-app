@@ -1,10 +1,10 @@
 package com.delhivery.axle.api.response
 
+import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
-import com.delhivery.axle.data.ledger.LedgerData
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
 import java.util.*
 
 data class ChargesResponse(
@@ -48,24 +48,19 @@ data class CollectionResponse(
 )
 
 data class TDS(
-        @SerializedName("amount") val amount: Double
+        @SerializedName("amount") val amount: Double,
+        @SerializedName("pmt_success_date") val pmtSuccessDate: String
 ){
     fun getTDS(
             tdsRate: Int,
             updatedTDSRate: Double
     ): Double{
-        val tdsRelaxadtionDate = Calendar.getInstance()
-        tdsRelaxadtionDate.set(Calendar.DAY_OF_MONTH, 16)
-        tdsRelaxadtionDate.set(Calendar.MONTH, 4)
-        tdsRelaxadtionDate.set(Calendar.YEAR, 2020)
-        tdsRelaxadtionDate.set(Calendar.HOUR, 23)
-        tdsRelaxadtionDate.set(Calendar.MINUTE, 59)
+        val date = "2020-05-16T23:59:00Z"
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        val formattedDate = format.parse(date)
+
         if (amount > 0) {
-            if (DateUtils.daysDiff(
-                            DateUtils.parseDate("",DatePatterns.OrionDateFormat),
-                            tdsRelaxadtionDate
-                    ) > 0
-            ) {
+            if (DateUtils.parseDate(pmtSuccessDate ?: "", DatePatterns.OrionDateFormat).after(formattedDate)) {
                 return (amount * (updatedTDSRate / 100))
             } else {
                 return (amount * (tdsRate.toDouble() / 100))

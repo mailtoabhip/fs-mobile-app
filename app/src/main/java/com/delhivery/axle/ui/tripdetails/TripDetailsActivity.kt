@@ -47,6 +47,7 @@ import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import io.opencensus.internal.Utils
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import javax.inject.Inject
 
@@ -549,8 +550,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions,false).apply {
-      var tdsObj = TDS(chargeTotal)
-      var tds = tdsObj.getTDS(1,0.75)
+      var transferTime = ""
+      if(viewModel.newPaymentSummary.size > 0){
+        transferTime = viewModel.newPaymentSummary[0].transferTime.toString()
+      }
+      val tdsObj = TDS(chargeTotal,transferTime)
+      val tds = tdsObj.getTDS(1, 0.75)
       deductionTotal += tds
       textChargeType.text = "TDS"
       textChargeValue.text = String.format("%.2f",tds)
