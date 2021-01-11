@@ -68,7 +68,7 @@ data class TDS(
             ) {
                 return (amount * (updatedTDSRate / 100))
             } else {
-                return (amount * (tdsRate / 100))
+                return (amount * (tdsRate.toDouble() / 100))
             }
         } else {
             return 0.0
