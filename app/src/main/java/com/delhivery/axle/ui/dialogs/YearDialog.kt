@@ -14,6 +14,7 @@ import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.reflect.typeOf
 
 class YearDialog : DialogFragment() {
 
@@ -26,6 +27,7 @@ class YearDialog : DialogFragment() {
     var years = mutableListOf<String>()
 
     var selectedYear = -1
+    var yearString = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -48,7 +50,9 @@ class YearDialog : DialogFragment() {
                         // The 'which' argument contains the index position
                         // of the selected item
                         selectedYear = which
-                        listener.onYearClick(selectedYear)
+
+                        yearString = years[which]
+                        listener.onYearClick(yearString.toInt())
                     }
 
             builder.create()

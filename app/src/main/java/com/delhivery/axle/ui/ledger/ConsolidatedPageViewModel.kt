@@ -228,8 +228,6 @@ class ConsolidatedPageViewModel @Inject constructor(
     }
 
     fun initiateLedgerData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, paginate: Boolean = false){
-        val startYear = 2020+startYear
-        val endYear = 2020+endYear
         val startDate = generateDateString("startDate",startMonth,startYear.toString())
         val endDate = generateDateString("endDate",endMonth,endYear.toString())
         val jsonObject = generatePayloadConsolidatedLedger(startDate,endDate)
