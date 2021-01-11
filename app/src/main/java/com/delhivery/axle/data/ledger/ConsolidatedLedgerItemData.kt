@@ -57,6 +57,7 @@ data class ConsolidatedLedgerItemData(
 
     public fun getDeductionsAmount(index: Int): String{
         var amount = deductions.get(index)["amount"]
+        amount = String.format("%.2f",amount)
         return "($amount)"
     }
 
