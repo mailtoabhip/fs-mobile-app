@@ -219,9 +219,6 @@ class TripDetailsViewModel @Inject constructor(
                       chargesListSummary.add(charge)
                       payeeId = charge.payeeId
                     }
-                    if(payeeId != "") {
-                      fetchDNListSummary()
-                    }
                   }
                 }
               } else {

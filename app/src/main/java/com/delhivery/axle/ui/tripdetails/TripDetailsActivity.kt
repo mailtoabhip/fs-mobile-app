@@ -638,10 +638,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     ))
 
     var pendingRecovery = 0.0
-    if(paymentDone > chargeTotal){
-      pendingRecovery += (paymentDone - chargeTotal - deductionTotal + viewModel.collections)
+    if(pendingPayment == 0.0){
+      pendingRecovery = chargeTotal - deductionTotal - paymentDone - viewModel.collections
+      if(pendingRecovery < 0){
+        pendingRecovery *= -1
+      }
     }
-    pendingRecovery += viewModel.paymentRecovery
     paymentSummaryBinding.pendingRecovery = String.format("%.2f",pendingRecovery)
     paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
