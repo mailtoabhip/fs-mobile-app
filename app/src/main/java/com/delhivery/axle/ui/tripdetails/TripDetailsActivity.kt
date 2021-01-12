@@ -524,16 +524,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             head = "In-transit"
           }
           var utr = ""+head+" UTR: "+payment.utrNumber+", "
-          var day = payment.updationDate.substring(8,10)
-          if(day[0] == '0'){
-            day = payment.updationDate.substring(9,10)
+          var year = payment.transferTime?.substring(2,4)
+          var day = payment.transferTime?.substring(8,10)
+          if(day?.get(0) ?: "" == '0'){
+            day = payment.transferTime?.substring(9,10)
           }
-          var month = payment.updationDate.substring(5,7)
-          if(month[0] == '0'){
-            month = payment.updationDate.substring(6,7)
+          var month = payment.transferTime?.substring(5,7)
+          if(month?.get(0) ?: "" == '0'){
+            month = payment.transferTime?.substring(6,7)
           }
-          month = DateUtils.getMonth(month.toInt())
-          utr += "$day $month"
+          if (month != null) {
+            month = DateUtils.getMonth(month.toInt())
+          }
+          utr += "$day $month $year"
           textChargeType.text = utr
           textChargeValue.text = String.format("%.2f",payment.amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
@@ -635,7 +638,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             R.color.status_confirmed
     ))
 
-    var pendingPayment = chargeTotal - deductionTotal - paymentDone - viewModel.paymentRecovery + viewModel.collections
+    var pendingPayment = chargeTotal - deductionTotal - paymentDone + viewModel.collections
 
     if(pendingPayment < 0){
       pendingPayment = 0.0
