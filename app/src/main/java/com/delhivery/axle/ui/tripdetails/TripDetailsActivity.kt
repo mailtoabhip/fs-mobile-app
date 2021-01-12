@@ -507,7 +507,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
           if(payment.paymentType  == "payment" || payment.paymentType == null){
             viewModel.newPaymentTypePayment.add(payment)
-          }else if(payment.paymentType == "dn"){
+          }else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId){
             viewModel.newPaymentTypeDN.add(payment)
           }
         }
