@@ -61,6 +61,12 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Your Money"
 
+        val df = SimpleDateFormat("yyyy-MM-dd")
+        val formatted: String = df.format(Date())
+        var endmonth = formatted.substring(5, 7)
+        var endYear = formatted.substring(0, 4).toInt()
+        var formattedEndMonth = endmonth.toInt() - 1
+
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
             refreshData(viewModel.selectedMonth,viewModel.selectedYear,viewModel.selectedMonth,viewModel.selectedYear)
@@ -99,83 +105,49 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 ) {
                     val option = parent.getItemAtPosition(position) as LedgerSpinnerOptions
                     if (option.key == 0) {
-                        viewModel.currentStartMonth = viewModel.selectedMonth
-                        viewModel.currentStartYear = viewModel.selectedYear
-                        viewModel.currentEndMonth = viewModel.selectedMonth
-                        viewModel.currentEndMonth = viewModel.selectedYear
-                        //viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear,false)
+                        updateSelection(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
                     } else if (option.key == 1) {
-                        viewModel.currentStartMonth = viewModel.selectedMonth
-                        viewModel.currentStartYear = viewModel.selectedYear
-                        viewModel.currentEndMonth = viewModel.selectedMonth
-                        viewModel.currentEndMonth = viewModel.selectedYear
-                        updateSelection(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear)
+                        updateSelection(formattedEndMonth, endYear, formattedEndMonth, endYear)
                     } else if (option.key == 2) {
-                        var month = viewModel.selectedMonth;
-                        var year = viewModel.selectedYear;
+                        var month = formattedEndMonth;
+                        var year = endYear
                         if(month != 0){
                             month -= 1
                         }else{
                             month = 11
                             year -= 1
                         }
-                        viewModel.currentStartMonth = month
-                        viewModel.currentStartYear = year
-                        viewModel.currentEndMonth = month
-                        viewModel.currentEndMonth = year
                         updateSelection(month, year, month, year)
                     }else if(option.key == 3){
                         var startMonth = 0
-                        var startYear = viewModel.selectedYear
-                        var endMonth = viewModel.selectedMonth
-                        var endYear = viewModel.selectedYear
+                        var startYear = endYear
 
-                        if(viewModel.selectedMonth >= 2){
-                            startMonth = endMonth - 2
+                        if(formattedEndMonth >= 2){
+                            startMonth = formattedEndMonth - 2
                         }else{
-                            startMonth = endMonth - 2 + 12
+                            startMonth = formattedEndMonth - 2 + 12
                             startYear -= 1
                         }
-                        viewModel.currentStartMonth = startMonth
-                        viewModel.currentStartYear = startYear
-                        viewModel.currentEndMonth = endMonth
-                        viewModel.currentEndMonth = endYear
-                        updateSelection(startMonth, startYear, endMonth, endYear)
+                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
                     }else if(option.key == 4){
                         var startMonth = 0
-                        var startYear = viewModel.selectedYear
-                        var endMonth = viewModel.selectedMonth
-                        var endYear = viewModel.selectedYear
+                        var startYear = endYear
 
-                        if(viewModel.selectedMonth >= 5){
-                            startMonth = endMonth - 5
+                        if(formattedEndMonth >= 5){
+                            startMonth = formattedEndMonth - 5
                         }else{
-                            startMonth = endMonth - 5 + 12
+                            startMonth = formattedEndMonth - 5 + 12
                             startYear -= 1
                         }
-                        viewModel.currentStartMonth = startMonth
-                        viewModel.currentStartYear = startYear
-                        viewModel.currentEndMonth = endMonth
-                        viewModel.currentEndMonth = endYear
-                        updateSelection(startMonth, startYear, endMonth, endYear)
+                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
                     }
                     else if(option.key == 5) {
-
-                        val df = SimpleDateFormat("yyyy-MM-dd")
-                        val formatted: String = df.format(Date())
-                        var endmonth = formatted.substring(5, 7)
-                        var endYear = formatted.substring(0, 4).toInt()
-                        var formattedEndMonth = endmonth.toInt() - 1
                         var startMonth = 3
                         var startYear = endYear
 
                         if (formattedEndMonth <= 2) {
                             startYear = endYear - 1
                         }
-                        viewModel.currentStartMonth = startMonth
-                        viewModel.currentStartYear = startYear
-                        viewModel.currentEndMonth = formattedEndMonth
-                        viewModel.currentEndMonth = endYear
                         updateSelection(startMonth, startYear, formattedEndMonth, endYear)
                     }
                 }
@@ -253,10 +225,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         return true
     }
 
-    private fun updateSelection(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
+    private fun updateSelection(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
-        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
+        if(recent){
+            viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
+        }else{
+            viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
+        }
     }
 
 
