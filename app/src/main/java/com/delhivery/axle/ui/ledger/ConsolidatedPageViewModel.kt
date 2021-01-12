@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.dialogs.DownloadLedgerInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.*
 import javax.inject.Inject
 import com.google.gson.JsonArray
@@ -28,7 +29,8 @@ import java.text.SimpleDateFormat
 
 class ConsolidatedPageViewModel @Inject constructor(
         private val payableRepository: PayableRepository,
-        private val userRepository: UserRepository
+        private val userRepository: UserRepository,
+        val userPrefs: UserPrefs
 ) : BaseViewModel(), DownloadLedgerInterface {
     var ledgerLiveData = MutableLiveData<List<Pair<BaseConsolidatedPageRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
@@ -208,7 +210,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                             }else{
                                 total = _res.count
                                 for(ledger in _res.ledgers){
-                                    add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId)),DataRVAdapterOperationType.Add))
+                                    add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId, userPrefs.userType)),DataRVAdapterOperationType.Add))
                                 }
                             }
                         }.let {ledgerLiveData.postValue(it)}

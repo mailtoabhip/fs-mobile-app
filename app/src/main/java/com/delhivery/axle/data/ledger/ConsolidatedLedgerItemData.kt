@@ -20,6 +20,7 @@ data class ConsolidatedLedgerItemData(
         @SerializedName("month") val month: String,
         @SerializedName("deductions") val deductions: List<Map<String, Any>>,
         @SerializedName("invoice_id") val invoiceId: String,
+        var userType: String,
         var expanded: Boolean = false
 
 ) : BaseKeyTypeModel<String>(), Serializable{
@@ -47,7 +48,11 @@ data class ConsolidatedLedgerItemData(
         var ded_type = deductions.get(index)["deduction_type"]
         var title = ""
         if(ded_type == "tds_deduction"){
-            title += "TDS (@1.5%)"
+            if(userType == "individual"){
+                title += "TDS (@0.75%)"
+            }else{
+                title += "TDS (@1.5%)"
+            }
         }else if(ded_type == "dn_deduction"){
             title += "Deduction against LR "
             title += deductions.get(index)["lr_number"]
