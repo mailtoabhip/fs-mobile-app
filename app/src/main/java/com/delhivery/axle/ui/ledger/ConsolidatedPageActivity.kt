@@ -109,7 +109,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = viewModel.selectedYear
                         viewModel.currentEndMonth = viewModel.selectedMonth
                         viewModel.currentEndMonth = viewModel.selectedYear
-                        refreshData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear)
+                        updateSelection(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear)
                     } else if (option.key == 2) {
                         var month = viewModel.selectedMonth;
                         var year = viewModel.selectedYear;
@@ -123,7 +123,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = year
                         viewModel.currentEndMonth = month
                         viewModel.currentEndMonth = year
-                        refreshData(month, year, month, year)
+                        updateSelection(month, year, month, year)
                     }else if(option.key == 3){
                         var startMonth = 0
                         var startYear = viewModel.selectedYear
@@ -140,7 +140,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = endMonth
                         viewModel.currentEndMonth = endYear
-                        refreshData(startMonth, startYear, endMonth, endYear)
+                        updateSelection(startMonth, startYear, endMonth, endYear)
                     }else if(option.key == 4){
                         var startMonth = 0
                         var startYear = viewModel.selectedYear
@@ -157,7 +157,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = endMonth
                         viewModel.currentEndMonth = endYear
-                        refreshData(startMonth, startYear, endMonth, endYear)
+                        updateSelection(startMonth, startYear, endMonth, endYear)
                     }
                     else if(option.key == 5) {
 
@@ -176,7 +176,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         viewModel.currentStartYear = startYear
                         viewModel.currentEndMonth = formattedEndMonth
                         viewModel.currentEndMonth = endYear
-                        refreshData(startMonth, startYear, formattedEndMonth, endYear)
+                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
                     }
                 }
             }
@@ -253,9 +253,19 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         return true
     }
 
+    private fun updateSelection(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
+        binding.refreshLayout.isRefreshing = true
+        adapter.resetStaticData()
+        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
+    }
+
+
     private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
+        binding.spinnerShowing.apply{
+            setSelection(0)
+        }
         viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
     }
 
