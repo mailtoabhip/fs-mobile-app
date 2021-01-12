@@ -34,9 +34,7 @@ import java.util.*
 
 class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, ConsolidatedPageViewModel>(),
         ConsolidatedPageRVAdapterInterface,
-        NavigationView.OnNavigationItemSelectedListener,
-        MonthDialog.MonthDialogListener,
-        YearDialog.YearDialogListener{
+        NavigationView.OnNavigationItemSelectedListener{
     override fun getViewModelClass() = ConsolidatedPageViewModel::class.java
 
     override fun layoutId() = R.layout.activity_consolidated_page
@@ -67,9 +65,15 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         var endYear = formatted.substring(0, 4).toInt()
         var formattedEndMonth = endmonth.toInt() - 1
 
+        viewModel.currentStartMonth = formattedEndMonth
+        viewModel.currentStartYear = endYear
+        viewModel.currentEndMonth = formattedEndMonth
+        viewModel.currentEndYear = endYear
+        refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
+
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
-            refreshData(viewModel.selectedMonth,viewModel.selectedYear,viewModel.selectedMonth,viewModel.selectedYear)
+            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
         }
 
         binding.rvConsolidatedLedger.apply {
@@ -105,9 +109,17 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 ) {
                     val option = parent.getItemAtPosition(position) as LedgerSpinnerOptions
                     if (option.key == 0) {
-                        updateSelection(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
+                        viewModel.currentStartMonth = formattedEndMonth
+                        viewModel.currentStartYear = endYear
+                        viewModel.currentEndMonth = formattedEndMonth
+                        viewModel.currentEndYear = endYear
+                        refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
                     } else if (option.key == 1) {
-                        updateSelection(formattedEndMonth, endYear, formattedEndMonth, endYear)
+                        viewModel.currentStartMonth = formattedEndMonth
+                        viewModel.currentStartYear = endYear
+                        viewModel.currentEndMonth = formattedEndMonth
+                        viewModel.currentEndYear = endYear
+                        refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear)
                     } else if (option.key == 2) {
                         var month = formattedEndMonth;
                         var year = endYear
@@ -117,7 +129,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                             month = 11
                             year -= 1
                         }
-                        updateSelection(month, year, month, year)
+                        viewModel.currentStartMonth = month
+                        viewModel.currentStartYear = year
+                        viewModel.currentEndMonth = month
+                        viewModel.currentEndYear = year
+                        refreshData(month, year, month, year)
                     }else if(option.key == 3){
                         var startMonth = 0
                         var startYear = endYear
@@ -128,7 +144,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                             startMonth = formattedEndMonth - 2 + 12
                             startYear -= 1
                         }
-                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
+                        viewModel.currentStartMonth = startMonth
+                        viewModel.currentStartYear = startYear
+                        viewModel.currentEndMonth = formattedEndMonth
+                        viewModel.currentEndYear = endYear
+                        refreshData(startMonth, startYear, formattedEndMonth, endYear)
                     }else if(option.key == 4){
                         var startMonth = 0
                         var startYear = endYear
@@ -139,7 +159,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                             startMonth = formattedEndMonth - 5 + 12
                             startYear -= 1
                         }
-                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
+                        viewModel.currentStartMonth = startMonth
+                        viewModel.currentStartYear = startYear
+                        viewModel.currentEndMonth = formattedEndMonth
+                        viewModel.currentEndYear = endYear
+                        refreshData(startMonth, startYear, formattedEndMonth, endYear)
                     }
                     else if(option.key == 5) {
                         var startMonth = 3
@@ -148,7 +172,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                         if (formattedEndMonth <= 2) {
                             startYear = endYear - 1
                         }
-                        updateSelection(startMonth, startYear, formattedEndMonth, endYear)
+                        viewModel.currentStartMonth = startMonth
+                        viewModel.currentStartYear = startYear
+                        viewModel.currentEndMonth = formattedEndMonth
+                        viewModel.currentEndYear = endYear
+                        refreshData(startMonth, startYear, formattedEndMonth, endYear)
                     }
                 }
             }
@@ -178,37 +206,15 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 requestStoragePermission()
             }
         })
-
-        openPopups()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(onDownloadComplete)
     }
-    fun openPopups(){
-        if(viewModel.isLoadedNow){
-            var dialog = MonthDialog()
-            dialog.show(supportFragmentManager, "MonthDialog")
-            viewModel.isLoadedNow = false
-
-        }
-    }
 
     override fun onItemClicked(item: BaseConsolidatedPageRVAdapterItem<*>, position: Int) {
         return
-    }
-
-    override fun onMonthClick(selectedMonth: Int) {
-        viewModel.selectedMonth = selectedMonth
-        var dialog = YearDialog()
-        dialog.isCancelable = false
-        dialog.show(supportFragmentManager, "YearDialog")
-    }
-
-    override fun onYearClick(selectedYear: Int) {
-        viewModel.selectedYear = selectedYear
-        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear, false)
     }
 
     override fun handleAction(actionId: String, position: Int, item: BaseConsolidatedPageRVAdapterItem<*>) {
@@ -225,24 +231,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         return true
     }
 
-    private fun updateSelection(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false){
+    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
         if(recent){
-            viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
+            viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false, true)
         }else{
             viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
         }
-    }
-
-
-    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int){
-        binding.refreshLayout.isRefreshing = true
-        adapter.resetStaticData()
-        binding.spinnerShowing.apply{
-            setSelection(0)
-        }
-        viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {

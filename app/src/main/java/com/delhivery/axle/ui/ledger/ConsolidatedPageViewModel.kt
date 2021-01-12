@@ -62,10 +62,10 @@ class ConsolidatedPageViewModel @Inject constructor(
 
 
     @SuppressLint("SimpleDateFormat")
-    fun generateDateString(type: String, monthNumber: Int, year: String): String {
+    fun generateDateString(type: String, monthNumber: Int, year: String, recent: Boolean=false): String {
         val parser = SimpleDateFormat("yy")
         val formatter = SimpleDateFormat("yyyy")
-        val fullYear = formatter.format(parser.parse(year)).toInt()
+        var fullYear = formatter.format(parser.parse(year)).toInt()
 
         val calendar = Calendar.getInstance()
         calendar.set(fullYear, monthNumber, 1)
@@ -80,6 +80,17 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         var finalDate = ""
         if (type == "startDate") {
+            if(recent){
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                val today = format.format(Date())
+                val todayFormatted: Date = format.parse(today)
+                val fifteenDaysFormatted = Date(todayFormatted.getTime() - 1296000000L) // 15 * 24 * 60 * 60 * 1000
+                val fifteenDays = format.format(fifteenDaysFormatted.time)
+
+                startDay = fifteenDays.substring(8,10)
+                month = fifteenDays.substring(5,7)
+                fullYear = fifteenDays.substring(0,4).toInt()
+            }
             if(ledgerStartDate != -1){
                 startDay = ledgerStartDate.toString()
                 if(startDay.length == 1){
@@ -122,26 +133,6 @@ class ConsolidatedPageViewModel @Inject constructor(
         root.add("range_filters", rangeFilterArray)
         root.add("limit", JsonPrimitive(UserSearchLimitConsolidatedAPI))
         root.add("offset", JsonPrimitive(offset))
-
-
-//        var start = "2020-10-31T18:30:00"
-//        var end = "2020-11-30T18:29:59"
-//
-//        startObject.add("column", JsonPrimitive("pmt_success_dt"))
-//        startObject.add("value", JsonPrimitive(start))
-//        startObject.add("operator", JsonPrimitive("gte"))
-//
-//        endObject.add("column", JsonPrimitive("pmt_success_dt"))
-//        endObject.add("value", JsonPrimitive(end))
-//        endObject.add("operator", JsonPrimitive("lte"))
-//
-//        rangeFilterArray.add(startObject)
-//        rangeFilterArray.add(endObject)
-//
-//        root.add("payee_id", JsonPrimitive("ums::user::8d7a31a4-3096-11eb-a545-0254207c9a09"))
-//        root.add("range_filters", rangeFilterArray)
-
-
         return root
     }
 
@@ -231,8 +222,8 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     }
 
-    fun initiateLedgerData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, paginate: Boolean = false){
-        val startDate = generateDateString("startDate",startMonth,startYear.toString())
+    fun initiateLedgerData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, paginate: Boolean = false, recent:Boolean = false){
+        val startDate = generateDateString("startDate",startMonth,startYear.toString(), recent)
         val endDate = generateDateString("endDate",endMonth,endYear.toString())
         val jsonObject = generatePayloadConsolidatedLedger(startDate,endDate)
 
@@ -248,9 +239,7 @@ class ConsolidatedPageViewModel @Inject constructor(
         }
         dataLoadingLiveData.postValue(true)
 
-        if(selectedMonth != -1 && selectedYear != -1) {
-            fetchLedgerData(jsonObject)
-        }
+        fetchLedgerData(jsonObject)
     }
 
     fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, email: String = ""){
