@@ -73,7 +73,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
-            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
+            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true, true)
         }
 
         binding.rvConsolidatedLedger.apply {
@@ -231,9 +231,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         return true
     }
 
-    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false){
+    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false, refresh:Boolean = false){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
+        if(refresh){
+            binding.spinnerShowing.apply {
+                setSelection(0)
+            }
+        }
         if(recent){
             viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false, true)
         }else{
