@@ -259,7 +259,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     private fun refreshData(){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
-        viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, false)
+        viewModel.initiateLedgerData(viewModel.selectedMonth, viewModel.selectedYear, viewModel.selectedMonth, viewModel.selectedYear, false)
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
