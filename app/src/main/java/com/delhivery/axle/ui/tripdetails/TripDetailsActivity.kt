@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -656,7 +657,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     var pendingRecovery = 0.0
     if(pendingPayment == 0.0){
-      pendingRecovery = chargeTotal - deductionTotal - paymentDone - viewModel.collections
+      pendingRecovery = chargeTotal - deductionTotal - paymentDone + viewModel.collections
       if(pendingRecovery < 0){
         pendingRecovery *= -1
       }
