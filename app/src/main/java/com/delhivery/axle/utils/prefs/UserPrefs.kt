@@ -129,6 +129,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.AccountNumber, "") ?: ""
 
   /**
+   * User type
+   */
+  var userType: String
+    set(value) = editor.putString(PrefKeys.UserType, value).apply()
+    get() = prefs.getString(PrefKeys.UserType, "") ?: ""
+
+  /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
@@ -261,6 +268,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ifscCode = user.ifscCode ?: ""
     pancard = user.panCardNo ?: ""
     accNumber = user.accNumber()
+    userType = user.userType ?: ""
     cityCode = if (user.hasRoutes()) {
       user.userRoutes()[0].origin.orion_db_city_code
     } else {
@@ -304,6 +312,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val FromNotification = "from_notification"
     const val MaxPMTRate = "max_pmt_rate"
     const val MaxCostPerKM = "max_cost_per_km"
+    const val UserType = "user_type"
   }
 }
 

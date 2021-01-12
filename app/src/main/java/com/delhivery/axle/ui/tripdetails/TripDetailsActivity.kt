@@ -555,7 +555,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         transferTime = viewModel.newPaymentSummary[0].transferTime.toString()
       }
       val tdsObj = TDS(chargeTotal,transferTime)
-      val tds = tdsObj.getTDS(1, 0.75)
+      var tdsRate = 0
+      var updatedTDSRate = 0.0
+      if(viewModel.userPrefs.userType == "individual"){
+        tdsRate = 1
+        updatedTDSRate = 0.75
+      }else{
+        tdsRate = 2
+        updatedTDSRate = 1.5
+      }
+      val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
       deductionTotal += tds
       textChargeType.text = "TDS"
       textChargeValue.text = String.format("%.2f",tds)
