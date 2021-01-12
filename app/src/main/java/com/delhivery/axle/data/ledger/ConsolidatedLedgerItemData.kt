@@ -14,12 +14,12 @@ data class ConsolidatedLedgerItemData(
         @SerializedName("uuid") val uuid: String,
         @SerializedName("payment_type") val paymentType: String,
         @SerializedName("trip_id") val tripId: String,
-        @SerializedName("lrs") val lrs: List<String>,
+        @SerializedName("lrs") val lrs: List<String>?,
         @SerializedName("pmt_success_dt") val paymentSuccessDate: String,
         @SerializedName("utr_number") val utrNumber: String?,
         @SerializedName("month") val month: String,
         @SerializedName("deductions") val deductions: List<Map<String, Any>>,
-        @SerializedName("invoice_id") val invoiceId: String,
+        @SerializedName("invoice_id") val invoiceId: String?,
         var userType: String,
         var expanded: Boolean = false
 
@@ -30,12 +30,16 @@ data class ConsolidatedLedgerItemData(
     public fun getTitle():String{
         var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1)
         var isLRs = false
-        if(lrs.size > 1){
-            isLRs = true
+        if (lrs != null) {
+            if(lrs.size > 1){
+                isLRs = true
+            }
         }
-        var lrNo = " - "+lrs[0]
-        if(isLRs){
-            lrNo += " +"+lrs.size+" more"
+        var lrNo = " - "+ (lrs?.get(0) ?: "")
+        if (lrs != null) {
+            if(isLRs){
+                lrNo += " +"+lrs.size+" more"
+            }
         }
         return ""+capitalizeEvent+lrNo
     }
