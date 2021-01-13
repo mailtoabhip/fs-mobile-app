@@ -42,9 +42,6 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     var downloadPressed = MutableLiveData<Boolean>()
 
-    var selectedMonth = -1
-    var selectedYear = -1
-
     var currentStartMonth = -1
     var currentStartYear = -1
 
@@ -53,8 +50,6 @@ class ConsolidatedPageViewModel @Inject constructor(
 
     var ledgerStartDate = -1
     var ledgerEndDate = -1
-
-    var isLoadedNow : Boolean = true
 
     var hasMoreData = false
     var offset = 0
@@ -187,16 +182,18 @@ class ConsolidatedPageViewModel @Inject constructor(
                 }
 
     }
-    private fun fetchLedgerData(jsonObject: JsonObject) {
+    private fun fetchLedgerData(jsonObject: JsonObject, paginate: Boolean) {
         Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         compositeDisposable += payableRepository.fetchConsolidatedLedgerList(jsonObject)
                 .onBackground()
                 .subscribe{
                     _res,error ->
                     if(!error){
+                        offset += _res.offset!!
+                        hasMoreData = _res.hasNext!!
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
-                            if (_res.count == 0) {
+                            if (!paginate && _res.count == 0) {
                                 add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
                             }else{
                                 total = _res.count
@@ -229,17 +226,18 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         if (!paginate) {
             offset = 0
-        } else if (paginate && !hasMoreData) {
+        } else if (paginate && (total == offset)) {
             return
         }
 
         /* add progress if not paginating */
         if (paginate) {
+            showProgress()
             Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         }
         dataLoadingLiveData.postValue(true)
 
-        fetchLedgerData(jsonObject)
+        fetchLedgerData(jsonObject, paginate)
     }
 
     fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, email: String = ""){

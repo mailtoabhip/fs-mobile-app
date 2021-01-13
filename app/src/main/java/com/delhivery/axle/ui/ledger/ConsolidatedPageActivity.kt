@@ -21,13 +21,10 @@ import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
 import com.delhivery.axle.databinding.ActivityConsolidatedPageBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
-import com.delhivery.axle.ui.dialogs.MonthDialog
-import com.delhivery.axle.ui.dialogs.YearDialog
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -249,7 +246,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
         override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, true)
 
-        override fun hasMore() = viewModel.hasMoreData
+        override fun hasMore() = viewModel.offset < viewModel.total
 
         override fun isLoading() = isLoadingData
     }
@@ -258,13 +255,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
         val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-        //val downloadUri = Uri.parse("https://51l1p3gsd7.execute-api.ap-southeast-1.amazonaws.com/prod/oracle-mis/applied/applied_2019-12-05_1575540958332.xlsx")
         val downloadUri = Uri.parse(url)
         val request = DownloadManager.Request(
                 downloadUri
         )
 
-        // TODO: add file name as month for which download requested
         val filename = "Ledger.xlsx"
         val path = "/Axle App/$filename"
         request.setAllowedNetworkTypes(

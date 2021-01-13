@@ -73,6 +73,8 @@ data class TDS(
 
 data class ConsolidatedLedgerResponse(
         @SerializedName("count") val count: Int,
+        @SerializedName("offset") val offset: Int?,
+        @SerializedName("has_next") val hasNext: Boolean?,
         @SerializedName("consolidated") val ledgers: List<ConsolidatedLedgerItemData>
 )
 
