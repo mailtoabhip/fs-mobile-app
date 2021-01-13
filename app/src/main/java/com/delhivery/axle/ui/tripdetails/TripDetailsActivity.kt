@@ -539,7 +539,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
           utr += "$day $month $year"
           textChargeType.text = utr
-          textChargeValue.text = String.format("%.2f",payment.amount)
+          var amount = payment.amount
+          if(payment.transactionId != viewModel.tripDetail.transactionId){
+            amount = payment.appliedAmount!!
+          }
+          textChargeValue.text = String.format("%.2f",amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,
                   R.color.status_confirmed
