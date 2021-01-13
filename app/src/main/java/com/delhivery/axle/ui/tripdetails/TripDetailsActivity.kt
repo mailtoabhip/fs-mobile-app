@@ -157,6 +157,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fetchChargeListSummary()
     viewModel.fetchNewPaymentSummary()
     viewModel.fetchCollectionSummary()
+    viewModel.fetchListInvoices()
     binding.executePendingBindings()
   }
 
@@ -181,7 +182,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
         viewModel.fetchCollectionSummary()
-
+        viewModel.fetchListInvoices()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -519,7 +520,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
-          paymentDone += payment.amount
           var head = payment.head.replace("_"," ").capitalizeWords()
           if(head == "Intermittent"){
             head = "In-transit"
@@ -540,9 +540,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           utr += "$day $month $year"
           textChargeType.text = utr
           var amount = payment.amount
-          if(payment.transactionId != viewModel.tripDetail.transactionId){
+          if(!viewModel.invoiceList.contains(payment.invoiceId)){
             amount = payment.appliedAmount!!
           }
+          paymentDone += amount
           textChargeValue.text = String.format("%.2f",amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,

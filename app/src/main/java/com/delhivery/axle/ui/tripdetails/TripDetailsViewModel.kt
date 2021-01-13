@@ -37,7 +37,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import kotlinx.android.synthetic.main.view_transaction_item.view.*
 import java.io.File
 import javax.inject.Inject
 
@@ -72,6 +71,7 @@ class TripDetailsViewModel @Inject constructor(
   var newPaymentSummary = mutableListOf<PaymentsResponse>()
   var newPaymentTypePayment = mutableListOf<PaymentsResponse>()
   var newPaymentTypeDN = mutableListOf<PaymentsResponse>()
+  var invoiceList = mutableListOf<String>()
   var chargesListSummary = mutableListOf<ChargesResponse>()
 
   /* trip history */
@@ -86,7 +86,6 @@ class TripDetailsViewModel @Inject constructor(
   var bidDetail: TripBidDetails? = null
 
   var tripType: String = ""
-  var paymentRecovery: Double = 0.0
   var collections: Double = 0.0
   var payeeId: String = ""
 
@@ -144,34 +143,6 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch DN List
-   */
-  fun fetchDNListSummary(){
-    val jsonObject = JsonObject()
-    val payee = JsonPrimitive(payeeId)
-    val status = JsonPrimitive("created")
-    jsonObject.add("payee",payee)
-    jsonObject.add("status",status)
-    compositeDisposable += payableRepository.fetchDNList(jsonObject)
-            .onBackground()
-            .subscribe{
-              _res, error ->
-              if(!error){
-                paymentRecovery = 0.0
-                if(_res.isNotEmpty() == true){
-                  _res.let {
-                    for (dn in _res){
-                      paymentRecovery += dn.balanceAmount
-                    }
-                  }
-                }
-              }else{
-                error?.handle()
-              }
-            }
-  }
-
-  /**
    * Fetch Collections summary
    */
 
@@ -185,7 +156,7 @@ class TripDetailsViewModel @Inject constructor(
               _res, error ->
               if(!error){
                 collections = 0.0
-                if(_res.isNotEmpty() == true){
+                if(_res.isNotEmpty()){
                   _res.let{
                     for (collection in _res) {
                       collections += collection.amount
@@ -213,7 +184,7 @@ class TripDetailsViewModel @Inject constructor(
               if(!error){
                 payeeId = ""
                 chargesListSummary.clear()
-                if(_res.isNotEmpty() == true){
+                if(_res.isNotEmpty()){
                   _res.let {
                     for (charge in _res){
                       chargesListSummary.add(charge)
@@ -239,10 +210,33 @@ class TripDetailsViewModel @Inject constructor(
                 newPaymentSummary.clear()
                 newPaymentTypePayment.clear()
                 newPaymentTypeDN.clear()
-                if(_res.isNotEmpty() == true){
+                if(_res.isNotEmpty()){
                   _res.let {
                     for (charge in _res){
                       newPaymentSummary.add(charge)
+                    }
+                  }
+                }
+              } else {
+                error?.handle()
+              }
+            }
+  }
+
+  /**
+   * Fetch List Invoices
+   */
+  fun fetchListInvoices(){
+    compositeDisposable += payableRepository.listInvoices(transactionId)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                invoiceList.clear()
+                if(_res.isNotEmpty()){
+                  _res.let {
+                    for (invoice in _res){
+                      invoiceList.add(invoice.invoiceId)
                     }
                   }
                 }

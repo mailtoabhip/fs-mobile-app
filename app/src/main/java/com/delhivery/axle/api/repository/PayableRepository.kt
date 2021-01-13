@@ -54,6 +54,12 @@ class PayableRepository @Inject constructor(
             payload: JsonObject
     ) = payableService.downloadVendorLedger(payload).convertResponse()
 
+    /**
+     * List Invoices
+     */
+    fun listInvoices(
+            tripId: String
+    ) = payableService.listInvoices(tripId).convertResponse()
 
 }
 

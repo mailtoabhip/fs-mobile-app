@@ -11,7 +11,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import io.reactivex.Single
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PayableService {
     /**
@@ -34,4 +36,9 @@ interface PayableService {
 
     @POST("email_vendor_ledger")
     fun emailVendorLedger(@Body payload: JsonObject): Single<BaseResponse<EmailLedgerResponse>>
+
+    @GET("/list_invoices/{trip_id}")
+    fun listInvoices(
+            @Path("trip_id") tripId: String
+    ):Single<BaseResponse<List<InvoiceListResponse>>>
 }

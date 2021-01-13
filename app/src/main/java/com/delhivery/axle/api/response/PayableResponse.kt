@@ -86,3 +86,7 @@ data class DownloadLedgerResponse(
 data class EmailLedgerResponse(
         @SerializedName("message") val message: String
 )
+
+data class InvoiceListResponse(
+        @SerializedName("invoice_id") val invoiceId: String
+)
