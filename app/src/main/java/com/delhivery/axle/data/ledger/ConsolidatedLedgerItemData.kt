@@ -38,7 +38,7 @@ data class ConsolidatedLedgerItemData(
         var lrNo = " - "+ (lrs?.get(0) ?: "")
         if (lrs != null) {
             if(isLRs){
-                lrNo += " +"+lrs.size+" more"
+                lrNo += " +"+(lrs.size-1)+" more"
             }
         }
         return ""+capitalizeEvent+lrNo

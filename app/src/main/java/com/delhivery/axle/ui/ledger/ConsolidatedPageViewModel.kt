@@ -137,11 +137,11 @@ class ConsolidatedPageViewModel @Inject constructor(
         val startObject = JsonObject()
         val endObject = JsonObject()
 
-        startObject.add("column", JsonPrimitive("pmt_success_dt"))
+        startObject.add("column", JsonPrimitive("status_update_info.truck_loaded.at"))
         startObject.add("value", JsonPrimitive(startDate))
         startObject.add("operator", JsonPrimitive("gte"))
 
-        endObject.add("column", JsonPrimitive("pmt_success_dt"))
+        endObject.add("column", JsonPrimitive("status_update_info.truck_loaded.at"))
         endObject.add("value", JsonPrimitive(endDate))
         endObject.add("operator", JsonPrimitive("lte"))
 
