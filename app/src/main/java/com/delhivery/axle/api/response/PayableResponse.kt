@@ -5,7 +5,6 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
-import java.util.*
 
 data class ChargesResponse(
         @SerializedName("payee_id") val payeeId: String,
@@ -64,6 +63,25 @@ data class TDS(
                 return (amount * (updatedTDSRate / 100))
             } else {
                 return (amount * (tdsRate.toDouble() / 100))
+            }
+        } else {
+            return 0.0
+        }
+    }
+
+    fun getTDSRate(
+            tdsRate: Int,
+            updatedTDSRate: Double
+    ): Double{
+        val date = "2020-05-16T23:59:00Z"
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        val formattedDate = format.parse(date)
+
+        if (amount > 0) {
+            if (DateUtils.parseDate(pmtSuccessDate ?: "", DatePatterns.OrionDateFormat).after(formattedDate)) {
+                return (updatedTDSRate / 100)
+            } else {
+                return (tdsRate.toDouble() / 100)
             }
         } else {
             return 0.0

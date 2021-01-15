@@ -70,6 +70,7 @@ class TripDetailsViewModel @Inject constructor(
 
   var newPaymentSummary = mutableListOf<PaymentsResponse>()
   var newPaymentTypePayment = mutableListOf<PaymentsResponse>()
+  var newPaymentTypeBalance = mutableListOf<PaymentsResponse>()
   var newPaymentTypeDN = mutableListOf<PaymentsResponse>()
   var invoiceList = mutableListOf<String>()
   var chargesListSummary = mutableListOf<ChargesResponse>()
@@ -159,7 +160,9 @@ class TripDetailsViewModel @Inject constructor(
                 if(_res.isNotEmpty()){
                   _res.let{
                     for (collection in _res) {
-                      collections += collection.amount
+                      if(collection.type == "waived_off"){
+                        collections += collection.amount
+                      }
                     }
                   }
                 }else{
@@ -209,6 +212,7 @@ class TripDetailsViewModel @Inject constructor(
               if(!error){
                 newPaymentSummary.clear()
                 newPaymentTypePayment.clear()
+                newPaymentTypeBalance.clear()
                 newPaymentTypeDN.clear()
                 if(_res.isNotEmpty()){
                   _res.let {

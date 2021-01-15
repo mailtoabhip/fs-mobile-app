@@ -1,19 +1,13 @@
 package com.delhivery.axle.ui.tripdetails
 
 import android.Manifest
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -30,7 +24,6 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.DateUtils
@@ -47,8 +40,6 @@ import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import io.opencensus.internal.Utils
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import javax.inject.Inject
 
@@ -143,23 +134,24 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onDestroy()
   }
 
-  private fun refreshData() {
-    binding.refreshing = true
-    binding.error = false
-    viewModel.tripHistory.clear()
-    viewModel.chargesSummary.clear()
-    viewModel.paymentsSummary.clear()
-    viewModel.chargesListSummary.clear()
-    viewModel.newPaymentSummary.clear()
-    viewModel.newPaymentTypePayment.clear()
-    viewModel.newPaymentTypeDN.clear()
-    viewModel.fetchTripDetails()
-    viewModel.fetchChargeListSummary()
-    viewModel.fetchNewPaymentSummary()
-    viewModel.fetchCollectionSummary()
-    viewModel.fetchListInvoices()
-    binding.executePendingBindings()
-  }
+    private fun refreshData() {
+        binding.refreshing = true
+        binding.error = false
+        viewModel.tripHistory.clear()
+        viewModel.chargesSummary.clear()
+        viewModel.paymentsSummary.clear()
+        viewModel.chargesListSummary.clear()
+        viewModel.newPaymentSummary.clear()
+        viewModel.newPaymentTypePayment.clear()
+        viewModel.newPaymentTypeBalance.clear()
+        viewModel.newPaymentTypeDN.clear()
+        viewModel.fetchTripDetails()
+        viewModel.fetchChargeListSummary()
+        viewModel.fetchNewPaymentSummary()
+        viewModel.fetchCollectionSummary()
+        viewModel.fetchListInvoices()
+        binding.executePendingBindings()
+    }
 
   /**
    * Transaction details and UI updation Observer
@@ -434,8 +426,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     )
 
     viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeBalance.clear()
     viewModel.newPaymentTypeDN.clear()
 
+
+    var tdsRate = 0
+    var updatedTDSRate = 0.0
+    if (viewModel.userPrefs.userType == "individual") {
+        tdsRate = 1
+        updatedTDSRate = 0.75
+    } else {
+        tdsRate = 2
+        updatedTDSRate = 1.5
+    }
     var chargeTotal = 0.0
     var deductionTotal = 0.0
     tripSummary.forEach{charge ->
@@ -507,9 +510,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     paymentSummary.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
-          if(payment.paymentType  == "payment" || payment.paymentType == null){
-            viewModel.newPaymentTypePayment.add(payment)
-          }else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId){
+          if(payment.paymentType  == "payment"){
+             if (payment.head == "balance" || payment.head == "balance_payment") {
+                 viewModel.newPaymentTypeBalance.add(payment)
+             } else {
+                 viewModel.newPaymentTypePayment.add(payment)
+             }
+          }else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId) {
             viewModel.newPaymentTypeDN.add(payment)
           }
         }
@@ -543,6 +550,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           if(!viewModel.invoiceList.contains(payment.invoiceId)){
             amount = payment.appliedAmount!!
           }
+          val tdsObj = payment.transferTime?.let { TDS(amount, it) }
+          val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
+          if (tds != null) {
+              amount -= tds
+          }
           paymentDone += amount
           textChargeValue.text = String.format("%.2f",amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
@@ -558,21 +570,57 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions,false).apply {
+    var balanceTotal = 0.0
+    viewModel.newPaymentTypeBalance.forEach { payment ->
+        if (payment.status == "success" && payment.amount != 0.0) {
+            ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentsBalance, false).apply {
+                seprator.visibility = View.GONE
+                var head = payment.head.replace("_", " ").capitalizeWords()
+                var utr = "" + head + " UTR: " + payment.utrNumber + ", "
+                var year = payment.transferTime?.substring(2, 4)
+                var day = payment.transferTime?.substring(8, 10)
+                if (day?.get(0) ?: "" == '0') {
+                    day = payment.transferTime?.substring(9, 10)
+                }
+                var month = payment.transferTime?.substring(5, 7)
+                if (month?.get(0) ?: "" == '0') {
+                    month = payment.transferTime?.substring(6, 7)
+                }
+                if (month != null) {
+                    month = DateUtils.getMonth(month!!.toInt())
+                }
+                utr += "$day $month $year"
+                textChargeType.text = utr
+                var amount = payment.amount
+                if (!viewModel.invoiceList.contains(payment.invoiceId)) {
+                    amount = payment.appliedAmount!!
+                }
+                val tdsObj = payment.transferTime?.let { TDS(amount, it) }
+                val tdsRate = tdsObj?.getTDSRate(tdsRate, updatedTDSRate)
+                if (tdsRate != null) {
+                    amount -= tdsRate * (chargeTotal - paymentDone)
+                }
+                balanceTotal += amount
+                textChargeValue.text = String.format("%.2f", amount)
+                textChargeValue.setTextColor(ContextCompat.getColor(
+                        this@TripDetailsActivity,
+                        R.color.status_confirmed
+                ))
+                textChargeConst.setTextColor(ContextCompat.getColor(
+                        this@TripDetailsActivity,
+                        R.color.status_confirmed
+                ))
+                paymentSummaryBinding.containerPaymentsBalance.addView(root)
+            }
+        }
+    }
+
+    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
       var transferTime = ""
       if(viewModel.newPaymentSummary.size > 0){
         transferTime = viewModel.newPaymentSummary[0].transferTime.toString()
       }
       val tdsObj = TDS(chargeTotal,transferTime)
-      var tdsRate = 0
-      var updatedTDSRate = 0.0
-      if(viewModel.userPrefs.userType == "individual"){
-        tdsRate = 1
-        updatedTDSRate = 0.75
-      }else{
-        tdsRate = 2
-        updatedTDSRate = 1.5
-      }
       val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
       deductionTotal += tds
       textChargeType.text = "TDS"
@@ -633,7 +681,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       paymentSummaryBinding.waivedOffAmount = String.format("%.2f",deductionTotal - viewModel.collections)
       paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
     }
-
+    paymentDone += balanceTotal
     paymentSummaryBinding.totalPaymentMade = String.format("%.2f",paymentDone)
     paymentSummaryBinding.textTotalPaymentsMade.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
