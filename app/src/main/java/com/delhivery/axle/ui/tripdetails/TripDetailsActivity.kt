@@ -523,6 +523,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
 
     var paymentDone = 0.0
+    var originalPaymentSum = 0.0
     viewModel.newPaymentTypePayment.forEach{ payment ->
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
@@ -552,6 +553,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
           val tdsObj = payment.transferTime?.let { TDS(amount, it) }
           val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
+          originalPaymentSum += amount
           if (tds != null) {
               amount -= tds
           }
@@ -598,7 +600,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 val tdsObj = payment.transferTime?.let { TDS(amount, it) }
                 val tdsRate = tdsObj?.getTDSRate(tdsRate, updatedTDSRate)
                 if (tdsRate != null) {
-                    amount -= tdsRate * (chargeTotal - paymentDone)
+                    amount -= tdsRate * (chargeTotal - originalPaymentSum)
                 }
                 balanceTotal += amount
                 textChargeValue.text = String.format("%.2f", amount)
