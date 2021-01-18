@@ -44,6 +44,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 
     var isLoadingData = true
 
+    var isRecent = true
+
     var downloadID = 0.toLong()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,11 +70,10 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         viewModel.currentStartYear = endYear
         viewModel.currentEndMonth = formattedEndMonth
         viewModel.currentEndYear = endYear
-        refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
-            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, recent = true, refresh = true)
+            refreshData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, isRecent)
         }
 
         binding.rvConsolidatedLedger.apply {
@@ -109,20 +110,17 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                     val option = parent.getItemAtPosition(position) as LedgerSpinnerOptions
                     when (option.key) {
                         0 -> {
-                            viewModel.currentStartMonth = formattedEndMonth
-                            viewModel.currentStartYear = endYear
-                            viewModel.currentEndMonth = formattedEndMonth
-                            viewModel.currentEndYear = endYear
-                            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, true)
+                            isRecent = true
+                            setSelection(formattedEndMonth, endYear, formattedEndMonth, endYear)
+                            refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear, isRecent)
                         }
                         1 -> {
-                            viewModel.currentStartMonth = formattedEndMonth
-                            viewModel.currentStartYear = endYear
-                            viewModel.currentEndMonth = formattedEndMonth
-                            viewModel.currentEndYear = endYear
+                            isRecent = false
+                            setSelection(formattedEndMonth, endYear, formattedEndMonth, endYear)
                             refreshData(formattedEndMonth, endYear, formattedEndMonth, endYear)
                         }
                         2 -> {
+                            isRecent = false
                             var month = formattedEndMonth
                             var year = endYear
                             if(month != 0){
@@ -131,13 +129,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                                 month = 11
                                 year -= 1
                             }
-                            viewModel.currentStartMonth = month
-                            viewModel.currentStartYear = year
-                            viewModel.currentEndMonth = month
-                            viewModel.currentEndYear = year
+                            setSelection(month, year, month, year)
                             refreshData(month, year, month, year)
                         }
                         3 -> {
+                            isRecent = false
                             val startMonth: Int
                             var startYear = endYear
 
@@ -147,13 +143,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                                 startMonth = formattedEndMonth - 2 + 12
                                 startYear -= 1
                             }
-                            viewModel.currentStartMonth = startMonth
-                            viewModel.currentStartYear = startYear
-                            viewModel.currentEndMonth = formattedEndMonth
-                            viewModel.currentEndYear = endYear
+                            setSelection(startMonth, startYear, formattedEndMonth, endYear)
                             refreshData(startMonth, startYear, formattedEndMonth, endYear)
                         }
                         4 -> {
+                            isRecent = false
                             val startMonth: Int
                             var startYear = endYear
 
@@ -163,23 +157,18 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                                 startMonth = formattedEndMonth - 5 + 12
                                 startYear -= 1
                             }
-                            viewModel.currentStartMonth = startMonth
-                            viewModel.currentStartYear = startYear
-                            viewModel.currentEndMonth = formattedEndMonth
-                            viewModel.currentEndYear = endYear
+                            setSelection(startMonth, startYear, formattedEndMonth, endYear)
                             refreshData(startMonth, startYear, formattedEndMonth, endYear)
                         }
                         5 -> {
+                            isRecent = false
                             val startMonth = 3
                             var startYear = endYear
 
                             if (formattedEndMonth <= 2) {
                                 startYear = endYear - 1
                             }
-                            viewModel.currentStartMonth = startMonth
-                            viewModel.currentStartYear = startYear
-                            viewModel.currentEndMonth = formattedEndMonth
-                            viewModel.currentEndYear = endYear
+                            setSelection(startMonth, startYear, formattedEndMonth, endYear)
                             refreshData(startMonth, startYear, formattedEndMonth, endYear)
                         }
                     }
@@ -236,14 +225,16 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         return true
     }
 
-    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false, refresh:Boolean = false){
+    private fun setSelection(startMonth: Int, startYear: Int, endMonth: Int, endYear: Int){
+        viewModel.currentStartMonth = startMonth
+        viewModel.currentStartYear = startYear
+        viewModel.currentEndMonth = endMonth
+        viewModel.currentEndYear = endYear
+    }
+
+    private fun refreshData(startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, recent:Boolean = false){
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
-        if(refresh){
-            binding.spinnerShowing.apply {
-                setSelection(0)
-            }
-        }
         if(recent){
             viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, paginate = false, recent = true)
         }else{
@@ -252,7 +243,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI) {
-        override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, true)
+        override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, true, isRecent)
 
         override fun hasMore() = viewModel.offset!! < viewModel.total
 
