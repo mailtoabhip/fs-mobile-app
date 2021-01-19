@@ -85,7 +85,8 @@ data class  PaymentsResponse(
         @SerializedName("payment_mode") val paymentMode: String?,
         @SerializedName("applied_amount") val appliedAmount: Double?,
         @SerializedName("invoice_id") val invoiceId: String?,
-        @SerializedName("lr_nos") val lr_nos: List<String>,
+        @SerializedName("lr_nos") val lrNos: List<String>,
+        @SerializedName("overpayment_lrs") val overPaymentLRs: List<String>,
         @SerializedName("transaction_id") val transactionId: String = ""
 )
 

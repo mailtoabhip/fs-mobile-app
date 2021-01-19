@@ -513,10 +513,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           if(payment.paymentType  == "payment"){
              if (payment.head == "balance" || payment.head == "balance_payment") {
                  viewModel.newPaymentTypeBalance.add(payment)
-             } else {
-                 viewModel.newPaymentTypePayment.add(payment)
+             } else if(!viewModel.invoiceList.contains(payment.invoiceId) && payment.transactionId != viewModel.tripDetail.transactionId){
+               viewModel.newPaymentTypeDN.add(payment)
+             }else {
+               viewModel.newPaymentTypePayment.add(payment)
              }
-          }else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId) {
+          } else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId) {
             viewModel.newPaymentTypeDN.add(payment)
           }
         }
@@ -548,9 +550,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           utr += "$day $month $year"
           textChargeType.text = utr
           var amount = payment.amount
-          if(!viewModel.invoiceList.contains(payment.invoiceId)){
-            amount = payment.appliedAmount!!
-          }
           val tdsObj = payment.transferTime?.let { TDS(amount, it) }
           val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
           originalPaymentSum += amount
@@ -594,9 +593,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 utr += "$day $month $year"
                 textChargeType.text = utr
                 var amount = payment.amount
-                if (!viewModel.invoiceList.contains(payment.invoiceId)) {
-                    amount = payment.appliedAmount!!
-                }
                 val tdsObj = payment.transferTime?.let { TDS(amount, it) }
                 val tdsRate = tdsObj?.getTDSRate(tdsRate, updatedTDSRate)
                 if (tdsRate != null) {
@@ -642,14 +638,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
-          deductionTotal += payment.amount
           var lrText = "Recovery against "+payment.dnType+": \n"
-          lrText += "LR "+payment.lr_nos?.get(0) +" (UTR: "+payment.utrNumber+")"
-          if(!payment.lr_nos.isNullOrEmpty() && payment.lr_nos.size > 1){
-            lrText += " +"+ (payment.lr_nos.size - 1) +" more"
+          lrText += "LR "+payment.lrNos?.get(0) +" (UTR: "+payment.utrNumber+")"
+          if(!payment.lrNos.isNullOrEmpty() && payment.lrNos.size > 1){
+            lrText += " +"+ (payment.lrNos.size - 1) +" more"
+          }
+          var amount = payment.amount
+          if (!viewModel.invoiceList.contains(payment.invoiceId) && payment.transactionId != viewModel.transactionId) {
+            lrText = "Recovery against overpayment: \n"
+            lrText += "LR "+payment.overPaymentLRs?.get(0) +" (UTR: "+payment.utrNumber+")"
+            if(!payment.overPaymentLRs.isNullOrEmpty() && payment.overPaymentLRs.size > 1){
+              lrText += " +"+ (payment.overPaymentLRs.size - 1) +" more"
+            }
+            amount = payment.appliedAmount!!
+            val tdsObj = payment.transferTime?.let { TDS(amount, it) }
+            val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
+            if (tds != null) {
+              amount -= tds
+            }
           }
           textChargeType.text = lrText
-          textChargeValue.text = String.format("%.2f",payment.amount)
+          deductionTotal += amount
+          textChargeValue.text = String.format("%.2f",amount)
           textChargeType.setOnClickListener{
             if(payment.transactionId != viewModel.transactionId) {
               redirectToLRsTrip(payment.transactionId)
