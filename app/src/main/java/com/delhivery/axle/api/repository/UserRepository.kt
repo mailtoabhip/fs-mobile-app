@@ -6,6 +6,7 @@ import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.api.service.UserService
+import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
@@ -108,4 +109,9 @@ class UserRepository @Inject constructor(
    */
   fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
     userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
+
+  /**
+   * Fetch roles and permissions
+   */
+  fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
 }

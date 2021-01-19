@@ -201,7 +201,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
   /**
-   * Is logged in user is parent or not
+   * Is logged in user parent or not
    */
   var isParent: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsParent, value)

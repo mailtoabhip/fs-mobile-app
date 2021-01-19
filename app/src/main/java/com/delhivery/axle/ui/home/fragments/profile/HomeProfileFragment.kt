@@ -81,17 +81,25 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 //      }
 //    }
 
+    viewModel.userRoleLiveData.observe(this, Observer {
+      if (it && viewModel.userPrefs.isParent) {
+        binding.containerYourTeam.visibility = View.VISIBLE
+      } else {
+        binding.containerYourTeam.visibility = View.GONE
+      }
+    })
+
     binding.containerYourRoutes.setOnClickListener {
       context?.let {
         startActivity(userRoutesIntent(it))
       }
     }
 
-    if (viewModel.userPrefs.isParent) {
-      binding.containerYourTeam.visibility = View.VISIBLE
-    } else {
-      binding.containerYourTeam.visibility = View.GONE
-    }
+//    if (viewModel.userPrefs.isParent && viewModel.userPrefs.hasUserCreationPermission) {
+//      binding.containerYourTeam.visibility = View.VISIBLE
+//    } else {
+//      binding.containerYourTeam.visibility = View.GONE
+//    }
 
     binding.containerYourTeam.setOnClickListener {
       context?.let {
@@ -117,6 +125,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
     }
 
+    viewModel.verifyRole()
     viewModel.fetchTripMeter()
   }
 
