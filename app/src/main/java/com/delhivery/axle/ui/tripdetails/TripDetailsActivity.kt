@@ -644,7 +644,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             lrText += " +"+ (payment.lrNos.size - 1) +" more"
           }
           var amount = payment.amount
-          if (!viewModel.invoiceList.contains(payment.invoiceId) && payment.transactionId != viewModel.transactionId) {
+          if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) {
             lrText = "Recovery against overpayment: \n"
             lrText += "LR "+payment.overPaymentLRs?.get(0) +" (UTR: "+payment.utrNumber+")"
             if(!payment.overPaymentLRs.isNullOrEmpty() && payment.overPaymentLRs.size > 1){
