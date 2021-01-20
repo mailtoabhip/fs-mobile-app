@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Pagination scroll listener
  */
-abstract class PaginationScrollListener(private val pageSize: Int) : RecyclerView.OnScrollListener() {
+abstract class PaginationScrollListener(private val pageSize: Int, private val isConsolidatedApi: Boolean = false) : RecyclerView.OnScrollListener() {
   override fun onScrolled(
     recyclerView: RecyclerView,
     dx: Int,
@@ -19,7 +19,7 @@ abstract class PaginationScrollListener(private val pageSize: Int) : RecyclerVie
         val totalItemCount = itemCount
         val firstVisible = findFirstVisibleItemPosition()
         if (!isLoading() && hasMore()) {
-          if (visibleItemCount + firstVisible >= totalItemCount && firstVisible >= 0 && totalItemCount >= pageSize) {
+          if (visibleItemCount + firstVisible >= totalItemCount && firstVisible >= 0 && (totalItemCount >= pageSize || isConsolidatedApi)) {
             loadMore()
           }
         }

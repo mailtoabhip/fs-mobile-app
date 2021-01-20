@@ -51,7 +51,7 @@ class ConsolidatedPageViewModel @Inject constructor(
     var ledgerStartDate = -1
     var ledgerEndDate = -1
 
-    var hasMoreData: Boolean? = false
+    var hasMoreData: Boolean = false
     var offset:Int? = 0
     var total = 0
 
@@ -189,8 +189,8 @@ class ConsolidatedPageViewModel @Inject constructor(
                 .subscribe{
                     _res,error ->
                     if(!error){
-                        //offset = offset?.plus(_res.offset!!)
-                        //hasMoreData = _res.hasNext!!
+                        offset = offset?.plus(20)
+                        hasMoreData = _res.hasNext!!
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
                             if (!paginate && _res.count == 0) {
@@ -232,7 +232,6 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         /* add progress if not paginating */
         if (paginate) {
-            showProgress()
             Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { ledgerLiveData.postValue(listOf(it)) }
         }
         dataLoadingLiveData.postValue(true)
