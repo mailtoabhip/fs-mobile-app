@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimitConsolidatedAPI
+import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
+import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
@@ -218,6 +220,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 val data = item.data as ConsolidatedLedgerItemData
                 adapter.toggle(position, data)
             }
+
+            HomeLoadsTimeOutAction -> {
+                refreshData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, isRecent)
+            }
+
+            HomeLoadsWarningAction_NoLoads ->{
+                refreshData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, isRecent)
+            }
         }
     }
 
@@ -236,6 +246,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         binding.refreshLayout.isRefreshing = true
         adapter.resetStaticData()
         if(recent){
+            binding.spinnerShowing.setSelection(0)
             viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, paginate = false, recent = true)
         }else{
             viewModel.initiateLedgerData(startMonth, startYear, endMonth, endYear, false)
