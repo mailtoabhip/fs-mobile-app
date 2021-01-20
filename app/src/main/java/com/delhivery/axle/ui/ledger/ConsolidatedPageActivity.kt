@@ -236,6 +236,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     private fun setSelection(startMonth: Int, startYear: Int, endMonth: Int, endYear: Int){
+        viewModel.offset = 0
         viewModel.currentStartMonth = startMonth
         viewModel.currentStartYear = startYear
         viewModel.currentEndMonth = endMonth

@@ -50,6 +50,9 @@ data class ConsolidatedLedgerItemData(
 
     public fun getDeductionsTitle(index: Int): String{
         var ded_type = deductions.get(index)["deduction_type"]
+        var lr_number = deductions.get(index)["lr_number"].toString()
+        val listLRs: List<String> = lr_number.split(",").toList()
+
         var title = ""
         if(ded_type == "tds_deduction"){
             if(userType == "individual"){
@@ -59,7 +62,18 @@ data class ConsolidatedLedgerItemData(
             }
         }else if(ded_type == "dn_deduction"){
             title += "Deduction against LR "
-            title += deductions.get(index)["lr_number"]
+            title += listLRs[0] + ",\n"
+            if(listLRs.size > 1){
+                var i = 0
+                for (lr in listLRs){
+                    if(i == listLRs.size - 1){
+                        title += lr
+                    }else if(i != 0){
+                        title += "$lr, "
+                    }
+                    i += 1
+                }
+            }
         }
         return title
     }
