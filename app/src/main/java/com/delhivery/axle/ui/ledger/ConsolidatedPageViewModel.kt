@@ -197,7 +197,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                                 add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Close","")), DataRVAdapterOperationType.AddUpdate))
                             }else{
                                 total = _res.count
-                                for(ledger in _res.ledgers.reversed()){
+                                for(ledger in _res.ledgers){
                                     if(ledger.amount!=0.0){
                                         add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId, userPrefs.userType)),DataRVAdapterOperationType.Add))
                                     }
