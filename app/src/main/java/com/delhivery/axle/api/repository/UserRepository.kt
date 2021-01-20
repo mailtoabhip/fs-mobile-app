@@ -47,7 +47,6 @@ class UserRepository @Inject constructor(
 //    when (BuildConfig.FLAVOR) {
 //      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
 //      else ->
-    //jwt?.let { (it.claims["sub"]?.asString()!!) } ?: ""
     userPrefs.jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
 //    }
 

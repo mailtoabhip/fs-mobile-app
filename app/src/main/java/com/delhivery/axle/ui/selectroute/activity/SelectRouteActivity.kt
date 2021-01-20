@@ -106,7 +106,6 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         if (!it.second.isNullOrEmpty()) {
           for (route in it.second) {
             if (route.origin.orion_db_city_code == originCityCode) {
-              //val routeModel = it.second[0]
               currentRoute = RouteModel(route.origin)
               currentRoute?.destinations = route.destinations
               break
@@ -206,7 +205,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
 
           viewModel.updateUserRoutes(_routes, allRoutes) { _success ->
-            viewModel.setRoutesUpdated(route)
+            viewModel.setRoutesUpdated()
             finish()
           }
         }
@@ -214,7 +213,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       EditOrigin -> {
         (action as RouteEditOriginAction).apply {
           currentRoute = route
-          viewModel.setRoutesUpdated(route)
+          viewModel.setRoutesUpdated()
           navigate(OriginCityFragment)
         }
       }

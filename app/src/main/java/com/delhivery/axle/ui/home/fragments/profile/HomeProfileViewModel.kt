@@ -56,7 +56,7 @@ class HomeProfileViewModel @Inject constructor(
 
 
   /**
-   * Verify user role as can_create_secondary_sp
+   * Verify user has permission as can_create_secondary_sp
    */
   fun verifyRole() {
     compositeDisposable += userRepository.fetchUserRoles()

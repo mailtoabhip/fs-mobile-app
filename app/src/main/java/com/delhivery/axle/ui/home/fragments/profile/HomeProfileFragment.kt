@@ -67,20 +67,6 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       binding.executePendingBindings()
     })
 
-//    binding.containerYourRoutes.setOnClickListener {
-//      // Capture event
-//      analyticsUtil.trackEvent(
-//          EVENT_EDIT_ROUTE,
-//          mutableListOf(PROPERTY_SOURCE),
-//          mutableListOf(VALUE_PROFILE)
-//      )
-//      it.post {
-//        startActivityForResult(
-//            selectRouteIntent(it.context, EditRoute), REQCODE_EDIT_ROUTE
-//        )
-//      }
-//    }
-
     viewModel.userRoleLiveData.observe(this, Observer {
       if (it && viewModel.userPrefs.isParent) {
         binding.containerYourTeam.visibility = View.VISIBLE
@@ -94,12 +80,6 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         startActivity(userRoutesIntent(it))
       }
     }
-
-//    if (viewModel.userPrefs.isParent && viewModel.userPrefs.hasUserCreationPermission) {
-//      binding.containerYourTeam.visibility = View.VISIBLE
-//    } else {
-//      binding.containerYourTeam.visibility = View.GONE
-//    }
 
     binding.containerYourTeam.setOnClickListener {
       context?.let {

@@ -19,7 +19,7 @@ import javax.inject.Inject
  */
 
 /**
- * Bid Create/Edit dialog
+ * Team member Create/Edit dialog
  */
 class TeamMembersCreateEditDialog @Inject constructor(
   context: Context,

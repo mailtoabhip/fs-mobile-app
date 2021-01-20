@@ -50,7 +50,6 @@ class TripsRepository @Inject constructor(
   fun uploadPod(
     transactionId: String,
     podRequest: PodRequest
-    //imageUrls: MutableList<String>
   ) = tripsService.updateTrip(transactionId, podRequest)
 
   /**

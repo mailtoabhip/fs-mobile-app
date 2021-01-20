@@ -119,9 +119,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     }
 
     binding.routesBanner.setOnClickListener {
-//      startActivity(
-//          selectRouteIntent(it.context, EditRoute)
-//      )
       context?.let {
         startActivity(userRoutesIntent(it))
       }
@@ -233,9 +230,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_SOURCE),
             mutableListOf(VALUE_LOAD_INFO)
         )
-//        context?.let {
-//          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
-//        }
         context?.let {
           startActivity(userRoutesIntent(it))
         }
@@ -248,9 +242,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_SOURCE),
             mutableListOf(VALUE_NO_RESULTS)
         )
-//        context?.let {
-//          startActivityForResult(selectRouteIntent(context!!, EditRoute), REQCODE_EDIT_ROUTE)
-//        }
         context?.let {
           startActivity(userRoutesIntent(it))
         }

@@ -106,8 +106,7 @@ class SelectRouteViewModel @Inject constructor(
   /**
    * Set route updated flag
    */
-  fun setRoutesUpdated(route: RouteModel) {
+  fun setRoutesUpdated() {
     userPrefs.routeUpdate = true
-    //userPrefs.cityCode = route.origin.orion_db_city_code
   }
 }

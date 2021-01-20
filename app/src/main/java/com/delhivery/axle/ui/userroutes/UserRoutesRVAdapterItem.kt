@@ -12,7 +12,7 @@ import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Route
  */
 
 /**
- * RV item type for []
+ * RV item type for [UserRoutesRVAdapter]
  */
 enum class UserRoutesRVAdapterItemType(val typeId: Int) {
   Route(0),

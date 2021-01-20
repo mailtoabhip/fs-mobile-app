@@ -13,7 +13,7 @@ import com.delhivery.axle.ui.base.BaseViewHolder
  */
 
 /**
- * Base Home bids RV adapter view holder
+ * User Routes RV adapter view holder
  */
 abstract class BaseUserRoutesRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseUserRouteRVAdapterItem<*>>(binding: B) :
     BaseViewHolder<B>(binding) {
