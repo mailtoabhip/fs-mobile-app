@@ -194,7 +194,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                         mutableListOf<Pair<BaseConsolidatedPageRVAdapterItem<*>,DataRVAdapterOperationType>>().apply {
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
                             if (!paginate && _res.count == 0) {
-                                add(Pair(ConsolidatedPageWarningItem(HomeLoadsWarningItemData("No Ledgers Found","Ledgers not found for the provided months","Refresh","")), DataRVAdapterOperationType.AddUpdate))
+                                add(Pair(ConsolidatedWarningItem_NoLedger, DataRVAdapterOperationType.AddUpdate))
                             }else{
                                 total = _res.count
                                 for(ledger in _res.ledgers){
@@ -211,7 +211,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                             /* remove progress item */
                             add(Pair(ConsolidatedPageProgressItem(ConsolidatedProgressItemData()), DataRVAdapterOperationType.Remove))
                             /* add api time out item */
-                            add(Pair(ConsolidatedPageTimeoutItem(HomeLoadsTimeOutItemData("TimeOut","Something went wrong","Refresh","")), DataRVAdapterOperationType.AddUpdate))
+                            add(Pair(ConsolidatedWarningItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                         }.let { ledgerLiveData.postValue(it) }
                     }
                     dataLoadingLiveData.postValue(false)
