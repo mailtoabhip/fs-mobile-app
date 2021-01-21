@@ -62,8 +62,9 @@ data class ConsolidatedLedgerItemData(
             }
         }else if(ded_type == "dn_deduction"){
             title += "Deduction against LR "
-            title += listLRs[0] + ",\n"
+            title += listLRs[0]
             if(listLRs.size > 1){
+                title += ",\n"
                 var i = 0
                 for (lr in listLRs){
                     if(i == listLRs.size - 1){
