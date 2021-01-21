@@ -67,13 +67,19 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       binding.executePendingBindings()
     })
 
-    viewModel.userRoleLiveData.observe(this, Observer {
-      if (it && viewModel.userPrefs.isParent) {
-        binding.containerYourTeam.visibility = View.VISIBLE
-      } else {
-        binding.containerYourTeam.visibility = View.GONE
-      }
-    })
+//    viewModel.userRoleLiveData.observe(this, Observer {
+//      if (it && viewModel.userPrefs.isParent) {
+//        binding.containerYourTeam.visibility = View.VISIBLE
+//      } else {
+//        binding.containerYourTeam.visibility = View.GONE
+//      }
+//    })
+
+    if (viewModel.userPrefs.isParent) {
+      binding.containerYourTeam.visibility = View.VISIBLE
+    } else {
+      binding.containerYourTeam.visibility = View.GONE
+    }
 
     binding.containerYourRoutes.setOnClickListener {
       context?.let {
@@ -105,7 +111,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
       }
     }
 
-    viewModel.verifyRole()
+    //viewModel.verifyRole()
     viewModel.fetchTripMeter()
   }
 
