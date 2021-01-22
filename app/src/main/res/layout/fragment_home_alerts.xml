@@ -23,7 +23,7 @@
         app:srcCompat="@drawable/ic_alerts_placeholder"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -33,11 +33,10 @@
         android:lineSpacingExtra="2sp"
         android:text="@string/label_coming_soon"
         android:textColor="#181818"
-        android:textSize="16sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_16sp"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/size_24dp"
@@ -49,8 +48,7 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/msg_alerts_under_dev"
         android:textColor="#181818"
-        android:textSize="12sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_12sp"
         />
 
   </androidx.appcompat.widget.LinearLayoutCompat>

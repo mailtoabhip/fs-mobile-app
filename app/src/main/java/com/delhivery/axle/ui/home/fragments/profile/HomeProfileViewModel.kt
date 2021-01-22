@@ -1,10 +1,10 @@
 package com.delhivery.axle.ui.home.fragments.profile
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.data.UserModel
-import com.delhivery.axle.repository.TransactionsRepository
-import com.delhivery.axle.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -19,6 +19,8 @@ class HomeProfileViewModel @Inject constructor(
 ) : BaseViewModel() {
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
+
+  var userRoleLiveData = MutableLiveData<Boolean>()
 
   var userLiveData = MutableLiveData<UserModel>()
 
@@ -47,6 +49,35 @@ class HomeProfileViewModel @Inject constructor(
             tripEarningLiveData.postValue(earningMap)
           } else {
             tripEarningLiveData.postValue(null)
+          }
+        }
+  }
+
+
+
+  /**
+   * Verify user has permission as can_create_secondary_sp
+   */
+  fun verifyRole() {
+    compositeDisposable += userRepository.fetchUserRoles()
+        .onBackground()
+        .subscribe { res, error ->
+          if (!error) {
+            if (res != null && !res.roles.isNullOrEmpty()) {
+              var permission = false
+              res.permissions.forEach {
+                if (it.name == "can_create_secondary_sp") {
+                  permission = true
+                }
+              }
+              if (permission) {
+                userRoleLiveData.postValue(true)
+              } else {
+                userRoleLiveData.postValue(false)
+              }
+            }
+          } else {
+            userRoleLiveData.postValue(false)
           }
         }
   }

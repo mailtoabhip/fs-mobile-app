@@ -8,8 +8,10 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
+import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
@@ -129,6 +131,24 @@ internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ * Loads filter view holder
+ */
+internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsFilterItemBinding, HomeLoadsFilterItem>(binding) {
+  override fun bind(
+    item: HomeLoadsFilterItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    if (item.data.actionLabel) {
+      binding.toggleRemovedMark.visibility = View.VISIBLE
+    } else {
+      binding.toggleRemovedMark.visibility = View.GONE
+    }
+    binding.llExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
   }
 }
 

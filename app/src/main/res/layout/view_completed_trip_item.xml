@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="trip"
+        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        />
+
+    <import type="androidx.core.content.ContextCompat" />
+    <import type="android.view.View" />
+    <import type="com.delhivery.axle.ui.bids.TripType" />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_6dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_6dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:padding="@dimen/size_16dp"
+        >
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_truck_details"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="@dimen/text_8sp"
+          android:text="@{ trip.vehicleDetails.vehicleNo }"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/text_16sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="HR26"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_route"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ trip.route() }"
+          android:textColor="@color/sub_heading_black"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+          tools:text="Ajmer - Goa"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_trip_status"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:lineSpacingExtra="10sp"
+          android:text="@{ trip.tripStatus().typeText}"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+          tools:text="Status"
+          tools:textColor="@color/status_active"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_start_date"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:fontFamily="sans-serif"
+          android:lineSpacingExtra="10sp"
+          android:text="@{ trip.loadedAt()}"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/text_trip_status"
+          tools:text="Start Date"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_end_date"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:fontFamily="sans-serif"
+          android:lineSpacingExtra="10sp"
+          android:text="@{ trip.unloadedAt()}"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/text_date_time"
+          tools:text="End Date"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_date_time"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:lineSpacingExtra="4sp"
+          android:text="@{trip.lr()}"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_route"
+          tools:text="LR: 1234567890"
+          />
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/container_advance"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          android:padding="@dimen/size_4dp"
+          app:layout_constraintEnd_toStartOf="@+id/container_balance"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_end_date"
+          >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_advance_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:text="@{trip.advance().first}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Advance Paid"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_advance_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{trip.advance().second}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{trip.advance().second.toString() == null || trip.advance().second.toString().isEmpty()?View.GONE: View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_advance"
+            tools:text="On: 12-11-2019"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_advance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{trip.advance().third}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{trip.advance().third.toString() == null || trip.advance().third.toString().isEmpty()?View.GONE: View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_advance_title"
+            tools:text="Rs 1750.00"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/container_balance"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/size_4dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:visibility="@{trip.balance_tile_visibility()}"
+          app:layout_constraintStart_toEndOf="@+id/container_advance"
+          app:layout_constraintTop_toTopOf="@+id/container_advance"
+          >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_balance_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:text="@{trip.balance().first}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Balance Paid"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_balance_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{trip.balance().second.toString()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{trip.balance().second.toString() == null || trip.balance().second.toString().isEmpty()?View.GONE: View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_balance"
+            tools:text="On: 12-11-2019"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_balance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{trip.balance().third.toString()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{trip.balance().third.toString() == null || trip.balance().third.toString().isEmpty()?View.GONE: View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_balance_title"
+            tools:text="Rs 1750.00"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_remark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{trip.pending()}"
+            android:textColor="@color/status_lost"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{trip.pending() == null || trip.pending().isEmpty()?View.GONE: View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_balance_time"
+            tools:text="Remarks"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_is_multidrop"
+          android:layout_marginTop="8dp"
+          android:background="@drawable/bg_gradient_blue"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:lineSpacingExtra="4sp"
+          android:paddingStart="8dp"
+          android:textColor="@color/white"
+          android:paddingEnd="8dp"
+          app:layout_constraintStart_toStartOf="parent"
+          android:text="Multidrop"
+          android:visibility="@{trip.setMutidrop()}"
+          app:layout_constraintTop_toBottomOf="@+id/container_advance"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+</layout>

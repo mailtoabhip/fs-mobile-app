@@ -38,21 +38,20 @@
           app:srcCompat="@drawable/ic_arrow_forward_black"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_source_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif"
           android:text="@{ data.originCity.city }"
           android:textColor="#de000000"
-          android:textSize="16sp"
-          android:textStyle="normal"
+          android:textSize="@dimen/text_16sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           tools:text="Panjim"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_source_state"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -60,13 +59,12 @@
           android:fontFamily="sans-serif"
           android:text="@{ data.originCity.state }"
           android:textColor="#99000000"
-          android:textSize="13sp"
-          android:textStyle="normal"
+          android:textSize="@dimen/text_12sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_city"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -74,14 +72,13 @@
           android:fontFamily="sans-serif"
           android:text="@{ data.destinationCity.city }"
           android:textColor="#de000000"
-          android:textSize="16sp"
-          android:textStyle="normal"
+          android:textSize="@dimen/text_16sp"
           app:layout_constraintStart_toEndOf="@id/img_forward"
           app:layout_constraintTop_toTopOf="@id/img_forward"
           tools:text="Andheri East"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_destination_state"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -90,7 +87,6 @@
           android:text="@{ data.destinationCity.state }"
           android:textColor="#99000000"
           android:textSize="13sp"
-          android:textStyle="normal"
           app:layout_constraintStart_toStartOf="@id/text_destination_city"
           app:layout_constraintTop_toBottomOf="@id/text_source_city"
           />

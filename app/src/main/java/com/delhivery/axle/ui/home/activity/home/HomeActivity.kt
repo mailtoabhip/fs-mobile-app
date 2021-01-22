@@ -11,8 +11,10 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
 import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
@@ -22,6 +24,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
@@ -50,6 +53,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       transactionIds = transactions.split(",")
           .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
+    preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -92,12 +96,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     markNotificationRead()
     when (notificationType) {
-      "submit_pod_notification" -> {
+      SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
           startActivity(tripDetailsIntent(transactionIds[0], this))
         } else {
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
+      }
+      PREFERRED_SUPPLIER_NOTIFICATION -> {
+        startActivity(bidDetailsIntent(preferredTransactionId, this))
+      }
+      REJECT_POD_NOTIFICATION -> {
+        startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
+      LOWEST_BID_NOTIFICATION -> {
+        if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
+          startActivity(bidDetailsIntent(transactionIds[0], this))
+        } else {
+          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+        }
+      }
+      LANE_PREFERENCE_UPDATE_NOTIFICATION -> {
+        startActivity(userRoutesIntent(this))
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -127,6 +147,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
+    preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
           .map { it.trim() }
@@ -191,3 +212,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 interface TitleProvider {
   val title: CharSequence
 }
+
+private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
+private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
+private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
+private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
+private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"

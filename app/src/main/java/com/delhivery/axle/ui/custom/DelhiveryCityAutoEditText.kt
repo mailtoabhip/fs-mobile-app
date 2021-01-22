@@ -105,7 +105,7 @@ class DelhiveryCityAutoEditText(
     if (!isPerformingCompletion) {
       progress(false)
       val adapter =
-        ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, cities.names())
+        ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, cities.names())
       setAdapter(adapter)
       setOnItemClickListener { _, _, i, _ ->
         setText(cities[i].cityName())

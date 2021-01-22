@@ -43,7 +43,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/text_skip"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -54,7 +54,6 @@
           android:text="@string/action_skip"
           android:textColor="@color/color_hint"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           />
 
       <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator

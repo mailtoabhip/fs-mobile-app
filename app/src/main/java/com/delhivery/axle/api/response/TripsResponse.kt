@@ -42,10 +42,3 @@ data class Summary(
     else -> "₹ ${StringUtils.formatAmount(amount)}"
   }
 }
-
-/**
- * Response container for Upload POD api
- */
-data class UploadPodResponse(
-  @SerializedName("pod_url") val podUrl: String
-)

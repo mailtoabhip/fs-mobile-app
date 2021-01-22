@@ -79,7 +79,7 @@
               bind:layout_constraintTop_toTopOf="parent"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_route_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,10 +89,9 @@
                 android:text="Route preference not added"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_16sp"
-                android:textStyle="normal"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_route_sub_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,7 +101,6 @@
                 android:text="Add route details to see loads in your area"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>
@@ -116,7 +114,7 @@
               bind:layout_constraintTop_toTopOf="parent"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/size_16dp"

@@ -23,7 +23,7 @@
         app:srcCompat="@drawable/ic_place_bid_first"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_14dp"
@@ -35,11 +35,10 @@
         android:shadowRadius="16"
         android:text="@string/msg_be_first_to_bid"
         android:textColor="#ffffff"
-        android:textSize="16sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_16sp"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -49,8 +48,7 @@
         android:lineSpacingExtra="6sp"
         android:text="@string/msg_no_bids_received"
         android:textColor="#e0e0e0"
-        android:textSize="12sp"
-        android:textStyle="normal"
+        android:textSize="@dimen/text_12sp"
         />
 
     <androidx.appcompat.widget.AppCompatButton

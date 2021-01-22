@@ -5,7 +5,6 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.regions.Region
-import com.amazonaws.regions.Regions.AP_SOUTHEAST_1
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList.BucketOwnerFullControl
 import com.delhivery.axle.api.response.DelegationToken
@@ -84,7 +83,7 @@ class AWSUtils @Inject constructor(
         delegationToken.accessKey, delegationToken.secretKey,
         delegationToken.sessionToken
     )
-    val s3 = AmazonS3Client(credentials, Region.getRegion(AP_SOUTHEAST_1))
+    val s3 = AmazonS3Client(credentials, Region.getRegion(AWSConfig.ServerRegion.value()))
     val transferUtility = TransferUtility.builder()
         .context(activity)
         .s3Client(s3)

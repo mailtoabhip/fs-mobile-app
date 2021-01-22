@@ -47,7 +47,7 @@
           app:layout_constraintTop_toTopOf="parent"
           >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_source_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,28 +56,52 @@
             android:text="@{request.originCityName()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/img_forward"
             tools:text="Goa"
             />
 
-        <TextView
-            android:id="@+id/text_source_state"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/til_state"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:fontFamily="sans-serif"
-            android:text="@{request.originStateName()}"
-            android:textColor="@color/sub_heading_black"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_source_city"
-            tools:text="Goa"
-            />
+            android:orientation="horizontal">
 
-        <TextView
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_source_state"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:text="@{request.originDistrictState()}"
+              android:paddingEnd="@dimen/size_8dp"
+              android:textColor="@color/sub_heading_black"
+              android:layout_weight="1"
+              tools:text="North Goa, Goa"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_destination_state"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:gravity="center"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:paddingEnd="@dimen/size_8dp"
+              android:paddingStart="@dimen/size_8dp"
+              android:text="@{request.destinationDistrictState()}"
+              android:textColor="@color/sub_heading_black"
+              app:layout_constraintStart_toStartOf="@id/text_destination_city"
+              app:layout_constraintTop_toBottomOf="@id/text_source_city"
+              tools:text="North Goa, Goa"
+              />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,24 +111,8 @@
             android:text="@{request.destinationCityName()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:textStyle="normal"
             app:layout_constraintStart_toEndOf="@id/img_forward"
             app:layout_constraintTop_toTopOf="@id/img_forward"
-            tools:text="Goa"
-            />
-
-        <TextView
-            android:id="@+id/text_destination_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:fontFamily="sans-serif"
-            android:text="@{request.destinationStateName()}"
-            android:textColor="@color/sub_heading_black"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="normal"
-            app:layout_constraintStart_toStartOf="@id/text_destination_city"
-            app:layout_constraintTop_toBottomOf="@id/text_source_city"
             tools:text="Goa"
             />
 
@@ -119,7 +127,7 @@
             app:srcCompat="@drawable/ic_arrow_forward_black"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_date_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -129,12 +137,12 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_source_state"
+            app:layout_constraintTop_toBottomOf="@id/til_state"
             bind:drawableResId="@{ request.requiredAtBg() }"
             tools:text="Today"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_capacity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -159,7 +167,7 @@
             app:srcCompat="@{ request.truckTypeDrawableRes() }"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_truck_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -175,11 +183,11 @@
             tools:text="Goa Gao goa goa"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_load_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_6dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@{request.loadDetails()}"
             android:textColor="@color/colorAccent"
@@ -188,6 +196,72 @@
             app:layout_constraintTop_toBottomOf="@id/text_date_time"
             tools:text="Goa goa goa"
             />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_detention"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_8dp"
+            android:background="@drawable/bg_gradient_green"
+            android:text="@string/low_detention_expected_detention_at_warehouse_is_8_hrs"
+            android:textColor="@color/white"
+            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_6dp"
+            android:background="@drawable/bg_gradient_orange"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_8dp"
+            android:text="Mandatory GPS"
+            app:layout_constraintStart_toEndOf="@+id/text_detention"
+            android:textColor="@color/white"
+            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_status_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@drawable/bg_gradient_orange"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="@dimen/size_8dp"
+            android:textColor="@color/white"
+            android:paddingEnd="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_6dp"
+            app:layout_constraintStart_toEndOf="@+id/text_gps"
+            android:text="@{request.expressText(false)}"
+            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            tools:text="Express"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_is_multidrop"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_gradient_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="8dp"
+            android:textColor="@color/white"
+            android:paddingEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="Multidrop"
+            android:visibility="@{request.setMutidrop()}"
+            app:layout_constraintTop_toBottomOf="@+id/text_detention"/>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -210,7 +284,7 @@
             android:paddingRight="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_14dp"
             android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
-            tools:visibility="gone"
+            tools:visibility="visible"
             >
 
           <androidx.appcompat.widget.AppCompatImageView
@@ -236,14 +310,61 @@
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              app:layout_constraintEnd_toStartOf="@+id/view_lowest_bid_info"
               app:layout_constraintStart_toEndOf="@+id/img_tick"
               app:layout_constraintTop_toTopOf="parent"
               autofit:minTextSize="@dimen/text_10sp"
               tools:text="Bid successufully placed for 235000"
               />
 
-          <TextView
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/view_lowest_bid_info"
+              app:layout_constraintTop_toTopOf="parent"
+              android:layout_marginEnd="@dimen/size_16dp"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintEnd_toStartOf="@+id/text_edit"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_lowest_bid_difference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textStyle="bold"
+                android:textColor="@color/colorDelhiveryRed"
+                android:text="@{request.lowestbidDifference()}"
+                app:layout_constraintEnd_toStartOf="@+id/img_bid_up_arrow"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_bid_up_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_baseline_arrow_upward_24"
+                android:visibility="@{request.setLowestBidImage()}"
+                app:layout_constraintStart_toEndOf="@id/text_lowest_bid_difference"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="visible"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_close_bracket"
+                android:text=")"
+                android:textColor="@color/colorDelhiveryRed"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                visibility="@{request.setCloseText()}"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_bid_up_arrow"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+          <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_edit"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -253,7 +374,6 @@
               android:textStyle="bold"
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toEndOf="@+id/text_bid_amount"
               app:layout_constraintTop_toTopOf="parent"
               app:srcCompat="@drawable/ic_arrow_forward_black"
               />
@@ -270,7 +390,7 @@
             android:paddingEnd="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_8dp"
             android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
-            tools:visibility="visible"
+            tools:visibility="gone"
             >
 
           <androidx.appcompat.widget.LinearLayoutCompat
@@ -283,7 +403,7 @@
               android:gravity="center_vertical"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"

@@ -96,20 +96,18 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_supplier_details"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -121,7 +119,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/id5"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -137,7 +135,7 @@
                 tools:text="qwertyuio"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_company"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -150,7 +148,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_name"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_company"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -166,7 +164,7 @@
                 tools:text="asdedfrf"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_mobile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -178,7 +176,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_company"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_mobile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -193,7 +191,7 @@
                 tools:text="asdedfrf"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_bank"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -205,7 +203,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_mobile"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_bank"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -220,7 +218,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_ifsc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -232,7 +230,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_bank"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_ifsc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -247,7 +245,7 @@
                 tools:text="1234567890"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_pan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -259,7 +257,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_ifsc"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_vehicle_type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -297,19 +295,17 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="Physical POD Postal Address"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_4dp"
@@ -317,7 +313,6 @@
                 android:text="Delhivery Pvt Ltd, Ground floor, Edificio Da Menezes E Silva, Sangolda, Near Holy Family Church, Goa 403501"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/id1"
                 />
@@ -345,20 +340,18 @@
               android:padding="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_trip_meter"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -367,7 +360,6 @@
                 android:text="@string/label_card_subheading_trip_meter"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/id1"
                 />
@@ -392,7 +384,7 @@
                   app:layout_constraintTop_toTopOf="parent"
                   >
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -400,10 +392,9 @@
                     android:text="This Month"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_10sp"
-                    android:textStyle="normal"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -415,7 +406,7 @@
                     tools:text="₹ 345000"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -423,7 +414,6 @@
                     android:text="@{currentMonth.count()}"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_12sp"
-                    android:textStyle="normal"
                     tools:text="35 trips"
                     />
 
@@ -442,7 +432,7 @@
                   app:layout_constraintTop_toTopOf="parent"
                   >
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -450,10 +440,9 @@
                     android:text="Last Month"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_10sp"
-                    android:textStyle="normal"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -465,7 +454,7 @@
                     tools:text="₹ 345000"
                     />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
@@ -473,7 +462,6 @@
                     android:text="@{lastMonth.count()}"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_12sp"
-                    android:textStyle="normal"
                     tools:text="34 trips"
                     />
               </androidx.appcompat.widget.LinearLayoutCompat>
@@ -506,14 +494,12 @@
               android:paddingBottom="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="Payment Terms"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -554,20 +540,18 @@
               android:paddingBottom="@dimen/size_16dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_your_routes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/label_your_routes"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_your_routes_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -576,7 +560,6 @@
                 android:text="@string/msg_view_edit_route_prefs"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_12sp"
-                android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_your_routes"
                 />
@@ -591,6 +574,53 @@
                 />
 
           </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- your team container -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_your_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_4dp"
+            >
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingStart="@dimen/size_16dp"
+              android:paddingTop="@dimen/size_16dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:paddingBottom="@dimen/size_16dp"
+              >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_your_team"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/label_your_team"
+                android:textColor="@color/heading_black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/text_your_team"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_your_team"
+                app:srcCompat="@drawable/ic_chevron_right_dark"
+                />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
 
         <!-- logout container -->
@@ -618,14 +648,12 @@
               android:paddingBottom="@dimen/size_24dp"
               >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/action_logout_from_app"
                 android:textColor="#de000000"
-                android:textSize="14sp"
-                android:textStyle="normal"
                 />
 
             <View

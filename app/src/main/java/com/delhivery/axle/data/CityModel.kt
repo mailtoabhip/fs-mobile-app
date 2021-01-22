@@ -1,17 +1,16 @@
 package com.delhivery.axle.data
 
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 
 data class CityModel(
   @SerializedName("city") val city: String,
-  @SerializedName("city_id") val cityId: String,
+  @SerializedName("orion_db_city_code") val orion_db_city_code: String? = "",
   @SerializedName("district") val district: String? = "",
-  @SerializedName("city_type") val cityType: String? = "",
-  @SerializedName("state") val state: String? = "",
-  @SerializedName("state_id") val stateId: String? = ""
+  @SerializedName("state") val state: String? = ""
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = cityId
+  override fun key() = orion_db_city_code ?: ""
 
   fun cityName() = StringUtils.capitalize(city) ?: ""
 
@@ -19,21 +18,26 @@ data class CityModel(
 
   fun cityState(): String {
     val sb = StringBuilder().append(cityName())
-    val code = cityId.subSequence(0, 2)
+    if (district.isNotNullOrEmpty())
+      sb.append(", ").append(district)
+    val code = orion_db_city_code?.subSequence(0, 2)
         .toString()
     StateModelList.toMutableList()
         .forEach { stateModel ->
           if (stateModel.stateId.compareTo(code) == 0) {
             sb.append(", ")
-                .append(stateModel.state)
+                .append(stateModel.stateId)
           }
         }
     return sb.toString()
   }
+
+  fun getUserCity() = UserCity(city, orion_db_city_code)
+
 }
 
 data class CitiesResponse(
-  @SerializedName("cities") val cities: List<CityModel>
+  @SerializedName("city_sugg") val cities: List<CityModel>
 )
 
 /**
@@ -42,9 +46,35 @@ data class CitiesResponse(
 fun List<CityModel>.names() =
   mapIndexed { _, cityModel ->
     val city: String = StringUtils.capitalize(cityModel.city) ?: ""
+    val district: String = StringUtils.capitalize(cityModel.district) ?: ""
     val state: String = StringUtils.capitalize(cityModel.state) ?: ""
-    when (state.length) {
-      0 -> return@mapIndexed city
-      else -> return@mapIndexed "$city, $state"
-    }
+    val sb = StringBuilder()
+    sb.append(city)
+    if (district.isNotNullOrEmpty())
+      sb.append(", ").append(district)
+    if (state.isNotNullOrEmpty())
+      sb.append(", ").append(state)
+    return@mapIndexed sb.toString()
   }
+
+/**
+ * Search city model
+ */
+data class SearchCityModel(
+  @SerializedName("city") val city: String,
+  @SerializedName("state") val state: String,
+  @SerializedName("orion_db_city_code") val dbCityCode: String? = ""
+) : BaseKeyTypeModel<String>() {
+  override fun key() = dbCityCode ?: ""
+
+  fun cityName() = StringUtils.capitalize(city)
+
+  fun stateName() = StringUtils.capitalize(state)
+}
+
+/**
+ * Search city response
+ */
+data class SearchCitiesResponse(
+  @SerializedName("records") val cities: List<SearchCityModel>
+)

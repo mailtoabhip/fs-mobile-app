@@ -5,7 +5,7 @@
   <data>
     <variable
         name="origin"
-        type="com.delhivery.axle.data.CityModel"
+        type="com.delhivery.axle.data.UserCity"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat
@@ -16,7 +16,7 @@
       android:paddingTop="@dimen/size_24dp"
       >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_24dp"
@@ -29,19 +29,18 @@
         android:textStyle="bold"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_24dp"
         android:layout_marginTop="@dimen/size_6dp"
         android:fontFamily="sans-serif-medium"
-        android:text="@{ @string/label_from_state(origin.state) }"
+        android:text="@{ @string/label_from_state(origin.city) }"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_16sp"
-        android:textStyle="normal"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_24dp"
@@ -50,8 +49,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_select_route_destinations"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         />
 
     <RelativeLayout

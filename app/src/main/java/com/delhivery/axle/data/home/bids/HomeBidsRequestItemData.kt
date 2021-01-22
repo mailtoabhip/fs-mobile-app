@@ -1,6 +1,7 @@
 package com.delhivery.axle.data.home.bids
 
 import android.text.TextUtils
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -43,10 +44,15 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_display_name") val truckDisplayName: String?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
+  @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
   @SerializedName("truck_specifications") var truckSpecification: TruckSpecification?,
+  @SerializedName("speed") var speed: String?,
+  @SerializedName("tat_minutes") var tatMinutes: String?,
+  @SerializedName("origin_district") val originDistrict: String?,
+  @SerializedName("destination_district") val destinationDistrict: String?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -54,12 +60,21 @@ data class HomeBidsRequestItemData(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = "Load: ${StringUtils.capitalize(materialType) ?: "Not available"}"
+  fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 
   fun target() = if (targetPrice > 0 && loadPricePercent > 0) {
     targetPrice * loadPricePercent / 100
   } else {
     0.0
+  }
+
+  /**
+   * if trip is Multidrop
+   */
+  fun setMutidrop() = if (isMultidrop != null && isMultidrop == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**
@@ -83,14 +98,50 @@ data class HomeBidsRequestItemData(
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
 
   /**
-   * @return formatted origin city, state
+   * @return formatted origin district name
    */
-  fun originCityState() = originCityName() + ", " + originStateName()
+  fun originDistrictName() = originDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return formatted destination district name
+   */
+  fun destinationDistrictName() = destinationDistrict?.let { StringUtils.capitalize(it) } ?: ""
+
+  /**
+   * @return origin district and state name
+   */
+  fun originDistrictState() = if(originDistrictName().isNotNullOrEmpty()) {
+    originDistrictName() + ", " + originStateName()
+  } else {
+    originStateName()
+  }
+
+  /**
+   * @return destination district and state name
+   */
+  fun destinationDistrictState() = if(destinationDistrictName().isNotNullOrEmpty()) {
+    destinationDistrictName() + ", " + destinationStateName()
+  } else {
+    destinationStateName()
+  }
+
+  /**
+   * @return formatted origin district, city, state
+   */
+  fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
+    originCityName() + ", " + originDistrictName() + ", " + originStateName()
+  } else {
+    originCityName() + ", " + originStateName()
+  }
 
   /**
    * @return formatted destination city, state
    */
-  fun destinationCityState() = destinationCityName() + ", " + destinationStateName()
+  fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
+    destinationCityName() + ", " + destinationDistrictName() + ", " + destinationStateName()
+  } else {
+    destinationCityName() + ", " + destinationStateName()
+  }
 
   /**
    * @return intermediary stops
@@ -233,9 +284,71 @@ data class HomeBidsRequestItemData(
   )}" + if (isPMTIndent()) " /MT" else ""
 
   /**
+   * @return lowest bid difference
+   */
+  fun lowestbidDifference() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+    if (isPMTIndent()) {
+      " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}" + " /MT"
+    } else {
+      " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}"
+    }
+  } else {
+    ""
+  }
+
+  /**
+   * @return set image if supplier bid is more than lowest bid
+   */
+  fun setLowestBidImage() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * @return set close bracket text if lowest bid is present
+   */
+  fun setCloseText() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+
+  /**
    * @return true if indent type(pmt/ftl)
    */
   fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
+  /**
+   * @return true if speed is express
+   */
+  fun isExpress() = speed?.compareTo("EXP") == 0
+
+
+
+  /**
+   * @return expressText with tat
+   */
+  fun expressText(showNum: Boolean): String {
+    val sb = StringBuilder()
+    if(showNum)
+      sb.append("1. ")
+    sb.append("Express")
+    if (tatMinutes != null) {
+      val tat = tatMinutes?.toDouble() ?: 0.0
+      if (tat > 60) {
+        sb.append("(")
+            .append(tat / 60)
+            .append(" hrs)")
+      } else {
+        sb.append("(")
+            .append(tat)
+            .append(" min)")
+      }
+    }
+    return sb.toString()
+  }
 
 }
 

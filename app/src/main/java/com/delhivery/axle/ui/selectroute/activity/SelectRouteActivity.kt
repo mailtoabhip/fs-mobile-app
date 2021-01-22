@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.UserCity
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.ActivitySelectRouteBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
@@ -58,12 +58,19 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   /* current route model */
   private var currentRoute: RouteModel? = null
 
+  private var allRoutes: List<RouteModel> = mutableListOf()
+
   private var addRouteOnLogin: Boolean = false
+
+  private var originCityCode: String = ""
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     addRouteOnLogin = intent?.extras?.getBoolean(SelectRouteWelcomeIntentExtra) ?: false
+
+    originCityCode = intent?.extras?.getString(SelectRouteOriginCityExtra, "")
+        .toString()
 
     /* flow type */
     try {
@@ -85,24 +92,34 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     /* start with origin city fragment */
     navigate(SelectRouteFragmentType.initFragment(flowType))
 
+    viewModel.allRoutesLiveData.observe(this, Observer {
+      if (!it.second.isNullOrEmpty()) {
+        allRoutes = it.second
+      }
+    })
+
     /* observe routes and update route list fragment */
     viewModel.routesLiveData.observe(this, Observer {
       val _fragment = supportFragmentManager.findFragmentByTag(SelectRouteFragmentTag)
       if (_fragment is SelectRouteDetailFragment && it != null) {
 
-        if (!it.third.isNullOrEmpty()) {
-          val routeModel = it.third.get(0)
-          currentRoute = RouteModel(CityModel(routeModel.origin.city, routeModel.origin.cityId))
-          currentRoute?.destinations = it.third[0].destinations
+        if (!it.second.isNullOrEmpty()) {
+          for (route in it.second) {
+            if (route.origin.orion_db_city_code == originCityCode) {
+              currentRoute = RouteModel(route.origin)
+              currentRoute?.destinations = route.destinations
+              break
+            }
+          }
         } else {
-          currentRoute = RouteModel(CityModel(it.first, it.second))
+          currentRoute = RouteModel(UserCity(it.first.first, it.first.second))
         }
         _fragment.route = currentRoute
         _fragment.populateRoute()
       }
     })
 
-    if (flowType == EditRoute) viewModel.fetchUserRoutes()
+    viewModel.fetchUserRoutes()
   }
 
   /**
@@ -128,10 +145,10 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         (action as OriginSelectedAction).apply {
           when (currentRoute) {
             null -> {
-              currentRoute = RouteModel(origin)
+              currentRoute = RouteModel(origin.getUserCity())
             }
             else -> {
-              currentRoute?.origin = origin
+              currentRoute?.origin = origin.getUserCity()
             }
           }
           navigate(DestinationFragment)
@@ -141,7 +158,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
         (action as DestinationSelectedAction).apply {
           currentRoute?.destinations = destinations.toMutableSet()
           viewModel.updateUserRoutes(
-              currentRoute!!.expandLocations()
+              currentRoute!!.expandLocations(), allRoutes
           ) { routeUpdateSuccess ->
             if (routeUpdateSuccess) {
               viewModel.fetchUser { userUpdateSuccess ->
@@ -187,8 +204,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             add(route)
           }
 
-          viewModel.updateUserRoutes(_routes) { _success ->
-            viewModel.setRoutesUpdated(route)
+          viewModel.updateUserRoutes(_routes, allRoutes) { _success ->
+            viewModel.setRoutesUpdated()
             finish()
           }
         }
@@ -196,7 +213,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       EditOrigin -> {
         (action as RouteEditOriginAction).apply {
           currentRoute = route
-          viewModel.setRoutesUpdated(route)
+          viewModel.setRoutesUpdated()
           navigate(OriginCityFragment)
         }
       }
@@ -243,6 +260,9 @@ private const val SelectRouteFlowTypeIntentExtra = "select_route_flow_type"
 
 /* Navigate from [SelectRouteWelcomeActivity] */
 const val SelectRouteWelcomeIntentExtra = "select_route_welcome_tag"
+
+/* Select route basis origin city key */
+const val SelectRouteOriginCityExtra = "select_route_origin_city_code"
 
 /**
  * Select route intent for [SelectRouteFlowType]

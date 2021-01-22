@@ -1,6 +1,6 @@
 package com.delhivery.axle.ui.home.activity.home
 
-import com.delhivery.axle.repository.NotificationRepository
+import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign

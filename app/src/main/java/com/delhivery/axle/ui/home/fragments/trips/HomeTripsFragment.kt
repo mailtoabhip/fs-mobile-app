@@ -12,19 +12,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_BalancePending
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
 import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
+import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
-import com.delhivery.axle.repository.UserTripsLoadLimit
 import com.delhivery.axle.ui.bids.TripType.AdvancePending
-import com.delhivery.axle.ui.bids.TripType.BalancePending
 import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.ui.bids.TripType.InTransit
 import com.delhivery.axle.ui.bids.userTripsIntent
@@ -32,6 +31,7 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.EVENT_LIST_HEADER
@@ -143,16 +143,16 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   ) {
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
-        val _item = item.data as HomeTripsItemData
+        val data = item.data as HomeTripsItemData
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_TRIP, _item.transactionId)
+            mutableListOf(VALUE_TRIP, data.transactionId)
         )
         context?.let {
           startActivity(
-              tripDetailsIntent(_item.key(), it)
+              tripDetailsIntent(data.key(), it)
           )
         }
       }
@@ -199,17 +199,21 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_ADVANCE_PENDING)
         )
-        startActivityForResult(userTripsIntent(context!!, AdvancePending), REQCODE_NO_TRIPS)
+        context?.let {
+          startActivityForResult(
+              userTripsIntent(it, AdvancePending), REQCODE_NO_TRIPS
+          )
+        }
       }
 
-      HomeTripsHeaderAction_BalancePending -> {
+      HomeTripsHeaderAction_PODPending -> {
         // Capture event
         analyticsUtil.trackEvent(
             EVENT_LIST_HEADER,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_BALANCE_PENDING)
         )
-        startActivityForResult(userTripsIntent(context!!, BalancePending), REQCODE_NO_TRIPS)
+        action(NavigateHomeFragmentAction(PodFragment))
       }
 
       HomeTripsHeaderAction_InTransit -> {
@@ -219,7 +223,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_INTRANSIT)
         )
-        startActivityForResult(userTripsIntent(context!!, InTransit), REQCODE_NO_TRIPS)
+        context?.let { startActivityForResult(userTripsIntent(it, InTransit), REQCODE_NO_TRIPS) }
       }
 
       HomeTripsHeaderAction_Completed -> {
@@ -229,7 +233,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
             mutableListOf(VALUE_TRIP, VALUE_COMPLETED)
         )
-        startActivityForResult(userTripsIntent(context!!, Completed), REQCODE_NO_TRIPS)
+        context?.let { startActivityForResult(userTripsIntent(it, Completed), REQCODE_NO_TRIPS) }
       }
 
       HomeTripsWarningAction_NoLoads -> {

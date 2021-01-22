@@ -24,7 +24,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -33,7 +33,6 @@
           android:text="@string/label_epod_pending"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -53,7 +52,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -62,7 +61,6 @@
           android:text="@string/label_physical_pending"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -82,7 +80,7 @@
         bind:shadow="@{ @dimen/action_btn_elevation }"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -91,7 +89,6 @@
           android:text="@string/label_pod_dispatched"
           android:textColor="@color/white"
           android:textSize="@dimen/text_12sp"
-          android:textStyle="normal"
           />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

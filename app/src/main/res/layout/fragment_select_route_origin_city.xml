@@ -16,7 +16,7 @@
       android:paddingTop="@dimen/size_24dp"
       >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_24dp"
@@ -41,7 +41,7 @@
         style="@style/FormInputField"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/size_4dp"
@@ -53,8 +53,6 @@
         android:lineSpacingExtra="@dimen/text_6sp"
         android:text="@string/msg_pickup_location_city_based"
         android:textColor="@color/sub_heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         />
 
   </androidx.appcompat.widget.LinearLayoutCompat>

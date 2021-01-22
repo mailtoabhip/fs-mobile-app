@@ -1,17 +1,14 @@
 package com.delhivery.axle.ui.selectroute.fragments.destination
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.StateModelList
+import com.delhivery.axle.data.UserCity
 import com.delhivery.axle.databinding.FragmentSelectRouteDestinationBinding
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -20,6 +17,7 @@ import com.delhivery.axle.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteBaseFragment
 import com.delhivery.axle.ui.selectroute.fragments.detail.DestinationsRVAdapter
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import com.google.android.material.snackbar.Snackbar
 
 class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRouteDestinationBinding, SelectRouteDestinationViewModel>(),
     ItemClickListener<StateModel> {
@@ -46,7 +44,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
   }
 
   /* origin city */
-  var originCity: CityModel? = null
+  var originCity: UserCity? = null
 
   override fun onViewCreated(
     view: View,

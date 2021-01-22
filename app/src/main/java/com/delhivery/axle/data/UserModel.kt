@@ -3,6 +3,7 @@ package com.delhivery.axle.data
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * User details model
@@ -13,6 +14,7 @@ data class UserModel(
   @SerializedName("name") var name: String,
   @SerializedName("base_city") var baseCity: String,
   @SerializedName("base_city_code") var baseCityCode: String,
+  @SerializedName("base_gn_city_code") var baseCityGnCode: String,
   @SerializedName("user_type") var userType: String?,
   @SerializedName("phone_no") var phoneNo: String?,
   @SerializedName("company_name") var companyName: String?,
@@ -32,8 +34,12 @@ data class UserModel(
   @SerializedName("bank_name") var bank: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
-  @SerializedName("test_user") var testUser: Boolean = false
-) {
+  @SerializedName("is_deleted") var isDeleted: Boolean = false,
+  @SerializedName("test_user") var testUser: Boolean = false,
+  @SerializedName("designation") var designation: String?
+) : BaseKeyTypeModel<String>(), Serializable {
+
+  override fun key() = userId
 
   /**
    * User has selected routes or not
@@ -52,7 +58,7 @@ data class UserModel(
   /**
    * Returns tds value for user
    */
-  fun getTDS() = when (userType) {
+  fun getTDSSubtractor() = when (userType) {
     "individual" -> 99
     else -> 98
   }
@@ -70,5 +76,14 @@ data class UserModel(
     } else {
       "Not Available"
     }
+
+  /**
+   * @return if user is parent/admin user or not
+   */
+  fun isParent() = if (designation.isNotNullOrEmpty()) {
+    designation.equals("ftl_sp_primary")
+  } else {
+    false
+  }
 
 }

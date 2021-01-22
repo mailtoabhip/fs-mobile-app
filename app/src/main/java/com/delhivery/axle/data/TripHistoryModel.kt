@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.TripDriverDetails
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.home.trips.TripStatus.Unknown
 import com.delhivery.axle.data.home.trips.TripVehicleDetails
 import com.delhivery.axle.utils.DateUtils
 import com.google.gson.annotations.SerializedName
@@ -22,7 +23,7 @@ data class TripHistoryModel(
   /**
    * Trip Status [TripStatus]
    */
-  fun status() = TripStatus.byKey(_tripStatus ?: "unknown")
+  fun status() = _tripStatus?.let { TripStatus.byKey(it) } ?: Unknown
 
   /**
    * Compute epoch to action time

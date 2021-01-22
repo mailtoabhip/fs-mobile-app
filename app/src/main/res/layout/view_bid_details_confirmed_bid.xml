@@ -31,7 +31,7 @@
       bind:shadow="@{ @dimen/size_2dp }"
       >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_pickup_location_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,12 +39,11 @@
         android:text="@string/label_pickup_location"
         android:textColor="@color/white"
         android:textSize="@dimen/text_12sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_pickup_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,8 +52,6 @@
         android:paddingEnd="@dimen/size_24dp"
         android:text="@{pickUpLocation}"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_pickup_location_label"
         tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
@@ -69,7 +66,7 @@
         app:srcCompat="@drawable/ic_awaiting_truck"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_truck_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,12 +77,11 @@
         android:text="@string/label_truck_details"
         android:textColor="@color/white"
         android:textSize="@dimen/text_20sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_pickup_location"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/label_vehicle_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,7 +95,7 @@
         app:layout_constraintTop_toBottomOf="@id/text_truck_details"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_vehicle_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -107,14 +103,12 @@
         android:fontFamily="sans-serif"
         android:text="@{vehicleNumber}"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toEndOf="@+id/label_driver_number"
         app:layout_constraintTop_toTopOf="@+id/label_vehicle_number"
         tools:text="HD56 AWM"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/label_driver_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,15 +122,13 @@
         app:layout_constraintTop_toBottomOf="@id/text_vehicle_number"
         />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_driver_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:text="@{driverPhone}"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         app:layout_constraintStart_toStartOf="@+id/text_vehicle_number"
         app:layout_constraintTop_toTopOf="@id/label_driver_number"
         tools:text="9090909090"

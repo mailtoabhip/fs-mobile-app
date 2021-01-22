@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.selectroute.fragments.routeslist
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.data.home.routes.RoutesAction_AddRoute
@@ -46,7 +46,7 @@ class SelectRouteListFragment : SelectRouteBaseFragment<FragmentSelectRouteListB
 
     binding.rvRoutes.apply {
       layoutManager =
-        androidx.recyclerview.widget.LinearLayoutManager(this@SelectRouteListFragment.context)
+        LinearLayoutManager(this@SelectRouteListFragment.context)
       adapter = this@SelectRouteListFragment.adapter
     }
 

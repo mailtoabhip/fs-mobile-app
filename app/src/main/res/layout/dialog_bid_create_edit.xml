@@ -34,7 +34,7 @@
         android:orientation="horizontal"
         >
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
@@ -42,13 +42,12 @@
           android:text="@string/label_place_bid"
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_20sp"
-          android:textStyle="normal"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/id1"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -60,14 +59,13 @@
           android:text="@string/label_multi_stop"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           android:visibility="@{request.multiDrop ? View.VISIBLE : View.GONE }"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/id2"
           app:layout_constraintTop_toTopOf="parent"
           />
 
-      <TextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/id2"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -78,7 +76,6 @@
           android:text="@string/label_pmt"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          android:textStyle="normal"
           android:visibility="@{request.isPMTIndent() ? View.VISIBLE : View.GONE }"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +83,7 @@
           />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_route_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,8 +92,6 @@
         android:lineSpacingExtra="@dimen/text_14sp"
         android:text="@{ route }"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_14sp"
-        android:textStyle="normal"
         tools:text="GA - MH"
         />
 
@@ -106,7 +101,7 @@
         android:layout_marginTop="@dimen/size_8dp"
         >
 
-      <LinearLayout
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/id3"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -124,7 +119,7 @@
             app:srcCompat="@{ request.truckTypeDrawableRes() }"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_truck_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -136,7 +131,7 @@
             tools:text="Type"
             />
 
-      </LinearLayout>
+      </androidx.appcompat.widget.LinearLayoutCompat>
 
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/id4"
@@ -168,8 +163,8 @@
         style="@style/TextInputLayoutAppearance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
@@ -187,7 +182,7 @@
           />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/label_bid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -195,7 +190,6 @@
         android:fontFamily="sans-serif"
         android:lineSpacingExtra="@dimen/text_4sp"
         android:textColor="@color/heading_black"
-        android:textStyle="normal"
         android:visibility="@{request.isPMTIndent()? View.VISIBLE: View.GONE}"
         tools:text="Your minimum payout will be ₹ rate * requested"
         />
@@ -203,7 +197,52 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_28dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+        android:orientation="vertical"
+        >
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:gravity="center_horizontal"
+          android:text="@string/_3_low_detention_expected_detention_at_warehouse_is_8_hrs"
+          android:textColor="@color/sub_heading_black"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:text="Additional Requirements:"
+          android:layout_marginTop="@dimen/size_6dp"
+          android:textColor="@color/sub_heading_black"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="@{request.expressText(true)}"
+          android:textColor="@color/sub_heading_black"
+          tools:text="1. Express"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif"
+          android:text="2. Mandatory GPS"
+          android:textColor="@color/sub_heading_black"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_12dp"
         android:gravity="end"
         >
 
