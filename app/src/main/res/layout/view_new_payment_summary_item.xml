@@ -38,17 +38,6 @@
                 tools:text="Charge type"
                 />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_charge_const"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rs."
-                android:textColor="@color/heading_black"
-                android:layout_marginStart="@dimen/size_160dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_charge_value"

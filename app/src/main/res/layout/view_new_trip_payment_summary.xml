@@ -109,18 +109,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_charge_total_charges"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Rs."
-                    android:textColor="@color/heading_black"
-                    android:layout_marginStart="@dimen/size_160dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_total_charges"
@@ -180,18 +168,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_charge_total_deduction"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Rs."
-                        android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_160dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_total_deduction"
@@ -242,18 +218,6 @@
                         tools:text="(Rs.100 have been waived off !)"
                         />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_charge_waived_off"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Rs."
-                        android:textColor="@color/status_lost"
-                        android:layout_marginStart="@dimen/size_160dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_waived_off"
@@ -326,18 +290,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_charge_total_payments_made"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Rs."
-                        android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_160dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
 
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -389,18 +341,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_charge_pending_payment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Rs."
-                        android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_160dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
 
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -456,18 +396,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_charge_pending_recovery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Rs."
-                        android:textColor="@color/heading_black"
-                        android:layout_marginStart="@dimen/size_160dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
 
 
                     <androidx.appcompat.widget.AppCompatTextView
