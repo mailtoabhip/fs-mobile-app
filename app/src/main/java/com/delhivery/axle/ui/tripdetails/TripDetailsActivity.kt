@@ -28,8 +28,6 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
-import java.text.NumberFormat
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -409,6 +407,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
+  private fun getDeductionHead(dnType: String, lrs: List<String>, utr: String): String{
+    return "Recovery against $dnType\nLR ${lrs[0]} +${lrs.size-1} more \n(UTR: $utr)"
+  }
+
   private fun getPaymentHead(head : String, utr: String, date: String): String{
     var newHead = head.replace("_"," ").capitalizeWords()
     if(newHead == "Intermittent"){
@@ -416,7 +418,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     } else if(newHead == "Loading"){
       newHead = "Advance"
     }
-    return "$newHead UTR: $utr, \n$date"
+    return "$newHead UTR: $utr, \n${getPaymentDate(date)}"
   }
 
   private fun getPaymentDate(transferTime: String): String{
@@ -612,22 +614,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
-          var lrText = "Recovery against "+payment.dnType+": \n"
-          lrText += "LR "+payment.lrNos?.get(0) +" (UTR: "+payment.utrNumber+")"
-          if(!payment.lrNos.isNullOrEmpty() && payment.lrNos.size > 1){
-            lrText += " +"+ (payment.lrNos.size - 1) +" more"
-          }
+          var dnType = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) "overpayment" else payment.dnType ?: ""
+          var lrs = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) payment.overPaymentLRs else payment.lrNos
+          var utr = payment.utrNumber ?: ""
           var amount = payment.amount
           if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) {
-            lrText = "Recovery against overpayment: \n"
-            lrText += "LR "+payment.overPaymentLRs?.get(0) +" (UTR: "+payment.utrNumber+")"
-            if(!payment.overPaymentLRs.isNullOrEmpty() && payment.overPaymentLRs.size > 1){
-              lrText += " +"+ (payment.overPaymentLRs.size - 1) +" more"
-            }
             val date = payment.transferTime ?: ""
             amount = getPaymentAmount(payment.appliedAmount!!,date)
           }
-          textChargeType.text = lrText
+          textChargeType.text = getDeductionHead(dnType,lrs, utr)
           deductionTotal += amount
           textChargeValue.text = StringUtils.getCurrency(amount)
           textChargeType.setOnClickListener{
