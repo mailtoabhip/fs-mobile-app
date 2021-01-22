@@ -4,8 +4,11 @@ import android.graphics.Color
 import android.text.SpannableString
 import android.text.TextPaint
 import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
@@ -40,18 +43,19 @@ data class ConsolidatedLedgerItemData(
         if(capitalizeEvent == "Loading"){
             capitalizeEvent = "Advance"
         }
-        val hash = "$capitalizeEvent - $vehicleNumber (${formatDate(loadedTime?:"",isShort = true)})"
+        val title = "$capitalizeEvent - $vehicleNumber (${formatDate(loadedTime?:"",isShort = true)})"
         var i = 0
-        for(c in hash){
+        for(c in title){
             if(c == '-'){
                 break
             }
             i += 1
         }
         i += 2
-        val text = SpannableString(hash)
-        text.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
-        return text
+        val spannableTitle = SpannableString(title)
+        spannableTitle.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
+        spannableTitle.setSpan(ForegroundColorSpan(Color.rgb(3,79,112)), i, i+vehicleNumber!!.length, 0)
+        return spannableTitle
     }
 
     public fun getAmount(): String{
