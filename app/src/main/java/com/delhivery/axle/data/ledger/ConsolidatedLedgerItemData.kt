@@ -1,5 +1,10 @@
 package com.delhivery.axle.data.ledger
 
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.style.BackgroundColorSpan
+import android.text.style.UnderlineSpan
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
@@ -30,13 +35,23 @@ data class ConsolidatedLedgerItemData(
 
     override fun key() = tripId
 
-    public fun getTitle():String{
+    public fun getTitle():SpannableString{
         var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1)
         if(capitalizeEvent == "Loading"){
             capitalizeEvent = "Advance"
         }
-
-        return "$capitalizeEvent - $vehicleNumber(${formatDate(loadedTime?:"",true)})"
+        val hash = "$capitalizeEvent - $vehicleNumber (${formatDate(loadedTime?:"",isShort = true)})"
+        var i = 0
+        for(c in hash){
+            if(c == '-'){
+                break
+            }
+            i += 1
+        }
+        i += 2
+        val text = SpannableString(hash)
+        text.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
+        return text
     }
 
     public fun getAmount(): String{
