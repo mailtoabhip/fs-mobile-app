@@ -92,19 +92,11 @@ data class ConsolidatedLedgerItemData(
         var year = paymentSuccessDate.substring(0, 4)
         var month = paymentSuccessDate.substring(5, 7).toInt()
         var date = paymentSuccessDate.substring(8, 10)
-        var time = paymentSuccessDate.substring(11, 16)
 
         var monthString = DateFormatSymbols().months[month - 1]
 
 
-        try {
-            val sdf = SimpleDateFormat("H:mm")
-            val dateObj = sdf.parse(time)
-            time = SimpleDateFormat("hh:mm a").format(dateObj)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return "$date $monthString $year, $time"
+        return "$date $monthString $year"
     }
 
     public fun isExpanded() = expanded
