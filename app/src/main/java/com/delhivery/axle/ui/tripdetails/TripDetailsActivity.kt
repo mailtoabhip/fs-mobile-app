@@ -4,9 +4,13 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
+import android.text.SpannableString
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -407,8 +411,23 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  private fun getDeductionHead(dnType: String, vehicleNumber: String, loadedTime: String, utr: String): String{
-    return "Recovery against $dnType\n$vehicleNumber (${getPaymentDate(loadedTime)}) \n(UTR: $utr)"
+  private fun getDeductionHead(dnType: String, vehicleNumber: String, loadedTime: String, utr: String): SpannableString{
+    val head = "Recovery against $dnType\n$vehicleNumber (${getPaymentDate(loadedTime)}) \n(UTR: $utr)"
+    var i = 0
+    for(char in head){
+      if(char == '\n'){
+        break
+      }
+      i += 1
+    }
+    i += 1
+    val spannableHead = SpannableString(head)
+    spannableHead.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
+    spannableHead.setSpan(ForegroundColorSpan(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.link
+    )), i, i+vehicleNumber!!.length, 0)
+    return spannableHead
   }
 
   private fun getPaymentHead(head : String, utr: String, date: String): String{
