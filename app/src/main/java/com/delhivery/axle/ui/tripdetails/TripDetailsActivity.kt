@@ -423,6 +423,31 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     return "$day $month $year"
   }
 
+  private fun getChargeText(chargeHead: String, days: Int): String{
+    var chargeText: String
+    var chargeDays: Int
+    when (chargeHead) {
+      "detention_charge_origin" -> {
+        chargeText = "Loading Detention"
+      }
+      "detention_charge_destination" -> {
+        chargeText = "Unloading Detention"
+      }
+      else -> {
+        chargeText = chargeHead.replace('_',' ').capitalizeWords()
+      }
+    }
+    if(chargeHead in viewModel.chargeDaysList){
+      chargeDays = days
+      if(chargeDays == 1){
+        chargeText += " (1 day)"
+      }else if(chargeDays != 0 && chargeDays > 1){
+        chargeText += " ($chargeDays days)"
+      }
+    }
+    return chargeText
+  }
+
   private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
     analyticsUtil.trackEvent(
             EVENT_PAYMENT_SUMMARY,
@@ -456,32 +481,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
     var chargeTotal = 0.0
     var deductionTotal = 0.0
+
     tripSummary.forEach{charge ->
       if(charge.chargeAmount != 0.0 && charge.action == "pay"){
         chargeTotal += charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPositiveCharges, false).apply {
           seprator.visibility = View.GONE
-          var chargeText = ""
-          var chargeDays = -1
-          when (charge.chargeHeadRef) {
-              "detention_charge_origin" -> {
-                chargeText = "Loading Detention"
-                chargeDays = charge.days
-              }
-              "detention_charge_destination" -> {
-                chargeText = "Unloading Detention"
-                chargeDays = charge.days
-              }
-              else -> {
-                chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
-              }
-          }
-          if(chargeDays == 1){
-            chargeText += "(1 day)"
-          }else if(chargeDays != null && chargeDays != -1 && chargeDays != 0){
-            chargeText += "($chargeDays days)"
-          }
-          textChargeType.text = chargeText
+          textChargeType.text = getChargeText(charge.chargeHeadRef, charge.days)
           textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,
@@ -493,8 +499,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         deductionTotal += charge.chargeAmount
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
-          var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
-          textChargeType.text = chargeText
+          textChargeType.text = getChargeText(charge.chargeHeadRef, charge.days)
           textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,

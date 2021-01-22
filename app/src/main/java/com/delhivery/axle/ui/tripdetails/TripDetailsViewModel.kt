@@ -75,6 +75,8 @@ class TripDetailsViewModel @Inject constructor(
   var invoiceList = mutableListOf<String>()
   var chargesListSummary = mutableListOf<ChargesResponse>()
 
+  var chargeDaysList = arrayOf("detention_charge_origin","detention_charge_destination","pod_bonus","pod_penalty","delay")
+
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
 
