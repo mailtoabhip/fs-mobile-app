@@ -76,6 +76,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+    updateTDSRate()
+
     /* observe trip details live data */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.tripLiveData.observe(this, TransactionObserver())
@@ -397,14 +399,24 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
   }
 
-  private fun getPaymentHead(head : String): String{
+  private fun updateTDSRate(){
+    if (viewModel.userPrefs.userType == "individual") {
+      viewModel.tdsRate = 1
+      viewModel.updatedTDSRate = 0.75
+    } else {
+      viewModel.tdsRate = 2
+      viewModel.updatedTDSRate = 1.5
+    }
+  }
+
+  private fun getPaymentHead(head : String, utr: String, date: String): String{
     var newHead = head.replace("_"," ").capitalizeWords()
     if(newHead == "Intermittent"){
       newHead = "In-transit"
     } else if(newHead == "Loading"){
       newHead = "Advance"
     }
-    return newHead
+    return "$newHead UTR: $utr, \n$date"
   }
 
   private fun getPaymentDate(transferTime: String): String{
@@ -421,6 +433,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       month = DateUtils.getMonth(month.toInt())
     }
     return "$day $month $year"
+  }
+
+  private fun getPaymentAmount(amount: Double, date: String): Double{
+    var newAmount = amount
+    val tdsObj = TDS(amount, date)
+    val tds = tdsObj?.getTDS(viewModel.tdsRate, viewModel.updatedTDSRate)
+    if (tds != null) {
+      newAmount -= tds
+    }
+    return newAmount
   }
 
   private fun getChargeText(chargeHead: String, days: Int): String{
@@ -469,16 +491,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.newPaymentTypeBalance.clear()
     viewModel.newPaymentTypeDN.clear()
 
-
-    var tdsRate = 0
-    var updatedTDSRate = 0.0
-    if (viewModel.userPrefs.userType == "individual") {
-        tdsRate = 1
-        updatedTDSRate = 0.75
-    } else {
-        tdsRate = 2
-        updatedTDSRate = 1.5
-    }
     var chargeTotal = 0.0
     var deductionTotal = 0.0
 
@@ -538,19 +550,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
-          var head = getPaymentHead(payment.head)
-          var utr = ""+head+" UTR: "+payment.utrNumber+", \n"
-          val paymentDate = payment.transferTime?.let { getPaymentDate(it) }
-          utr += paymentDate
-          textChargeType.text = utr
-          var amount = payment.amount
-          val tdsObj = payment.transferTime?.let { TDS(amount, it) }
-          val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
-          originalPaymentSum += amount
-          if (tds != null) {
-              amount -= tds
-          }
+          var utr = payment.utrNumber ?: ""
+          var date = payment.transferTime ?: ""
+          originalPaymentSum += payment.amount
+          val amount = getPaymentAmount(payment.amount, date)
           paymentDone += amount
+          textChargeType.text = getPaymentHead(payment.head, utr, date)
           textChargeValue.text = StringUtils.getCurrency(amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,
@@ -566,24 +571,22 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         if (payment.status == "success" && payment.amount != 0.0) {
             ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentsBalance, false).apply {
                 seprator.visibility = View.GONE
-              var head = getPaymentHead(payment.head)
-              var utr = ""+head+" UTR: "+payment.utrNumber+", \n"
-              val paymentDate = payment.transferTime?.let { getPaymentDate(it) }
-              utr += paymentDate
-              textChargeType.text = utr
-                var amount = payment.amount
-                val tdsObj = payment.transferTime?.let { TDS(amount, it) }
-                val tdsRate = tdsObj?.getTDSRate(tdsRate, updatedTDSRate)
-                if (tdsRate != null) {
-                    amount -= tdsRate * (chargeTotal - originalPaymentSum)
-                }
-                balanceTotal += amount
-                textChargeValue.text = StringUtils.getCurrency(amount)
-                textChargeValue.setTextColor(ContextCompat.getColor(
-                        this@TripDetailsActivity,
-                        R.color.status_confirmed
-                ))
-                paymentSummaryBinding.containerPaymentsBalance.addView(root)
+              var utr = payment.utrNumber ?: ""
+              val date = payment.transferTime ?: ""
+              var amount = payment.amount
+              val tdsObj = payment.transferTime?.let { TDS(amount, it) }
+              val tdsRate = tdsObj?.getTDSRate(viewModel.tdsRate, viewModel.updatedTDSRate)
+              if (tdsRate != null) {
+                  amount -= tdsRate * (chargeTotal - originalPaymentSum)
+              }
+              balanceTotal += amount
+              textChargeType.text = getPaymentHead(payment.head, utr, date)
+              textChargeValue.text = StringUtils.getCurrency(amount)
+              textChargeValue.setTextColor(ContextCompat.getColor(
+                      this@TripDetailsActivity,
+                      R.color.status_confirmed
+              ))
+              paymentSummaryBinding.containerPaymentsBalance.addView(root)
             }
         }
     }
@@ -594,7 +597,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         transferTime = viewModel.newPaymentSummary[0].transferTime.toString()
       }
       val tdsObj = TDS(chargeTotal,transferTime)
-      val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
+      val tds = tdsObj.getTDS(viewModel.tdsRate, viewModel.updatedTDSRate)
       deductionTotal += tds
       textChargeType.text = "TDS"
       textChargeValue.text = StringUtils.getCurrency(tds)
@@ -621,12 +624,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             if(!payment.overPaymentLRs.isNullOrEmpty() && payment.overPaymentLRs.size > 1){
               lrText += " +"+ (payment.overPaymentLRs.size - 1) +" more"
             }
-            amount = payment.appliedAmount!!
-            val tdsObj = payment.transferTime?.let { TDS(amount, it) }
-            val tds = tdsObj?.getTDS(tdsRate, updatedTDSRate)
-            if (tds != null) {
-              amount -= tds
-            }
+            val date = payment.transferTime ?: ""
+            amount = getPaymentAmount(payment.appliedAmount!!,date)
           }
           textChargeType.text = lrText
           deductionTotal += amount
@@ -653,7 +652,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     if(viewModel.collections != 0.0){
       paymentSummaryBinding.isWaivedOff = true
-      paymentSummaryBinding.waivedOffAmount = String.format("%.2f",deductionTotal - viewModel.collections)
+      paymentSummaryBinding.waivedOffAmount = StringUtils.getCurrency(deductionTotal - viewModel.collections)
       paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
     }
     paymentDone += balanceTotal

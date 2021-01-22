@@ -80,6 +80,9 @@ class TripDetailsViewModel @Inject constructor(
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
 
+  var tdsRate: Int = 0
+  var updatedTDSRate: Double = 0.0
+
   var balancePaid = false
   var balancePaidTime: String = ""
   var balanceUTR: String = ""
