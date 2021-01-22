@@ -408,6 +408,32 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
   }
 
+  private fun getPaymentHead(head : String): String{
+    var newHead = head.replace("_"," ").capitalizeWords()
+    if(newHead == "Intermittent"){
+      newHead = "In-transit"
+    } else if(newHead == "Loading"){
+      newHead = "Advance"
+    }
+    return newHead
+  }
+
+  private fun getPaymentDate(transferTime: String): String{
+    var year = transferTime.substring(2,4)
+    var day = transferTime.substring(8,10)
+    if(day.get(0) == '0'){
+      day = transferTime.substring(9,10)
+    }
+    var month = transferTime.substring(5,7)
+    if(month.get(0) == '0'){
+      month = transferTime.substring(6,7)
+    }
+    if (month != null) {
+      month = DateUtils.getMonth(month.toInt())
+    }
+    return "$day $month $year"
+  }
+
   private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
     analyticsUtil.trackEvent(
             EVENT_PAYMENT_SUMMARY,
@@ -530,24 +556,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(payment.status == "success" && payment.amount != 0.0){
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
           seprator.visibility = View.GONE
-          var head = payment.head.replace("_"," ").capitalizeWords()
-          if(head == "Intermittent"){
-            head = "In-transit"
-          }
-          var utr = ""+head+" UTR: "+payment.utrNumber+", "
-          var year = payment.transferTime?.substring(2,4)
-          var day = payment.transferTime?.substring(8,10)
-          if(day?.get(0) ?: "" == '0'){
-            day = payment.transferTime?.substring(9,10)
-          }
-          var month = payment.transferTime?.substring(5,7)
-          if(month?.get(0) ?: "" == '0'){
-            month = payment.transferTime?.substring(6,7)
-          }
-          if (month != null) {
-            month = DateUtils.getMonth(month.toInt())
-          }
-          utr += "$day $month $year"
+          var head = getPaymentHead(payment.head)
+          var utr = ""+head+" UTR: "+payment.utrNumber+", \n"
+          val paymentDate = payment.transferTime?.let { getPaymentDate(it) }
+          utr += paymentDate
           textChargeType.text = utr
           var amount = payment.amount
           val tdsObj = payment.transferTime?.let { TDS(amount, it) }
@@ -576,22 +588,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         if (payment.status == "success" && payment.amount != 0.0) {
             ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentsBalance, false).apply {
                 seprator.visibility = View.GONE
-                var head = payment.head.replace("_", " ").capitalizeWords()
-                var utr = "" + head + " UTR: " + payment.utrNumber + ", "
-                var year = payment.transferTime?.substring(2, 4)
-                var day = payment.transferTime?.substring(8, 10)
-                if (day?.get(0) ?: "" == '0') {
-                    day = payment.transferTime?.substring(9, 10)
-                }
-                var month = payment.transferTime?.substring(5, 7)
-                if (month?.get(0) ?: "" == '0') {
-                    month = payment.transferTime?.substring(6, 7)
-                }
-                if (month != null) {
-                    month = DateUtils.getMonth(month!!.toInt())
-                }
-                utr += "$day $month $year"
-                textChargeType.text = utr
+              var head = getPaymentHead(payment.head)
+              var utr = ""+head+" UTR: "+payment.utrNumber+", \n"
+              val paymentDate = payment.transferTime?.let { getPaymentDate(it) }
+              utr += paymentDate
+              textChargeType.text = utr
                 var amount = payment.amount
                 val tdsObj = payment.transferTime?.let { TDS(amount, it) }
                 val tdsRate = tdsObj?.getTDSRate(tdsRate, updatedTDSRate)
