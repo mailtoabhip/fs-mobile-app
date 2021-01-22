@@ -29,6 +29,9 @@ data class ConsolidatedLedgerItemData(
 
     public fun getTitle():String{
         var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1)
+        if(capitalizeEvent == "Loading"){
+            capitalizeEvent = "Advance"
+        }
         var isLRs = false
         if (lrs != null) {
             if(lrs.size > 1){
