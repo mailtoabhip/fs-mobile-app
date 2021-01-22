@@ -407,8 +407,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  private fun getDeductionHead(dnType: String, lrs: List<String>, utr: String): String{
-    return "Recovery against $dnType\nLR ${lrs[0]} +${lrs.size-1} more \n(UTR: $utr)"
+  private fun getDeductionHead(dnType: String, vehicleNumber: String, loadedTime: String, utr: String): String{
+    return "Recovery against $dnType\n$vehicleNumber (${getPaymentDate(loadedTime)}) \n(UTR: $utr)"
   }
 
   private fun getPaymentHead(head : String, utr: String, date: String): String{
@@ -615,14 +615,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
           seprator.visibility = View.GONE
           var dnType = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) "overpayment" else payment.dnType ?: ""
-          var lrs = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) payment.overPaymentLRs else payment.lrNos
           var utr = payment.utrNumber ?: ""
           var amount = payment.amount
           if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) {
             val date = payment.transferTime ?: ""
             amount = getPaymentAmount(payment.appliedAmount!!,date)
           }
-          textChargeType.text = getDeductionHead(dnType,lrs, utr)
+          textChargeType.text = getDeductionHead(dnType,payment.vehicleNumber?:"", payment.loadedTime?:"", utr)
           deductionTotal += amount
           textChargeValue.text = StringUtils.getCurrency(amount)
           textChargeType.setOnClickListener{
