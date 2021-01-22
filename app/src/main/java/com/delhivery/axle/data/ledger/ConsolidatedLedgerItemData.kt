@@ -64,7 +64,7 @@ data class ConsolidatedLedgerItemData(
                 title += "TDS (@1.5%)"
             }
         }else if(ded_type == "dn_deduction"){
-            title += "Deduction against LR "
+            title += "Recovery against LR "
             title += listLRs[0]
             if(listLRs.size > 1){
                 title += ",\n"
