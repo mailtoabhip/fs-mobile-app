@@ -20,6 +20,8 @@ class HomeProfileViewModel @Inject constructor(
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
 
+  var userRoleLiveData = MutableLiveData<Boolean>()
+
   var userLiveData = MutableLiveData<UserModel>()
 
   fun fetchTripMeter() {
@@ -47,6 +49,35 @@ class HomeProfileViewModel @Inject constructor(
             tripEarningLiveData.postValue(earningMap)
           } else {
             tripEarningLiveData.postValue(null)
+          }
+        }
+  }
+
+
+
+  /**
+   * Verify user has permission as can_create_secondary_sp
+   */
+  fun verifyRole() {
+    compositeDisposable += userRepository.fetchUserRoles()
+        .onBackground()
+        .subscribe { res, error ->
+          if (!error) {
+            if (res != null && !res.roles.isNullOrEmpty()) {
+              var permission = false
+              res.permissions.forEach {
+                if (it.name == "can_create_secondary_sp") {
+                  permission = true
+                }
+              }
+              if (permission) {
+                userRoleLiveData.postValue(true)
+              } else {
+                userRoleLiveData.postValue(false)
+              }
+            }
+          } else {
+            userRoleLiveData.postValue(false)
           }
         }
   }

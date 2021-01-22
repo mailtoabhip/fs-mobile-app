@@ -27,3 +27,28 @@ data class DelegationToken(
   @SerializedName("aws_secret_key") val secretKey: String,
   @SerializedName("session_token") val sessionToken: String
 )
+
+/**
+ * Roles and permission response
+ */
+data class UMSRolePermissionResponse(
+  @SerializedName("roles") val roles: List<Role>,
+  @SerializedName("permissions") val permissions: List<Permissions>,
+  @SerializedName("error") val error: String
+)
+
+/**
+ * Permission data
+ */
+data class Permissions(
+  @SerializedName("app_id") val appId: String,
+  @SerializedName("name") val name: String
+)
+
+/**
+ * Role data
+ */
+data class Role(
+  @SerializedName("app_id") val appId: String,
+  @SerializedName("name") val name: String
+)

@@ -6,6 +6,7 @@ import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.api.service.UserService
+import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.database.AppDatabase
@@ -13,6 +14,7 @@ import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,7 +47,7 @@ class UserRepository @Inject constructor(
 //    when (BuildConfig.FLAVOR) {
 //      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
 //      else ->
-    jwt?.let { (it.claims["sub"]?.asString()!!) } ?: ""
+    userPrefs.jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
 //    }
 
   /**
@@ -88,4 +90,27 @@ class UserRepository @Inject constructor(
    * Get delegation token for AWS
    */
   fun getDelegationToken(target: String) = umsService.getDelegationToken(target)
+
+  /**
+   * Get team members
+   */
+  fun getUserTeamMembers(offset: Int, limit: Int, includeAllUsers: Boolean, sp_id: String) =
+    userService.getTeamMembers(offset, limit, includeAllUsers, sp_id).convertResponse()
+
+  /**
+   * Create secondary user
+   */
+  fun createSecondaryUser(jsonObject: JsonObject) =
+    userService.createSecondaryUser(jsonObject).convertResponse()
+
+  /**
+   * Update secondary user
+   */
+  fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
+    userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
+
+  /**
+   * Fetch roles and permissions
+   */
+  fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
 }

@@ -219,7 +219,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
           PODStatus.UPLOAD, PODStatus.REJECT -> {
             context?.let {
               startActivityForResult(
-                  uploadImageIntent(it, data.transactionId), REQCODE_UPLOAD_POD
+                  uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
               )
             }
           }

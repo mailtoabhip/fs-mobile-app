@@ -9,6 +9,7 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import okhttp3.Route
 import javax.inject.Inject
 
 /**
@@ -22,8 +23,13 @@ class SelectRouteViewModel @Inject constructor(
   var routesLiveData =
     MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
 
+  var allRoutesLiveData =
+    MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
+
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
+
+  var existingRoutes = mutableListOf<RouteModel>()
 
   /**
    * Fetch user routes
@@ -38,6 +44,9 @@ class SelectRouteViewModel @Inject constructor(
             routesLiveData.postValue(
                 Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
             )
+            allRoutesLiveData.postValue(
+                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+            )
           } else {
             error.handle()
           }
@@ -49,10 +58,20 @@ class SelectRouteViewModel @Inject constructor(
    */
   fun updateUserRoutes(
     newRoutes: List<RouteModel>,
+    allRoutes: List<RouteModel>,
     completedAction: (success: Boolean) -> Unit
   ) {
+
+    for (route in allRoutes) {
+      for (newRoute in newRoutes) {
+        if (route.origin.orion_db_city_code != newRoute.origin.orion_db_city_code) {
+          existingRoutes.add(route)
+        }
+      }
+    }
     val routeMappings = mutableListOf<RouteMappingModel>().apply {
       newRoutes.forEach { addAll(it.toMapping()) }
+      existingRoutes.forEach { addAll(it.toMapping()) }
     }
     compositeDisposable += userRepository.updateUserRoutes(routeMappings)
         .onBackground()
@@ -87,8 +106,7 @@ class SelectRouteViewModel @Inject constructor(
   /**
    * Set route updated flag
    */
-  fun setRoutesUpdated(route: RouteModel) {
+  fun setRoutesUpdated() {
     userPrefs.routeUpdate = true
-    userPrefs.cityCode = route.origin.orion_db_city_code
   }
 }

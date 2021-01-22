@@ -6,6 +6,7 @@
   <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
   <string name="title_dialog_delete_route">Delete Route ?</string>
   <string name="title_dialog_logout">Confirm Logout</string>
+  <string name="title_dialog_delete">Confirm Delete</string>
   <string name="title_dialog_update">Update Available</string>
   <string name="title_dialog_invalid_num">Invalid phone number</string>
   <string name="title_dialog_supplier_disabled">User Disabled</string>
@@ -34,6 +35,7 @@
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+  <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
   <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
   <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
   <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
@@ -89,6 +91,7 @@
   <string name="action_go_to_load_requests">GO to load requests</string>
   <string name="action_add_more_route">Add more routes</string>
   <string name="action_confirm">Confirm</string>
+  <string name="action_save">Save</string>
   <string name="action_logout_from_app">Logout from the app</string>
   <string name="action_dismiss">DISMISS</string>
   <string name="action_update_route">Update Route</string>
@@ -146,8 +149,10 @@
   <string name="label_payment_summary">Payment Summary</string>
   <string name="label_no_bids_found">No bids found</string>
   <string name="label_your_routes">Your Routes</string>
+  <string name="label_your_team">Your Team Members</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
+  <string name="label_add_team_member">Add Team Member</string>
   <string name="label_bidding_ended">Bidding ended</string>
   <string name="label_destination_states">Destination States</string>
   <string name="label_we_are_building_this_page">We are building the page</string>

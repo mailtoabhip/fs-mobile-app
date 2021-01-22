@@ -152,6 +152,14 @@
         android:name=".ui.searchtrip.SearchActivity"
         android:screenOrientation="portrait" />
 
+    <activity
+        android:name=".ui.team.TeamMembersActivity"
+        android:screenOrientation="portrait"/>
+
+    <activity
+        android:name=".ui.userroutes.UserRoutesActivity"
+        android:screenOrientation="portrait"/>
+
   </application>
 
 </manifest>

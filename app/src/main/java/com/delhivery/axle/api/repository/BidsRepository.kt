@@ -31,6 +31,7 @@ class BidsRepository @Inject constructor(
         val userId = userRepository.userId()
         var hasPMT = false
         var hasFTL = false
+        val userBid :TransactionBid?
         it.bids.forEach { it1 ->
           when (it1.biddingType.toLowerCase()) {
             "pmt" -> hasPMT = true
@@ -41,7 +42,11 @@ class BidsRepository @Inject constructor(
         if ((hasPMT && !hasFTL) || (!hasPMT && hasFTL)) {
           lowestBid = (it.bids.minBy { b -> b.bidAmount })
         }
-        val userBid = it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        userBid = if (userPrefs.isParent) {
+          it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        } else {
+          it.bids.firstOrNull { _b -> _b.secondaryVendorId.safeEquals(userId) }
+        }
         Triple(
             Pair(userBid, lowestBid), it.bids, it.totalBids
         )
@@ -54,8 +59,12 @@ class BidsRepository @Inject constructor(
       .convertResponse()
       .map {
         val userId = userRepository.userId()
-        val userBid = it.bids.filter { _b -> _b.supplierId.safeEquals(userId) }
-            .firstOrNull()
+        val userBid :TransactionBid?
+        userBid = if (userPrefs.isParent) {
+          it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
+        } else {
+          it.bids.firstOrNull { _b -> _b.secondaryVendorId.safeEquals(userId) }
+        }
         userBid
       }!!
 

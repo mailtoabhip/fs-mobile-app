@@ -108,6 +108,9 @@ class AuthenticationViewModel @Inject constructor(
             if (!_res.third.supplierEnabled) {
               userPrefs.hasLoggedIn = false
               Disabled
+            } else if (_res.third.isDeleted) {
+              userPrefs.hasLoggedIn = false
+              Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               LoadRequest
