@@ -423,12 +423,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     return "$day $month $year"
   }
 
-  private fun getCurrency(amount: Double): String{
-    val nf: NumberFormat = NumberFormat.getCurrencyInstance(Locale("hi", "IN"))
-    val currency: String = nf.format(amount)
-    return currency.substring(0,currency.length-3)
-  }
-
   private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
     analyticsUtil.trackEvent(
             EVENT_PAYMENT_SUMMARY,
@@ -488,7 +482,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             chargeText += "($chargeDays days)"
           }
           textChargeType.text = chargeText
-          textChargeValue.text = getCurrency(charge.chargeAmount)
+          textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,
                   R.color.status_confirmed
@@ -501,7 +495,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.GONE
           var chargeText = charge.chargeHeadRef.replace('_',' ').capitalizeWords()
           textChargeType.text = chargeText
-          textChargeValue.text = getCurrency(charge.chargeAmount)
+          textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                   this@TripDetailsActivity,
                   R.color.status_lost
@@ -510,7 +504,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
     }
-    paymentSummaryBinding.totalCharges = getCurrency(chargeTotal)
+    paymentSummaryBinding.totalCharges = StringUtils.getCurrency(chargeTotal)
     paymentSummaryBinding.textTotalCharges.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -552,7 +546,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               amount -= tds
           }
           paymentDone += amount
-          textChargeValue.text = getCurrency(amount)
+          textChargeValue.text = StringUtils.getCurrency(amount)
           textChargeValue.setTextColor(ContextCompat.getColor(
                  this@TripDetailsActivity,
                   R.color.status_confirmed
@@ -579,7 +573,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                     amount -= tdsRate * (chargeTotal - originalPaymentSum)
                 }
                 balanceTotal += amount
-                textChargeValue.text = getCurrency(amount)
+                textChargeValue.text = StringUtils.getCurrency(amount)
                 textChargeValue.setTextColor(ContextCompat.getColor(
                         this@TripDetailsActivity,
                         R.color.status_confirmed
@@ -598,7 +592,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
       deductionTotal += tds
       textChargeType.text = "TDS"
-      textChargeValue.text = getCurrency(tds)
+      textChargeValue.text = StringUtils.getCurrency(tds)
       textChargeValue.setTextColor(ContextCompat.getColor(
               this@TripDetailsActivity,
               R.color.status_lost
@@ -631,7 +625,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
           textChargeType.text = lrText
           deductionTotal += amount
-          textChargeValue.text = getCurrency(amount)
+          textChargeValue.text = StringUtils.getCurrency(amount)
           textChargeType.setOnClickListener{
             if(payment.transactionId != viewModel.transactionId) {
               redirectToLRsTrip(payment.transactionId)
@@ -646,7 +640,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     }
 
-    paymentSummaryBinding.totalDeduction = getCurrency(deductionTotal)
+    paymentSummaryBinding.totalDeduction = StringUtils.getCurrency(deductionTotal)
     paymentSummaryBinding.textTotalDeduction.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_lost
@@ -658,7 +652,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
     }
     paymentDone += balanceTotal
-    paymentSummaryBinding.totalPaymentMade = getCurrency(paymentDone)
+    paymentSummaryBinding.totalPaymentMade = StringUtils.getCurrency(paymentDone)
     paymentSummaryBinding.textTotalPaymentsMade.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -670,7 +664,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       pendingPayment = 0.0
     }
 
-    paymentSummaryBinding.pendingPayment = getCurrency(pendingPayment)
+    paymentSummaryBinding.pendingPayment = StringUtils.getCurrency(pendingPayment)
     paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_confirmed
@@ -683,7 +677,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         pendingRecovery *= -1
       }
     }
-    paymentSummaryBinding.pendingRecovery = getCurrency(pendingRecovery)
+    paymentSummaryBinding.pendingRecovery = StringUtils.getCurrency(pendingRecovery)
     paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
             this@TripDetailsActivity,
             R.color.status_lost

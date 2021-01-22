@@ -2,6 +2,8 @@ package com.delhivery.axle.utils
 
 import com.delhivery.axle.injection.scope.ActivityScope
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 
 /**
  * Created by saurabh
@@ -35,5 +37,11 @@ object StringUtils {
   fun formatAmount(num: Double): String = DecimalFormat("##,##,##,###").format(num) ?: ""
 
   fun formatDecimalAmount(num: Double): String = DecimalFormat("##,##,##,###.##").format(num) ?: ""
+
+  fun getCurrency(amount: Double): String{
+    val nf: NumberFormat = NumberFormat.getCurrencyInstance(Locale("hi", "IN"))
+    val currency: String = nf.format(amount)
+    return currency.substring(0,currency.length-3)
+  }
 
 }

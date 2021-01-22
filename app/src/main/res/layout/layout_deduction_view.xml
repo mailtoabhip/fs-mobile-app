@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_4dp"
+        android:layout_marginHorizontal="@dimen/size_4dp"
         android:orientation="horizontal"
         >
 

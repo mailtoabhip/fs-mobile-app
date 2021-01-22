@@ -3,6 +3,7 @@ package com.delhivery.axle.data.ledger
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
+import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.text.DateFormatSymbols
@@ -47,7 +48,7 @@ data class ConsolidatedLedgerItemData(
         return ""+capitalizeEvent+lrNo
     }
 
-    public fun getAmount() = "+ Rs.$amount"
+    public fun getAmount() = "+ "+StringUtils.getCurrency(amount)
 
     public fun getUTR() = "UTR: UA12018"
 
@@ -84,7 +85,7 @@ data class ConsolidatedLedgerItemData(
 
     public fun getDeductionsAmount(index: Int): String{
         var amount = deductions.get(index)["amount"]
-        amount = String.format("%.2f",amount)
+        amount = StringUtils.formatAmount(amount.toString().toDouble())
         return "($amount)"
     }
 
