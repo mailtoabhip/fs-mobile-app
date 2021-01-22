@@ -199,7 +199,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                                 total = _res.count
                                 for(ledger in _res.ledgers){
                                     if(ledger.amount!=0.0){
-                                        add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber,ledger.month,ledger.deductions,ledger.invoiceId, userPrefs.userType)),DataRVAdapterOperationType.Add))
+                                        add(Pair(ConsolidatedPageLedgerItem(ConsolidatedLedgerItemData(ledger.paymentEvent,ledger.amount,ledger.uuid,ledger.paymentType,ledger.tripId,ledger.lrs,ledger.paymentSuccessDate,ledger.utrNumber, ledger.loadedTime, ledger.month,ledger.deductions,ledger.invoiceId,ledger.vehicleNumber, userPrefs.userType)),DataRVAdapterOperationType.Add))
                                     }
                                 }
                             }

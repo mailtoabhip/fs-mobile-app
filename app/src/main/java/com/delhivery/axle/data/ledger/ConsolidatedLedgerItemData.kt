@@ -18,9 +18,11 @@ data class ConsolidatedLedgerItemData(
         @SerializedName("lrs") val lrs: List<String>?,
         @SerializedName("pmt_success_dt") val paymentSuccessDate: String,
         @SerializedName("utr_number") val utrNumber: String?,
+        @SerializedName("loaded_time") val loadedTime: String?,
         @SerializedName("month") val month: String,
         @SerializedName("deductions") val deductions: List<Map<String, Any>>,
         @SerializedName("invoice_id") val invoiceId: String?,
+        @SerializedName("vehicle_number") val vehicleNumber: String?,
         var userType: String,
         var expanded: Boolean = false
 
@@ -33,19 +35,8 @@ data class ConsolidatedLedgerItemData(
         if(capitalizeEvent == "Loading"){
             capitalizeEvent = "Advance"
         }
-        var isLRs = false
-        if (lrs != null) {
-            if(lrs.size > 1){
-                isLRs = true
-            }
-        }
-        var lrNo = " - "+ (lrs?.get(0) ?: "")
-        if (lrs != null) {
-            if(isLRs){
-                lrNo += " +"+(lrs.size-1)+" more"
-            }
-        }
-        return ""+capitalizeEvent+lrNo
+
+        return "$capitalizeEvent - $vehicleNumber(${formatDate(loadedTime?:"",true)})"
     }
 
     public fun getAmount(): String{
@@ -98,17 +89,25 @@ data class ConsolidatedLedgerItemData(
     }
 
     public fun getPaymentDate():String{
-        var year = paymentSuccessDate.substring(0, 4)
-        var month = paymentSuccessDate.substring(5, 7).toInt()
-        var date = paymentSuccessDate.substring(8, 10)
+        return formatDate(paymentSuccessDate)
+    }
+
+    public fun isExpanded() = expanded
+
+    private fun formatDate(date: String, isShort: Boolean = false): String{
+        var year = date.substring(0, 4)
+        var month = date.substring(5, 7).toInt()
+        var date = date.substring(8, 10)
 
         var monthString = DateFormatSymbols().months[month - 1]
+
+        if(isShort){
+            monthString = monthString.substring(0,3)
+        }
 
 
         return "$date $monthString $year"
     }
-
-    public fun isExpanded() = expanded
 
 
     /**
