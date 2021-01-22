@@ -48,7 +48,15 @@ data class ConsolidatedLedgerItemData(
         return ""+capitalizeEvent+lrNo
     }
 
-    public fun getAmount() = "+ "+StringUtils.getCurrency(amount)
+    public fun getAmount(): String{
+        var amt = amount
+        for(deduction in deductions){
+            if(deduction["deduction_type"] == "tds_deduction"){
+                amt -= deduction["amount"].toString().toDouble()
+            }
+        }
+        return StringUtils.getCurrency(amt)
+    }
 
     public fun getUTR() = "UTR: UA12018"
 
