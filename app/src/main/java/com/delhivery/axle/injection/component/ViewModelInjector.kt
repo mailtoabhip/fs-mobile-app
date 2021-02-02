@@ -26,8 +26,10 @@ import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginC
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel
 import com.delhivery.axle.ui.splash.SplashViewModel
+import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -172,6 +174,16 @@ interface ViewModelInjector {
    * Injects [UploadImageViewModel]
    */
   fun inject(viewModel: UploadImageViewModel)
+
+  /**
+   * Injects [TeamMembersViewModel]
+   */
+  fun inject(viewModel: TeamMembersViewModel)
+
+  /**
+   * Injects [UserRoutesViewModel]
+   */
+  fun inject(viewModel: UserRoutesViewModel)
 
   @Component.Builder
   interface Builder {

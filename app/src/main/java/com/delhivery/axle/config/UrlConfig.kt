@@ -94,6 +94,9 @@ enum class UrlConfig(
       "https://orion-utility-api.delhivery.com",
       "https://orion-utility-api-dev.delhivery.com",
       "https://orion-utility-api-uat.delhivery.com"
+  ),
+  AppID(
+  "83", "371", "371"
   );
 
   /**

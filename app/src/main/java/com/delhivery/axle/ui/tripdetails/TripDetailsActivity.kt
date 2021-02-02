@@ -248,7 +248,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 textReupload.setOnClickListener {
                   it.post {
                     startActivityForResult(
-                        uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD
+                        uploadImageIntent(it.context, viewModel.transactionId, viewModel.tripDetail.reachedTime!!,
+                            viewModel.tripDetail.unloadingTime!!), REQCODE_UPLOAD_POD
                     )
                   }
                 }
@@ -269,7 +270,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                 textAction.setOnClickListener {
                   it.post {
                     startActivityForResult(
-                        uploadImageIntent(it.context, viewModel.transactionId), REQCODE_UPLOAD_POD
+                        uploadImageIntent(it.context, viewModel.transactionId, viewModel.tripDetail.reachedTime!!,
+                            viewModel.tripDetail.unloadingTime!!), REQCODE_UPLOAD_POD
                     )
                   }
                 }

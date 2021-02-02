@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="route"
+        type="com.delhivery.axle.data.home.routes.RouteModel"
+        />
+
+    <import type="android.view.View" />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:id="@+id/route_card"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_2dp"
+      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lay_routes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toStartOf="@id/img_route_detail"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_origin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:orientation="horizontal">
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_origin_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/black"
+              android:text="From: "
+              android:textSize="@dimen/size_16dp"
+              tools:text="From: "/>
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_origin_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/black"
+              android:text="@{route.key()}"
+              android:textSize="@dimen/size_16dp"
+              android:textStyle="bold"
+              tools:text="New Delhi, Delhi"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:orientation="horizontal">
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_destination_title"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/black"
+              android:text="To: "
+              android:textSize="@dimen/size_16dp"
+              tools:text="To: "/>
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_destination_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/black"
+              android:ellipsize="end"
+              android:maxLines="1"
+              android:text="@{route.stateNames()}"
+              android:textSize="@dimen/size_16dp"
+              tools:text="Assam, Andhra Pradesh, Arunanchal Pradesh, Bihar, Uttar Pradesh"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/img_route_detail"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:layout_marginEnd="@dimen/size_16dp"
+          app:srcCompat="@drawable/ic_chevron_right_dark"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.cardview.widget.CardView>
+
+</layout>

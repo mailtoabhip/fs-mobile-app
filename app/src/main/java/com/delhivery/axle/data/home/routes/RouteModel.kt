@@ -17,6 +17,22 @@ data class RouteModel(
 
   fun statesCount() = "${destinations.size} States"
 
+  fun stateNames() = if (destinations.size > 0) {
+    val destinationString = java.lang.StringBuilder()
+    var stateString = ""
+    for (destination in destinations) {
+      destinationString.append(destination.state)
+      destinationString.append(", ")
+    }
+    stateString = destinationString.toString()
+    if (stateString.endsWith(", ")) {
+      stateString = stateString.substring(0, destinationString.length - 2)
+    }
+    stateString
+  } else {
+    ""
+  }
+
   fun destinationCount() = "${destinations.size}"
 
   /**

@@ -26,9 +26,11 @@ import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.axle.ui.splash.SplashActivity
+import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
+import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -151,6 +153,14 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsSearchActivityModule::class])
   internal abstract fun bindSearchActivity(): SearchActivity
 
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTeamMembersActivityModule::class])
+  internal abstract fun bindTeamMembersActivity(): TeamMembersActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsUserRoutesActivityModule::class])
+  internal abstract fun bindUserRoutesActivity(): UserRoutesActivity
+
   /* Consolidated page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
@@ -226,6 +236,12 @@ internal abstract class AbsDocketUpdateActivityModule : ActivityModule<DocketUpd
 
 @Module
 internal abstract class AbsSearchActivityModule : ActivityModule<SearchActivity>()
+
+@Module
+internal abstract class AbsTeamMembersActivityModule: ActivityModule<TeamMembersActivity>()
+
+@Module
+internal abstract class AbsUserRoutesActivityModule: ActivityModule<UserRoutesActivity>()
 
 @Module
 internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<ConsolidatedPageActivity>()

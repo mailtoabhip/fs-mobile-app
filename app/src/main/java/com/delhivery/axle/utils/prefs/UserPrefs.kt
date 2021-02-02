@@ -208,6 +208,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
   /**
+   * Is logged in user parent or not
+   */
+  var isParent: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsParent, value)
+        .apply()
+    get() = prefs.getBoolean(PrefKeys.IsParent, false)
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -251,6 +259,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
         .apply()
+    editor.remove(PrefKeys.IsParent)
+        .apply()
     editor.commit()
   }
 
@@ -268,12 +278,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ifscCode = user.ifscCode ?: ""
     pancard = user.panCardNo ?: ""
     accNumber = user.accNumber()
+    cityCode = user.baseCityCode
+    isParent = user.isParent()
     userType = user.userType ?: ""
-    cityCode = if (user.hasRoutes()) {
-      user.userRoutes()[0].origin.orion_db_city_code
-    } else {
-      user.baseCityCode
-    }
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -312,6 +319,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val FromNotification = "from_notification"
     const val MaxPMTRate = "max_pmt_rate"
     const val MaxCostPerKM = "max_cost_per_km"
+    const val IsParent = "is_parent"
     const val UserType = "user_type"
   }
 }

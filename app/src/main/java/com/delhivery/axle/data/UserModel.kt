@@ -3,6 +3,7 @@ package com.delhivery.axle.data
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * User details model
@@ -33,8 +34,12 @@ data class UserModel(
   @SerializedName("bank_name") var bank: String?,
   @SerializedName("payment_mode") var paymentMode: String?,
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
-  @SerializedName("test_user") var testUser: Boolean = false
-) {
+  @SerializedName("is_deleted") var isDeleted: Boolean = false,
+  @SerializedName("test_user") var testUser: Boolean = false,
+  @SerializedName("designation") var designation: String?
+) : BaseKeyTypeModel<String>(), Serializable {
+
+  override fun key() = userId
 
   /**
    * User has selected routes or not
@@ -71,5 +76,14 @@ data class UserModel(
     } else {
       "Not Available"
     }
+
+  /**
+   * @return if user is parent/admin user or not
+   */
+  fun isParent() = if (designation.isNotNullOrEmpty()) {
+    designation.equals("ftl_sp_primary")
+  } else {
+    false
+  }
 
 }

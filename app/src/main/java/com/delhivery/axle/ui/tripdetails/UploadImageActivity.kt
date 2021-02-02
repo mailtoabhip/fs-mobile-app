@@ -79,6 +79,8 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     }
 
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.reachedTime = intent?.getStringExtra(ReachedTimeIntentKey) ?: ""
+    viewModel.unloadedTime = intent?.getStringExtra(UnloadedTimeIntentKey) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -418,13 +420,19 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
+private const val ReachedTimeIntentKey = "reached_time"
+private const val UnloadedTimeIntentKey = "unloaded_time"
 
 /**
  * Upload Image intent
  */
 fun uploadImageIntent(
   context: Context,
-  transactionId: String
+  transactionId: String,
+  reachedTime: String,
+  unloadedTime: String
 ) = Intent(context, UploadImageActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  putExtra(ReachedTimeIntentKey, reachedTime)
+  putExtra(UnloadedTimeIntentKey, unloadedTime)
 }

@@ -168,7 +168,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         viewModel.transactionId = data.transactionId
         viewModel.podUrl = data.podUrl ?: ""
         if (data.podUrl.isNullOrEmpty()) {
-          startActivityForResult(uploadImageIntent(this, data.transactionId), REQCODE_UPLOAD_POD)
+          startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD)
         } else {
           compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
               .onBackground()

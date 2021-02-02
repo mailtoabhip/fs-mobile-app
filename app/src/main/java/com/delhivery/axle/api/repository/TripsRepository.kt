@@ -49,8 +49,8 @@ class TripsRepository @Inject constructor(
    */
   fun uploadPod(
     transactionId: String,
-    imageUrls: MutableList<String>
-  ) = tripsService.updateTrip(transactionId, PodRequest.getRequest(imageUrls))
+    podRequest: PodRequest
+  ) = tripsService.updateTrip(transactionId, podRequest)
 
   /**
    * Update tracking details
