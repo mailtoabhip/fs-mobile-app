@@ -91,6 +91,7 @@ class TripDetailsViewModel @Inject constructor(
   var advanceUTR: String = ""
   var bidDetail: TripBidDetails? = null
 
+  var isApReconPending = false
   var tripType: String = ""
   var collections: Double = 0.0
   var payeeId: String = ""
@@ -106,6 +107,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error) {
             this.tripDetail = _res.second
             this.warehouse = _res.first.pickupLocation
+            isApReconPending = _res.second.isApReconPending?:false
             tripLiveData.postValue(_res)
           } else {
             tripLiveData.postValue(null)
@@ -555,6 +557,4 @@ class TripDetailsViewModel @Inject constructor(
             error.handle()
         }
   }
-
-
 }

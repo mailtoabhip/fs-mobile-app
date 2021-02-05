@@ -26,10 +26,28 @@ import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.databinding.ActivityTripDetailsBinding
+import com.delhivery.axle.databinding.ViewPaymentBreakupItemBinding
+import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
+import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
+import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
+import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
+import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
+import com.delhivery.axle.utils.EVENT_POD_VIEWED
+import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
+import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.REQCODE_STORAGE
+import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.VALUE_FAILURE
+import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.File
 import javax.inject.Inject
@@ -43,7 +61,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   init {
     hasInlineProgress = true
   }
-
 
   override fun getViewModelClass() = TripDetailsViewModel::class.java
 
@@ -98,7 +115,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
+        if(viewModel.isApReconPending){
+          populateIsApReconPendingPage()
+        }else{
           populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -109,7 +130,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+      if(viewModel.isApReconPending){
+        populateIsApReconPendingPage()
+      }else{
+        populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+      }
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -196,6 +221,27 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.executePendingBindings()
       }
     }
+  }
+
+  private fun populateIsApReconPendingPage(){
+    analyticsUtil.trackEvent(
+            EVENT_PAYMENT_SUMMARY,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
+    binding.progressHistory.root.visibility = View.GONE
+    binding.viewSummary.isSelected = true
+    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
+    binding.viewHistory.isSelected = false
+    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
+
+    binding.containerHistory.removeAllViews()
+    val paymentSummaryBinding = ViewApReconPendingBinding.inflate(
+            layoutInflater, binding.containerHistory, false
+    )
+    paymentSummaryBinding.containerApText.visibility = View.VISIBLE
+    binding.containerHistory.addView(paymentSummaryBinding.root)
+
   }
 
   private fun populateHistory(history: MutableList<TripHistoryItem>) {
