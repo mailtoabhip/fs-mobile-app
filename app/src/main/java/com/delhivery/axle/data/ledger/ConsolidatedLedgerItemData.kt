@@ -39,7 +39,7 @@ data class ConsolidatedLedgerItemData(
     override fun key() = tripId
 
     public fun getTitle():SpannableString{
-        var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1)
+        var capitalizeEvent = paymentEvent.substring(0, 1).toUpperCase() + paymentEvent.substring(1).replace("_"," ")
         if(capitalizeEvent == "Loading"){
             capitalizeEvent = "Advance"
         }
