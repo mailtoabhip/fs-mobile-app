@@ -1,20 +1,7 @@
 package com.delhivery.axle.injection.module
 
 import android.content.Context
-import com.delhivery.axle.api.service.BidService
-import com.delhivery.axle.api.service.CityService
-import com.delhivery.axle.api.service.ExpenseService
-import com.delhivery.axle.api.service.FuelService
-import com.delhivery.axle.api.service.LoadCycleService
-import com.delhivery.axle.api.service.NotificationService
-import com.delhivery.axle.api.service.PaymentService
-import com.delhivery.axle.api.service.TransactionService
-import com.delhivery.axle.api.service.TripService
-import com.delhivery.axle.api.service.UMSService
-import com.delhivery.axle.api.service.UserService
-import com.delhivery.axle.api.service.UtilityService
-import com.delhivery.axle.api.service.WalletService
-import com.delhivery.axle.api.service.WarehouseService
+import com.delhivery.axle.api.service.*
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
@@ -174,6 +161,17 @@ class NetworkModule {
       PaymentService::class.java
   )
 
+  /**
+   * Provide [PayableService]
+   */
+  @Provides
+  @Singleton
+  fun providePayableService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.PayableService).create(
+          PayableService::class.java
+  )
   /**
    * Provide [WarehouseService]
    */

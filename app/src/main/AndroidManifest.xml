@@ -150,6 +150,10 @@
 
     <activity
         android:name=".ui.searchtrip.SearchActivity"
+        android:screenOrientation="portrait"/>
+
+    <activity
+        android:name=".ui.ledger.ConsolidatedPageActivity"
         android:screenOrientation="portrait" />
 
     <activity

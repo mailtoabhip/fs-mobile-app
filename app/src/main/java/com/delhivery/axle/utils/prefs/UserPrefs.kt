@@ -129,6 +129,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.AccountNumber, "") ?: ""
 
   /**
+   * User type
+   */
+  var userType: String
+    set(value) = editor.putString(PrefKeys.UserType, value).apply()
+    get() = prefs.getString(PrefKeys.UserType, "") ?: ""
+
+  /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
@@ -273,6 +280,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     accNumber = user.accNumber()
     cityCode = user.baseCityCode
     isParent = user.isParent()
+    userType = user.userType ?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -312,6 +320,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val MaxPMTRate = "max_pmt_rate"
     const val MaxCostPerKM = "max_cost_per_km"
     const val IsParent = "is_parent"
+    const val UserType = "user_type"
   }
 }
 

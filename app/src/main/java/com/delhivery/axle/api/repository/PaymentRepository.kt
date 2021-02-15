@@ -35,7 +35,14 @@ class PaymentRepository @Inject constructor(
         }
     )
 
-  /**
+    /**
+     * Fetch Payments Summary
+     */
+    fun payments(
+            transactionId: String
+    ) = paymentService.payments(transactionId).convertResponse()
+
+    /**
    * Get bulk transactions using ids
    */
   fun bulkPaymentTransactions(

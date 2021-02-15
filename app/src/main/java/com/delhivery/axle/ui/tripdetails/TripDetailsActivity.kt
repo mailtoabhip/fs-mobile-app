@@ -4,17 +4,20 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
+import android.text.SpannableString
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.TripChargesResponse
-import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
 import com.delhivery.axle.data.AwaitingPODUpload
 import com.delhivery.axle.data.BalancePaid
@@ -29,8 +32,9 @@ import com.delhivery.axle.databinding.ViewPaymentSummaryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryItemBinding
 import com.delhivery.axle.databinding.ViewTripHistoryPodUploadedBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
@@ -80,6 +84,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -88,6 +94,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    updateTDSRate()
 
     /* observe trip details live data */
     viewModel.progressLiveData.observe(this, ProgressObserver())
@@ -107,7 +115,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (!viewModel.chargesSummary.isNullOrEmpty() &&
           viewModel.tripDetail.tripStatus == TripStatus.TripCompleted.statusKey
       ) {
-        populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+        if(viewModel.isApReconPending){
+          populateIsApReconPendingPage()
+        }else{
+          populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+        }
       } else {
         populateHistory(viewModel.tripHistory.toSortedMap().values.toMutableList())
       }
@@ -118,7 +130,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.viewSummary.setOnClickListener {
-      populatePaymentSummary(viewModel.chargesSummary.toMutableList())
+      if(viewModel.isApReconPending){
+        populateIsApReconPendingPage()
+      }else{
+        populateNewCompletedPaymentSummary(viewModel.chargesListSummary.toMutableList(), viewModel.newPaymentSummary.toMutableList())
+      }
     }
 
     binding.containerError.btnAction.setOnClickListener {
@@ -132,15 +148,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     refreshData()
   }
 
-  private fun refreshData() {
-    binding.refreshing = true
-    binding.error = false
-    viewModel.tripHistory.clear()
-    viewModel.chargesSummary.clear()
-    viewModel.paymentsSummary.clear()
-    viewModel.fetchTripDetails()
-    binding.executePendingBindings()
+  override fun onDestroy() {
+    super.onDestroy()
   }
+
+    private fun refreshData() {
+        binding.refreshing = true
+        binding.error = false
+        viewModel.tripHistory.clear()
+        viewModel.chargesSummary.clear()
+        viewModel.paymentsSummary.clear()
+        viewModel.chargesListSummary.clear()
+        viewModel.newPaymentSummary.clear()
+        viewModel.newPaymentTypePayment.clear()
+        viewModel.newPaymentTypeBalance.clear()
+        viewModel.newPaymentTypeDN.clear()
+        viewModel.fetchTripDetails()
+        viewModel.fetchChargeListSummary()
+        viewModel.fetchNewPaymentSummary()
+        viewModel.fetchCollectionSummary()
+        viewModel.fetchListInvoices()
+        binding.executePendingBindings()
+    }
 
   /**
    * Transaction details and UI updation Observer
@@ -160,6 +189,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPaymentSummary()
         viewModel.fetchChargeSummary()
+        viewModel.fetchChargeListSummary()
+        viewModel.fetchNewPaymentSummary()
+        viewModel.fetchCollectionSummary()
+        viewModel.fetchListInvoices()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -188,6 +221,27 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.executePendingBindings()
       }
     }
+  }
+
+  private fun populateIsApReconPendingPage(){
+    analyticsUtil.trackEvent(
+            EVENT_PAYMENT_SUMMARY,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
+    binding.progressHistory.root.visibility = View.GONE
+    binding.viewSummary.isSelected = true
+    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
+    binding.viewHistory.isSelected = false
+    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
+
+    binding.containerHistory.removeAllViews()
+    val paymentSummaryBinding = ViewApReconPendingBinding.inflate(
+            layoutInflater, binding.containerHistory, false
+    )
+    paymentSummaryBinding.containerApText.visibility = View.VISIBLE
+    binding.containerHistory.addView(paymentSummaryBinding.root)
+
   }
 
   private fun populateHistory(history: MutableList<TripHistoryItem>) {
@@ -387,6 +441,319 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     } catch (e: java.lang.Exception) {
       uiUtils.showSnackbar("No application found which can open the file")
     }
+  }
+
+  private fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
+
+  private fun redirectToLRsTrip(transactionId: String){
+    startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
+  }
+
+  private fun updateTDSRate(){
+    if (viewModel.userPrefs.userType == "individual") {
+      viewModel.tdsRate = 1
+      viewModel.updatedTDSRate = 0.75
+    } else {
+      viewModel.tdsRate = 2
+      viewModel.updatedTDSRate = 1.5
+    }
+  }
+
+  private fun getDeductionHead(dnType: String, vehicleNumber: String, loadedTime: String, utr: String): SpannableString{
+    val head = "Recovery against $dnType\n$vehicleNumber (${getPaymentDate(loadedTime)}) \n(UTR: $utr)"
+    var i = 0
+    for(char in head){
+      if(char == '\n'){
+        break
+      }
+      i += 1
+    }
+    i += 1
+    val spannableHead = SpannableString(head)
+    spannableHead.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
+    spannableHead.setSpan(ForegroundColorSpan(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.link
+    )), i, i+vehicleNumber!!.length, 0)
+    return spannableHead
+  }
+
+  private fun getPaymentHead(head : String, utr: String, date: String): String{
+    var newHead = head.replace("_"," ").capitalizeWords()
+    if(newHead == "Intermittent"){
+      newHead = "In-transit"
+    } else if(newHead == "Loading"){
+      newHead = "Advance"
+    }
+    return "$newHead UTR: $utr, \n${getPaymentDate(date)}"
+  }
+
+  private fun getPaymentDate(transferTime: String): String{
+    var year = transferTime.substring(2,4)
+    var day = transferTime.substring(8,10)
+    if(day.get(0) == '0'){
+      day = transferTime.substring(9,10)
+    }
+    var month = transferTime.substring(5,7)
+    if(month.get(0) == '0'){
+      month = transferTime.substring(6,7)
+    }
+    if (month != null) {
+      month = DateUtils.getMonth(month.toInt())
+    }
+    return "$day $month $year"
+  }
+
+  private fun getPaymentAmount(amount: Double, date: String): Double{
+    var newAmount = amount
+    val tdsObj = TDS(amount, date)
+    val tds = tdsObj?.getTDS(viewModel.tdsRate, viewModel.updatedTDSRate)
+    if (tds != null) {
+      newAmount -= tds
+    }
+    return newAmount
+  }
+
+  private fun getChargeText(chargeHead: String, days: Int): String{
+    var chargeText: String
+    var chargeDays: Int
+    when (chargeHead) {
+      "detention_charge_origin" -> {
+        chargeText = "Loading Detention"
+      }
+      "detention_charge_destination" -> {
+        chargeText = "Unloading Detention"
+      }
+      else -> {
+        chargeText = chargeHead.replace('_',' ').capitalizeWords()
+      }
+    }
+    if(chargeHead in viewModel.chargeDaysList){
+      chargeDays = days
+      if(chargeDays == 1){
+        chargeText += " (1 day)"
+      }else if(chargeDays != 0 && chargeDays > 1){
+        chargeText += " ($chargeDays days)"
+      }
+    }
+    return chargeText
+  }
+
+  private fun populateNewCompletedPaymentSummary(tripSummary: MutableList<ChargesResponse>, paymentSummary: MutableList<PaymentsResponse>){
+    analyticsUtil.trackEvent(
+            EVENT_PAYMENT_SUMMARY,
+            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+            mutableListOf(VALUE_LOAD, viewModel.transactionId)
+    )
+    binding.progressHistory.root.visibility = View.GONE
+    binding.viewSummary.isSelected = true
+    binding.textPaymentSummary.setTextColor(ContextCompat.getColor(this, R.color.black))
+    binding.viewHistory.isSelected = false
+    binding.textStatusHistory.setTextColor(ContextCompat.getColor(this, R.color.transparent_grey))
+
+    binding.containerHistory.removeAllViews()
+    val paymentSummaryBinding = ViewNewTripPaymentSummaryBinding.inflate(
+            layoutInflater, binding.containerHistory, false
+    )
+
+    viewModel.newPaymentTypePayment.clear()
+    viewModel.newPaymentTypeBalance.clear()
+    viewModel.newPaymentTypeDN.clear()
+
+    var chargeTotal = 0.0
+    var deductionTotal = 0.0
+
+    tripSummary.forEach{charge ->
+      if(charge.chargeAmount != 0.0 && charge.action == "pay"){
+        chargeTotal += charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPositiveCharges, false).apply {
+          seprator.visibility = View.GONE
+          textChargeType.text = getChargeText(charge.chargeHeadRef, charge.days)
+          textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          paymentSummaryBinding.containerPositiveCharges.addView(root)
+        }
+      }else if(charge.chargeAmount != 0.0 && charge.action == "deduct"){
+        deductionTotal += charge.chargeAmount
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerNegativeDeductions, false).apply {
+          seprator.visibility = View.GONE
+          textChargeType.text = getChargeText(charge.chargeHeadRef, charge.days)
+          textChargeValue.text = StringUtils.getCurrency(charge.chargeAmount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                  this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          paymentSummaryBinding.containerNegativeDeductions.addView(root)
+        }
+      }
+    }
+    paymentSummaryBinding.totalCharges = StringUtils.getCurrency(chargeTotal)
+    paymentSummaryBinding.textTotalCharges.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+
+    paymentSummary.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+          if(payment.paymentType  == "payment"){
+             if (payment.head == "balance" || payment.head == "balance_payment") {
+                 viewModel.newPaymentTypeBalance.add(payment)
+             } else if(!viewModel.invoiceList.contains(payment.invoiceId) && payment.transactionId != viewModel.tripDetail.transactionId){
+               viewModel.newPaymentTypeDN.add(payment)
+             }else {
+               viewModel.newPaymentTypePayment.add(payment)
+             }
+          } else if(payment.paymentType == "dn" && payment.transactionId != viewModel.tripDetail.transactionId) {
+            viewModel.newPaymentTypeDN.add(payment)
+          }
+        }
+      }
+
+    var paymentDone = 0.0
+    var originalPaymentSum = 0.0
+    viewModel.newPaymentTypePayment.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerPaymentsMade, false).apply {
+          seprator.visibility = View.GONE
+          var utr = payment.utrNumber ?: ""
+          var date = payment.transferTime ?: ""
+          originalPaymentSum += payment.amount
+          val amount = getPaymentAmount(payment.amount, date)
+          paymentDone += amount
+          textChargeType.text = getPaymentHead(payment.head, utr, date)
+          textChargeValue.text = StringUtils.getCurrency(amount)
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_confirmed
+          ))
+          paymentSummaryBinding.containerPaymentsMade.addView(root)
+        }
+      }
+    }
+
+    var balanceTotal = 0.0
+    viewModel.newPaymentTypeBalance.forEach { payment ->
+        if (payment.status == "success" && payment.amount != 0.0) {
+            ViewNewPaymentSummaryItemBinding.inflate(layoutInflater, paymentSummaryBinding.containerPaymentsBalance, false).apply {
+                seprator.visibility = View.GONE
+              var utr = payment.utrNumber ?: ""
+              val date = payment.transferTime ?: ""
+              var amount = payment.amount
+              val tdsObj = payment.transferTime?.let { TDS(amount, it) }
+              val tdsRate = tdsObj?.getTDSRate(viewModel.tdsRate, viewModel.updatedTDSRate)
+              if (tdsRate != null) {
+                  amount -= tdsRate * (chargeTotal - originalPaymentSum)
+              }
+              balanceTotal += amount
+              textChargeType.text = getPaymentHead(payment.head, utr, date)
+              textChargeValue.text = StringUtils.getCurrency(amount)
+              textChargeValue.setTextColor(ContextCompat.getColor(
+                      this@TripDetailsActivity,
+                      R.color.status_confirmed
+              ))
+              paymentSummaryBinding.containerPaymentsBalance.addView(root)
+            }
+        }
+    }
+
+    ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
+      var transferTime = ""
+      if(viewModel.newPaymentSummary.size > 0){
+        transferTime = viewModel.newPaymentSummary[0].transferTime.toString()
+      }
+      val tdsObj = TDS(chargeTotal,transferTime)
+      val tds = tdsObj.getTDS(viewModel.tdsRate, viewModel.updatedTDSRate)
+      deductionTotal += tds
+      textChargeType.text = "TDS"
+      textChargeValue.text = StringUtils.getCurrency(tds)
+      textChargeValue.setTextColor(ContextCompat.getColor(
+              this@TripDetailsActivity,
+              R.color.status_lost
+      ))
+      paymentSummaryBinding.containerNegativeDeductions.addView(root)
+    }
+
+    viewModel.newPaymentTypeDN.forEach{ payment ->
+      if(payment.status == "success" && payment.amount != 0.0){
+        ViewNewPaymentSummaryItemBinding.inflate(layoutInflater,paymentSummaryBinding.containerNegativeDeductions, false).apply {
+          seprator.visibility = View.GONE
+          var dnType = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) "overpayment" else payment.dnType ?: ""
+          var utr = payment.utrNumber ?: ""
+          var amount = payment.amount
+          if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) {
+            val date = payment.transferTime ?: ""
+            amount = getPaymentAmount(payment.appliedAmount!!,date)
+          }
+          textChargeType.text = getDeductionHead(dnType,payment.vehicleNumber?:"", payment.loadedTime?:"", utr)
+          deductionTotal += amount
+          textChargeValue.text = StringUtils.getCurrency(amount)
+          textChargeType.setOnClickListener{
+            if(payment.transactionId != viewModel.transactionId) {
+              redirectToLRsTrip(payment.transactionId)
+            }
+          }
+          textChargeValue.setTextColor(ContextCompat.getColor(
+                 this@TripDetailsActivity,
+                  R.color.status_lost
+          ))
+          paymentSummaryBinding.containerNegativeDeductions.addView(root)
+        }
+      }
+    }
+
+    paymentSummaryBinding.totalDeduction = StringUtils.getCurrency(deductionTotal)
+    paymentSummaryBinding.textTotalDeduction.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+
+    if(viewModel.collections != 0.0){
+      paymentSummaryBinding.isWaivedOff = true
+      paymentSummaryBinding.waivedOffAmount = StringUtils.getCurrency(deductionTotal - viewModel.collections)
+      paymentSummaryBinding.waivedOffLabel = "(Rs. "+viewModel.collections+" have been waived off !)"
+    }
+    paymentDone += balanceTotal
+    paymentSummaryBinding.totalPaymentMade = StringUtils.getCurrency(paymentDone)
+    paymentSummaryBinding.textTotalPaymentsMade.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+    var pendingPayment = chargeTotal - deductionTotal - paymentDone + viewModel.collections
+
+    if(pendingPayment < 0){
+      pendingPayment = 0.0
+    }
+
+    paymentSummaryBinding.pendingPayment = StringUtils.getCurrency(pendingPayment)
+    paymentSummaryBinding.textPendingPayment.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_confirmed
+    ))
+
+    var pendingRecovery = 0.0
+    if(pendingPayment == 0.0){
+      pendingRecovery = chargeTotal - deductionTotal - paymentDone + viewModel.collections
+      if(pendingRecovery < 0){
+        pendingRecovery *= -1
+      }
+    }
+    paymentSummaryBinding.pendingRecovery = StringUtils.getCurrency(pendingRecovery)
+    paymentSummaryBinding.textPendingRecovery.setTextColor(ContextCompat.getColor(
+            this@TripDetailsActivity,
+            R.color.status_lost
+    ))
+
+    paymentSummaryBinding.containerTotalCharges.visibility = View.VISIBLE
+    paymentSummaryBinding.containerTotalDeduction.visibility = View.VISIBLE
+    paymentSummaryBinding.containerTotalPaymentsMade.visibility = View.VISIBLE
+    paymentSummaryBinding.containerPendingPayment.visibility = View.VISIBLE
+    paymentSummaryBinding.containerPendingRecovery.visibility = View.VISIBLE
+    binding.containerHistory.addView(paymentSummaryBinding.root)
   }
 
   private fun populatePaymentSummary(tripChargesSummary: MutableList<TripChargesResponse>) {
@@ -655,14 +1022,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
+private const val IntentExtraTripTypeKey = "trip_type"
 
 /**
  * Trip details intent
  */
 fun tripDetailsIntent(
   transactionId: String,
-  context: Context
+  context: Context,
+  tripType: String = ""
 ) = Intent(context, TripDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  putExtra(IntentExtraTripTypeKey, tripType)
 }
 

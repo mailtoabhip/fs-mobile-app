@@ -2,14 +2,8 @@ package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.PaymentRepository
-import com.delhivery.axle.api.repository.TripsRepository
-import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.repository.UtilityRepository
-import com.delhivery.axle.api.repository.WarehouseRepository
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.api.response.TripChargesResponse
-import com.delhivery.axle.api.response.TripPaymentsResponse
+import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.response.*
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
 import com.delhivery.axle.data.AdvancePending
@@ -42,6 +36,7 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import java.io.File
 import javax.inject.Inject
 
@@ -54,12 +49,12 @@ class TripDetailsViewModel @Inject constructor(
   private val warehouseRepository: WarehouseRepository,
   private val utilityRepository: UtilityRepository,
   private var userRepository: UserRepository,
+  private val payableRepository: PayableRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   /* transaction id */
   lateinit var transactionId: String
-
   lateinit var tripDetail: HomeTripsItemData
   private lateinit var warehouse: String
 
@@ -73,8 +68,20 @@ class TripDetailsViewModel @Inject constructor(
   var chargesSummary = mutableListOf<TripChargesResponse>()
   var paymentsSummary = mutableListOf<TripPaymentsResponse>()
 
+  var newPaymentSummary = mutableListOf<PaymentsResponse>()
+  var newPaymentTypePayment = mutableListOf<PaymentsResponse>()
+  var newPaymentTypeBalance = mutableListOf<PaymentsResponse>()
+  var newPaymentTypeDN = mutableListOf<PaymentsResponse>()
+  var invoiceList = mutableListOf<String>()
+  var chargesListSummary = mutableListOf<ChargesResponse>()
+
+  var chargeDaysList = arrayOf("detention_charge_origin","detention_charge_destination","pod_bonus","pod_penalty","delay")
+
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
+
+  var tdsRate: Int = 0
+  var updatedTDSRate: Double = 0.0
 
   var balancePaid = false
   var balancePaidTime: String = ""
@@ -83,6 +90,11 @@ class TripDetailsViewModel @Inject constructor(
   var advancePaidTime: String = ""
   var advanceUTR: String = ""
   var bidDetail: TripBidDetails? = null
+
+  var isApReconPending = false
+  var tripType: String = ""
+  var collections: Double = 0.0
+  var payeeId: String = ""
 
   /**
    * Fetch trip details
@@ -95,6 +107,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error) {
             this.tripDetail = _res.second
             this.warehouse = _res.first.pickupLocation
+            isApReconPending = _res.second.isApReconPending?:false
             tripLiveData.postValue(_res)
           } else {
             tripLiveData.postValue(null)
@@ -135,6 +148,113 @@ class TripDetailsViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+
+  /**
+   * Fetch Collections summary
+   */
+
+  fun fetchCollectionSummary(){
+    val jsonObject = JsonObject()
+    val jsonElement = JsonPrimitive(transactionId)
+    jsonObject.add("trip_id",jsonElement)
+    compositeDisposable += payableRepository.fetchCollectionList(jsonObject)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                collections = 0.0
+                if(_res.isNotEmpty()){
+                  _res.let{
+                    for (collection in _res) {
+                      if(collection.type == "waived_off"){
+                        collections += collection.amount
+                      }
+                    }
+                  }
+                }else{
+                  error?.handle()
+                }
+              }
+            }
+  }
+
+
+  /**
+   * Fetch Charges List summary
+   */
+  fun fetchChargeListSummary(){
+    val jsonObject = JsonObject()
+    val jsonElement = JsonPrimitive(transactionId)
+    jsonObject.add("trip_id",jsonElement)
+    compositeDisposable += payableRepository.fetchChargesList(jsonObject)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                payeeId = ""
+                chargesListSummary.clear()
+                if(_res.isNotEmpty()){
+                  _res.let {
+                    for (charge in _res){
+                      chargesListSummary.add(charge)
+                      payeeId = charge.payeeId
+                    }
+                  }
+                }
+              } else {
+                error?.handle()
+              }
+            }
+  }
+
+  /**
+   * Fetch Payment summary
+   */
+  fun fetchNewPaymentSummary(){
+    compositeDisposable += paymentRepository.payments(transactionId)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                newPaymentSummary.clear()
+                newPaymentTypePayment.clear()
+                newPaymentTypeBalance.clear()
+                newPaymentTypeDN.clear()
+                if(_res.isNotEmpty()){
+                  _res.let {
+                    for (charge in _res){
+                      newPaymentSummary.add(charge)
+                    }
+                  }
+                }
+              } else {
+                error?.handle()
+              }
+            }
+  }
+
+  /**
+   * Fetch List Invoices
+   */
+  fun fetchListInvoices(){
+    compositeDisposable += payableRepository.listInvoices(transactionId)
+            .onBackground()
+            .subscribe{
+              _res, error ->
+              if(!error){
+                invoiceList.clear()
+                if(_res.isNotEmpty()){
+                  _res.let {
+                    for (invoice in _res){
+                      invoiceList.add(invoice.invoiceId)
+                    }
+                  }
+                }
+              } else {
+                error?.handle()
+              }
+            }
   }
 
   /**

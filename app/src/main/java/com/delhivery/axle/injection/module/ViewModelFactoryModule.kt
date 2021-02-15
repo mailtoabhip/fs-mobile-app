@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -232,6 +233,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(UserRoutesViewModel::class)
   abstract fun bindUserRoutesViewModel(viewModel: UserRoutesViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ConsolidatedPageViewModel::class)
+  abstract fun bindConsolidatedPageViewModel(viewModel: ConsolidatedPageViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
