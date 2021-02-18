@@ -37,7 +37,7 @@ interface PayableService {
     @POST("email_vendor_ledger")
     fun emailVendorLedger(@Body payload: JsonObject): Single<BaseResponse<EmailLedgerResponse>>
 
-    @GET("/list_invoices/{trip_id}")
+    @GET("list_invoices/{trip_id}")
     fun listInvoices(
             @Path("trip_id") tripId: String
     ):Single<BaseResponse<List<InvoiceListResponse>>>
