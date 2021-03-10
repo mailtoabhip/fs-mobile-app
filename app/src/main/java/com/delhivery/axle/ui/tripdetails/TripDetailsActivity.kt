@@ -683,7 +683,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           seprator.visibility = View.GONE
           var dnType = if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) "overpayment" else payment.dnType ?: ""
           var utr = payment.utrNumber ?: ""
-          var amount = payment.amount
+          var amount = if(payment.appliedAmount != null && payment.appliedAmount != 0.0) payment.appliedAmount else payment.amount
           if (payment.overPaymentLRs != null && payment.overPaymentLRs.isNotEmpty()) {
             val date = payment.transferTime ?: ""
             amount = getPaymentAmount(payment.appliedAmount!!,date)
