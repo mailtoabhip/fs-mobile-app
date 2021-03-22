@@ -7,7 +7,6 @@ import com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.jakewharton.rxbinding2.widget.RxTextView
