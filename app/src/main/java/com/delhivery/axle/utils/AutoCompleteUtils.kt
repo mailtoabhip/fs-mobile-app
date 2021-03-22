@@ -7,7 +7,9 @@ import com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.jakewharton.rxbinding2.widget.RxTextView
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.Disposable
@@ -95,6 +97,7 @@ class AutoCompleteUtils @Inject constructor(
     val jsonArray = JsonArray()
     jsonArray.add(jsonObject)
     parentJsonObject.add("suggesters", jsonArray)
+    parentJsonObject.add("include_old_cities", JsonPrimitive(true))
 
     disposable?.dispose()
     disposable = cityService.searchCities(parentJsonObject)
