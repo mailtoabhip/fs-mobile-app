@@ -10,5 +10,5 @@ object Config {
   const val BaseUrl = "http://demo5995716.mockable.io"
   const val AxleSupportEmail = "axle-support@delhivery.com"
   const val AxleOnboardingEmail = "axle-onboarding@delhivery.com"
-  const val AxleCallSupport = "01246220684"
+  const val AxleCallSupport = "01246719600"
 }
