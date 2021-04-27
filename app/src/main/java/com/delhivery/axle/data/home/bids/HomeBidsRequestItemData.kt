@@ -56,7 +56,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("tat_minutes") var tatMinutes: String?,
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
-  @SerializedName("benchmark_price") val benchmarkPrice: Double ?= 0.0,
+  @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -392,7 +392,7 @@ data class HomeBidsRequestItemData(
       if (isPMTIndent()) {
         Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
       } else {
-        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "higher than the lowest bid")
+        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + " higher than the lowest bid")
       }
     } else {
       Html.fromHtml("You currently have the lowest bid")
@@ -400,22 +400,22 @@ data class HomeBidsRequestItemData(
   }
 
   /**
-   * lowest bid tick icon visibility
+   * inline with guidance price tick icon visibility
    */
-  fun inlineBenchmarkIconVisibility() = if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0)  && (transactionBid!!.bidAmount <= benchmarkPrice ?: 0.0 * 1.2)) {
+  fun inlineGuidanceIconVisibility() = if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0))  && (transactionBid!!.bidAmount <= (guidancePrice ?: 0.0) * 1.2)) {
     View.GONE
-  } else if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice ?: 0.0)) {
+  } else if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) * 0.9)  && (transactionBid!!.bidAmount < (guidancePrice ?: 0.0))) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
   /**
-   * not lowest bid error icon visibility
+   * not inline with guidance price error icon visibility
    */
-  fun notInlineBenchmarkIconVisibility() = if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 )  && (transactionBid!!.bidAmount <= benchmarkPrice ?: 0.0 * 1.2)) {
+  fun notInlineGuidanceIconVisibility() = if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) )  && (transactionBid!!.bidAmount <= (guidancePrice ?: 0.0) * 1.2)) {
     View.VISIBLE
-  } else if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice ?: 0.0)) {
+  } else if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) * 0.9)  && (transactionBid!!.bidAmount < (guidancePrice ?: 0.0))) {
     View.GONE
   } else {
     View.GONE
@@ -424,21 +424,21 @@ data class HomeBidsRequestItemData(
   /**
    * @return Formatted string for benchmark diff with bid placed
    */
-  fun diffBenchmarkBidText(
+  fun diffGuidanceBidText(
   ): Spanned? {
     val bid: Double = transactionBid!!.bidAmount
     var diff = 0.0
-    benchmarkPrice?.let {
-      diff = bid - benchmarkPrice
+    guidancePrice?.let {
+      diff = bid - guidancePrice
       val percentDiff : Int = if (diff >= 0) {
-        ((bid - benchmarkPrice) * 100 / benchmarkPrice).toInt()
+        ((bid - guidancePrice) * 100 / guidancePrice).toInt()
       } else {
-        ((benchmarkPrice - bid) * 100 / benchmarkPrice).toInt()
+        ((guidancePrice - bid) * 100 / guidancePrice).toInt()
       }
 
-      return if ((transactionBid!!.bidAmount >= benchmarkPrice)  && (transactionBid!!.bidAmount <= benchmarkPrice * 1.2)) {
-        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to" + "<font><b>" + StringUtils.formatAmount(benchmarkPrice) + "</b></font>" + " to increase your chances to > 70%")
-      } else if ((transactionBid!!.bidAmount >= benchmarkPrice * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice)){
+      return if ((transactionBid!!.bidAmount >= guidancePrice)  && (transactionBid!!.bidAmount <= guidancePrice * 1.2)) {
+        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to " + "<font><b>" + StringUtils.formatAmount(guidancePrice) + "</b></font>" + " to increase your chances to > 70%")
+      } else if ((transactionBid!!.bidAmount >= guidancePrice * 0.9)  && (transactionBid!!.bidAmount < guidancePrice)){
         Html.fromHtml("Your bid is inline with DLV Benchmark Price. Your confirmation chances are > 70%")
       } else {
         Html.fromHtml("")
