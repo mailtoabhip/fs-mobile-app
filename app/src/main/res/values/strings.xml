@@ -94,6 +94,8 @@
   <string name="action_save">Save</string>
   <string name="action_logout_from_app">Logout from the app</string>
   <string name="action_dismiss">DISMISS</string>
+  <string name="action_done">Done</string>
+  <string name="action_revise_bid">Revise the bid</string>
   <string name="action_update_route">Update Route</string>
 
   <!--Label (label_)-->
@@ -130,6 +132,7 @@
   <string name="label_from_state">From %1$s</string>
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
   <string name="label_user_bid_amount">You have bid: ₹ </string>
+  <string name="label_user_edit_bid_amount">Your Bid: ₹ </string>
   <string name="label_bids">%1$s Bids</string>
   <string name="label_destination_state">Destination States(%1$s)</string>
   <string name="label_advance_pending">Advance Pending</string>
@@ -243,6 +246,8 @@
   <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
   <string name="express">Express</string>
   <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
+  <string name="lowest_bid_text">You currently have the lowest bid</string>
+  <string name="bid_stand_label">Where do you stand?</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

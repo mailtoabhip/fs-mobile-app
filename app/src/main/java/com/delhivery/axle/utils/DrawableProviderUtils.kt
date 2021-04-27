@@ -31,6 +31,26 @@ object DrawableProviderUtils {
   }
 
   /**
+   * Lowest bid drawable
+   */
+  @DrawableRes
+  fun lowestBidDrawables(bidPrice: Double?, lowestBidPrice: Double?) = if (bidPrice == lowestBidPrice) {
+    R.drawable.green_tick
+  } else {
+    R.drawable.error_icon
+  }
+
+  /**
+   * Standing with benchmark price drawable
+   */
+  @DrawableRes
+  fun benchmarkDrawable(bidWithBenchmark: Boolean) = if (bidWithBenchmark) {
+    R.drawable.green_tick
+  } else {
+    R.drawable.error_icon
+  }
+
+  /**
    * Get transaction type drawable
    */
   @DrawableRes

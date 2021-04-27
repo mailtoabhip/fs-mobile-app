@@ -176,6 +176,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           is BidDetailsUserBidState_EditBid -> {
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
+                  val data = viewModel.transaction as HomeBidsRequestItemData
+                  data.numBids = state.bidsCount
+                  data.transactionBid = state.lowestAndUserBidPair.first
                   bidsRecieved = state.bidsCount
                   val userBid = state.lowestAndUserBidPair.first
                   val lowestTBid = state.lowestAndUserBidPair.second
@@ -187,15 +190,20 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                             it.bidAmount
                         )}" + if (state.isPMTIndent) "/MT" else ""
                       }
-                      if (state.bidsCount > 1) {
-                        textUserBidAmountDiff.text =
-                          userBid?.diffFromLowestBid(it.bidAmount, state.isPMTIndent)
+                      data.lowestBid = when (it) {
+                        null -> 0.0
+                        else -> it.bidAmount
                       }
+//                      if (state.bidsCount > 1) {
+//                        textUserBidAmountDiff.text =
+//                          userBid?.diffFromLowestBid(it.bidAmount, state.isPMTIndent)
+//                      }
                     }
                   }
+                  request = data
 
                   userBid?.bidAmount?.let {
-                    val bid = getString(string.label_user_bid_amount) + if (state.isPMTIndent) {
+                    val bid = getString(string.label_user_edit_bid_amount) + if (state.isPMTIndent) {
                       StringUtils.formatAmount(it) + "/MT"
                     } else {
                       StringUtils.formatAmount(it)

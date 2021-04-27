@@ -30,6 +30,7 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -152,6 +153,15 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     })
 
+    viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if (it.first) {
+        val data = adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
+        BidDetailsCreateEditDialog(
+            context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs
+        ).show()
+      }
+    })
+
     viewModel.bidsActionLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.toggleKeyboard()
           .apply {
@@ -160,6 +170,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
                 val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
                 data?.transactionBid = it.second
                 adapter.notifyItemChanged(it.first)
+                if (data != null) {
+                  BidConfirmReviseDialog(
+                      context!!, data, viewModel, it.first
+                  ).show()
+                }
               }
             }
           }

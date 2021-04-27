@@ -7,17 +7,16 @@ import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -42,7 +41,7 @@ class HomeLoadsViewModel @Inject constructor(
   private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface {
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface {
 
   /* user bids live data */
   var userLoadsData =
@@ -53,6 +52,9 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
+
+  /* revise bid live data */
+  var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
 
   /* loads count live data */
   var loadsCountLiveData = MutableLiveData<Int>()
@@ -260,6 +262,10 @@ class HomeLoadsViewModel @Inject constructor(
             userPrefs.fcmTokenGenerated = false
           }
         }
+  }
+
+  override fun reviseBid(position: Int) {
+    reviseBidLiveData.postValue(Pair(true, position))
   }
 }
 

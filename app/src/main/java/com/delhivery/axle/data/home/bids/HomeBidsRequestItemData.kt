@@ -1,5 +1,7 @@
 package com.delhivery.axle.data.home.bids
 
+import android.text.Html
+import android.text.Spanned
 import android.text.TextUtils
 import android.view.View
 import androidx.annotation.ColorRes
@@ -20,6 +22,7 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import kotlin.math.abs
 
 /**
  *
@@ -53,6 +56,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("tat_minutes") var tatMinutes: String?,
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
+  @SerializedName("benchmark_price") val benchmarkPrice: Double ?= 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -348,6 +352,99 @@ data class HomeBidsRequestItemData(
       }
     }
     return sb.toString()
+  }
+
+
+  /**
+   * bid amount text
+   */
+  fun bidAmountText() = if (isPMTIndent()) {
+    "Bid placed for Rs ${transactionBid!!.bidAmount} /MT"
+  } else {
+    "Bid placed for Rs ${transactionBid!!.bidAmount}"
+  }
+
+  /**
+   * lowest bid tick icon visibility
+   */
+  fun lowestBidIconVisibility() = if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  /**
+   * not lowest bid error icon visibility
+   */
+  fun nonLowestBidIconVisibility() = if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * @return Formatted string for lowest bid diff
+   */
+  fun diffLowestBidText(
+  ): Spanned? {
+    val bid: Double = transactionBid!!.bidAmount
+    return if (bid > lowestBid ?: 0.0) {
+      if (isPMTIndent()) {
+        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
+      } else {
+        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "higher than the lowest bid")
+      }
+    } else {
+      Html.fromHtml("You currently have the lowest bid")
+    }
+  }
+
+  /**
+   * lowest bid tick icon visibility
+   */
+  fun inlineBenchmarkIconVisibility() = if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0)  && (transactionBid!!.bidAmount <= benchmarkPrice ?: 0.0 * 1.2)) {
+    View.GONE
+  } else if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice ?: 0.0)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * not lowest bid error icon visibility
+   */
+  fun notInlineBenchmarkIconVisibility() = if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 )  && (transactionBid!!.bidAmount <= benchmarkPrice ?: 0.0 * 1.2)) {
+    View.VISIBLE
+  } else if ((transactionBid!!.bidAmount >= benchmarkPrice ?: 0.0 * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice ?: 0.0)) {
+    View.GONE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * @return Formatted string for benchmark diff with bid placed
+   */
+  fun diffBenchmarkBidText(
+  ): Spanned? {
+    val bid: Double = transactionBid!!.bidAmount
+    var diff = 0.0
+    benchmarkPrice?.let {
+      diff = bid - benchmarkPrice
+      val percentDiff : Int = if (diff >= 0) {
+        ((bid - benchmarkPrice) * 100 / benchmarkPrice).toInt()
+      } else {
+        ((benchmarkPrice - bid) * 100 / benchmarkPrice).toInt()
+      }
+
+      return if ((transactionBid!!.bidAmount >= benchmarkPrice)  && (transactionBid!!.bidAmount <= benchmarkPrice * 1.2)) {
+        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to" + "<font><b>" + StringUtils.formatAmount(benchmarkPrice) + "</b></font>" + " to increase your chances to > 70%")
+      } else if ((transactionBid!!.bidAmount >= benchmarkPrice * 0.9)  && (transactionBid!!.bidAmount < benchmarkPrice)){
+        Html.fromHtml("Your bid is inline with DLV Benchmark Price. Your confirmation chances are > 70%")
+      } else {
+        Html.fromHtml("")
+      }
+    }
+    return Html.fromHtml("")
   }
 
 }
