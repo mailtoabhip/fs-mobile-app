@@ -367,8 +367,12 @@ data class HomeBidsRequestItemData(
   /**
    * lowest bid tick icon visibility
    */
-  fun lowestBidIconVisibility() = if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
-    View.GONE
+  fun lowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0) {
+    if (transactionBid!!.bidAmount <= (lowestBid ?: 0.0)) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
   } else {
     View.VISIBLE
   }
@@ -376,8 +380,12 @@ data class HomeBidsRequestItemData(
   /**
    * not lowest bid error icon visibility
    */
-  fun nonLowestBidIconVisibility() = if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
-    View.VISIBLE
+  fun nonLowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0) {
+    if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
   } else {
     View.GONE
   }
@@ -388,15 +396,18 @@ data class HomeBidsRequestItemData(
   fun diffLowestBidText(
   ): Spanned? {
     val bid: Double = transactionBid!!.bidAmount
-    return if (bid > lowestBid ?: 0.0) {
-      if (isPMTIndent()) {
-        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
+    lowestBid?.let {
+      return if (bid > lowestBid ?: 0.0) {
+        if (isPMTIndent()) {
+          Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
+        } else {
+          Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + " higher than the lowest bid")
+        }
       } else {
-        Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + " higher than the lowest bid")
+        Html.fromHtml("You currently have the lowest bid")
       }
-    } else {
-      Html.fromHtml("You currently have the lowest bid")
     }
+    return Html.fromHtml("You currently have the lowest bid")
   }
 
   /**
@@ -436,8 +447,13 @@ data class HomeBidsRequestItemData(
         ((guidancePrice - bid) * 100 / guidancePrice).toInt()
       }
 
+      var pmt = ""
+      if (isPMTIndent()) {
+        pmt = "/MT"
+      }
+
       return if ((transactionBid!!.bidAmount >= guidancePrice)  && (transactionBid!!.bidAmount <= guidancePrice * 1.2)) {
-        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to " + "<font><b>" + StringUtils.formatAmount(guidancePrice) + "</b></font>" + " to increase your chances to > 70%")
+        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to " + "<font><b>" + StringUtils.formatAmount(guidancePrice) + "</b></font>" + pmt + " to increase your chances to > 70%")
       } else if ((transactionBid!!.bidAmount >= guidancePrice * 0.9)  && (transactionBid!!.bidAmount < guidancePrice)){
         Html.fromHtml("Your bid is inline with DLV Benchmark Price. Your confirmation chances are > 70%")
       } else {
