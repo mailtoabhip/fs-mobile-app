@@ -367,7 +367,7 @@ data class HomeBidsRequestItemData(
   /**
    * lowest bid tick icon visibility
    */
-  fun lowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0) {
+  fun lowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0 && numBids > 1) {
     if (transactionBid!!.bidAmount <= (lowestBid ?: 0.0)) {
       View.VISIBLE
     } else {
@@ -380,7 +380,7 @@ data class HomeBidsRequestItemData(
   /**
    * not lowest bid error icon visibility
    */
-  fun nonLowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0) {
+  fun nonLowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0 && numBids > 1) {
     if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
       View.VISIBLE
     } else {
@@ -397,7 +397,7 @@ data class HomeBidsRequestItemData(
   ): Spanned? {
     val bid: Double = transactionBid!!.bidAmount
     lowestBid?.let {
-      return if (bid > lowestBid ?: 0.0) {
+      return if (bid > lowestBid ?: 0.0 && numBids > 1) {
         if (isPMTIndent()) {
           Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
         } else {
