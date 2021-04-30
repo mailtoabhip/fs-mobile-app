@@ -194,22 +194,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         null -> 0.0
                         else -> it.bidAmount
                       }
-//                      if (state.bidsCount > 1) {
-//                        textUserBidAmountDiff.text =
-//                          userBid?.diffFromLowestBid(it.bidAmount, state.isPMTIndent)
-//                      }
                     }
                   }
                   request = data
-
-                  userBid?.bidAmount?.let {
-                    val bid = getString(string.label_user_edit_bid_amount) + if (state.isPMTIndent) {
-                      StringUtils.formatAmount(it) + "/MT"
-                    } else {
-                      StringUtils.formatAmount(it)
-                    }
-                    textUserBidAmount.text = bid
-                  }
 
                   btnEditBid.setOnClickListener { bidDialog(userBid) }
                 }

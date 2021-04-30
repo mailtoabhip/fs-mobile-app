@@ -393,25 +393,6 @@ data class HomeBidsRequestItemData(
   }
 
   /**
-   * diff lowest bid text
-   */
-  fun diffLowestBidText() : String {
-    val bid: Double = transactionBid!!.bidAmount
-    lowestBid?.let {
-      return if (bid > lowestBid ?: 0.0 && numBids > 1) {
-        if (isPMTIndent()) {
-          "Lowest Bid: Rs. ${StringUtils.formatAmount(lowestBid!!)}/MT (${StringUtils.formatAmount(lowestBid!! - bid)}/MT)"
-        } else {
-          "Lowest Bid: Rs. ${StringUtils.formatAmount(lowestBid!!)} (${StringUtils.formatAmount(lowestBid!! - bid)})"
-        }
-      } else {
-        "You have the lowest bid"
-      }
-    }
-    return "You have the lowest bid"
-  }
-
-  /**
    * Suggested price w.r.t lowest bid price text
    */
   fun benchmarkSuggestedAmount() : String {
@@ -419,7 +400,7 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/pmtRate).roundToInt()
+        diff = (diff/requestedCapacityMg).roundToInt()
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - guidancePrice) > diff) {
@@ -444,7 +425,7 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/pmtRate).roundToInt()
+        diff = (diff/requestedCapacityMg).roundToInt()
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - lowestBid!!) > diff) {
