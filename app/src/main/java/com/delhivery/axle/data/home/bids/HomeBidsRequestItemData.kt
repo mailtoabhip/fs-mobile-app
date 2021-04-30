@@ -23,6 +23,7 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  *
@@ -301,6 +302,33 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * @return lowest bid text
+   */
+  fun lowestbidText() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+    if (isPMTIndent()) {
+      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)}/MT (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}/MT)"
+    } else {
+      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)} (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))})"
+    }
+  } else {
+    ""
+  }
+
+  /**
+   * @return benchmark price text
+   */
+  fun benchmarkPriceText() : String {
+    guidancePrice?.let {
+      return if (isPMTIndent()) {
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)}/MT (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)}/MT)"
+      } else {
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)} (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)})"
+      }
+    }
+    return ""
+  }
+
+  /**
    * @return set image if supplier bid is more than lowest bid
    */
   fun setLowestBidImage() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
@@ -359,108 +387,201 @@ data class HomeBidsRequestItemData(
    * bid amount text
    */
   fun bidAmountText() = if (isPMTIndent()) {
-    "Bid placed for Rs ${transactionBid!!.bidAmount} /MT"
+    "Bid placed: ₹${StringUtils.formatAmount(transactionBid!!.bidAmount)}/MT"
   } else {
-    "Bid placed for Rs ${transactionBid!!.bidAmount}"
+    "Bid placed: ₹${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
   }
 
   /**
-   * lowest bid tick icon visibility
+   * diff lowest bid text
    */
-  fun lowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0 && numBids > 1) {
-    if (transactionBid!!.bidAmount <= (lowestBid ?: 0.0)) {
-      View.VISIBLE
-    } else {
-      View.GONE
-    }
-  } else {
-    View.VISIBLE
-  }
-
-  /**
-   * not lowest bid error icon visibility
-   */
-  fun nonLowestBidIconVisibility() = if (lowestBid != null && (lowestBid ?: 0.0) > 0.0 && numBids > 1) {
-    if (transactionBid!!.bidAmount > lowestBid ?: 0.0) {
-      View.VISIBLE
-    } else {
-      View.GONE
-    }
-  } else {
-    View.GONE
-  }
-
-  /**
-   * @return Formatted string for lowest bid diff
-   */
-  fun diffLowestBidText(
-  ): Spanned? {
+  fun diffLowestBidText() : String {
     val bid: Double = transactionBid!!.bidAmount
     lowestBid?.let {
       return if (bid > lowestBid ?: 0.0 && numBids > 1) {
         if (isPMTIndent()) {
-          Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + "/MT higher than the lowest bid")
+          "Lowest Bid: Rs. ${StringUtils.formatAmount(lowestBid!!)}/MT (${StringUtils.formatAmount(lowestBid!! - bid)}/MT)"
         } else {
-          Html.fromHtml("Your bid is Rs. " + "<font><b>" + StringUtils.formatAmount(abs((bid - lowestBid!!))) + "</b></font>"  + " higher than the lowest bid")
+          "Lowest Bid: Rs. ${StringUtils.formatAmount(lowestBid!!)} (${StringUtils.formatAmount(lowestBid!! - bid)})"
         }
       } else {
-        Html.fromHtml("You currently have the lowest bid")
+        "You have the lowest bid"
       }
     }
-    return Html.fromHtml("You currently have the lowest bid")
+    return "You have the lowest bid"
   }
 
   /**
-   * inline with guidance price tick icon visibility
+   * Suggested price w.r.t lowest bid price text
    */
-  fun inlineGuidanceIconVisibility() = if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0))  && (transactionBid!!.bidAmount <= (guidancePrice ?: 0.0) * 1.2)) {
-    View.GONE
-  } else if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) * 0.9)  && (transactionBid!!.bidAmount < (guidancePrice ?: 0.0))) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
-
-  /**
-   * not inline with guidance price error icon visibility
-   */
-  fun notInlineGuidanceIconVisibility() = if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) )  && (transactionBid!!.bidAmount <= (guidancePrice ?: 0.0) * 1.2)) {
-    View.VISIBLE
-  } else if ((transactionBid!!.bidAmount >= (guidancePrice ?: 0.0) * 0.9)  && (transactionBid!!.bidAmount < (guidancePrice ?: 0.0))) {
-    View.GONE
-  } else {
-    View.GONE
-  }
-
-  /**
-   * @return Formatted string for benchmark diff with bid placed
-   */
-  fun diffGuidanceBidText(
-  ): Spanned? {
-    val bid: Double = transactionBid!!.bidAmount
-    var diff = 0.0
+  fun benchmarkSuggestedAmount() : String {
     guidancePrice?.let {
-      diff = bid - guidancePrice
-      val percentDiff : Int = if (diff >= 0) {
-        ((bid - guidancePrice) * 100 / guidancePrice).toInt()
-      } else {
-        ((guidancePrice - bid) * 100 / guidancePrice).toInt()
-      }
-
-      var pmt = ""
+      val bid: Double = transactionBid!!.bidAmount
+      var diff = 500
       if (isPMTIndent()) {
-        pmt = "/MT"
+        diff = (diff/pmtRate).roundToInt()
       }
-
-      return if ((transactionBid!!.bidAmount >= guidancePrice)  && (transactionBid!!.bidAmount <= guidancePrice * 1.2)) {
-        Html.fromHtml("Your bid is $percentDiff% higher than the DLV Benchmark price. Reduce it to " + "<font><b>" + StringUtils.formatAmount(guidancePrice) + "</b></font>" + pmt + " to increase your chances to > 70%")
-      } else if ((transactionBid!!.bidAmount >= guidancePrice * 0.9)  && (transactionBid!!.bidAmount < guidancePrice)){
-        Html.fromHtml("Your bid is inline with DLV Benchmark Price. Your confirmation chances are > 70%")
+      val suggestedBidAmount : Double
+      suggestedBidAmount = if ((bid - guidancePrice) > diff) {
+        guidancePrice
       } else {
-        Html.fromHtml("")
+        guidancePrice - (diff - (bid - guidancePrice))
+      }
+      return if (isPMTIndent()) {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
+      } else {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}"
       }
     }
-    return Html.fromHtml("")
+    return ""
+  }
+
+  /**
+   * suggested price w.r.t benchmark price
+   */
+  fun lowestSuggestedAmount() : String {
+    lowestBid?.let {
+      val bid: Double = transactionBid!!.bidAmount
+      var diff = 500
+      if (isPMTIndent()) {
+        diff = (diff/pmtRate).roundToInt()
+      }
+      val suggestedBidAmount : Double
+      suggestedBidAmount = if ((bid - lowestBid!!) > diff) {
+        lowestBid!!
+      } else {
+        lowestBid!! - (diff - (bid - lowestBid!!))
+      }
+      return if (isPMTIndent()) {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
+      } else {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}"
+      }
+    }
+    return ""
+  }
+
+  /**
+   * Condition-1 check
+   */
+  fun layoutOneVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice)) {
+        condition1 = true
+      }
+    }
+    lowestBid?.let {
+      if (bid > lowestBid!! && numBids > 1) {
+        condition2 = false
+      }
+    }
+    return condition1 && condition2
+  }
+
+  /**
+   * Condition-2 check
+   */
+  fun layoutTwoVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = true
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice * 1.2)) {
+        condition1 = false
+      }
+    }
+    lowestBid?.let {
+     if (bid > lowestBid!! && numBids > 1) {
+       condition2 = false
+     }
+    }
+    return condition1 && condition2
+  }
+
+  /**
+   * Condition-3 check
+   */
+  fun layoutThreeVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice * 1.2)) {
+        lowestBid?.let {
+          if ((lowestBid!! < guidancePrice) && (bid > lowestBid!!)) {
+            condition1 = true
+          }
+        }
+      }
+      if ((bid < guidancePrice * 0.9) || (bid > guidancePrice * 1.2)) {
+        lowestBid?.let {
+          condition2 = bid > lowestBid!! && numBids > 1
+        }
+      } else {
+        condition2 = false
+      }
+    }
+    return condition1 || condition2
+  }
+
+  /**
+   * Condition-4 check
+   */
+  fun layoutFourVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = false
+    guidancePrice?.let {
+      if ((bid >= guidancePrice) && (bid <= guidancePrice * 1.2)) {
+        condition2 = true
+        lowestBid?.let {
+          condition2 = false
+          if (lowestBid!! > guidancePrice) {
+            condition1 = true
+          }
+        }
+      }
+    }
+    return condition1 || condition2
+  }
+
+  /**
+   * layout visibility one
+   */
+  fun oneVisibility() = if (layoutOneVisibility() && !(layoutTwoVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility two
+   */
+  fun twoVisibility() = if (layoutTwoVisibility() && !(layoutOneVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility three
+   */
+  fun threeVisibility() = if (layoutThreeVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility four
+   */
+  fun fourVisibility() = if (layoutFourVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutThreeVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
 }

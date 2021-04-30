@@ -94,8 +94,8 @@
   <string name="action_save">Save</string>
   <string name="action_logout_from_app">Logout from the app</string>
   <string name="action_dismiss">DISMISS</string>
-  <string name="action_done">Done</string>
-  <string name="action_revise_bid">Revise the bid</string>
+  <string name="action_continue">Continue</string>
+  <string name="action_revise_bid">Revise bid</string>
   <string name="action_update_route">Update Route</string>
 
   <!--Label (label_)-->

@@ -34,8 +34,16 @@ class BidConfirmReviseDialog @Inject constructor(
     /* set binding params */
     binding.apply {
       request = transaction
-      btnDone.setOnClickListener { dismiss() }
-      btnRevise.setOnClickListener { reviseBidDialog() }
+      closeBtn1.setOnClickListener { dismiss() }
+      closeBtn2.setOnClickListener { dismiss() }
+      closeBtn3.setOnClickListener { dismiss() }
+      closeBtn4.setOnClickListener { dismiss() }
+      btnContinue1.setOnClickListener { dismiss() }
+      btnContinue2.setOnClickListener { dismiss() }
+      btnContinue3.setOnClickListener { dismiss() }
+      btnContinue4.setOnClickListener { dismiss() }
+      btnRevise3.setOnClickListener { reviseBidDialog() }
+      btnRevise4.setOnClickListener { reviseBidDialog() }
     }
   }
 
