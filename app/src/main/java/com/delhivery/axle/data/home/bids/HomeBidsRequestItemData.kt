@@ -521,13 +521,10 @@ data class HomeBidsRequestItemData(
           }
         }
       }
-      if ((bid < guidancePrice * 0.9) || (bid > guidancePrice * 1.2)) {
-        lowestBid?.let {
-          condition2 = bid > lowestBid!! && numBids > 1
-        }
-      } else {
-        condition2 = false
-      }
+      condition2 = (bid < guidancePrice * 0.9) || (bid > guidancePrice * 1.2)
+    }
+    lowestBid?.let {
+      condition2 = condition2 && (bid > lowestBid!! && numBids > 1)
     }
     return condition1 || condition2
   }
