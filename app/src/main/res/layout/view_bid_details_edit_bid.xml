@@ -450,12 +450,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:text="@{request.lowestSuggestedAmount()}"
+                android:visibility="@{request.lowestSuggestedBidVisibility()}"
                 android:textStyle="bold"
                 android:textSize="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
                 android:textColor="@color/heading_black"
                 tools:text="Suggested Bid: RS. 57,000"
+                tools:visibility="visible"
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>
@@ -574,12 +576,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:text="@{request.benchmarkSuggestedAmount()}"
+                android:visibility="@{request.benchmarkSuggestedBidVisibility()}"
                 android:textStyle="bold"
                 android:textSize="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
                 android:textColor="@color/heading_black"
                 tools:text="Suggested Bid: RS. 57,000"
+                tools:visibility="visible"
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>

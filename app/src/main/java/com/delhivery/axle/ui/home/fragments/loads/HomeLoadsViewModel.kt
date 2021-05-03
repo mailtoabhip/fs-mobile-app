@@ -53,6 +53,8 @@ class HomeLoadsViewModel @Inject constructor(
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
+  var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
+
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
 
@@ -266,6 +268,23 @@ class HomeLoadsViewModel @Inject constructor(
 
   override fun reviseBid(position: Int) {
     reviseBidLiveData.postValue(Pair(true, position))
+  }
+
+  /**
+   * Fetch lowest bid of a particular transaction
+   */
+  fun fetchLowestBid(transaction: HomeBidsRequestItemData, pos: Int) {
+    compositeDisposable += bidsRepository.bulkLowestBidsForLoads(listOf(transaction))
+        .onBackground()
+        .progress()
+        .subscribe { res, error ->
+          if (!error && res != null) {
+            transaction.lowestBid = res.second[0].minBid
+            lowestBidLiveData.postValue(Pair(pos, transaction))
+          } else {
+            lowestBidLiveData.postValue(Pair(pos, transaction))
+          }
+        }
   }
 }
 

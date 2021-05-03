@@ -408,6 +408,9 @@ data class HomeBidsRequestItemData(
       } else {
         guidancePrice - (diff - (bid - guidancePrice))
       }
+      if (suggestedBidAmount <= 0) {
+        return ""
+      }
       return if (isPMTIndent()) {
         "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
       } else {
@@ -415,6 +418,15 @@ data class HomeBidsRequestItemData(
       }
     }
     return ""
+  }
+
+  /**
+   * benchmark suggest bid visibility
+   */
+  fun benchmarkSuggestedBidVisibility() = if (benchmarkSuggestedAmount().isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**
@@ -433,6 +445,9 @@ data class HomeBidsRequestItemData(
       } else {
         lowestBid!! - (diff - (bid - lowestBid!!))
       }
+      if (suggestedBidAmount <= 0) {
+        return ""
+      }
       return if (isPMTIndent()) {
         "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
       } else {
@@ -440,6 +455,15 @@ data class HomeBidsRequestItemData(
       }
     }
     return ""
+  }
+
+  /**
+   * lowest suggest bid visibility
+   */
+  fun lowestSuggestedBidVisibility() = if (lowestSuggestedAmount().isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**

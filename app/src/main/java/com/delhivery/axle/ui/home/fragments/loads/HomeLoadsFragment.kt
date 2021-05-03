@@ -169,15 +169,24 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
               it != null -> {
                 val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
                 data?.transactionBid = it.second
-                adapter.notifyItemChanged(it.first)
+
                 if (data != null) {
-                  BidConfirmReviseDialog(
-                      context!!, data, viewModel, it.first
-                  ).show()
+                  uiUtils.showProgress()
+                  viewModel.fetchLowestBid(data, it.first)
                 }
               }
             }
           }
+    })
+
+    viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if (it != null) {
+        BidConfirmReviseDialog(
+            context!!, it.second, viewModel, it.first
+        ).show()
+      }
+      adapter.notifyItemChanged(it.first)
     })
 
     viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
