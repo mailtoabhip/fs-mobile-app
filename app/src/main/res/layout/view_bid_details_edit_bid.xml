@@ -5,6 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
+
+    <variable
+        name="request"
+        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        />
     <variable
         name="bidsRecieved"
         type="Integer"
@@ -52,21 +57,7 @@
           android:text="@{ @string/msg_bids_received_till_now(bidsRecieved) }"
           android:textColor="@color/white"
           android:textSize="@dimen/text_16sp"
-          tools:text="23 bids recieved till now"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_2dp"
-          android:fontFamily="sans-serif"
-          android:gravity="center_horizontal"
-          android:letterSpacing="0.01"
-          android:lineSpacingExtra="@dimen/text_6sp"
-          android:text="@{lowestBid}"
-          android:textColor="#e0e0e0"
-          android:textSize="@dimen/text_12sp"
-          tools:text="Lowest Bid Placed- 34000"
+          tools:text="23 bids received till now"
           />
 
       <androidx.appcompat.widget.LinearLayoutCompat
@@ -78,33 +69,529 @@
           android:orientation="vertical"
           >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_user_bid_amount"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:letterSpacing="0.01"
-            android:lineSpacingExtra="@dimen/text_4sp"
-            android:textColor="@color/white"
-            tools:text="You have bid: ₹ 21500.00"
-            />
+            android:background="@android:color/white"
+            android:visibility="@{request.oneVisibility()}"
+            android:orientation="vertical"
+            tools:visibility="gone"
+            >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_user_bid_amount_diff"
-            android:layout_width="wrap_content"
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_240dp"
+              android:orientation="vertical">
+
+            <RelativeLayout
+                android:background="@drawable/bg_green_bid_placed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_bid_amount_1"
+                  android:layout_above="@+id/ll_lowest_bid_til_1"
+                  android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="@{request.bidAmountText()}"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_4sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    tools:text="Bid placed for Rs 60,000"
+                    />
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_lowest_bid_til_1"
+                  android:layout_width="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_centerHorizontal="true"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:padding="@dimen/size_2dp"
+                    android:layout_width="match_parent"
+                    android:background="@color/light_green"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:layout_width="@dimen/size_24dp"
+                      android:layout_height="@dimen/size_24dp"
+                      app:srcCompat="@drawable/ic_tick">
+
+                  </androidx.appcompat.widget.AppCompatImageView>
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="In-line with Benchmark Price"
+                      android:fontFamily="sans-serif"
+                      android:lineSpacingExtra="@dimen/text_4sp"
+                      android:textStyle="bold"
+                      android:layout_marginStart="@dimen/size_8dp"
+                      android:textColor="@color/bid_placed_green"
+                      tools:text="In-line with Benchmark Price"
+                      />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:padding="@dimen/size_2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_green"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:layout_width="@dimen/size_24dp"
+                      android:layout_height="@dimen/size_24dp"
+                      android:layout_gravity="center"
+                      app:srcCompat="@drawable/ic_tick">
+
+                  </androidx.appcompat.widget.AppCompatImageView>
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="You have the lowest bid"
+                      android:fontFamily="sans-serif"
+                      android:lineSpacingExtra="@dimen/text_4sp"
+                      android:textStyle="bold"
+                      android:layout_marginStart="@dimen/size_8dp"
+                      android:gravity="center"
+                      android:layout_gravity="center"
+                      android:textColor="@color/bid_placed_green"
+                      tools:text="You have the lowest bid"
+                      />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </RelativeLayout>
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginStart="@dimen/size_12dp"
+              android:paddingStart="@dimen/size_24dp"
+              android:paddingEnd="@dimen/size_24dp"
+              android:paddingBottom="@dimen/size_4dp"
+              android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textStyle="bold"
+                android:textColor="@color/bid_placed_green"
+                tools:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:letterSpacing="0.01"
-            android:lineSpacingExtra="@dimen/text_8sp"
-            android:textColor="#99ffffff"
-            android:textSize="@dimen/text_10sp"
-            tools:text="(₹ 2400.00 less than target price)"
-            />
-      </androidx.appcompat.widget.LinearLayoutCompat>
+            android:background="@android:color/white"
+            android:visibility="@{request.twoVisibility()}"
+            android:orientation="vertical"
+            tools:visibility="gone"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_240dp"
+              android:orientation="vertical">
+
+            <RelativeLayout
+                android:background="@drawable/bg_green_bid_placed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_bid_amount_2"
+                  android:layout_above="@+id/ll_lowest_bid_til_2"
+                  android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="@{request.bidAmountText()}"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_4sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    tools:text="Bid placed for Rs 60,000"
+                    />
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_lowest_bid_til_2"
+                  android:layout_width="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_centerHorizontal="true"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:padding="@dimen/size_4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:background="@color/light_green"
+                    android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:layout_width="@dimen/size_24dp"
+                      android:layout_height="@dimen/size_24dp"
+                      android:layout_gravity="center"
+                      app:srcCompat="@drawable/ic_tick">
+
+                  </androidx.appcompat.widget.AppCompatImageView>
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="You have the lowest bid"
+                      android:fontFamily="sans-serif"
+                      android:lineSpacingExtra="@dimen/text_4sp"
+                      android:textStyle="bold"
+                      android:layout_marginStart="@dimen/size_8dp"
+                      android:gravity="center"
+                      android:layout_gravity="center"
+                      android:textColor="@color/bid_placed_green"
+                      tools:text="You have the lowest bid"
+                      />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </RelativeLayout>
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginStart="@dimen/size_12dp"
+              android:layout_marginBottom="@dimen/size_12dp"
+              android:paddingStart="@dimen/size_24dp"
+              android:paddingEnd="@dimen/size_24dp"
+              android:paddingBottom="@dimen/size_4dp"
+              android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textStyle="bold"
+                android:textColor="@color/bid_placed_green"
+                tools:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:visibility="@{request.threeVisibility()}"
+            android:orientation="vertical"
+            tools:visibility="gone"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_240dp"
+              android:orientation="vertical">
+
+            <RelativeLayout
+                android:background="@drawable/bg_red_bid_placed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_bid_amount_3"
+                  android:layout_above="@+id/ll_lowest_bid_til_3"
+                  android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="@{request.bidAmountText()}"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_4sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    tools:text="Bid placed for Rs 60,000"
+                    />
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_lowest_bid_til_3"
+                  android:layout_width="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_centerHorizontal="true"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:padding="@dimen/size_4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:background="@color/light_red"
+                    android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@{request.lowestbidText()}"
+                      android:fontFamily="sans-serif"
+                      android:lineSpacingExtra="@dimen/text_4sp"
+                      android:textStyle="bold"
+                      android:layout_marginStart="@dimen/size_8dp"
+                      android:gravity="center"
+                      android:layout_gravity="center"
+                      android:textColor="@color/colorDelhiveryRed"
+                      tools:text="You have the lowest bid"
+                      />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </RelativeLayout>
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginStart="@dimen/size_12dp"
+              android:layout_marginBottom="@dimen/size_12dp"
+              android:paddingStart="@dimen/size_24dp"
+              android:paddingEnd="@dimen/size_24dp"
+              android:paddingBottom="@dimen/size_4dp"
+              android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="Reducing below the lowest bid will increase your chances of confirmation"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorDelhiveryRed"
+                tools:text="Reducing below the lowest bid will increase your chances of confirmation"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="@{request.lowestSuggestedAmount()}"
+                android:visibility="@{request.lowestSuggestedBidVisibility()}"
+                android:textStyle="bold"
+                android:textSize="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textColor="@color/heading_black"
+                tools:text="Suggested Bid: RS. 57,000"
+                tools:visibility="visible"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:visibility="@{request.fourVisibility()}"
+            android:orientation="vertical"
+            tools:visibility="visible"
+            >
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_240dp"
+              android:orientation="vertical">
+
+            <RelativeLayout
+                android:background="@drawable/bg_red_bid_placed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_bid_amount_4"
+                  android:layout_above="@+id/ll_lowest_bid_til_4"
+                  android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="@{request.bidAmountText()}"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_4sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    tools:text="Bid placed for Rs 60,000"
+                    />
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:id="@+id/ll_lowest_bid_til_4"
+                  android:layout_width="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_centerHorizontal="true"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:padding="@dimen/size_4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_red"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@{request.benchmarkPriceText()}"
+                      android:fontFamily="sans-serif"
+                      android:lineSpacingExtra="@dimen/text_4sp"
+                      android:textStyle="bold"
+                      android:layout_marginStart="@dimen/size_8dp"
+                      android:textColor="@color/colorDelhiveryRed"
+                      tools:text="In-line with Benchmark Price"
+                      />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </RelativeLayout>
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginStart="@dimen/size_12dp"
+              android:layout_marginBottom="@dimen/size_12dp"
+              android:paddingStart="@dimen/size_24dp"
+              android:paddingEnd="@dimen/size_24dp"
+              android:paddingBottom="@dimen/size_4dp"
+              android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="Matching our benchmark price will increase your chances of confirmation"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorDelhiveryRed"
+                tools:text="Matching our benchmark price will increase your chances of confirmation"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="@{request.benchmarkSuggestedAmount()}"
+                android:visibility="@{request.benchmarkSuggestedBidVisibility()}"
+                android:textStyle="bold"
+                android:textSize="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="@dimen/text_4sp"
+                android:textColor="@color/heading_black"
+                tools:text="Suggested Bid: RS. 57,000"
+                tools:visibility="visible"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
     <!---->
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -133,10 +620,12 @@
           android:letterSpacing="0.04"
           android:paddingEnd="@dimen/size_36dp"
           android:paddingStart="@dimen/size_36dp"
-          android:text="@string/action_edit_bid"
+          android:text="@string/action_revise_bid"
           android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_14sp"
           />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
   </androidx.appcompat.widget.LinearLayoutCompat>
+
 </layout>

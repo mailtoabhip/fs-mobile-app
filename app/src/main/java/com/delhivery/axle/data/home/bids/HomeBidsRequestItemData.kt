@@ -1,5 +1,7 @@
 package com.delhivery.axle.data.home.bids
 
+import android.text.Html
+import android.text.Spanned
 import android.text.TextUtils
 import android.view.View
 import androidx.annotation.ColorRes
@@ -20,6 +22,8 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  *
@@ -53,6 +57,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("tat_minutes") var tatMinutes: String?,
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
+  @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -297,6 +302,33 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * @return lowest bid text
+   */
+  fun lowestbidText() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+    if (isPMTIndent()) {
+      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)}/MT (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}/MT)"
+    } else {
+      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)} (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))})"
+    }
+  } else {
+    ""
+  }
+
+  /**
+   * @return benchmark price text
+   */
+  fun benchmarkPriceText() : String {
+    guidancePrice?.let {
+      return if (isPMTIndent()) {
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)}/MT (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)}/MT)"
+      } else {
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)} (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)})"
+      }
+    }
+    return ""
+  }
+
+  /**
    * @return set image if supplier bid is more than lowest bid
    */
   fun setLowestBidImage() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
@@ -348,6 +380,210 @@ data class HomeBidsRequestItemData(
       }
     }
     return sb.toString()
+  }
+
+
+  /**
+   * bid amount text
+   */
+  fun bidAmountText() = if (isPMTIndent()) {
+    "Bid placed: ₹${StringUtils.formatAmount(transactionBid!!.bidAmount)}/MT"
+  } else {
+    "Bid placed: ₹${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+  }
+
+  /**
+   * Suggested price w.r.t lowest bid price text
+   */
+  fun benchmarkSuggestedAmount() : String {
+    guidancePrice?.let {
+      val bid: Double = transactionBid!!.bidAmount
+      var diff = 500
+      if (isPMTIndent()) {
+        diff = (diff/requestedCapacityMg).roundToInt()
+      }
+      val suggestedBidAmount : Double
+      suggestedBidAmount = if ((bid - guidancePrice) > diff) {
+        guidancePrice
+      } else {
+        guidancePrice - (diff - (bid - guidancePrice))
+      }
+      if (suggestedBidAmount <= 0) {
+        return ""
+      }
+      return if (isPMTIndent()) {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
+      } else {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}"
+      }
+    }
+    return ""
+  }
+
+  /**
+   * benchmark suggest bid visibility
+   */
+  fun benchmarkSuggestedBidVisibility() = if (benchmarkSuggestedAmount().isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * suggested price w.r.t benchmark price
+   */
+  fun lowestSuggestedAmount() : String {
+    lowestBid?.let {
+      val bid: Double = transactionBid!!.bidAmount
+      var diff = 500
+      if (isPMTIndent()) {
+        diff = (diff/requestedCapacityMg).roundToInt()
+      }
+      val suggestedBidAmount : Double
+      suggestedBidAmount = if ((bid - lowestBid!!) > diff) {
+        lowestBid!!
+      } else {
+        lowestBid!! - (diff - (bid - lowestBid!!))
+      }
+      if (suggestedBidAmount <= 0) {
+        return ""
+      }
+      return if (isPMTIndent()) {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}/MT"
+      } else {
+        "Suggested Bid: ₹${StringUtils.formatAmount(suggestedBidAmount)}"
+      }
+    }
+    return ""
+  }
+
+  /**
+   * lowest suggest bid visibility
+   */
+  fun lowestSuggestedBidVisibility() = if (lowestSuggestedAmount().isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * Condition-1 check
+   */
+  fun layoutOneVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice)) {
+        condition1 = true
+      }
+    }
+    lowestBid?.let {
+      if (bid > lowestBid!! && numBids > 1) {
+        condition2 = false
+      }
+    }
+    return condition1 && condition2
+  }
+
+  /**
+   * Condition-2 check
+   */
+  fun layoutTwoVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = true
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice * 1.2)) {
+        condition1 = false
+      }
+    }
+    lowestBid?.let {
+     if (bid > lowestBid!! && numBids > 1) {
+       condition2 = false
+     }
+    }
+    return condition1 && condition2
+  }
+
+  /**
+   * Condition-3 check
+   */
+  fun layoutThreeVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = true
+    guidancePrice?.let {
+      if ((bid >= guidancePrice * 0.9) && (bid <= guidancePrice * 1.2)) {
+        lowestBid?.let {
+          if ((lowestBid!! < guidancePrice) && (bid > lowestBid!!)) {
+            condition1 = true
+          }
+        }
+      }
+      condition2 = (bid < guidancePrice * 0.9) || (bid > guidancePrice * 1.2)
+    }
+    lowestBid?.let {
+      condition2 = condition2 && (bid > lowestBid!! && numBids > 1)
+    }
+    return condition1 || condition2
+  }
+
+  /**
+   * Condition-4 check
+   */
+  fun layoutFourVisibility() : Boolean {
+    val bid: Double = transactionBid!!.bidAmount
+    var condition1 = false
+    var condition2 = false
+    guidancePrice?.let {
+      if ((bid >= guidancePrice) && (bid <= guidancePrice * 1.2)) {
+        condition2 = true
+        lowestBid?.let {
+          condition2 = false
+          if (lowestBid!! > guidancePrice) {
+            condition1 = true
+          }
+        }
+      }
+    }
+    return condition1 || condition2
+  }
+
+  /**
+   * layout visibility one
+   */
+  fun oneVisibility() = if (layoutOneVisibility() && !(layoutTwoVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility two
+   */
+  fun twoVisibility() = if (layoutTwoVisibility() && !(layoutOneVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility three
+   */
+  fun threeVisibility() = if (layoutThreeVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutFourVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * layout visibility four
+   */
+  fun fourVisibility() = if (layoutFourVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutThreeVisibility())) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
 }
