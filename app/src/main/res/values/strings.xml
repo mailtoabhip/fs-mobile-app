@@ -11,6 +11,8 @@
   <string name="title_dialog_invalid_num">Invalid phone number</string>
   <string name="title_dialog_supplier_disabled">User Disabled</string>
   <string name="title_dialog_supplier_not_approved">User Not Approved</string>
+  <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
+  <string name="title_dialog_apply_filter">Apply filter</string>
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -97,6 +99,7 @@
   <string name="action_continue">Continue</string>
   <string name="action_revise_bid">Revise bid</string>
   <string name="action_update_route">Update Route</string>
+  <string name="action_call_driver">Call Driver</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -125,10 +128,12 @@
   <string name="label_to">To</string>
   <string name="label_target_price">Target price</string>
   <string name="label_origin_city">Origin city</string>
+  <string name="label_starting_city">Starting City</string>
   <string name="label_pickup_location">Pickup location</string>
   <string name="label_truck_details">Truck details</string>
   <string name="label_no_trips_yet">No trips yet !</string>
   <string name="label_destination_city">Destination city</string>
+  <string name="label_ending_city">Ending City</string>
   <string name="label_from_state">From %1$s</string>
   <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
   <string name="label_user_bid_amount">You have bid: ₹ </string>
@@ -136,8 +141,10 @@
   <string name="label_bids">%1$s Bids</string>
   <string name="label_destination_state">Destination States(%1$s)</string>
   <string name="label_advance_pending">Advance Pending</string>
+  <string name="label_total_pending">Total Pending : </string>
   <string name="label_in_transit">In-transit</string>
   <string name="label_balance_pending">Balance Pending</string>
+  <string name="label_recovery_pending">Recovery Pending</string>
   <string name="label_complete">Complete</string>
   <string name="label_advance_paid">Advance Paid</string>
   <string name="label_balance_paid">Balance Paid</string>
@@ -225,6 +232,21 @@
   <string name="label_pod_dispatched">Dispatched</string>
   <string name="label_pod_pending">POD Pending</string>
   <string name="label_pod_received">POD Received</string>
+  <string name="label_by_trip_status">By Trip Status</string>
+  <string name="label_view_all_trips">View all trips</string>
+  <string name="label_by_payment_status">By Payment Status</string>
+  <string name="label_download_ledger">Download Ledger</string>
+  <string name="label_awaiting_arrival">Awaiting Arrival</string>
+  <string name="label_awaiting_pod">Awaiting POD</string>
+  <string name="label_awaiting_loading">Awaiting Loading</string>
+  <string name="label_awaiting_unloading">Awaiting Unloading</string>
+  <string name="label_lr_no">LR Number</string>
+  <string name="label_truck_type">Truck Type</string>
+  <string name="label_pickup_destination_address">Pickup/ Destination Address</string>
+  <string name="label_pickup_address">Pickup Address</string>
+  <string name="label_destination_address">Destination Address</string>
+  <string name="label_charge">Charge</string>
+  <string name="label_current_status">Current Status</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -248,6 +270,10 @@
   <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
   <string name="lowest_bid_text">You currently have the lowest bid</string>
   <string name="bid_stand_label">Where do you stand?</string>
+  <string name="label_deductions">Deductions</string>
+  <string name="label_payments">Payments</string>
+  <string name="label_recoveries_adjusted">Recoveries Adjusted</string>
+  <string name="label_pending_recovery">Pending Recovery</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
