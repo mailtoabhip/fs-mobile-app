@@ -7,6 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
@@ -16,7 +19,7 @@ import java.util.*
 class DownloadLedgerDialog(
         context: Context,
         private val dialogInterface: DownloadLedgerInterface
-) : AlertDialog(context) {
+) : AlertDialog(context), RadioGroup.OnCheckedChangeListener {
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
 
@@ -27,11 +30,18 @@ class DownloadLedgerDialog(
     var endDate = -1
     var endMonth = -1
     var endYear = -1
+    var optionFilter = ""
 
     /* dismiss timeout disposable */
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+        )
+
+        setCancelable(false)
 
         /* dialog binding */
         binding = DialogDownloadLedgerBinding.inflate(layoutInflater)
@@ -39,12 +49,15 @@ class DownloadLedgerDialog(
 
         /* bind data to layout */
         binding.apply {
+            radioGroup.check(binding.all.id)
             btnClose.setOnClickListener { dismissDialog() }
             editStartDate.setOnClickListener { openDatePicker("start") }
             editEndDate.setOnClickListener{ openDatePicker("end")}
             btnDownload.setOnClickListener { downloadDialog() }
             btnEmail.setOnClickListener { emailDialog() }
         }
+
+        binding.btnClose.setOnClickListener { dismiss() }
     }
 
     /**
@@ -55,9 +68,7 @@ class DownloadLedgerDialog(
             if (ownerActivity == null || ownerActivity!!.isDestroyed) {
                 return
             }
-            if (isShowing) {
-                dismiss()
-            }
+            dismiss()
         } catch (e: Exception) {
             Log.d("Error Dialog", "Exception while closing dialog")
         }
@@ -115,7 +126,7 @@ class DownloadLedgerDialog(
         }else{
             //download report
             dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
-            dismissDialog()
+            dismiss()
         }
     }
 
@@ -135,7 +146,31 @@ class DownloadLedgerDialog(
         }else{
             //email report
             dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
-            dismissDialog()
+            dismiss()
+        }
+    }
+
+    override fun onCheckedChanged(
+        p0: RadioGroup?,
+        p1: Int
+    ) {
+        val checkedRadioButton = p0?.findViewById(p0.checkedRadioButtonId) as? RadioButton
+        checkedRadioButton?.let {
+            if (checkedRadioButton.isChecked) {
+                val text = checkedRadioButton.text
+                Log.d("ledgerOption",checkedRadioButton.text.toString())
+
+                if (text.equals("Payment Due (POD Submitted)")) {
+                    optionFilter = "payment_due"
+                } else if (text.equals("Trips with Recovery")) {
+                    optionFilter = "trips_with_recovery"
+                } else if (text.equals("Settled")) {
+                    optionFilter = "settled"
+                } else {
+                    optionFilter = "all"
+                }
+
+            }
         }
     }
 }
