@@ -14,7 +14,6 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -255,12 +254,13 @@ data class HomeBidsRequestItemData(
    * Trip display name for toolbar title
    */
   fun tripDisplayName(tripType: TripType? = null) =
-    when (tripType) {
-      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
-          destinationState
-      )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
-      else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
-    }
+    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+//    when (tripType) {
+//      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
+//          destinationState
+//      )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
+//      else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+//    }
 
   /**
    * @return bid difference

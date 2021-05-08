@@ -3,9 +3,11 @@ package com.delhivery.axle.api.service
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -58,4 +60,12 @@ interface TripService {
   fun updateDispatchDetails(
     @Body request: UpdateDispatchRequest
   ): Single<BaseResponse<List<String>>>
+
+  /**
+   * Get bulk payment summary of trips
+   */
+  @POST("/trips/bulk_payment_summary/")
+  fun fetchTripsPayments(
+    @Body request: JsonObject
+  ): Single<BaseResponse<List<TripPaymentResponse>>>
 }

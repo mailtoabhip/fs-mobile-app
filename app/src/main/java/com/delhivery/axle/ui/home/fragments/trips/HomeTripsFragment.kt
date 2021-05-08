@@ -8,11 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
+import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
 import com.delhivery.axle.ui.dialogs.LedgerSuccessDialog
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.utils.REQCODE_NO_TRIPS
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>()
@@ -68,6 +70,54 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.downloadContainer.setOnClickListener {
       DownloadLedgerDialog(context!!, viewModel).show()
+    }
+
+    binding.labelViewAllTrips.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "all", 0))
+    }
+
+    binding.viewAwaitingArirval.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "trips_view", 0))
+    }
+
+    binding.viewInTransit.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "trips_view", 1))
+    }
+
+    binding.viewAwaitingPod.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "trips_view", 2))
+    }
+
+    binding.viewAwaitingLoading.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "trips_view", 3))
+    }
+
+    binding.viewAwaitingUnloading.setOnClickListener {
+      startActivity(userTripsIntent(context!!, "trips_view", 4))
+    }
+
+    binding.labelPaymentSummary.setOnClickListener {
+      context?.let {
+        startActivity(consolidatedPageIntent(context!!))
+      }
+    }
+
+    binding.advanceCard.setOnClickListener {
+      context?.let {
+        startActivity(userTripsIntent(context!!, "payment_view", 0))
+      }
+    }
+
+    binding.balanceCard.setOnClickListener {
+      context?.let {
+        startActivity(userTripsIntent(context!!, "payment_view", 1))
+      }
+    }
+
+    binding.recoveryCard.setOnClickListener {
+      context?.let {
+        startActivity(userTripsIntent(context!!, "payment_view", 2))
+      }
     }
 
     setText()

@@ -4,18 +4,19 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.ExpenseRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
+import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.ui.bids.TripType.Completed
 import com.delhivery.axle.ui.bids.TripType.Unknown
+import com.delhivery.axle.ui.bids.ViewPaymentType.NA
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
-import com.delhivery.axle.ui.home.fragments.trips.HomeCompletedTripItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
@@ -25,6 +26,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
 import javax.inject.Inject
 
 /**
@@ -38,6 +40,7 @@ import javax.inject.Inject
  */
 class TripsViewModel @Inject constructor(
   private val expenseRepository: ExpenseRepository,
+  private val tripsRepository: TripsRepository,
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs
@@ -59,6 +62,8 @@ class TripsViewModel @Inject constructor(
 
   var request = SearchRequest()
   var tripType: TripType = Unknown
+  var viewPaymentType: ViewPaymentType = NA
+  var viewType: String ?= "all"
   var total = 0
 
   /**
@@ -79,17 +84,40 @@ class TripsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
+    val statuses = mutableListOf<String>().apply {
+      add(TripStatus.In_Transit.statusKey)
+      add(TripStatus.TruckArrived.statusKey)
+      add(TripStatus.TruckConfirmed.statusKey)
+      add(TripStatus.TruckLoaded.statusKey)
+      add(TripStatus.TruckReached.statusKey)
+      add(TripStatus.TruckUnloaded.statusKey)
+      add(TripStatus.EPodUploaded.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
     request.offset = offset
     request.limit = UserSearchLimit
     request.vendorId = userRepository.userId()
-    request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+    if (viewType.equals("all")) {
+      request.tripStatus = statuses
+    } else if (viewType.equals("payment_view")) {
+      request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
+    } else {
+      request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+    }
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .flatMap { t ->
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
           tripsCountLiveData.postValue(total)
-          expenseRepository.bulkExpense(t.trips)
+
+          val jsonObject = JsonObject()
+          jsonObject.addProperty("vendor_id", userRepository.userId())
+          jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
+          jsonObject.addProperty("offset", 0)
+          jsonObject.addProperty("limit", 10)
+          tripsRepository.bulkPayments(t.trips, jsonObject)
         }
         .onBackground()
         .subscribe { _res, error ->
@@ -116,11 +144,7 @@ class TripsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                  if (trip.tripStatus() == Completed) {
-                    add(Pair(HomeCompletedTripItem(trip), Add))
-                  } else {
                     add(Pair(HomeTripsItem(trip), Add))
-                  }
                 }
               }
             }

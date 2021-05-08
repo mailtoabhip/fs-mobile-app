@@ -46,3 +46,10 @@ data class Summary(
     else -> "₹ ${StringUtils.formatAmount(amount)}"
   }
 }
+
+
+data class TripPaymentResponse(
+  @SerializedName("transaction_id") val transactionId: String,
+  @SerializedName("status") val status: String,
+  @SerializedName("amount") val paymentAmount: Double?
+)

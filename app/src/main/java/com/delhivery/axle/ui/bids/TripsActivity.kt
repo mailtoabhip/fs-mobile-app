@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
@@ -16,6 +17,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.bids.TripType.Companion
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
@@ -67,15 +69,32 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     try {
       require(
-          !(intent == null || !intent.hasExtra(IntentExtraTripTypeKey))
-      ) { "$IntentExtraTripTypeKey intent key missing" }
+          !(intent == null || !intent.hasExtra(IntentExtraViewTypeKey))
+      ) { "$IntentExtraViewTypeKey intent key missing" }
     } catch (e: IllegalArgumentException) {
       finish()
     }
 
-    /* get bid type from intent */
-    viewModel.tripType =
-      TripType.byTypeId(intent.getIntExtra(IntentExtraTripTypeKey, TripType.Unknown.typeId))
+    viewModel.viewType = intent.getStringExtra(IntentExtraViewTypeKey)
+
+    if (viewModel.viewType != "all") {
+      try {
+        require(
+            !(intent == null || !intent.hasExtra(IntentExtraSubViewTypeKey))
+        ) { "$IntentExtraSubViewTypeKey intent key missing" }
+      } catch (e: IllegalArgumentException) {
+        finish()
+      }
+
+      /* get su view type from intent */
+      val subview = intent.getIntExtra(IntentExtraSubViewTypeKey, 0)
+      if (viewModel.viewType.equals("trips_view")) {
+        viewModel.tripType = TripType.byTypeId(subview)
+      } else {
+        viewModel.viewPaymentType = ViewPaymentType.byTypeId(subview)
+      }
+    }
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -83,8 +102,34 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = viewModel.tripType.toolbarTitle()
+    title = when {
+      viewModel.viewType.equals("all") -> "All Trips"
+      viewModel.viewType.equals("payment_view") -> {
+        viewModel.viewPaymentType.toolbarTitle()
+      }
+      else -> {
+        viewModel.tripType.toolbarTitle()
+      }
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    when {
+      viewModel.viewType.equals("trips_view") -> {
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.VISIBLE
+        binding.txtTotalPending.visibility = View.GONE
+      }
+      viewModel.viewType.equals("payment_view") -> {
+        binding.paymentsFilterView.visibility = View.VISIBLE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.VISIBLE
+      }
+      else -> {
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.GONE
+      }
+    }
 
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
@@ -220,14 +265,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 }
 
 /*  */
-private const val IntentExtraTripTypeKey = "trip_type"
+private const val IntentExtraViewTypeKey = "view_type"
+private const val IntentExtraSubViewTypeKey = "trip_type"
 
 /**
- * Get [TripsActivity] for specific [TripsType] as [type]
+ * Get [TripsActivity] for specific [viewType] as [String] and [TripType] as [type]
  */
 fun userTripsIntent(
   context: Context,
-  type: TripType
+  viewType: String,
+  subview: Int
 ) = Intent(context, TripsActivity::class.java).apply {
-  putExtra(IntentExtraTripTypeKey, type.typeId)
+  putExtra(IntentExtraViewTypeKey, viewType)
+  putExtra(IntentExtraSubViewTypeKey, subview)
 }
