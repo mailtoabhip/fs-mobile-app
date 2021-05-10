@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <data>
+
+
+  </data>
+
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_4dp"
+      app:cardCornerRadius="@dimen/size_12dp"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        >
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/img_toggle"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_4dp"
+          android:layout_marginEnd="@dimen/size_6dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:srcCompat="@drawable/ic_expand"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_summary_title"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_6dp"
+          android:layout_marginTop="@dimen/size_6dp"
+          android:layout_marginBottom="@dimen/size_4dp"
+          android:text="Charges"
+          android:textColor="@color/heading_black"
+          android:textSize="@dimen/size_18dp"
+          app:fontFamily="sans-serif-medium"
+          app:layout_constraintBottom_toTopOf="@+id/text_indents"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="Title"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_indents"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_6dp"
+          android:layout_marginBottom="@dimen/size_8dp"
+          android:text="Rs 6000"
+          android:textColor="@color/colorDelhiveryRed"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/text_summary_title"
+          tools:text="Amount"
+          />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+
+</layout>

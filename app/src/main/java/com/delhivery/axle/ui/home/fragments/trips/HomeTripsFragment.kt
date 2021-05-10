@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
 import com.delhivery.axle.ui.dialogs.LedgerSuccessDialog
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.utils.REQCODE_NO_TRIPS
@@ -85,15 +86,15 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.viewAwaitingPod.setOnClickListener {
-      startActivity(userTripsIntent(context!!, "trips_view", 2))
+      action(NavigateHomeFragmentAction(PodFragment))
     }
 
     binding.viewAwaitingLoading.setOnClickListener {
-      startActivity(userTripsIntent(context!!, "trips_view", 3))
+      startActivity(userTripsIntent(context!!, "trips_view", 2))
     }
 
     binding.viewAwaitingUnloading.setOnClickListener {
-      startActivity(userTripsIntent(context!!, "trips_view", 4))
+      startActivity(userTripsIntent(context!!, "trips_view", 3))
     }
 
     binding.labelPaymentSummary.setOnClickListener {

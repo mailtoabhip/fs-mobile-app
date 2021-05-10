@@ -79,8 +79,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="@{!refreshing &amp;&amp; !error ? View.VISIBLE : View.GONE }"
-            tools:visibility="visible"
-            >
+            tools:visibility="visible">
 
           <!-- vehicle/driver details container -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -371,81 +370,280 @@
 
           </androidx.constraintlayout.widget.ConstraintLayout>
 
-          <!-- Status history header -->
           <androidx.appcompat.widget.LinearLayoutCompat
+              android:background="@color/white"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_4dp"
-              android:background="@color/white"
-              android:gravity="center_horizontal"
-              android:orientation="horizontal"
-              android:paddingTop="@dimen/size_8dp"
-              bind:shadow="@{ @dimen/size_2dp }"
-              >
+              android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginBottom="@dimen/size_16dp"
+                android:text="Current Status"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/view_history"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_selector_trip_detail_tab"
-                >
+                android:weightSum="6"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginBottom="@dimen/size_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/text_status_history"
-                  android:layout_width="match_parent"
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:fontFamily="sans-serif-medium"
-                  android:gravity="center_horizontal"
-                  android:letterSpacing="0.01"
-                  android:lineSpacingExtra="@dimen/text_4sp"
-                  android:paddingTop="@dimen/size_16dp"
-                  android:paddingBottom="@dimen/size_16dp"
-                  android:text="@string/label_status_history"
-                  android:textColor="@color/black"
-                  />
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                  android:orientation="vertical">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/view_summary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_selector_trip_detail_tab"
-                >
+                <RelativeLayout
+                    android:paddingStart="@dimen/size_16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/text_payment_summary"
-                  android:layout_width="match_parent"
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_arrival"
+                      app:srcCompat="@drawable/ic_check_circle_green"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_arrival"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="Arrived at pickup"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:fontFamily="sans-serif-medium"
-                  android:gravity="center_horizontal"
-                  android:letterSpacing="0.01"
-                  android:lineSpacingExtra="@dimen/text_4sp"
-                  android:paddingTop="@dimen/size_16dp"
-                  android:paddingBottom="@dimen/size_16dp"
-                  android:text="@string/label_payment_summary"
-                  android:textColor="@color/transparent_grey"
-                  />
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                  android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_loaded"
+                      app:srcCompat="@drawable/ic_check_circle_green"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_loaded"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="Loaded"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_reached"
+                      app:srcCompat="@drawable/ic_check_circle_green"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_reached"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="Reached Destination"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_unloaded"
+                      app:srcCompat="@drawable/ic_check_circle_green"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_unloaded"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="Unloaded"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_pod"
+                      app:srcCompat="@drawable/ic_rounded_circle_black"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_pod"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="POD Submitted"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
+              <androidx.appcompat.widget.LinearLayoutCompat
+                  android:layout_weight="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/icon_settled"
+                      app:srcCompat="@drawable/ic_rounded_circle_black"
+                      android:layout_centerVertical="true"
+                      android:layout_width="@dimen/size_12dp"
+                      android:layout_height="@dimen/size_12dp"/>
+
+                  <View
+                      android:layout_width="0dp"
+                      android:layout_height="2dp"
+                      android:background="@color/black"
+                      android:layout_centerVertical="true"
+                      android:layout_toEndOf="@+id/icon_settled"
+                      android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:text="Settled"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textAlignment="viewStart"
+                    android:textSize="@dimen/text_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+
           </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <include
-              android:id="@+id/progress_history"
-              layout="@layout/view_bid_details_loading_bids"
-              />
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <androidx.appcompat.widget.LinearLayoutCompat
-              android:id="@+id/container_history"
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/txt_pmt_label"
+              android:text="Payment Summary"
+              android:paddingStart="@dimen/size_16dp"
+              android:padding="@dimen/size_8dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"/>
+
+          <androidx.recyclerview.widget.RecyclerView
+              android:id="@+id/rv_pmt_summary"
+              android:layout_marginTop="@dimen/size_8dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginBottom="@dimen/size_8dp"
-              android:orientation="vertical"
-              />
+              tools:listitem="@layout/view_trip_payment_summary_item"
+              tools:itemCount="5"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

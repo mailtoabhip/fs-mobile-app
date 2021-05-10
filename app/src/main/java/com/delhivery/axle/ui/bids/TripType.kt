@@ -33,16 +33,12 @@ enum class TripType(
       1, listOf(TruckReached.statusKey, In_Transit.statusKey),
       "InTransit", "InTransit Trips"
   ),
-  AwaitingPOD(
-      2, listOf(TruckUnloaded.statusKey),
-      "Awaiting POD", "Awaiting POD Trips"
-  ),
   AwaitingLoading(
-      3, listOf(TruckArrived.statusKey),
+      2, listOf(TruckArrived.statusKey),
       "Awaiting Loading", "Awaiting Loading Trips"
   ),
   AwaitingUnloading(
-      4, listOf(TruckReached.statusKey),
+      3, listOf(TruckReached.statusKey),
       "Awaiting Unloading", "Awaiting Unloading Trips"
   );
 
@@ -63,7 +59,6 @@ enum class TripType(
     fun byStatus(_status: String) = when (_status) {
       TruckConfirmed.statusKey -> AwaitingArrival
       TruckReached.statusKey, In_Transit.statusKey -> InTransit
-      TruckUnloaded.statusKey -> AwaitingPOD
       TruckArrived.statusKey -> AwaitingLoading
       TruckReached.statusKey -> AwaitingUnloading
       else -> Unknown
