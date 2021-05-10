@@ -96,6 +96,8 @@ class TripDetailsViewModel @Inject constructor(
   var collections: Double = 0.0
   var payeeId: String = ""
 
+  // var tripChargesSummaryLiveData = MutableLiveData<List<Pair<>>>
+
   /**
    * Fetch trip details
    */

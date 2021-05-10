@@ -120,24 +120,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onDestroy()
   }
 
-    private fun refreshData() {
-        binding.refreshing = true
-        binding.error = false
-        viewModel.tripHistory.clear()
-        viewModel.chargesSummary.clear()
-        viewModel.paymentsSummary.clear()
-        viewModel.chargesListSummary.clear()
-        viewModel.newPaymentSummary.clear()
-        viewModel.newPaymentTypePayment.clear()
-        viewModel.newPaymentTypeBalance.clear()
-        viewModel.newPaymentTypeDN.clear()
-        viewModel.fetchTripDetails()
-        viewModel.fetchChargeListSummary()
-        viewModel.fetchNewPaymentSummary()
-        viewModel.fetchCollectionSummary()
-        viewModel.fetchListInvoices()
-        binding.executePendingBindings()
-    }
+  private fun refreshData() {
+      binding.refreshing = true
+      binding.error = false
+      viewModel.tripHistory.clear()
+      viewModel.chargesSummary.clear()
+      viewModel.paymentsSummary.clear()
+      viewModel.chargesListSummary.clear()
+      viewModel.newPaymentSummary.clear()
+      viewModel.newPaymentTypePayment.clear()
+      viewModel.newPaymentTypeBalance.clear()
+      viewModel.newPaymentTypeDN.clear()
+      viewModel.fetchTripDetails()
+  }
 
   /**
    * Transaction details and UI updation Observer
