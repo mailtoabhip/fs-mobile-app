@@ -46,6 +46,20 @@ data class CollectionResponse(
         @SerializedName("type") val type: String
 )
 
+data class TripRecoveryResponse(
+        @SerializedName("dn_id") val dnId: String,
+        @SerializedName("trip_id") val tripId: String,
+        @SerializedName("dn_type") val dnType: String,
+        @SerializedName("total_recovery_amount") val TotalRecoveryAmount: Double,
+        @SerializedName("pending_recovery") val pendingRecoveryAmount: Double,
+        @SerializedName("recovery_data") val recoveryData: List<RecoveryData>?
+)
+
+data class RecoveryData(
+        @SerializedName("recovery_amount") val recoveryAmount: Double,
+        @SerializedName("trip_id") val recoveryTripId: String
+)
+
 data class TDS(
         @SerializedName("amount") val amount: Double,
         @SerializedName("pmt_success_date") val pmtSuccessDate: String
@@ -106,5 +120,7 @@ data class EmailLedgerResponse(
 )
 
 data class InvoiceListResponse(
-        @SerializedName("invoice_id") val invoiceId: String
+        @SerializedName("invoice_id") val invoiceId: String,
+        @SerializedName("invoice_amount") val invoiceAmount: Double,
+        @SerializedName("paid_amount") val paidAmount: Double
 )

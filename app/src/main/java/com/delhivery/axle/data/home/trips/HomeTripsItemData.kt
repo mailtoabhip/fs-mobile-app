@@ -74,7 +74,8 @@ data class HomeTripsItemData(
   var selected: Boolean = false,
   var selectable: Boolean = false,
   var tds: Int,
-  var updatedTds: Double
+  var updatedTds: Double,
+  var isSettled: Boolean = false
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -95,7 +96,7 @@ data class HomeTripsItemData(
   /**
    * Trip Status [TripStatus]
    */
-  fun tripStatus() = TripType.byStatus(tripStatus)
+  fun tripStatus() = tripStatus //TripType.byStatus(tripStatus)
 
   /**
    * Trip status visibility
@@ -245,7 +246,7 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
+    ColorProviderUtils.getTripStatusColor(tripStatus().toLowerCase())
 
   /**
    * Required at text color as per promise date
@@ -555,6 +556,62 @@ data class HomeTripsItemData(
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
 
+  /**
+   * truck arrived icon resource
+   */
+  @DrawableRes
+  fun truckArrivedRes() = if (updateInfo!!.truckArrivedInfo != null) {
+        DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck loaded icon resource
+   */
+  @DrawableRes
+  fun truckLoadedRes() = if (updateInfo!!.loadedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck reached icon resource
+   */
+  @DrawableRes
+  fun truckReachedRes() = if (updateInfo!!.truckReachedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck unloaded icon resource
+   */
+  @DrawableRes
+  fun truckUnloadedRes() = if (updateInfo!!.truckUnloadedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * pod uploaded icon resource
+   */
+  @DrawableRes
+  fun podUploadedRes() = if (updateInfo!!.epodUploadInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * trip settled icon resource
+   */
+  @DrawableRes
+  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled)
+
 }
 
 enum class PODStatus(
@@ -620,7 +677,12 @@ data class TripBidDetails(
  * Status update info
  */
 data class StatusUpdateInfo(
+  @SerializedName("trip_confirmed") val tripConfirmedInfo: ByUser?= null,
+  @SerializedName("truck_arrived") val truckArrivedInfo: ByUser?= null,
   @SerializedName("truck_loaded") val loadedInfo: ByUser? = null,
+  @SerializedName("in_transit") val inTransitInfo: ByUser?= null,
+  @SerializedName("truck_reached") val truckReachedInfo: ByUser?= null,
+  @SerializedName("truck_unloaded") val truckUnloadedInfo: ByUser?= null,
   @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null
 ) : Serializable
 

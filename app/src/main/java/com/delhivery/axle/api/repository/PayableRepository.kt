@@ -61,6 +61,13 @@ class PayableRepository @Inject constructor(
             tripId: String
     ) = payableService.listInvoices(tripId).convertResponse()
 
+  /**
+   * List trip recoveries
+   */
+  fun listTripRecoveries(
+    payload: JsonObject
+  ) = payableService.listTripRecoveries(payload).convertResponse()
+
 }
 
 

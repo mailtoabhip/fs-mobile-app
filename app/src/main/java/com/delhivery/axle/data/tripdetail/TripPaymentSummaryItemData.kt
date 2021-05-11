@@ -3,6 +3,7 @@ package com.delhivery.axle.data.tripdetail
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
+import com.delhivery.axle.utils.StringUtils
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -18,10 +19,22 @@ data class TripPaymentSummaryItemData (
 
   override fun key() = title
 
+  fun totalAmount() = if (itemSummary.isNotEmpty()) {
+    var total = 0.0
+    for (summary in itemSummary) {
+      total += summary.amount
+    }
+    "₹ ${StringUtils.formatAmount(total)}"
+  } else {
+    ""
+  }
+
   /**
    * @return expanded resource basis [expanded]
    */
   @DrawableRes
-  fun expandedResource() = DrawableProviderUtils.expandedResLedger(expanded)
+  fun expandedResource() = DrawableProviderUtils.expandedRes(expanded)
 
 }
+
+const val TripPaymentSummaryItemAction = "toggle"

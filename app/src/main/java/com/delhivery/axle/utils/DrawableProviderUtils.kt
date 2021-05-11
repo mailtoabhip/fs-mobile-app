@@ -106,6 +106,16 @@ object DrawableProviderUtils {
 
   }
 
+  /**
+   * Resource for showing current trip status
+   */
+  @DrawableRes
+  fun tripStatusRes(flag: Boolean) = if (flag) {
+    R.drawable.ic_check_circle_green
+  } else {
+    R.drawable.ic_rounded_circle_black
+  }
+
 
 
 }

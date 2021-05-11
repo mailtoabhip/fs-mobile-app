@@ -41,4 +41,7 @@ interface PayableService {
     fun listInvoices(
             @Path("trip_id") tripId: String
     ):Single<BaseResponse<List<InvoiceListResponse>>>
+
+    @POST("list_dn_recovery")
+    fun listTripRecoveries(@Body payload: JsonObject): Single<BaseResponse<List<TripRecoveryResponse>>>
 }

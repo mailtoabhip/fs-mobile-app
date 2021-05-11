@@ -2,12 +2,24 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     >
 
   <data>
 
+    <variable
+        name="item"
+        type="com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData"
+        />
+
+    <variable
+        name="title"
+        type="String"
+        />
+
+    <variable
+        name="amount"
+        type="String"
+        />
 
   </data>
 
@@ -39,7 +51,8 @@
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          app:srcCompat="@drawable/ic_expand"
+          app:srcCompat="@{item.expandedResource()}"
+          tools:src="@drawable/ic_expand"
           />
 
       <androidx.appcompat.widget.AppCompatTextView
@@ -60,12 +73,12 @@
           />
 
       <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_indents"
+          android:id="@+id/text_subtitle"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/size_6dp"
           android:layout_marginBottom="@dimen/size_8dp"
-          android:text="Rs 6000"
+          android:text="@{amount}"
           android:textColor="@color/colorDelhiveryRed"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"

@@ -1,8 +1,7 @@
 package com.delhivery.axle.data.tripdetail
 
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import com.delhivery.axle.utils.StringUtils
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -17,5 +16,7 @@ data class TripPaymentSummaryDetailItemData (
 ) : BaseKeyTypeModel<String>() {
 
   override fun key() = title
+
+  fun formattedAmount() = "₹ ${StringUtils.formatAmount(amount)}}"
 
 }

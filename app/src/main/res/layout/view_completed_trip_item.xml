@@ -69,7 +69,7 @@
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:lineSpacingExtra="10sp"
-          android:text="@{ trip.tripStatus().typeText}"
+          android:text="@{ trip.tripStatus()}"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"

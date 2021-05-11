@@ -25,7 +25,10 @@ import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.*
@@ -50,7 +53,7 @@ import javax.inject.Inject
  * Trip detail screen
  */
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>(),
-    AWSProgressInterface {
+    AWSProgressInterface, TripPaymentSummaryRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -63,6 +66,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   override fun requireConnection() = true
 
   @Inject lateinit var awsUtils: AWSUtils
+
+  private val adapter: TripPaymentSummaryRVAdapter by lazy { TripPaymentSummaryRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -97,11 +102,26 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.warehouseLiveData.observe(this, Observer {
       binding.labelWarehouse.text = it
     })
+    viewModel.tripSettledLiveData.observe(this, Observer {
+      binding.tripSettled = it
+    })
     viewModel.delegationLiveData.observe(this, Observer {
       if (it != null) {
         awsUtils.startDownload(it.first, it.second, it.third, this)
       } else {
         uiUtils.showSnackbar("Please try again")
+      }
+    })
+
+    binding.rvPmtSummary.apply {
+      layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+      adapter = this@TripDetailsActivity.adapter
+    }
+
+    viewModel.tripPaymentSummaryLiveData.observe(this, Observer {
+      binding.refreshLayout.isRefreshing = false
+      it?.let { _items ->
+        adapter.operation(_items)
       }
     })
 
@@ -123,6 +143,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun refreshData() {
       binding.refreshing = true
       binding.error = false
+      adapter.resetStaticData()
       viewModel.tripHistory.clear()
       viewModel.chargesSummary.clear()
       viewModel.paymentsSummary.clear()
@@ -142,18 +163,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.refreshing = false
       if (t != null) {
         binding.error = false
-        title = t.first.tripDisplayName(t.second.tripStatus())
+        title = t.first.tripDisplayName()
         binding.transaction = t.first
         binding.tripDetails = t.second
-        binding.textPromiseDate.setTextColor(
-            ContextCompat.getColor(baseContext, t.second.requiredPromiseDateColor())
-        )
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPaymentSummary()
         viewModel.fetchChargeSummary()
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
+        viewModel.fetchTripRecoveries()
         viewModel.fetchCollectionSummary()
         viewModel.fetchListInvoices()
       } else {
@@ -406,6 +425,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == REQCODE_UPLOAD_POD && resultCode == RESULT_OK) {
       refreshData()
+    }
+  }
+
+  override fun handleAction(actionId: String, position: Int, item: BaseTripPaymentSummaryRVAdapterItem<*>) {
+    when (actionId) {
+      TripPaymentSummaryItemAction -> {
+        val data = item.data as TripPaymentSummaryItemData
+        adapter.toggle(position, data)
+      }
+
+      HomeTripsTimeOutAction -> {
+        refreshData()
+      }
     }
   }
 }

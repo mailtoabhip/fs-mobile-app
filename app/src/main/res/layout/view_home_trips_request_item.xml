@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="10sp"
-            android:text="@{ trip.tripStatus().typeText}"
+            android:text="@{ trip.tripStatus()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
@@ -117,20 +117,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_driver_details"
             bind:drawableResId="@{ trip.requiredAtBg() }"
-            tools:text="Today"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:lineSpacingExtra="4sp"
-            android:text="@{trip.promiseDate()}"
-            android:visibility="@{ (trip.promiseDate == null || trip.promiseDate.isEmpty() || trip.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
-            app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/text_date_time"
-            bind:textColor="@{ ContextCompat.getColor(context, trip.requiredPromiseDateColor()) }"
             tools:text="Today"
             />
 
@@ -201,7 +187,7 @@
               android:layout_gravity="center"
               android:gravity="center"
               android:fontFamily="sans-serif"
-              android:text="In-transit"
+              android:text="@{trip.tripStatus()}"
               android:textColor="@color/orange"
               android:layout_weight="1"
               tools:text="Awaiting Arrival"

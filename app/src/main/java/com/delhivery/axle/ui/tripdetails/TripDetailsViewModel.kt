@@ -25,7 +25,13 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryProgressItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.isNotEmpty
@@ -96,7 +102,16 @@ class TripDetailsViewModel @Inject constructor(
   var collections: Double = 0.0
   var payeeId: String = ""
 
-  // var tripChargesSummaryLiveData = MutableLiveData<List<Pair<>>>
+  var paymentSettled: Boolean = false
+  var recoverySettled: Boolean = true
+  var tripSettledLiveData = MutableLiveData<Boolean>()
+
+  var tripPaymentSummaryLiveData = MutableLiveData<List<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+  var chargesSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
+  var deductionSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
+  var paymentSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
+  var recoveriesSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
+  var pendingRecoveryList = mutableListOf<TripPaymentSummaryDetailItemData>()
 
   /**
    * Fetch trip details
@@ -121,6 +136,9 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch warehouse details
    */
   fun fetchWarehouseDetails() {
+    Pair(TripSummaryProgressItem(TripPaymentSummaryProgressItemData()), DataRVAdapterOperationType.AddUpdate).let { tripPaymentSummaryLiveData.postValue(
+        listOf(it)) }
+
     compositeDisposable += warehouseRepository.fetchWarehouseDetails(
         tripDetail.clientId, warehouse
     )
@@ -171,14 +189,43 @@ class TripDetailsViewModel @Inject constructor(
                     for (collection in _res) {
                       if(collection.type == "waived_off"){
                         collections += collection.amount
+                        deductionSummaryList.add(TripPaymentSummaryDetailItemData("Waived Off", collection.amount, ""))
                       }
                     }
                   }
-                }else{
-                  error?.handle()
+                } else{
+                  // error?.handle()
                 }
               }
+              processPaymentSummary()
             }
+  }
+
+  /**
+   * process payment summary
+   */
+  fun processPaymentSummary() {
+
+    if (pendingRecoveryList.size > 0) {
+      recoverySettled = false
+    }
+
+    tripDetail.isSettled = paymentSettled && recoverySettled
+    if (tripDetail.isSettled) {
+      tripSettledLiveData.postValue(true)
+    }
+
+    mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      add(Pair(TripSummaryProgressItem(TripPaymentSummaryProgressItemData()), Remove))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Charges", chargesSummaryList, false)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Deductions", deductionSummaryList, false)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Payments", paymentSummaryList, false)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Recoveries Adjusted", recoveriesSummaryList, false)), Add))
+    }.let {
+      tripPaymentSummaryLiveData.postValue(it)
+    }
+
   }
 
 
@@ -198,9 +245,20 @@ class TripDetailsViewModel @Inject constructor(
                 chargesListSummary.clear()
                 if(_res.isNotEmpty()){
                   _res.let {
+                    chargesSummaryList.clear()
+                    deductionSummaryList.clear()
                     for (charge in _res){
-                      chargesListSummary.add(charge)
-                      payeeId = charge.payeeId
+                      if (charge.action == "deduct") {
+                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
+                            charge.days.toString()
+                        ))
+                      } else {
+                        chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
+                            charge.days.toString()
+                        ))
+                      }
+                      //chargesListSummary.add(charge)
+                      //payeeId = charge.payeeId
                     }
                   }
                 }
@@ -225,8 +283,17 @@ class TripDetailsViewModel @Inject constructor(
                 newPaymentTypeDN.clear()
                 if(_res.isNotEmpty()){
                   _res.let {
+                    paymentSummaryList.clear()
                     for (charge in _res){
-                      newPaymentSummary.add(charge)
+                      if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
+                        paymentSettled = true
+                      }
+                      if (charge.utrNumber.isNotNullOrEmpty()) {
+                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.utrNumber!!, charge.amount, charge.transferTime))
+                      } else {
+                        paymentSummaryList.add(TripPaymentSummaryDetailItemData("", charge.amount, charge.transferTime))
+                      }
+                      //newPaymentSummary.add(charge)
                     }
                   }
                 }
@@ -257,6 +324,43 @@ class TripDetailsViewModel @Inject constructor(
                 error?.handle()
               }
             }
+
+
+  }
+
+  /**
+   * Fetch Trip Recoveries
+   */
+  fun fetchTripRecoveries(){
+    val jsonObject = JsonObject()
+    val jsonList = JsonArray()
+    jsonList.add(transactionId)
+    jsonObject.add("trip_ids", jsonList)
+    compositeDisposable += payableRepository.listTripRecoveries(jsonObject)
+        .onBackground()
+        .progress()
+        .subscribe {
+          _res, error ->
+          if (!error && _res != null) {
+            pendingRecoveryList.clear()
+            recoveriesSummaryList.clear()
+            for (recovery in _res) {
+              if (recovery.pendingRecoveryAmount > 0) {
+                pendingRecoveryList.add(
+                    TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
+                )
+              } else {
+                recovery.recoveryData?.let {
+                  for (data in recovery.recoveryData) {
+                    recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, ""))
+                  }
+                }
+              }
+            }
+          } else {
+            error.handle()
+          }
+        }
   }
 
   /**

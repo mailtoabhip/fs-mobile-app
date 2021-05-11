@@ -21,6 +21,11 @@
         />
 
     <variable
+        name="tripSettled"
+        type="Boolean"
+        />
+
+    <variable
         name="refreshing"
         type="Boolean"
         />
@@ -147,20 +152,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_vehicle"
                 tools:text="Ram kumar,+919090909090"
-                />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_promise_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
-                android:fontFamily="sans-serif-medium"
-                android:lineSpacingExtra="@dimen/text_4sp"
-                android:text="@{tripDetails.promiseDate()}"
-                android:visibility="@{ (tripDetails.promiseDate.isEmpty() || tripDetails.tripStatus() != TripType.InTransit) ? View.GONE : View.VISIBLE }"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_driver"
-                tools:text="Today"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -371,7 +362,23 @@
           </androidx.constraintlayout.widget.ConstraintLayout>
 
           <androidx.appcompat.widget.LinearLayoutCompat
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:background="@color/white"
+              android:layout_marginTop="@dimen/size_8dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
@@ -407,10 +414,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_arrival"
-                      app:srcCompat="@drawable/ic_check_circle_green"
+                      app:srcCompat="@{tripDetails.truckArrivedRes()}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
                       android:layout_width="match_parent"
@@ -446,10 +454,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_loaded"
-                      app:srcCompat="@drawable/ic_check_circle_green"
+                      app:srcCompat="@{tripDetails.truckLoadedRes()}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
                       android:layout_width="match_parent"
@@ -484,10 +493,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_reached"
-                      app:srcCompat="@drawable/ic_check_circle_green"
+                      app:srcCompat="@{tripDetails.truckReachedRes()}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
                       android:layout_width="match_parent"
@@ -522,10 +532,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_unloaded"
-                      app:srcCompat="@drawable/ic_check_circle_green"
+                      app:srcCompat="@{tripDetails.truckUnloadedRes()}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
                       android:layout_width="match_parent"
@@ -560,10 +571,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_pod"
-                      app:srcCompat="@drawable/ic_rounded_circle_black"
+                      app:srcCompat="@{tripDetails.podUploadedRes()}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_rounded_circle_black"/>
 
                   <View
                       android:layout_width="match_parent"
@@ -599,10 +611,11 @@
 
                   <androidx.appcompat.widget.AppCompatImageView
                       android:id="@+id/icon_settled"
-                      app:srcCompat="@drawable/ic_rounded_circle_black"
+                      app:srcCompat="@{tripDetails.tripSettledRes(tripSettled)}"
                       android:layout_centerVertical="true"
                       android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"/>
+                      android:layout_height="@dimen/size_12dp"
+                      tools:src="@drawable/ic_rounded_circle_black"/>
 
                   <View
                       android:layout_width="0dp"

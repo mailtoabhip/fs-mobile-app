@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
 import com.delhivery.axle.data.home.trips.TripStatus.TruckConfirmed
 import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
+import com.delhivery.axle.data.home.trips.TripStatus.TruckLoaded
 import com.delhivery.axle.data.home.trips.TripStatus.Recovery
 
 /**
@@ -30,7 +31,7 @@ enum class TripType(
       "Awaiting Arrival", "Awaiting Arrival Trips"
   ),
   InTransit(
-      1, listOf(TruckReached.statusKey, In_Transit.statusKey),
+      1, listOf(TruckReached.statusKey, In_Transit.statusKey, TruckLoaded.statusKey),
       "InTransit", "InTransit Trips"
   ),
   AwaitingLoading(
@@ -58,7 +59,7 @@ enum class TripType(
 
     fun byStatus(_status: String) = when (_status) {
       TruckConfirmed.statusKey -> AwaitingArrival
-      TruckReached.statusKey, In_Transit.statusKey -> InTransit
+      TruckReached.statusKey, In_Transit.statusKey, TruckLoaded.statusKey -> InTransit
       TruckArrived.statusKey -> AwaitingLoading
       TruckReached.statusKey -> AwaitingUnloading
       else -> Unknown
