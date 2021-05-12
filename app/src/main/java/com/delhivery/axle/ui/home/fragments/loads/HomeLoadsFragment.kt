@@ -100,6 +100,12 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   ) {
     super.onViewCreated(view, savedInstanceState)
 
+    //Crash Code
+    binding.crash.setOnClickListener(View.OnClickListener {
+      throw RuntimeException("Test Crash")
+    })
+    //Ends Here
+
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()

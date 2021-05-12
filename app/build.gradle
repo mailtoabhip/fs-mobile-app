@@ -2,7 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
+
+
 
 android {
   compileSdkVersion 29
@@ -20,8 +21,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
     targetSdkVersion 29
-    versionCode 42
-    versionName "1.41"
+    versionCode 43
+    versionName "1.42"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -42,7 +43,7 @@ android {
     development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
-      resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resValue("bool", "FIREBASE_ACTIVATED", "true")
       resConfigs "en", "xxhdpi"
     }
     uat {
@@ -169,15 +170,26 @@ dependencies {
   implementation 'com.auth0.android:jwtdecode:1.2.0'
 
   //Firebase
-  implementation 'com.google.firebase:firebase-core:17.2.1'
-  implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.2'
-  implementation 'com.google.firebase:firebase-config:19.0.3'
-  implementation 'com.google.firebase:firebase-messaging:20.0.1'
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+  implementation 'com.google.firebase:firebase-core:18.0.3'
+  implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.5'
+  implementation 'com.google.firebase:firebase-config:20.0.4'
+  implementation 'com.google.firebase:firebase-messaging:21.1.0'
+
+  implementation platform('com.google.firebase:firebase-bom:27.1.0')
+
+  implementation 'com.google.firebase:firebase-crashlytics-ktx'
+  implementation 'com.google.firebase:firebase-analytics-ktx'
+  implementation 'com.google.firebase:firebase-crashlytics:17.4.1'
+
+  implementation 'com.google.firebase:firebase-analytics:18.0.3'
+
 
   //AWS sdk
   implementation 'com.amazonaws:aws-android-sdk-s3:2.15+'
   implementation('com.amazonaws:aws-android-sdk-mobile-client:2.15+@aar') { transitive = true }
   implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.15+@aar')
 }
+
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+

@@ -8,6 +8,15 @@
         type="com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel"
         />
   </data>
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/crash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+      android:text="Crash"/>
 
   <FrameLayout
       android:layout_width="match_parent"
@@ -129,4 +138,5 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   </FrameLayout>
+  </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
