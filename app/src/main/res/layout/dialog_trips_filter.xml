@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="error"
+        type="Boolean" />
+    <variable
+        name="errorMsg"
+        type="String" />
+
+    <import type="android.view.View" />
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@android:color/white"
+      android:orientation="vertical"
+      android:paddingStart="@dimen/size_24dp"
+      android:paddingTop="@dimen/size_24dp"
+      android:paddingEnd="@dimen/size_24dp"
+      android:paddingBottom="@dimen/size_4dp"
+      >
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:orientation="vertical">
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_label_filter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="@dimen/text_12sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large"
+            android:text="Apply filter"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            tools:text="Apply filter"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_sub_header"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="@dimen/text_12sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large"
+            android:text="Please select the issue type"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_filter"
+            android:textColor="@color/colorAccent"
+            tools:text="Please select the issue type"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_gravity="end"
+            android:padding="@dimen/size_2dp"
+            app:srcCompat="@drawable/ic_close_black"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <RadioGroup
+          android:id="@+id/radio_group"
+          android:layout_marginTop="@dimen/size_16dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            tools:text="All"/>
+
+        <RadioButton
+            android:id="@+id/issued_trips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            tools:text="Trips with issue (34)"/>
+
+      </RadioGroup>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:orientation="vertical">
+
+      <androidx.appcompat.widget.AppCompatButton
+          android:id="@+id/btn_confirm"
+          style="@style/Widget.AppCompat.Button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:paddingStart="@dimen/size_8dp"
+          android:paddingEnd="@dimen/size_8dp"
+          android:layout_gravity="center"
+          android:text="@string/action_confirm"
+          android:layout_marginTop="@dimen/size_16dp"
+          android:paddingHorizontal="@dimen/size_12dp"
+          android:textColor="@color/white"
+          android:textSize="@dimen/text_14sp"
+          android:background="@drawable/bg_all_round_corner_black"
+          />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

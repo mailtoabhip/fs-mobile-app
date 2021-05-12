@@ -18,6 +18,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
+import com.delhivery.axle.ui.dialogs.TripsFilterDialog
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
@@ -28,6 +29,7 @@ import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_TRIP
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 
@@ -113,23 +115,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    when {
-      viewModel.viewType.equals("trips_view") -> {
-        binding.paymentsFilterView.visibility = View.GONE
-        binding.tripsFilterView.visibility = View.VISIBLE
-        binding.txtTotalPending.visibility = View.GONE
-      }
-      viewModel.viewType.equals("payment_view") -> {
-        binding.paymentsFilterView.visibility = View.VISIBLE
-        binding.tripsFilterView.visibility = View.GONE
-        binding.txtTotalPending.visibility = View.VISIBLE
-      }
-      else -> {
-        binding.paymentsFilterView.visibility = View.GONE
-        binding.tripsFilterView.visibility = View.GONE
-        binding.txtTotalPending.visibility = View.GONE
-      }
-    }
+    setHeaderResources()
 
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
@@ -154,24 +140,107 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
     })
 
+    viewModel.summaryLiveData.observe(this, Observer {
+      binding.textAdvancePending.text = it.advancePending.amount()
+      binding.textBalancePending.text = it.balancePending.amount()
+      binding.textRecoveryPending.text = it.recoveryPending.amount()
+
+      val totalPending = (it.advancePending.amount ?: 0.0) + (it.balancePending.amount ?: 0.0) + (it.recoveryPending.amount ?: 0.0)
+      val totalPendingText = "Total Pending: ₹ " + StringUtils.formatAmount(totalPending)
+      binding.txtTotalPending.text = totalPendingText
+
+      binding.textArrival.text = it.awaitingArrival.count()
+      binding.textInTransit.text = it.inTransit.count()
+      binding.textAwaitingLoading.text = it.awaitingLoading.count()
+      binding.textAwaitingUnloading.text = it.awaitingUnloading.count()
+    })
+
     viewModel.tripsCountLiveData.observe(this, Observer {
-      title = viewModel.tripType.toolbarTitle(it ?: 0)
+      val count = it ?: 0
+      title = when {
+        viewModel.viewType.equals("all") -> "All Trips (${count})"
+        viewModel.viewType.equals("payment_view") -> {
+          viewModel.viewPaymentType.toolbarTitle(count)
+        }
+        else -> {
+          viewModel.tripType.toolbarTitle(count)
+        }
+      }
+
+      binding.txtTripCount.text = viewModel.tripsCountText
     })
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
       isLoadingData = it ?: false
     })
 
-    viewModel.fetchTrips(false)
+    viewModel.filterAppliedLiveData.observe(this, Observer {
+      fetchTripDetails()
+    })
+
+    binding.viewAdvancePending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(0)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewBalancePending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(1)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewRecoveryPending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(2)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingArrival.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(0)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewInTransit.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(1)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingLoading.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(2)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingUnloading.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(3)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.filterIcon.setOnClickListener {
+      val filter1 = "All Trips " + "(" + viewModel.total.toString() + ")"
+      val filter2 = "Trips with the issue " + "(" + viewModel.issueTripsCount.toString() + ")"
+      TripsFilterDialog(this, filter1, filter2, viewModel).show()
+    }
+
+    refreshData()
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsProgressItem())
   }
 
-  private fun refreshData() {
+  private fun fetchTripDetails() {
     adapter.setItems(getStaticItems())
     viewModel.fetchTrips(false)
+  }
+
+  private fun refreshData() {
+    viewModel.fetchTripsSummary()
+    fetchTripDetails()
   }
 
   override fun handleAction(
@@ -249,6 +318,165 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         return true
       }
     })
+  }
+
+  private fun setHeaderResources() {
+    when {
+      viewModel.viewType.equals("trips_view") -> {
+
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.VISIBLE
+        binding.txtTotalPending.visibility = View.GONE
+
+        when (viewModel.tripType) {
+          Companion.byTypeId(0) -> {
+
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.white))
+            binding.textArrival.setTextColor(resources.getColor(R.color.white))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+          }
+          Companion.byTypeId(1) -> {
+
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.white))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.white))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+          }
+          Companion.byTypeId(2) -> {
+
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.white))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.white))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+          }
+          else -> {
+
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
+
+          }
+        }
+      }
+      viewModel.viewType.equals("payment_view") -> {
+
+        binding.paymentsFilterView.visibility = View.VISIBLE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.VISIBLE
+
+        when (viewModel.viewPaymentType) {
+          ViewPaymentType.byTypeId(0) -> {
+
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.id1.setTextColor(resources.getColor(R.color.white))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.white))
+
+            binding.id2.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+
+            binding.id3.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+
+          }
+          ViewPaymentType.byTypeId(1) -> {
+
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.id1.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+
+            binding.id2.setTextColor(resources.getColor(R.color.white))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.white))
+
+            binding.id3.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+
+          }
+          else -> {
+
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+
+            binding.id1.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+
+            binding.id2.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+
+            binding.id3.setTextColor(resources.getColor(R.color.white))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.white))
+
+          }
+        }
+
+      }
+      else -> {
+
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.GONE
+
+      }
+    }
   }
 
   /**

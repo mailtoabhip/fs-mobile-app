@@ -24,7 +24,9 @@ data class TripSummaryResponse(
   @SerializedName("in_transit") val inTransit: Summary,
   @SerializedName("awaiting_pod") val awaitingPod: Summary,
   @SerializedName("awaiting_loading") val awaitingLoading: Summary,
-  @SerializedName("awaiting_unloading") val awaitingUnloading: Summary
+  @SerializedName("awaiting_unloading") val awaitingUnloading: Summary,
+  @SerializedName("total") val totalTrips: Int?= 0,
+  @SerializedName("trips_with_issue") val issueTrips: Int?= 0
 )
 
 /**

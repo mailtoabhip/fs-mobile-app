@@ -17,6 +17,6 @@ data class TripPaymentSummaryDetailItemData (
 
   override fun key() = title
 
-  fun formattedAmount() = "₹ ${StringUtils.formatAmount(amount)}}"
+  fun formattedAmount() = "₹ ${StringUtils.formatAmount(amount)}"
 
 }

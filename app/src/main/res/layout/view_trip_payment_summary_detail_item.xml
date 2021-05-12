@@ -20,12 +20,16 @@
         type="String"
         />
 
+    <import type="android.view.View" />
   </data>
 
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:cardCornerRadius="@dimen/size_12dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:paddingTop="@dimen/size_8dp"
+      android:paddingBottom="@dimen/size_8dp"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardElevation="@dimen/size_2dp"
       >
@@ -41,6 +45,7 @@
           android:id="@+id/txt_amount"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:text="@{amount}"
           android:layout_marginStart="@dimen/size_4dp"
           android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
           android:layout_marginTop="@dimen/size_6dp"
@@ -60,7 +65,7 @@
           android:layout_marginStart="@dimen/size_6dp"
           android:layout_marginTop="@dimen/size_6dp"
           android:layout_marginBottom="@dimen/size_4dp"
-          android:text="Loading Charge"
+          android:text="@{title}"
           android:textColor="@color/transparent_grey"
           android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
           app:layout_constraintBottom_toTopOf="@+id/text_indents"
@@ -76,7 +81,8 @@
           android:paddingStart="@dimen/size_12dp"
           android:layout_marginStart="@dimen/size_6dp"
           android:layout_marginBottom="@dimen/size_8dp"
-          android:text="Rs 6000"
+          android:text="@{subtitle}"
+          android:visibility="@{subtitle.length() > 0 ? View.VISIBLE : View.GONE }"
           android:textColor="@color/transparent_grey"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"

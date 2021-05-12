@@ -8,10 +8,6 @@ import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryDetailItemBinding
 import com.delhivery.axle.databinding.ViewTripPaymentSummaryItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.ledger.BaseConsolidatedPageRVAdapterViewHolder
-import com.delhivery.axle.ui.ledger.ConsolidatedPageProgressItem
-import com.delhivery.axle.ui.ledger.ConsolidatedPageRVAdapterInterface
-import com.delhivery.axle.ui.ledger.ConsolidatedPageTimeoutItem
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -57,6 +53,7 @@ class TripPaymentSummaryItemVH(binding: ViewTripPaymentSummaryItemBinding) :
   ) {
     binding.title = item.data.title
     binding.amount = item.data.totalAmount()
+    binding.item = item.data
     binding.root.clickToAction(TripPaymentSummaryItemAction, item, adapterPosition, _interface)
   }
 }

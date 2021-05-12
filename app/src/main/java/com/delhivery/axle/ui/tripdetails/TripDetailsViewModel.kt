@@ -189,7 +189,8 @@ class TripDetailsViewModel @Inject constructor(
                     for (collection in _res) {
                       if(collection.type == "waived_off"){
                         collections += collection.amount
-                        deductionSummaryList.add(TripPaymentSummaryDetailItemData("Waived Off", collection.amount, ""))
+                        deductionSummaryList.add(
+                            TripPaymentSummaryDetailItemData("Waived Off", collection.amount, ""))
                       }
                     }
                   }
@@ -248,13 +249,17 @@ class TripDetailsViewModel @Inject constructor(
                     chargesSummaryList.clear()
                     deductionSummaryList.clear()
                     for (charge in _res){
+                      var subtitle = ""
+                      if (charge.days > 0) {
+                        subtitle = charge.days.toString() + " days"
+                      }
                       if (charge.action == "deduct") {
                         deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
-                            charge.days.toString()
+                            subtitle
                         ))
                       } else {
                         chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
-                            charge.days.toString()
+                            subtitle
                         ))
                       }
                       //chargesListSummary.add(charge)

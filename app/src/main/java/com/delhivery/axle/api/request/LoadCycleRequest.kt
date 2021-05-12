@@ -19,6 +19,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var column: String? = "unloaded"
   var operator: String? = "gte"
   var value: String? = null
+  var issueTrips: Boolean?= false
 
   constructor(
     vehicleNumber: String? = null,
@@ -57,6 +58,12 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
       rangeJsonObject.addProperty("value", value)
       jsonArray.add(rangeJsonObject)
       jsonObject.add("range_filters", jsonArray)
+    }
+
+    issueTrips?.let {
+      if (it) {
+        jsonObject.addProperty("trips_with_issue", true)
+      }
     }
     return jsonObject
   }

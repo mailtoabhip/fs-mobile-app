@@ -8,6 +8,7 @@ import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
+import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -16,11 +17,13 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.bids.TripType.Unknown
 import com.delhivery.axle.ui.bids.ViewPaymentType.NA
+import com.delhivery.axle.ui.dialogs.FilterTripsInterface
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -44,7 +47,7 @@ class TripsViewModel @Inject constructor(
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs
-) : BaseViewModel() {
+) : BaseViewModel(), FilterTripsInterface {
 
   /* user trips live data */
   var userTripsData =
@@ -56,6 +59,10 @@ class TripsViewModel @Inject constructor(
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
+  var summaryLiveData = MutableLiveData<TripSummaryResponse>()
+
+  var filterAppliedLiveData = MutableLiveData<Boolean>()
+
   /* pagination params */
   var hasMoreData = true
   var offset = 0
@@ -65,6 +72,26 @@ class TripsViewModel @Inject constructor(
   var viewPaymentType: ViewPaymentType = NA
   var viewType: String ?= "all"
   var total = 0
+  var issueTripsCount = 0
+  var tripsFilter = ""
+  var tripsCountText = ""
+
+  /**
+   * Fetch trips summary
+   */
+  fun fetchTripsSummary() {
+    compositeDisposable += tripsRepository.userTripsSummary()
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            issueTripsCount = _res.issueTrips ?: 0
+            summaryLiveData.postValue(_res)
+          } else {
+            error.handle()
+          }
+        }
+  }
 
   /**
    * Fetch user trips
@@ -98,18 +125,30 @@ class TripsViewModel @Inject constructor(
     request.offset = offset
     request.limit = UserSearchLimit
     request.vendorId = userRepository.userId()
-    if (viewType.equals("all")) {
-      request.tripStatus = statuses
-    } else if (viewType.equals("payment_view")) {
-      request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
-    } else {
-      request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+    if (tripsFilter == "issue_trips") {
+      request.issueTrips = true
+    }
+    when {
+      viewType.equals("all") -> {
+        request.tripStatus = statuses
+      }
+      viewType.equals("payment_view") -> {
+        request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
+      }
+      else -> {
+        request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+      }
     }
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .flatMap { t ->
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
+          tripsCountText = if (tripsFilter == "issue_trips") {
+            "Trips with the issue (${total})"
+          } else {
+            "All Trips (${total})"
+          }
           tripsCountLiveData.postValue(total)
 
           val jsonObject = JsonObject()
@@ -163,6 +202,11 @@ class TripsViewModel @Inject constructor(
 
           dataLoadingLiveData.postValue(false)
         }
+  }
+
+  override fun onConfirmClick(filter: String) {
+    tripsFilter = filter
+    filterAppliedLiveData.postValue(true)
   }
 
 }

@@ -34,7 +34,7 @@
         android:layout_marginStart="@dimen/size_8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Total Pending: ₹ 25,900.00"
+        tools:text="Total Pending: "
         tools:visibility="visible"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -54,13 +54,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_advance_pending"
-            style="@style/view_header_background_white"
-
+            android:background="@drawable/bg_white_all_corner_black"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_56dp"
             android:layout_marginStart="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_4dp"
-            bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
           <androidx.appcompat.widget.AppCompatTextView
@@ -69,6 +67,7 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif-medium"
               android:lineSpacingExtra="@dimen/text_6sp"
+              android:layout_marginTop="@dimen/size_8dp"
               android:maxLines="1"
               android:gravity="center"
               android:text="@string/label_advance_pending"
@@ -81,12 +80,14 @@
               />
 
           <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_advance_pending"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="4dp"
               android:fontFamily="sans-serif-medium"
               android:gravity="center"
-              android:text="₹ 6,000"
+              android:layout_marginBottom="@dimen/size_8dp"
+              android:text=""
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
               android:textColor="@color/black"
@@ -106,12 +107,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_balance_pending"
-            style="@style/view_header_background_white"
+            android:background="@drawable/bg_white_all_corner_black"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_56dp"
             android:layout_marginStart="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_4dp"
-            bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
           <androidx.appcompat.widget.AppCompatTextView
@@ -121,6 +121,7 @@
               android:fontFamily="sans-serif-medium"
               android:lineSpacingExtra="@dimen/text_6sp"
               android:text="@string/label_balance_pending"
+              android:layout_marginTop="@dimen/size_8dp"
               android:textColor="@color/black"
               android:gravity="center"
               android:textSize="@dimen/text_10sp"
@@ -131,12 +132,14 @@
               />
 
           <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_balance_pending"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="4dp"
               android:fontFamily="sans-serif-medium"
               android:gravity="center"
-              android:text="₹ 6,000"
+              android:layout_marginBottom="@dimen/size_8dp"
+              android:text=""
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
               android:textColor="@color/black"
@@ -157,12 +160,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_recovery_pending"
-            style="@style/view_header_background_white"
+            android:background="@drawable/bg_white_all_corner_black"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_56dp"
             android:layout_marginStart="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_4dp"
-            bind:shadow="@{ @dimen/action_btn_elevation }"
             >
 
           <androidx.appcompat.widget.AppCompatTextView
@@ -172,6 +174,8 @@
               android:fontFamily="sans-serif-medium"
               android:lineSpacingExtra="@dimen/text_6sp"
               android:text="@string/label_recovery_pending"
+              android:gravity="center"
+              android:layout_marginTop="@dimen/size_8dp"
               android:textColor="@color/black"
               android:textSize="@dimen/text_10sp"
               app:layout_constraintStart_toStartOf="parent"
@@ -181,12 +185,14 @@
               />
 
           <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_recovery_pending"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="4dp"
               android:fontFamily="sans-serif-medium"
               android:gravity="center"
-              android:text="₹ 6,000"
+              android:layout_marginBottom="@dimen/size_8dp"
+              android:text=""
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
               android:textColor="@color/black"
@@ -212,6 +218,7 @@
       <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
           android:orientation="horizontal"
           android:paddingStart="@dimen/size_4dp"
           android:paddingEnd="@dimen/size_4dp"
@@ -223,12 +230,11 @@
 
           <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/view_awaiting_arrival"
-              style="@style/view_header_background_white"
+              android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_4dp"
-              android:layout_marginEnd="@dimen/size_4dp"
-              bind:shadow="@{ @dimen/action_btn_elevation }"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -237,11 +243,16 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:gravity="center"
                 android:minWidth="@dimen/size_80dp"
                 android:text="@string/label_awaiting_arrival"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_10sp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Awaiting Arrival"
                 />
@@ -250,10 +261,11 @@
                 android:id="@+id/text_arrival"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="5 Trips"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -272,22 +284,24 @@
 
           <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/view_in_transit"
-              style="@style/view_header_background_white"
+              android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_4dp"
-              android:layout_marginEnd="@dimen/size_4dp"
-              bind:shadow="@{ @dimen/action_btn_elevation }"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id_in_transit"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:minWidth="@dimen/size_80dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
                 android:gravity="center"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:minWidth="@dimen/size_80dp"
                 android:text="@string/label_in_transit"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_10sp"
@@ -299,64 +313,14 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_in_transit"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="5 Trips"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:text="5 Trips"
-                />
-
-          </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-          <androidx.constraintlayout.widget.ConstraintLayout
-              android:id="@+id/view_awaiting_pod"
-              style="@style/view_header_background_white"
-              android:layout_width="wrap_content"
-              android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_4dp"
-              android:layout_marginEnd="@dimen/size_4dp"
-              bind:shadow="@{ @dimen/action_btn_elevation }"
-              >
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/id_awaiting_pod"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:lineSpacingExtra="@dimen/text_6sp"
-                android:minWidth="@dimen/size_80dp"
-                android:text="@string/label_awaiting_pod"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_10sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Awaiting POD"
-                />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_awaiting_pod"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/black"
-                android:text="5 Trips"
-                android:gravity="center"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -374,22 +338,24 @@
 
           <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/view_awaiting_loading"
-              style="@style/view_header_background_white"
+              android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_4dp"
-              android:layout_marginEnd="@dimen/size_4dp"
-              bind:shadow="@{ @dimen/action_btn_elevation }"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id_awaiting_loading"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:minWidth="@dimen/size_80dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
+                android:minWidth="@dimen/size_80dp"
                 android:text="@string/label_awaiting_loading"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_10sp"
@@ -401,12 +367,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_awaiting_loading"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="5 Trips"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -425,44 +392,47 @@
 
           <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/view_awaiting_unloading"
-              style="@style/view_header_background_white"
+              android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_4dp"
-              android:layout_marginEnd="@dimen/size_4dp"
-              bind:shadow="@{ @dimen/action_btn_elevation }"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/id_awaiting_unloading"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:minWidth="@dimen/size_80dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
+                android:minWidth="@dimen/size_80dp"
                 android:text="@string/label_awaiting_unloading"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_10sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Awaiting unloading"
+                tools:text="Awaiting Unloading"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_awaiting_unloading"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/black"
                 android:gravity="center"
-                android:text="5 Trips"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:text="5 Trips"
                 />
 
