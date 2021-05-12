@@ -38,7 +38,9 @@
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:paddingTop="@dimen/size_8dp"
+        android:paddingBottom="@dimen/size_8dp"
+        android:background="@color/light_grey"
         >
 
       <androidx.appcompat.widget.AppCompatTextView

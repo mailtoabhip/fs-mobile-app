@@ -38,19 +38,23 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           android:background="@color/light_red"
+          android:visibility="@{trip.issueTripTileVisibility()}"
           android:paddingTop="@dimen/size_4dp"
           android:paddingBottom="@dimen/size_4dp"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:text="No Stamp POD"
+            android:id="@+id/txt_issue_trip"
+            android:text="@{trip.issueTripText()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:textColor="@color/colorDelhiveryRed"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            tools:text="No Stamp POD"/>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -82,13 +86,14 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="10sp"
-            android:text="@{ trip.tripStatus()}"
+            android:text="@{trip.paymentStatusText()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
-            android:visibility="gone"
+            android:visibility="@{trip.paymentVisibility()}"
             tools:text="Load picked up"
             tools:textColor="@color/status_active"
+            tools:visibility="visible"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -97,28 +102,26 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="10sp"
+            android:visibility="@{trip.paymentVisibility()}"
             android:text="@{ trip.tripPayment()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_trip_status"
             bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
             tools:text=" Rs 52000"
             tools:textColor="@color/status_active"
+            tools:visibility="visible"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_date_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_12dp"
-            android:lineSpacingExtra="4sp"
-            android:text="@{trip.requiredAt()}"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_driver_details"
-            bind:drawableResId="@{ trip.requiredAtBg() }"
-            tools:text="Today"
-            />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/seperator"
+            app:layout_constraintTop_toBottomOf="@+id/text_driver_details"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/seprator_dotted">
+
+
+        </androidx.appcompat.widget.AppCompatImageView>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_driver_details"
@@ -139,7 +142,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_date_time"
+            app:layout_constraintTop_toBottomOf="@id/seperator"
             app:srcCompat="@drawable/ic_arrow_forward_black"
             />
 
@@ -187,7 +190,7 @@
               android:layout_gravity="center"
               android:gravity="center"
               android:fontFamily="sans-serif"
-              android:text="@{trip.tripStatus()}"
+              android:text="@{trip.tripStatusText()}"
               android:textColor="@color/orange"
               android:layout_weight="1"
               tools:text="Awaiting Arrival"
@@ -208,6 +211,43 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/til_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_state"
+            android:orientation="horizontal">
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_source_time"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:paddingEnd="@dimen/size_8dp"
+              android:text="@{trip.sourceTime()}"
+              android:textColor="@color/sub_heading_black"
+              android:layout_weight="1"
+              tools:text="21 Apr, 2021"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/text_destination_time"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:fontFamily="sans-serif"
+              android:text="@{trip.destinationTime()}"
+              android:textColor="@color/sub_heading_black"
+              android:layout_weight="1"
+              android:textAlignment="viewEnd"
+              tools:text="24 Apr, 2021"
+              />
+
+        </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_destination_city"
             android:layout_width="wrap_content"
@@ -222,21 +262,6 @@
             app:layout_constraintTop_toTopOf="@id/img_forward"
             tools:text="Andheri East"
             />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_is_multidrop"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:background="@drawable/bg_gradient_blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="4sp"
-            android:paddingStart="8dp"
-            android:textColor="@color/white"
-            android:paddingEnd="8dp"
-            android:text="Multidrop"
-            android:visibility="@{trip.setMutidrop()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/til_state"/>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 

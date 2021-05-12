@@ -9,7 +9,9 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
+import com.delhivery.axle.data.home.trips.TripStatus.Unknown
 import com.delhivery.axle.ui.bids.TripType
+import com.delhivery.axle.ui.bids.ViewPaymentType
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
@@ -60,6 +62,8 @@ data class HomeTripsItemData(
   @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
+  @SerializedName("no_stamp_pod") val noStampPOD: Boolean? = false,
+  @SerializedName("shortage_pending") val shortagePending: Boolean? = false,
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
   @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
@@ -75,7 +79,8 @@ data class HomeTripsItemData(
   var selectable: Boolean = false,
   var tds: Int,
   var updatedTds: Double,
-  var isSettled: Boolean = false
+  var isSettled: Boolean = false,
+  var paymentStatus: String = ""
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -97,6 +102,36 @@ data class HomeTripsItemData(
    * Trip Status [TripStatus]
    */
   fun tripStatus() = tripStatus //TripType.byStatus(tripStatus)
+
+  /**
+   * Trip Status text
+   */
+  fun tripStatusText(): String {
+    val status = tripStatus.let { TripStatus.byKey(it) }
+    return status.status
+  }
+
+  /**
+   * Trip Payment Status
+   */
+  fun paymentStatus() : String {
+    payment?.let {
+      return payment!!.status
+    }
+    return ""
+  }
+
+  /**
+   * Trip payment status text
+   */
+  fun paymentStatusText() : String {
+    return when (paymentStatus()) {
+      "advance_pending" -> "Advance Pending"
+      "balance_pending" -> "Balance Pending"
+      "recovery_pending" -> "Recovery Pending"
+      else -> ""
+    }
+  }
 
   /**
    * Trip status visibility
@@ -215,6 +250,27 @@ data class HomeTripsItemData(
     DateUtils.formatDate(DateUtils.parseDate(displayTime(), OrionDateFormat), "dd MMM")
 
   /**
+   * source time
+   */
+  fun sourceTime(): String {
+    return when (tripStatus) {
+      "truck_confirmed", "truck_arrived" -> {
+        requiredAt()
+      }
+      else -> {
+        DateUtils.formatDate(DateUtils.parseDate(updateInfo!!.loadedInfo!!.time, OrionDateFormat), "dd MMM")
+      }
+    }
+  }
+
+  /**
+   * destination time
+   */
+  fun destinationTime() = unloadingTime?.let {
+    DateUtils.formatDate(DateUtils.parseDate(it, OrionDateFormat), "dd MMM")
+  } ?: ""
+
+  /**
    * Formatted required at
    */
   fun loadedAt() =
@@ -246,7 +302,7 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getTripStatusColor(tripStatus().toLowerCase())
+    ColorProviderUtils.getTripStatusColor(paymentStatus().toLowerCase())
 
   /**
    * Required at text color as per promise date
@@ -402,37 +458,21 @@ data class HomeTripsItemData(
   /**
    * @return payment advance/pending
    */
-  fun tripPayment() = when (tripStatus()) {
-//    AdvancePending -> {
-//      if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-//        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout ?: 0.0)}"
-//      } else {
-//        ""
-//      }
-//    }
-//    BalancePending -> {
-//      if (payment != null) {
-//        val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
-//        val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
-//        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
-//        var amount = bidDetails?.bidPrice ?: 0.0
-//        if (!intermittentPayment.isNullOrEmpty()) {
-//          intermittentPayment.forEach {
-//            amount -= it.amount
-//          }
-//        }
-//        if (advancePayment != null) {
-//          amount -= advancePayment.amount
-//          if (loadingChargePayment != null) {
-//            amount -= loadingChargePayment.amount
-//          }
-//        }
-//        "₹ ${StringUtils.formatAmount(amount)}"
-//      } else {
-//        ""
-//      }
-//    }
-    else -> ""
+  fun tripPayment(): String {
+    payment?.let {
+      return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
+    }
+    return ""
+  }
+
+  /**
+   * payment amount visibility
+   */
+  fun paymentVisibility() = if (paymentStatus() == "advance_pending" ||
+      paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending") {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**
@@ -555,6 +595,39 @@ data class HomeTripsItemData(
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
+
+  /**
+   * set issue trip tile visibility
+   */
+  fun issueTripTileVisibility() = if (damagePending == true || detentionPending == true
+      || shortagePending == true || noStampPOD == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * set issue trip text
+   */
+  fun issueTripText() : String {
+    var issueTripText = ""
+    val issueList = mutableListOf<String>()
+    if (damagePending == true) {
+      issueList.add("Damage")
+    }
+    if (detentionPending == true) {
+      issueList.add("Detention Pending")
+    }
+    if (shortagePending == true) {
+      issueList.add("Shortage Pending")
+    }
+    if (noStampPOD == true) {
+      issueList.add("No Stamp POD")
+    }
+    issueTripText = issueList.joinToString(separator = ",") {it}
+
+    return issueTripText
+  }
 
   /**
    * truck arrived icon resource

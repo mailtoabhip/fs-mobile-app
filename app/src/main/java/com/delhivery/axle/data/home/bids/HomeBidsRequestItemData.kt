@@ -254,7 +254,8 @@ data class HomeBidsRequestItemData(
    * Trip display name for toolbar title
    */
   fun tripDisplayName() =
-    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+    "${originState.capitalize()} - ${destinationState.capitalize()}"
+//    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
 //    when (tripType) {
 //      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
 //          destinationState

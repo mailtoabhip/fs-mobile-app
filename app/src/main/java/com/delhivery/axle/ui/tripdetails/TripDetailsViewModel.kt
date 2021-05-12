@@ -254,11 +254,11 @@ class TripDetailsViewModel @Inject constructor(
                         subtitle = charge.days.toString() + " days"
                       }
                       if (charge.action == "deduct") {
-                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
+                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
                             subtitle
                         ))
                       } else {
-                        chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.chargeHeadRef, charge.chargeAmount,
+                        chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
                             subtitle
                         ))
                       }
@@ -294,9 +294,9 @@ class TripDetailsViewModel @Inject constructor(
                         paymentSettled = true
                       }
                       if (charge.utrNumber.isNotNullOrEmpty()) {
-                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.utrNumber!!, charge.amount, charge.transferTime))
+                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, charge.amount, charge.transferTime))
                       } else {
-                        paymentSummaryList.add(TripPaymentSummaryDetailItemData("", charge.amount, charge.transferTime))
+                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, charge.transferTime))
                       }
                       //newPaymentSummary.add(charge)
                     }

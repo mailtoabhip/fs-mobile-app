@@ -41,7 +41,7 @@ object ColorProviderUtils {
   fun getTripStatusColor(
     status: String
   ) = when (status.toLowerCase()) {
-    "advance pending", "balance pending" -> R.color.pending
+    "advance_pending", "balance_pending", "recovery_pending" -> R.color.pending
     "intransit" -> R.color.status_active
     else -> R.color.status_confirmed
   }

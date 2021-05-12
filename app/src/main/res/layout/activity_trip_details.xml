@@ -416,8 +416,8 @@
                       android:id="@+id/icon_arrival"
                       app:srcCompat="@{tripDetails.truckArrivedRes()}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
@@ -456,8 +456,8 @@
                       android:id="@+id/icon_loaded"
                       app:srcCompat="@{tripDetails.truckLoadedRes()}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
@@ -495,8 +495,8 @@
                       android:id="@+id/icon_reached"
                       app:srcCompat="@{tripDetails.truckReachedRes()}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
@@ -534,8 +534,8 @@
                       android:id="@+id/icon_unloaded"
                       app:srcCompat="@{tripDetails.truckUnloadedRes()}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_check_circle_green"/>
 
                   <View
@@ -573,8 +573,8 @@
                       android:id="@+id/icon_pod"
                       app:srcCompat="@{tripDetails.podUploadedRes()}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_rounded_circle_black"/>
 
                   <View
@@ -613,8 +613,8 @@
                       android:id="@+id/icon_settled"
                       app:srcCompat="@{tripDetails.tripSettledRes(tripSettled)}"
                       android:layout_centerVertical="true"
-                      android:layout_width="@dimen/size_12dp"
-                      android:layout_height="@dimen/size_12dp"
+                      android:layout_width="@dimen/size_16dp"
+                      android:layout_height="@dimen/size_16dp"
                       tools:src="@drawable/ic_rounded_circle_black"/>
 
                   <View
@@ -653,6 +653,7 @@
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/rv_pmt_summary"
               android:layout_marginTop="@dimen/size_8dp"
+              android:layout_marginBottom="@dimen/size_16dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               tools:listitem="@layout/view_trip_payment_summary_item"

@@ -20,7 +20,11 @@ data class ChargesResponse(
         @SerializedName("charge_uuid") val chargeUuid: String,
         @SerializedName("charge_amount") val chargeAmount: Double,
         @SerializedName("days") val days: Int
-)
+) {
+  fun getChargeTitle(): String {
+    return chargeHeadRef.replace("_", " ").capitalize()
+  }
+}
 
 data class DNResponse(
         @SerializedName("description") val description: String,
