@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
@@ -19,9 +18,10 @@ import java.util.*
 class DownloadLedgerDialog(
         context: Context,
         private val dialogInterface: DownloadLedgerInterface
-) : AlertDialog(context), RadioGroup.OnCheckedChangeListener {
+) : AlertDialog(context){
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
+    private lateinit var radioButton: RadioButton
 
     var startDate = -1
     var startMonth = -1
@@ -125,7 +125,10 @@ class DownloadLedgerDialog(
             Log.d("DownloadDialog","Please select valid dates")
         }else{
             //download report
-            dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
+            val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
+            radioButton = findViewById(selectedOption)!!
+            optionFilter = getFilterString(radioButton.text.toString())
+            dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter)
             dismiss()
         }
     }
@@ -145,37 +148,33 @@ class DownloadLedgerDialog(
 
         }else{
             //email report
-            dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
+            val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
+            radioButton = findViewById(selectedOption)!!
+            optionFilter = getFilterString(radioButton.text.toString())
+            dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter, binding.editEmailId.text.toString())
             dismiss()
         }
     }
 
-    override fun onCheckedChanged(
-        p0: RadioGroup?,
-        p1: Int
-    ) {
-        val checkedRadioButton = p0?.findViewById(p0.checkedRadioButtonId) as? RadioButton
-        checkedRadioButton?.let {
-            if (checkedRadioButton.isChecked) {
-                val text = checkedRadioButton.text
-                Log.d("ledgerOption",checkedRadioButton.text.toString())
-
-                if (text.equals("Payment Due (POD Submitted)")) {
-                    optionFilter = "payment_due"
-                } else if (text.equals("Trips with Recovery")) {
-                    optionFilter = "trips_with_recovery"
-                } else if (text.equals("Settled")) {
-                    optionFilter = "settled"
-                } else {
-                    optionFilter = "all"
-                }
-
+    private fun getFilterString(text: String = ""): String {
+        return when (text) {
+            "Payment Due (POD Submitted)" -> {
+                "filter_trips_with_pending_payments"
+            }
+            "Trips with Recovery" -> {
+                "filter_trips_with_recoveries"
+            }
+            "Settled" -> {
+                "filter_settled_trips"
+            }
+            else -> {
+                "all"
             }
         }
     }
 }
 
 interface DownloadLedgerInterface{
-    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String)
-    fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int)
+    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String, optionFilter: String)
+    fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String)
 }

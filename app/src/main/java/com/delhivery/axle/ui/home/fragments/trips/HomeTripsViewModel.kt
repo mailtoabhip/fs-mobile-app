@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.DownloadLedgerInterface
 import com.delhivery.axle.ui.ledger.BaseConsolidatedPageRVAdapterItem
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -168,7 +169,7 @@ class HomeTripsViewModel @Inject constructor(
     return finalDate
   }
 
-  private fun generatePayloadDownloadEmailLedger(startDate: String, endDate: String, email: String = ""): JsonObject {
+  private fun generatePayloadDownloadEmailLedger(startDate: String, endDate: String, optionFilter: String = "all", email: String = ""): JsonObject {
     val root = JsonObject()
     val rangeFilterArray = JsonArray()
     val startObject = JsonObject()
@@ -187,6 +188,14 @@ class HomeTripsViewModel @Inject constructor(
 
     root.add("payee_id", JsonPrimitive(userRepository.userId()))
     root.add("range_filters", rangeFilterArray)
+
+    if (optionFilter.isNotNullOrEmpty()) {
+      if (optionFilter == "filter_trips_with_pending_payments"
+          || optionFilter == "filter_trips_with_recoveries"
+          || optionFilter == "filter_settled_trips") {
+        root.addProperty(optionFilter, true)
+      }
+    }
 
     if(email != "") {
       root.add("email_id", JsonPrimitive(email))
@@ -226,31 +235,31 @@ class HomeTripsViewModel @Inject constructor(
 
   }
 
-  fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, email: String = ""){
+  fun initiateDownloadAndEmail(type: String, startMonth:Int, startYear:Int,endMonth:Int, endYear:Int, optionFilter: String = "" ,email: String = ""){
     val startRange = generateDateString("startDate",startMonth,startYear.toString())
     val endRange = generateDateString("endDate",endMonth,endYear.toString())
 
     if (type == "email" && email != ""){
-      val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange,email)
+      val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange, optionFilter, email)
       emailVendorLedger(jsonObject)
     }else if(type == "download"){
-      val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange)
+      val jsonObject = generatePayloadDownloadEmailLedger(startRange,endRange, optionFilter)
       downloadVendorLedger(jsonObject)
     }
   }
 
-  override fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String) {
+  override fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String ,email: String) {
     Log.d("Email->","$startDate-$startMonth-$startYear---->$email")
     ledgerStartDate = startDate
     ledgerEndDate = endDate
-    initiateDownloadAndEmail("email", startMonth,startYear, endMonth, endYear,email)
+    initiateDownloadAndEmail("email", startMonth,startYear, endMonth, endYear, optionFilter, email)
   }
 
-  override fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int) {
+  override fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String) {
     Log.d("Download->","$endDate-$endMonth-$endYear")
     ledgerStartDate = startDate
     ledgerEndDate = endDate
     downloadPressed.postValue(true)
-    initiateDownloadAndEmail("download", startMonth,startYear, endMonth, endYear)
+    initiateDownloadAndEmail("download", startMonth,startYear, endMonth, endYear, optionFilter)
   }
 }

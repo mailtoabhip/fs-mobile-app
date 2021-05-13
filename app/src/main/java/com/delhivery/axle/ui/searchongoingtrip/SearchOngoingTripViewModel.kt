@@ -56,11 +56,9 @@ class SearchOngoingTripViewModel @Inject constructor(
       return
     }
 
-    if (paginate) {
-      showProgress()
-      /* add progress if not paginating */
-      Pair(SearchProgressItem(), AddUpdate).let { searchLiveData.postValue(listOf(it)) }
-    }
+    showProgress()
+    /* add progress if not paginating */
+    Pair(SearchProgressItem(), AddUpdate).let { searchLiveData.postValue(listOf(it)) }
 
     dataLoadingLiveData.postValue(true)
 

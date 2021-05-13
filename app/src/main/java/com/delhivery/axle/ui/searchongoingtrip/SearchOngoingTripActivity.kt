@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.databinding.ActivitySearchOngoingTripBinding
@@ -47,6 +48,13 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
       addOnScrollListener(PaginationInterface())
     }
 
+    viewModel.searchLiveData.observe(this, Observer {
+      adapter.resetStaticData()
+      if (it != null) {
+        adapter.operation(it)
+      }
+    })
+
     binding.editQuery.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
@@ -69,6 +77,8 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
 
             if (viewModel.searchText.length in 3..10) {
               refreshData()
+            } else {
+              adapter.resetStaticData()
             }
           }  catch (e: Exception) {
             binding.editQuery.error = e.message
