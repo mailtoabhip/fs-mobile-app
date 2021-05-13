@@ -9,8 +9,13 @@ import android.util.Log
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.search.SearchTimeOutAction
+import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchOngoingTripBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.PaginationScrollListener
 
 /**
@@ -117,7 +122,20 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     actionId: String,
     item: BaseSearchOngoingTripRVAdapterItem<*>
   ) {
+    when (actionId) {
+      HomeTripsRequestAction_ViewDetails -> {
+        val data = item.data as HomeTripsItemData
+        startActivity(tripDetailsIntent(data.key(), this, viewModel.tripType.typeText))
+      }
 
+       SearchWarningAction_NoResult -> {
+        refreshData()
+      }
+
+      SearchTimeOutAction -> {
+        refreshData()
+      }
+    }
   }
 
 }

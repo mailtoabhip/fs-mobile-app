@@ -13,6 +13,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.bids.TripType
+import com.delhivery.axle.ui.bids.TripType.Unknown
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -46,6 +48,7 @@ class SearchOngoingTripViewModel @Inject constructor(
   var total = 0
 
   var searchText = ""
+  var tripType: TripType = Unknown
   var request = SearchRequest()
 
   fun searchTrips(paginate: Boolean = false) {
