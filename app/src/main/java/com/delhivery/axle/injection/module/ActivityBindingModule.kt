@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
+import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
 import com.delhivery.axle.ui.searchtrip.SearchActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
@@ -161,6 +162,10 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsUserRoutesActivityModule::class])
   internal abstract fun bindUserRoutesActivity(): UserRoutesActivity
 
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchOngoingTripActivityModule::class])
+  internal abstract fun bindSearchOngoingTripActivity(): SearchOngoingTripActivity
+
   /* Consolidated page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
@@ -245,6 +250,9 @@ internal abstract class AbsUserRoutesActivityModule: ActivityModule<UserRoutesAc
 
 @Module
 internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<ConsolidatedPageActivity>()
+
+@Module
+internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 /**
  * Activity Binds Module

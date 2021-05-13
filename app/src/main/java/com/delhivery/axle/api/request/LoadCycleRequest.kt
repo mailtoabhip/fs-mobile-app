@@ -20,6 +20,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var operator: String? = "gte"
   var value: String? = null
   var issueTrips: Boolean?= false
+  var prefix: String? = null
 
   constructor(
     vehicleNumber: String? = null,
@@ -63,6 +64,10 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     issueTrips?.let {
       if (it) {
         jsonObject.addProperty("trips_with_issue", true)
+      }
+
+      prefix?.let {
+        jsonObject.addProperty("prefix", prefix)
       }
     }
     return jsonObject

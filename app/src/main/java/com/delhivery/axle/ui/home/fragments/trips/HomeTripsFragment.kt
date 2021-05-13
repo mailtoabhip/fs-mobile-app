@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.searchongoingtrip.searchOngoingTripIntent
 import com.delhivery.axle.utils.REQCODE_NO_TRIPS
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>()
@@ -118,6 +119,12 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.recoveryCard.setOnClickListener {
       context?.let {
         startActivity(userTripsIntent(context!!, "payment_view", 2))
+      }
+    }
+
+    binding.editStickySearch.setOnClickListener {
+      context?.let {
+        startActivity(searchOngoingTripIntent(context!!))
       }
     }
 
