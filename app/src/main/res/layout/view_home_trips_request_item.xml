@@ -120,7 +120,6 @@
             android:layout_height="5dp"
             android:src="@drawable/seprator_dotted">
 
-
         </androidx.appcompat.widget.AppCompatImageView>
 
         <androidx.appcompat.widget.AppCompatTextView

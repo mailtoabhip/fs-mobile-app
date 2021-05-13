@@ -162,7 +162,7 @@ class DownloadLedgerDialog(
                 "filter_trips_with_pending_payments"
             }
             "Trips with Recovery" -> {
-                "filter_trips_with_recoveries"
+                "filter_pending_recovery_trips"
             }
             "Settled" -> {
                 "filter_settled_trips"

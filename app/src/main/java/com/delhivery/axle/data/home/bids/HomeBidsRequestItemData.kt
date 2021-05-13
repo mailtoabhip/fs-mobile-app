@@ -57,6 +57,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
+  @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -223,6 +224,11 @@ data class HomeBidsRequestItemData(
    */
   @DrawableRes
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
+
+  /**
+   * @return truck_type with placed capacity
+   */
+  fun truckTypeWithCapacity() = "$truckType/${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
 
   /**
    * Formatted required at

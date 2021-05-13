@@ -73,6 +73,7 @@ data class HomeTripsItemData(
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
+  @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
   var payment: TripPaymentResponse? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -80,7 +81,8 @@ data class HomeTripsItemData(
   var tds: Int,
   var updatedTds: Double,
   var isSettled: Boolean = false,
-  var paymentStatus: String = ""
+  var paymentStatus: String = "",
+  var addressExpand: Boolean = false
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -354,6 +356,22 @@ data class HomeTripsItemData(
           .append(", ")
     }
     "LR: ${lrString.substring(0, lrString.length - 2)}"
+  } else {
+    ""
+  }
+
+  /**
+   * @return comma seperated lr numbers
+   */
+  fun allLRS() = if (lr.isNotNullOrEmpty()) {
+    lr
+  } else if (!lrDetails.isNullOrEmpty()) {
+    val lrString = StringBuilder()
+    lrDetails.forEach {
+      lrString.append(it.lr)
+          .append(", ")
+    }
+    lrString.substring(0, lrString.length - 2)
   } else {
     ""
   }
@@ -684,6 +702,12 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled)
+
+  /**
+   * pickup/destination icon resource
+   */
+  @DrawableRes
+  fun addressExpandRes() = DrawableProviderUtils.expandedRes(addressExpand)
 
 }
 

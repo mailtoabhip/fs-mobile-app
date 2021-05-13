@@ -154,7 +154,7 @@ class ConsolidatedPageViewModel @Inject constructor(
 
         if (optionFilter.isNotNullOrEmpty()) {
             if (optionFilter == "filter_trips_with_pending_payments"
-                || optionFilter == "filter_trips_with_recoveries"
+                || optionFilter == "filter_pending_recovery_trips"
                 || optionFilter == "filter_settled_trips") {
                 root.addProperty(optionFilter, true)
             }
@@ -173,7 +173,7 @@ class ConsolidatedPageViewModel @Inject constructor(
                 .subscribe{
                     _res,error ->
                     if(!error){
-                        Log.d("DOwnload response",""+_res)
+                        Log.d("Download response",""+_res)
                         downloadLoadingLiveData.postValue(_res)
                     }
                 }

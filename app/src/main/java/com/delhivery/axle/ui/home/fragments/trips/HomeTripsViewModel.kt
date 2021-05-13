@@ -191,7 +191,7 @@ class HomeTripsViewModel @Inject constructor(
 
     if (optionFilter.isNotNullOrEmpty()) {
       if (optionFilter == "filter_trips_with_pending_payments"
-          || optionFilter == "filter_trips_with_recoveries"
+          || optionFilter == "filter_pending_recovery_trips"
           || optionFilter == "filter_settled_trips") {
         root.addProperty(optionFilter, true)
       }

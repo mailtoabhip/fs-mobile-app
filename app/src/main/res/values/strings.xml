@@ -275,6 +275,7 @@
   <string name="label_payments">Payments</string>
   <string name="label_recoveries_adjusted">Recoveries Adjusted</string>
   <string name="label_pending_recovery">Pending Recovery</string>
+  <string name="call_driver">CALL DRIVER</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

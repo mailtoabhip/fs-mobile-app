@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.text.SpannableString
@@ -17,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
 import com.delhivery.axle.data.AwaitingPODUpload
@@ -46,6 +48,8 @@ import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import java.io.File
 import javax.inject.Inject
 
@@ -131,6 +135,33 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
     binding.refreshLayout.setOnRefreshListener {
       refreshData()
+    }
+
+    binding.llPickupDestination.setOnClickListener {
+      viewModel.tripDetail.addressExpand = !viewModel.tripDetail.addressExpand
+      binding.tripDetails = viewModel.tripDetail
+    }
+
+    binding.callDriverText.setOnClickListener {
+      compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+          .onBackground()
+          .subscribe { granted, error ->
+            if (error == null && granted) {
+              when (viewModel.tripDetail.driverDetails?.driverPhoneNo?.let { it1 ->
+                contactUtils.callDriver(
+                    it1
+                )
+              }) {
+                false -> {
+                  uiUtils.showSnackbar("Unable to place call")
+                }
+                else -> {
+                }
+              }
+            } else {
+              uiUtils.showSnackbar(getString(string.msg_call_permission))
+            }
+          }
     }
 
     refreshData()
