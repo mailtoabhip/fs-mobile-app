@@ -6,8 +6,11 @@ import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
+import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
+import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.data.home.trips.TripStatus.Unknown
 import com.delhivery.axle.ui.bids.TripType
@@ -82,7 +85,8 @@ data class HomeTripsItemData(
   var updatedTds: Double,
   var isSettled: Boolean = false,
   var paymentStatus: String = "",
-  var addressExpand: Boolean = false
+  var addressExpand: Boolean = false,
+  var isDelayed: Boolean = false
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -244,6 +248,15 @@ data class HomeTripsItemData(
           DateUtils.parseDate(it, OrionDateFormat), format
       )
     } ?: ""
+
+  /**
+   * promise date visibility
+   */
+  fun promiseDateVisibility() = if (tripStatus == TripStatus.In_Transit.statusKey) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
 
   /**
    * Formatted required at
@@ -434,6 +447,49 @@ data class HomeTripsItemData(
       else unloadingTime?.let {
         getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
       } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * ageing since truck is arrived
+   */
+  fun loadedAgeing() = when (tripStatus) {
+    TruckArrived.statusKey -> {
+      updateInfo?.loadedInfo?.let {
+        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+      } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * ageing since truck is reached
+   */
+  fun unloadedAgeing() = when (tripStatus) {
+    TruckReached.statusKey -> {
+      updateInfo?.truckReachedInfo?.let {
+        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+      } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * return ageing basis trip status
+   */
+  fun showAgeing() = when (tripStatus) {
+    TruckArrived.statusKey -> {
+      loadedAgeing()
+    }
+    TruckReached.statusKey -> {
+      unloadedAgeing()
     }
     else -> {
       ""

@@ -84,18 +84,32 @@
           android:layout_height="wrap_content">
 
         <RadioButton
-            android:id="@+id/all"
+            android:id="@+id/filter1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            tools:text="All"/>
+            tools:text="Filter1"/>
 
         <RadioButton
-            android:id="@+id/issued_trips"
+            android:id="@+id/filter2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            tools:text="Trips with issue (34)"/>
+            tools:text="Filter2"/>
+
+        <RadioButton
+            android:id="@+id/filter3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            tools:text="Filter3"/>
+
+        <RadioButton
+            android:id="@+id/filter4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            tools:text="Filter4"/>
 
       </RadioGroup>
 

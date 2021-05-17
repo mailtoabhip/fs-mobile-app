@@ -1,16 +1,22 @@
 package com.delhivery.axle.ui.bids
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
@@ -24,6 +30,7 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
@@ -31,7 +38,13 @@ import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_TRIP
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.toDate
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Calendar
+import java.util.Date
 
 /**
  * Created by saurabh
@@ -99,6 +112,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   }
 
+  @RequiresApi(VERSION_CODES.N)
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -221,12 +235,64 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     }
 
     binding.filterIcon.setOnClickListener {
-      val filter1 = "All Trips " + "(" + viewModel.total.toString() + ")"
-      val filter2 = "Trips with the issue " + "(" + viewModel.issueTripsCount.toString() + ")"
-      TripsFilterDialog(this, filter1, filter2, viewModel).show()
+      if (viewModel.filterList.isNotEmpty() && viewModel.filterList.size <= 4) {
+        TripsFilterDialog(this, viewModel.filterList, viewModel).show()
+      }
+    }
+
+    binding.llLoadedFilter.setOnClickListener {
+      if (viewModel.loadingDateFilter) {
+        binding.toggleRemovedLoadedFilter.visibility = View.GONE
+        binding.loadedAfter.text = "Loaded after"
+        viewModel.loadingDateFilter = false
+        viewModel.month = -1
+        viewModel.year = -1
+        fetchTripDetails()
+      } else {
+        binding.toggleRemovedLoadedFilter.visibility = View.VISIBLE
+        viewModel.loadingDateFilter = true
+        openDatePicker()
+      }
+    }
+
+    binding.llSettledFilter.setOnClickListener {
+      if (viewModel.isSettledFilter) {
+        binding.toggleRemovedSettle.visibility = View.GONE
+        viewModel.isSettledFilter = false
+      } else {
+        binding.toggleRemovedSettle.visibility = View.VISIBLE
+        viewModel.isSettledFilter = true
+      }
+      fetchTripDetails()
     }
 
     refreshData()
+  }
+
+  @SuppressLint("SetTextI18n")
+  @RequiresApi(Build.VERSION_CODES.N)
+  private fun openDatePicker(){
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(this, {
+      view, year, monthOfYear, dayOfMonth ->
+      viewModel.date = dayOfMonth
+      viewModel.month = monthOfYear
+      viewModel.year = year
+      var month = monthOfYear + 1
+      viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
+      binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
+      if (viewModel.loadingDate.isNotNullOrEmpty()) {
+        fetchTripDetails()
+      } else {
+        uiUtils.showSnackbar("Please choose valid date")
+      }
+    }, year, month, day)
+
+    datePickerDialog.show()
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
@@ -234,6 +300,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   }
 
   private fun fetchTripDetails() {
+    viewModel.request = SearchRequest()
     adapter.setItems(getStaticItems())
     viewModel.fetchTrips(false)
   }
@@ -324,6 +391,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     when {
       viewModel.viewType.equals("trips_view") -> {
 
+        binding.llAllTripFilters.visibility = View.GONE
         binding.paymentsFilterView.visibility = View.GONE
         binding.tripsFilterView.visibility = View.VISIBLE
         binding.txtTotalPending.visibility = View.GONE
@@ -331,6 +399,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         when (viewModel.tripType) {
           Companion.byTypeId(0) -> {
 
+            binding.filterIcon.visibility = View.GONE
             binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
@@ -351,6 +420,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
           }
           Companion.byTypeId(1) -> {
 
+            binding.filterIcon.visibility = View.VISIBLE
             binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewInTransit.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
@@ -368,9 +438,13 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
             binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
 
+            viewModel.filterList = listOf("All", "Delayed")
+            viewModel.filterKey = "loaded_after"
+
           }
           Companion.byTypeId(2) -> {
 
+            binding.filterIcon.visibility = View.VISIBLE
             binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
@@ -388,9 +462,13 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
             binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
 
+            viewModel.filterList = listOf("Less than 1 day", "1 day", "2 days", "3 days +")
+            viewModel.filterKey = "arrived_ageing"
+
           }
           else -> {
 
+            binding.filterIcon.visibility = View.VISIBLE
             binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
@@ -408,11 +486,15 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
             binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
 
+            viewModel.filterList = listOf("Less than 1 day", "1 day", "2 days", "3 days +")
+            viewModel.filterKey = "reached_ageing"
+
           }
         }
       }
       viewModel.viewType.equals("payment_view") -> {
 
+        binding.llAllTripFilters.visibility = View.GONE
         binding.paymentsFilterView.visibility = View.VISIBLE
         binding.tripsFilterView.visibility = View.GONE
         binding.txtTotalPending.visibility = View.VISIBLE
@@ -420,6 +502,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         when (viewModel.viewPaymentType) {
           ViewPaymentType.byTypeId(0) -> {
 
+            binding.filterIcon.visibility = View.GONE
             binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
@@ -436,6 +519,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
           }
           ViewPaymentType.byTypeId(1) -> {
 
+            binding.filterIcon.visibility = View.VISIBLE
             binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
@@ -449,9 +533,13 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.id3.setTextColor(resources.getColor(R.color.black))
             binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
 
+            viewModel.filterList = listOf("All", "Trips with the issue")
+            viewModel.filterKey = "trips_with_issue"
+
           }
           else -> {
 
+            binding.filterIcon.visibility = View.GONE
             binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
@@ -471,6 +559,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
       else -> {
 
+        binding.filterIcon.visibility = View.GONE
+        binding.llAllTripFilters.visibility = View.VISIBLE
         binding.paymentsFilterView.visibility = View.GONE
         binding.tripsFilterView.visibility = View.GONE
         binding.txtTotalPending.visibility = View.GONE

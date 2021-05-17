@@ -23,13 +23,20 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.delhivery.axle.utils.extensions.toDate
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -75,6 +82,15 @@ class TripsViewModel @Inject constructor(
   var issueTripsCount = 0
   var tripsFilter = ""
   var tripsCountText = ""
+  var filterList: List<String> = listOf()
+  var filterKey: String = ""
+  var loadingDateFilter: Boolean = false
+  var loadingDate: String = ""
+  var isSettledFilter: Boolean = false
+
+  var date = -1
+  var month = -1
+  var year = -1
 
   /**
    * Fetch trips summary
@@ -125,8 +141,29 @@ class TripsViewModel @Inject constructor(
     request.offset = offset
     request.limit = UserSearchLimit
     request.vendorId = userRepository.userId()
-    if (tripsFilter == "issue_trips") {
-      request.issueTrips = true
+    when (tripsFilter) {
+      "issue_trips" -> {
+        request.issueTrips = true
+      }
+      "less_than_1_day", "1_day", "2_days", "more_than_3_days" -> {
+        if (filterKey == "arrived_ageing") {
+          request.arrivedAgeing = tripsFilter
+        } else {
+          request.reachedAgeing = tripsFilter
+        }
+      }
+      "delayed" -> {
+        request.delayed = true
+      }
+      else -> {
+
+      }
+    }
+    if (loadingDateFilter) {
+      request.loadedAfter = generateDateString(month, year.toString())
+    }
+    if (isSettledFilter) {
+      request.settledTrips = true
     }
     when {
       viewType.equals("all") -> {
@@ -177,6 +214,17 @@ class TripsViewModel @Inject constructor(
                   trip.tds = userPrefs.tdsRate
                   trip.updatedTds = userPrefs.updatedTdsRate
                   try {
+                    if (trip.tripStatus == TripStatus.In_Transit.statusKey) {
+                      val currentTime = Calendar.getInstance()
+                      val promiseDate = trip.promiseDate?.let { it } ?: ""
+                      if (DateUtils.parseDate(promiseDate, DatePatterns.OrionDateFormat).time > currentTime.timeInMillis) {
+                        trip.isDelayed = true
+                      }
+                    }
+                  } catch (e: Exception) {
+                    Log.d("No PD found for: ", trip.transactionId)
+                  }
+                  try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
                     }[0]
@@ -202,6 +250,37 @@ class TripsViewModel @Inject constructor(
 
           dataLoadingLiveData.postValue(false)
         }
+  }
+
+  /**
+   * generate date string
+   */
+  private fun generateDateString(monthNumber: Int, year: String): String {
+    val parser = SimpleDateFormat("yy")
+    val formatter = SimpleDateFormat("yyyy")
+    var fullYear = formatter.format(parser.parse(year)).toInt()
+
+    val calendar = Calendar.getInstance()
+    calendar.set(fullYear, monthNumber, 1)
+
+    var endDay = calendar.getActualMaximum(Calendar.DATE).toString()
+    var startDay = "01"
+
+    var month = "" + (monthNumber + 1)
+    if (month.length == 1) {
+      month = "0$month"
+    }
+
+    var finalDate = ""
+    if (date != -1) {
+      endDay = date.toString()
+      if(endDay.length == 1){
+        endDay = "0$endDay"
+      }
+      date = -1
+    }
+    finalDate = "" + fullYear + "-" + month + "-" + endDay + "T23:59:59"
+    return finalDate
   }
 
   override fun onConfirmClick(filter: String) {

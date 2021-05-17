@@ -175,6 +175,6 @@ class DownloadLedgerDialog(
 }
 
 interface DownloadLedgerInterface{
-    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String, optionFilter: String)
+    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String, email: String)
     fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String)
 }

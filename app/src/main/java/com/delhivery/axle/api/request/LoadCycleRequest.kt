@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.request
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
@@ -21,6 +22,11 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var value: String? = null
   var issueTrips: Boolean?= false
   var prefix: String? = null
+  var loadedAfter: String?=  null
+  var settledTrips: Boolean?= false
+  var arrivedAgeing: String? = null
+  var reachedAgeing: String?= null
+  var delayed: Boolean?= false
 
   constructor(
     vehicleNumber: String? = null,
@@ -49,6 +55,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
     updatedAfter?.let { if (it.isNotEmpty()) jsonObject.addProperty("updated_after", it) }
+    loadedAfter?.let { if (it.isNotNullOrEmpty()) jsonObject.addProperty("loaded_after", it) }
     offset?.let { jsonObject.addProperty("offset", it) }
     limit?.let { jsonObject.addProperty("limit", it) }
     value?.let {
@@ -65,11 +72,35 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
       if (it) {
         jsonObject.addProperty("trips_with_issue", true)
       }
+    }
+
+    settledTrips?.let {
+      if (it) {
+        jsonObject.addProperty("is_ap_recon_pending", true)
+      }
+    }
+
+    delayed?.let {
+      if (it) {
+        jsonObject.addProperty("delayed", true)
+      }
+    }
+
+    arrivedAgeing?.let {
+      jsonObject.addProperty("frm_arrived", arrivedAgeing)
+    }
+
+    reachedAgeing?.let {
+      jsonObject.addProperty("frm_reached", reachedAgeing)
+    }
 
       prefix?.let {
         jsonObject.addProperty("prefix", prefix)
       }
-    }
+
+    jsonObject.addProperty("sort_by", "loaded")
+    jsonObject.addProperty("sort_dir", "desc")
+
     return jsonObject
   }
 

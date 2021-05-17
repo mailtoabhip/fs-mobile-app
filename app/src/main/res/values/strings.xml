@@ -66,7 +66,7 @@
   <string name="hint_otp_digit" />
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
-  <string name="hint_search_trips">Vehicle / Destination / LR</string>
+  <string name="hint_search_trips">Vehicle / Destination</string>
   <string name="hint_search_trip">Search Trip</string>
   <string name="hint_search_bids">Origin / Destination</string>
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
@@ -268,6 +268,8 @@
   <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
   <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
   <string name="express">Express</string>
+  <string name="loading_filter">Loaded after: </string>
+  <string name="settled_filter">Only settled</string>
   <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
   <string name="lowest_bid_text">You currently have the lowest bid</string>
   <string name="bid_stand_label">Where do you stand?</string>

@@ -31,7 +31,7 @@ enum class TripType(
       "Awaiting Arrival", "Awaiting Arrival Trips"
   ),
   InTransit(
-      1, listOf(TruckReached.statusKey, In_Transit.statusKey, TruckLoaded.statusKey),
+      1, listOf(TruckReached.statusKey, In_Transit.statusKey),
       "InTransit", "InTransit Trips"
   ),
   AwaitingLoading(

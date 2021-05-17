@@ -15,12 +15,15 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.Unknown
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -112,6 +115,17 @@ class SearchOngoingTripViewModel @Inject constructor(
                 for (trip in trips) {
                   trip.tds = userPrefs.tdsRate
                   trip.updatedTds = userPrefs.updatedTdsRate
+                  try {
+                    if (trip.tripStatus == TripStatus.In_Transit.statusKey) {
+                      val currentTime = Calendar.getInstance()
+                      val promiseDate = trip.promiseDate?.let { it } ?: ""
+                      if (DateUtils.parseDate(promiseDate, DatePatterns.OrionDateFormat).time > currentTime.timeInMillis) {
+                        trip.isDelayed = true
+                      }
+                    }
+                  } catch (e: Exception) {
+                    Log.d("No PD found for: ", trip.transactionId)
+                  }
                   try {
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
