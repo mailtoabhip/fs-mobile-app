@@ -9,6 +9,7 @@ import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckLoaded
 import com.delhivery.axle.data.home.trips.TripStatus.Recovery
+import com.delhivery.axle.data.home.trips.TripStatus.TripCompleted
 
 /**
  * Created by saurabh
@@ -31,7 +32,7 @@ enum class TripType(
       "Awaiting Arrival", "Awaiting Arrival Trips"
   ),
   InTransit(
-      1, listOf(TruckReached.statusKey, In_Transit.statusKey),
+      1, listOf(In_Transit.statusKey),
       "InTransit", "InTransit Trips"
   ),
   AwaitingLoading(
@@ -81,11 +82,11 @@ enum class ViewPaymentType(
       "Advance Pending", "Advance Pending Trips"
   ),
   BalancePending(
-      1, listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey),
+      1, listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey, TripCompleted.statusKey),
       "Balance Pending", "Balance Pending Trips "
   ),
   RecoveryPending(
-      2, listOf(Recovery.statusKey),
+      2, listOf(TripCompleted.statusKey),
       "Recovery Pending", "Recovery Pending Trips "
   );
 
@@ -106,7 +107,7 @@ enum class ViewPaymentType(
     fun byStatus(_status: String) = when (_status) {
       TruckArrived.statusKey, TruckConfirmed.statusKey -> AdvancePending
       TruckUnloaded.statusKey, EPodUploaded.statusKey -> BalancePending
-      Recovery.statusKey -> RecoveryPending
+      TripCompleted.statusKey -> RecoveryPending
       else -> NA
     }
 

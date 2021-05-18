@@ -15,8 +15,12 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.bids.TripType.AwaitingUnloading
+import com.delhivery.axle.ui.bids.TripType.InTransit
 import com.delhivery.axle.ui.bids.TripType.Unknown
+import com.delhivery.axle.ui.bids.ViewPaymentType.BalancePending
 import com.delhivery.axle.ui.bids.ViewPaymentType.NA
+import com.delhivery.axle.ui.bids.ViewPaymentType.RecoveryPending
 import com.delhivery.axle.ui.dialogs.FilterTripsInterface
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
@@ -135,6 +139,7 @@ class TripsViewModel @Inject constructor(
       add(TripStatus.TruckReached.statusKey)
       add(TripStatus.TruckUnloaded.statusKey)
       add(TripStatus.EPodUploaded.statusKey)
+      add(TripStatus.TripCompleted.statusKey)
     }
         .joinToString(separator = ",") { it }
 
@@ -173,7 +178,8 @@ class TripsViewModel @Inject constructor(
         request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
       }
       else -> {
-        request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+        // request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+        request.operationTripStatus = tripType.status[0]
       }
     }
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
@@ -193,6 +199,11 @@ class TripsViewModel @Inject constructor(
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
           jsonObject.addProperty("limit", 10)
+          if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
+            jsonObject.addProperty("bucket_type", "balance")
+          } else if (viewType.equals("payment_view") && viewPaymentType == RecoveryPending) {
+            jsonObject.addProperty("bucket_type", "recovery")
+          }
           tripsRepository.bulkPayments(t.trips, jsonObject)
         }
         .onBackground()
@@ -217,7 +228,7 @@ class TripsViewModel @Inject constructor(
                     if (trip.tripStatus == TripStatus.In_Transit.statusKey) {
                       val currentTime = Calendar.getInstance()
                       val promiseDate = trip.promiseDate?.let { it } ?: ""
-                      if (DateUtils.parseDate(promiseDate, DatePatterns.OrionDateFormat).time > currentTime.timeInMillis) {
+                      if (DateUtils.parseDate(promiseDate, OrionDateFormat).time < currentTime.timeInMillis) {
                         trip.isDelayed = true
                       }
                     }
@@ -228,6 +239,7 @@ class TripsViewModel @Inject constructor(
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
                     }[0]
+
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }

@@ -15,6 +15,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.TripType.Unknown
+import com.delhivery.axle.ui.bids.ViewPaymentType.BalancePending
+import com.delhivery.axle.ui.bids.ViewPaymentType.RecoveryPending
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.not
@@ -76,6 +78,7 @@ class SearchOngoingTripViewModel @Inject constructor(
       add(TripStatus.TruckReached.statusKey)
       add(TripStatus.TruckUnloaded.statusKey)
       add(TripStatus.EPodUploaded.statusKey)
+      add(TripStatus.TripCompleted.statusKey)
     }
         .joinToString(separator = ",") { it }
 
@@ -119,7 +122,7 @@ class SearchOngoingTripViewModel @Inject constructor(
                     if (trip.tripStatus == TripStatus.In_Transit.statusKey) {
                       val currentTime = Calendar.getInstance()
                       val promiseDate = trip.promiseDate?.let { it } ?: ""
-                      if (DateUtils.parseDate(promiseDate, DatePatterns.OrionDateFormat).time > currentTime.timeInMillis) {
+                      if (DateUtils.parseDate(promiseDate, DatePatterns.OrionDateFormat).time < currentTime.timeInMillis) {
                         trip.isDelayed = true
                       }
                     }

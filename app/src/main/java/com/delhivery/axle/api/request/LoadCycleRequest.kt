@@ -27,6 +27,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var arrivedAgeing: String? = null
   var reachedAgeing: String?= null
   var delayed: Boolean?= false
+  var operationTripStatus: String?= null
 
   constructor(
     vehicleNumber: String? = null,
@@ -47,6 +48,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   fun getRequest(): JsonObject {
     val jsonObject = JsonObject()
     tripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("status_list", it) }
+    operationTripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("trip_status", it) }
     vehicleNumber?.let {
       if (it.isNotEmpty()) jsonObject.addProperty(
           "vehicle_number", it.toUpperCase()

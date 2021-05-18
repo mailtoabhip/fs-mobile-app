@@ -6,9 +6,11 @@ import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.InTransit
 import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
+import com.delhivery.axle.data.home.trips.TripStatus.In_Transit
 import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
 import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
@@ -114,6 +116,13 @@ data class HomeTripsItemData(
    */
   fun tripStatusText(): String {
     val status = tripStatus.let { TripStatus.byKey(it) }
+    reachedTime?.let {
+      if (reachedTime.isNotNullOrEmpty()) {
+        if (tripStatus == "in_transit") {
+          return "Truck Reached"
+        }
+      }
+    }
     return status.status
   }
 
@@ -248,6 +257,15 @@ data class HomeTripsItemData(
           DateUtils.parseDate(it, OrionDateFormat), format
       )
     } ?: ""
+
+  /**
+   * @return set delayed text visibility
+   */
+  fun delayedVisibility() = if (isDelayed) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
 
   /**
    * promise date visibility
@@ -434,8 +452,13 @@ data class HomeTripsItemData(
     val diffInMillisec = today.timeInMillis - arrived.time
     val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
         .toInt()
+    var minsDiff = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec).toInt()
+    val hrsDiff = TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()
+    if (hrsDiff >=1 ) {
+      minsDiff -= hrsDiff * 60
+    }
     return if (daysDiff >= 1) "$prefix $daysDiff days"
-    else "$prefix${TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()} hrs"
+    else "$prefix${TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()} hrs ${minsDiff} mins"
   }
 
   /**
@@ -471,7 +494,7 @@ data class HomeTripsItemData(
    * ageing since truck is reached
    */
   fun unloadedAgeing() = when (tripStatus) {
-    TruckReached.statusKey -> {
+    TruckReached.statusKey, In_Transit.statusKey -> {
       updateInfo?.truckReachedInfo?.let {
         getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
       } ?: ""
@@ -488,7 +511,7 @@ data class HomeTripsItemData(
     TruckArrived.statusKey -> {
       loadedAgeing()
     }
-    TruckReached.statusKey -> {
+    TruckReached.statusKey, In_Transit.statusKey -> {
       unloadedAgeing()
     }
     else -> {

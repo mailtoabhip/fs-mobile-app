@@ -199,13 +199,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
-        viewModel.fetchPaymentSummary()
-        viewModel.fetchChargeSummary()
+        // viewModel.fetchPaymentSummary()
+        // viewModel.fetchChargeSummary()
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
-        viewModel.fetchTripRecoveries()
+        viewModel.fetchDNRecoveries()
+        viewModel.fetchOverpaymentRecoveries()
         viewModel.fetchCollectionSummary()
-        viewModel.fetchListInvoices()
+        // viewModel.fetchListInvoices()
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"

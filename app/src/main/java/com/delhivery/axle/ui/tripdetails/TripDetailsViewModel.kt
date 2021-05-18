@@ -33,6 +33,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -251,7 +252,7 @@ class TripDetailsViewModel @Inject constructor(
                     for (charge in _res){
                       var subtitle = ""
                       if (charge.days > 0) {
-                        subtitle = charge.days.toString() + " days"
+                        subtitle = "(" + charge.days.toString() + " days)"
                       }
                       if (charge.action == "deduct") {
                         deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
@@ -290,13 +291,24 @@ class TripDetailsViewModel @Inject constructor(
                   _res.let {
                     paymentSummaryList.clear()
                     for (charge in _res){
-                      if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
-                        paymentSettled = true
+                      if (charge.status != "success") {
+                        continue
                       }
-                      if (charge.utrNumber.isNotNullOrEmpty()) {
-                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, charge.amount, charge.transferTime))
-                      } else {
-                        paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, charge.transferTime))
+                      charge.transferTime?.let {
+                        var newAmount = charge.amount
+                        val tdsObj = TDS(charge.amount, charge.transferTime)
+                        val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
+                        newAmount -= tds
+                        if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
+                          paymentSettled = true
+                        }
+                        val time = DateUtils.formatDate(
+                            DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
+                        if (charge.utrNumber.isNotNullOrEmpty()) {
+                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time))
+                        } else {
+                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, time))
+                        }
                       }
                       //newPaymentSummary.add(charge)
                     }
@@ -334,14 +346,14 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
-   * Fetch Trip Recoveries
+   * Fetch DN Recoveries
    */
-  fun fetchTripRecoveries(){
+  fun fetchDNRecoveries(){
     val jsonObject = JsonObject()
     val jsonList = JsonArray()
     jsonList.add(transactionId)
     jsonObject.add("trip_ids", jsonList)
-    compositeDisposable += payableRepository.listTripRecoveries(jsonObject)
+    compositeDisposable += payableRepository.listDNRecoveries(jsonObject)
         .onBackground()
         .progress()
         .subscribe {
@@ -349,15 +361,54 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             pendingRecoveryList.clear()
             recoveriesSummaryList.clear()
-            for (recovery in _res) {
-              if (recovery.pendingRecoveryAmount > 0) {
-                pendingRecoveryList.add(
-                    TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
-                )
-              } else {
-                recovery.recoveryData?.let {
-                  for (data in recovery.recoveryData) {
-                    recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, ""))
+            if (_res.isNotEmpty()) {
+              for (recovery in _res) {
+                if (recovery.pendingRecoveryAmount > 0) {
+                  pendingRecoveryList.add(
+                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
+                  )
+                } else {
+                  recovery.recoveryData?.let {
+                    for (data in recovery.recoveryData) {
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, ""))
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            error.handle()
+          }
+        }
+  }
+
+  /**
+   * Fetch Overpayment Recoveries
+   */
+  fun fetchOverpaymentRecoveries(){
+    val jsonObject = JsonObject()
+    val jsonList = JsonArray()
+    jsonList.add(transactionId)
+    jsonObject.add("trip_ids", jsonList)
+    compositeDisposable += payableRepository.listOverpaymentRecoveries(jsonObject)
+        .onBackground()
+        .progress()
+        .subscribe {
+          _res, error ->
+          if (!error && _res != null) {
+            pendingRecoveryList.clear()
+            recoveriesSummaryList.clear()
+            if (_res.isNotEmpty()) {
+              for (recovery in _res) {
+                if (recovery.pendingRecoveryAmount > 0) {
+                  pendingRecoveryList.add(
+                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
+                  )
+                } else {
+                  recovery.recoveryData?.let {
+                    for (data in recovery.recoveryData) {
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber))
+                    }
                   }
                 }
               }

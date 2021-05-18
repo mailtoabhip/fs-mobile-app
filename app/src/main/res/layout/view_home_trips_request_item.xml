@@ -150,6 +150,22 @@
             />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_delayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/colorDelhiveryRed"
+            android:text="(Delayed)"
+            android:visibility="@{trip.delayedVisibility()}"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            app:layout_constraintStart_toEndOf="@+id/text_promise_date"
+            app:layout_constraintTop_toBottomOf="@id/text_driver_details"
+            tools:text="(Delayed)"
+            tools:visibility="visible"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_ageing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

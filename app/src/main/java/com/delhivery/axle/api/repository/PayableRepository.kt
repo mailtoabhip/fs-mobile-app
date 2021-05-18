@@ -62,11 +62,18 @@ class PayableRepository @Inject constructor(
     ) = payableService.listInvoices(tripId).convertResponse()
 
   /**
-   * List trip recoveries
+   * List dn recoveries
    */
-  fun listTripRecoveries(
+  fun listDNRecoveries(
     payload: JsonObject
-  ) = payableService.listTripRecoveries(payload).convertResponse()
+  ) = payableService.listDNRecoveries(payload).convertResponse()
+
+  /**
+   * List overpayment recoveries
+   */
+  fun listOverpaymentRecoveries(
+    payload: JsonObject
+  ) = payableService.listOverpaymentRecoveries(payload).convertResponse()
 
 }
 

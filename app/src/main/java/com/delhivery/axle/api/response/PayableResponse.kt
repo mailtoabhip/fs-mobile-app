@@ -64,6 +64,23 @@ data class RecoveryData(
         @SerializedName("trip_id") val recoveryTripId: String
 )
 
+data class OverpaymentRecoveryResponse(
+  @SerializedName("utr") val utr: String,
+  @SerializedName("trip_id") val tripId: String,
+  @SerializedName("type") val Type: String,
+  @SerializedName("total_recovery_amount") val TotalRecoveryAmount: Double,
+  @SerializedName("pending_recovery") val pendingRecoveryAmount: Double,
+  @SerializedName("recovery_data") val recoveryData: List<OverpaymentRecoveryData>?
+)
+
+data class OverpaymentRecoveryData(
+  @SerializedName("recovery_amount") val recoveryAmount: Double,
+  @SerializedName("trip_id") val recoveryTripId: String,
+  @SerializedName("utr_number") val utrNumber: String
+)
+
+
+
 data class TDS(
         @SerializedName("amount") val amount: Double,
         @SerializedName("pmt_success_date") val pmtSuccessDate: String
