@@ -25,7 +25,7 @@ import com.delhivery.axle.ui.dialogs.FilterTripsInterface
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoTrips
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
@@ -217,7 +217,7 @@ class TripsViewModel @Inject constructor(
 
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
-                add(Pair(HomeTripsWarningItem_NoLoads, AddUpdate))
+                add(Pair(HomeTripsWarningItem_NoTrips, AddUpdate))
               }
               /* post all trips with their respective payments as add */
               else {

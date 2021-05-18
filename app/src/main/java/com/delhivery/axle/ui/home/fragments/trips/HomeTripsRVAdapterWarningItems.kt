@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
+import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoTrips
 import com.delhivery.axle.data.home.trips.HomeTripsWarningItemData
 
 /**
@@ -9,11 +9,11 @@ import com.delhivery.axle.data.home.trips.HomeTripsWarningItemData
  *
  * @Zeplin https://zpl.io/2pvmPol
  */
-val HomeTripsWarningItem_NoLoads = HomeTripsWarningItem(
+val HomeTripsWarningItem_NoTrips = HomeTripsWarningItem(
     HomeTripsWarningItemData(
         "No Trips found",
         "Start bidding now !",
-        "View Available Load", HomeTripsWarningAction_NoLoads
+        "View Trips Summary", HomeTripsWarningAction_NoTrips
     )
 )
 

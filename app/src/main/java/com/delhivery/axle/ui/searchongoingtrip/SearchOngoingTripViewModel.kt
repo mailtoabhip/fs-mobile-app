@@ -111,7 +111,7 @@ class SearchOngoingTripViewModel @Inject constructor(
 
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
-                 add(Pair(SearchOngoingTripWarningItem_NoResult, AddUpdate))
+                 add(Pair(SearchOngoingTripsWarningItem_NoResult, AddUpdate))
               }
               /* post all trips with their respective payments as add */
               else {

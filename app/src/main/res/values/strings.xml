@@ -66,7 +66,7 @@
   <string name="hint_otp_digit" />
   <string name="hint_enter_city_name">Enter city name</string>
   <string name="hint_search_load">Search load</string>
-  <string name="hint_search_trips">Vehicle / Destination</string>
+  <string name="hint_search_trips">Vehicle / Destination / LR </string>
   <string name="hint_search_trip">Search Trip</string>
   <string name="hint_search_bids">Origin / Destination</string>
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>

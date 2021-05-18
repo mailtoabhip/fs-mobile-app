@@ -20,7 +20,7 @@ import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
+import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoTrips
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
@@ -328,7 +328,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       HomeTripsTimeOutAction -> {
         refreshData()
       }
-      HomeTripsWarningAction_NoLoads -> {
+      HomeTripsWarningAction_NoTrips -> {
         setResult(RESULT_OK)
         finish()
       }
