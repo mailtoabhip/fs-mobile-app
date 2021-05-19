@@ -49,6 +49,7 @@ data class HomeTripsItemData(
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("unloaded_time") val unloadingTime: String?,
   @SerializedName("required_on") val requiredOn: String,
+  @SerializedName("required_on_time") val requiredOnTime: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
@@ -209,8 +210,8 @@ data class HomeTripsItemData(
    * @return formatted display time
    */
   private fun displayTime() = when (tripStatus) {
-    TripStatus.TruckConfirmed.statusKey -> requiredOn
-    else -> arrivalTime ?: requiredOn
+    TripStatus.TruckConfirmed.statusKey -> requiredOnTime
+    else -> arrivalTime ?: requiredOnTime
   }
 
   /**
@@ -270,7 +271,7 @@ data class HomeTripsItemData(
   /**
    * promise date visibility
    */
-  fun promiseDateVisibility() = if (tripStatus == TripStatus.In_Transit.statusKey) {
+  fun promiseDateVisibility() = if (tripStatus == In_Transit.statusKey) {
     View.VISIBLE
   } else {
     View.GONE
@@ -481,7 +482,7 @@ data class HomeTripsItemData(
    */
   fun loadedAgeing() = when (tripStatus) {
     TruckArrived.statusKey -> {
-      updateInfo?.loadedInfo?.let {
+      updateInfo?.truckArrivedInfo?.let {
         getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
       } ?: ""
     }

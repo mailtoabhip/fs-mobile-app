@@ -13,7 +13,8 @@ import com.delhivery.axle.utils.StringUtils
 data class TripPaymentSummaryItemData (
   var title: String,
   var itemSummary: List<TripPaymentSummaryDetailItemData>,
-  var expanded: Boolean = false
+  var expanded: Boolean = false,
+  var amount: Double ?= 0.0
 
 ) : BaseKeyTypeModel<String>() {
 
@@ -25,6 +26,8 @@ data class TripPaymentSummaryItemData (
       total += summary.amount
     }
     "₹ ${StringUtils.formatAmount(total)}"
+  } else if (title == "Pending Payment/Recovery") {
+    "₹ ${StringUtils.formatAmount(amount ?: 0.0)}"
   } else {
     ""
   }

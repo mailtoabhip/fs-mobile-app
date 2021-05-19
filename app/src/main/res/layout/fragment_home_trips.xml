@@ -9,570 +9,587 @@
         name="viewModel"
         type="com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel"
         />
+
+    <import type="android.view.View" />
   </data>
 
-  <androidx.appcompat.widget.LinearLayoutCompat
+  <ScrollView
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      >
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorBackground"
+        android:layout_height="wrap_content"
         >
 
-      <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-          android:id="@+id/refresh_layout"
+      <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- your team container -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/container_your_team"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorBackground"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_4dp"
             >
 
-          <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-              android:id="@+id/edit_sticky_search"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/size_72dp"
-              android:gravity="center_vertical"
-              android:hint="@string/hint_search_trip"
-              android:imeOptions="actionSearch"
-              android:maxLines="1"
-              android:paddingBottom="@dimen/size_16dp"
-              android:paddingStart="@dimen/size_56dp"
-              android:singleLine="true"
-              android:textColorHint="@color/color_hint"
-              android:textSize="@dimen/text_16sp"
-              bind:layout_constraintTop_toTopOf="parent"
-              bind:shadow="@{ @dimen/size_4dp }"
-              />
-
-          <androidx.core.widget.NestedScrollView
+          <androidx.constraintlayout.widget.ConstraintLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/edit_sticky_search"
-              app:layout_constraintVertical_bias="0.005">
+              >
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+                android:id="@+id/edit_sticky_search"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_72dp"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_search_trip"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/size_16dp"
+                android:paddingStart="@dimen/size_56dp"
+                android:singleLine="true"
+                android:textColorHint="@color/color_hint"
+                android:textSize="@dimen/text_16sp"
+                bind:layout_constraintTop_toTopOf="parent"
+                bind:shadow="@{ @dimen/size_4dp }"
+                />
+
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_sticky_search"
+                app:layout_constraintVertical_bias="0.005">
 
-              <FrameLayout
-                  android:id="@+id/container_trip"
+              <androidx.appcompat.widget.LinearLayoutCompat
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginLeft="@dimen/size_4dp"
-                  android:layout_marginRight="@dimen/size_4dp"
-                  android:layout_marginTop="@dimen/size_4dp"
-                  android:orientation="horizontal"
-                  android:padding="@dimen/size_4dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_by_trip_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/label_by_trip_status"
-                    android:textColor="@color/sub_heading_black"
-                    android:textSize="@dimen/size_16dp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_view_all_trips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:drawableEnd="@drawable/ic_forward"
-                    android:text="@string/label_view_all_trips"
-                    android:textStyle="bold" />
-              </FrameLayout>
-
-              <FrameLayout
-                  android:id="@+id/container_bucket"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:padding="@dimen/size_2dp">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="3"
-                    android:orientation="horizontal">
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:id="@+id/view_awaiting_arirval"
-                      style="@style/view_header_background_white"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_marginStart="@dimen/size_4dp"
-                      android:layout_weight="1"
-                      android:layout_marginEnd="@dimen/size_4dp"
-                      android:orientation="vertical"
-                      bind:shadow="@{ @dimen/action_btn_elevation }">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_arrival" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/id1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_6sp"
-                        android:minWidth="@dimen/size_80dp"
-                        android:text="@string/label_awaiting_arrival"
-                        android:textSize="@dimen/size_12dp" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_awaiting_arrival_trip_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.awaitingArrivalCount}"
-                        android:textColor="@color/trip_red"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        tools:text="5 Trips"
-                        />
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:id="@+id/view_in_transit"
-                      style="@style/view_header_background_white"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center"
-                      android:layout_weight="1"
-                      android:layout_marginStart="@dimen/size_4dp"
-                      android:layout_marginEnd="@dimen/size_8dp"
-                      android:orientation="vertical"
-                      bind:shadow="@{ @dimen/action_btn_elevation }">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_in_transit" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/id3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_6sp"
-                        android:minWidth="@dimen/size_80dp"
-                        android:text="@string/label_in_transit"
-                        android:textSize="@dimen/size_12dp"
-
-                        />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_in_transit_trip_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.inTransitCount}"
-                        android:textColor="@color/trip_red"
-                        android:textSize="@dimen/size_14dp"
-                        android:textStyle="bold"
-                        tools:text="5 Trips"
-                        />
-
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:id="@+id/view_awaiting_pod"
-                      style="@style/view_header_background_white"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:layout_marginStart="@dimen/size_4dp"
-                      android:layout_marginEnd="@dimen/size_4dp"
-                      android:orientation="vertical"
-                      bind:shadow="@{ @dimen/action_btn_elevation }">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_pod" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/id2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_6sp"
-                        android:minWidth="@dimen/size_80dp"
-                        android:text="@string/label_awaiting_pod"
-                        android:textSize="@dimen/size_12dp" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_awaiting_pod_trip_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.awaitingPodCount}"
-                        android:textColor="@color/trip_red"
-                        android:textSize="@dimen/size_14dp"
-                        android:textStyle="bold"
-                        tools:text="5 Trips"
-                        />
-
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-              </FrameLayout>
-
-              <FrameLayout
-                  android:id="@+id/container_bucket_second"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:paddingStart="@dimen/size_2dp">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:orientation="horizontal">
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:id="@+id/view_awaiting_loading"
-                      style="@style/view_header_background_white"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_weight="1"
-                      android:layout_marginStart="@dimen/size_4dp"
-                      android:layout_marginEnd="@dimen/size_4dp"
-                      android:orientation="vertical"
-                      bind:shadow="@{ @dimen/action_btn_elevation }">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_loading" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/id4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_6sp"
-                        android:minWidth="@dimen/size_80dp"
-                        android:text="@string/label_awaiting_loading"
-                        android:textSize="@dimen/size_12dp" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_awaiting_loading_trip_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.awaitingLoadingCount}"
-                        android:textColor="@color/trip_red"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        tools:text="5 Trips"
-                        />
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:id="@+id/view_awaiting_unloading"
-                      style="@style/view_header_background_white"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:layout_marginStart="@dimen/size_4dp"
-                      android:layout_marginEnd="@dimen/size_8dp"
-                      android:orientation="vertical"
-                      bind:shadow="@{ @dimen/action_btn_elevation }">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_unloading" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/id5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:lineSpacingExtra="@dimen/text_6sp"
-                        android:minWidth="@dimen/size_80dp"
-                        android:text="@string/label_awaiting_unloading"
-                        android:textSize="@dimen/size_12dp" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_awaiting_unloading_trip_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.awaitingUnloadingCount}"
-                        android:textColor="@color/trip_red"
-                        android:textSize="@dimen/size_14dp"
-                        android:textStyle="bold"
-                        tools:text="5 Trips"
-                        />
-
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-              </FrameLayout>
-
-              <FrameLayout
-                  android:id="@+id/container_payment"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="@dimen/size_4dp"
-                  android:layout_marginTop="@dimen/size_4dp"
-                  android:orientation="horizontal"
-                  android:padding="@dimen/size_4dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_by_payment_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/label_by_payment_status"
-                    android:textColor="@color/sub_heading_black"
-                    android:textSize="@dimen/size_16dp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_payment_summary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:drawableEnd="@drawable/ic_forward"
-                    android:text="@string/label_payment_summary"
-                    android:textStyle="bold" />
-              </FrameLayout>
-
-              <androidx.cardview.widget.CardView
-                  android:id="@+id/advance_card"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="@dimen/size_6dp"
-                  android:background="@color/white"
-                  android:padding="@dimen/size_8dp"
-                  app:cardCornerRadius="5dp">
+                  android:orientation="vertical">
 
                 <FrameLayout
+                    android:id="@+id/container_trip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/size_8dp">
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_advance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_advance_pending"
-                        android:textColor="@color/heading_black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_advance_pending_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{viewModel.advancePendingAmount}"
-                        android:textColor="@color/price_red"
-                        tools:text="₹ 6000"
-                        />
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.AppCompatTextView
-                      android:id="@+id/text_advance_pending_trip_count"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="end"
-                      android:text="@{viewModel.advancePendingCount}"
-                      android:textColor="@color/price_red"
-                      android:textStyle="bold"
-                      tools:text="5 Trips"
-                      />
-                </FrameLayout>
-              </androidx.cardview.widget.CardView>
-
-              <androidx.cardview.widget.CardView
-                  android:id="@+id/balance_card"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="@dimen/size_6dp"
-                  android:background="@color/white"
-                  android:padding="@dimen/size_8dp"
-                  app:cardCornerRadius="5dp">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/size_8dp">
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_balance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_balance_pending"
-                        android:textColor="@color/heading_black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_balance_pending_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{viewModel.balancePendingAmount}"
-                        android:textColor="@color/price_red"
-                        tools:text="₹ 6000"
-                        />
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.AppCompatTextView
-                      android:id="@+id/text_balance_pending_trip_count"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="end"
-                      android:text="@{viewModel.balancePendingCount}"
-                      android:textColor="@color/price_red"
-                      android:textStyle="bold"
-                      tools:text="5 Trips"
-                      />
-                </FrameLayout>
-              </androidx.cardview.widget.CardView>
-
-              <androidx.cardview.widget.CardView
-                  android:id="@+id/recovery_card"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="@dimen/size_6dp"
-                  android:background="@color/white"
-                  android:padding="@dimen/size_8dp"
-                  app:cardCornerRadius="5dp">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/size_8dp">
-
-                  <androidx.appcompat.widget.LinearLayoutCompat
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/label_recovery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_recovery_pending"
-                        android:textColor="@color/heading_black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_recovery_pending_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{viewModel.recoveryPendingAmount}"
-                        android:textColor="@color/price_red"
-                        tools:text="₹ 6000"
-                        />
-                  </androidx.appcompat.widget.LinearLayoutCompat>
-
-                  <androidx.appcompat.widget.AppCompatTextView
-                      android:id="@+id/text_recovery_pending_trip_count"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="end"
-                      android:text="@{viewModel.recoveryPendingCount}"
-                      android:textColor="@color/price_red"
-                      android:textStyle="bold"
-                      tools:text="5 Trips"
-                      />
-                </FrameLayout>
-
-              </androidx.cardview.widget.CardView>
-
-              <androidx.cardview.widget.CardView
-                  android:id="@+id/download_card"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginStart="@dimen/size_6dp"
-                  android:layout_marginEnd="@dimen/size_6dp"
-                  android:background="@color/white"
-                  android:layout_gravity="bottom"
-                  app:cardCornerRadius="5dp">
-
-                <FrameLayout
-                    android:id="@+id/download_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_4dp"
+                    android:layout_marginRight="@dimen/size_4dp"
                     android:layout_marginTop="@dimen/size_4dp"
-                    android:padding="@dimen/size_10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:background="@color/bid_header_bg_black"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="@dimen/size_4dp">
+
                   <androidx.appcompat.widget.AppCompatTextView
-                      android:id="@+id/label_download_ledger"
+                      android:id="@+id/label_by_trip_status"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="@string/label_download_ledger"
-                      android:textAllCaps="true"
-                      android:textSize="@dimen/text_12sp"
                       android:layout_gravity="center_vertical"
-                      android:textColor="@color/off_white" />
-                  <androidx.appcompat.widget.AppCompatImageButton
-                      android:id="@+id/download_ledger_button"
+                      android:text="@string/label_by_trip_status"
+                      android:textColor="@color/sub_heading_black"
+                      android:textSize="@dimen/size_16dp"
+                      android:textStyle="bold" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/label_view_all_trips"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_gravity="end|center_vertical"
-                      app:srcCompat="@drawable/ic_download_ledger"
-                      android:background="@color/bid_header_bg_black"/>
+                      android:drawableEnd="@drawable/ic_forward"
+                      android:text="@string/label_view_all_trips"
+                      android:textStyle="bold" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/container_bucket"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/size_2dp">
+
+                  <androidx.appcompat.widget.LinearLayoutCompat
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:weightSum="3"
+                      android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_awaiting_arirval"
+                        style="@style/view_header_background_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/size_4dp"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
+
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image1"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_arrival" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id1"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_6sp"
+                          android:minWidth="@dimen/size_80dp"
+                          android:text="@string/label_awaiting_arrival"
+                          android:textSize="@dimen/size_12dp" />
+
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_arrival_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingArrivalCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/text_14sp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_in_transit"
+                        style="@style/view_header_background_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_marginEnd="@dimen/size_8dp"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
+
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image2"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_in_transit" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id3"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_6sp"
+                          android:minWidth="@dimen/size_80dp"
+                          android:text="@string/label_in_transit"
+                          android:textSize="@dimen/size_12dp"
+
+                          />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_in_transit_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.inTransitCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/size_14dp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_awaiting_pod"
+                        style="@style/view_header_background_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_marginEnd="@dimen/size_4dp"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
+
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image3"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_pod" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id2"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_6sp"
+                          android:minWidth="@dimen/size_80dp"
+                          android:text="@string/label_awaiting_pod"
+                          android:textSize="@dimen/size_12dp" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_pod_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingPodCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/size_14dp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                  </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </FrameLayout>
 
-              </androidx.cardview.widget.CardView>
+                <FrameLayout
+                    android:id="@+id/container_bucket_second"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/size_2dp">
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
-          </androidx.core.widget.NestedScrollView>
+                  <androidx.appcompat.widget.LinearLayoutCompat
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:weightSum="2"
+                      android:orientation="horizontal">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_awaiting_loading"
+                        style="@style/view_header_background_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_marginEnd="@dimen/size_4dp"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
 
-      </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image4"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_loading" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id4"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_6sp"
+                          android:minWidth="@dimen/size_80dp"
+                          android:text="@string/label_awaiting_loading"
+                          android:textSize="@dimen/size_12dp" />
+
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_loading_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingLoadingCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/text_14sp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_awaiting_unloading"
+                        style="@style/view_header_background_white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_marginEnd="@dimen/size_8dp"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
+
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image5"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_unloading" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id5"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_6sp"
+                          android:minWidth="@dimen/size_80dp"
+                          android:text="@string/label_awaiting_unloading"
+                          android:textSize="@dimen/size_12dp" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_unloading_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_4dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingUnloadingCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/size_14dp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                  </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/container_payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_4dp"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/size_4dp">
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/label_by_payment_status"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center_vertical"
+                      android:text="@string/label_by_payment_status"
+                      android:textColor="@color/sub_heading_black"
+                      android:textSize="@dimen/size_16dp"
+                      android:textStyle="bold" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/label_payment_summary"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="end|center_vertical"
+                      android:drawableEnd="@drawable/ic_forward"
+                      android:text="@string/label_payment_summary"
+                      android:textStyle="bold" />
+                </FrameLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/advance_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_6dp"
+                    android:background="@color/white"
+                    android:padding="@dimen/size_8dp"
+                    app:cardCornerRadius="5dp">
+
+                  <FrameLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="@dimen/size_8dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/label_advance"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@string/label_advance_pending"
+                          android:textColor="@color/heading_black" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_advance_pending_amount"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@{viewModel.advancePendingAmount}"
+                          android:textColor="@color/price_red"
+                          tools:text="₹ 6000"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_advance_pending_trip_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@{viewModel.advancePendingCount}"
+                        android:textColor="@color/price_red"
+                        android:textStyle="bold"
+                        tools:text="5 Trips"
+                        />
+                  </FrameLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/balance_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_6dp"
+                    android:background="@color/white"
+                    android:padding="@dimen/size_8dp"
+                    app:cardCornerRadius="5dp">
+
+                  <FrameLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="@dimen/size_8dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/label_balance"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@string/label_balance_pending"
+                          android:textColor="@color/heading_black" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_balance_pending_amount"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@{viewModel.balancePendingAmount}"
+                          android:textColor="@color/price_red"
+                          tools:text="₹ 6000"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_balance_pending_trip_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@{viewModel.balancePendingCount}"
+                        android:textColor="@color/price_red"
+                        android:textStyle="bold"
+                        tools:text="5 Trips"
+                        />
+                  </FrameLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/recovery_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_6dp"
+                    android:background="@color/white"
+                    android:padding="@dimen/size_8dp"
+                    app:cardCornerRadius="5dp">
+
+                  <FrameLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="@dimen/size_8dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/label_recovery"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@string/label_recovery_pending"
+                          android:textColor="@color/heading_black" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_recovery_pending_amount"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@{viewModel.recoveryPendingAmount}"
+                          android:textColor="@color/price_red"
+                          tools:text="₹ 6000"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_recovery_pending_trip_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@{viewModel.recoveryPendingCount}"
+                        android:textColor="@color/price_red"
+                        android:textStyle="bold"
+                        tools:text="5 Trips"
+                        />
+                  </FrameLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/download_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_6dp"
+                    android:layout_marginEnd="@dimen/size_6dp"
+                    android:background="@color/white"
+                    android:layout_gravity="bottom"
+                    app:cardCornerRadius="5dp">
+
+                  <FrameLayout
+                      android:id="@+id/download_container"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="@dimen/size_4dp"
+                      android:padding="@dimen/size_10dp"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      android:background="@color/bid_header_bg_black"
+                      android:orientation="horizontal">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_download_ledger"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_download_ledger"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/text_12sp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/off_white" />
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/download_ledger_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        app:srcCompat="@drawable/ic_download_ledger"
+                        android:background="@color/bid_header_bg_black"/>
+
+                  </FrameLayout>
+
+                </androidx.cardview.widget.CardView>
+
+              </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.core.widget.NestedScrollView>
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
 
     </FrameLayout>
 
-  </androidx.appcompat.widget.LinearLayoutCompat>
+  </ScrollView>
 
 </layout>

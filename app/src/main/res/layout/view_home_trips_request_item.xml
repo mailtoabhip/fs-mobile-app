@@ -115,7 +115,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/seperator"
             app:layout_constraintTop_toBottomOf="@+id/text_promise_date"
-            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_16dp"
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:src="@drawable/seprator_dotted">
@@ -172,6 +172,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:fontFamily="sans-serif"
             android:textColor="@color/colorDelhiveryRed"
+            android:paddingBottom="@dimen/size_4dp"
             android:text="@{ trip.showAgeing() }"
             android:layout_marginTop="@dimen/size_4dp"
             app:layout_constraintTop_toBottomOf="@id/text_driver_details"

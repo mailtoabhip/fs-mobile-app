@@ -147,7 +147,9 @@ class TripDetailsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            tripDetail.payment = _res.second[0]
+            if (_res.second.isNotEmpty()) {
+              tripDetail.payment = _res.second[0]
+            }
             paymentSummaryLiveData.postValue(true)
           }
         }
@@ -237,12 +239,27 @@ class TripDetailsViewModel @Inject constructor(
       tripSettledLiveData.postValue(true)
     }
 
+    var pendingRecovery = 0.0
+    for (charge in chargesSummaryList) {
+      pendingRecovery += charge.amount
+    }
+    for (charge in deductionSummaryList) {
+      pendingRecovery -= charge.amount
+    }
+    for (payment in paymentSummaryList) {
+      pendingRecovery -= payment.amount
+    }
+    pendingRecovery += 2 * collections
+    for (recovery in recoveriesSummaryList) {
+      pendingRecovery -= recovery.amount
+    }
+
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(TripSummaryProgressItem(TripPaymentSummaryProgressItemData()), Remove))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Charges", chargesSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Deductions", deductionSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Payments", paymentSummaryList, false)), Add))
-      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false, pendingRecovery)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Recoveries Adjusted", recoveriesSummaryList, false)), Add))
     }.let {
       tripPaymentSummaryLiveData.postValue(it)
@@ -260,6 +277,7 @@ class TripDetailsViewModel @Inject constructor(
     jsonObject.add("trip_id",jsonElement)
     compositeDisposable += payableRepository.fetchChargesList(jsonObject)
             .onBackground()
+            .progress()
             .subscribe{
               _res, error ->
               if(!error){
@@ -300,6 +318,7 @@ class TripDetailsViewModel @Inject constructor(
   fun fetchNewPaymentSummary(){
     compositeDisposable += paymentRepository.payments(transactionId)
             .onBackground()
+            .progress()
             .subscribe{
               _res, error ->
               if(!error){
@@ -316,9 +335,9 @@ class TripDetailsViewModel @Inject constructor(
                       }
                       charge.transferTime?.let {
                         var newAmount = charge.amount
-                        val tdsObj = TDS(charge.amount, charge.transferTime)
-                        val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
-                        newAmount -= tds
+                        // val tdsObj = TDS(charge.amount, charge.transferTime)
+                        // val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
+                        newAmount -= charge.tdsDeducted
                         if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                           paymentSettled = true
                         }
@@ -327,7 +346,7 @@ class TripDetailsViewModel @Inject constructor(
                         if (charge.utrNumber.isNotNullOrEmpty()) {
                           paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time, false))
                         } else {
-                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, time, false))
+                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), newAmount, time, false))
                         }
                       }
                       //newPaymentSummary.add(charge)
@@ -416,7 +435,6 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe {
           _res, error ->
           if (!error && _res != null) {
-            pendingRecoveryList.clear()
             recoveriesSummaryList.clear()
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
