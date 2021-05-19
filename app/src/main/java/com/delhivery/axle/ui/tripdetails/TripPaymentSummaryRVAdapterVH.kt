@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.tripdetails
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
@@ -70,6 +71,8 @@ class TripPaymentDetailSummaryItemVH(binding: ViewTripPaymentSummaryDetailItemBi
     binding.title = item.data.title
     binding.subtitle = item.data.subTitle
     binding.amount = item.data.formattedAmount()
+    binding.detailItem = item.data
+    binding.textTitle.clickToAction(TripPaymentSummaryDetailItemAction, item, adapterPosition, _interface)
   }
 }
 

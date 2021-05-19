@@ -68,6 +68,7 @@ class TripDetailsViewModel @Inject constructor(
   /* trip details live data */
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
   var historyLiveData = MutableLiveData<Boolean>()
+  var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
@@ -134,6 +135,25 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   /**
+   * fetch payment summary of the trip
+   */
+  fun fetchPayment() {
+    val jsonObject = JsonObject()
+    jsonObject.addProperty("vendor_id", userRepository.userId())
+    jsonObject.addProperty("transaction_ids", transactionId)
+    jsonObject.addProperty("offset", 0)
+    jsonObject.addProperty("limit", 10)
+    compositeDisposable += tripsRepository.bulkPayments(listOf(tripDetail), jsonObject)
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            tripDetail.payment = _res.second[0]
+            paymentSummaryLiveData.postValue(true)
+          }
+        }
+  }
+
+  /**
    * Fetch warehouse details
    */
   fun fetchWarehouseDetails() {
@@ -191,7 +211,7 @@ class TripDetailsViewModel @Inject constructor(
                       if(collection.type == "waived_off"){
                         collections += collection.amount
                         deductionSummaryList.add(
-                            TripPaymentSummaryDetailItemData("Waived Off", collection.amount, ""))
+                            TripPaymentSummaryDetailItemData("Waived Off", collection.amount, "", false))
                       }
                     }
                   }
@@ -256,11 +276,11 @@ class TripDetailsViewModel @Inject constructor(
                       }
                       if (charge.action == "deduct") {
                         deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
-                            subtitle
+                            subtitle, false
                         ))
                       } else {
                         chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
-                            subtitle
+                            subtitle, false
                         ))
                       }
                       //chargesListSummary.add(charge)
@@ -269,7 +289,7 @@ class TripDetailsViewModel @Inject constructor(
                   }
                 }
               } else {
-                error?.handle()
+                // error?.handle()
               }
             }
   }
@@ -305,9 +325,9 @@ class TripDetailsViewModel @Inject constructor(
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.utrNumber.isNotNullOrEmpty()) {
-                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time))
+                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time, false))
                         } else {
-                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, time))
+                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), charge.amount, time, false))
                         }
                       }
                       //newPaymentSummary.add(charge)
@@ -315,7 +335,7 @@ class TripDetailsViewModel @Inject constructor(
                   }
                 }
               } else {
-                error?.handle()
+                // error?.handle()
               }
             }
   }
@@ -365,19 +385,19 @@ class TripDetailsViewModel @Inject constructor(
               for (recovery in _res) {
                 if (recovery.pendingRecoveryAmount > 0) {
                   pendingRecoveryList.add(
-                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
+                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
                   )
                 } else {
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, ""))
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
                     }
                   }
                 }
               }
             }
           } else {
-            error.handle()
+            // error.handle()
           }
         }
   }
@@ -402,19 +422,19 @@ class TripDetailsViewModel @Inject constructor(
               for (recovery in _res) {
                 if (recovery.pendingRecoveryAmount > 0) {
                   pendingRecoveryList.add(
-                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "")
+                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
                   )
                 } else {
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber))
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, true))
                     }
                   }
                 }
               }
             }
           } else {
-            error.handle()
+            // error.handle()
           }
         }
   }

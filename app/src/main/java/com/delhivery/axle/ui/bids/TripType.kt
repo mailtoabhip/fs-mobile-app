@@ -82,7 +82,7 @@ enum class ViewPaymentType(
       "Advance Pending", "Advance Pending Trips"
   ),
   BalancePending(
-      1, listOf(TruckUnloaded.statusKey, EPodUploaded.statusKey, TripCompleted.statusKey),
+      1, listOf(EPodUploaded.statusKey, TripCompleted.statusKey),
       "Balance Pending", "Balance Pending Trips "
   ),
   RecoveryPending(

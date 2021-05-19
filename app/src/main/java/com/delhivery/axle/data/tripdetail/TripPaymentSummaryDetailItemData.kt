@@ -1,5 +1,7 @@
 package com.delhivery.axle.data.tripdetail
 
+import androidx.annotation.ColorRes
+import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.StringUtils
 
@@ -11,7 +13,8 @@ import com.delhivery.axle.utils.StringUtils
 data class TripPaymentSummaryDetailItemData (
   var title: String,
   var amount: Double,
-  var subTitle: String ? = ""
+  var subTitle: String ? = "",
+  var redirectable: Boolean ?= false
 
 ) : BaseKeyTypeModel<String>() {
 
@@ -19,4 +22,16 @@ data class TripPaymentSummaryDetailItemData (
 
   fun formattedAmount() = "₹ ${StringUtils.formatAmount(amount)}"
 
+  /**
+  * Required at text color as per promise date
+  */
+  @ColorRes
+  fun titleTextColor() = if (redirectable == true) {
+    R.color.link
+  } else {
+    R.color.sub_heading_black
+  }
+
 }
+
+const val TripPaymentSummaryDetailItemAction = "tripLink"

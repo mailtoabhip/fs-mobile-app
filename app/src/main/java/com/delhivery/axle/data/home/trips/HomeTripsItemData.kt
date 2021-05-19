@@ -144,7 +144,7 @@ data class HomeTripsItemData(
       "advance_pending" -> "Advance Pending"
       "balance_pending" -> "Balance Pending"
       "recovery_pending" -> "Recovery Pending"
-      else -> ""
+      else -> "Settled"
     }
   }
 

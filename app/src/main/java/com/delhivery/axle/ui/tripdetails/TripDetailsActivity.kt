@@ -29,6 +29,8 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemAction
+import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
@@ -103,6 +105,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     /* observe trip details live data */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.tripLiveData.observe(this, TransactionObserver())
+    viewModel.paymentSummaryLiveData.observe(this, Observer {
+      binding.tripDetails = viewModel.tripDetail
+    })
     viewModel.warehouseLiveData.observe(this, Observer {
       binding.labelWarehouse.text = it
     })
@@ -201,6 +206,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         viewModel.fetchWarehouseDetails()
         // viewModel.fetchPaymentSummary()
         // viewModel.fetchChargeSummary()
+        viewModel.fetchPayment()
         viewModel.fetchChargeListSummary()
         viewModel.fetchNewPaymentSummary()
         viewModel.fetchDNRecoveries()
@@ -469,6 +475,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
       HomeTripsTimeOutAction -> {
         refreshData()
+      }
+
+      TripPaymentSummaryDetailItemAction -> {
+        val data = item.data as TripPaymentSummaryDetailItemData
+        if (data.redirectable == true) {
+          startActivity(tripDetailsIntent(data.title, this))
+        }
       }
     }
   }

@@ -1,12 +1,20 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
+import android.Manifest
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
@@ -17,12 +25,17 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.searchongoingtrip.searchOngoingTripIntent
+import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.REQCODE_NO_TRIPS
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import javax.inject.Inject
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>()
 {
 
   var _title: String = "Ongoing Trips"
+  var downloadID = 0.toLong()
 
   override val title: CharSequence
     get() = _title
@@ -37,6 +50,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     val _instance: HomeTripsFragment by lazy { HomeTripsFragment() }
   }
 
+  @Inject lateinit var awsUtils: AWSUtils
+
   override fun getViewModelClass() = HomeTripsViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_home_trips
@@ -46,6 +61,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+    activity?.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
     viewModel.fetchTripsSummary()
 
@@ -56,7 +72,12 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       setText()
     })
 
+    viewModel.downloadPressed.observe(viewLifecycleOwner, Observer {
+      requestPermission()
+    })
+
     viewModel.downloadLoadingLiveData.observe(viewLifecycleOwner, Observer {
+      downloadLedger(it.url)
       uiUtils.showSnackbar("Ledger downloaded successfully")
     })
 
@@ -176,6 +197,58 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
       }
     }
+  }
+
+  private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+    override fun onReceive(
+      context: Context,
+      intent: Intent
+    ) {
+      val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+      if (downloadID == id) {
+        uiUtils.showToast("File downloaded, please check notification.")
+      }
+    }
+  }
+
+  private fun downloadLedger(url: String) {
+
+    val mgr = activity?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+    val downloadUri = Uri.parse(url)
+    val request = DownloadManager.Request(
+        downloadUri
+    )
+
+    val filename = "Ledger.xlsx"
+    val path = "/Axle App/$filename"
+    request.setAllowedNetworkTypes(
+        DownloadManager.Request.NETWORK_WIFI or
+            DownloadManager.Request.NETWORK_MOBILE
+    )
+        .setTitle("Ledger Download")
+        .setDescription("Downloading...")
+        .setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOCUMENTS,
+            path
+        )
+        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+
+    downloadID = mgr.enqueue(request)
+
+  }
+
+  private fun requestPermission() {
+    compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+
+          } else {
+            uiUtils.showSnackbar(getString(string.storage_permission))
+          }
+        }
   }
 
 }
