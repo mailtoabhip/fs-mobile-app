@@ -75,6 +75,13 @@ class PayableRepository @Inject constructor(
     payload: JsonObject
   ) = payableService.listOverpaymentRecoveries(payload).convertResponse()
 
+  /**
+   * List trip recoveries
+   */
+  fun listTripRecoveries(
+    payload: JsonObject
+  ) = payableService.listTripRecoveries(payload).convertResponse()
+
 }
 
 

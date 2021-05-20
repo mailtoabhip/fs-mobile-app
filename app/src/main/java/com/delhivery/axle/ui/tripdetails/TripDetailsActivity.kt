@@ -169,6 +169,30 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
     }
 
+    viewModel.chargesLiveData.observe(this, Observer {
+      viewModel.fetchNewPaymentSummary()
+    })
+
+    viewModel.paymentLiveData.observe(this, Observer {
+      viewModel.fetchDNRecoveries()
+    })
+
+    viewModel.dnRecoveryLiveData.observe(this, Observer {
+      viewModel.fetchOverpaymentRecoveries()
+    })
+
+    viewModel.overpaymentRecoveryLiveData.observe(this, Observer {
+      viewModel.fetchTripRecoveries()
+    })
+
+    viewModel.tripRecoveryLiveData.observe(this, Observer {
+      viewModel.fetchCollectionSummary()
+    })
+
+    viewModel.collectionLiveData.observe(this, Observer {
+      viewModel.processPaymentSummary()
+    })
+
     refreshData()
   }
 
@@ -204,14 +228,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         viewModel.fetchWarehouseDetails()
-        // viewModel.fetchPaymentSummary()
-        // viewModel.fetchChargeSummary()
         viewModel.fetchPayment()
         viewModel.fetchChargeListSummary()
-        viewModel.fetchNewPaymentSummary()
-        viewModel.fetchDNRecoveries()
-        viewModel.fetchOverpaymentRecoveries()
-        viewModel.fetchCollectionSummary()
+        // viewModel.fetchPaymentSummary()
+        // viewModel.fetchChargeSummary()
         // viewModel.fetchListInvoices()
       } else {
         binding.error = true

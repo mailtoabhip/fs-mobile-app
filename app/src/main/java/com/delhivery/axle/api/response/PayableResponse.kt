@@ -50,7 +50,7 @@ data class CollectionResponse(
         @SerializedName("type") val type: String
 )
 
-data class TripRecoveryResponse(
+data class DNRecoveryResponse(
         @SerializedName("dn_id") val dnId: String,
         @SerializedName("trip_id") val tripId: String,
         @SerializedName("dn_type") val dnType: String,
@@ -77,6 +77,15 @@ data class OverpaymentRecoveryData(
   @SerializedName("recovery_amount") val recoveryAmount: Double,
   @SerializedName("trip_id") val recoveryTripId: String,
   @SerializedName("utr_number") val utrNumber: String
+)
+
+data class TripRecoveryResponse(
+  @SerializedName("current_trip_id") val currentTripId: String,
+  @SerializedName("trip_id") val tripId: String,
+  @SerializedName("type") val type: String,
+  @SerializedName("recovered_amount") val recoveredAmount: Double,
+  @SerializedName("added_by") val addedBy: Double,
+  @SerializedName("utr") val utr: String?
 )
 
 

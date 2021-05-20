@@ -20,7 +20,7 @@ data class TripPaymentSummaryItemData (
 
   override fun key() = title
 
-  fun totalAmount() = if (itemSummary.isNotEmpty()) {
+  fun totalAmount() = if (itemSummary.isNotEmpty() && title != "Pending Payment/Recovery") {
     var total = 0.0
     for (summary in itemSummary) {
       total += summary.amount
@@ -29,7 +29,7 @@ data class TripPaymentSummaryItemData (
   } else if (title == "Pending Payment/Recovery") {
     "₹ ${StringUtils.formatAmount(amount ?: 0.0)}"
   } else {
-    ""
+    "₹ 0"
   }
 
   /**

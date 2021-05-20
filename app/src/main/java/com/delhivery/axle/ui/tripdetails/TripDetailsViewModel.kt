@@ -76,6 +76,14 @@ class TripDetailsViewModel @Inject constructor(
   var chargesSummary = mutableListOf<TripChargesResponse>()
   var paymentsSummary = mutableListOf<TripPaymentsResponse>()
 
+  /* payment summary buckets live data */
+  var chargesLiveData = MutableLiveData<Boolean>()
+  var paymentLiveData = MutableLiveData<Boolean>()
+  var dnRecoveryLiveData = MutableLiveData<Boolean>()
+  var overpaymentRecoveryLiveData = MutableLiveData<Boolean>()
+  var tripRecoveryLiveData = MutableLiveData<Boolean>()
+  var collectionLiveData = MutableLiveData<Boolean>()
+
   var newPaymentSummary = mutableListOf<PaymentsResponse>()
   var newPaymentTypePayment = mutableListOf<PaymentsResponse>()
   var newPaymentTypeBalance = mutableListOf<PaymentsResponse>()
@@ -103,6 +111,9 @@ class TripDetailsViewModel @Inject constructor(
   var tripType: String = ""
   var collections: Double = 0.0
   var payeeId: String = ""
+  var totalPendingBalance = 0.0
+  var totalPendingRecovery = 0.0
+  var totalTDS = 0.0
 
   var paymentSettled: Boolean = false
   var recoverySettled: Boolean = true
@@ -221,7 +232,7 @@ class TripDetailsViewModel @Inject constructor(
                   // error?.handle()
                 }
               }
-              processPaymentSummary()
+              collectionLiveData.postValue(true)
             }
   }
 
@@ -239,19 +250,24 @@ class TripDetailsViewModel @Inject constructor(
       tripSettledLiveData.postValue(true)
     }
 
-    var pendingRecovery = 0.0
+    var pendingBalanceRecovery = 0.0
     for (charge in chargesSummaryList) {
-      pendingRecovery += charge.amount
+      totalPendingBalance += charge.amount
     }
     for (charge in deductionSummaryList) {
-      pendingRecovery -= charge.amount
+      totalPendingBalance -= charge.amount
     }
     for (payment in paymentSummaryList) {
-      pendingRecovery -= payment.amount
+      totalPendingBalance -= payment.amount
     }
-    pendingRecovery += 2 * collections
     for (recovery in recoveriesSummaryList) {
-      pendingRecovery -= recovery.amount
+      totalPendingBalance -= recovery.amount
+    }
+
+    if (totalPendingBalance > 0) {
+      pendingBalanceRecovery = totalPendingBalance
+    } else {
+      pendingBalanceRecovery = totalPendingRecovery
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -259,7 +275,7 @@ class TripDetailsViewModel @Inject constructor(
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Charges", chargesSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Deductions", deductionSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Payments", paymentSummaryList, false)), Add))
-      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false, pendingRecovery)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false, pendingBalanceRecovery)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Recoveries Adjusted", recoveriesSummaryList, false)), Add))
     }.let {
       tripPaymentSummaryLiveData.postValue(it)
@@ -309,6 +325,7 @@ class TripDetailsViewModel @Inject constructor(
               } else {
                 // error?.handle()
               }
+              chargesLiveData.postValue(true)
             }
   }
 
@@ -322,10 +339,10 @@ class TripDetailsViewModel @Inject constructor(
             .subscribe{
               _res, error ->
               if(!error){
-                newPaymentSummary.clear()
-                newPaymentTypePayment.clear()
-                newPaymentTypeBalance.clear()
-                newPaymentTypeDN.clear()
+//                newPaymentSummary.clear()
+//                newPaymentTypePayment.clear()
+//                newPaymentTypeBalance.clear()
+//                newPaymentTypeDN.clear()
                 if(_res.isNotEmpty()){
                   _res.let {
                     paymentSummaryList.clear()
@@ -338,6 +355,7 @@ class TripDetailsViewModel @Inject constructor(
                         // val tdsObj = TDS(charge.amount, charge.transferTime)
                         // val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
                         newAmount -= charge.tdsDeducted
+                        totalTDS += charge.tdsDeducted
                         if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                           paymentSettled = true
                         }
@@ -351,11 +369,17 @@ class TripDetailsViewModel @Inject constructor(
                       }
                       //newPaymentSummary.add(charge)
                     }
+                    if (totalTDS > 0) {
+                      deductionSummaryList.add(
+                          TripPaymentSummaryDetailItemData("TDS", totalTDS, "", false)
+                      )
+                    }
                   }
                 }
               } else {
                 // error?.handle()
               }
+              paymentLiveData.postValue(true)
             }
   }
 
@@ -388,6 +412,9 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch DN Recoveries
    */
   fun fetchDNRecoveries(){
+    recoveriesSummaryList.clear()
+    totalPendingRecovery = 0.0
+    totalPendingBalance = 0.0
     val jsonObject = JsonObject()
     val jsonList = JsonArray()
     jsonList.add(transactionId)
@@ -398,18 +425,19 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe {
           _res, error ->
           if (!error && _res != null) {
-            pendingRecoveryList.clear()
-            recoveriesSummaryList.clear()
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
                 if (recovery.pendingRecoveryAmount > 0) {
-                  pendingRecoveryList.add(
-                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-                  )
+                  totalPendingRecovery += recovery.pendingRecoveryAmount
+//                  pendingRecoveryList.add(
+//                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
+//                  )
                 } else {
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
+                      if (data.recoveryTripId == transactionId) {
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
+                      }
                     }
                   }
                 }
@@ -418,6 +446,7 @@ class TripDetailsViewModel @Inject constructor(
           } else {
             // error.handle()
           }
+          dnRecoveryLiveData.postValue(true)
         }
   }
 
@@ -435,17 +464,19 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe {
           _res, error ->
           if (!error && _res != null) {
-            recoveriesSummaryList.clear()
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
                 if (recovery.pendingRecoveryAmount > 0) {
-                  pendingRecoveryList.add(
-                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-                  )
+                  totalPendingRecovery += recovery.pendingRecoveryAmount
+//                  pendingRecoveryList.add(
+//                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
+//                  )
                 } else {
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, true))
+                      if (data.recoveryTripId == transactionId) {
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
+                      }
                     }
                   }
                 }
@@ -454,6 +485,36 @@ class TripDetailsViewModel @Inject constructor(
           } else {
             // error.handle()
           }
+          overpaymentRecoveryLiveData.postValue(true)
+        }
+  }
+
+  /**
+   * Fetch trip recoveries
+   */
+  fun fetchTripRecoveries() {
+    val jsonObject = JsonObject()
+    val jsonList = JsonArray()
+    jsonList.add(transactionId)
+    jsonObject.add("trip_ids", jsonList)
+    compositeDisposable += payableRepository.listTripRecoveries(jsonObject)
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            for (recovery in _res) {
+              var subtitle = ""
+              if (recovery.type == "overpayment") {
+                subtitle = "UTR: " + recovery.utr
+              }
+              var redirectable = false
+              if (recovery.tripId != transactionId) {
+                redirectable = true
+              }
+              recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(recovery.tripId, recovery.recoveredAmount, subtitle, redirectable))
+            }
+          }
+          tripRecoveryLiveData.postValue(true)
         }
   }
 
