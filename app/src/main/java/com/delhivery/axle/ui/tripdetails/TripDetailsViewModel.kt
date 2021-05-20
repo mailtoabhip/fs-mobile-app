@@ -347,7 +347,7 @@ class TripDetailsViewModel @Inject constructor(
                   _res.let {
                     paymentSummaryList.clear()
                     for (charge in _res){
-                      if (charge.status != "success" && charge.paymentType != "payment") {
+                      if (charge.status != "success" || charge.paymentType != "payment") {
                         continue
                       }
                       charge.transferTime?.let {
@@ -436,7 +436,7 @@ class TripDetailsViewModel @Inject constructor(
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
                       if (data.recoveryTripId == transactionId) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
+                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
                       }
                     }
                   }
@@ -475,7 +475,7 @@ class TripDetailsViewModel @Inject constructor(
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
                       if (data.recoveryTripId == transactionId) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
+                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
                       }
                     }
                   }
