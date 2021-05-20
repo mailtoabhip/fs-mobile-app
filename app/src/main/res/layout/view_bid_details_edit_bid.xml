@@ -206,13 +206,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                android:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textColor="@color/bid_placed_green"
-                tools:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                tools:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>
@@ -328,13 +328,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                android:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textColor="@color/bid_placed_green"
-                tools:text="Great! Your bid is likely to be confirmed. \n If someone bids lower, you'll be notified."
+                tools:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>
