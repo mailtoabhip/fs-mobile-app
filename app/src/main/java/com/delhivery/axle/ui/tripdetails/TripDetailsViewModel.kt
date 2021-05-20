@@ -436,7 +436,7 @@ class TripDetailsViewModel @Inject constructor(
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
                       if (data.recoveryTripId == transactionId) {
-                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
                       }
                     }
                   }
@@ -475,7 +475,7 @@ class TripDetailsViewModel @Inject constructor(
                   recovery.recoveryData?.let {
                     for (data in recovery.recoveryData) {
                       if (data.recoveryTripId == transactionId) {
-                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
                       }
                     }
                   }
@@ -511,7 +511,7 @@ class TripDetailsViewModel @Inject constructor(
               if (recovery.tripId != transactionId) {
                 redirectable = true
               }
-              recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(recovery.tripId, recovery.recoveredAmount, subtitle, redirectable))
+              deductionSummaryList.add(TripPaymentSummaryDetailItemData(recovery.tripId, recovery.recoveredAmount, subtitle, redirectable))
             }
           }
           tripRecoveryLiveData.postValue(true)
