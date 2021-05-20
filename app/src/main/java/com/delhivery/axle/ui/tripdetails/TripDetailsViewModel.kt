@@ -347,7 +347,7 @@ class TripDetailsViewModel @Inject constructor(
                   _res.let {
                     paymentSummaryList.clear()
                     for (charge in _res){
-                      if (charge.status != "success") {
+                      if (charge.status != "success" && charge.paymentType != "payment") {
                         continue
                       }
                       charge.transferTime?.let {
