@@ -357,20 +357,28 @@ class TripDetailsViewModel @Inject constructor(
                         continue
                       }
                       charge.transferTime?.let {
-                        var newAmount = charge.amount
-                        // val tdsObj = TDS(charge.amount, charge.transferTime)
-                        // val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
-                        newAmount -= charge.tdsDeducted
-                        totalTDS += charge.tdsDeducted
-                        if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
-                          paymentSettled = true
-                        }
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
-                        if (charge.utrNumber.isNotNullOrEmpty()) {
-                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time, false))
+                        if (charge.transactionId != transactionId) {
+                          deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovery against overpayment ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
+                          charge.appliedAmount!!, "", false))
                         } else {
-                          paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), newAmount, time, false))
+                          var newAmount = charge.amount
+                          charge.appliedAmount?.let {
+                            newAmount = charge.appliedAmount
+                          }
+                          // val tdsObj = TDS(charge.amount, charge.transferTime)
+                          // val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
+                          newAmount -= charge.tdsDeducted
+                          totalTDS += charge.tdsDeducted
+                          if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
+                            paymentSettled = true
+                          }
+                          if (charge.utrNumber.isNotNullOrEmpty()) {
+                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time, false))
+                          } else {
+                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), newAmount, time, false))
+                          }
                         }
                       }
                       //newPaymentSummary.add(charge)

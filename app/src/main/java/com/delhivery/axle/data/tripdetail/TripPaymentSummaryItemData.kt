@@ -23,7 +23,11 @@ data class TripPaymentSummaryItemData (
   fun totalAmount() = if (itemSummary.isNotEmpty() && (title != "Pending Payment" || title != "Pending Recovery")) {
     var total = 0.0
     for (summary in itemSummary) {
-      total += summary.amount
+      if (title == "Deductions" && summary.title == "Waived Off") {
+        total -= summary.amount
+      } else {
+        total += summary.amount
+      }
     }
     "₹ ${StringUtils.formatAmount(total)}"
   } else if (title == "Pending Payment" || title == "Pending Recovery") {

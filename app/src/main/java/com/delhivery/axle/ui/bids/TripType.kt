@@ -58,14 +58,6 @@ enum class TripType(
      */
     fun byTypeId(typeId: Int) = values().firstOrNull { it.typeId == typeId } ?: Unknown
 
-    fun byStatus(_status: String) = when (_status) {
-      TruckConfirmed.statusKey -> AwaitingArrival
-      TruckReached.statusKey, In_Transit.statusKey, TruckLoaded.statusKey -> InTransit
-      TruckArrived.statusKey -> AwaitingLoading
-      TruckReached.statusKey -> AwaitingUnloading
-      else -> Unknown
-    }
-
   }
 }
 
@@ -82,7 +74,7 @@ enum class ViewPaymentType(
       "Advance Pending", "Advance Pending Trips"
   ),
   BalancePending(
-      1, listOf(EPodUploaded.statusKey, TripCompleted.statusKey),
+      1, listOf(TripCompleted.statusKey),
       "Balance Pending", "Balance Pending Trips "
   ),
   RecoveryPending(
@@ -103,13 +95,6 @@ enum class ViewPaymentType(
      * Get [ViewPaymentType] by type id
      */
     fun byTypeId(typeId: Int) = values().firstOrNull { it.typeId == typeId } ?: NA
-
-    fun byStatus(_status: String) = when (_status) {
-      TruckArrived.statusKey, TruckConfirmed.statusKey -> AdvancePending
-      TruckUnloaded.statusKey, EPodUploaded.statusKey -> BalancePending
-      TripCompleted.statusKey -> RecoveryPending
-      else -> NA
-    }
 
   }
 }

@@ -771,7 +771,7 @@ data class HomeTripsItemData(
    * pod uploaded icon resource
    */
   @DrawableRes
-  fun podUploadedRes() = if (updateInfo!!.epodUploadInfo != null) {
+  fun podUploadedRes() = if (updateInfo!!.tripCompletedInfo != null) {
     DrawableProviderUtils.tripStatusRes(true)
   } else {
     DrawableProviderUtils.tripStatusRes(false)
@@ -860,7 +860,8 @@ data class StatusUpdateInfo(
   @SerializedName("in_transit") val inTransitInfo: ByUser?= null,
   @SerializedName("truck_reached") val truckReachedInfo: ByUser?= null,
   @SerializedName("truck_unloaded") val truckUnloadedInfo: ByUser?= null,
-  @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null
+  @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null,
+  @SerializedName("trip_completed") val tripCompletedInfo: ByUser?= null
 ) : Serializable
 
 /**
