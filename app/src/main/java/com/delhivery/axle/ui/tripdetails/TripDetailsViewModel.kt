@@ -273,7 +273,7 @@ class TripDetailsViewModel @Inject constructor(
       pendingBalanceRecovery = totalPendingBalance
     } else {
       pendingTitle = "Pending Recovery"
-      pendingBalanceRecovery = totalPendingRecovery
+      pendingBalanceRecovery = abs(totalPendingBalance)
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

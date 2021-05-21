@@ -204,6 +204,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.refreshing = true
       binding.error = false
       adapter.resetStaticData()
+      viewModel.totalTDS = 0.0
       viewModel.tripHistory.clear()
       viewModel.chargesSummary.clear()
       viewModel.paymentsSummary.clear()
