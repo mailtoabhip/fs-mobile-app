@@ -86,6 +86,7 @@ class TripsViewModel @Inject constructor(
   var viewType: String ?= "all"
   var total = 0
   var issueTripsCount = 0
+  var tripsCount = 0
   var tripsFilter = ""
   var tripsCountText = ""
   var filterList: List<String> = listOf()
@@ -281,6 +282,7 @@ class TripsViewModel @Inject constructor(
                       }
                     }
                     trip.isSettled = true
+                    tripsCount++
                   }
                   add(Pair(HomeTripsItem(trip), Add))
                 }

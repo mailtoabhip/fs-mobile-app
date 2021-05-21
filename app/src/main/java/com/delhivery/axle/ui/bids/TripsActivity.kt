@@ -182,6 +182,10 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
 
       binding.txtTripCount.text = viewModel.tripsCountText
+      if (viewModel.isSettledFilter) {
+        binding.txtTripCount.text = "All Trips (${viewModel.tripsCount})"
+        title = "All Trips (${viewModel.tripsCount})"
+      }
     })
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
