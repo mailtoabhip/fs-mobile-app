@@ -169,9 +169,9 @@ class TripsViewModel @Inject constructor(
     if (loadingDateFilter) {
       request.loadedAfter = generateDateString(month, year.toString())
     }
-    if (isSettledFilter) {
-      request.settledTrips = true
-    }
+//    if (isSettledFilter) {
+//      request.settledTrips = true
+//    }
     when {
       viewType.equals("all") -> {
         request.tripStatus = statuses
@@ -222,6 +222,9 @@ class TripsViewModel @Inject constructor(
           } else if (viewType.equals("payment_view") && viewPaymentType == RecoveryPending) {
             jsonObject.addProperty("bucket_type", "recovery")
           }
+          if (isSettledFilter) {
+            jsonObject.addProperty("bucket_type", "balance_and_recovery")
+          }
           tripsRepository.bulkPayments(t.trips, jsonObject)
         }
         .onBackground()
@@ -262,9 +265,22 @@ class TripsViewModel @Inject constructor(
                     Log.d("No payment found for: ", trip.transactionId)
                   }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status !="balance_pending")
-                      || viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending") {
+                      || (viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending")) {
                     total--
                     continue
+                  }
+                  if (isSettledFilter) {
+                    if (trip.tripStatus != "trip_completed") {
+                      total--
+                      continue
+                    }
+                    if (trip.isApReconPending != true) {
+                      if (trip.payment!!.paymentAmount != 0.0 ) {
+                        total--
+                        continue
+                      }
+                    }
+                    trip.isSettled = true
                   }
                   add(Pair(HomeTripsItem(trip), Add))
                 }

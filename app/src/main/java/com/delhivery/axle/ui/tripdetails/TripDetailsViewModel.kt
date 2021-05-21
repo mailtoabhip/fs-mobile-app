@@ -248,6 +248,10 @@ class TripDetailsViewModel @Inject constructor(
       recoverySettled = false
     }
 
+    if (paymentSummaryList.isEmpty() && tripDetail.tripStatus == "trip_completed") {
+      paymentSettled = true
+    }
+
     tripDetail.isSettled = paymentSettled && recoverySettled
     if (tripDetail.isSettled) {
       tripSettledLiveData.postValue(true)
@@ -353,7 +357,7 @@ class TripDetailsViewModel @Inject constructor(
                   _res.let {
                     paymentSummaryList.clear()
                     for (charge in _res){
-                      if (charge.status != "success" || charge.paymentType != "payment") {
+                      if (charge.status != "success") {
                         continue
                       }
                       charge.transferTime?.let {
@@ -361,12 +365,9 @@ class TripDetailsViewModel @Inject constructor(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.transactionId != transactionId) {
                           deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovery against overpayment ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
-                          charge.appliedAmount!!, "", false))
-                        } else {
+                          charge.appliedAmount!!, "", true, charge.transactionId))
+                        } else if (charge.paymentType == "payment") {
                           var newAmount = charge.amount
-                          charge.appliedAmount?.let {
-                            newAmount = charge.appliedAmount
-                          }
                           // val tdsObj = TDS(charge.amount, charge.transferTime)
                           // val tds = tdsObj.getTDS(tdsRate, updatedTDSRate)
                           newAmount -= charge.tdsDeducted
@@ -374,11 +375,25 @@ class TripDetailsViewModel @Inject constructor(
                           if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                             paymentSettled = true
                           }
-                          if (charge.utrNumber.isNotNullOrEmpty()) {
-                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize() + " UTR: " + charge.utrNumber!!, newAmount, time, false))
-                          } else {
-                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(charge.head.capitalize(), newAmount, time, false))
+                          var event = charge.head.capitalize()
+                          when (charge.head) {
+                            "loading" -> {
+                              event = "Advance"
+                            }
+                            "intermittent" -> {
+                              event = "In-Transit"
+                            }
+                            "balance" -> {
+                              event = "Balance"
+                            }
                           }
+                          if (charge.utrNumber.isNotNullOrEmpty()) {
+                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(event + " UTR: " + charge.utrNumber!!, newAmount, time, false))
+                          } else {
+                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(event, newAmount, time, false))
+                          }
+                        } else {
+
                         }
                       }
                       //newPaymentSummary.add(charge)

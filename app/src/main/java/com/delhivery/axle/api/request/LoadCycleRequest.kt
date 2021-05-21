@@ -78,11 +78,11 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
       }
     }
 
-    settledTrips?.let {
-      if (it) {
-        jsonObject.addProperty("is_ap_recon_pending", true)
-      }
-    }
+//    settledTrips?.let {
+//      if (it) {
+//        jsonObject.addProperty("is_ap_recon_pending", true)
+//      }
+//    }
 
     delayed?.let {
       if (it) {
