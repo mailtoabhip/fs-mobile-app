@@ -187,12 +187,6 @@ class TripsViewModel @Inject constructor(
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
-          tripsCountText = if (tripsFilter == "issue_trips") {
-            "Trips with the issue (${total})"
-          } else {
-            "All Trips (${total})"
-          }
-          tripsCountLiveData.postValue(total)
 
           val jsonObject = JsonObject()
           jsonObject.addProperty("vendor_id", userRepository.userId())
@@ -243,8 +237,19 @@ class TripsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                    add(Pair(HomeTripsItem(trip), Add))
+                  if ((viewPaymentType == BalancePending && trip.payment!!.status !="balance_pending")
+                      || viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending") {
+                    total--
+                    continue
+                  }
+                  add(Pair(HomeTripsItem(trip), Add))
                 }
+                tripsCountText = if (tripsFilter == "issue_trips") {
+                  "Trips with the issue (${total})"
+                } else {
+                  "All Trips (${total})"
+                }
+                tripsCountLiveData.postValue(total)
               }
             }
                 .let {
