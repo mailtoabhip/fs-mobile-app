@@ -46,6 +46,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.abs
 
 /**
  * View model for [TripDetailsActivity]
@@ -223,9 +224,11 @@ class TripDetailsViewModel @Inject constructor(
                     for (collection in _res) {
                       if(collection.type == "waived_off"){
                         collections += collection.amount
-                        deductionSummaryList.add(
-                            TripPaymentSummaryDetailItemData("Waived Off", collection.amount, "", false))
                       }
+                    }
+                    if (collections > 0) {
+                      deductionSummaryList.add(
+                          TripPaymentSummaryDetailItemData("Waived Off", collections, "", false))
                     }
                   }
                 } else{
@@ -260,13 +263,16 @@ class TripDetailsViewModel @Inject constructor(
     for (payment in paymentSummaryList) {
       totalPendingBalance -= payment.amount
     }
+    totalPendingBalance += 2*collections
     for (recovery in recoveriesSummaryList) {
-      totalPendingBalance -= recovery.amount
+      totalPendingBalance += recovery.amount
     }
 
+    var pendingTitle = "Pending Payment"
     if (totalPendingBalance > 0) {
       pendingBalanceRecovery = totalPendingBalance
     } else {
+      pendingTitle = "Pending Recovery"
       pendingBalanceRecovery = totalPendingRecovery
     }
 
@@ -275,7 +281,7 @@ class TripDetailsViewModel @Inject constructor(
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Charges", chargesSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Deductions", deductionSummaryList, false)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Payments", paymentSummaryList, false)), Add))
-      add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Pending Payment/Recovery", pendingRecoveryList, false, pendingBalanceRecovery)), Add))
+      add(Pair(TripSummaryItem(TripPaymentSummaryItemData(pendingTitle, pendingRecoveryList, false, pendingBalanceRecovery)), Add))
       add(Pair(TripSummaryItem(TripPaymentSummaryItemData("Recoveries Adjusted", recoveriesSummaryList, false)), Add))
     }.let {
       tripPaymentSummaryLiveData.postValue(it)
@@ -427,17 +433,16 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
-                if (recovery.pendingRecoveryAmount > 0) {
-                  totalPendingRecovery += recovery.pendingRecoveryAmount
-//                  pendingRecoveryList.add(
-//                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-//                  )
-                } else {
-                  recovery.recoveryData?.let {
-                    for (data in recovery.recoveryData) {
-                      if (data.recoveryTripId == transactionId) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", false))
-                      }
+//                if (abs(recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount) > 0)  {
+//                  totalPendingRecovery += recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount
+////                  pendingRecoveryList.add(
+////                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
+////                  )
+//                }
+                recovery.recoveryData?.let {
+                  for (data in recovery.recoveryData) {
+                    if (data.recoveryTripId != transactionId) {
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
                     }
                   }
                 }
@@ -464,18 +469,22 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe {
           _res, error ->
           if (!error && _res != null) {
-            if (_res.isNotEmpty()) {
-              for (recovery in _res) {
-                if (recovery.pendingRecoveryAmount > 0) {
-                  totalPendingRecovery += recovery.pendingRecoveryAmount
-//                  pendingRecoveryList.add(
-//                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-//                  )
-                } else {
-                  recovery.recoveryData?.let {
-                    for (data in recovery.recoveryData) {
-                      if (data.recoveryTripId == transactionId) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, false))
+            if (_res.responseData != null) {
+              for (recovery in _res.responseData) {
+//                if (abs(recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount) > 0) {
+//                  totalPendingRecovery += recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount
+////                  pendingRecoveryList.add(
+////                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
+////                  )
+//                }
+                recovery.recoveryData?.let {
+                  for (data in recovery.recoveryData) {
+                    if (data.recoveryTripId != transactionId) {
+                      val utr = data.utrNumber
+                      if (utr.isNotNullOrEmpty()) {
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, true))
+                      } else {
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
                       }
                     }
                   }
@@ -501,8 +510,8 @@ class TripDetailsViewModel @Inject constructor(
         .onBackground()
         .progress()
         .subscribe { _res, error ->
-          if (!error && _res != null) {
-            for (recovery in _res) {
+          if (!error && _res.responseData != null) {
+            for (recovery in _res.responseData) {
               var subtitle = ""
               if (recovery.type == "overpayment") {
                 subtitle = "UTR: " + recovery.utr
