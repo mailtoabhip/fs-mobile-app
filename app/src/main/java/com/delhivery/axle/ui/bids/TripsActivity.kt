@@ -462,7 +462,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
             binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
 
-            viewModel.filterList = listOf("Less than 1 day", "1 day", "2 days", "3 days +")
+            viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
             viewModel.filterKey = "arrived_ageing"
 
           }
@@ -486,7 +486,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
             binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
 
-            viewModel.filterList = listOf("Less than 1 day", "1 day", "2 days", "3 days +")
+            viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
             viewModel.filterKey = "reached_ageing"
 
           }

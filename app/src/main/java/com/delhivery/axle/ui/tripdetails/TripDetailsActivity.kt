@@ -501,7 +501,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       TripPaymentSummaryDetailItemAction -> {
         val data = item.data as TripPaymentSummaryDetailItemData
         if (data.redirectable == true) {
-          startActivity(tripDetailsIntent(data.title, this))
+          data.transactionId?.let {
+            startActivity(tripDetailsIntent(data.transactionId!!, this))
+          }
         }
       }
     }

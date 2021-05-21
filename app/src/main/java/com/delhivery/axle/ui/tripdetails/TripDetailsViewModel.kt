@@ -450,7 +450,8 @@ class TripDetailsViewModel @Inject constructor(
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                          data.recoveryAmount, "", true, data.recoveryTripId))
                     }
                   }
                 }
@@ -490,9 +491,11 @@ class TripDetailsViewModel @Inject constructor(
                     if (data.recoveryTripId != transactionId) {
                       val utr = data.utrNumber
                       if (utr.isNotNullOrEmpty()) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "UTR: " + data.utrNumber, true))
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                            data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId))
                       } else {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(data.recoveryTripId, data.recoveryAmount, "", true))
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                            data.recoveryAmount, "", true, data.recoveryTripId))
                       }
                     }
                   }

@@ -483,7 +483,8 @@ data class HomeTripsItemData(
   fun loadedAgeing() = when (tripStatus) {
     TruckArrived.statusKey -> {
       updateInfo?.truckArrivedInfo?.let {
-        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        "Ageing: " + DateUtils.convertToRelativeTimeStamp(it.time)
       } ?: ""
     }
     else -> {
@@ -497,7 +498,8 @@ data class HomeTripsItemData(
   fun unloadedAgeing() = when (tripStatus) {
     TruckReached.statusKey, In_Transit.statusKey -> {
       updateInfo?.truckReachedInfo?.let {
-        getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        "Ageing: " + DateUtils.convertToRelativeTimeStamp(it.time)
       } ?: ""
     }
     else -> {

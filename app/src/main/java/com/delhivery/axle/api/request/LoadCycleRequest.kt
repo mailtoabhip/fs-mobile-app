@@ -28,6 +28,8 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var reachedAgeing: String?= null
   var delayed: Boolean?= false
   var operationTripStatus: String?= null
+  var sortBy: String?= null
+  var sortDir: String?= null
 
   constructor(
     vehicleNumber: String? = null,
@@ -100,8 +102,13 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
         jsonObject.addProperty("prefix", prefix)
       }
 
-    jsonObject.addProperty("sort_by", "loaded")
-    jsonObject.addProperty("sort_dir", "desc")
+    sortBy?.let {
+      jsonObject.addProperty("sort_by", sortBy)
+    }
+
+    sortDir?.let {
+      jsonObject.addProperty("sort_dir", sortDir)
+    }
 
     return jsonObject
   }

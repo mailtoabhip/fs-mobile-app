@@ -15,6 +15,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.bids.TripType.AwaitingArrival
+import com.delhivery.axle.ui.bids.TripType.AwaitingLoading
 import com.delhivery.axle.ui.bids.TripType.AwaitingUnloading
 import com.delhivery.axle.ui.bids.TripType.InTransit
 import com.delhivery.axle.ui.bids.TripType.Unknown
@@ -180,6 +182,28 @@ class TripsViewModel @Inject constructor(
       else -> {
         // request.tripStatus = tripType.status.joinToString(separator = ",") { it }
         request.operationTripStatus = tripType.status[0]
+        when (tripType) {
+          AwaitingArrival -> {
+            request.sortBy = "required_on"
+            request.sortDir = "asc"
+          }
+          InTransit -> {
+            request.sortBy = "loaded"
+            request.sortDir = "desc"
+          }
+          AwaitingLoading -> {
+            request.sortBy = "arrival"
+            request.sortDir = "desc"
+          }
+          AwaitingUnloading -> {
+            request.sortBy = "reached"
+            request.sortDir = "desc"
+          }
+          else -> {
+            request.sortBy = "loaded"
+            request.sortDir = "desc"
+          }
+        }
       }
     }
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())

@@ -106,10 +106,10 @@ class TripsFilterDialog (
       "Less than 1 day" -> {
         "less_than_1_day"
       }
-      "1 day" -> {
+      "1 day +" -> {
         "1_day"
       }
-      "2 days" -> {
+      "2 days +" -> {
         "2_days"
       }
       "3 days +" -> {

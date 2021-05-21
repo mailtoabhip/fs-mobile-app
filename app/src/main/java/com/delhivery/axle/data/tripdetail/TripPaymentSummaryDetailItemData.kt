@@ -14,7 +14,8 @@ data class TripPaymentSummaryDetailItemData (
   var title: String,
   var amount: Double,
   var subTitle: String ? = "",
-  var redirectable: Boolean ?= false
+  var redirectable: Boolean ?= false,
+  var transactionId: String ?= ""
 
 ) : BaseKeyTypeModel<String>() {
 
