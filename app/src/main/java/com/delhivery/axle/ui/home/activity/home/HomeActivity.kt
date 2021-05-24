@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.activity.home
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -25,6 +26,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 
@@ -40,6 +42,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun requireConnection() = true
 
+  var fragmentType : String ?= ""
+
   /* home fragments pager adapter */
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
@@ -54,6 +58,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+
+    fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -90,6 +96,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     if (notificationId.isNotEmpty()) {
       processNotification()
+    }
+
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+      fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
   }
 
@@ -218,3 +228,16 @@ private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notifica
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
 private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
+
+/* intent keys */
+private const val IntentExtraFragmentTypeKey = "fragment_type"
+
+/**
+ * Trip details intent
+ */
+fun homeActivityIntent(
+  fragmentType: String,
+  context: Context
+) = Intent(context, HomeActivity::class.java).apply {
+  putExtra(IntentExtraFragmentTypeKey, fragmentType)
+}

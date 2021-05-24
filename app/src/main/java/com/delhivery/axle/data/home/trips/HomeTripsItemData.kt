@@ -46,11 +46,13 @@ data class HomeTripsItemData(
   @SerializedName("driver") val driverDetails: TripDriverDetails?,
   @SerializedName("bid_details") val bidDetails: TripBidDetails?,
   @SerializedName("loading_location") val loadingLocation: String?,
+  @SerializedName("loading_location_contact_no") val loadingLocationContactNo: String?,
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("unloaded_time") val unloadingTime: String?,
   @SerializedName("required_on") val requiredOn: String,
   @SerializedName("required_on_time") val requiredOnTime: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
+  @SerializedName("unloading_location_contact_no") val unloadingLocationContactNo: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   @SerializedName("pod_url") val podUrl: String? = "",
@@ -207,6 +209,52 @@ data class HomeTripsItemData(
   }
 
   /**
+   * @return loading location text
+   */
+  fun loadingLocation() = if (loadingLocation.isNotNullOrEmpty()) {
+    ", $loadingLocation"
+  } else {
+    ""
+  }
+
+  /**
+   * @return loading location contact no. text
+   */
+  fun loadingLocationContactNo() = if (loadingLocationContactNo.isNotNullOrEmpty()) {
+    ", $loadingLocationContactNo"
+  } else {
+    ""
+  }
+
+  /**
+   * @return unloading location text
+   */
+  fun unloadingLocation() = if (unloadingLocation.isNotNullOrEmpty()) {
+    ", $unloadingLocation"
+  } else {
+    ""
+  }
+
+  /**
+   * @return unloading location contact no. text
+   */
+  fun unloadingLocationContactNo() = if (unloadingLocationContactNo.isNotNullOrEmpty()) {
+    ", $unloadingLocationContactNo"
+  } else {
+    ""
+  }
+
+  /**
+   * @return origin city, warehouse, contact no.
+   */
+  fun originCityWarehouseContact() = originCityName() + loadingLocation() + loadingLocationContactNo()
+
+  /**
+   * @return destination city, warehouse, contact no.
+   */
+  fun destinationCityWarehouseContact() = destinationCityName() + " " + unloadingLocation() + " " + unloadingLocationContactNo()
+
+  /**
    * @return formatted display time
    */
   private fun displayTime() = when (tripStatus) {
@@ -243,17 +291,14 @@ data class HomeTripsItemData(
   /**
    * @return formatted pmt rate
    */
-  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ ${StringUtils.formatAmount(vendorPmtRate)} PMT" }
+  fun pmtRate() = vendorPmtRate?.let { "₹ ${StringUtils.formatAmount(vendorPmtRate)} PMT" }
 
   /**
    * @return promise date
    */
   fun promiseDate() =
     promiseDate?.let {
-      val format = when {
-        isExpress() -> "dd-MMM-yyyy hh:mm"
-        else -> "dd-MMM-yyyy"
-      }
+      val format = "dd-MMM-yyyy"
       "PD: " + DateUtils.formatDate(
           DateUtils.parseDate(it, OrionDateFormat), format
       )
@@ -484,7 +529,7 @@ data class HomeTripsItemData(
     TruckArrived.statusKey -> {
       updateInfo?.truckArrivedInfo?.let {
         //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
-        "Ageing: " + DateUtils.convertToRelativeTimeStamp(it.time)
+        "Ageing: " + DateUtils.convertToRelativeTimeStampTrip(it.time)
       } ?: ""
     }
     else -> {
@@ -499,7 +544,7 @@ data class HomeTripsItemData(
     TruckReached.statusKey, In_Transit.statusKey -> {
       updateInfo?.truckReachedInfo?.let {
         //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
-        "Ageing: " + DateUtils.convertToRelativeTimeStamp(it.time)
+        "Ageing: " + DateUtils.convertToRelativeTimeStampTrip(it.time)
       } ?: ""
     }
     else -> {
@@ -566,6 +611,27 @@ data class HomeTripsItemData(
   }
 
   /**
+   * @return trip payment text on trip detail page basis trip payment status
+   */
+  fun tripPaymentText(): String {
+    payment?.let {
+      when {
+        paymentStatus() == "advance_pending" -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid when the loading is completed"
+        }
+        paymentStatus() == "balance_pending" -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid as balance soon"
+        }
+        paymentStatus() == "recovery_pending" -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} to be recovered yet"
+        }
+        else -> ""
+      }
+    }
+    return ""
+  }
+
+  /**
    * payment amount visibility
    */
   fun paymentVisibility() = if ((paymentStatus() == "advance_pending" ||
@@ -574,6 +640,17 @@ data class HomeTripsItemData(
   } else {
     View.GONE
   }
+
+  /**
+   * payment visibility on trip detail
+   */
+  fun paymentDetailVisibility() = if ((paymentStatus() == "advance_pending" ||
+          paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending")) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
 
   /**
    * Advance payment status, payment date and utr triplet
@@ -790,6 +867,26 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun addressExpandRes() = DrawableProviderUtils.expandedRes(addressExpand)
+
+  /**
+   * particular trip status timestamp
+   */
+  fun tripStatusTime(datetime: String?) = datetime?.let {
+    DateUtils.formatDate(
+        DateUtils.parseDate(it, OrionDateFormat), SimpleDateFormat
+    )
+  } ?: ""
+
+  /**
+   * trip settlement time text
+   */
+  fun tripSettlementTimeText(datetime: String?) = if (datetime.isNotNullOrEmpty()) {
+    DateUtils.formatDate(
+        DateUtils.parseDate(datetime!!, OrionDateFormat), SimpleDateFormat
+    )
+  } else {
+    ""
+  }
 
 }
 

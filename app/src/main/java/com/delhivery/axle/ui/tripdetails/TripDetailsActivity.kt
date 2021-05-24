@@ -109,7 +109,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.tripDetails = viewModel.tripDetail
     })
     viewModel.warehouseLiveData.observe(this, Observer {
-      binding.labelWarehouse.text = it
+      // binding.labelWarehouse.text = it
     })
     viewModel.tripSettledLiveData.observe(this, Observer {
       binding.tripSettled = it
@@ -122,6 +122,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     })
 
+    binding.rvPmtSummary.visibility = View.GONE
     binding.rvPmtSummary.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = this@TripDetailsActivity.adapter
@@ -228,6 +229,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.transaction = t.first
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
+        if ((viewModel.tripDetail.tripStatus != "truck_confirmed") &&
+            (viewModel.tripDetail.tripStatus != "truck_arrived") &&
+            (viewModel.tripDetail.tripStatus != "truck_loaded")) {
+          binding.rvPmtSummary.visibility = View.VISIBLE
+          viewModel.paymentBucketType = "balance_and_recovery"
+        }
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPayment()
         viewModel.fetchChargeListSummary()

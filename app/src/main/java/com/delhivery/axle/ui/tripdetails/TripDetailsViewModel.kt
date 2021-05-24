@@ -107,6 +107,7 @@ class TripDetailsViewModel @Inject constructor(
   var advancePaidTime: String = ""
   var advanceUTR: String = ""
   var bidDetail: TripBidDetails? = null
+  var paymentBucketType: String = ""
 
   var isApReconPending = false
   var tripType: String = ""
@@ -118,6 +119,7 @@ class TripDetailsViewModel @Inject constructor(
 
   var paymentSettled: Boolean = false
   var recoverySettled: Boolean = true
+  var settledTime: String ? = ""
   var tripSettledLiveData = MutableLiveData<Boolean>()
 
   var tripPaymentSummaryLiveData = MutableLiveData<List<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -155,6 +157,9 @@ class TripDetailsViewModel @Inject constructor(
     jsonObject.addProperty("transaction_ids", transactionId)
     jsonObject.addProperty("offset", 0)
     jsonObject.addProperty("limit", 10)
+    if (paymentBucketType.isNotNullOrEmpty()) {
+      jsonObject.addProperty("bucket_type", paymentBucketType)
+    }
     compositeDisposable += tripsRepository.bulkPayments(listOf(tripDetail), jsonObject)
         .onBackground()
         .subscribe { _res, error ->
@@ -244,7 +249,7 @@ class TripDetailsViewModel @Inject constructor(
    */
   fun processPaymentSummary() {
 
-    if (pendingRecoveryList.size > 0) {
+    if (pendingRecoveryList.size > 0 || totalPendingBalance != 0.0 || totalPendingRecovery == 0.0) {
       recoverySettled = false
     }
 
@@ -374,6 +379,7 @@ class TripDetailsViewModel @Inject constructor(
                           totalTDS += charge.tdsDeducted
                           if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                             paymentSettled = true
+                            settledTime = charge.transferTime
                           }
                           var event = charge.head.capitalize()
                           when (charge.head) {

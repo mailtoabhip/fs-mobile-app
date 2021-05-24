@@ -206,39 +206,54 @@
                   />
 
               <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/label_truck_type"
+                  android:id="@+id/textView"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_8dp"
+                  android:fontFamily="sans-serif"
+                  android:gravity="center_vertical"
+                  android:text="@{ tripDetails.load() }"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_14sp"
+                  android:visibility="@{tripDetails.isPMTIndent()? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@id/text_lr"
+                  tools:text="Loaded Weight: 32MT"
+                  />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/label_pmt_rate"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_marginEnd="@dimen/size_16dp"
                   android:layout_marginTop="@dimen/size_8dp"
                   android:fontFamily="sans-serif"
-                  android:text="Truck Type"
+                  android:text="PMT Rate"
                   android:textColor="@color/sub_heading_black"
                   android:textSize="@dimen/text_14sp"
                   app:layout_constraintEnd_toEndOf="parent"
                   app:layout_constraintTop_toBottomOf="@+id/seperator"
-                  tools:text="Truck Type"
+                  tools:text="PMT Rate"
                   />
 
               <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/text_truck_type"
+                  android:id="@+id/text_pmt_rate"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:fontFamily="sans-serif"
                   android:layout_marginTop="@dimen/size_4dp"
                   android:layout_marginEnd="@dimen/size_16dp"
-                  android:text="@{ transaction.truckTypeWithCapacity() }"
+                  android:text="@{ tripDetails.pmtRate() }"
                   android:textColor="@color/black"
                   android:textSize="@dimen/text_14sp"
                   app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintTop_toBottomOf="@+id/label_truck_type"
-                  tools:text="Mini Truck/LCV"
+                  app:layout_constraintTop_toBottomOf="@+id/label_pmt_rate"
+                  tools:text="₹ 16/MT"
                   />
 
           </androidx.constraintlayout.widget.ConstraintLayout>
 
           <!-- trip details container -->
-
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -318,7 +333,7 @@
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_2dp"
                   android:fontFamily="sans-serif"
-                  android:text="@{transaction.originDistrictCityState()}"
+                  android:text="@{tripDetails.originCityWarehouseContact()}"
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_16sp"
                   app:layout_constraintStart_toStartOf="parent"
@@ -346,7 +361,7 @@
                   android:layout_marginTop="@dimen/size_2dp"
                   android:ellipsize="end"
                   android:fontFamily="sans-serif"
-                  android:text="@{transaction.destinationDistrictCityState()}"
+                  android:text="@{tripDetails.destinationCityWarehouseContact()}"
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_16sp"
                   app:layout_constraintStart_toStartOf="parent"
@@ -413,61 +428,6 @@
                   tools:srcCompat="@drawable/ic_closed_truck"
                   />
 
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/textView"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_8dp"
-                  android:fontFamily="sans-serif"
-                  android:gravity="center_vertical"
-                  android:text="@{ tripDetails.load() }"
-                  android:textColor="@color/sub_heading_black"
-                  android:textSize="@dimen/text_14sp"
-                  android:visibility="@{tripDetails.isPMTIndent()? View.VISIBLE : View.GONE}"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@id/img_truck"
-                  tools:text="Loaded Weight: 32MT"
-                  />
-
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_8dp"
-                  android:fontFamily="sans-serif"
-                  android:gravity="center_vertical"
-                  android:text="@{ tripDetails.pmtRate() }"
-                  android:textColor="@color/sub_heading_black"
-                  android:textSize="@dimen/text_14sp"
-                  android:visibility="@{tripDetails.isPMTIndent()? View.VISIBLE : View.GONE}"
-                  app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintTop_toBottomOf="@id/img_truck"
-                  tools:text="PMT rate: Rs 4000 PMT"
-                  />
-
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/id3"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_8dp"
-                  android:fontFamily="sans-serif"
-                  android:text="@string/label_pickup_location"
-                  android:textColor="@color/sub_heading_black"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@+id/textView"
-                  />
-
-              <androidx.appcompat.widget.AppCompatTextView
-                  android:id="@+id/label_warehouse"
-                  android:layout_width="0dp"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/size_4dp"
-                  android:fontFamily="sans-serif"
-                  android:textColor="@color/heading_black"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@+id/id3"
-                  tools:text="Shop No 33-35, Kamat Arcade, Santa Inez, Panaji, Goa 403001"
-                  />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
           </androidx.appcompat.widget.LinearLayoutCompat>
@@ -491,9 +451,8 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:weightSum="6"
-                android:layout_marginEnd="@dimen/size_16dp"
-                android:layout_marginStart="@dimen/size_16dp"
-                android:layout_marginBottom="@dimen/size_16dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -534,7 +493,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-
               </androidx.appcompat.widget.LinearLayoutCompat>
 
 
@@ -573,7 +531,6 @@
                     android:textSize="@dimen/text_12sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
-
 
               </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -735,6 +692,95 @@
 
           </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:weightSum="6"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_marginBottom="@dimen/size_16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_arrival_time"
+                  android:text="@{tripDetails.tripStatusTime(tripDetails.updateInfo.truckArrivedInfo.time)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_loading_time"
+                  android:text="@{tripDetails.tripStatusTime(tripDetails.updateInfo.loadedInfo.time)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_reached_time"
+                  android:text="@{tripDetails.tripStatusTime(tripDetails.updateInfo.truckReachedInfo.time)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_unloading_time"
+                  android:text="@{tripDetails.tripStatusTime(tripDetails.updateInfo.truckUnloadedInfo.time)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_pod_submit_time"
+                  android:text="@{tripDetails.tripStatusTime(tripDetails.updateInfo.tripCompletedInfo.time)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_settled_time"
+                  android:text="@{tripDetails.tripSettlementTimeText(viewModel.settledTime)}"
+                  android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                  android:textAlignment="viewStart"
+                  android:textSize="@dimen/text_10sp"
+                  android:layout_weight="1"
+                  android:layout_marginTop="@dimen/size_4dp"
+                  android:maxLines="1"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  tools:text="21 Dec 2021"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
           </androidx.appcompat.widget.LinearLayoutCompat>
 
           <androidx.appcompat.widget.AppCompatTextView
@@ -745,46 +791,54 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"/>
 
-          <androidx.appcompat.widget.LinearLayoutCompat
+          <androidx.cardview.widget.CardView
+              app:cardCornerRadius="@dimen/size_4dp"
+              android:layout_marginTop="@dimen/size_8dp"
+              android:layout_marginBottom="@dimen/size_8dp"
+              android:paddingTop="@dimen/size_4dp"
+              android:paddingBottom="@dimen/size_4dp"
+              android:visibility="@{tripDetails.paymentDetailVisibility()}"
+              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_margin="@dimen/size_4dp"
-              android:weightSum="2"
-              android:orientation="horizontal">
+              tools:visibility="visible">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_pending_payment"
-                android:text="@{tripDetails.paymentStatusText()}"
-                android:paddingStart="@dimen/size_16dp"
-                android:padding="@dimen/size_8dp"
-                android:visibility="@{tripDetails.paymentVisibility()}"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_weight="1"
-                android:background="@color/trip_red"
-                android:layout_width="0dp"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:visibility="visible"
-                tools:text="Advance Pending"/>
+                android:paddingTop="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_8dp"
+                android:background="@drawable/bg_gradient_orange"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_pending_payment_amount"
-                android:text="@{tripDetails.tripPayment()}"
-                android:paddingStart="@dimen/size_16dp"
-                android:padding="@dimen/size_8dp"
-                android:visibility="@{tripDetails.paymentVisibility()}"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textAlignment="viewEnd"
-                android:layout_weight="1"
-                android:background="@color/trip_red"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:visibility="visible"
-                tools:text="Rs. 43,200"/>
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_pending_payment"
+                  android:text="@{tripDetails.paymentStatusText()}"
+                  android:paddingStart="@dimen/size_16dp"
+                  android:paddingBottom="@dimen/size_4dp"
+                  android:textColor="@color/white"
+                  android:layout_gravity="center"
+                  android:textStyle="bold"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  tools:text="Advance Pending"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/txt_pending_payment_amount"
+                  android:text="@{tripDetails.tripPaymentText()}"
+                  android:paddingStart="@dimen/size_16dp"
+                  android:textColor="@color/white"
+                  android:layout_gravity="center"
+                  android:textStyle="bold"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  tools:text="Rs. 43,200 will be paid when the loading is completed"/>
 
 
-          </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+          </androidx.cardview.widget.CardView>
 
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/rv_pmt_summary"
@@ -793,7 +847,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               tools:listitem="@layout/view_trip_payment_summary_item"
-              tools:itemCount="5"/>
+              tools:itemCount="5"
+              tools:visibility="visible"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

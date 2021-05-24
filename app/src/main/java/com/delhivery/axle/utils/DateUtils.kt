@@ -175,6 +175,32 @@ object DateUtils {
     }
   }
 
+  /**
+   * @return time stamp relative to current time for trip
+   */
+  fun convertToRelativeTimeStampTrip(actionTime: String? = ""): String {
+    return if (actionTime.isNotNullOrEmpty()) {
+      (System.currentTimeMillis() - parseDate(
+          actionTime!!, DatePatterns.OrionDateFormat
+      ).time).let { msDiff ->
+        val days = TimeUnit.MILLISECONDS.toDays(msDiff)
+        val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
+        val mins = TimeUnit.MILLISECONDS.toMinutes(msDiff - TimeUnit.HOURS.toMillis(hours))
+        val secs = TimeUnit.MILLISECONDS.toSeconds(msDiff - TimeUnit.MINUTES.toMillis(mins))
+        when {
+          days > 0 -> when {
+            days <= 1 -> "$days day"
+            days in 2..3 -> "$days days"
+            else -> "3 days+"
+          }
+          else -> "Less than 1 day"
+        }
+      }
+    } else {
+      ""
+    }
+  }
+
   fun getMonth(month: Int): String{
     when(month){
       1 -> return "Jan"

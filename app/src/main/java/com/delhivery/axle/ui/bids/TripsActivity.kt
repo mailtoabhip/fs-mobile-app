@@ -25,12 +25,13 @@ import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
 import com.delhivery.axle.ui.dialogs.TripsFilterDialog
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
@@ -39,12 +40,7 @@ import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_TRIP
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.toDate
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Calendar
-import java.util.Date
 
 /**
  * Created by saurabh
@@ -170,6 +166,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       binding.textInTransit.text = it.inTransit.count()
       binding.textAwaitingLoading.text = it.awaitingLoading.count()
       binding.textAwaitingUnloading.text = it.awaitingUnloading.count()
+      binding.textAwaitingPod.text = it.awaitingPod.count()
     })
 
     viewModel.tripsCountLiveData.observe(this, Observer {
@@ -239,6 +236,10 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       viewModel.tripType = Companion.byTypeId(3)
       setHeaderResources()
       refreshData()
+    }
+
+    binding.viewAwaitingPod.setOnClickListener {
+      startActivity(homeActivityIntent("pod", this))
     }
 
     binding.filterIcon.setOnClickListener {
