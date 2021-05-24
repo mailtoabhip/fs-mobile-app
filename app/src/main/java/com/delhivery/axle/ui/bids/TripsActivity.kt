@@ -156,8 +156,11 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     viewModel.summaryLiveData.observe(this, Observer {
       binding.textAdvancePending.text = it.advancePending.amount()
+      binding.textAdvancePendingCount.text = it.advancePending.count()
       binding.textBalancePending.text = it.balancePending.amount()
+      binding.textBalancePendingCount.text = it.balancePending.count()
       binding.textRecoveryPending.text = it.recoveryPending.amount()
+      binding.textRecoveryPendingCount.text = it.recoveryPending.count()
 
       val totalPending = (it.advancePending.amount ?: 0.0) + (it.balancePending.amount ?: 0.0) + (it.recoveryPending.amount ?: 0.0)
       val totalPendingText = "Total Pending: ₹ " + StringUtils.formatAmount(totalPending)
@@ -513,12 +516,15 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
             binding.id1.setTextColor(resources.getColor(R.color.white))
             binding.textAdvancePending.setTextColor(resources.getColor(R.color.white))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.white))
 
             binding.id2.setTextColor(resources.getColor(R.color.black))
             binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
 
             binding.id3.setTextColor(resources.getColor(R.color.black))
             binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
 
           }
           ViewPaymentType.byTypeId(1) -> {
@@ -530,12 +536,15 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
             binding.id1.setTextColor(resources.getColor(R.color.black))
             binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
 
             binding.id2.setTextColor(resources.getColor(R.color.white))
             binding.textBalancePending.setTextColor(resources.getColor(R.color.white))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.white))
 
             binding.id3.setTextColor(resources.getColor(R.color.black))
             binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
 
             viewModel.filterList = listOf("All", "Trips with the issue")
             viewModel.filterKey = "trips_with_issue"
@@ -550,12 +559,15 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
             binding.id1.setTextColor(resources.getColor(R.color.black))
             binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
 
             binding.id2.setTextColor(resources.getColor(R.color.black))
             binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
 
             binding.id3.setTextColor(resources.getColor(R.color.white))
             binding.textRecoveryPending.setTextColor(resources.getColor(R.color.white))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.white))
 
           }
         }

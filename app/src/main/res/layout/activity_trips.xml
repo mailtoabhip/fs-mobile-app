@@ -163,23 +163,54 @@
               tools:text="Advance Pending"
               />
 
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/text_advance_pending"
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
-              android:fontFamily="sans-serif-medium"
-              android:gravity="center"
-              android:layout_marginBottom="@dimen/size_8dp"
-              android:text=""
+              app:layout_constraintTop_toBottomOf="@+id/id1"
+              android:layout_marginTop="@dimen/size_8dp"
+              app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              android:textColor="@color/black"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
-              app:layout_constraintBottom_toBottomOf="parent"
-              tools:text="₹ 10,0000"
-              />
+              android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_advance_pending_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="5 trips"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_advance_pending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="₹ 10,0000"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
@@ -215,23 +246,53 @@
               tools:text="Balance Pending"
               />
 
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/text_balance_pending"
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
-              android:fontFamily="sans-serif-medium"
-              android:gravity="center"
-              android:layout_marginBottom="@dimen/size_8dp"
-              android:text=""
+              app:layout_constraintTop_toBottomOf="@+id/id2"
+              android:layout_marginTop="@dimen/size_8dp"
+              app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              android:textColor="@color/black"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
-              app:layout_constraintBottom_toBottomOf="parent"
-              tools:text="₹ 10,0000"
-              />
+              android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_balance_pending_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="5 trips"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_balance_pending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="₹ 10,0000"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -268,23 +329,53 @@
               tools:text="Recovery Pending"
               />
 
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/text_recovery_pending"
+          <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
-              android:fontFamily="sans-serif-medium"
-              android:gravity="center"
-              android:layout_marginBottom="@dimen/size_8dp"
-              android:text=""
+              app:layout_constraintTop_toBottomOf="@+id/id3"
+              android:layout_marginTop="@dimen/size_8dp"
+              app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"
-              android:textColor="@color/black"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold"
-              app:layout_constraintBottom_toBottomOf="parent"
-              tools:text="₹ 10,0000"
-              />
+              android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_recovery_pending_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="5 trips"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_recovery_pending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="@dimen/size_8dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                tools:text="₹ 10,0000"
+                />
+
+          </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -569,7 +569,7 @@ data class HomeTripsItemData(
    * payment amount visibility
    */
   fun paymentVisibility() = if ((paymentStatus() == "advance_pending" ||
-      paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending" || paymentStatus() == "trip_completed") && isSettled) {
+      paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending") || (paymentStatus() == "trip_completed" && isSettled)) {
     View.VISIBLE
   } else {
     View.GONE
