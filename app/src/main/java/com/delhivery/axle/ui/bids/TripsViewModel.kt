@@ -182,13 +182,15 @@ class TripsViewModel @Inject constructor(
       }
       viewType.equals("payment_view") -> {
         request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
+        request.sortBy = "confirmed"
+        request.sortDir = "desc"
       }
       else -> {
         // request.tripStatus = tripType.status.joinToString(separator = ",") { it }
         request.operationTripStatus = tripType.status[0]
         when (tripType) {
           AwaitingArrival -> {
-            request.sortBy = "required_on"
+            request.sortBy = "confirmed"
             request.sortDir = "asc"
           }
           InTransit -> {
@@ -220,7 +222,7 @@ class TripsViewModel @Inject constructor(
           jsonObject.addProperty("vendor_id", userRepository.userId())
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
-          jsonObject.addProperty("limit", 10)
+          jsonObject.addProperty("limit", 100)
           if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
             jsonObject.addProperty("bucket_type", "balance")
           } else if (viewType.equals("payment_view") && viewPaymentType == RecoveryPending) {

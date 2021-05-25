@@ -60,8 +60,8 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
     updatedAfter?.let { if (it.isNotEmpty()) jsonObject.addProperty("updated_after", it) }
     loadedAfter?.let { if (it.isNotNullOrEmpty()) jsonObject.addProperty("loaded_after", it) }
-    offset?.let { jsonObject.addProperty("offset", it) }
-    limit?.let { jsonObject.addProperty("limit", it) }
+    offset?.let { jsonObject.addProperty("offset", 0) }
+    limit?.let { jsonObject.addProperty("limit", 100) }
     value?.let {
       val jsonArray = JsonArray()
       val rangeJsonObject = JsonObject()
