@@ -286,13 +286,13 @@ class TripsViewModel @Inject constructor(
                   }
                   add(Pair(HomeTripsItem(trip), Add))
                 }
-                tripsCountText = if (tripsFilter == "issue_trips") {
-                  "Trips with the issue (${total})"
-                } else {
-                  "All Trips (${total})"
-                }
-                tripsCountLiveData.postValue(total)
               }
+              tripsCountText = if (tripsFilter == "issue_trips") {
+                "Trips with the issue (${total})"
+              } else {
+                "All Trips (${total})"
+              }
+              tripsCountLiveData.postValue(total)
             }
                 .let {
                   userTripsData.postValue(it)

@@ -85,11 +85,11 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       LedgerSuccessDialog(context!!).show()
     })
 
-//    binding.refreshLayout.setOnRefreshListener {
-//      binding.refreshLayout.isRefreshing = false
-//      uiUtils.showProgress()
-//      viewModel.fetchTripsSummary()
-//    }
+    binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
+      uiUtils.showProgress()
+      viewModel.fetchTripsSummary()
+    }
 
     binding.downloadContainer.setOnClickListener {
       DownloadLedgerDialog(context!!, viewModel).show()
