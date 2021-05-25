@@ -182,10 +182,10 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
 
       binding.txtTripCount.text = viewModel.tripsCountText
-      if (viewModel.isSettledFilter) {
-        binding.txtTripCount.text = "All Trips (${viewModel.tripsCount})"
-        title = "All Trips (${viewModel.tripsCount})"
-      }
+//      if (viewModel.isSettledFilter) {
+//        binding.txtTripCount.text = "All Trips (${viewModel.tripsCount})"
+//        title = "All Trips (${viewModel.tripsCount})"
+//      }
     })
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
@@ -253,6 +253,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         binding.toggleRemovedLoadedFilter.visibility = View.GONE
         binding.loadedAfter.text = "Loaded after"
         viewModel.loadingDateFilter = false
+        viewModel.date = -1
         viewModel.month = -1
         viewModel.year = -1
         fetchTripDetails()

@@ -122,6 +122,7 @@ class TripsViewModel @Inject constructor(
   fun fetchTrips(paginate: Boolean) {
     if (!paginate) {
       offset = 0
+      tripsCount = 0
     } else if (paginate && !hasMoreData) {
       return
     }
@@ -168,7 +169,7 @@ class TripsViewModel @Inject constructor(
       }
     }
     if (loadingDateFilter) {
-      request.loadedAfter = generateDateString(month, year.toString())
+      request.loadedAfter = generateDateString(date, month, year.toString())
     }
 //    if (isSettledFilter) {
 //      request.settledTrips = true
@@ -176,6 +177,8 @@ class TripsViewModel @Inject constructor(
     when {
       viewType.equals("all") -> {
         request.tripStatus = statuses
+        request.sortBy = "confirmed"
+        request.sortDir = "desc"
       }
       viewType.equals("payment_view") -> {
         request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
@@ -222,10 +225,12 @@ class TripsViewModel @Inject constructor(
             jsonObject.addProperty("bucket_type", "balance")
           } else if (viewType.equals("payment_view") && viewPaymentType == RecoveryPending) {
             jsonObject.addProperty("bucket_type", "recovery")
-          }
-          if (isSettledFilter) {
+          } else if (viewType.equals("all")) {
             jsonObject.addProperty("bucket_type", "balance_and_recovery")
           }
+//          if (isSettledFilter) {
+//            jsonObject.addProperty("bucket_type", "balance_and_recovery")
+//          }
           tripsRepository.bulkPayments(t.trips, jsonObject)
         }
         .onBackground()
@@ -270,29 +275,26 @@ class TripsViewModel @Inject constructor(
                     total--
                     continue
                   }
-                  if (isSettledFilter) {
-                    if (trip.tripStatus != "trip_completed") {
-                      total--
-                      continue
-                    }
-                    if (trip.isApReconPending != true) {
-                      if (trip.payment!!.paymentAmount != 0.0 ) {
-                        total--
-                        continue
-                      }
-                    }
+                  if (trip.tripStatus == "trip_completed" && (trip.isApReconPending == true || trip.payment!!.paymentAmount == 0.0)) {
                     trip.isSettled = true
+                  }
+                  if (isSettledFilter) {
+                    if (trip.isSettled) {
+                      add(Pair(HomeTripsItem(trip), Add))
+                      tripsCount++
+                    }
+                  } else {
+                    add(Pair(HomeTripsItem(trip), Add))
                     tripsCount++
                   }
-                  add(Pair(HomeTripsItem(trip), Add))
                 }
               }
               tripsCountText = if (tripsFilter == "issue_trips") {
-                "Trips with the issue (${total})"
+                "Trips with the issue (${tripsCount})"
               } else {
-                "All Trips (${total})"
+                "All Trips (${tripsCount})"
               }
-              tripsCountLiveData.postValue(total)
+              tripsCountLiveData.postValue(tripsCount)
             }
                 .let {
                   userTripsData.postValue(it)
@@ -314,13 +316,13 @@ class TripsViewModel @Inject constructor(
   /**
    * generate date string
    */
-  private fun generateDateString(monthNumber: Int, year: String): String {
+  private fun generateDateString(day: Int, monthNumber: Int, year: String): String {
     val parser = SimpleDateFormat("yy")
     val formatter = SimpleDateFormat("yyyy")
     var fullYear = formatter.format(parser.parse(year)).toInt()
 
     val calendar = Calendar.getInstance()
-    calendar.set(fullYear, monthNumber, 1)
+    calendar.set(fullYear, monthNumber, day)
 
     var endDay = calendar.getActualMaximum(Calendar.DATE).toString()
     var startDay = "01"
@@ -336,7 +338,7 @@ class TripsViewModel @Inject constructor(
       if(endDay.length == 1){
         endDay = "0$endDay"
       }
-      date = -1
+      // date = -1
     }
     finalDate = "" + fullYear + "-" + month + "-" + endDay + "T23:59:59"
     return finalDate

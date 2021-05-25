@@ -113,6 +113,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
     viewModel.tripSettledLiveData.observe(this, Observer {
       binding.tripSettled = it
+      binding.viewModel = viewModel
     })
     viewModel.delegationLiveData.observe(this, Observer {
       if (it != null) {

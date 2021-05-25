@@ -249,19 +249,6 @@ class TripDetailsViewModel @Inject constructor(
    */
   fun processPaymentSummary() {
 
-    if (pendingRecoveryList.size > 0 || totalPendingBalance != 0.0 || totalPendingRecovery == 0.0) {
-      recoverySettled = false
-    }
-
-    if (paymentSummaryList.isEmpty() && tripDetail.tripStatus == "trip_completed") {
-      paymentSettled = true
-    }
-
-    tripDetail.isSettled = paymentSettled && recoverySettled
-    if (tripDetail.isSettled) {
-      tripSettledLiveData.postValue(true)
-    }
-
     var pendingBalanceRecovery = 0.0
     for (charge in chargesSummaryList) {
       totalPendingBalance += charge.amount
@@ -283,6 +270,19 @@ class TripDetailsViewModel @Inject constructor(
     } else {
       pendingTitle = "Pending Recovery"
       pendingBalanceRecovery = abs(totalPendingBalance)
+    }
+
+    if (pendingRecoveryList.size > 0 || totalPendingBalance < 0.0) {
+      recoverySettled = false
+    }
+
+    if (totalPendingBalance == 0.0 && tripDetail.tripStatus == "trip_completed") {
+      paymentSettled = true
+    }
+
+    tripDetail.isSettled = paymentSettled && recoverySettled
+    if (tripDetail.isSettled) {
+      tripSettledLiveData.postValue(true)
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -369,8 +369,18 @@ class TripDetailsViewModel @Inject constructor(
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.transactionId != transactionId) {
-                          deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovery against overpayment ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
-                          charge.appliedAmount!!, "", true, charge.transactionId))
+                          if (charge.appliedAmount!! > 0.0) {
+                            var subHeading = ""
+                            subHeading = if (charge.paymentType == "payment") {
+                              "overpayment"
+                            } else {
+                              charge.dnType ?: ""
+                            }
+                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovery against $subHeading ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
+                                charge.appliedAmount!!, "", true, charge.transactionId))
+                          } else {
+
+                          }
                         } else if (charge.paymentType == "payment") {
                           var newAmount = charge.amount
                           // val tdsObj = TDS(charge.amount, charge.transferTime)
@@ -393,10 +403,18 @@ class TripDetailsViewModel @Inject constructor(
                               event = "Balance"
                             }
                           }
-                          if (charge.utrNumber.isNotNullOrEmpty()) {
-                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(event + " UTR: " + charge.utrNumber!!, newAmount, time, false))
+                          if (charge.amount - charge.tdsDeducted > 0.0) {
+                            if (charge.utrNumber.isNotNullOrEmpty()) {
+                              paymentSummaryList.add(TripPaymentSummaryDetailItemData(event + " UTR: " + charge.utrNumber!!, newAmount, time, false))
+                            } else {
+                              paymentSummaryList.add(TripPaymentSummaryDetailItemData(event, newAmount, time, false))
+                            }
                           } else {
-                            paymentSummaryList.add(TripPaymentSummaryDetailItemData(event, newAmount, time, false))
+                            if (charge.utrNumber.isNotNullOrEmpty()) {
+                              paymentSummaryList.add(TripPaymentSummaryDetailItemData(event + " UTR: " + charge.utrNumber!!, 0.0, time, false))
+                            } else {
+                              paymentSummaryList.add(TripPaymentSummaryDetailItemData(event, 0.0, time, false))
+                            }
                           }
                         } else {
 
