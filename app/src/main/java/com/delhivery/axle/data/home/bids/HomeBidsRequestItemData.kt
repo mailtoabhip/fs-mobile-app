@@ -407,7 +407,8 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/requestedCapacityMg).roundToInt()
+        diff=25
+        //diff = (diff/requestedCapacityMg).roundToInt()
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - guidancePrice) > diff) {
@@ -444,7 +445,8 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/requestedCapacityMg).roundToInt()
+        //diff = (diff/requestedCapacityMg).roundToInt()
+        diff=25
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - lowestBid!!) > diff) {
