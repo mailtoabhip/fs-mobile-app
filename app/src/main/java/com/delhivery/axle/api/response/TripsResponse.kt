@@ -19,16 +19,22 @@ data class TripsResponse(
 data class TripSummaryResponse(
   @SerializedName("advance_pending") val advancePending: Summary,
   @SerializedName("balance_pending") val balancePending: Summary,
-  @SerializedName("completed") val completed: Summary,
-  @SerializedName("in_transit") val inTransit: Summary
+  @SerializedName("recovery_pending") val recoveryPending: Summary,
+  @SerializedName("awaiting_arrival") val awaitingArrival: Summary,
+  @SerializedName("in_transit") val inTransit: Summary,
+  @SerializedName("awaiting_pod") val awaitingPod: Summary,
+  @SerializedName("awaiting_loading") val awaitingLoading: Summary,
+  @SerializedName("awaiting_unloading") val awaitingUnloading: Summary,
+  @SerializedName("total") val totalTrips: Int?= 0,
+  @SerializedName("trips_with_issue") val issueTrips: Int?= 0
 )
 
 /**
  * Child Response container for [TripSummaryResponse]
  */
 data class Summary(
-  @SerializedName("amount") val amount: Double? = null,
-  @SerializedName("count") val count: Int? = null
+  @SerializedName("amount") val amount: Double? = 0.0,
+  @SerializedName("count") val count: Int? = 0
 ) {
 
   fun count() = when (count) {
@@ -42,3 +48,10 @@ data class Summary(
     else -> "₹ ${StringUtils.formatAmount(amount)}"
   }
 }
+
+
+data class TripPaymentResponse(
+  @SerializedName("transaction_id") val transactionId: String,
+  @SerializedName("status") val status: String,
+  @SerializedName("amount") val paymentAmount: Double?
+)

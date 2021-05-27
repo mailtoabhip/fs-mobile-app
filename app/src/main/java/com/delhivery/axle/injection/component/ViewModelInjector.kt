@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
+import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripViewModel
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
@@ -184,6 +185,11 @@ interface ViewModelInjector {
    * Injects [UserRoutesViewModel]
    */
   fun inject(viewModel: UserRoutesViewModel)
+
+  /**
+   * Injects [SearchOngoingTripViewModel]
+   */
+  fun inject(viewModel: SearchOngoingTripViewModel)
 
   @Component.Builder
   interface Builder {

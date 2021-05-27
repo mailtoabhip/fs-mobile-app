@@ -27,7 +27,7 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsTimeOutItemVH
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsTimeoutItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItemVH
-import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoLoads
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_NoTrips
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsWarningItem_TimeOut
 
 /**
@@ -76,7 +76,7 @@ class TripsRVAdapter(private val _interface: HomeTripsRVAdapterInterface) :
   fun resetStaticData() {
     mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeTripsProgressItem(), AddUpdate))
-      add(Pair(HomeTripsWarningItem_NoLoads, Remove))
+      add(Pair(HomeTripsWarningItem_NoTrips, Remove))
       add(Pair(HomeTripsWarningItem_TimeOut, Remove))
       items.filter { it.type == TripItem }
           .map { Pair(it, Remove) }

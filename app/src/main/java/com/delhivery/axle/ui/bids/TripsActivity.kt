@@ -1,21 +1,32 @@
 package com.delhivery.axle.ui.bids
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoLoads
+import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoTrips
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.bids.TripType.Companion
+import com.delhivery.axle.ui.dialogs.TripsFilterDialog
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
@@ -26,8 +37,10 @@ import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_TRIP
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.util.Calendar
 
 /**
  * Created by saurabh
@@ -67,24 +80,52 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     try {
       require(
-          !(intent == null || !intent.hasExtra(IntentExtraTripTypeKey))
-      ) { "$IntentExtraTripTypeKey intent key missing" }
+          !(intent == null || !intent.hasExtra(IntentExtraViewTypeKey))
+      ) { "$IntentExtraViewTypeKey intent key missing" }
     } catch (e: IllegalArgumentException) {
       finish()
     }
 
-    /* get bid type from intent */
-    viewModel.tripType =
-      TripType.byTypeId(intent.getIntExtra(IntentExtraTripTypeKey, TripType.Unknown.typeId))
+    viewModel.viewType = intent.getStringExtra(IntentExtraViewTypeKey)
+
+    if (viewModel.viewType != "all") {
+      try {
+        require(
+            !(intent == null || !intent.hasExtra(IntentExtraSubViewTypeKey))
+        ) { "$IntentExtraSubViewTypeKey intent key missing" }
+      } catch (e: IllegalArgumentException) {
+        finish()
+      }
+
+      /* get su view type from intent */
+      val subview = intent.getIntExtra(IntentExtraSubViewTypeKey, 0)
+      if (viewModel.viewType.equals("trips_view")) {
+        viewModel.tripType = TripType.byTypeId(subview)
+      } else {
+        viewModel.viewPaymentType = ViewPaymentType.byTypeId(subview)
+      }
+    }
+
   }
 
+  @RequiresApi(VERSION_CODES.N)
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = viewModel.tripType.toolbarTitle()
+    title = when {
+      viewModel.viewType.equals("all") -> "All Trips"
+      viewModel.viewType.equals("payment_view") -> {
+        viewModel.viewPaymentType.toolbarTitle()
+      }
+      else -> {
+        viewModel.tripType.toolbarTitle()
+      }
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    setHeaderResources()
 
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })
@@ -106,27 +147,191 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.userTripsData.observe(this, Observer {
       if (it != null) {
         adapter.operation(it)
+        viewModel.tripsFilter = ""
       }
     })
 
+    viewModel.summaryLiveData.observe(this, Observer {
+      binding.textAdvancePending.text = it.advancePending.amount()
+      binding.textAdvancePendingCount.text = it.advancePending.count()
+      binding.textBalancePending.text = it.balancePending.amount()
+      binding.textBalancePendingCount.text = it.balancePending.count()
+      binding.textRecoveryPending.text = it.recoveryPending.amount()
+      binding.textRecoveryPendingCount.text = it.recoveryPending.count()
+
+      val totalPending = (it.advancePending.amount ?: 0.0) + (it.balancePending.amount ?: 0.0) + (it.recoveryPending.amount ?: 0.0)
+      val totalPendingText = "Total Pending: ₹ " + StringUtils.formatAmount(totalPending)
+      binding.txtTotalPending.text = totalPendingText
+
+      binding.textArrival.text = it.awaitingArrival.count()
+      binding.textInTransit.text = it.inTransit.count()
+      binding.textAwaitingLoading.text = it.awaitingLoading.count()
+      binding.textAwaitingUnloading.text = it.awaitingUnloading.count()
+      binding.textAwaitingPod.text = it.awaitingPod.count()
+    })
+
     viewModel.tripsCountLiveData.observe(this, Observer {
-      title = viewModel.tripType.toolbarTitle(it ?: 0)
+      val count = it ?: 0
+      title = when {
+        viewModel.viewType.equals("all") -> "All Trips (${count})"
+        viewModel.viewType.equals("payment_view") -> {
+          viewModel.viewPaymentType.toolbarTitle(count)
+        }
+        else -> {
+          viewModel.tripType.toolbarTitle(count)
+        }
+      }
+
+      binding.txtTripCount.text = viewModel.tripsCountText
+      if (viewModel.tripsFilter == "issue_trips") {
+        var pendingBalanceCount = ""
+        pendingBalanceCount = if (viewModel.tripsCount > 1) {
+          "${viewModel.tripsCount} trips"
+        } else {
+          "${viewModel.tripsCount} trip"
+        }
+        val pendingBalanceAmount = "₹ ${StringUtils.formatAmount(viewModel.balancePendingTotal)}"
+        val total = viewModel.advancePendingTotal + viewModel.balancePendingTotal + viewModel.recoveryPendingTotal
+        val totalPendingAmount = "Total Pending: ₹ " + StringUtils.formatAmount(total)
+        binding.textBalancePending.text = pendingBalanceAmount
+        binding.textBalancePendingCount.text = pendingBalanceCount
+        binding.txtTotalPending.text = totalPendingAmount
+      }
+//      if (viewModel.isSettledFilter) {
+//        binding.txtTripCount.text = "All Trips (${viewModel.tripsCount})"
+//        title = "All Trips (${viewModel.tripsCount})"
+//      }
     })
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
       isLoadingData = it ?: false
     })
 
-    viewModel.fetchTrips(false)
+    viewModel.filterAppliedLiveData.observe(this, Observer {
+      refreshData()
+    })
+
+    binding.viewAdvancePending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(0)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewBalancePending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(1)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewRecoveryPending.setOnClickListener {
+      viewModel.viewPaymentType = ViewPaymentType.byTypeId(2)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingArrival.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(0)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewInTransit.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(1)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingLoading.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(2)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingUnloading.setOnClickListener {
+      viewModel.tripType = Companion.byTypeId(3)
+      setHeaderResources()
+      refreshData()
+    }
+
+    binding.viewAwaitingPod.setOnClickListener {
+      startActivity(homeActivityIntent("pod", this))
+    }
+
+    binding.filterIcon.setOnClickListener {
+      if (viewModel.filterList.isNotEmpty() && viewModel.filterList.size <= 4) {
+        TripsFilterDialog(this, viewModel.filterList, viewModel).show()
+      }
+    }
+
+    binding.llLoadedFilter.setOnClickListener {
+      if (viewModel.loadingDateFilter) {
+        binding.toggleRemovedLoadedFilter.visibility = View.GONE
+        binding.loadedAfter.text = "Loaded after"
+        viewModel.loadingDateFilter = false
+        viewModel.date = -1
+        viewModel.month = -1
+        viewModel.year = -1
+        fetchTripDetails()
+      } else {
+        binding.toggleRemovedLoadedFilter.visibility = View.VISIBLE
+        viewModel.loadingDateFilter = true
+        openDatePicker()
+      }
+    }
+
+    binding.llSettledFilter.setOnClickListener {
+      if (viewModel.isSettledFilter) {
+        binding.toggleRemovedSettle.visibility = View.GONE
+        viewModel.isSettledFilter = false
+      } else {
+        binding.toggleRemovedSettle.visibility = View.VISIBLE
+        viewModel.isSettledFilter = true
+      }
+      fetchTripDetails()
+    }
+
+    refreshData()
+  }
+
+  @SuppressLint("SetTextI18n")
+  @RequiresApi(Build.VERSION_CODES.N)
+  private fun openDatePicker(){
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(this, {
+      view, year, monthOfYear, dayOfMonth ->
+      viewModel.date = dayOfMonth
+      viewModel.month = monthOfYear
+      viewModel.year = year
+      var month = monthOfYear + 1
+      viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
+      binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
+      if (viewModel.loadingDate.isNotNullOrEmpty()) {
+        fetchTripDetails()
+      } else {
+        uiUtils.showSnackbar("Please choose valid date")
+      }
+    }, year, month, day)
+
+    datePickerDialog.show()
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
     add(0, HomeTripsProgressItem())
   }
 
-  private fun refreshData() {
+  private fun fetchTripDetails() {
+    viewModel.request = SearchRequest()
     adapter.setItems(getStaticItems())
     viewModel.fetchTrips(false)
+  }
+
+  private fun refreshData() {
+    viewModel.fetchTripsSummary()
+    fetchTripDetails()
   }
 
   override fun handleAction(
@@ -147,7 +352,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       HomeTripsTimeOutAction -> {
         refreshData()
       }
-      HomeTripsWarningAction_NoLoads -> {
+      HomeTripsWarningAction_NoTrips -> {
         setResult(RESULT_OK)
         finish()
       }
@@ -206,6 +411,197 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     })
   }
 
+  private fun setHeaderResources() {
+    when {
+      viewModel.viewType.equals("trips_view") -> {
+
+        binding.llAllTripFilters.visibility = View.GONE
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.VISIBLE
+        binding.txtTotalPending.visibility = View.GONE
+
+        when (viewModel.tripType) {
+          Companion.byTypeId(0) -> {
+
+            binding.filterIcon.visibility = View.GONE
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.white))
+            binding.textArrival.setTextColor(resources.getColor(R.color.white))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+          }
+          Companion.byTypeId(1) -> {
+
+            binding.filterIcon.visibility = View.VISIBLE
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.white))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.white))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+            viewModel.filterList = listOf("All", "Delayed")
+            viewModel.filterKey = "loaded_after"
+
+          }
+          Companion.byTypeId(2) -> {
+
+            binding.filterIcon.visibility = View.VISIBLE
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.white))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.white))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+
+            viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
+            viewModel.filterKey = "arrived_ageing"
+
+          }
+          else -> {
+
+            binding.filterIcon.visibility = View.VISIBLE
+            binding.viewAwaitingArrival.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewInTransit.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+
+            binding.idArrival.setTextColor(resources.getColor(R.color.black))
+            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+
+            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+
+            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
+            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
+
+            viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
+            viewModel.filterKey = "reached_ageing"
+
+          }
+        }
+      }
+      viewModel.viewType.equals("payment_view") -> {
+
+        binding.llAllTripFilters.visibility = View.GONE
+        binding.paymentsFilterView.visibility = View.VISIBLE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.VISIBLE
+
+        when (viewModel.viewPaymentType) {
+          ViewPaymentType.byTypeId(0) -> {
+
+            binding.filterIcon.visibility = View.GONE
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.id1.setTextColor(resources.getColor(R.color.white))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.white))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.white))
+
+            binding.id2.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
+
+            binding.id3.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
+
+          }
+          ViewPaymentType.byTypeId(1) -> {
+
+            binding.filterIcon.visibility = View.VISIBLE
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+
+            binding.id1.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
+
+            binding.id2.setTextColor(resources.getColor(R.color.white))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.white))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.white))
+
+            binding.id3.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
+
+            viewModel.filterList = listOf("All", "Trips with POD issue")
+            viewModel.filterKey = "trips_with_issue"
+
+          }
+          else -> {
+
+            binding.filterIcon.visibility = View.GONE
+            binding.viewAdvancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
+            binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
+
+            binding.id1.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
+
+            binding.id2.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
+            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
+
+            binding.id3.setTextColor(resources.getColor(R.color.white))
+            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.white))
+            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.white))
+
+          }
+        }
+
+      }
+      else -> {
+
+        binding.filterIcon.visibility = View.GONE
+        binding.llAllTripFilters.visibility = View.VISIBLE
+        binding.paymentsFilterView.visibility = View.GONE
+        binding.tripsFilterView.visibility = View.GONE
+        binding.txtTotalPending.visibility = View.GONE
+
+      }
+    }
+  }
+
   /**
    * Pagination interface
    */
@@ -220,14 +616,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 }
 
 /*  */
-private const val IntentExtraTripTypeKey = "trip_type"
+private const val IntentExtraViewTypeKey = "view_type"
+private const val IntentExtraSubViewTypeKey = "trip_type"
 
 /**
- * Get [TripsActivity] for specific [TripsType] as [type]
+ * Get [TripsActivity] for specific [viewType] as [String] and [TripType] as [type]
  */
 fun userTripsIntent(
   context: Context,
-  type: TripType
+  viewType: String,
+  subview: Int
 ) = Intent(context, TripsActivity::class.java).apply {
-  putExtra(IntentExtraTripTypeKey, type.typeId)
+  putExtra(IntentExtraViewTypeKey, viewType)
+  putExtra(IntentExtraSubViewTypeKey, subview)
 }

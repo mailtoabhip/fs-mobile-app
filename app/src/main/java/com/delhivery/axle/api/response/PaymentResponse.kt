@@ -89,7 +89,8 @@ data class  PaymentsResponse(
         @SerializedName("overpayment_lrs") val overPaymentLRs: List<String>,
         @SerializedName("transaction_id") val transactionId: String = "",
         @SerializedName("vehicle_number") val vehicleNumber: String? = "",
-        @SerializedName("loaded_time") val loadedTime: String? = ""
+        @SerializedName("loaded_time") val loadedTime: String? = "",
+        @SerializedName("tds_deducted") val tdsDeducted: Double
 )
 
 /**

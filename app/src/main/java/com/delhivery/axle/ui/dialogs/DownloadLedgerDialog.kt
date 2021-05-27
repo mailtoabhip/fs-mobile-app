@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
+import android.widget.RadioButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
@@ -16,9 +18,10 @@ import java.util.*
 class DownloadLedgerDialog(
         context: Context,
         private val dialogInterface: DownloadLedgerInterface
-) : AlertDialog(context) {
+) : AlertDialog(context){
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
+    private lateinit var radioButton: RadioButton
 
     var startDate = -1
     var startMonth = -1
@@ -27,11 +30,18 @@ class DownloadLedgerDialog(
     var endDate = -1
     var endMonth = -1
     var endYear = -1
+    var optionFilter = ""
 
     /* dismiss timeout disposable */
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window?.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+        )
+
+        setCancelable(false)
 
         /* dialog binding */
         binding = DialogDownloadLedgerBinding.inflate(layoutInflater)
@@ -39,12 +49,15 @@ class DownloadLedgerDialog(
 
         /* bind data to layout */
         binding.apply {
+            radioGroup.check(binding.all.id)
             btnClose.setOnClickListener { dismissDialog() }
             editStartDate.setOnClickListener { openDatePicker("start") }
             editEndDate.setOnClickListener{ openDatePicker("end")}
             btnDownload.setOnClickListener { downloadDialog() }
             btnEmail.setOnClickListener { emailDialog() }
         }
+
+        binding.btnClose.setOnClickListener { dismiss() }
     }
 
     /**
@@ -55,9 +68,7 @@ class DownloadLedgerDialog(
             if (ownerActivity == null || ownerActivity!!.isDestroyed) {
                 return
             }
-            if (isShowing) {
-                dismiss()
-            }
+            dismiss()
         } catch (e: Exception) {
             Log.d("Error Dialog", "Exception while closing dialog")
         }
@@ -114,8 +125,11 @@ class DownloadLedgerDialog(
             Log.d("DownloadDialog","Please select valid dates")
         }else{
             //download report
-            dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear)
-            dismissDialog()
+            val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
+            radioButton = findViewById(selectedOption)!!
+            optionFilter = getFilterString(radioButton.text.toString())
+            dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter)
+            dismiss()
         }
     }
 
@@ -134,13 +148,33 @@ class DownloadLedgerDialog(
 
         }else{
             //email report
-            dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, binding.editEmailId.text.toString())
-            dismissDialog()
+            val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
+            radioButton = findViewById(selectedOption)!!
+            optionFilter = getFilterString(radioButton.text.toString())
+            dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter, binding.editEmailId.text.toString())
+            dismiss()
+        }
+    }
+
+    private fun getFilterString(text: String = ""): String {
+        return when (text) {
+            "Payment Due (POD Submitted)" -> {
+                "filter_trips_with_pending_payments"
+            }
+            "Trips with Recovery" -> {
+                "filter_pending_recovery_trips"
+            }
+            "Settled" -> {
+                "filter_settled_trips"
+            }
+            else -> {
+                "all"
+            }
         }
     }
 }
 
 interface DownloadLedgerInterface{
-    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, email: String)
-    fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int)
+    fun onEmailClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String, email: String)
+    fun onDownloadClick(startDate: Int, startMonth: Int, startYear: Int, endDate: Int, endMonth: Int, endYear: Int, optionFilter: String)
 }

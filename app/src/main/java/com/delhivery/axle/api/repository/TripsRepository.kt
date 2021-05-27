@@ -2,12 +2,14 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
+import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
@@ -58,6 +60,17 @@ class TripsRepository @Inject constructor(
   fun updateDispatchDetails(
     request: UpdateDispatchRequest
   ) = tripsService.updateDispatchDetails(request).convertResponse()
+
+  /**
+   * Get bulk trips payment
+   */
+  fun bulkPayments(
+    trips: List<HomeTripsItemData>,
+    request: JsonObject
+  ) : Single<Pair<List<HomeTripsItemData>, List<TripPaymentResponse>>> =
+    tripsService.fetchTripsPayments(request)
+        .convertResponse()
+        .map { Pair(trips, it) }
 }
 
 /* User trips pagination load limit */

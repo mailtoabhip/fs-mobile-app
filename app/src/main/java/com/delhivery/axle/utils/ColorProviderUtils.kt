@@ -3,6 +3,7 @@ package com.delhivery.axle.utils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.trips.PaymentStatus
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -41,7 +42,7 @@ object ColorProviderUtils {
   fun getTripStatusColor(
     status: String
   ) = when (status.toLowerCase()) {
-    "advance pending", "balance pending" -> R.color.pending
+    PaymentStatus.AdvancePending.statusKey, PaymentStatus.BalancePending.statusKey, PaymentStatus.RecoveryPending.statusKey -> R.color.pending
     "intransit" -> R.color.status_active
     else -> R.color.status_confirmed
   }

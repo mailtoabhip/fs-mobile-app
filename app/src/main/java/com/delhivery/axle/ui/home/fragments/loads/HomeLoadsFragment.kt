@@ -37,18 +37,7 @@ import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.FCMUtils
-import com.delhivery.axle.utils.PROPERTY_SOURCE
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
-import com.delhivery.axle.utils.VALUE_LOAD
-import com.delhivery.axle.utils.VALUE_LOAD_INFO
-import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -182,8 +171,24 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.hideProgress()
       if (it != null) {
+        if (it.second.oneVisibility()==View.VISIBLE || it.second.twoVisibility()==View.VISIBLE){
+          analyticsUtil.trackEvent(
+                  EVENT_BID_INLINE_PROMPT,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(it.second.key())
+          )
+
+        }
+        else if (it.second.threeVisibility()==View.VISIBLE || it.second.fourVisibility()==View.VISIBLE){
+          analyticsUtil.trackEvent(
+                  Event_BID_REVISE_PROMPT,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(it.second.key())
+          )
+        }
+
         BidConfirmReviseDialog(
-            context!!, it.second, viewModel, it.first
+            context!!, it.second, viewModel, it.first,analyticsUtil
         ).show()
       }
       adapter.notifyItemChanged(it.first)

@@ -29,6 +29,16 @@ class ContactUtils @Inject constructor(private val activity: DaggerAppCompatActi
     }
   }
 
+  fun callDriver(phoneNumber:String = "") = try {
+    val callIntent = Intent(Intent.ACTION_CALL).apply {
+      data = Uri.parse("tel:$phoneNumber")
+    }
+    activity.startActivity(callIntent)
+    true
+  } catch (e: Exception) {
+    false
+  }
+
   fun callHelpline() = try {
     val callIntent = Intent(Intent.ACTION_CALL).apply {
       data = Uri.parse("tel:$AxleCallSupport")
