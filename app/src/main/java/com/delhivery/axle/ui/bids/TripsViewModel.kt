@@ -9,6 +9,7 @@ import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.api.response.TripSummaryResponse
+import com.delhivery.axle.data.home.trips.PaymentStatus
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -280,13 +281,13 @@ class TripsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
-                  if ((viewPaymentType == BalancePending && trip.payment!!.status !="balance_pending")
-                      || (viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending")
-                      || (viewPaymentType == AdvancePending && trip.payment!!.status != "advance_pending")) {
+                  if ((viewPaymentType == BalancePending && trip.payment!!.status != PaymentStatus.BalancePending.statusKey)
+                      || (viewPaymentType == RecoveryPending && trip.payment!!.status != PaymentStatus.RecoveryPending.statusKey)
+                      || (viewPaymentType == AdvancePending && trip.payment!!.status != PaymentStatus.AdvancePending.statusKey)) {
                     total--
                     continue
                   }
-                  if (trip.tripStatus == "trip_completed" && (trip.isApReconPending == true || trip.payment!!.paymentAmount == 0.0)) {
+                  if (trip.tripStatus == TripStatus.TripCompleted.statusKey && (trip.isApReconPending == true || trip.payment!!.paymentAmount == 0.0)) {
                     trip.isSettled = true
                   }
                   if (isSettledFilter) {

@@ -145,9 +145,9 @@ data class HomeTripsItemData(
    */
   fun paymentStatusText() : String {
     return when (paymentStatus()) {
-      "advance_pending" -> "Advance Pending"
-      "balance_pending" -> "Balance Pending"
-      "recovery_pending" -> "Recovery Pending"
+      PaymentStatus.AdvancePending.statusKey -> PaymentStatus.AdvancePending.status
+      PaymentStatus.BalancePending.statusKey -> PaymentStatus.BalancePending.status
+      PaymentStatus.RecoveryPending.statusKey -> PaymentStatus.RecoveryPending.status
       else -> "Settled"
     }
   }
@@ -617,13 +617,13 @@ data class HomeTripsItemData(
   fun tripPaymentText(): String {
     payment?.let {
       when {
-        paymentStatus() == "advance_pending" -> {
+        paymentStatus() == PaymentStatus.AdvancePending.statusKey -> {
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid when the loading is completed"
         }
-        paymentStatus() == "balance_pending" -> {
+        paymentStatus() == PaymentStatus.BalancePending.statusKey -> {
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid as balance soon"
         }
-        paymentStatus() == "recovery_pending" -> {
+        paymentStatus() == PaymentStatus.RecoveryPending.statusKey -> {
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} to be recovered yet"
         }
         else -> ""
@@ -635,8 +635,10 @@ data class HomeTripsItemData(
   /**
    * payment amount visibility
    */
-  fun paymentVisibility() = if ((paymentStatus() == "advance_pending" ||
-      paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending") || (paymentStatus() == "trip_completed" && isSettled)) {
+  fun paymentVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+      paymentStatus() == PaymentStatus.BalancePending.statusKey ||
+          paymentStatus() == PaymentStatus.RecoveryPending.statusKey) ||
+      (paymentStatus() == TripStatus.TripCompleted.statusKey && isSettled)) {
     View.VISIBLE
   } else {
     View.GONE
@@ -645,8 +647,8 @@ data class HomeTripsItemData(
   /**
    * payment visibility on trip detail
    */
-  fun paymentDetailVisibility() = if ((paymentStatus() == "advance_pending" ||
-          paymentStatus() == "balance_pending" || paymentStatus() == "recovery_pending")) {
+  fun paymentDetailVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+          paymentStatus() == PaymentStatus.BalancePending.statusKey || paymentStatus() == PaymentStatus.RecoveryPending.statusKey)) {
     View.VISIBLE
   } else {
     View.GONE
@@ -1022,4 +1024,16 @@ enum class TripStatus(
     fun byKey(statusKey: String) =
       values().firstOrNull { it.statusKey.equals(statusKey, true) } ?: Unknown
   }
+}
+
+/**
+ * Payment Status Enum
+ */
+enum class PaymentStatus(
+  val statusKey: String,
+  val status: String
+) {
+  AdvancePending("advance_pending", "Advance Pending"),
+  BalancePending("balance_pending", "Balance Pending"),
+  RecoveryPending("recovery_pending", "Recovery Pending");
 }
