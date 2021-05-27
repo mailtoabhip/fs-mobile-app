@@ -99,6 +99,10 @@ class TripsViewModel @Inject constructor(
   var month = -1
   var year = -1
 
+  var advancePendingTotal = 0.0
+  var balancePendingTotal = 0.0
+  var recoveryPendingTotal = 0.0
+
   /**
    * Fetch trips summary
    */
@@ -109,6 +113,8 @@ class TripsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error && _res != null) {
             issueTripsCount = _res.issueTrips ?: 0
+            advancePendingTotal = _res.advancePending.amount!!
+            recoveryPendingTotal = _res.recoveryPending.amount!!
             summaryLiveData.postValue(_res)
           } else {
             error.handle()
@@ -123,6 +129,7 @@ class TripsViewModel @Inject constructor(
     if (!paginate) {
       offset = 0
       tripsCount = 0
+      balancePendingTotal = 0.0
     } else if (paginate && !hasMoreData) {
       return
     }
@@ -286,6 +293,9 @@ class TripsViewModel @Inject constructor(
                       tripsCount++
                     }
                   } else {
+                    if (tripsFilter == "issue_trips") {
+                      balancePendingTotal += trip.payment!!.paymentAmount ?: 0.0
+                    }
                     add(Pair(HomeTripsItem(trip), Add))
                     tripsCount++
                   }

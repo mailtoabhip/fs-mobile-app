@@ -79,6 +79,7 @@ class HomeTripsViewModel @Inject constructor(
   var hasMoreData: Boolean = false
   var offset:Int? = 0
   var total = 0
+  var fetchSummaryCount = 0
 
   /* user trips live data */
   var userTripsData =
@@ -98,6 +99,8 @@ class HomeTripsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
+            fetchSummaryCount++
+
             advancePendingCount = _res.advancePending.count()
             advancePendingAmount = "₹ ${StringUtils.formatAmount(_res.advancePending.amount ?: 0.0)}"
             balancePendingCount = _res.balancePending.count()
@@ -113,7 +116,11 @@ class HomeTripsViewModel @Inject constructor(
 
             dataLoadingLiveData.postValue(true)
           } else {
-            error.handle()
+            if (fetchSummaryCount < 1) {
+              fetchTripsSummary()
+            } else {
+              error.handle()
+            }
           }
         }
   }

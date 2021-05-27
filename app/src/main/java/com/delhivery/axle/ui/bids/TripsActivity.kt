@@ -147,6 +147,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.userTripsData.observe(this, Observer {
       if (it != null) {
         adapter.operation(it)
+        viewModel.tripsFilter = ""
       }
     })
 
@@ -182,6 +183,20 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
 
       binding.txtTripCount.text = viewModel.tripsCountText
+      if (viewModel.tripsFilter == "issue_trips") {
+        var pendingBalanceCount = ""
+        pendingBalanceCount = if (viewModel.tripsCount > 1) {
+          "${viewModel.tripsCount} trips"
+        } else {
+          "${viewModel.tripsCount} trip"
+        }
+        val pendingBalanceAmount = "₹ ${StringUtils.formatAmount(viewModel.balancePendingTotal)}"
+        val total = viewModel.advancePendingTotal + viewModel.balancePendingTotal + viewModel.recoveryPendingTotal
+        val totalPendingAmount = "Total Pending: ₹ " + StringUtils.formatAmount(total)
+        binding.textBalancePending.text = pendingBalanceAmount
+        binding.textBalancePendingCount.text = pendingBalanceCount
+        binding.txtTotalPending.text = totalPendingAmount
+      }
 //      if (viewModel.isSettledFilter) {
 //        binding.txtTripCount.text = "All Trips (${viewModel.tripsCount})"
 //        title = "All Trips (${viewModel.tripsCount})"
@@ -193,7 +208,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     })
 
     viewModel.filterAppliedLiveData.observe(this, Observer {
-      fetchTripDetails()
+      refreshData()
     })
 
     binding.viewAdvancePending.setOnClickListener {
