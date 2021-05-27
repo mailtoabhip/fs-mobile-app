@@ -58,7 +58,7 @@
           android:layout_marginStart="@dimen/size_4dp"
           android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
           android:layout_marginTop="@dimen/size_6dp"
-          android:textColor="@color/transparent_grey"
+          bind:textColor="@{ ContextCompat.getColor(context, detail_item.amountTextColor()) }"
           android:paddingEnd="@dimen/size_12dp"
           android:layout_marginEnd="@dimen/size_6dp"
           app:layout_constraintEnd_toEndOf="parent"

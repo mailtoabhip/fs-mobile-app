@@ -18,6 +18,7 @@ import com.delhivery.axle.data.home.trips.TripStatus.Unknown
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.ViewPaymentType
 import com.delhivery.axle.utils.ColorProviderUtils
+import com.delhivery.axle.utils.DatePatterns.CurrentStatusFormat
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
 import com.delhivery.axle.utils.DateUtils
@@ -873,8 +874,8 @@ data class HomeTripsItemData(
    */
   fun tripStatusTime(datetime: String?) = datetime?.let {
     DateUtils.formatDate(
-        DateUtils.parseDate(it, OrionDateFormat), SimpleDateFormat
-    )
+        DateUtils.parseDate(it, OrionDateFormat), CurrentStatusFormat
+    ).replace(" ", "")
   } ?: ""
 
   /**
@@ -882,8 +883,8 @@ data class HomeTripsItemData(
    */
   fun tripSettlementTimeText(datetime: String?) = if (datetime.isNotNullOrEmpty()) {
     DateUtils.formatDate(
-        DateUtils.parseDate(datetime!!, OrionDateFormat), SimpleDateFormat
-    )
+        DateUtils.parseDate(datetime!!, OrionDateFormat), CurrentStatusFormat
+    ).replace(" ", "")
   } else {
     ""
   }

@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
 import com.delhivery.axle.api.response.*
@@ -529,11 +530,12 @@ class TripDetailsViewModel @Inject constructor(
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
                       val utr = data.utrNumber
+                      val title = "Recovered against: " + data.recoveryTripId
                       if (utr.isNotNullOrEmpty()) {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
                             data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId))
                       } else {
-                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                        recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
                             data.recoveryAmount, "", true, data.recoveryTripId))
                       }
                     }

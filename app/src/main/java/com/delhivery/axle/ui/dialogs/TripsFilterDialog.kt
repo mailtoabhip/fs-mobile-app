@@ -118,7 +118,7 @@ class TripsFilterDialog (
       "Delayed" -> {
         "delayed"
       }
-      "Trips with the issue" -> {
+      "Trips with POD issue" -> {
         "issue_trips"
       }
       else -> {

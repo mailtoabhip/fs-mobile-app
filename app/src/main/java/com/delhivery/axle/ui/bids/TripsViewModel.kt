@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.bids.TripType.AwaitingLoading
 import com.delhivery.axle.ui.bids.TripType.AwaitingUnloading
 import com.delhivery.axle.ui.bids.TripType.InTransit
 import com.delhivery.axle.ui.bids.TripType.Unknown
+import com.delhivery.axle.ui.bids.ViewPaymentType.AdvancePending
 import com.delhivery.axle.ui.bids.ViewPaymentType.BalancePending
 import com.delhivery.axle.ui.bids.ViewPaymentType.NA
 import com.delhivery.axle.ui.bids.ViewPaymentType.RecoveryPending
@@ -280,7 +281,8 @@ class TripsViewModel @Inject constructor(
                     Log.d("No payment found for: ", trip.transactionId)
                   }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status !="balance_pending")
-                      || (viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending")) {
+                      || (viewPaymentType == RecoveryPending && trip.payment!!.status !="recovery_pending")
+                      || (viewPaymentType == AdvancePending && trip.payment!!.status != "advance_pending")) {
                     total--
                     continue
                   }
@@ -302,7 +304,7 @@ class TripsViewModel @Inject constructor(
                 }
               }
               tripsCountText = if (tripsFilter == "issue_trips") {
-                "Trips with the issue (${tripsCount})"
+                "Trips with POD issue (${tripsCount})"
               } else {
                 "All Trips (${tripsCount})"
               }

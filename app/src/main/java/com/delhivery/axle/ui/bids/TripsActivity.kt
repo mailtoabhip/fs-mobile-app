@@ -563,7 +563,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
             binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
 
-            viewModel.filterList = listOf("All", "Trips with the issue")
+            viewModel.filterList = listOf("All", "Trips with POD issue")
             viewModel.filterKey = "trips_with_issue"
 
           }

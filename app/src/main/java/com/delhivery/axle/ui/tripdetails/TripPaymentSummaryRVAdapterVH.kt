@@ -1,6 +1,9 @@
 package com.delhivery.axle.ui.tripdetails
 
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
@@ -72,6 +75,16 @@ class TripPaymentDetailSummaryItemVH(binding: ViewTripPaymentSummaryDetailItemBi
     binding.subtitle = item.data.subTitle
     binding.amount = item.data.formattedAmount()
     binding.detailItem = item.data
+    if (item.data.redirectable == true) {
+      val text = SpannableString(item.data.title)
+      text.setSpan(
+          UnderlineSpan(),
+          19, // start
+          item.data.title.length, // end
+          0 // flags
+      )
+      binding.textTitle.text = text
+    }
     binding.textTitle.clickToAction(TripPaymentSummaryDetailItemAction, item, adapterPosition, _interface)
   }
 }

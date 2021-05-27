@@ -225,6 +225,7 @@ object DateUtils {
  */
 object DatePatterns {
   const val SimpleDateFormat = "dd MMM yyyy"
+  const val CurrentStatusFormat = "dd MMM yy"
   const val PODDateFormat = "yyyy-MM-dd"
   const val OrionDateFormat = "yyyy-MM-dd'T'hh:mm:ss"
 }
