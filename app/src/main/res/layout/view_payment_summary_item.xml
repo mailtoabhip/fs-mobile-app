@@ -56,7 +56,7 @@
           android:textSize="@dimen/text_12sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          tools:text="Rs 3500.00"
+          tools:text="₹ 3500.00"
           />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

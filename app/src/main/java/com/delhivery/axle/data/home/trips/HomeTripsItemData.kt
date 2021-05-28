@@ -4,15 +4,21 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.ExpenseData
+import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.InTransit
+import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
+import com.delhivery.axle.data.home.trips.TripStatus.In_Transit
+import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
+import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
+import com.delhivery.axle.data.home.trips.TripStatus.Unknown
 import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.AdvancePending
-import com.delhivery.axle.ui.bids.TripType.BalancePending
+import com.delhivery.axle.ui.bids.ViewPaymentType
 import com.delhivery.axle.utils.ColorProviderUtils
+import com.delhivery.axle.utils.DatePatterns.CurrentStatusFormat
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DatePatterns.SimpleDateFormat
 import com.delhivery.axle.utils.DateUtils
@@ -41,10 +47,13 @@ data class HomeTripsItemData(
   @SerializedName("driver") val driverDetails: TripDriverDetails?,
   @SerializedName("bid_details") val bidDetails: TripBidDetails?,
   @SerializedName("loading_location") val loadingLocation: String?,
+  @SerializedName("loading_location_contact_no") val loadingLocationContactNo: String?,
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("unloaded_time") val unloadingTime: String?,
   @SerializedName("required_on") val requiredOn: String,
+  @SerializedName("required_on_time") val requiredOnTime: String,
   @SerializedName("unloading_location") val unloadingLocation: String?,
+  @SerializedName("unloading_location_contact_no") val unloadingLocationContactNo: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
   @SerializedName("truck_display_name") val truckDisplayName: String? = "",
   @SerializedName("pod_url") val podUrl: String? = "",
@@ -62,6 +71,8 @@ data class HomeTripsItemData(
   @SerializedName("charges_updated") val chargesUpdated: Boolean? = false,
   @SerializedName("damage_pending") val damagePending: Boolean? = false,
   @SerializedName("detention_pending") val detentionPending: Boolean? = false,
+  @SerializedName("no_stamp_pod") val noStampPOD: Boolean? = false,
+  @SerializedName("shortage_pending") val shortagePending: Boolean? = false,
   @SerializedName("is_epod_verified") val isEpodVerified: Boolean? = false,
   @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
   @SerializedName("epod_rejection_remarks") val epodRejectionRemark: String? = "",
@@ -71,12 +82,17 @@ data class HomeTripsItemData(
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
-  var payment: ExpenseData? = null,
+  @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
+  var payment: TripPaymentResponse? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
   var selectable: Boolean = false,
   var tds: Int,
-  var updatedTds: Double
+  var updatedTds: Double,
+  var isSettled: Boolean = false,
+  var paymentStatus: String = "",
+  var addressExpand: Boolean = false,
+  var isDelayed: Boolean = false
 ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -97,7 +113,44 @@ data class HomeTripsItemData(
   /**
    * Trip Status [TripStatus]
    */
-  fun tripStatus() = TripType.byStatus(tripStatus)
+  fun tripStatus() = tripStatus //TripType.byStatus(tripStatus)
+
+  /**
+   * Trip Status text
+   */
+  fun tripStatusText(): String {
+    val status = tripStatus.let { TripStatus.byKey(it) }
+    reachedTime?.let {
+      if (reachedTime.isNotNullOrEmpty()) {
+        if (tripStatus == "in_transit") {
+          return "Truck Reached"
+        }
+      }
+    }
+    return status.status
+  }
+
+  /**
+   * Trip Payment Status
+   */
+  fun paymentStatus() : String {
+    payment?.let {
+      return payment!!.status
+    }
+    return ""
+  }
+
+  /**
+   * Trip payment status text
+   */
+  fun paymentStatusText() : String {
+    return when (paymentStatus()) {
+      PaymentStatus.AdvancePending.statusKey -> PaymentStatus.AdvancePending.status
+      PaymentStatus.BalancePending.statusKey -> PaymentStatus.BalancePending.status
+      PaymentStatus.RecoveryPending.statusKey -> PaymentStatus.RecoveryPending.status
+      else -> "Settled"
+    }
+  }
 
   /**
    * Trip status visibility
@@ -157,20 +210,66 @@ data class HomeTripsItemData(
   }
 
   /**
+   * @return loading location text
+   */
+  fun loadingLocation() = if (loadingLocation.isNotNullOrEmpty()) {
+    ", $loadingLocation"
+  } else {
+    ""
+  }
+
+  /**
+   * @return loading location contact no. text
+   */
+  fun loadingLocationContactNo() = if (loadingLocationContactNo.isNotNullOrEmpty()) {
+    ", $loadingLocationContactNo"
+  } else {
+    ""
+  }
+
+  /**
+   * @return unloading location text
+   */
+  fun unloadingLocation() = if (unloadingLocation.isNotNullOrEmpty()) {
+    ", $unloadingLocation"
+  } else {
+    ""
+  }
+
+  /**
+   * @return unloading location contact no. text
+   */
+  fun unloadingLocationContactNo() = if (unloadingLocationContactNo.isNotNullOrEmpty()) {
+    ", $unloadingLocationContactNo"
+  } else {
+    ""
+  }
+
+  /**
+   * @return origin city, warehouse, contact no.
+   */
+  fun originCityWarehouseContact() = originCityName() + loadingLocation() + loadingLocationContactNo()
+
+  /**
+   * @return destination city, warehouse, contact no.
+   */
+  fun destinationCityWarehouseContact() = destinationCityName() + " " + unloadingLocation() + " " + unloadingLocationContactNo()
+
+  /**
    * @return formatted display time
    */
   private fun displayTime() = when (tripStatus) {
-    TripStatus.TruckConfirmed.statusKey -> requiredOn
-    else -> arrivalTime ?: requiredOn
+    TripStatus.TruckConfirmed.statusKey -> requiredOnTime
+    else -> arrivalTime ?: requiredOnTime
   }
 
   /**
    * @return advance deduction flag
    */
   fun advanceDeduction() = when (tripStatus()) {
-    AdvancePending -> {
-      autoAdvanceTransfer ?: false
-    }
+//    AdvancePending -> {
+//      autoAdvanceTransfer ?: false
+//    }
     else -> {
       when (paymentMode) {
         "automatic" -> true
@@ -193,27 +292,63 @@ data class HomeTripsItemData(
   /**
    * @return formatted pmt rate
    */
-  fun pmtRate() = vendorPmtRate?.let { "Rate: ₹ ${StringUtils.formatAmount(vendorPmtRate)} PMT" }
+  fun pmtRate() = vendorPmtRate?.let { "₹ ${StringUtils.formatAmount(vendorPmtRate)} PMT" }
 
   /**
    * @return promise date
    */
   fun promiseDate() =
     promiseDate?.let {
-      val format = when {
-        isExpress() -> "dd-MMM-yyyy hh:mm"
-        else -> "dd-MMM-yyyy"
-      }
+      val format = "dd-MMM-yyyy"
       "PD: " + DateUtils.formatDate(
           DateUtils.parseDate(it, OrionDateFormat), format
       )
     } ?: ""
 
   /**
+   * @return set delayed text visibility
+   */
+  fun delayedVisibility() = if (isDelayed) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * promise date visibility
+   */
+  fun promiseDateVisibility() = if (tripStatus == In_Transit.statusKey) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
    * Formatted required at
    */
   fun requiredAt() =
     DateUtils.formatDate(DateUtils.parseDate(displayTime(), OrionDateFormat), "dd MMM")
+
+  /**
+   * source time
+   */
+  fun sourceTime(): String {
+    return when (tripStatus) {
+      "truck_confirmed", "truck_arrived" -> {
+        requiredAt()
+      }
+      else -> {
+        DateUtils.formatDate(DateUtils.parseDate(updateInfo!!.loadedInfo!!.time, OrionDateFormat), "dd MMM")
+      }
+    }
+  }
+
+  /**
+   * destination time
+   */
+  fun destinationTime() = unloadingTime?.let {
+    DateUtils.formatDate(DateUtils.parseDate(it, OrionDateFormat), "dd MMM")
+  } ?: ""
 
   /**
    * Formatted required at
@@ -247,7 +382,7 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getTripStatusColor(tripStatus().typeText.toLowerCase())
+    ColorProviderUtils.getTripStatusColor(paymentStatus().toLowerCase())
 
   /**
    * Required at text color as per promise date
@@ -304,6 +439,22 @@ data class HomeTripsItemData(
   }
 
   /**
+   * @return comma seperated lr numbers
+   */
+  fun allLRS() = if (lr.isNotNullOrEmpty()) {
+    lr
+  } else if (!lrDetails.isNullOrEmpty()) {
+    val lrString = StringBuilder()
+    lrDetails.forEach {
+      lrString.append(it.lr)
+          .append(", ")
+    }
+    lrString.substring(0, lrString.length - 2)
+  } else {
+    ""
+  }
+
+  /**
    * @return pod action text
    */
   fun podAction() = when (tripStatus) {
@@ -348,8 +499,13 @@ data class HomeTripsItemData(
     val diffInMillisec = today.timeInMillis - arrived.time
     val daysDiff = TimeUnit.MILLISECONDS.toDays(diffInMillisec)
         .toInt()
+    var minsDiff = TimeUnit.MILLISECONDS.toMinutes(diffInMillisec).toInt()
+    val hrsDiff = TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()
+    if (hrsDiff >=1 ) {
+      minsDiff -= hrsDiff * 60
+    }
     return if (daysDiff >= 1) "$prefix $daysDiff days"
-    else "$prefix${TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()} hrs"
+    else "$prefix${TimeUnit.MILLISECONDS.toHours(diffInMillisec).toInt()} hrs ${minsDiff} mins"
   }
 
   /**
@@ -361,6 +517,51 @@ data class HomeTripsItemData(
       else unloadingTime?.let {
         getDiff(DateUtils.parseDate(it, OrionDateFormat), "Ageing: ")
       } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * ageing since truck is arrived
+   */
+  fun loadedAgeing() = when (tripStatus) {
+    TruckArrived.statusKey -> {
+      updateInfo?.truckArrivedInfo?.let {
+        //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        "Ageing: " + DateUtils.convertToRelativeTimeStampTrip(it.time)
+      } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * ageing since truck is reached
+   */
+  fun unloadedAgeing() = when (tripStatus) {
+    TruckReached.statusKey, In_Transit.statusKey -> {
+      updateInfo?.truckReachedInfo?.let {
+        //getDiff(DateUtils.parseDate(it.time, OrionDateFormat), "Ageing: ")
+        "Ageing: " + DateUtils.convertToRelativeTimeStampTrip(it.time)
+      } ?: ""
+    }
+    else -> {
+      ""
+    }
+  }
+
+  /**
+   * return ageing basis trip status
+   */
+  fun showAgeing() = when (tripStatus) {
+    TruckArrived.statusKey -> {
+      loadedAgeing()
+    }
+    TruckReached.statusKey, In_Transit.statusKey -> {
+      unloadedAgeing()
     }
     else -> {
       ""
@@ -403,130 +604,148 @@ data class HomeTripsItemData(
   /**
    * @return payment advance/pending
    */
-  fun tripPayment() = when (tripStatus()) {
-    AdvancePending -> {
-      if (bidDetails != null && bidDetails.advancePayout ?: 0.0 > 0.0) {
-        "₹ ${StringUtils.formatAmount(bidDetails.advancePayout ?: 0.0)}"
-      } else {
-        ""
-      }
+  fun tripPayment(): String {
+    payment?.let {
+      return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
     }
-//    BalancePending -> {
-//      if (payment != null) {
-//        val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
-//        val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
-//        val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
-//        var amount = bidDetails?.bidPrice ?: 0.0
-//        if (!intermittentPayment.isNullOrEmpty()) {
-//          intermittentPayment.forEach {
-//            amount -= it.amount
-//          }
-//        }
-//        if (advancePayment != null) {
-//          amount -= advancePayment.amount
-//          if (loadingChargePayment != null) {
-//            amount -= loadingChargePayment.amount
-//          }
-//        }
-//        "₹ ${StringUtils.formatAmount(amount)}"
-//      } else {
-//        ""
-//      }
-//    }
-    else -> ""
+    return ""
   }
 
   /**
-   * Advance payment status, payment date and utr triplet
+   * @return trip payment text on trip detail page basis trip payment status
    */
-  fun advance(): Triple<String, String, String> {
-    var status = "Advance Pending"
-    var date = ""
-    var totaltds = 0.0
-    var amount = bidDetails?.advancePayout ?: 0.0
-    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
-    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
-    if (advancePayment != null) {
-      status = "Advance Paid"
-      date = advancePayment.dateTime()
-      amount = advancePayment.amount
-      totaltds += advancePayment.getTDS(tds, updatedTds)
-      if (loadingChargePayment != null) {
-        amount += loadingChargePayment.amount
-        totaltds += loadingChargePayment.getTDS(tds, updatedTds)
-      }
-    }
-    amount -= totaltds
-    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
-  }
-
-  /**
-   * Balance payment status, payment date and utr triplet
-   */
-  fun balance(): Triple<String, String, String> {
-    var status = "Balance Pending"
-    var date = ""
-    var amount = bidDetails?.bidPrice ?: 0.0
-    var advance = 0.0
-
-    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
-    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
-    if (advancePayment != null) {
-      advance += advancePayment.amount
-      if (loadingChargePayment != null) {
-        advance += loadingChargePayment.amount
-      }
-    } else {
-      advance = bidDetails?.advancePayout ?: 0.0
-    }
-
-    val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
-    val partialBalancePayment = payment?.payments?.find { it.head == "partial_balance_payment" }
-    val balancePayment = payment?.payments?.find { it.head == "balance_payment" }
-    var charges = 0.0
-    payment?.charges?.forEach { charge ->
-      charge.payVendor?.let {
-        if (charge.payVendor < 0) {
-          charges += charge.payVendor
-        } else {
-          charges -= charge.payVendor
+  fun tripPaymentText(): String {
+    payment?.let {
+      when {
+        paymentStatus() == PaymentStatus.AdvancePending.statusKey -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid when the loading is completed"
         }
-      }
-      charge.deductVendor?.let {
-        charges += charge.deductVendor
-      }
-    }
-    amount -= (advance + charges)
-
-    var interPayments = 0.0
-    if (!intermittentPayment.isNullOrEmpty()) {
-      intermittentPayment.forEach {
-        interPayments += (it.amount)
+        paymentStatus() == PaymentStatus.BalancePending.statusKey -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid as balance soon"
+        }
+        paymentStatus() == PaymentStatus.RecoveryPending.statusKey -> {
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} to be recovered yet"
+        }
+        else -> ""
       }
     }
-    partialBalancePayment?.let {
-      interPayments += (it.amount)
-    }
-    amount -= (interPayments)
-    amount = amount * (updatedTds) / 100
-
-    balancePayment?.let {
-      status = "Balance Paid"
-      date = it.dateTime()
-      amount = it.amount - it.getTDS(tds, updatedTds)
-    }
-
-    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
+    return ""
   }
 
   /**
-   * balance visibility
+   * payment amount visibility
    */
-  fun balance_tile_visibility() = if (balance().first == "Balance Paid") {
+  fun paymentVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+      paymentStatus() == PaymentStatus.BalancePending.statusKey ||
+          paymentStatus() == PaymentStatus.RecoveryPending.statusKey) ||
+      (paymentStatus() == TripStatus.TripCompleted.statusKey && isSettled)) {
     View.VISIBLE
   } else {
     View.GONE
   }
+
+  /**
+   * payment visibility on trip detail
+   */
+  fun paymentDetailVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+          paymentStatus() == PaymentStatus.BalancePending.statusKey || paymentStatus() == PaymentStatus.RecoveryPending.statusKey)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+
+  /**
+   * Advance payment status, payment date and utr triplet
+   */
+//  fun advance(): Triple<String, String, String> {
+//    var status = "Advance Pending"
+//    var date = ""
+//    var totaltds = 0.0
+//    var amount = bidDetails?.advancePayout ?: 0.0
+//    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+//    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+//    if (advancePayment != null) {
+//      status = "Advance Paid"
+//      date = advancePayment.dateTime()
+//      amount = advancePayment.amount
+//      totaltds += advancePayment.getTDS(tds, updatedTds)
+//      if (loadingChargePayment != null) {
+//        amount += loadingChargePayment.amount
+//        totaltds += loadingChargePayment.getTDS(tds, updatedTds)
+//      }
+//    }
+//    amount -= totaltds
+//    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
+//  }
+//
+//  /**
+//   * Balance payment status, payment date and utr triplet
+//   */
+//  fun balance(): Triple<String, String, String> {
+//    var status = "Balance Pending"
+//    var date = ""
+//    var amount = bidDetails?.bidPrice ?: 0.0
+//    var advance = 0.0
+//
+//    val advancePayment = payment?.payments?.find { it.head == "cash_advance" }
+//    val loadingChargePayment = payment?.payments?.find { it.head == "loading_charge" }
+//    if (advancePayment != null) {
+//      advance += advancePayment.amount
+//      if (loadingChargePayment != null) {
+//        advance += loadingChargePayment.amount
+//      }
+//    } else {
+//      advance = bidDetails?.advancePayout ?: 0.0
+//    }
+//
+//    val intermittentPayment = payment?.payments?.filter { it.head == "intermittent" }
+//    val partialBalancePayment = payment?.payments?.find { it.head == "partial_balance_payment" }
+//    val balancePayment = payment?.payments?.find { it.head == "balance_payment" }
+//    var charges = 0.0
+//    payment?.charges?.forEach { charge ->
+//      charge.payVendor?.let {
+//        if (charge.payVendor < 0) {
+//          charges += charge.payVendor
+//        } else {
+//          charges -= charge.payVendor
+//        }
+//      }
+//      charge.deductVendor?.let {
+//        charges += charge.deductVendor
+//      }
+//    }
+//    amount -= (advance + charges)
+//
+//    var interPayments = 0.0
+//    if (!intermittentPayment.isNullOrEmpty()) {
+//      intermittentPayment.forEach {
+//        interPayments += (it.amount)
+//      }
+//    }
+//    partialBalancePayment?.let {
+//      interPayments += (it.amount)
+//    }
+//    amount -= (interPayments)
+//    amount = amount * (updatedTds) / 100
+//
+//    balancePayment?.let {
+//      status = "Balance Paid"
+//      date = it.dateTime()
+//      amount = it.amount - it.getTDS(tds, updatedTds)
+//    }
+//
+//    return Triple(status, date, "₹ ${StringUtils.formatAmount(amount)}")
+//  }
+
+//  /**
+//   * balance visibility
+//   */
+//  fun balance_tile_visibility() = if (balance().first == "Balance Paid") {
+//    View.VISIBLE
+//  } else {
+//    View.GONE
+//  }
 
   /**
    * Pending text
@@ -556,6 +775,121 @@ data class HomeTripsItemData(
     vehicleDetails.vehicleNo.contains(query, true)
         || destination.contains(query, true)
         || (lr.isNotNullOrEmpty() && lr.contains(query, true))
+
+  /**
+   * set issue trip tile visibility
+   */
+  fun issueTripTileVisibility() = if (damagePending == true || detentionPending == true
+      || shortagePending == true || noStampPOD == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * set issue trip text
+   */
+  fun issueTripText() : String {
+    var issueTripText = ""
+    val issueList = mutableListOf<String>()
+    if (damagePending == true) {
+      issueList.add("Damage")
+    }
+    if (detentionPending == true) {
+      issueList.add("Detention Pending")
+    }
+    if (shortagePending == true) {
+      issueList.add("Shortage Pending")
+    }
+    if (noStampPOD == true) {
+      issueList.add("No Stamp POD")
+    }
+    issueTripText = issueList.joinToString(separator = ",") {it}
+
+    return issueTripText
+  }
+
+  /**
+   * truck arrived icon resource
+   */
+  @DrawableRes
+  fun truckArrivedRes() = if (updateInfo!!.truckArrivedInfo != null) {
+        DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck loaded icon resource
+   */
+  @DrawableRes
+  fun truckLoadedRes() = if (updateInfo!!.loadedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck reached icon resource
+   */
+  @DrawableRes
+  fun truckReachedRes() = if (updateInfo!!.truckReachedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * truck unloaded icon resource
+   */
+  @DrawableRes
+  fun truckUnloadedRes() = if (updateInfo!!.truckUnloadedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * pod uploaded icon resource
+   */
+  @DrawableRes
+  fun podUploadedRes() = if (updateInfo!!.tripCompletedInfo != null) {
+    DrawableProviderUtils.tripStatusRes(true)
+  } else {
+    DrawableProviderUtils.tripStatusRes(false)
+  }
+
+  /**
+   * trip settled icon resource
+   */
+  @DrawableRes
+  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled)
+
+  /**
+   * pickup/destination icon resource
+   */
+  @DrawableRes
+  fun addressExpandRes() = DrawableProviderUtils.expandedRes(addressExpand)
+
+  /**
+   * particular trip status timestamp
+   */
+  fun tripStatusTime(datetime: String?) = datetime?.let {
+    DateUtils.formatDate(
+        DateUtils.parseDate(it, OrionDateFormat), CurrentStatusFormat
+    ).replace(" ", "")
+  } ?: ""
+
+  /**
+   * trip settlement time text
+   */
+  fun tripSettlementTimeText(datetime: String?) = if (datetime.isNotNullOrEmpty()) {
+    DateUtils.formatDate(
+        DateUtils.parseDate(datetime!!, OrionDateFormat), CurrentStatusFormat
+    ).replace(" ", "")
+  } else {
+    ""
+  }
 
 }
 
@@ -622,8 +956,14 @@ data class TripBidDetails(
  * Status update info
  */
 data class StatusUpdateInfo(
+  @SerializedName("trip_confirmed") val tripConfirmedInfo: ByUser?= null,
+  @SerializedName("truck_arrived") val truckArrivedInfo: ByUser?= null,
   @SerializedName("truck_loaded") val loadedInfo: ByUser? = null,
-  @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null
+  @SerializedName("in_transit") val inTransitInfo: ByUser?= null,
+  @SerializedName("truck_reached") val truckReachedInfo: ByUser?= null,
+  @SerializedName("truck_unloaded") val truckUnloadedInfo: ByUser?= null,
+  @SerializedName("epod_uploaded") val epodUploadInfo: ByUser? = null,
+  @SerializedName("trip_completed") val tripCompletedInfo: ByUser?= null
 ) : Serializable
 
 /**
@@ -672,7 +1012,8 @@ enum class TripStatus(
   EPodUploaded("epod_uploaded", "EPod Uploaded"),
   InvoiceInProgress("invoice_inprogress", "Invoice Progress"),
   Invoiced("invoiced", "Invoiced"),
-  InvoicFailed("invoice_failed", "Invoice Failed"),
+  InvoiceFailed("invoice_failed", "Invoice Failed"),
+  Recovery("recovery_pending", "Recovery Pending"),
   Unknown("unknown", "Unknown");
 
   companion object {
@@ -683,4 +1024,16 @@ enum class TripStatus(
     fun byKey(statusKey: String) =
       values().firstOrNull { it.statusKey.equals(statusKey, true) } ?: Unknown
   }
+}
+
+/**
+ * Payment Status Enum
+ */
+enum class PaymentStatus(
+  val statusKey: String,
+  val status: String
+) {
+  AdvancePending("advance_pending", "Advance Pending"),
+  BalancePending("balance_pending", "Balance Pending"),
+  RecoveryPending("recovery_pending", "Recovery Pending");
 }

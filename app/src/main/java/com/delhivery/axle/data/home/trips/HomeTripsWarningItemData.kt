@@ -15,4 +15,4 @@ data class HomeTripsWarningItemData(
 const val HomeTripsWarningItemDataKeyPrefix = "warning_"
 
 /* actions */
-const val HomeTripsWarningAction_NoLoads = "no_loads"
+const val HomeTripsWarningAction_NoTrips = "no_trips"

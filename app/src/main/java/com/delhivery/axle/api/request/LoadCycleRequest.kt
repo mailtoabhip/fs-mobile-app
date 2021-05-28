@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.request
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
@@ -19,6 +20,16 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var column: String? = "unloaded"
   var operator: String? = "gte"
   var value: String? = null
+  var issueTrips: Boolean?= false
+  var prefix: String? = null
+  var loadedAfter: String?=  null
+  var settledTrips: Boolean?= false
+  var arrivedAgeing: String? = null
+  var reachedAgeing: String?= null
+  var delayed: Boolean?= false
+  var operationTripStatus: String?= null
+  var sortBy: String?= null
+  var sortDir: String?= null
 
   constructor(
     vehicleNumber: String? = null,
@@ -39,6 +50,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   fun getRequest(): JsonObject {
     val jsonObject = JsonObject()
     tripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("status_list", it) }
+    operationTripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("trip_status", it) }
     vehicleNumber?.let {
       if (it.isNotEmpty()) jsonObject.addProperty(
           "vehicle_number", it.toUpperCase()
@@ -47,8 +59,9 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }
     vendorId?.let { if (it.isNotEmpty()) jsonObject.addProperty("vendor_id", it) }
     updatedAfter?.let { if (it.isNotEmpty()) jsonObject.addProperty("updated_after", it) }
-    offset?.let { jsonObject.addProperty("offset", it) }
-    limit?.let { jsonObject.addProperty("limit", it) }
+    loadedAfter?.let { if (it.isNotNullOrEmpty()) jsonObject.addProperty("loaded_after", it) }
+    offset?.let { jsonObject.addProperty("offset", 0) }
+    limit?.let { jsonObject.addProperty("limit", 100) }
     value?.let {
       val jsonArray = JsonArray()
       val rangeJsonObject = JsonObject()
@@ -58,6 +71,45 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
       jsonArray.add(rangeJsonObject)
       jsonObject.add("range_filters", jsonArray)
     }
+
+    issueTrips?.let {
+      if (it) {
+        jsonObject.addProperty("trips_with_issue", true)
+      }
+    }
+
+//    settledTrips?.let {
+//      if (it) {
+//        jsonObject.addProperty("is_ap_recon_pending", true)
+//      }
+//    }
+
+    delayed?.let {
+      if (it) {
+        jsonObject.addProperty("delayed", true)
+      }
+    }
+
+    arrivedAgeing?.let {
+      jsonObject.addProperty("frm_arrived", arrivedAgeing)
+    }
+
+    reachedAgeing?.let {
+      jsonObject.addProperty("frm_reached", reachedAgeing)
+    }
+
+      prefix?.let {
+        jsonObject.addProperty("prefix", prefix)
+      }
+
+    sortBy?.let {
+      jsonObject.addProperty("sort_by", sortBy)
+    }
+
+    sortDir?.let {
+      jsonObject.addProperty("sort_dir", sortDir)
+    }
+
     return jsonObject
   }
 

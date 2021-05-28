@@ -20,7 +20,11 @@ data class ChargesResponse(
         @SerializedName("charge_uuid") val chargeUuid: String,
         @SerializedName("charge_amount") val chargeAmount: Double,
         @SerializedName("days") val days: Int
-)
+) {
+  fun getChargeTitle(): String {
+    return chargeHeadRef.replace("_", " ").capitalize()
+  }
+}
 
 data class DNResponse(
         @SerializedName("description") val description: String,
@@ -45,6 +49,46 @@ data class CollectionResponse(
         @SerializedName("payee_id") val payeeId: String,
         @SerializedName("type") val type: String
 )
+
+data class DNRecoveryResponse(
+        @SerializedName("dn_id") val dnId: String,
+        @SerializedName("trip_id") val tripId: String,
+        @SerializedName("dn_type") val dnType: String,
+        @SerializedName("total_recovery_amount") val TotalRecoveryAmount: Double,
+        @SerializedName("pending_recovery") val pendingRecoveryAmount: Double,
+        @SerializedName("recovery_data") val recoveryData: List<RecoveryData>?
+)
+
+data class RecoveryData(
+        @SerializedName("recovery_amount") val recoveryAmount: Double,
+        @SerializedName("trip_id") val recoveryTripId: String
+)
+
+data class OverpaymentRecoveryResponse(
+  @SerializedName("utr") val utr: String,
+  @SerializedName("trip_id") val tripId: String,
+  @SerializedName("type") val Type: String,
+  @SerializedName("total_recovery_amount") val TotalRecoveryAmount: Double,
+  @SerializedName("pending_recovery") val pendingRecoveryAmount: Double,
+  @SerializedName("recovery_data") val recoveryData: List<OverpaymentRecoveryData>?
+)
+
+data class OverpaymentRecoveryData(
+  @SerializedName("recovery_amount") val recoveryAmount: Double,
+  @SerializedName("trip_id") val recoveryTripId: String,
+  @SerializedName("utr_number") val utrNumber: String?
+)
+
+data class TripRecoveryResponse(
+  @SerializedName("current_trip_id") val currentTripId: String,
+  @SerializedName("trip_id") val tripId: String,
+  @SerializedName("type") val type: String,
+  @SerializedName("recovered_amount") val recoveredAmount: Double,
+  @SerializedName("added_by") val addedBy: Double,
+  @SerializedName("utr") val utr: String?
+)
+
+
 
 data class TDS(
         @SerializedName("amount") val amount: Double,
@@ -106,5 +150,7 @@ data class EmailLedgerResponse(
 )
 
 data class InvoiceListResponse(
-        @SerializedName("invoice_id") val invoiceId: String
+        @SerializedName("invoice_id") val invoiceId: String,
+        @SerializedName("invoice_amount") val invoiceAmount: Double,
+        @SerializedName("paid_amount") val paidAmount: Double
 )

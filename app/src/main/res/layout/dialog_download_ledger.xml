@@ -25,12 +25,82 @@
         android:paddingBottom="@dimen/size_4dp"
         >
 
-        <FrameLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal"
-            >
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_ledger_option"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:lineSpacingExtra="@dimen/text_12sp"
+                    android:text="Select Option for Ledger Details"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/text_16sp"
+                    tools:text="Select Option for Ledger Details"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_gravity="end"
+                    android:padding="@dimen/size_2dp"
+                    app:srcCompat="@drawable/ic_close_black"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RadioGroup
+                android:id="@+id/radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All"/>
+
+                <RadioButton
+                    android:id="@+id/payment_due"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Payment Due (POD Submitted)"/>
+
+                <RadioButton
+                    android:id="@+id/trips_with_recovery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trips with Recovery"/>
+
+                <RadioButton
+                    android:id="@+id/settled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settled"/>
+            </RadioGroup>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_title"
                 android:layout_width="wrap_content"
@@ -40,149 +110,149 @@
                 android:text="Select Duration"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/text_16sp"
-                tools:text="Error"
+                tools:text="Select Duration"
                 />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btn_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:padding="@dimen/size_2dp"
-                app:srcCompat="@drawable/ic_close_black"
-                />
-        </FrameLayout>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/size_18dp"
-            android:orientation="horizontal">
-
-
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/size_10dp"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:weightSum="2"
+                android:layout_marginTop="@dimen/size_18dp"
+                android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatTextView
+
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="From"
-                    android:textSize="@dimen/text_16sp"
-                    android:layout_gravity="center"
-                    android:fontFamily="sans-serif-medium"
-                    />
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="@dimen/size_10dp"
+                    android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_start_date"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="From"
+                        android:textSize="@dimen/text_16sp"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center"
+                        android:fontFamily="sans-serif-medium"
+                        />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edit_start_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:hint="Start Date"
+                        android:drawablePadding="@dimen/size_4dp"
+                        android:drawableRight="@drawable/ic_calendar"
+                        android:layout_gravity="center"
+                        android:paddingVertical="@dimen/size_10dp"
+                        android:paddingHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:textSize="@dimen/size_16dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="center"
+                        android:background="@drawable/bg_white_all_corner_black"
+                        />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:hint="Start Date"
-                    android:paddingVertical="@dimen/size_10dp"
-                    android:paddingHorizontal="@dimen/size_8dp"
-                    android:layout_marginTop="@dimen/size_2dp"
-                    android:textSize="@dimen/size_16dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textAlignment="center"
-                    android:background="@drawable/bg_white_all_corner_black"
-                    />
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="@dimen/size_10dp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/black"
+                        android:text="To"
+                        android:textSize="@dimen/text_16sp"
+                        android:fontFamily="sans-serif-medium"
+                        />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edit_end_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="End Date"
+                        android:layout_gravity="center"
+                        android:focusable="false"
+                        android:drawableRight="@drawable/ic_calendar"
+                        android:drawablePadding="@dimen/size_4dp"
+                        android:paddingVertical="@dimen/size_10dp"
+                        android:paddingHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:background="@drawable/bg_white_all_corner_black"
+                        />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginHorizontal="@dimen/size_4dp"
-                app:srcCompat="@drawable/ic_calendar"/>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/size_10dp"
-                android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="To"
-                    android:textSize="@dimen/text_16sp"
-                    android:fontFamily="sans-serif-medium"
-                    />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_end_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="End Date"
-                    android:focusable="false"
-                    android:paddingVertical="@dimen/size_10dp"
-                    android:paddingHorizontal="@dimen/size_8dp"
-                    android:layout_marginTop="@dimen/size_2dp"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/size_16dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:background="@drawable/bg_white_all_corner_black"
-                    />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/edit_email_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Email ID"
-            android:textSize="@dimen/size_16dp"
-            android:fontFamily="sans-serif-medium"
-            android:paddingVertical="@dimen/size_10dp"
-            android:layout_marginTop="@dimen/size_18dp"
-            android:textAlignment="center"
-            android:background="@drawable/bg_white_all_corner_black"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/error_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_12dp"
-            android:text="Dummy"
-            android:textAlignment="center"
-            android:textColor="@color/status_lost"
-            android:visibility="gone"
-            />
-
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_18dp"
-            android:layout_marginBottom="@dimen/size_24dp"
-            android:gravity="center"
-            >
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_download"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:text="Download"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_gravity="center"
+                android:text="Download Ledger"
                 android:textColor="@color/white"
                 android:paddingHorizontal="@dimen/size_12dp"
                 android:textSize="@dimen/text_14sp"
                 android:background="@drawable/bg_all_round_corner_black"
                 />
 
-            <View
-                android:layout_width="@dimen/size_16dp"
-                android:layout_height="0dp"
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_enter_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:text="Enter Email ID"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:visibility="visible"
+                />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edit_email_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="youremail@gmail.com"
+                android:textSize="@dimen/size_16dp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingVertical="@dimen/size_10dp"
+                android:paddingHorizontal="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_18dp"
+                android:background="@drawable/bg_white_all_corner_black"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/error_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:text="Dummy"
+                android:textAlignment="center"
+                android:textColor="@color/status_lost"
+                android:visibility="gone"
                 />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -190,8 +260,9 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="Email"
+                android:layout_gravity="center"
+                android:text="Send Ledger"
+                android:layout_marginTop="@dimen/size_16dp"
                 android:paddingHorizontal="@dimen/size_12dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_14sp"
@@ -199,5 +270,7 @@
                 />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </layout>

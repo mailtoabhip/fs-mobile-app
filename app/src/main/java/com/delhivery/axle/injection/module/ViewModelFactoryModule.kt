@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
+import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripViewModel
 import com.delhivery.axle.ui.searchtrip.SearchViewModel
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteViewModel
 import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestinationViewModel
@@ -238,6 +239,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ConsolidatedPageViewModel::class)
   abstract fun bindConsolidatedPageViewModel(viewModel: ConsolidatedPageViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchOngoingTripViewModel::class)
+  abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -14,7 +14,6 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.AdvancePending
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -58,6 +57,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_district") val originDistrict: String?,
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
+  @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -226,6 +226,11 @@ data class HomeBidsRequestItemData(
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
   /**
+   * @return truck_type with placed capacity
+   */
+  fun truckTypeWithCapacity() = "$truckType/${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
+
+  /**
    * Formatted required at
    */
   fun requiredAt() = DateUtils.daysDiffWithTimeStr(_requiredOn, DatePatterns.OrionDateFormat)
@@ -254,13 +259,15 @@ data class HomeBidsRequestItemData(
   /**
    * Trip display name for toolbar title
    */
-  fun tripDisplayName(tripType: TripType? = null) =
-    when (tripType) {
-      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
-          destinationState
-      )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
-      else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
-    }
+  fun tripDisplayName() =
+    "${originState.capitalize()} - ${destinationState.capitalize()}"
+//    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+//    when (tripType) {
+//      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
+//          destinationState
+//      )} (${DateUtils.daysDiffStr(_requiredOn, DatePatterns.OrionDateFormat)})".toUpperCase()
+//      else -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
+//    }
 
   /**
    * @return bid difference
@@ -400,7 +407,8 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/requestedCapacityMg).roundToInt()
+        diff=25
+        //diff = (diff/requestedCapacityMg).roundToInt()
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - guidancePrice) > diff) {
@@ -437,7 +445,8 @@ data class HomeBidsRequestItemData(
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff = (diff/requestedCapacityMg).roundToInt()
+        //diff = (diff/requestedCapacityMg).roundToInt()
+        diff=25
       }
       val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - lowestBid!!) > diff) {

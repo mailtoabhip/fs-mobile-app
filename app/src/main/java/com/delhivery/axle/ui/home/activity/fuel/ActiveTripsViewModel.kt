@@ -13,8 +13,6 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.TripType.ActiveForFuel
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -36,7 +34,7 @@ class ActiveTripsViewModel @Inject constructor(
   var hasMoreData = true
   var offset = 0
   var total = 0
-  var trip: TripType = ActiveForFuel
+  // var trip: TripType = ActiveForFuel
   var optinDate = ""
   var request = SearchRequest()
 
@@ -65,7 +63,7 @@ class ActiveTripsViewModel @Inject constructor(
     request.offset = offset
     request.limit = UserSearchLimit
     request.vendorId = userRepository.userId()
-    request.tripStatus = trip.status.joinToString(separator = ",") { it }
+    // request.tripStatus = trip.status.joinToString(separator = ",") { it }
     request.updatedAfter = DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
