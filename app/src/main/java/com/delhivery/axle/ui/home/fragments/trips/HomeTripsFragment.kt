@@ -239,6 +239,11 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    activity?.unregisterReceiver(onDownloadComplete)
+  }
+
   private fun requestPermission() {
     compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         .onBackground()
