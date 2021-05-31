@@ -87,29 +87,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     })
 
-  viewModel.bidsActionLiveDataFlag.observe(this, Observer {
-     if(it == true){
-         viewModel.fetchTransactionBids(it)
-         viewModel.doneBidCaptureEvent()
-     }
-  })
 
     viewModel.analyticsBucket.observe(this, Observer {
       if (it != null) {
-        if (it==1) {
           analyticsUtil.trackEvent(
-                  EVENT_BID_INLINE_PROMPT,
+                  it,
                   mutableListOf(PROPERTY_TRANSACTION_ID),
                   mutableListOf(viewModel.transaction.key())
-          )
 
-        } else if (it==2) {
-          analyticsUtil.trackEvent(
-                  EVENT_BID_REVISE_PROMPT,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(viewModel.transaction.key())
           )
-        }
       }
     })
 

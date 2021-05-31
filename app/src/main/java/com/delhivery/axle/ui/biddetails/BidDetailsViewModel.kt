@@ -10,6 +10,8 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.EVENT_BID_INLINE_PROMPT
+import com.delhivery.axle.utils.EVENT_BID_REVISE_PROMPT
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -38,8 +40,7 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
-  var bidsActionLiveDataFlag =MutableLiveData<Boolean>()
-   var analyticsBucket = MutableLiveData<Int>()
+   var analyticsBucket = MutableLiveData<String>()
 
   lateinit var transaction: HomeBidsRequestItemData
 
@@ -65,7 +66,7 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * Fetch transaction bids and update UI as per response
    */
-  fun fetchTransactionBids( action: Boolean = false) {
+  private fun fetchTransactionBids( action: Boolean = false) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
         .bidsProgress()
@@ -82,10 +83,10 @@ class BidDetailsViewModel @Inject constructor(
               _bRes.first.first == null -> {
                   if(action){
                       if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
-                          analyticsBucket.postValue(1)
+                          analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
                       }
                       else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
-                          analyticsBucket.postValue(2)
+                          analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
                       }
                   }
                 transactionBidLiveData.postValue(
@@ -117,10 +118,10 @@ class BidDetailsViewModel @Inject constructor(
                 else -> {
                     if(action){
                         if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
-                            analyticsBucket.postValue(1)
+                            analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
                         }
                         else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
-                            analyticsBucket.postValue(2)
+                            analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
                         }
                     }
                   transactionBidLiveData.postValue(
@@ -172,8 +173,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-              //fetchTransactionBids()
-              bidsActionLiveDataFlag.postValue(true)
+              fetchTransactionBids(true)
           } else {
             error.handle()
           }
@@ -197,17 +197,14 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-              //fetchTransactionBids()
-              bidsActionLiveDataFlag.postValue(true)
+              fetchTransactionBids(true)
+
           } else {
             error.handle()
           }
         }
   }
 
-    fun doneBidCaptureEvent(){
-        bidsActionLiveDataFlag.postValue(false)
-    }
 
 
 
