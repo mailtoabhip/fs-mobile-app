@@ -39,8 +39,7 @@ class BidDetailsViewModel @Inject constructor(
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
   var bidsActionLiveDataFlag =MutableLiveData<Boolean>()
-   var transactionLiveDataFlag= MutableLiveData<HomeBidsRequestItemData>()
-    var analyticsBucket = MutableLiveData<Int>()
+   var analyticsBucket = MutableLiveData<Int>()
 
   lateinit var transaction: HomeBidsRequestItemData
 
@@ -169,13 +168,10 @@ class BidDetailsViewModel @Inject constructor(
         isPMT, transactionId, bidAmount, pmtRate, commercialType
     )
         .delay(BidsUpdateDelay, SECONDS)
-        .flatMap {
-            bidsRepository.transactionBid(transactionId)
-        }
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
-          if (!error && _res!=null) {
+          if (!error && _res.isSuccess) {
               //fetchTransactionBids()
               bidsActionLiveDataFlag.postValue(true)
           } else {
@@ -197,13 +193,10 @@ class BidDetailsViewModel @Inject constructor(
         isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
     )
         .delay(BidsUpdateDelay, SECONDS)
-        .flatMap {
-            bidsRepository.transactionBid(transactionId)
-        }
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
-          if (!error && _res!=null) {
+          if (!error && _res.isSuccess) {
               //fetchTransactionBids()
               bidsActionLiveDataFlag.postValue(true)
           } else {
