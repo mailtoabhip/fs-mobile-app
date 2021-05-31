@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
@@ -37,7 +38,12 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
+  var bidsActionLiveDataFlag =MutableLiveData<Boolean>()
+   var transactionLiveDataFlag= MutableLiveData<HomeBidsRequestItemData>()
+    var analyticsBucket = MutableLiveData<Int>()
+
   lateinit var transaction: HomeBidsRequestItemData
+
 
   /**
    * Fetch transaction details
@@ -60,7 +66,7 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * Fetch transaction bids and update UI as per response
    */
-  private fun fetchTransactionBids() {
+  fun fetchTransactionBids( action: Boolean = false) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
         .bidsProgress()
@@ -75,6 +81,14 @@ class BidDetailsViewModel @Inject constructor(
                 bidPriceLiveData.postValue(null)
               }
               _bRes.first.first == null -> {
+                  if(action){
+                      if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
+                          analyticsBucket.postValue(1)
+                      }
+                      else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
+                          analyticsBucket.postValue(2)
+                      }
+                  }
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBid(
                         _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -102,6 +116,14 @@ class BidDetailsViewModel @Inject constructor(
                   }
                 }
                 else -> {
+                    if(action){
+                        if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
+                            analyticsBucket.postValue(1)
+                        }
+                        else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
+                            analyticsBucket.postValue(2)
+                        }
+                    }
                   transactionBidLiveData.postValue(
                       BidDetailsUserBidState_EditBid(
                           _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -147,11 +169,15 @@ class BidDetailsViewModel @Inject constructor(
         isPMT, transactionId, bidAmount, pmtRate, commercialType
     )
         .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+            bidsRepository.transactionBid(transactionId)
+        }
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
-            fetchTransactionBids()
+          if (!error && _res!=null) {
+              //fetchTransactionBids()
+              bidsActionLiveDataFlag.postValue(true)
           } else {
             error.handle()
           }
@@ -171,16 +197,28 @@ class BidDetailsViewModel @Inject constructor(
         isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
     )
         .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+            bidsRepository.transactionBid(transactionId)
+        }
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
-            fetchTransactionBids()
+          if (!error && _res!=null) {
+              //fetchTransactionBids()
+              bidsActionLiveDataFlag.postValue(true)
           } else {
             error.handle()
           }
         }
   }
+
+    fun doneBidCaptureEvent(){
+        bidsActionLiveDataFlag.postValue(false)
+    }
+
+
+
+
 
   /**
    * filter accepted Bid

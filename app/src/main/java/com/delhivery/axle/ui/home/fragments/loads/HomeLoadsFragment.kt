@@ -181,7 +181,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         }
         else if (it.second.threeVisibility()==View.VISIBLE || it.second.fourVisibility()==View.VISIBLE){
           analyticsUtil.trackEvent(
-                  Event_BID_REVISE_PROMPT,
+                  EVENT_BID_REVISE_PROMPT,
                   mutableListOf(PROPERTY_TRANSACTION_ID),
                   mutableListOf(it.second.key())
           )

@@ -17,6 +17,10 @@ import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidBinding
 import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidFirstBinding
 import com.delhivery.axle.databinding.ViewBidDetailsRejectedBidBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.utils.EVENT_BID_INLINE_PROMPT
+import com.delhivery.axle.utils.EVENT_BID_REVISE_PROMPT
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -82,6 +86,36 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }
       }
     })
+
+  viewModel.bidsActionLiveDataFlag.observe(this, Observer {
+     if(it == true){
+         viewModel.fetchTransactionBids(it)
+         viewModel.doneBidCaptureEvent()
+     }
+  })
+
+    viewModel.analyticsBucket.observe(this, Observer {
+      if (it != null) {
+        if (it==1) {
+          analyticsUtil.trackEvent(
+                  EVENT_BID_INLINE_PROMPT,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(viewModel.transaction.key())
+          )
+
+        } else if (it==2) {
+          analyticsUtil.trackEvent(
+                  EVENT_BID_REVISE_PROMPT,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(viewModel.transaction.key())
+          )
+        }
+      }
+    })
+
+
+
+
 
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
