@@ -377,7 +377,7 @@ class TripDetailsViewModel @Inject constructor(
                             } else {
                               charge.dnType ?: ""
                             }
-                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $subHeading ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
+                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: ${subHeading.capitalize()} of ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
                                 charge.appliedAmount, "", true, charge.transactionId))
                           } else {
 
@@ -481,12 +481,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
-//                if (abs(recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount) > 0)  {
-//                  totalPendingRecovery += recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount
-////                  pendingRecoveryList.add(
-////                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-////                  )
-//                }
+                val recoveryType = recovery.dnType.capitalize()
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
@@ -505,7 +500,7 @@ class TripDetailsViewModel @Inject constructor(
                           ) + ")"
                         } ?: ""
                       }
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $vehicleNumber $loadedTime",
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $recoveryType of $vehicleNumber $loadedTime",
                           data.recoveryAmount, "", true, data.recoveryTripId))
                     }
                   }
@@ -535,12 +530,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             if (_res.responseData != null) {
               for (recovery in _res.responseData) {
-//                if (abs(recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount) > 0) {
-//                  totalPendingRecovery += recovery.TotalRecoveryAmount - recovery.pendingRecoveryAmount
-////                  pendingRecoveryList.add(
-////                      TripPaymentSummaryDetailItemData(recovery.tripId, recovery.pendingRecoveryAmount, "", true)
-////                  )
-//                }
+                val recoveryType = recovery.Type.capitalize()
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
@@ -560,7 +550,7 @@ class TripDetailsViewModel @Inject constructor(
                         } ?: ""
                       }
                       val utr = data.utrNumber
-                      val title = "Recovered against: $vehicleNumber $loadedTime"
+                      val title = "Recovered against: $recoveryType of $vehicleNumber $loadedTime"
                       if (utr.isNotNullOrEmpty()) {
                         recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
                             data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId))
