@@ -377,8 +377,8 @@ class TripDetailsViewModel @Inject constructor(
                             } else {
                               charge.dnType ?: ""
                             }
-                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovery against $subHeading ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
-                                charge.appliedAmount!!, "", true, charge.transactionId))
+                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $subHeading ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
+                                charge.appliedAmount, "", true, charge.transactionId))
                           } else {
 
                           }
