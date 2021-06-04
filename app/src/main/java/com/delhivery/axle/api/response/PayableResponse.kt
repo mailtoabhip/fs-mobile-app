@@ -61,7 +61,9 @@ data class DNRecoveryResponse(
 
 data class RecoveryData(
         @SerializedName("recovery_amount") val recoveryAmount: Double,
-        @SerializedName("trip_id") val recoveryTripId: String
+        @SerializedName("trip_id") val recoveryTripId: String,
+        @SerializedName("vehicle_number") val recoveryVehicleNumber: String?,
+        @SerializedName("loaded_time") val recoveryTripLoadedTime: String?
 )
 
 data class OverpaymentRecoveryResponse(
@@ -76,6 +78,8 @@ data class OverpaymentRecoveryResponse(
 data class OverpaymentRecoveryData(
   @SerializedName("recovery_amount") val recoveryAmount: Double,
   @SerializedName("trip_id") val recoveryTripId: String,
+  @SerializedName("vehicle_number") val recoveryVehicleNumber: String?,
+  @SerializedName("loaded_time") val recoveryTripLoadedTime: String?,
   @SerializedName("utr_number") val utrNumber: String?
 )
 

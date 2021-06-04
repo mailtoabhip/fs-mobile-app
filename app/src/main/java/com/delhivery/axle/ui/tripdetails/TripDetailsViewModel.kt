@@ -490,7 +490,22 @@ class TripDetailsViewModel @Inject constructor(
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
-                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: " + data.recoveryTripId,
+                      var vehicleNumber = ""
+                      var loadedTime = ""
+                      vehicleNumber = if (data.recoveryVehicleNumber.isNotNullOrEmpty()) {
+                        data.recoveryVehicleNumber ?: ""
+                      } else {
+                        data.recoveryTripId
+                      }
+                      if (data.recoveryTripLoadedTime.isNotNullOrEmpty()) {
+                        loadedTime = data.recoveryTripLoadedTime?.let {
+                          "(Loaded at:" + DateUtils.formatDate(
+                            DateUtils.parseDate(it, OrionDateFormat),
+                            DatePatterns.SimpleDateFormat
+                          ) + ")"
+                        } ?: ""
+                      }
+                      recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $vehicleNumber $loadedTime",
                           data.recoveryAmount, "", true, data.recoveryTripId))
                     }
                   }
@@ -529,8 +544,23 @@ class TripDetailsViewModel @Inject constructor(
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
+                      var vehicleNumber = ""
+                      var loadedTime = ""
+                      vehicleNumber = if (data.recoveryVehicleNumber.isNotNullOrEmpty()) {
+                        data.recoveryVehicleNumber ?: ""
+                      } else {
+                        data.recoveryTripId
+                      }
+                      if (data.recoveryTripLoadedTime.isNotNullOrEmpty()) {
+                        loadedTime = data.recoveryTripLoadedTime?.let {
+                          "(Loaded at:" + DateUtils.formatDate(
+                            DateUtils.parseDate(it, OrionDateFormat),
+                            DatePatterns.SimpleDateFormat
+                          ) + ")"
+                        } ?: ""
+                      }
                       val utr = data.utrNumber
-                      val title = "Recovered against: " + data.recoveryTripId
+                      val title = "Recovered against: $vehicleNumber $loadedTime"
                       if (utr.isNotNullOrEmpty()) {
                         recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
                             data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId))

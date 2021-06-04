@@ -231,10 +231,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
         if ((viewModel.tripDetail.tripStatus != "truck_confirmed") &&
-            (viewModel.tripDetail.tripStatus != "truck_arrived") &&
-            (viewModel.tripDetail.tripStatus != "truck_loaded")) {
+            (viewModel.tripDetail.tripStatus != "truck_arrived")) {
           binding.rvPmtSummary.visibility = View.VISIBLE
-          viewModel.paymentBucketType = "balance_and_recovery"
+          viewModel.paymentBucketType = "all"
         }
         viewModel.fetchWarehouseDetails()
         viewModel.fetchPayment()

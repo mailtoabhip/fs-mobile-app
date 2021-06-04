@@ -70,7 +70,8 @@ enum class ViewPaymentType(
   NA(-1, listOf(TripStatus.Unknown.statusKey), "NA", "NA"),
   AdvancePending(
       0,
-      listOf(TruckArrived.statusKey, TruckConfirmed.statusKey),
+      listOf(TruckArrived.statusKey, TruckConfirmed.statusKey, TruckLoaded.statusKey,
+        In_Transit.statusKey, TruckReached.statusKey, TruckUnloaded.statusKey, EPodUploaded.statusKey),
       "Advance Pending", "Advance Pending Trips"
   ),
   BalancePending(
