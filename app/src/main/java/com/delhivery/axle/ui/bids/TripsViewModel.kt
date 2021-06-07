@@ -283,6 +283,10 @@ class TripsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
+                  if (trip.payment == null) {
+                    total--
+                    continue
+                  }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status != PaymentStatus.BalancePending.statusKey)
                       || (viewPaymentType == RecoveryPending && trip.payment!!.status != PaymentStatus.RecoveryPending.statusKey)
                       || (viewPaymentType == AdvancePending && trip.payment!!.status != PaymentStatus.AdvancePending.statusKey)) {
