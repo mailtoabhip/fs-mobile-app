@@ -232,12 +232,14 @@ class TripsViewModel @Inject constructor(
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
           jsonObject.addProperty("limit", 100)
-          if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
+          if (viewType.equals("payment_view") && viewPaymentType == AdvancePending) {
+            jsonObject.addProperty("bucket_type", "advance")
+          } else if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
             jsonObject.addProperty("bucket_type", "balance")
           } else if (viewType.equals("payment_view") && viewPaymentType == RecoveryPending) {
             jsonObject.addProperty("bucket_type", "recovery")
           } else if (viewType.equals("all")) {
-            jsonObject.addProperty("bucket_type", "balance_and_recovery")
+            jsonObject.addProperty("bucket_type", "all")
           }
 //          if (isSettledFilter) {
 //            jsonObject.addProperty("bucket_type", "balance_and_recovery")
@@ -280,6 +282,10 @@ class TripsViewModel @Inject constructor(
 
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
+                  }
+                  if (trip.payment == null) {
+                    total--
+                    continue
                   }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status != PaymentStatus.BalancePending.statusKey)
                       || (viewPaymentType == RecoveryPending && trip.payment!!.status != PaymentStatus.RecoveryPending.statusKey)

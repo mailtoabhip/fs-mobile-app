@@ -98,6 +98,7 @@ class SearchOngoingTripViewModel @Inject constructor(
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
           jsonObject.addProperty("limit", 10)
+          jsonObject.addProperty("bucket_type", "all")
           tripsRepository.bulkPayments(t.trips, jsonObject)
         }
         .onBackground()
