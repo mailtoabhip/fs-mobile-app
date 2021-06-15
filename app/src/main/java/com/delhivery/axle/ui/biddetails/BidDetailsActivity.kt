@@ -188,8 +188,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     else -> "Lowest Bid - ₹ ${
                       StringUtils.formatAmount(
                               state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
-                      )
-                    }" + if (state.isPMTIndent) "/MT" else ""
+                      )}" + if (state.isPMTIndent) "/MT" else ""
                   }
                 }
                 btnPlaceBid.setOnClickListener { bidDialog() }
@@ -211,8 +210,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         else -> "Lowest Bid - ₹ ${
                           StringUtils.formatAmount(
                                   it.bidAmount
-                          )
-                        }" + if (state.isPMTIndent) "/MT" else ""
+                          )}" + if (state.isPMTIndent) "/MT" else ""
                       }
                       data.lowestBid = when (it) {
                         null -> 0.0
