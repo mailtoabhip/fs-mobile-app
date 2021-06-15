@@ -103,10 +103,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     })
 
-
-
-
-
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
     }
@@ -176,75 +172,75 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         when (state) {
           is BidDetailsUserBidState_PlaceBidFirst -> {
             ViewBidDetailsPlaceBidFirstBinding.inflate(
-                    layoutInflater, binding.containerActions, false
+                layoutInflater, binding.containerActions, false
             )
-                    .apply {
-                      btnPlaceBid.setOnClickListener { bidDialog() }
-                    }
+                .apply {
+                  btnPlaceBid.setOnClickListener { bidDialog() }
+                }
           }
           is BidDetailsUserBidState_PlaceBid -> {
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
-                    .apply {
-                      bidsRecieved = state.bidsCount
-                      state.lowestAndUserBidPair.second?.let {
-                        lowestBid = when (state.lowestAndUserBidPair) {
-                          null -> ""
-                          else -> "Lowest Bid - ₹ ${
-                            StringUtils.formatAmount(
-                                    state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
-                            )
-                          }" + if (state.isPMTIndent) "/MT" else ""
-                        }
-                      }
-                      btnPlaceBid.setOnClickListener { bidDialog() }
-                    }
+              .apply {
+                bidsRecieved = state.bidsCount
+                state.lowestAndUserBidPair.second?.let {
+                  lowestBid = when (state.lowestAndUserBidPair) {
+                    null -> ""
+                    else -> "Lowest Bid - ₹ ${
+                      StringUtils.formatAmount(
+                              state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
+                      )
+                    }" + if (state.isPMTIndent) "/MT" else ""
+                  }
+                }
+                btnPlaceBid.setOnClickListener { bidDialog() }
+              }
           }
           is BidDetailsUserBidState_EditBid -> {
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
-                    .apply {
-                      val data = viewModel.transaction as HomeBidsRequestItemData
-                      data.numBids = state.bidsCount
-                      data.transactionBid = state.lowestAndUserBidPair.first
-                      bidsRecieved = state.bidsCount
-                      val userBid = state.lowestAndUserBidPair.first
-                      val lowestTBid = state.lowestAndUserBidPair.second
-                      lowestTBid?.let {
-                        if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
-                          lowestBid = when (it) {
-                            null -> ""
-                            else -> "Lowest Bid - ₹ ${
-                              StringUtils.formatAmount(
-                                      it.bidAmount
-                              )
-                            }" + if (state.isPMTIndent) "/MT" else ""
-                          }
-                          data.lowestBid = when (it) {
-                            null -> 0.0
-                            else -> it.bidAmount
-                          }
-                        }
+                .apply {
+                  val data = viewModel.transaction as HomeBidsRequestItemData
+                  data.numBids = state.bidsCount
+                  data.transactionBid = state.lowestAndUserBidPair.first
+                  bidsRecieved = state.bidsCount
+                  val userBid = state.lowestAndUserBidPair.first
+                  val lowestTBid = state.lowestAndUserBidPair.second
+                  lowestTBid?.let {
+                    if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+                      lowestBid = when (it) {
+                        null -> ""
+                        else -> "Lowest Bid - ₹ ${
+                          StringUtils.formatAmount(
+                                  it.bidAmount
+                          )
+                        }" + if (state.isPMTIndent) "/MT" else ""
                       }
-                      request = data
-                      val show=true
-                        mHandler = Handler()
-                        mRunnable= object :Runnable{
-                         override fun run() {
-                           val transition: Transition = Fade()
-                           transition.setDuration(600)
-                           transition.addTarget(btnEditBidInsider)
-
-                           TransitionManager.beginDelayedTransition(binding.containerActions, transition)
-                           mHandler.postDelayed(mRunnable, 2000)
-                         }
-                       }
-
-
-                      mHandler.post(mRunnable)
-
-                      btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
-                      textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
-                      textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                      data.lowestBid = when (it) {
+                        null -> 0.0
+                        else -> it.bidAmount
+                      }
                     }
+                  }
+                  request = data
+                  val show=true
+                    mHandler = Handler()
+                    mRunnable= object :Runnable{
+                     override fun run() {
+                       val transition: Transition = Fade()
+                       transition.setDuration(600)
+                       transition.addTarget(btnEditBidInsider)
+
+                       TransitionManager.beginDelayedTransition(binding.containerActions, transition)
+                       mHandler.postDelayed(mRunnable, 2000)
+                     }
+                   }
+
+
+                  mHandler.post(mRunnable)
+
+                  btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                  textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                  textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                }
           }
           is BidDetailsUserBidState_LoadingBids -> {
             ViewBidDetailsLoadingBidsBinding.inflate(
