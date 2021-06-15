@@ -3,19 +3,17 @@ package com.delhivery.axle.ui.biddetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.databinding.ActivityBidDetailsBinding
-import com.delhivery.axle.databinding.ViewBidDetailsConfirmedBidBinding
-import com.delhivery.axle.databinding.ViewBidDetailsEditBidBinding
-import com.delhivery.axle.databinding.ViewBidDetailsLoadingBidsBinding
-import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidBinding
-import com.delhivery.axle.databinding.ViewBidDetailsPlaceBidFirstBinding
-import com.delhivery.axle.databinding.ViewBidDetailsRejectedBidBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
@@ -23,7 +21,9 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
+
 
 /**
  * Bid detail screen
@@ -42,13 +42,17 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
   override fun requireConnection() = true
 
+  private lateinit var mHandler :Handler
+  private lateinit var mRunnable :Runnable
+
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     /* validate intent */
     try {
       require(
-          !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
+              !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
       ) { "Required data $TransactionIdIntentKey not found" }
     } catch (e: Exception) {
       finish()
@@ -73,7 +77,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       if (it != null) {
         binding.transaction?.transactionBid = it
         val visibility =
-          if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
+                if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
@@ -152,84 +156,106 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         when (state) {
           is BidDetailsUserBidState_PlaceBidFirst -> {
             ViewBidDetailsPlaceBidFirstBinding.inflate(
-                layoutInflater, binding.containerActions, false
+                    layoutInflater, binding.containerActions, false
             )
-                .apply {
-                  btnPlaceBid.setOnClickListener { bidDialog() }
-                }
+                    .apply {
+                      btnPlaceBid.setOnClickListener { bidDialog() }
+                    }
           }
           is BidDetailsUserBidState_PlaceBid -> {
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
-                .apply {
-                  bidsRecieved = state.bidsCount
-                  state.lowestAndUserBidPair.second?.let {
-                    lowestBid = when (state.lowestAndUserBidPair) {
-                      null -> ""
-                      else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                          state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
-                      )}" + if (state.isPMTIndent) "/MT" else ""
+                    .apply {
+                      bidsRecieved = state.bidsCount
+                      state.lowestAndUserBidPair.second?.let {
+                        lowestBid = when (state.lowestAndUserBidPair) {
+                          null -> ""
+                          else -> "Lowest Bid - ₹ ${
+                            StringUtils.formatAmount(
+                                    state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
+                            )
+                          }" + if (state.isPMTIndent) "/MT" else ""
+                        }
+                      }
+                      btnPlaceBid.setOnClickListener { bidDialog() }
                     }
-                  }
-                  btnPlaceBid.setOnClickListener { bidDialog() }
-                }
           }
           is BidDetailsUserBidState_EditBid -> {
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
-                .apply {
-                  val data = viewModel.transaction as HomeBidsRequestItemData
-                  data.numBids = state.bidsCount
-                  data.transactionBid = state.lowestAndUserBidPair.first
-                  bidsRecieved = state.bidsCount
-                  val userBid = state.lowestAndUserBidPair.first
-                  val lowestTBid = state.lowestAndUserBidPair.second
-                  lowestTBid?.let {
-                    if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
-                      lowestBid = when (it) {
-                        null -> ""
-                        else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
-                            it.bidAmount
-                        )}" + if (state.isPMTIndent) "/MT" else ""
+                    .apply {
+                      val data = viewModel.transaction as HomeBidsRequestItemData
+                      data.numBids = state.bidsCount
+                      data.transactionBid = state.lowestAndUserBidPair.first
+                      bidsRecieved = state.bidsCount
+                      val userBid = state.lowestAndUserBidPair.first
+                      val lowestTBid = state.lowestAndUserBidPair.second
+                      lowestTBid?.let {
+                        if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+                          lowestBid = when (it) {
+                            null -> ""
+                            else -> "Lowest Bid - ₹ ${
+                              StringUtils.formatAmount(
+                                      it.bidAmount
+                              )
+                            }" + if (state.isPMTIndent) "/MT" else ""
+                          }
+                          data.lowestBid = when (it) {
+                            null -> 0.0
+                            else -> it.bidAmount
+                          }
+                        }
                       }
-                      data.lowestBid = when (it) {
-                        null -> 0.0
-                        else -> it.bidAmount
-                      }
-                    }
-                  }
-                  request = data
+                      request = data
+                      val show=true
+                        mHandler = Handler()
+                        mRunnable= object :Runnable{
+                         override fun run() {
+                           val transition: Transition = Fade()
+                           transition.setDuration(600)
+                           transition.addTarget(btnEditBidInsider)
 
-                  btnEditBid.setOnClickListener { bidDialog(userBid) }
-                }
+                           TransitionManager.beginDelayedTransition(binding.containerActions, transition)
+                           mHandler.postDelayed(mRunnable, 2000)
+                         }
+                       }
+
+
+                      mHandler.post(mRunnable)
+
+                      btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                      textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                      textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                    }
           }
           is BidDetailsUserBidState_LoadingBids -> {
             ViewBidDetailsLoadingBidsBinding.inflate(
-                layoutInflater, binding.containerActions, false
+                    layoutInflater, binding.containerActions, false
             )
           }
           is BidDetailsUserBidState_ConfirmedBid -> {
             ViewBidDetailsConfirmedBidBinding.inflate(
-                layoutInflater, binding.containerActions, false
+                    layoutInflater, binding.containerActions, false
             )
-                .apply {
-                  pickUpLocation =
-                    StringUtils.capitalize(state.pickupLocation) ?: getString(string.not_available)
-                  vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
-                  driverPhone =
-                    state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
-                }
+                    .apply {
+                      pickUpLocation =
+                              StringUtils.capitalize(state.pickupLocation)
+                                      ?: getString(string.not_available)
+                      vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
+                      driverPhone =
+                              state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                    }
           }
           is BidDetailsUserBidState_RejectedBid -> {
             ViewBidDetailsRejectedBidBinding.inflate(
-                layoutInflater, binding.containerActions, false
+                    layoutInflater, binding.containerActions, false
             )
-                .apply {
-                  val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-                    StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
-                  } else {
-                    StringUtils.formatAmount(state.userBid.bidAmount)
-                  }
-                  textUserHighestBid.text = bidText
-                }
+                    .apply {
+                      val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                        StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                      } else {
+                        StringUtils.formatAmount(state.userBid.bidAmount)
+                      }
+                      textUserHighestBid.text = bidText
+                    }
           }
           else -> null
         }?.let { _binding ->
@@ -253,24 +279,24 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+                  this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_not_approved,
+                string.msg_dialog_supplier_not_approved,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_disabled,
+                string.msg_dialog_supplier_disabled,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
     }
@@ -284,8 +310,8 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Bid details intent
  */
 fun bidDetailsIntent(
-  transactionId: String,
-  context: Context
+        transactionId: String,
+        context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
 }

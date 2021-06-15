@@ -595,7 +595,18 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  /**
+   * revise bid button visibility
+   *
+   */
+  fun reviseButtonVisibility() = if(layoutThreeVisibility() || layoutFourVisibility()){
+    View.VISIBLE
+  } else{
+    View.GONE
+  }
+
 }
+
 
 /**
  * Truck specification detail
