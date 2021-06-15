@@ -167,7 +167,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error && _res.isSuccess) {
               fetchTransactionBids(true)
           } else {
-            //error.handle()
+            error.handle()
           }
         }
   }
@@ -192,7 +192,7 @@ class BidDetailsViewModel @Inject constructor(
               fetchTransactionBids(true)
 
           } else {
-            //error.handle()
+            error.handle()
           }
         }
   }
