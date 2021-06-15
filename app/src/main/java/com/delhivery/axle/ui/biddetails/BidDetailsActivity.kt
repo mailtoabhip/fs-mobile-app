@@ -92,17 +92,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     })
 
 
-    viewModel.analyticsBucket.observe(this, Observer {
-      if (it != null) {
-          analyticsUtil.trackEvent(
-                  it,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(viewModel.transaction.key())
-
-          )
-      }
-    })
-
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
     }
@@ -217,6 +206,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
                   }
                   request = data
+                  if(viewModel.analyticsBucket) {
+                    if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
+                      analyticsUtil.trackEvent(
+                              EVENT_BID_INLINE_PROMPT,
+                              mutableListOf(PROPERTY_TRANSACTION_ID),
+                              mutableListOf(data.key())
+                      )
+                    } else if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
+                      analyticsUtil.trackEvent(
+                              EVENT_BID_REVISE_PROMPT,
+                              mutableListOf(PROPERTY_TRANSACTION_ID),
+                              mutableListOf(data.key())
+                      )
+                    }
+                    viewModel.analyticsBucket=false
+                  }
                   val show=true
                     mHandler = Handler()
                     mRunnable= object :Runnable{

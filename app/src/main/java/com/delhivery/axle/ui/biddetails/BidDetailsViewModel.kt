@@ -40,9 +40,9 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
-   var analyticsBucket = MutableLiveData<String>()
+    var analyticsBucket :Boolean = false
 
-  lateinit var transaction: HomeBidsRequestItemData
+    lateinit var transaction: HomeBidsRequestItemData
 
 
   /**
@@ -109,12 +109,7 @@ class BidDetailsViewModel @Inject constructor(
                 }
                 else -> {
                     if(action){
-                        if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
-                            analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
-                        }
-                        else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
-                            analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
-                        }
+                        analyticsBucket=true
                     }
                   transactionBidLiveData.postValue(
                       BidDetailsUserBidState_EditBid(
