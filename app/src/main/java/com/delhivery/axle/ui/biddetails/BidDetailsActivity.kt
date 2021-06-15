@@ -15,6 +15,10 @@ import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.utils.EVENT_BID_INLINE_PROMPT
+import com.delhivery.axle.utils.EVENT_BID_REVISE_PROMPT
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -86,6 +90,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }
       }
     })
+
+
+    viewModel.analyticsBucket.observe(this, Observer {
+      if (it != null) {
+          analyticsUtil.trackEvent(
+                  it,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(viewModel.transaction.key())
+
+          )
+      }
+    })
+
+
+
+
 
     binding.containerError.btnAction.setOnClickListener {
       refreshData()

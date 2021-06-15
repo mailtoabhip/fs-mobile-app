@@ -52,7 +52,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
   }
 
-  /* override in init if required for specific activity */
+    /* override in init if required for specific activity */
   protected var StatusBarColor = Color.parseColor("#F9F9F9")
 
   /* set true if inline progress */

@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
@@ -9,6 +10,8 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.EVENT_BID_INLINE_PROMPT
+import com.delhivery.axle.utils.EVENT_BID_REVISE_PROMPT
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -37,7 +40,10 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
+   var analyticsBucket = MutableLiveData<String>()
+
   lateinit var transaction: HomeBidsRequestItemData
+
 
   /**
    * Fetch transaction details
@@ -60,7 +66,7 @@ class BidDetailsViewModel @Inject constructor(
   /**
    * Fetch transaction bids and update UI as per response
    */
-  private fun fetchTransactionBids() {
+  private fun fetchTransactionBids( action: Boolean = false) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
         .bidsProgress()
@@ -75,6 +81,14 @@ class BidDetailsViewModel @Inject constructor(
                 bidPriceLiveData.postValue(null)
               }
               _bRes.first.first == null -> {
+                  if(action){
+                      if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
+                          analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
+                      }
+                      else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
+                          analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
+                      }
+                  }
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBid(
                         _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -102,6 +116,14 @@ class BidDetailsViewModel @Inject constructor(
                   }
                 }
                 else -> {
+                    if(action){
+                        if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
+                            analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
+                        }
+                        else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
+                            analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
+                        }
+                    }
                   transactionBidLiveData.postValue(
                       BidDetailsUserBidState_EditBid(
                           _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -151,7 +173,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-            fetchTransactionBids()
+              fetchTransactionBids(true)
           } else {
             error.handle()
           }
@@ -175,12 +197,18 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
-            fetchTransactionBids()
+              fetchTransactionBids(true)
+
           } else {
             error.handle()
           }
         }
   }
+
+
+
+
+
 
   /**
    * filter accepted Bid
