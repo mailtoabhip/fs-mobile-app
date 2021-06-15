@@ -81,14 +81,6 @@ class BidDetailsViewModel @Inject constructor(
                 bidPriceLiveData.postValue(null)
               }
               _bRes.first.first == null -> {
-                  if(action){
-                      if(transaction.oneVisibility()==View.VISIBLE || transaction.twoVisibility()== View.VISIBLE) {
-                          analyticsBucket.postValue(EVENT_BID_INLINE_PROMPT)
-                      }
-                      else if (transaction.threeVisibility() == View.VISIBLE || transaction.fourVisibility() == View.VISIBLE){
-                          analyticsBucket.postValue(EVENT_BID_REVISE_PROMPT)
-                      }
-                  }
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBid(
                         _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -175,7 +167,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error && _res.isSuccess) {
               fetchTransactionBids(true)
           } else {
-            error.handle()
+            //error.handle()
           }
         }
   }
@@ -200,7 +192,7 @@ class BidDetailsViewModel @Inject constructor(
               fetchTransactionBids(true)
 
           } else {
-            error.handle()
+            //error.handle()
           }
         }
   }

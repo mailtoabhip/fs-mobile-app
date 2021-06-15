@@ -291,7 +291,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-                  this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+          this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }
@@ -322,8 +322,8 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Bid details intent
  */
 fun bidDetailsIntent(
-        transactionId: String,
-        context: Context
+    transactionId: String,
+    context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
 }
