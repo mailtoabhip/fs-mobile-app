@@ -252,27 +252,27 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsConfirmedBidBinding.inflate(
                     layoutInflater, binding.containerActions, false
             )
-                    .apply {
-                      pickUpLocation =
-                              StringUtils.capitalize(state.pickupLocation)
-                                      ?: getString(string.not_available)
-                      vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
-                      driverPhone =
-                              state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
-                    }
+                  .apply {
+                    pickUpLocation =
+                            StringUtils.capitalize(state.pickupLocation)
+                                    ?: getString(string.not_available)
+                    vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
+                    driverPhone =
+                            state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                  }
           }
           is BidDetailsUserBidState_RejectedBid -> {
             ViewBidDetailsRejectedBidBinding.inflate(
-                    layoutInflater, binding.containerActions, false
+                layoutInflater, binding.containerActions, false
             )
-                    .apply {
-                      val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-                        StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
-                      } else {
-                        StringUtils.formatAmount(state.userBid.bidAmount)
-                      }
-                      textUserHighestBid.text = bidText
+                  .apply {
+                    val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                      StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                    } else {
+                      StringUtils.formatAmount(state.userBid.bidAmount)
                     }
+                    textUserHighestBid.text = bidText
+                  }
           }
           else -> null
         }?.let { _binding ->
@@ -296,24 +296,24 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-          this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
         }
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-                string.title_dialog_supplier_not_approved,
-                string.msg_dialog_supplier_not_approved,
-                getString(string.label_call_us), getString(string.label_mail_us),
-                { callHelpline() }, { sendMail() }
+              string.title_dialog_supplier_not_approved,
+              string.msg_dialog_supplier_not_approved,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-                string.title_dialog_supplier_disabled,
-                string.msg_dialog_supplier_disabled,
-                getString(string.label_call_us), getString(string.label_mail_us),
-                { callHelpline() }, { sendMail() }
+              string.title_dialog_supplier_disabled,
+              string.msg_dialog_supplier_disabled,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
         )
       }
     }
