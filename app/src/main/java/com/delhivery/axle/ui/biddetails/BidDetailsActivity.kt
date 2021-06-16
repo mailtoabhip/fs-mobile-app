@@ -250,7 +250,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
           is BidDetailsUserBidState_ConfirmedBid -> {
             ViewBidDetailsConfirmedBidBinding.inflate(
-                    layoutInflater, binding.containerActions, false
+                layoutInflater, binding.containerActions, false
             )
                   .apply {
                     pickUpLocation =
@@ -302,18 +302,18 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_not_approved,
-              string.msg_dialog_supplier_not_approved,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+            string.title_dialog_supplier_not_approved,
+            string.msg_dialog_supplier_not_approved,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_disabled,
-              string.msg_dialog_supplier_disabled,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+            string.title_dialog_supplier_disabled,
+            string.msg_dialog_supplier_disabled,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
         )
       }
     }
@@ -327,8 +327,8 @@ private const val TransactionIdIntentKey = "transaction_id"
  * Bid details intent
  */
 fun bidDetailsIntent(
-    transactionId: String,
-    context: Context
+  transactionId: String,
+  context: Context
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
 }
