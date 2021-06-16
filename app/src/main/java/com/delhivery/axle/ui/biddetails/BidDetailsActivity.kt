@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.Observer
 import androidx.transition.Fade
 import androidx.transition.Transition
@@ -45,10 +46,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   override fun layoutId() = R.layout.activity_bid_details
 
   override fun requireConnection() = true
-
-  private lateinit var mHandler :Handler
-  private lateinit var mRunnable :Runnable
-
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -206,6 +203,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
                   }
                   request = data
+
                   if(viewModel.analyticsBucket) {
                     if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
@@ -222,21 +220,28 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
                     viewModel.analyticsBucket=false
                   }
-                  val show=true
-                    mHandler = Handler()
-                    mRunnable= object :Runnable{
-                     override fun run() {
-                       val transition: Transition = Fade()
-                       transition.setDuration(600)
-                       transition.addTarget(btnEditBidInsider)
 
-                       TransitionManager.beginDelayedTransition(binding.containerActions, transition)
-                       mHandler.postDelayed(mRunnable, 2000)
-                     }
-                   }
+                  if(data.threeVisibility() ==View.VISIBLE || data.fourVisibility()==View.VISIBLE) {
+                    val mHandler = Handler()
+                    var mRunnable :Runnable= Runnable {  }
+                    mRunnable = object : Runnable {
+                      override fun run() {
+                        btnEditBidInsider.setVisibility(View.VISIBLE)
+                        //loading our custom made animations
+                        val animation = AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
+                        //starting the animation
+                        btnEditBidInsider.startAnimation(animation)
+                        val animation2 = AnimationUtils.loadAnimation(applicationContext , R.anim.fade_out)
+                        btnEditBidInsider.startAnimation(animation2)
+                        mHandler.postDelayed({
+                          btnEditBidInsider.setVisibility(View.GONE)
+                        }, 3000)
+                        mHandler.postDelayed(mRunnable,2000)
 
-
-                  mHandler.post(mRunnable)
+                      }
+                    }
+                    mHandler.post(mRunnable)
+                  }
 
                   btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
                   textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
