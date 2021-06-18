@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
@@ -31,7 +32,7 @@ class TransactionsRepository @Inject constructor(
     destination: String?,
     truckType: String?
   ) = transactionService.transactions(
-      offset, Requested.statusId, source, destination, truckType
+      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType
   ).convertResponse()
 
   /**
@@ -57,6 +58,7 @@ class TransactionsRepository @Inject constructor(
 
 enum class TransactionStatus(val statusId: String) {
   Requested("requested"),
+  InEnquiry("in_enquiry"),
   TruckConfirmed("truck_confirmed"),
   Completed("completed")
 }
