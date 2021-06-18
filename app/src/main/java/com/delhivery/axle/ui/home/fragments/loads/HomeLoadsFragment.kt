@@ -460,7 +460,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(10) {
+  inner class PaginationInterface : PaginationScrollListener(50) {
     override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
 
     override fun hasMore() = viewModel.hasMoreData
