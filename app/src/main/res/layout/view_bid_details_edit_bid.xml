@@ -58,14 +58,14 @@
       <androidx.appcompat.widget.AppCompatImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_36dp"
+          android:layout_marginTop="@dimen/size_32dp"
           app:srcCompat="@drawable/ic_place_bid"
           />
 
       <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_12dp"
+          android:layout_marginTop="@dimen/size_8dp"
           android:fontFamily="sans-serif-medium"
           android:letterSpacing="0.01"
           android:lineSpacingExtra="@dimen/text_2sp"
