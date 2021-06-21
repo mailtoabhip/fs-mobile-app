@@ -98,7 +98,7 @@
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
-              android:layout_height="@dimen/size_280dp"
+              android:layout_height="@dimen/size_270dp"
               android:background="@color/bid_placed_green"
               android:orientation="vertical">
 
@@ -212,7 +212,7 @@
                       android:id="@+id/text_edit_bid"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Edit?"
+                      android:text="@string/action_edit_bid_underline"
                       android:textColor="@color/white"
                       android:textStyle="bold"
                       android:textSize="@dimen/text_20sp"
@@ -348,7 +348,7 @@
                       android:id="@+id/text_edit_bid_2"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Edit?"
+                      android:text="@string/action_edit_bid_underline"
                       android:textColor="@color/white"
                       android:textStyle="bold"
                       android:textSize="@dimen/text_20sp"
