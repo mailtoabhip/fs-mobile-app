@@ -11,11 +11,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidCreateEditBinding
-import com.delhivery.axle.utils.AnalyticsUtil
-import com.delhivery.axle.utils.EVENT_EDIT_BID
-import com.delhivery.axle.utils.EVENT_PLACE_BID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -162,6 +158,11 @@ class BidDetailsCreateEditDialog @Inject constructor(
           )
         } else {
           event = EVENT_EDIT_BID
+          analyticsUtil.trackEvent(
+                  EVENT_REVISE_BID_INTENT,
+                  mutableListOf(PROPERTY_TRANSACTION_ID),
+                  mutableListOf(transaction.key())
+          )
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
               amount, pmtRate, transaction.biddingType ?: "FTL", position

@@ -101,6 +101,7 @@
   <string name="action_revise_bid">Revise bid</string>
   <string name="action_update_route">Update Route</string>
   <string name="action_call_driver">Call Driver</string>
+  <string name="action_edit_bid_underline"><u>Edit?</u></string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>

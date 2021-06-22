@@ -15,12 +15,12 @@ import retrofit2.http.Query
 interface TransactionService {
 
   /**
-   * List all transactions basis [status] [origin] [destination] [truckType]
+   * List all transactions basis [status_list] [source] [destination] [truckType]
    */
   @GET("/transactions/list/")
   fun transactions(
     @Query("offset") offset: Int,
-    @Query("status") status: String?,
+    @Query("status_list") status_list: String?,
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_type") truckType: String? = null,

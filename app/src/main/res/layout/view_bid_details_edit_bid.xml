@@ -20,6 +20,24 @@
         type="String"
         />
   </data>
+  <androidx.coordinatorlayout.widget.CoordinatorLayout
+      android:id="@+id/container_bid"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <androidx.appcompat.widget.AppCompatButton
+          android:id="@+id/btn_edit_bid_insider"
+          android:layout_width="wrap_content"
+          android:layout_height="@dimen/size_30dp"
+          android:padding="@dimen/size_6dp"
+          android:visibility="@{request.reviseButtonVisibility()}"
+          android:text="@string/action_revise_bid"
+          android:layout_margin="@dimen/size_16dp"
+          android:background="@drawable/bg_revise_button"
+          android:textColor="@color/white"
+          android:layout_gravity="top|end"
+          />
+
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -40,14 +58,14 @@
       <androidx.appcompat.widget.AppCompatImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_36dp"
+          android:layout_marginTop="@dimen/size_32dp"
           app:srcCompat="@drawable/ic_place_bid"
           />
 
       <androidx.appcompat.widget.AppCompatTextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/size_12dp"
+          android:layout_marginTop="@dimen/size_8dp"
           android:fontFamily="sans-serif-medium"
           android:letterSpacing="0.01"
           android:lineSpacingExtra="@dimen/text_2sp"
@@ -80,7 +98,7 @@
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
-              android:layout_height="@dimen/size_240dp"
+              android:layout_height="@dimen/size_270dp"
               android:background="@color/bid_placed_green"
               android:orientation="vertical">
 
@@ -158,7 +176,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/light_green"
-                    android:layout_marginBottom="@dimen/size_12dp"
                     android:orientation="horizontal">
 
                   <androidx.appcompat.widget.AppCompatImageView
@@ -185,6 +202,23 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:paddingBottom="@dimen/size_2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_6dp"
+                    android:gravity="center">
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/text_edit_bid"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/action_edit_bid_underline"
+                      android:textColor="@color/white"
+                      android:textStyle="bold"
+                      android:textSize="@dimen/text_20sp"
+                      android:layout_gravity="center"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
               </androidx.appcompat.widget.LinearLayoutCompat>
 
             </RelativeLayout>
@@ -194,8 +228,8 @@
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_12dp"
-              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               android:layout_marginStart="@dimen/size_12dp"
               android:paddingStart="@dimen/size_12dp"
               android:paddingEnd="@dimen/size_12dp"
@@ -205,7 +239,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_2dp"
                 android:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
@@ -230,7 +264,7 @@
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
-              android:layout_height="@dimen/size_240dp"
+              android:layout_height="@dimen/size_260dp"
               android:background="@color/bid_placed_green"
               android:orientation="vertical">
 
@@ -278,7 +312,6 @@
                     android:padding="@dimen/size_4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/size_12dp"
                     android:background="@color/light_green"
                     android:orientation="horizontal">
 
@@ -305,6 +338,22 @@
                       />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:paddingBottom="@dimen/size_2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_6dp"
+                    android:gravity="center">
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/text_edit_bid_2"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/action_edit_bid_underline"
+                      android:textColor="@color/white"
+                      android:textStyle="bold"
+                      android:textSize="@dimen/text_20sp"
+                      android:layout_gravity="center"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
               </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -315,7 +364,7 @@
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginTop="@dimen/size_4dp"
               android:layout_marginEnd="@dimen/size_12dp"
               android:layout_marginStart="@dimen/size_12dp"
               android:layout_marginBottom="@dimen/size_12dp"
@@ -327,7 +376,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_2dp"
                 android:text="Great! Your bid is likely to be confirmed. \nIf someone bids lower, you'll be notified."
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
@@ -352,7 +401,7 @@
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
-              android:layout_height="@dimen/size_240dp"
+              android:layout_height="@dimen/size_230dp"
               android:background="@color/bid_placed_red"
               android:orientation="vertical">
 
@@ -429,19 +478,19 @@
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_marginTop="@dimen/size_4dp"
               android:layout_marginEnd="@dimen/size_12dp"
               android:layout_marginStart="@dimen/size_12dp"
-              android:layout_marginBottom="@dimen/size_12dp"
-              android:paddingStart="@dimen/size_24dp"
-              android:paddingEnd="@dimen/size_24dp"
+              android:layout_marginBottom="@dimen/size_4dp"
+              android:paddingStart="@dimen/size_12dp"
+              android:paddingEnd="@dimen/size_12dp"
               android:paddingBottom="@dimen/size_4dp"
               android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_4dp"
                 android:text="Reducing below the lowest bid will increase your chances of confirmation"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_4sp"
@@ -453,7 +502,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_4dp"
                 android:text="@{request.lowestSuggestedAmount()}"
                 android:visibility="@{request.lowestSuggestedBidVisibility()}"
                 android:textStyle="bold"
@@ -480,7 +529,7 @@
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
-              android:layout_height="@dimen/size_240dp"
+              android:layout_height="@dimen/size_230dp"
               android:background="@color/bid_placed_red"
               android:orientation="vertical">
 
@@ -529,7 +578,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/light_red"
-                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:layout_marginBottom="@dimen/size_8dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -556,11 +605,11 @@
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_12dp"
-              android:layout_marginEnd="@dimen/size_12dp"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:layout_marginEnd="@dimen/size_8dp"
               android:layout_marginStart="@dimen/size_12dp"
-              android:layout_marginBottom="@dimen/size_12dp"
-              android:paddingStart="@dimen/size_24dp"
+              android:layout_marginBottom="@dimen/size_4dp"
+              android:paddingStart="@dimen/size_8dp"
               android:paddingEnd="@dimen/size_24dp"
               android:paddingBottom="@dimen/size_4dp"
               android:orientation="vertical">
@@ -581,7 +630,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_4dp"
                 android:text="@{request.benchmarkSuggestedAmount()}"
                 android:visibility="@{request.benchmarkSuggestedBidVisibility()}"
                 android:textStyle="bold"
@@ -600,39 +649,9 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-    <!---->
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_10dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        bind:shadow="@{ @dimen/size_2dp }"
-        >
 
-      <androidx.appcompat.widget.AppCompatButton
-          android:id="@+id/btn_edit_bid"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="@dimen/size_8dp"
-          android:layout_marginEnd="@dimen/size_16dp"
-          android:layout_marginTop="@dimen/size_8dp"
-          android:layout_weight="1"
-          android:background="@drawable/bg_bid_details_action_btn"
-          android:fontFamily="sans-serif-medium"
-          android:foreground="?attr/selectableItemBackgroundBorderless"
-          android:gravity="center_horizontal"
-          android:letterSpacing="0.04"
-          android:paddingEnd="@dimen/size_36dp"
-          android:paddingStart="@dimen/size_36dp"
-          android:text="@string/action_revise_bid"
-          android:textColor="@color/colorAccent"
-          android:textSize="@dimen/text_14sp"
-          />
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
   </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>
