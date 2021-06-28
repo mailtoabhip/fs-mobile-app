@@ -231,7 +231,7 @@ class TripsViewModel @Inject constructor(
           jsonObject.addProperty("vendor_id", userRepository.userId())
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
-          jsonObject.addProperty("limit", 100)
+          jsonObject.addProperty("limit", UserSearchLimit)
           if (viewType.equals("payment_view") && viewPaymentType == AdvancePending) {
             jsonObject.addProperty("bucket_type", "advance")
           } else if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
@@ -279,18 +279,19 @@ class TripsViewModel @Inject constructor(
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
                     }[0]
+                    trip.payment = null
 
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
                   }
                   if (trip.payment == null) {
-                    total--
+//                    total--
                     continue
                   }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status != PaymentStatus.BalancePending.statusKey)
                       || (viewPaymentType == RecoveryPending && trip.payment!!.status != PaymentStatus.RecoveryPending.statusKey)
                       || (viewPaymentType == AdvancePending && trip.payment!!.status != PaymentStatus.AdvancePending.statusKey)) {
-                    total--
+//                    total--
                     continue
                   }
                   if (trip.tripStatus == TripStatus.TripCompleted.statusKey && (trip.isApReconPending == true || trip.payment!!.paymentAmount == 0.0)) {
@@ -328,6 +329,10 @@ class TripsViewModel @Inject constructor(
               add(Pair(HomeTripsWarningItem_TimeOut, AddUpdate))
             }
                 .let { userTripsData.postValue(it) }
+          }
+
+          if(tripsCount < UserSearchLimit && hasMoreData){
+            fetchTrips(true)
           }
 
           dataLoadingLiveData.postValue(false)
