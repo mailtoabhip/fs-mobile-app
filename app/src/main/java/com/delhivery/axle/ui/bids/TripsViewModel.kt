@@ -279,7 +279,6 @@ class TripsViewModel @Inject constructor(
                     trip.payment = payments.filter { p ->
                       p.transactionId.safeEquals(trip.transactionId)
                     }[0]
-                    trip.payment = null
 
                   } catch (e: Exception) {
                     Log.d("No payment found for: ", trip.transactionId)
