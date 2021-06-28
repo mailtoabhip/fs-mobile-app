@@ -149,6 +149,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       if (it != null) {
         adapter.operation(it)
         viewModel.tripsFilter = ""
+        viewModel.loadMore()
       }
     })
 

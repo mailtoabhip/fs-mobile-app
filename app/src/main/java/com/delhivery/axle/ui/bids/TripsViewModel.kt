@@ -89,6 +89,7 @@ class TripsViewModel @Inject constructor(
   var total = 0
   var issueTripsCount = 0
   var tripsCount = 0
+  var currentTripsCount = -1
   var tripsFilter = ""
   var tripsCountText = ""
   var filterList: List<String> = listOf()
@@ -135,6 +136,7 @@ class TripsViewModel @Inject constructor(
     } else if (paginate && !hasMoreData) {
       return
     }
+    currentTripsCount = -1
 
     if (paginate) {
       showProgress()
@@ -258,6 +260,7 @@ class TripsViewModel @Inject constructor(
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
                 add(Pair(HomeTripsWarningItem_NoTrips, AddUpdate))
+                currentTripsCount = -1
               }
               /* post all trips with their respective payments as add */
               else {
@@ -300,6 +303,7 @@ class TripsViewModel @Inject constructor(
                     if (trip.isSettled) {
                       add(Pair(HomeTripsItem(trip), Add))
                       tripsCount++
+                      currentTripsCount++
                     }
                   } else {
                     if (tripsFilter == "issue_trips") {
@@ -307,9 +311,11 @@ class TripsViewModel @Inject constructor(
                     }
                     add(Pair(HomeTripsItem(trip), Add))
                     tripsCount++
+                    currentTripsCount++
                   }
                 }
               }
+
               tripsCountText = if (tripsFilter == "issue_trips") {
                 "Trips with POD issue (${tripsCount})"
               } else {
@@ -322,6 +328,7 @@ class TripsViewModel @Inject constructor(
                 }
           } else {
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              currentTripsCount = -1
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
               /* add api time out item */
@@ -330,12 +337,14 @@ class TripsViewModel @Inject constructor(
                 .let { userTripsData.postValue(it) }
           }
 
-          if(tripsCount < UserSearchLimit && hasMoreData){
-            fetchTrips(true)
-          }
-
           dataLoadingLiveData.postValue(false)
         }
+  }
+
+  fun loadMore(){
+    if(currentTripsCount != -1 && currentTripsCount < UserSearchLimit && hasMoreData){
+      fetchTrips(true)
+    }
   }
 
   /**
