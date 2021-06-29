@@ -22,4 +22,4 @@ class LoadCycleRepository @Inject constructor(
 }
 
 /* User trips pagination load limit */
-const val UserSearchLimit = 5
+const val UserSearchLimit = 50

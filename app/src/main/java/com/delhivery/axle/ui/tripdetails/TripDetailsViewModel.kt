@@ -46,6 +46,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import java.io.File
+import java.util.Calendar
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -366,7 +367,12 @@ class TripDetailsViewModel @Inject constructor(
                       if (charge.status != "success") {
                         continue
                       }
-                      charge.transferTime?.let {
+                      var transferTime = charge.transferTime
+                      if (transferTime.isNullOrEmpty()) {
+                        val cal = Calendar.getInstance()
+                        transferTime = DateUtils.formatDate(cal.time, OrionDateFormat)
+                      }
+                      transferTime.let {
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.transactionId != transactionId) {
@@ -390,7 +396,7 @@ class TripDetailsViewModel @Inject constructor(
                           totalTDS += charge.tdsDeducted
                           if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                             paymentSettled = true
-                            settledTime = charge.transferTime
+                            settledTime = transferTime
                           }
                           var event = charge.head.capitalize()
                           when (charge.head) {
