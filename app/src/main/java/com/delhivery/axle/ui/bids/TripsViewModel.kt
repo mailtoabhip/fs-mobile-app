@@ -264,6 +264,7 @@ class TripsViewModel @Inject constructor(
               }
               /* post all trips with their respective payments as add */
               else {
+                currentTripsCount = 0
                 for (trip in trips) {
                   trip.tds = userPrefs.tdsRate
                   trip.updatedTds = userPrefs.updatedTdsRate
