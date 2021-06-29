@@ -41,6 +41,7 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_TRIP
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.util.Calendar
+import com.delhivery.axle.api.repository.UserSearchLimit
 
 /**
  * Created by saurabh
@@ -148,6 +149,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       if (it != null) {
         adapter.operation(it)
         viewModel.tripsFilter = ""
+        viewModel.loadMore()
       }
     })
 
@@ -605,7 +607,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(10) {
+  inner class PaginationInterface : PaginationScrollListener(UserSearchLimit) {
     override fun loadMore() = viewModel.fetchTrips(true)
 
     override fun hasMore() = viewModel.offset < viewModel.total

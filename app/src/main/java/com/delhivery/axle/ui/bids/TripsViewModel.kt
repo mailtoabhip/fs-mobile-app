@@ -89,6 +89,7 @@ class TripsViewModel @Inject constructor(
   var total = 0
   var issueTripsCount = 0
   var tripsCount = 0
+  var currentTripsCount = -1
   var tripsFilter = ""
   var tripsCountText = ""
   var filterList: List<String> = listOf()
@@ -135,6 +136,7 @@ class TripsViewModel @Inject constructor(
     } else if (paginate && !hasMoreData) {
       return
     }
+    currentTripsCount = -1
 
     if (paginate) {
       showProgress()
@@ -231,7 +233,7 @@ class TripsViewModel @Inject constructor(
           jsonObject.addProperty("vendor_id", userRepository.userId())
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
           jsonObject.addProperty("offset", 0)
-          jsonObject.addProperty("limit", 100)
+          jsonObject.addProperty("limit", UserSearchLimit)
           if (viewType.equals("payment_view") && viewPaymentType == AdvancePending) {
             jsonObject.addProperty("bucket_type", "advance")
           } else if (viewType.equals("payment_view") && viewPaymentType == BalancePending) {
@@ -258,9 +260,11 @@ class TripsViewModel @Inject constructor(
               /* No trips found, if fresh fetch n total == 0 */
               if (total == 0) {
                 add(Pair(HomeTripsWarningItem_NoTrips, AddUpdate))
+                currentTripsCount = -1
               }
               /* post all trips with their respective payments as add */
               else {
+                currentTripsCount = 0
                 for (trip in trips) {
                   trip.tds = userPrefs.tdsRate
                   trip.updatedTds = userPrefs.updatedTdsRate
@@ -284,13 +288,13 @@ class TripsViewModel @Inject constructor(
                     Log.d("No payment found for: ", trip.transactionId)
                   }
                   if (trip.payment == null) {
-                    total--
+//                    total--
                     continue
                   }
                   if ((viewPaymentType == BalancePending && trip.payment!!.status != PaymentStatus.BalancePending.statusKey)
                       || (viewPaymentType == RecoveryPending && trip.payment!!.status != PaymentStatus.RecoveryPending.statusKey)
                       || (viewPaymentType == AdvancePending && trip.payment!!.status != PaymentStatus.AdvancePending.statusKey)) {
-                    total--
+//                    total--
                     continue
                   }
                   if (trip.tripStatus == TripStatus.TripCompleted.statusKey && (trip.isApReconPending == true || trip.payment!!.paymentAmount == 0.0)) {
@@ -300,6 +304,7 @@ class TripsViewModel @Inject constructor(
                     if (trip.isSettled) {
                       add(Pair(HomeTripsItem(trip), Add))
                       tripsCount++
+                      currentTripsCount++
                     }
                   } else {
                     if (tripsFilter == "issue_trips") {
@@ -307,9 +312,11 @@ class TripsViewModel @Inject constructor(
                     }
                     add(Pair(HomeTripsItem(trip), Add))
                     tripsCount++
+                    currentTripsCount++
                   }
                 }
               }
+
               tripsCountText = if (tripsFilter == "issue_trips") {
                 "Trips with POD issue (${tripsCount})"
               } else {
@@ -322,6 +329,7 @@ class TripsViewModel @Inject constructor(
                 }
           } else {
             mutableListOf<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              currentTripsCount = -1
               /* remove progress item */
               add(Pair(HomeTripsProgressItem(), Remove))
               /* add api time out item */
@@ -332,6 +340,12 @@ class TripsViewModel @Inject constructor(
 
           dataLoadingLiveData.postValue(false)
         }
+  }
+
+  fun loadMore(){
+    if(currentTripsCount != -1 && currentTripsCount < UserSearchLimit && hasMoreData){
+      fetchTrips(true)
+    }
   }
 
   /**
