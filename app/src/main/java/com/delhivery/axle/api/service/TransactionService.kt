@@ -36,7 +36,9 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
-    @Query("axle_current_week_loads") currWeekLoads: String = "yes",
+    @Query("vendor_type") vendorType: String,
+    @Query("vehicle_type") vehicleType: String,
+    @Query("valid_loads") validLoads: Boolean = true,
     @Query("speed") speed: String
   ): Single<BaseResponse<TransactionsResponse>>
 

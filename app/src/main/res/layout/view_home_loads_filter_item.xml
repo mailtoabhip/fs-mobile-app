@@ -55,7 +55,14 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_vehicle_filter"
+        android:layout_marginBottom="@dimen/size_8dp"
+        android:background="@drawable/bg_round_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
   </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -94,11 +94,17 @@ class HomeLoadsViewModel @Inject constructor(
   /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(paginate: Boolean = false, express: String = "", isExpress: Boolean = false) {
+  fun fetchUserTransactions(paginate: Boolean = false, express: String = "",
+    isExpress: Boolean = false, vendor_type: String = "orion", vehicle_type: List<String>) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
+    }
+    var vehicleStr = userPrefs.truckTypes
+
+    if (vehicle_type.isNotEmpty()) {
+      vehicleStr = vehicle_type.joinToString(separator = ",") {it}
     }
 
     if (paginate) {
@@ -107,7 +113,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, express)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, vendor_type, vehicleStr ?: "", express)
         .flatMap { t ->
           offset = t.offset
           total = t.total

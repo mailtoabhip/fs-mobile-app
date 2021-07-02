@@ -224,7 +224,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private fun refreshData() {
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, express, isExpress)
+    viewModel.fetchUserTransactions(false, express, isExpress, "orion", listOf())
   }
 
   override fun handleAction(
@@ -461,7 +461,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(50) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress, "orion", listOf())
 
     override fun hasMore() = viewModel.hasMoreData
 
