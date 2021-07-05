@@ -296,52 +296,41 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
       HomeLoadsInfoAction_Search -> {
         viewModel.type = "orion"
-        viewModel.fetchUserTransactions(true, express, isExpress, true)
+        viewModel.hasOrionLoadOnce = true
+        adapter.removeInfoData()
+        viewModel.fetchUserTransactions(false, express, isExpress, true)
       }
     }
   }
 
-  // Method to show an alert dialog with multiple choice list items
   private fun showVehicleFilterDialog(){
-    // Late initialize an alert dialog object
     lateinit var dialog: AlertDialog
 
-    // Initialize an array of colors
-    val arrayColors = arrayOf("open","closed","trailer","all")
+    // Initialize an array of vehicles
+    val arrayVehicle = arrayOf("open","closed","trailer","all")
 
-    // Initialize a boolean array of checked items
     val arrayChecked = booleanArrayOf(false,false,false,false)
 
     val userVehicleTypes = userPrefs.truckTypes?.split(",") ?: listOf()
     if (userVehicleTypes.isNotEmpty()) {
       for (vehicle in userVehicleTypes) {
-        arrayChecked[arrayColors.indexOf(vehicle)] = true
+        arrayChecked[arrayVehicle.indexOf(vehicle)] = true
       }
     }
 
-    // Initialize a new instance of alert dialog builder object
     val builder = AlertDialog.Builder(context)
 
-    // Set a title for alert dialog
     builder.setTitle("-- Select vehicle types --")
 
-    // Define multiple choice items for alert dialog
-    builder.setMultiChoiceItems(arrayColors, arrayChecked) { _, which, isChecked ->
-      // Update the clicked item checked status
+    builder.setMultiChoiceItems(arrayVehicle, arrayChecked) { _, which, isChecked ->
       arrayChecked[which] = isChecked
-
-      // Get the clicked item
-      // val color = arrayColors[which]
-      // Display the clicked item text
     }
 
-    // Set the positive/yes button click listener
     builder.setPositiveButton("Filter") { _, _ ->
 
       var filterVehicleTypes = listOf<String>()
-      // Do something when click positive button
-      for (vehicle in arrayColors) {
-        if (arrayChecked[arrayColors.indexOf(vehicle)]) {
+      for (vehicle in arrayVehicle) {
+        if (arrayChecked[arrayVehicle.indexOf(vehicle)]) {
           filterVehicleTypes  = filterVehicleTypes + vehicle
         }
       }
@@ -354,10 +343,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       dialog.dismiss()
     }
 
-    // Initialize the AlertDialog using builder object
     dialog = builder.create()
-
-    // Finally, display the alert dialog
     dialog.show()
   }
 

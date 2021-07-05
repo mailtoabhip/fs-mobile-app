@@ -71,6 +71,25 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   }
 
   /**
+   * Remove info/warning/timeout data
+   */
+  fun removeInfoData() {
+    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      add(Pair(HomeLoadsProgressItem(), AddUpdate))
+      items.filter {
+        it.type == Warning || it.type == Timeout || it.type == Info
+      }
+        .map { Pair(it, Remove) }
+        .let {
+          addAll(it)
+        }
+    }
+      .let {
+        operation(it)
+      }
+  }
+
+  /**
    * Reset all data, remove all errors/transactions
    */
   fun resetStaticData() {

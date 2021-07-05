@@ -70,6 +70,7 @@ class HomeLoadsViewModel @Inject constructor(
   var hasMoreData = true
   var offset = 0
   var total = 0
+  var hasOrionLoadOnce = false
 
   /* vehicle_type filter */
   var vehicleStr = userPrefs.truckTypes ?: ""
@@ -101,9 +102,7 @@ class HomeLoadsViewModel @Inject constructor(
   fun fetchUserTransactions(
     paginate: Boolean = false, express: String = "",
     isExpress: Boolean = false, infoSearch: Boolean = false) {
-    if (!paginate) {
-      offset = 0
-    }else if (paginate && infoSearch) {
+    if (!paginate || infoSearch) {
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
@@ -168,7 +167,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }
 
-                if (!hasMoreData) {
+                if (!hasMoreData && !hasOrionLoadOnce) {
                   add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
               }
