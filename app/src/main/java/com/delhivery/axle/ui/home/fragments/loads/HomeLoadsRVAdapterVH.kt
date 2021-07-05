@@ -11,6 +11,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
@@ -149,7 +150,7 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
       binding.toggleRemovedMark.visibility = View.GONE
     }
     binding.llExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
-
+    binding.llVehicleFilter.clickToAction(HomeLoadsVehicleFilterAction, item, _interface)
   }
 }
 

@@ -71,6 +71,10 @@ class HomeLoadsViewModel @Inject constructor(
   var offset = 0
   var total = 0
 
+  /* vehicle_type filter */
+  var vehicleStr = userPrefs.truckTypes ?: ""
+  var type = userPrefs.vendorType ?: "orion"
+
   /**
    * Getter/Setter for route update flag to preferences
    */
@@ -94,26 +98,28 @@ class HomeLoadsViewModel @Inject constructor(
   /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(paginate: Boolean = false, express: String = "",
-    isExpress: Boolean = false, vendor_type: String = "orion", vehicle_type: List<String>) {
+  fun fetchUserTransactions(
+    paginate: Boolean = false, express: String = "",
+    isExpress: Boolean = false, infoSearch: Boolean = false) {
     if (!paginate) {
+      offset = 0
+    }else if (paginate && infoSearch) {
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
-    }
-    var vehicleStr = userPrefs.truckTypes
-
-    if (vehicle_type.isNotEmpty()) {
-      vehicleStr = vehicle_type.joinToString(separator = ",") {it}
     }
 
     if (paginate) {
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
+    if (type.isNullOrEmpty()) {
+      type = "orion"
+    }
+
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, vendor_type, vehicleStr ?: "", express)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, vehicleStr, express)
         .flatMap { t ->
           offset = t.offset
           total = t.total

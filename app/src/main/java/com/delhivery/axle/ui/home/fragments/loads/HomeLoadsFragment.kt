@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.CompoundButton
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,11 +19,11 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
@@ -34,10 +34,9 @@ import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
-import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -224,7 +223,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private fun refreshData() {
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, express, isExpress, "orion", listOf())
+    viewModel.fetchUserTransactions(false, express, isExpress)
   }
 
   override fun handleAction(
@@ -244,7 +243,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         context?.let { startActivity(bidDetailsIntent(data.key(), it)) }
       }
 
-      HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> {
+      HomeLoadsSearchAction_Search -> {
         context?.let {
           startActivity(
               Intent(it, SearchLoadActivity::class.java)
@@ -290,7 +289,76 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         }
         refreshData()
       }
+
+      HomeLoadsVehicleFilterAction -> {
+        showVehicleFilterDialog()
+      }
+
+      HomeLoadsInfoAction_Search -> {
+        viewModel.type = "orion"
+        viewModel.fetchUserTransactions(true, express, isExpress, true)
+      }
     }
+  }
+
+  // Method to show an alert dialog with multiple choice list items
+  private fun showVehicleFilterDialog(){
+    // Late initialize an alert dialog object
+    lateinit var dialog: AlertDialog
+
+    // Initialize an array of colors
+    val arrayColors = arrayOf("open","closed","trailer","all")
+
+    // Initialize a boolean array of checked items
+    val arrayChecked = booleanArrayOf(false,false,false,false)
+
+    val userVehicleTypes = userPrefs.truckTypes?.split(",") ?: listOf()
+    if (userVehicleTypes.isNotEmpty()) {
+      for (vehicle in userVehicleTypes) {
+        arrayChecked[arrayColors.indexOf(vehicle)] = true
+      }
+    }
+
+    // Initialize a new instance of alert dialog builder object
+    val builder = AlertDialog.Builder(context)
+
+    // Set a title for alert dialog
+    builder.setTitle("-- Select vehicle types --")
+
+    // Define multiple choice items for alert dialog
+    builder.setMultiChoiceItems(arrayColors, arrayChecked) { _, which, isChecked ->
+      // Update the clicked item checked status
+      arrayChecked[which] = isChecked
+
+      // Get the clicked item
+      // val color = arrayColors[which]
+      // Display the clicked item text
+    }
+
+    // Set the positive/yes button click listener
+    builder.setPositiveButton("Filter") { _, _ ->
+
+      var filterVehicleTypes = listOf<String>()
+      // Do something when click positive button
+      for (vehicle in arrayColors) {
+        if (arrayChecked[arrayColors.indexOf(vehicle)]) {
+          filterVehicleTypes  = filterVehicleTypes + vehicle
+        }
+      }
+
+      viewModel.vehicleStr = filterVehicleTypes.joinToString( separator = ",") {it}
+      refreshData()
+    }
+
+    builder.setNegativeButton("Cancel") {_, _ ->
+      dialog.dismiss()
+    }
+
+    // Initialize the AlertDialog using builder object
+    dialog = builder.create()
+
+    // Finally, display the alert dialog
+    dialog.show()
   }
 
   override fun handleAction(
@@ -461,7 +529,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(50) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress, "orion", listOf())
+    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
 
     override fun hasMore() = viewModel.hasMoreData
 

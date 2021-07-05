@@ -224,6 +224,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.TruckTypes, "")
 
   /**
+   * Vendor type (Fleet / Orion / Internal)
+   */
+  var vendorType: String?
+    set(value) = editor.putString(PrefKeys.VendorType, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.VendorType, "")
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -270,6 +278,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.IsParent)
         .apply()
     editor.remove(PrefKeys.TruckTypes)
+        .apply()
+    editor.remove(PrefKeys.VendorType)
+        .apply()
     editor.commit()
   }
 
@@ -291,6 +302,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isParent = user.isParent()
     userType = user.userType ?: ""
     truckTypes = user.truckTypes?.joinToString(separator = ",") {it}
+    vendorType = user.vendorType ?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -332,6 +344,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val IsParent = "is_parent"
     const val UserType = "user_type"
     const val TruckTypes = "truck_types"
+    const val VendorType = "vendor_type"
   }
 }
 

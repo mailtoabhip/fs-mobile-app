@@ -36,9 +36,9 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
-    @Query("vendor_type") vendorType: String,
+    @Query("vendor_type") vendorType: String ? = "orion",
     @Query("vehicle_type") vehicleType: String,
-    @Query("valid_loads") validLoads: Boolean = true,
+    @Query("valid_loads_only") validLoads: String = "yes",
     @Query("speed") speed: String
   ): Single<BaseResponse<TransactionsResponse>>
 
