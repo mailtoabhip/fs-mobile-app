@@ -56,7 +56,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
-  var express = ""
+  var express: String?= null
   var isExpress = false
 
   @Inject lateinit var dialogUtils: DialogUtils
@@ -282,7 +282,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       HomeLoadsFilterAction -> {
         if (isExpress) {
           isExpress = false
-          express = ""
+          express = null
         } else {
           isExpress = true
           express = "EXP"
@@ -295,10 +295,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsInfoAction_Search -> {
-        viewModel.type = "orion"
         viewModel.hasOrionLoadOnce = true
         adapter.removeInfoData()
-        viewModel.fetchUserTransactions(false, express, isExpress, true)
+        viewModel.fetchUserTransactions(false, express, isExpress, true, userPrefs.truckTypes)
       }
     }
   }

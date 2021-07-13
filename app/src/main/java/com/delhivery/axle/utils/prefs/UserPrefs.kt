@@ -226,10 +226,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /**
    * Vendor type (Fleet / Orion / Internal)
    */
-  var vendorType: String?
-    set(value) = editor.putString(PrefKeys.VendorType, value)
+  var demandType: String
+    set(value) = editor.putString(PrefKeys.DemandType, value)
         .apply()
-    get() = prefs.getString(PrefKeys.VendorType, "")
+    get() = prefs.getString(PrefKeys.DemandType, "")!!
 
   /**
    * Clear all preferences
@@ -279,7 +279,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.TruckTypes)
         .apply()
-    editor.remove(PrefKeys.VendorType)
+    editor.remove(PrefKeys.DemandType)
         .apply()
     editor.commit()
   }
@@ -302,7 +302,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isParent = user.isParent()
     userType = user.userType ?: ""
     truckTypes = user.truckTypes?.joinToString(separator = ",") {it}
-    vendorType = user.vendorType ?: ""
+    demandType = user.demandType.joinToString(separator = ",") {it}
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -344,7 +344,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val IsParent = "is_parent"
     const val UserType = "user_type"
     const val TruckTypes = "truck_types"
-    const val VendorType = "vendor_type"
+    const val DemandType = "demand_type"
   }
 }
 
