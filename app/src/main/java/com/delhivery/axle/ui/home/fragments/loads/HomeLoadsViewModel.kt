@@ -140,7 +140,7 @@ class HomeLoadsViewModel @Inject constructor(
               val loads = _tRes.first
               val bids = _tRes.second
 
-              if (total == 0) {
+              if (total == 0 && !infoSearch) {
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))

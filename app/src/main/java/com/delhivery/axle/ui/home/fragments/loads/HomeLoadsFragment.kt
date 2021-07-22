@@ -313,7 +313,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     val userVehicleTypes = userPrefs.truckTypes?.split(",") ?: listOf()
     if (userVehicleTypes.isNotEmpty()) {
       for (vehicle in userVehicleTypes) {
-        arrayChecked[arrayVehicle.indexOf(vehicle)] = true
+        if (arrayVehicle.contains(vehicle))
+        {
+          arrayChecked[arrayVehicle.indexOf(vehicle)] = true
+        }
       }
     }
 
