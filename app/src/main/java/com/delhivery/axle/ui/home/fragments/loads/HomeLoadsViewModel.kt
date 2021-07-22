@@ -68,12 +68,14 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* pagination params */
   var hasMoreData = true
+  var more_default_loads = false
+  var passing_vehicle_type: String?= null
   var offset = 0
   var total = 0
   var hasOrionLoadOnce = false
 
   /* vehicle_type filter */
-  var vehicleStr = userPrefs.truckTypes ?: ""
+  var vehicleStr = userPrefs.truckTypes
   var type = userPrefs.demandType
 
   /**
@@ -112,14 +114,20 @@ class HomeLoadsViewModel @Inject constructor(
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
+    passing_vehicle_type = vehicleStr
+    if (infoSearch) {
+      passing_vehicle_type = null
+    }
+
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, vehicleStr, express, excludeTruckTypes)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, passing_vehicle_type, express, excludeTruckTypes)
         .flatMap { t ->
           offset = t.offset
           total = t.total
           hasMoreData = t.offset != t.total
           loadPricePercent = t.loadPricePercent
+          more_default_loads = t.more_loads
           loadsCountLiveData.postValue(total)
 
           Single.zip(
@@ -163,7 +171,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }
 
-                if (!hasMoreData && !hasOrionLoadOnce) {
+                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
                   add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
               }
