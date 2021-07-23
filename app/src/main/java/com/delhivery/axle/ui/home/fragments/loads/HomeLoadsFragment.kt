@@ -221,6 +221,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   }
 
   private fun refreshData() {
+    viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
     viewModel.fetchUserTransactions(false, express, isExpress)
@@ -297,7 +298,21 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       HomeLoadsInfoAction_Search -> {
         viewModel.hasOrionLoadOnce = true
         adapter.removeInfoData()
-        viewModel.fetchUserTransactions(false, express, isExpress, true, userPrefs.truckTypes)
+        val all_truck_types = listOf("open", "closed", "trailer")
+        var currentVehicleFilterList = listOf<String>()
+        var exclude_truck_types = listOf<String>()
+        currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
+          viewModel.passing_vehicle_type!!.split(",")
+        } else {
+          userPrefs.truckTypes!!.split(",")
+        }
+        for (vehicle in all_truck_types) {
+          if (currentVehicleFilterList.contains(vehicle)) {
+            exclude_truck_types = exclude_truck_types + vehicle
+          }
+        }
+        val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
+        viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
       }
     }
   }
@@ -310,9 +325,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     val arrayChecked = booleanArrayOf(false,false,false,false)
 
-    val userVehicleTypes = userPrefs.truckTypes?.split(",") ?: listOf()
-    if (userVehicleTypes.isNotEmpty()) {
-      for (vehicle in userVehicleTypes) {
+    var currentVehicleFilterList = listOf<String>()
+    currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
+      viewModel.passing_vehicle_type!!.split(",")
+    } else {
+      userPrefs.truckTypes!!.split(",")
+    }
+    if (currentVehicleFilterList.isNotEmpty()) {
+      for (vehicle in currentVehicleFilterList) {
         if (arrayVehicle.contains(vehicle))
         {
           arrayChecked[arrayVehicle.indexOf(vehicle)] = true
