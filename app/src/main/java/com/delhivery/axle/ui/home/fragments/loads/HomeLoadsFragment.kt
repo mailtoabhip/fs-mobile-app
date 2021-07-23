@@ -358,6 +358,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       viewModel.vehicleStr = filterVehicleTypes.joinToString( separator = ",") {it}
+      viewModel.filterVehicleType = true
       refreshData()
     }
 

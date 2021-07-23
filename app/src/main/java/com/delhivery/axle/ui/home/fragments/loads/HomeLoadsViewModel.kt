@@ -70,6 +70,7 @@ class HomeLoadsViewModel @Inject constructor(
   var hasMoreData = true
   var more_default_loads = false
   var passing_vehicle_type: String?= null
+  var filterVehicleType: Boolean?= null
   var offset = 0
   var total = 0
   var hasOrionLoadOnce = false
@@ -121,7 +122,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, passing_vehicle_type, express, excludeTruckTypes)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, passing_vehicle_type, express, excludeTruckTypes, filterVehicleType)
         .flatMap { t ->
           offset = t.offset
           total = t.total
@@ -173,6 +174,9 @@ class HomeLoadsViewModel @Inject constructor(
 
                 if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
                   add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                }
+                if (filterVehicleType == true) {
+                  filterVehicleType = null
                 }
               }
             }
