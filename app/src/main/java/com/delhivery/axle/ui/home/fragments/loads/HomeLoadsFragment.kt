@@ -306,9 +306,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         } else {
           userPrefs.truckTypes!!.split(",")
         }
-        for (vehicle in all_truck_types) {
-          if (currentVehicleFilterList.contains(vehicle)) {
-            exclude_truck_types = exclude_truck_types + vehicle
+
+        if (currentVehicleFilterList.contains("all")) {
+          exclude_truck_types = listOf("open", "closed", "trailer")
+        } else {
+          for (vehicle in all_truck_types) {
+            if (currentVehicleFilterList.contains(vehicle)) {
+              exclude_truck_types = exclude_truck_types + vehicle
+            }
           }
         }
         val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}

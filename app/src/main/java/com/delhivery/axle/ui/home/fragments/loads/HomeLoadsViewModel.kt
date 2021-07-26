@@ -172,7 +172,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }
 
-                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                if (!hasMoreData && !hasOrionLoadOnce && !more_default_loads) {
                   add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
                 if (filterVehicleType == true) {
