@@ -69,6 +69,7 @@ class HomeLoadsViewModel @Inject constructor(
   /* pagination params */
   var hasMoreData = true
   var more_default_loads = false
+  var vehicleTypes: String?= null
   var passing_vehicle_type: String?= null
   var filterVehicleType: Boolean?= null
   var offset = 0
@@ -116,13 +117,14 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     passing_vehicle_type = vehicleStr
+    vehicleTypes = passing_vehicle_type
     if (infoSearch) {
-      passing_vehicle_type = null
+      vehicleTypes = null
     }
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, passing_vehicle_type, express, excludeTruckTypes, filterVehicleType)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, vehicleTypes, express, excludeTruckTypes, filterVehicleType)
         .flatMap { t ->
           offset = t.offset
           total = t.total
