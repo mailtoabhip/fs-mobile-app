@@ -25,10 +25,11 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.searchongoingtrip.searchOngoingTripIntent
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.REQCODE_NO_TRIPS
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.*
 import javax.inject.Inject
 
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>()
@@ -36,6 +37,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   var _title: String = "Ongoing Trips"
   var downloadID = 0.toLong()
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override val title: CharSequence
     get() = _title
@@ -62,6 +65,15 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   ) {
     super.onViewCreated(view, savedInstanceState)
     activity?.registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
+    /**
+     Track Event when trip_screen is created
+     */
+    analyticsUtil.trackEvent(
+            EVENT_VIEW_TRIPS,
+            mutableListOf(PROPERTY_USER_ID),
+            mutableListOf(userPrefs.userId())
+    )
 
     viewModel.fetchTripsSummary()
 
@@ -92,34 +104,49 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.downloadContainer.setOnClickListener {
-      DownloadLedgerDialog(context!!, viewModel).show()
+      DownloadLedgerDialog(context!!, viewModel,analyticsUtil,userPrefs).show()
     }
 
     binding.labelViewAllTrips.setOnClickListener {
       startActivity(userTripsIntent(context!!, "all", 0))
+      userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingArirval.setOnClickListener {
       startActivity(userTripsIntent(context!!, "trips_view", 0))
+      userPrefs.startTime = Date().time
     }
 
     binding.viewInTransit.setOnClickListener {
       startActivity(userTripsIntent(context!!, "trips_view", 1))
+      userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingPod.setOnClickListener {
+      analyticsUtil.trackEvent(
+              EVENT_VIEW_TRIPS_AWAITING_POD,
+              mutableListOf(PROPERTY_USER_ID , PROPERTY_TRIPS_AWAITING_POD_COUNT),
+              mutableListOf(userPrefs.userId() , viewModel.awaitingPodCount)
+      )
       action(NavigateHomeFragmentAction(PodFragment))
     }
 
     binding.viewAwaitingLoading.setOnClickListener {
       startActivity(userTripsIntent(context!!, "trips_view", 2))
+      userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingUnloading.setOnClickListener {
       startActivity(userTripsIntent(context!!, "trips_view", 3))
+      userPrefs.startTime = Date().time
     }
 
     binding.labelPaymentSummary.setOnClickListener {
+      analyticsUtil.trackEvent(
+              EVENT_VIEW_PAYMENT_SUMMARY,
+              mutableListOf(PROPERTY_USER_ID),
+              mutableListOf(userPrefs.userId())
+      )
       context?.let {
         startActivity(consolidatedPageIntent(context!!))
       }
@@ -128,18 +155,21 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.advanceCard.setOnClickListener {
       context?.let {
         startActivity(userTripsIntent(context!!, "payment_view", 0))
+        userPrefs.startTime = Date().time
       }
     }
 
     binding.balanceCard.setOnClickListener {
       context?.let {
         startActivity(userTripsIntent(context!!, "payment_view", 1))
+        userPrefs.startTime = Date().time
       }
     }
 
     binding.recoveryCard.setOnClickListener {
       context?.let {
         startActivity(userTripsIntent(context!!, "payment_view", 2))
+        userPrefs.startTime = Date().time
       }
     }
 

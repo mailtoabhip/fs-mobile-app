@@ -17,10 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
-import com.delhivery.axle.utils.EVENT_BID_INLINE_PROMPT
-import com.delhivery.axle.utils.EVENT_BID_REVISE_PROMPT
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -208,14 +205,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
                               EVENT_BID_INLINE_PROMPT,
-                              mutableListOf(PROPERTY_TRANSACTION_ID),
-                              mutableListOf(data.key())
+                              mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID),
+                              mutableListOf(userPrefs.userId(), data.key())
                       )
                     } else if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
                               EVENT_BID_REVISE_PROMPT,
-                              mutableListOf(PROPERTY_TRANSACTION_ID),
-                              mutableListOf(data.key())
+                              mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID),
+                              mutableListOf(userPrefs.userId(), data.key())
                       )
                     }
                     viewModel.analyticsBucket=false

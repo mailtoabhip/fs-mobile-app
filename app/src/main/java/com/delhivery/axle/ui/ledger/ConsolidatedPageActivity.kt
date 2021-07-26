@@ -26,10 +26,12 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_STORAGE
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
 class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, ConsolidatedPageViewModel>(),
@@ -47,6 +49,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     var isLoadingData = true
 
     var isRecent = true
+
+    @Inject lateinit var userPrefs: UserPrefs
 
     var downloadID = 0.toLong()
 
@@ -86,7 +90,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         }
 
         binding.textRequestStatement.setOnClickListener{
-            val dialog = DownloadLedgerDialog(this, viewModel)
+            val dialog = DownloadLedgerDialog(this, viewModel ,analyticsUtil, userPrefs)
             dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
             dialog.setOwnerActivity(this)
             if (!this.isFinishing)

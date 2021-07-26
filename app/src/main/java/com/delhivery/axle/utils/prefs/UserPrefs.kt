@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
+import com.auth0.android.jwt.JWT
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import javax.inject.Inject
@@ -216,6 +217,27 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.IsParent, false)
 
   /**
+   *  Logout status
+   */
+  var logoutStatus: String
+    set(value) = editor.putString(PrefKeys.LogoutStatus, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.LogoutStatus, "") ?: ""
+
+  /**
+   *  Start Time
+   */
+  var startTime: Long
+    set(value) = editor.putLong(PrefKeys.StartTime, value)
+            .apply()
+    get() = prefs.getLong(PrefKeys.StartTime , 0)
+
+  var firstRoute: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsFirstRoute, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.IsFirstRoute, false)
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -261,6 +283,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.IsParent)
         .apply()
+    editor.remove(PrefKeys.LogoutStatus)
+        .apply()
+    editor.remove(PrefKeys.StartTime)
+        .apply()
+    editor.remove(PrefKeys.IsFirstRoute)
+        .apply()
     editor.commit()
   }
 
@@ -292,6 +320,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     DISABLED
   }
 
+
+  /**
+   * Current user id
+   */
+  fun userId() = jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
+
   /**
    * Pref keys
    */
@@ -321,6 +355,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val MaxCostPerKM = "max_cost_per_km"
     const val IsParent = "is_parent"
     const val UserType = "user_type"
+    const val LogoutStatus = "logout_status"
+    const val StartTime = "start_time"
+    const val IsFirstRoute = "first_route"
   }
 }
 

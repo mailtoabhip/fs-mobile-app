@@ -160,8 +160,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
           event = EVENT_EDIT_BID
           analyticsUtil.trackEvent(
                   EVENT_REVISE_BID_INTENT,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(transaction.key())
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID),
+                  mutableListOf(userPrefs.userId() , transaction.key())
           )
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
@@ -171,8 +171,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
         // Capture event
         analyticsUtil.trackEvent(
             event,
-            mutableListOf(PROPERTY_TRANSACTION_ID),
-            mutableListOf(transaction.key())
+            mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID),
+            mutableListOf(userPrefs.userId(), transaction.key())
         )
         dismiss()
       } else {

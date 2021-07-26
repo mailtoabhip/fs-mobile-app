@@ -174,21 +174,21 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         if (it.second.oneVisibility()==View.VISIBLE || it.second.twoVisibility()==View.VISIBLE){
           analyticsUtil.trackEvent(
                   EVENT_BID_INLINE_PROMPT,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(it.second.key())
+                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID),
+                  mutableListOf(userPrefs.userId() , it.second.key())
           )
 
         }
         else if (it.second.threeVisibility()==View.VISIBLE || it.second.fourVisibility()==View.VISIBLE){
           analyticsUtil.trackEvent(
                   EVENT_BID_REVISE_PROMPT,
-                  mutableListOf(PROPERTY_TRANSACTION_ID),
-                  mutableListOf(it.second.key())
+                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID),
+                  mutableListOf(userPrefs.userId() , it.second.key())
           )
         }
 
         BidConfirmReviseDialog(
-            context!!, it.second, viewModel, it.first,analyticsUtil
+            context!!, it.second, viewModel, it.first,analyticsUtil,userPrefs
         ).show()
       }
       adapter.notifyItemChanged(it.first)
@@ -281,6 +281,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsFilterAction -> {
+        //Capture Event
+        analyticsUtil.trackEvent(
+                EVENT_FILTER_EXPRESS_LOADS,
+                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(userPrefs.userId())
+        )
+
         if (isExpress) {
           isExpress = false
           express = ""

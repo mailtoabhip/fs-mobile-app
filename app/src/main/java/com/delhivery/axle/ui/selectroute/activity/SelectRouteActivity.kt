@@ -35,8 +35,10 @@ import com.delhivery.axle.ui.selectroute.fragments.SelectRouteFragmentType.Route
 import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
 import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailFragment
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListFragment
-import com.delhivery.axle.utils.LocationFlowState
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 /**
  * Handles route updation
@@ -63,6 +65,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
   private var addRouteOnLogin: Boolean = false
 
   private var originCityCode: String = ""
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -151,6 +155,14 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
               currentRoute?.origin = origin.getUserCity()
             }
           }
+          if(userPrefs.firstRoute){
+            userPrefs.firstRoute = false
+            analyticsUtil.trackEvent(
+                    EVENT_ENTER_FIRST_OC,
+                    mutableListOf( PROPERTY_USER_ID , PROPERTY_ORIGIN_CITY_CAPTURED),
+                    mutableListOf( userPrefs.userId(), currentRoute!!.origin.city)
+            )
+          }
           navigate(DestinationFragment)
         }
       }
@@ -164,6 +176,11 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
               viewModel.fetchUser { userUpdateSuccess ->
                 when (userUpdateSuccess) {
                   true -> {
+                    analyticsUtil.trackEvent(
+                            EVENT_EDIT_PREFERENCES,
+                            mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
+                            mutableListOf(userPrefs.userId()  )
+                    )
                     setResult(Activity.RESULT_OK)
                     finish()
                   }
@@ -187,9 +204,20 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       }
       LoadRequests -> {
         when (flowType) {
-          AddNewRoute -> navigationUtils.navigate(
-              HomeActivity::class.java, true
-          )
+          AddNewRoute -> {
+            val states  = mutableListOf<String>()
+            for (destination in currentRoute!!.destinations){
+              states.add(destination.state)
+            }
+            analyticsUtil.trackEvent(
+                    EVENT_CONFIRM_FIRST_ROUTE,
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_ROUTE_PREFERENCES),
+                    mutableListOf(userPrefs.userId() , currentRoute!!.origin.city + "to " + states.toString())
+            )
+            navigationUtils.navigate(
+                    HomeActivity::class.java, true
+            )
+          }
           EditRoute -> finish()
         }
       }
