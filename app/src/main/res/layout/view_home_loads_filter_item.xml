@@ -62,7 +62,7 @@
             android:layout_gravity="center"
             android:text="@string/express"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="@dimen/size_40dp"/>
 
 
         <ImageView
@@ -73,8 +73,8 @@
             app:srcCompat="@drawable/ic_cancel"
             android:tint="@color/white"
             android:layout_gravity="center"
-            android:layout_width="@dimen/size_32dp"
-            android:layout_height="@dimen/size_32dp"
+            android:layout_width="@dimen/size_36dp"
+            android:layout_height="@dimen/size_40dp"
             android:visibility="gone"
             tools:visibility="visible"/>
 

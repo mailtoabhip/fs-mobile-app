@@ -90,7 +90,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      refreshData()
+      if (!userPrefs.isParent) {
+        fetchParentVendorTruckTypes()
+      } else {
+        refreshData()
+      }
     }
 
     /* setup recycler view */

@@ -9,7 +9,7 @@ data class HomeLoadsMoreInfoItemData(
 }
 
 /* unique key for diff */
-const val HomeLoadsMoreInfoItemDataKey = "info"
+const val HomeLoadsMoreInfoItemDataKey = "more_info"
 
 /* actions */
 const val HomeLoadsInfoAction_EditRoute = "edit_route"
