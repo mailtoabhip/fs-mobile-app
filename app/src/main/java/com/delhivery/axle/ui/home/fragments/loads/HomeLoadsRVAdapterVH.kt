@@ -14,6 +14,7 @@ import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
+import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
@@ -189,11 +190,27 @@ internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
     )
     binding.textSearch.text = searchString
     binding.textSearch.clickToAction(HomeLoadsInfoAction_Search, item, _interface)
+  }
+}
+
+
+/**
+ * More Info item view holder
+ */
+internal class HomeLoadsMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsMoreInfoItemBinding, HomeLoadsMoreInfoItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsMoreInfoItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
 
     val editRouteString: Spannable = SpannableString(item.data.editRouteString)
     editRouteString.setSpan(
-        colorSpan, editRouteString.length - 6,
-        editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+      colorSpan, editRouteString.length - 6,
+      editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     binding.textEditRoute.text = editRouteString
     binding.textEditRoute.clickToAction(HomeLoadsInfoAction_EditRoute, item, _interface)

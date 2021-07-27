@@ -36,6 +36,7 @@ data class UserModel(
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
   @SerializedName("is_deleted") var isDeleted: Boolean = false,
   @SerializedName("test_user") var testUser: Boolean = false,
+  @SerializedName("parent_sp_id") var parentId: String?,
   @SerializedName("designation") var designation: String?,
   @SerializedName("demand_type") var demandType: List<String>
 ) : BaseKeyTypeModel<String>(), Serializable {

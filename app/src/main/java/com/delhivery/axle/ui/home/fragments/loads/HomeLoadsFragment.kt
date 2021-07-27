@@ -197,7 +197,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       isLoadingData = it ?: false
     })
 
-    refreshData()
+    viewModel.parentDetailsLiveData.reobserve(viewLifecycleOwner, Observer {
+      refreshData()
+    })
 
     if (viewModel.isFCMTokenGenerated()) {
       fcmUtils.generateToken {
@@ -207,7 +209,15 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     }
 
+    if (!userPrefs.isParent) {
+      fetchParentVendorTruckTypes()
+    }
+
     viewModel.updateUserAppAccess()
+  }
+
+  private fun fetchParentVendorTruckTypes() {
+    viewModel.fetchParentTruckTypes(userPrefs.parentId ?: "")
   }
 
   override fun onResume() {

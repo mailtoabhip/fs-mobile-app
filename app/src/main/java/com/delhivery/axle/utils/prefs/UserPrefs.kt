@@ -224,6 +224,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.TruckTypes, "")
 
   /**
+   * Vendor truck types
+   */
+  var parentId: String?
+    set(value) = editor.putString(PrefKeys.ParentId, value)
+      .apply()
+    get() = prefs.getString(PrefKeys.ParentId, "")
+
+  /**
    * Vendor type (Fleet / Orion / Internal)
    */
   var demandType: String
@@ -281,6 +289,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.DemandType)
         .apply()
+    editor.remove(PrefKeys.ParentId)
+        .apply()
     editor.commit()
   }
 
@@ -301,6 +311,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     cityCode = user.baseCityCode
     isParent = user.isParent()
     userType = user.userType ?: ""
+    parentId = user.parentId ?: ""
     truckTypes = user.truckTypes?.joinToString(separator = ",") {it}
     demandType = user.demandType.joinToString(separator = ",") {it}
   }
@@ -342,6 +353,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val MaxPMTRate = "max_pmt_rate"
     const val MaxCostPerKM = "max_cost_per_km"
     const val IsParent = "is_parent"
+    const val ParentId = "parent_id"
     const val UserType = "user_type"
     const val TruckTypes = "truck_types"
     const val DemandType = "demand_type"
