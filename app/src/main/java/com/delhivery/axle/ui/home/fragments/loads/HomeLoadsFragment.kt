@@ -317,6 +317,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           }
         }
         val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
+        viewModel.filterVehicleType = null
         viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
       }
     }
