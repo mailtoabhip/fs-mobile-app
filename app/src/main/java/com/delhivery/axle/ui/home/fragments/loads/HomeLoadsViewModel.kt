@@ -64,9 +64,6 @@ class HomeLoadsViewModel @Inject constructor(
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
-  /* parent details live data */
-  var parentDetailsLiveData = MutableLiveData<Boolean>()
-
   var loadPricePercent = 0
 
   /* pagination params */
@@ -214,23 +211,6 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
         }
-  }
-
-  /**
-   * Fetch parent vendor's truck_types and set to current users truck_types
-   */
-  fun fetchParentTruckTypes(parent_id: String) {
-    compositeDisposable += userRepository.getParentVendor(parent_id)
-      .onBackground()
-      .subscribe { res, error ->
-        if (!error && res != null ) {
-          if (!res.truckTypes.isNullOrEmpty()) {
-            userPrefs.truckTypes = res.truckTypes?.joinToString(separator = ",") {it}
-            vehicleStr = res.truckTypes?.joinToString(separator = ",") {it}
-            parentDetailsLiveData.postValue(true)
-          }
-        }
-      }
   }
 
   override fun createBid(

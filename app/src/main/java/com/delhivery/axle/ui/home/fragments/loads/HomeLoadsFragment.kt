@@ -90,11 +90,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      if (!userPrefs.isParent) {
-        fetchParentVendorTruckTypes()
-      } else {
-        refreshData()
-      }
+      refreshData()
     }
 
     /* setup recycler view */
@@ -201,10 +197,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       isLoadingData = it ?: false
     })
 
-    viewModel.parentDetailsLiveData.reobserve(viewLifecycleOwner, Observer {
-      refreshData()
-    })
-
     if (viewModel.isFCMTokenGenerated()) {
       fcmUtils.generateToken {
         if (it.isNotNullOrEmpty()) {
@@ -213,15 +205,9 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
     }
 
-    if (!userPrefs.isParent) {
-      fetchParentVendorTruckTypes()
-    }
+    refreshData()
 
     viewModel.updateUserAppAccess()
-  }
-
-  private fun fetchParentVendorTruckTypes() {
-    viewModel.fetchParentTruckTypes(userPrefs.parentId ?: "")
   }
 
   override fun onResume() {

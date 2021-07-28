@@ -68,11 +68,6 @@ class UserRepository @Inject constructor(
   }
 
   /**
-   * Get parent vendor details
-   */
-  fun getParentVendor(parentId: String) = userService.userDetails(parentId).convertResponse()
-
-  /**
    * Update user routes and get all routes
    */
   fun updateUserRoutes(routes: List<RouteMappingModel>) =
