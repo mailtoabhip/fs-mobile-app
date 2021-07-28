@@ -153,8 +153,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       R.id.nav_call -> {
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE),
-                mutableListOf(userPrefs.userId(),fragmentType!!)
+                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(userPrefs.userId())
         )
         callHelpline()
         true
