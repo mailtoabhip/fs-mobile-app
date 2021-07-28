@@ -205,14 +205,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
                               EVENT_BID_INLINE_PROMPT,
-                              mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID),
-                              mutableListOf(userPrefs.userId(), data.key())
+                              mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
+                              mutableListOf(userPrefs.userId(), data.key() , userPrefs.userDemandType, userPrefs.userPerformance)
                       )
                     } else if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
                               EVENT_BID_REVISE_PROMPT,
-                              mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID),
-                              mutableListOf(userPrefs.userId(), data.key())
+                              mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+                              mutableListOf(userPrefs.userId(), data.key(), userPrefs.userDemandType, userPrefs.userPerformance)
                       )
                     }
                     viewModel.analyticsBucket=false

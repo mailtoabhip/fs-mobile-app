@@ -158,6 +158,8 @@ const val PROPERTY_LATEST_VERSION = "latest_app_version"
 const val PROPERTY_ATTRIBUTE_CHANGED = "attribute_changed"
 const val PROPERTY_ORIGIN_CITY_CAPTURED = "origin_city_captured"
 const val PROPERTY_ROUTE_PREFERENCES = "route_preferences_selected"
+const val PROPERTY_DEMAND_TYPE = "demand_type"
+const val PROPERTY_OVERALL_PERFORMANCE = "overall_performance"
 
 
 

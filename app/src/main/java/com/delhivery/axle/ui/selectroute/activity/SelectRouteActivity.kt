@@ -178,8 +178,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
                   true -> {
                     analyticsUtil.trackEvent(
                             EVENT_EDIT_PREFERENCES,
-                            mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
-                            mutableListOf(userPrefs.userId()  )
+                            mutableListOf(PROPERTY_USER_ID),
+                            mutableListOf(userPrefs.userId())
                     )
                     setResult(Activity.RESULT_OK)
                     finish()

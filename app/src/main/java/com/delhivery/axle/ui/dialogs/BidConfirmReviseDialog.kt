@@ -18,9 +18,7 @@ class BidConfirmReviseDialog @Inject constructor(
   context : Context,
   private val transaction: HomeBidsRequestItemData,
   private val dialogInterface: BidConfirmReviseDialogInterface,
-  private val position: Int = 0,
-  private val analyticsUtil: AnalyticsUtil,
-  private val userPrefs: UserPrefs
+  private val position: Int = 0
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -55,11 +53,6 @@ class BidConfirmReviseDialog @Inject constructor(
    * Revise bid dialog
    */
   private fun reviseBidDialog() {
-    analyticsUtil.trackEvent(
-            EVENT_REVISE_BID_INTENT,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID),
-            mutableListOf(userPrefs.userId() , transaction.key())
-    )
     dialogInterface.reviseBid(position)
     dismiss()
   }

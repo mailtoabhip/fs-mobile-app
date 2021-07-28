@@ -137,6 +137,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.UserType, "") ?: ""
 
   /**
+   * User Performance
+   */
+  var userPerformance: String
+    set(value) = editor.putString(PrefKeys.UserOverallPerformance, value).apply()
+    get() = prefs.getString(PrefKeys.UserOverallPerformance, "") ?: ""
+
+  /**
+   * User Demand type
+   */
+  var userDemandType: String
+    set(value) = editor.putString(PrefKeys.UserDemandType, value).apply()
+    get() = prefs.getString(PrefKeys.UserDemandType, "") ?: ""
+
+
+  /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
@@ -289,6 +304,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.IsFirstRoute)
         .apply()
+    editor.remove(PrefKeys.UserOverallPerformance)
+        .apply()
+    editor.remove(PrefKeys.UserDemandType)
+        .apply()
     editor.commit()
   }
 
@@ -309,6 +328,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     cityCode = user.baseCityCode
     isParent = user.isParent()
     userType = user.userType ?: ""
+    userPerformance = user.overallPerformance ?: ""
+    userDemandType = user.demandType.toString()
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -358,6 +379,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val LogoutStatus = "logout_status"
     const val StartTime = "start_time"
     const val IsFirstRoute = "first_route"
+    const val UserOverallPerformance = "overall_performance"
+    const val UserDemandType = "demand_type"
   }
 }
 

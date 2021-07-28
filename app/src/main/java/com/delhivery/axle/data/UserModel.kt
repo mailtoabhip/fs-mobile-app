@@ -36,7 +36,9 @@ data class UserModel(
   @SerializedName("is_supplier_enabled") var supplierEnabled: Boolean = false,
   @SerializedName("is_deleted") var isDeleted: Boolean = false,
   @SerializedName("test_user") var testUser: Boolean = false,
-  @SerializedName("designation") var designation: String?
+  @SerializedName("designation") var designation: String?,
+  @SerializedName("overall_performance") var overallPerformance: String? = "",
+  @SerializedName("demand_type") var demandType : List<String>?
 ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
