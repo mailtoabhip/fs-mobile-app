@@ -52,6 +52,7 @@ import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import javax.inject.Inject
 
@@ -72,6 +73,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   override fun requireConnection() = true
 
   @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   private val adapter: TripPaymentSummaryRVAdapter by lazy { TripPaymentSummaryRVAdapter(this) }
 
@@ -498,6 +500,38 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     when (actionId) {
       TripPaymentSummaryItemAction -> {
         val data = item.data as TripPaymentSummaryItemData
+        if(!data.expanded){
+          when(data.title.toUpperCase()){
+            "CHARGES" -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_CHARGES,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_CHARGES_AMOUNT, PROPERTY_AMOUNT_TYPE),
+                      mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_PENDING_AMOUNT)
+              )
+            }
+            "DEDUCTIONS" -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_DEDUCTIONS,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEDUCTIONS_AMOUNT, PROPERTY_AMOUNT_TYPE),
+                      mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_RECOVERY_AMOUNT)
+              )
+            }
+            "PAYMENTS" -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_PAYMENTS,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_PAYMENTS_AMOUNT, PROPERTY_AMOUNT_TYPE),
+                      mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_PENDING_AMOUNT)
+              )
+            }
+            "RECOVERIES ADJUSTED" -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_RECOVERIES_ADJUSTED,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_RECOVERIES_ADJUSTED_AMOUNT, PROPERTY_AMOUNT_TYPE),
+                      mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_RECOVERY_AMOUNT)
+              )
+            }
+          }
+        }
         adapter.toggle(position, data)
       }
 
