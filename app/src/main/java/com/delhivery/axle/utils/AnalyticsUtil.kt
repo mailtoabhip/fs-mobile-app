@@ -111,6 +111,7 @@ const val EVENT_UPDATE_CANCEL = "update_cancel"
 const val EVENT_EDIT_PREFERENCES ="edit_preferences"
 const val EVENT_ENTER_FIRST_OC = "enter_first_oc"
 const val EVENT_CONFIRM_FIRST_ROUTE = "confirm_first_route"
+const val EVENT_LOAD_SCROLL = "load_scroll"
 
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
@@ -160,6 +161,7 @@ const val PROPERTY_ORIGIN_CITY_CAPTURED = "origin_city_captured"
 const val PROPERTY_ROUTE_PREFERENCES = "route_preferences_selected"
 const val PROPERTY_DEMAND_TYPE = "demand_type"
 const val PROPERTY_OVERALL_PERFORMANCE = "overall_performance"
+const val PROPERTY_LOAD_SCROLL = "load_scroll"
 
 
 
@@ -182,5 +184,6 @@ const val VALUE_DOWNLOADED = "downloaded"
 const val VALUE_EMAILED = "emailed"
 const val VALUE_PENDING_AMOUNT = "pending_amount"
 const val VALUE_RECOVERY_AMOUNT = "recovery_amount"
-
+const val VALUE_REFRESH = "load"
+const val VALUE_SCROLL = "scroll"
 const val CUSTOM_PHONE_NUMBER = "phone_number"
