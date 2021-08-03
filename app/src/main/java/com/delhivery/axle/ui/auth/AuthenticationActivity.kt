@@ -22,20 +22,19 @@ import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.Config.AxleOnboardingEmail
-import com.delhivery.axle.utils.EVENT_OTP_RESEND
-import com.delhivery.axle.utils.EVENT_OTP_SEND
-import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
-import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
+import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Authentication screen
@@ -51,6 +50,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -76,12 +77,20 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       raisedFocus()
       lengthAction(10) {
         // Capture event
-        analyticsUtil.trackEvent(EVENT_OTP_SEND)
+        analyticsUtil.trackEvent(
+                EVENT_OTP_SEND,
+                mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
+                mutableListOf(binding.editPhoneNo.text.toString())
+        )
         viewModel.sendOTP()
       }
       actionDone {
         // Capture event
-        analyticsUtil.trackEvent(EVENT_OTP_SEND)
+        analyticsUtil.trackEvent(
+                EVENT_OTP_SEND,
+                mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
+                mutableListOf(binding.editPhoneNo.text.toString())
+        )
         viewModel.sendOTP()
       }
     }
@@ -192,6 +201,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
+            userPrefs.firstRoute = true
             // Capture event
             analyticsUtil.trackEvent(EVENT_OTP_VERIFIED)
             uiUtils.hideDelhiveryProgress()

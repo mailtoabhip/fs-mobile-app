@@ -22,9 +22,12 @@ import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
 import com.delhivery.axle.ui.splash.SplashPostState.Onboarding
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import javax.inject.Inject
 
 /**
  * Splash screen
@@ -38,7 +41,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   override fun layoutId() = R.layout.activity_splash
 
+  var latestCode :Int = 0
+  var currentCode :Int =0
+
   override fun requireConnection() = false
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -79,10 +86,20 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                 positiveAction = "UPDATE",
                 negativeAction = "CANCEL",
                 positiveClickListener = {
+                  analyticsUtil.trackEvent(
+                          EVENT_UPDATE_APP,
+                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
+                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString())
+                  )
                   it.dismiss()
                   openPlayStore()
                 },
                 negativeClickListener = {
+                  analyticsUtil.trackEvent(
+                          EVENT_UPDATE_CANCEL,
+                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
+                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString() )
+                  )
                   it.dismiss()
                   finish()
                 }
@@ -153,7 +170,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             } else {
               pInfo.versionCode
             }
-
+            currentCode = currentVersionCode
+            latestCode = playStoreVersionCode
             completedAction(playStoreVersionCode > currentVersionCode)
           } else {
             completedAction(false)

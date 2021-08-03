@@ -7,6 +7,7 @@ import android.util.Log
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogConfirmBidBinding
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -17,8 +18,7 @@ class BidConfirmReviseDialog @Inject constructor(
   context : Context,
   private val transaction: HomeBidsRequestItemData,
   private val dialogInterface: BidConfirmReviseDialogInterface,
-  private val position: Int = 0,
-  private val analyticsUtil: AnalyticsUtil
+  private val position: Int = 0
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -53,11 +53,6 @@ class BidConfirmReviseDialog @Inject constructor(
    * Revise bid dialog
    */
   private fun reviseBidDialog() {
-    analyticsUtil.trackEvent(
-            EVENT_REVISE_BID_INTENT,
-            mutableListOf(PROPERTY_TRANSACTION_ID),
-            mutableListOf(transaction.key())
-    )
     dialogInterface.reviseBid(position)
     dismiss()
   }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.config.UrlConfig.DashboardUrl
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
@@ -14,11 +15,8 @@ import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
-import com.delhivery.axle.utils.PROPERTY_SOURCE
-import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
-import com.delhivery.axle.utils.VALUE_PROFILE
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>(),
@@ -37,6 +35,8 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
   }
 
   @Inject lateinit var dialogUtils: DialogUtils
+  @Inject lateinit var userPrefs : UserPrefs
+
 
   override fun getViewModelClass() = HomeProfileViewModel::class.java
 
@@ -155,8 +155,13 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         negativeAction = "BACK",
         positiveClickListener = {
           it.dismiss()
+          analyticsUtil.trackEvent(
+                  EVENT_USER_LOGOUT,
+                  mutableListOf(PROPERTY_USER_ID),
+                  mutableListOf(userPrefs.userId())
+          )
           viewModel.logout()
-          navigationUtils.logout("Successfully logged out")
+          navigationUtils.logout("Successfully logged out","fromUser")
         }
     )
   }
