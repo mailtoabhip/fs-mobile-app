@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:background="@drawable/bg_bid_details_rejected"
+      android:gravity="center_horizontal"
+      android:orientation="vertical"
+      bind:shadow="@{ @dimen/size_2dp }"
+      >
+
+    <View
+        android:layout_width="@dimen/size_72dp"
+        android:layout_height="@dimen/size_72dp"
+        android:layout_marginTop="@dimen/size_36dp"
+        android:alpha="0.25"
+        android:background="@drawable/bg_circle_primary"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_18dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_2sp"
+        android:text="@string/msg_you_lost_bid"
+        android:textColor="#181818"
+        android:textSize="@dimen/text_16sp"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_cancel_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_2dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:text="@string/cancelled_bid_msg"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_8sp"
+        android:textColor="#181818"
+        android:textSize="@dimen/text_12sp"
+        tools:text="The load request itself is cancelled"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_user_highest_bid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_14dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="@dimen/text_8sp"
+        android:textColor="#181818"
+        android:textSize="@dimen/text_12sp"
+        tools:text="Your bid: ₹ 26200.00"
+        />
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

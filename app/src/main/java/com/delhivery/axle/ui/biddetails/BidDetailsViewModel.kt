@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
+import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -100,6 +101,20 @@ class BidDetailsViewModel @Inject constructor(
                             _bRes.second.acceptedBid()!!, _bRes.first.first!!,
                             transaction.isPMTIndent()
                         )
+                    )
+                  } catch (e: Exception) {
+
+                  } finally {
+                    bidPriceLiveData.postValue(null)
+                  }
+                }
+                Cancelled -> {
+                  try {
+                    transactionBidLiveData.postValue(
+                      BidDetailsUserBidState_CancelledBid(
+                        _bRes.first.first!!,
+                        transaction.isPMTIndent()
+                      )
                     )
                   } catch (e: Exception) {
 
