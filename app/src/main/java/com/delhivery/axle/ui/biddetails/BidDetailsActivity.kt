@@ -276,6 +276,19 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     textUserHighestBid.text = bidText
                   }
           }
+          is BidDetailsUserBidState_CancelledBid -> {
+            ViewBidDetailsCancelledBidBinding.inflate(
+              layoutInflater, binding.containerActions, false
+            )
+              .apply {
+                val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                } else {
+                  StringUtils.formatAmount(state.userBid.bidAmount)
+                }
+                textUserHighestBid.text = bidText
+              }
+          }
           else -> null
         }?.let { _binding ->
           /* bidding ended */

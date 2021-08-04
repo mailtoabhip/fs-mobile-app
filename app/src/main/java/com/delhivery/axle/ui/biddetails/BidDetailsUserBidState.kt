@@ -61,3 +61,11 @@ data class BidDetailsUserBidState_RejectedBid(
   val userBid: TransactionBid,
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_rejected_bid)
+
+/**
+ * Cancelled bid state
+ */
+data class BidDetailsUserBidState_CancelledBid(
+  val userBid: TransactionBid,
+  val isPMTIndent: Boolean
+) : BidDetailsUserBidState(R.layout.view_bid_details_cancelled_bid)
