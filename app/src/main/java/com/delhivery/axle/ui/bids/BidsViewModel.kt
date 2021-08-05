@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -73,7 +74,16 @@ class BidsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += bidsRepository.userBidsByStatus(bidType.status, offset)
+    var statuses = bidType.status.statusKey
+    if (bidType == BidType.LostBid) {
+       statuses = mutableListOf<String>().apply {
+        add(BidType.LostBid.status.statusKey)
+        add(TransactionBidStatus.Cancelled.statusKey)
+      }
+        .joinToString(separator = ",") { it }
+    }
+
+    compositeDisposable += bidsRepository.userBids(offset, statuses)
         .flatMap { _res ->
           total = _res.first
           bidsCountLiveData.postValue(total)

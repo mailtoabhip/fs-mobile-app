@@ -11,6 +11,7 @@ import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
+import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.TripType
@@ -203,7 +204,7 @@ data class HomeBidsRequestItemData(
    */
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
-      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+      Accepted, Open, Rejected, Cancelled -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
       else -> ""
     }
   } else {
@@ -214,7 +215,7 @@ data class HomeBidsRequestItemData(
    * @return bid label
    */
   fun amountLabel() = when (bidStatus()) {
-    Open, Rejected -> "Your Bid"
+    Open, Rejected, Cancelled -> "Your Bid"
     Accepted -> "Confirmed Price"
     else -> ""
   }
@@ -273,6 +274,9 @@ data class HomeBidsRequestItemData(
    * @return bid difference
    */
   fun bidDifference(): String {
+    if (bidStatus() == Cancelled) {
+      return "(The load request itself is cancelled)"
+    }
     if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
       return transactionBid?.diffFromLowestBid(lowestBid!!, isPMTIndent()) ?: ""
     }

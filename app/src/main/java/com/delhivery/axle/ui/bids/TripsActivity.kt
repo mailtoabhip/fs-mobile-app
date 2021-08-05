@@ -32,16 +32,13 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.VALUE_TRIP
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import java.util.Calendar
 import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by saurabh
@@ -66,8 +63,11 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   override fun requireConnection() = true
 
-  var isLoadingData = true
+   var isLoadingData = true
+   var intentRefresh= false
+   var finalTime :Long = 0
 
+  @Inject lateinit var userPrefs :UserPrefs
   /* search menu item ref */
   private var searchItem: MenuItem? = null
 
@@ -133,7 +133,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
-      refreshData()
+      refreshData(true)
     }
 
     /* setup recycler view */
@@ -170,6 +170,78 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       binding.textAwaitingLoading.text = it.awaitingLoading.count()
       binding.textAwaitingUnloading.text = it.awaitingUnloading.count()
       binding.textAwaitingPod.text = it.awaitingPod.count()
+
+      if(!intentRefresh) {
+
+        finalTime = Date().time
+        val loadingTime: String = ((finalTime - userPrefs.startTime) / 1000).toInt().toString() + "sec"
+
+        if (viewModel.viewType.equals("trips_view")) {
+          when (viewModel.tripType) {
+            Companion.byTypeId(0) -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_TRIPS_AWAITING_ARRIVAL,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_ARRIVAL_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.awaitingArrival.count(), loadingTime)
+              )
+            }
+            Companion.byTypeId(1) -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_TRIPS_INTRANSIT,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_INTRANSIT_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.inTransit.count(), loadingTime)
+              )
+            }
+            Companion.byTypeId(2) -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_TRIPS_AWAITING_LOADING,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_LOADING_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.awaitingLoading.count(), loadingTime)
+              )
+            }
+            else -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_TRIPS_AWAITING_UNLOADING,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_UNLOADING_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.awaitingUnloading.count(), loadingTime)
+              )
+            }
+          }
+        } else if (viewModel.viewType.equals("payment_view")) {
+          when (viewModel.viewPaymentType) {
+            ViewPaymentType.byTypeId(0) -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_ADVANCE_PENDING,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_ADVANCE_PENDING_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.advancePending.count(), loadingTime)
+              )
+            }
+            ViewPaymentType.byTypeId(1) -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_BALANCE_PENDING,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_BALANCE_PENDING_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.balancePending.count(), loadingTime)
+              )
+
+            }
+            else -> {
+              analyticsUtil.trackEvent(
+                      EVENT_VIEW_RECOVERY_PENDING,
+                      mutableListOf(PROPERTY_USER_ID, PROPERTY_RECOVERY_PENDING_COUNT, PROPERTY_LOADING_TIME),
+                      mutableListOf(userPrefs.userId(), it.recoveryPending.count(), loadingTime)
+              )
+            }
+          }
+        }
+        else{
+          val total = it.awaitingArrival.count!! + it.inTransit.count!! + it.awaitingPod.count!! + it .awaitingLoading.count!! + it.awaitingUnloading.count!!
+          analyticsUtil.trackEvent(
+                  EVENT_VIEW_ALL_TRIPS,
+                  mutableListOf(PROPERTY_USER_ID , PROPERTY_ALL_TRIPS_COUNT , PROPERTY_LOADING_TIME),
+                  mutableListOf(userPrefs.userId() , total.toString() ,loadingTime)
+          )
+        }
+      }
     })
 
     viewModel.tripsCountLiveData.observe(this, Observer {
@@ -214,42 +286,49 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     })
 
     binding.viewAdvancePending.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.viewPaymentType = ViewPaymentType.byTypeId(0)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewBalancePending.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.viewPaymentType = ViewPaymentType.byTypeId(1)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewRecoveryPending.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.viewPaymentType = ViewPaymentType.byTypeId(2)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewAwaitingArrival.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.tripType = Companion.byTypeId(0)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewInTransit.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.tripType = Companion.byTypeId(1)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewAwaitingLoading.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.tripType = Companion.byTypeId(2)
       setHeaderResources()
       refreshData()
     }
 
     binding.viewAwaitingUnloading.setOnClickListener {
+      userPrefs.startTime = Date().time
       viewModel.tripType = Companion.byTypeId(3)
       setHeaderResources()
       refreshData()
@@ -261,7 +340,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     binding.filterIcon.setOnClickListener {
       if (viewModel.filterList.isNotEmpty() && viewModel.filterList.size <= 4) {
-        TripsFilterDialog(this, viewModel.filterList, viewModel).show()
+        TripsFilterDialog(this, viewModel.filterList, viewModel,analyticsUtil,userPrefs,viewModel.filterKey).show()
       }
     }
 
@@ -312,6 +391,11 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
       binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
       if (viewModel.loadingDate.isNotNullOrEmpty()) {
+        analyticsUtil.trackEvent(
+                EVENT_FILTER_ALL_TRIPS,
+                mutableListOf(PROPERTY_USER_ID , PROPERTY_LOADED_AFTER , PROPERTY_ONLY_SETTLED),
+                mutableListOf(userPrefs.userId() , viewModel.loadingDate ,viewModel.isSettledFilter.toString())
+        )
         fetchTripDetails()
       } else {
         uiUtils.showSnackbar("Please choose valid date")
@@ -331,7 +415,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.fetchTrips(false)
   }
 
-  private fun refreshData() {
+  private fun refreshData(intent: Boolean = false) {
+    intentRefresh = intent
     viewModel.fetchTripsSummary()
     fetchTripDetails()
   }

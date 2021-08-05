@@ -52,6 +52,9 @@ class HomeBidsViewModel @Inject constructor(
   var total = 0
   var offset = 0
   var hasMoreData = true
+  var activeBids = ""
+  var confirmedBids= ""
+  var lostBids= ""
 
   /**
    * Fetch bids summary
@@ -61,6 +64,9 @@ class HomeBidsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
+            activeBids=_res.myBids.toString()
+            confirmedBids=_res.confirmedBids.toString()
+            lostBids=_res.lostBids.toString()
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(

@@ -9,6 +9,11 @@ import android.view.WindowManager
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.delhivery.axle.databinding.DialogTripsFilterBinding
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_FILTER_BALANCE_PENDING
+import com.delhivery.axle.utils.PROPERTY_FILTER_SELECTED
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.prefs.UserPrefs
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -18,14 +23,17 @@ import com.delhivery.axle.databinding.DialogTripsFilterBinding
 class TripsFilterDialog (
   context: Context,
   private val filterList: List<String>,
-    private val dialogInterface: FilterTripsInterface
-) : AlertDialog(context) {
+  private val dialogInterface: FilterTripsInterface,
+  private val analyticsUtil: AnalyticsUtil,
+  private val userPrefs: UserPrefs,
+  private val filterKey : String) : AlertDialog(context) {
 
   /* dialog binding */
   private lateinit var binding: DialogTripsFilterBinding
   private lateinit var radioButton: RadioButton
 
   private var optionFilter = ""
+  var event=false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -52,6 +60,9 @@ class TripsFilterDialog (
           binding.filter4.visibility = View.GONE
         }
         2 -> {
+          if(filterKey == "trips_with_issue") {
+            event = true
+          }
           binding.filter1.visibility = View.VISIBLE
           binding.filter2.visibility = View.VISIBLE
           binding.filter1.text = filterList[0]
@@ -92,6 +103,15 @@ class TripsFilterDialog (
       binding.btnConfirm.setOnClickListener {
         val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
         radioButton = findViewById(selectedOption)!!
+
+        if(event){
+          analyticsUtil.trackEvent(
+                  EVENT_FILTER_BALANCE_PENDING,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_FILTER_SELECTED),
+                  mutableListOf(userPrefs.userId(), radioButton.text.toString())
+          )
+        }
+
         optionFilter = filterValue(radioButton.text.toString())
         dialogInterface.onConfirmClick(optionFilter)
         dismiss()

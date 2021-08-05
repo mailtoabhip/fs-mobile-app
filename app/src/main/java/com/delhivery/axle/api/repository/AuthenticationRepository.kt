@@ -5,6 +5,9 @@ import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.RequestOTP
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_AUTO_LOGOUT
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Date
@@ -65,7 +68,10 @@ class AuthenticationRepository @Inject constructor(
   /**
    * Logout current user
    */
-  fun logout() {
+  fun logout(intent :String = "notFromUser") {
+    if(intent== "notFromUser"){
+      //analyticsUtil.trackEvent(EVENT_AUTO_LOGOUT)
+    }
     DelhiveryNetworkInterceptor.instance.updateJWT(null)
     userPrefs.clearPrefs()
     /* delete user pref db's and other user-related cache */

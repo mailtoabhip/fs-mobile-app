@@ -26,9 +26,15 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
+import com.delhivery.axle.utils.EVENT_CALL_HELPLINE
+import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
+import com.delhivery.axle.utils.PROPERTY_PAGE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import javax.inject.Inject
 
 /**
  * Home screen
@@ -43,6 +49,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun requireConnection() = true
 
   var fragmentType : String ?= ""
+
+  @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
@@ -143,6 +151,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     return when (item?.itemId) {
       R.id.nav_call -> {
+        analyticsUtil.trackEvent(
+                EVENT_CALL_VENDOR_DESK,
+                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(userPrefs.userId())
+        )
         callHelpline()
         true
       }

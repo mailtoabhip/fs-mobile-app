@@ -32,18 +32,9 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationC
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
-import com.delhivery.axle.utils.EVENT_LIST_HEADER
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
-import com.delhivery.axle.utils.PROPERTY_ITEM
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.REQCODE_NO_ROUTES
-import com.delhivery.axle.utils.VALUE_ACTIVE
-import com.delhivery.axle.utils.VALUE_BID
-import com.delhivery.axle.utils.VALUE_CONFIRMED
-import com.delhivery.axle.utils.VALUE_LOST
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * All bids screen on home
@@ -52,6 +43,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
 
   var _title: String = "My Bids"
+  var launch : Boolean =true
+  @Inject lateinit var userPrefs: UserPrefs
 
   override val title: CharSequence
     get() = _title
@@ -97,6 +90,14 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
+     if(launch) {
+       analyticsUtil.trackEvent(
+               EVENT_VIEW_BIDS_SCREEN,
+               mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
+               mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
+       )
+       launch=false
+     }
       it?.let { _items -> adapter.operation(_items) }
     })
 
@@ -145,9 +146,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsHeaderAction_MyBids -> {
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_LIST_HEADER,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_BID, VALUE_ACTIVE)
+            EVENT_VIEW_ACTIVE_BIDS,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
+            mutableListOf(userPrefs.userId(), viewModel.activeBids)
         )
         startActivityForResult(userBidsIntent(context!!, ActiveBid), REQCODE_NO_ROUTES)
       }
@@ -155,9 +156,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsHeaderAction_ConfirmedBids -> {
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_LIST_HEADER,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_BID, VALUE_CONFIRMED)
+            EVENT_VIEW_CONFIRMED_BIDS,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
+            mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
         )
         startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQCODE_NO_ROUTES)
       }
@@ -165,9 +166,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsHeaderAction_LostBids -> {
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_LIST_HEADER,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_ITEM),
-            mutableListOf(VALUE_BID, VALUE_LOST)
+            EVENT_VIEW_LOST_BIDS,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
+            mutableListOf(userPrefs.userId(), viewModel.lostBids)
         )
         startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
       }

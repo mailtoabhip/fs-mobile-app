@@ -76,6 +76,7 @@ enum class TransactionBidStatus(
 ) {
   Open("open", "Active"),
   Rejected("rejected", "Lost"),
+  Cancelled("cancelled", "Cancelled"),
   Accepted("accepted", "Confirmed"),
   NA("na", "NA");
 

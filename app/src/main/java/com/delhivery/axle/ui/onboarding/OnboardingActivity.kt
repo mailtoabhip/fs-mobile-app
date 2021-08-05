@@ -14,6 +14,8 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.EVENT_SKIP_TUTORIAL
+import com.delhivery.axle.utils.EVENT_VIEW_TUTORIAL
 import com.github.florent37.kotlin.pleaseanimate.please
 
 /**
@@ -52,7 +54,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
 
 
     /* skip */
-    binding.textSkip.setOnClickListener { skip() }
+    binding.textSkip.setOnClickListener { skip(true) }
 
     /* next page fab */
     binding.fabNext.setOnClickListener { moveNext() }
@@ -84,6 +86,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
    * Move to next page
    */
   private fun moveNext() {
+    analyticsUtil.trackEvent(EVENT_VIEW_TUTORIAL)
     val currentPage = binding.viewpager.currentItem
     if (currentPage < adapter.count - 1) {
       binding.viewpager.setCurrentItem(currentPage + 1, true)
@@ -92,7 +95,10 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
     }
   }
 
-  private fun skip() {
+  private fun skip(intentSkip :Boolean =false) {
+    if(intentSkip) {
+      analyticsUtil.trackEvent(EVENT_SKIP_TUTORIAL)
+    }
     viewModel.onboardingCompleted()
     when (viewModel.isUserAuthenticated()) {
       true -> HomeActivity::class

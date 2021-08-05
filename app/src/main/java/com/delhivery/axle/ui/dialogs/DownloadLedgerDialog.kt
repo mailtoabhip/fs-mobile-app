@@ -12,12 +12,16 @@ import android.widget.RadioButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DownloadLedgerDialog(
         context: Context,
-        private val dialogInterface: DownloadLedgerInterface
+        private val dialogInterface: DownloadLedgerInterface,
+        private val analyticsUtil: AnalyticsUtil,
+        private val userPrefs: UserPrefs
 ) : AlertDialog(context){
     /* dialog binding */
     private lateinit var binding: DialogDownloadLedgerBinding
@@ -117,6 +121,32 @@ class DownloadLedgerDialog(
         }
         return false
     }
+    private fun calculateDuration() :String{
+        try{
+            var sdf = SimpleDateFormat("dd/MM/yyyy")
+            var start = sdf.parse(binding.editStartDate.text.toString())
+            var end = sdf.parse(binding.editEndDate.text.toString())
+
+            var milli: Long = end.time - start.time
+
+
+            val secondsInMilli: Long = 1000
+            val minutesInMilli = secondsInMilli * 60
+            val hoursInMilli = minutesInMilli * 60
+            val daysInMilli = hoursInMilli * 24
+
+            val elapsedDays: Long = milli / daysInMilli
+            milli %= daysInMilli
+
+            return "$elapsedDays days"
+
+
+        }catch (exception: Exception){
+            exception.printStackTrace()
+        }
+
+        return ""
+    }
 
     private fun downloadDialog(){
         if(!isDateCorrect()){
@@ -125,8 +155,14 @@ class DownloadLedgerDialog(
             Log.d("DownloadDialog","Please select valid dates")
         }else{
             //download report
+            val duration = calculateDuration()
             val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
             radioButton = findViewById(selectedOption)!!
+            analyticsUtil.trackEvent(
+                    EVENT_DOWNLOAD_LEDGER,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_OPTION_SELECTED, PROPERTY_DURATION_SELECTED, PROPERTY_DOWNLOADED_EMAILED_SELECTED),
+                    mutableListOf(userPrefs.userId(), radioButton.text.toString(), duration, VALUE_DOWNLOADED)
+            )
             optionFilter = getFilterString(radioButton.text.toString())
             dialogInterface.onDownloadClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter)
             dismiss()
@@ -148,8 +184,14 @@ class DownloadLedgerDialog(
 
         }else{
             //email report
+            val duration = calculateDuration()
             val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
             radioButton = findViewById(selectedOption)!!
+            analyticsUtil.trackEvent(
+                    EVENT_DOWNLOAD_LEDGER,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_OPTION_SELECTED, PROPERTY_DURATION_SELECTED, PROPERTY_EMAIL_ENTERED, PROPERTY_DOWNLOADED_EMAILED_SELECTED),
+                    mutableListOf(userPrefs.userId(), radioButton.text.toString(), duration , binding.editEmailId.text.toString(), VALUE_EMAILED)
+            )
             optionFilter = getFilterString(radioButton.text.toString())
             dialogInterface.onEmailClick(startDate, startMonth, startYear, endDate, endMonth, endYear, optionFilter, binding.editEmailId.text.toString())
             dismiss()

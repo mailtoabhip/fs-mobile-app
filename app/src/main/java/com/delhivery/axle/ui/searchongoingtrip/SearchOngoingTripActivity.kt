@@ -16,7 +16,12 @@ import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchOngoingTripBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.utils.EVENT_SEARCH_TRIPS
+import com.delhivery.axle.utils.PROPERTY_ENTERED_VALUE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -33,6 +38,8 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
   override fun requireConnection() = true
 
   var isLoadingData = true
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   init {
     hasInlineProgress = true
@@ -54,6 +61,11 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     }
 
     viewModel.searchLiveData.observe(this, Observer {
+      analyticsUtil.trackEvent(
+              EVENT_SEARCH_TRIPS,
+              mutableListOf(PROPERTY_USER_ID , PROPERTY_ENTERED_VALUE),
+              mutableListOf(userPrefs.userId() , binding.editQuery.text.toString())
+      )
       adapter.resetStaticData()
       if (it != null) {
         adapter.operation(it)

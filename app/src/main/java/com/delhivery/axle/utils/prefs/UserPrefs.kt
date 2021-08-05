@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
+import com.auth0.android.jwt.JWT
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import javax.inject.Inject
@@ -136,6 +137,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.UserType, "") ?: ""
 
   /**
+   * User Performance
+   */
+  var userPerformance: String
+    set(value) = editor.putString(PrefKeys.UserOverallPerformance, value).apply()
+    get() = prefs.getString(PrefKeys.UserOverallPerformance, "") ?: ""
+
+  /**
+   * User Demand type
+   */
+  var userDemandType: String
+    set(value) = editor.putString(PrefKeys.UserDemandType, value).apply()
+    get() = prefs.getString(PrefKeys.UserDemandType, "") ?: ""
+
+
+  /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
@@ -231,6 +247,24 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.DemandType, "")!!
 
+  var logoutStatus: String
+    set(value) = editor.putString(PrefKeys.LogoutStatus, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.LogoutStatus, "") ?: ""
+
+  /**
+   *  Start Time
+   */
+  var startTime: Long
+    set(value) = editor.putLong(PrefKeys.StartTime, value)
+            .apply()
+    get() = prefs.getLong(PrefKeys.StartTime , 0)
+
+  var firstRoute: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsFirstRoute, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.IsFirstRoute, false)
+
   /**
    * Clear all preferences
    */
@@ -280,6 +314,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.TruckTypes)
         .apply()
     editor.remove(PrefKeys.DemandType)
+    editor.remove(PrefKeys.LogoutStatus)
+        .apply()
+    editor.remove(PrefKeys.StartTime)
+        .apply()
+    editor.remove(PrefKeys.IsFirstRoute)
+        .apply()
+    editor.remove(PrefKeys.UserOverallPerformance)
+        .apply()
+    editor.remove(PrefKeys.UserDemandType)
         .apply()
     editor.commit()
   }
@@ -307,6 +350,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       user.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
     demandType = user.demandType.joinToString(separator = ",") {it}
+    userPerformance = user.overallPerformance ?: ""
+    userDemandType = user.demandType.toString()
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -317,6 +362,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   } else {
     DISABLED
   }
+
+
+  /**
+   * Current user id
+   */
+  fun userId() = jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
 
   /**
    * Pref keys
@@ -349,6 +400,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserType = "user_type"
     const val TruckTypes = "truck_types"
     const val DemandType = "demand_type"
+    const val LogoutStatus = "logout_status"
+    const val StartTime = "start_time"
+    const val IsFirstRoute = "first_route"
+    const val UserOverallPerformance = "overall_performance"
+    const val UserDemandType = "demand_type"
   }
 }
 

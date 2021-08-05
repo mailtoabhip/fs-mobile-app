@@ -7,6 +7,7 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment
+import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -133,8 +134,8 @@ class NavigationUtils @Inject constructor(
   /**
    * Logout and navigate to login screen
    */
-  fun logout(message: String) {
-    authRepository.logout()
+  fun logout(message: String, intention: String = "notFromUser") {
+    authRepository.logout(intention)
     uiUtils.showToast(message)
     Intent(activity, AuthenticationActivity::class.java)
         .let {

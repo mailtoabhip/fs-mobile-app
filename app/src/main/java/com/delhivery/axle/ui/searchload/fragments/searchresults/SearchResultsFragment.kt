@@ -19,17 +19,7 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
-import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
-import com.delhivery.axle.utils.PROPERTY_DESTINATION
-import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
-import com.delhivery.axle.utils.PROPERTY_ORIGIN
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
-import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.setup
@@ -226,10 +216,12 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       analyticsUtil.trackEvent(
           event,
           mutableListOf(
+              PROPERTY_USER_ID,
               PROPERTY_ORIGIN, PROPERTY_DESTINATION,
               PROPERTY_TRUCK_TYPE, PROPERTY_NUM_RESULTS
           ),
           mutableListOf(
+              userPrefs.userId(),
               binding.origin?.cityName() ?: "Anywhere",
               binding.destination?.cityName() ?: "Anywhere",
               binding.spinnerTruckType.selectedItem.toString(),

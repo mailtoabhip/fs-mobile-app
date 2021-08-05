@@ -279,6 +279,7 @@
   <string name="label_recoveries_adjusted">Recoveries Adjusted</string>
   <string name="label_pending_recovery">Pending Recovery</string>
   <string name="call_driver">CALL DRIVER</string>
+  <string name="cancelled_bid_msg">The load request itself is cancelled</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
