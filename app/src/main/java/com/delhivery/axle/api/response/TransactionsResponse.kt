@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName
 
 data class TransactionsResponse(
   @SerializedName("has_next") val hasNext: Boolean,
-  @SerializedName("more_loads") val more_loads: Boolean,
   @SerializedName("load_price_percent") val loadPricePercent: Int,
   @SerializedName("total") val total: Int,
   @SerializedName("offset") val offset: Int,
