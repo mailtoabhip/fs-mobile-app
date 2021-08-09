@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
+import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
@@ -17,6 +18,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Filters
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.MoreInfo
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
@@ -40,6 +42,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
+    MoreInfo -> ViewHomeLoadsMoreInfoItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeLoadsFilterItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
@@ -50,6 +53,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
+    is ViewHomeLoadsMoreInfoItemBinding -> HomeLoadsMoreInfoItemVH(binding)
     is ViewTimeOutItemBinding -> HomeLoadsTimeOutItemVH(binding)
     is ViewHomeLoadsFilterItemBinding -> HomeLoadsFilterItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
@@ -66,8 +70,28 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsWarningItemVH -> holder.bind(item as HomeLoadsWarningItem, _interface)
       is HomeLoadsTimeOutItemVH -> holder.bind(item as HomeLoadsTimeoutItem, _interface)
       is HomeLoadsInfoItemVH -> holder.bind(item as HomeLoadsInfoItem, _interface)
+      is HomeLoadsMoreInfoItemVH -> holder.bind(item as HomeLoadsMoreInfoItem, _interface)
       is HomeLoadsFilterItemVH -> holder.bind(item as HomeLoadsFilterItem, _interface)
     }
+  }
+
+  /**
+   * Remove info/warning/timeout data
+   */
+  fun removeInfoData() {
+    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      add(Pair(HomeLoadsProgressItem(), AddUpdate))
+      items.filter {
+        it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo
+      }
+        .map { Pair(it, Remove) }
+        .let {
+          addAll(it)
+        }
+    }
+      .let {
+        operation(it)
+      }
   }
 
   /**
@@ -77,7 +101,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter {
-        it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == Search || it.type == Filters
+        it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters
       }
           .map { Pair(it, Remove) }
           .let {

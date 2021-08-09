@@ -3,8 +3,7 @@ package com.delhivery.axle.data.home.loads
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeLoadsInfoItemData(
-  val searchString: String = "",
-  val editRouteString: String = ""
+  val searchString: String = ""
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeLoadsInfoItemDataKey
 }
@@ -14,4 +13,3 @@ const val HomeLoadsInfoItemDataKey = "info"
 
 /* actions */
 const val HomeLoadsInfoAction_Search = "search_info"
-const val HomeLoadsInfoAction_EditRoute = "edit_route"

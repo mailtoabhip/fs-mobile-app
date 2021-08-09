@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.CompoundButton
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,11 +19,11 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
@@ -34,10 +34,9 @@ import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
-import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -57,7 +56,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
-  var express = ""
+  var express: String?= null
   var isExpress = false
 
   @Inject lateinit var dialogUtils: DialogUtils
@@ -198,8 +197,6 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       isLoadingData = it ?: false
     })
 
-    refreshData()
-
     if (viewModel.isFCMTokenGenerated()) {
       fcmUtils.generateToken {
         if (it.isNotNullOrEmpty()) {
@@ -207,6 +204,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         }
       }
     }
+
+    refreshData()
 
     viewModel.updateUserAppAccess()
   }
@@ -222,6 +221,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   }
 
   private fun refreshData() {
+    viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
     viewModel.fetchUserTransactions(false, express, isExpress)
@@ -244,7 +244,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         context?.let { startActivity(bidDetailsIntent(data.key(), it)) }
       }
 
-      HomeLoadsInfoAction_Search, HomeLoadsSearchAction_Search -> {
+      HomeLoadsSearchAction_Search -> {
         context?.let {
           startActivity(
               Intent(it, SearchLoadActivity::class.java)
@@ -290,14 +290,97 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
         if (isExpress) {
           isExpress = false
-          express = ""
+          express = null
         } else {
           isExpress = true
           express = "EXP"
         }
         refreshData()
       }
+
+      HomeLoadsVehicleFilterAction -> {
+        showVehicleFilterDialog()
+      }
+
+      HomeLoadsInfoAction_Search -> {
+        viewModel.hasOrionLoadOnce = true
+        adapter.removeInfoData()
+        val all_truck_types = listOf("open", "closed", "trailer")
+        var currentVehicleFilterList = listOf<String>()
+        var exclude_truck_types = listOf<String>()
+        currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
+          viewModel.passing_vehicle_type!!.split(",")
+        } else {
+          userPrefs.truckTypes!!.split(",")
+        }
+
+        if (currentVehicleFilterList.contains("all")) {
+          exclude_truck_types = listOf("open", "closed", "trailer")
+        } else {
+          for (vehicle in all_truck_types) {
+            if (currentVehicleFilterList.contains(vehicle)) {
+              exclude_truck_types = exclude_truck_types + vehicle
+            }
+          }
+        }
+        val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
+        viewModel.filterVehicleType = null
+        viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
+      }
     }
+  }
+
+  private fun showVehicleFilterDialog(){
+    lateinit var dialog: AlertDialog
+
+    // Initialize an array of vehicles
+    val arrayVehicle = arrayOf("open","closed","trailer","all")
+
+    val arrayChecked = booleanArrayOf(false,false,false,false)
+
+    var currentVehicleFilterList = listOf<String>()
+    currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
+      viewModel.passing_vehicle_type!!.split(",")
+    } else {
+      userPrefs.truckTypes!!.split(",")
+    }
+    if (currentVehicleFilterList.isNotEmpty()) {
+      for (vehicle in currentVehicleFilterList) {
+        if (arrayVehicle.contains(vehicle))
+        {
+          arrayChecked[arrayVehicle.indexOf(vehicle)] = true
+        }
+      }
+    }
+
+    val builder = AlertDialog.Builder(context)
+
+    builder.setTitle("-- Select vehicle types --")
+
+    builder.setMultiChoiceItems(arrayVehicle, arrayChecked) { _, which, isChecked ->
+      arrayChecked[which] = isChecked
+    }
+
+    builder.setPositiveButton("Filter") { _, _ ->
+
+      var filterVehicleTypes = listOf<String>()
+      for (vehicle in arrayVehicle) {
+        if (arrayChecked[arrayVehicle.indexOf(vehicle)]) {
+          filterVehicleTypes  = filterVehicleTypes + vehicle
+        }
+      }
+
+      viewModel.vehicleStr = filterVehicleTypes.joinToString( separator = ",") {it}
+      viewModel.filterVehicleType = true
+      refreshData()
+    }
+
+    builder.setNegativeButton("Cancel") {_, _ ->
+      dialog.dismiss()
+    }
+
+    dialog = builder.create()
+    dialog.show()
   }
 
   override fun handleAction(
