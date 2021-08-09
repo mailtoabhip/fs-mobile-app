@@ -68,17 +68,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* pagination params */
   var hasMoreData = true
-  var more_default_loads = false
-  var vehicleTypes: String?= null
-  var passing_vehicle_type: String?= null
-  var filterVehicleType: Boolean?= null
   var offset = 0
   var total = 0
-  var hasOrionLoadOnce = false
-
-  /* vehicle_type filter */
-  var vehicleStr = userPrefs.truckTypes
-  var type = userPrefs.demandType
 
   /**
    * Getter/Setter for route update flag to preferences
@@ -103,10 +94,8 @@ class HomeLoadsViewModel @Inject constructor(
   /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(
-    paginate: Boolean = false, express: String?= null,
-    isExpress: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
-    if (!paginate || infoSearch) {
+  fun fetchUserTransactions(paginate: Boolean = false, express: String = "", isExpress: Boolean = false) {
+    if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
       return
@@ -116,21 +105,14 @@ class HomeLoadsViewModel @Inject constructor(
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
-    passing_vehicle_type = vehicleStr
-    vehicleTypes = passing_vehicle_type
-    if (infoSearch) {
-      vehicleTypes = null
-    }
-
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, vehicleTypes, express, excludeTruckTypes, filterVehicleType)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, express)
         .flatMap { t ->
           offset = t.offset
           total = t.total
           hasMoreData = t.offset != t.total
           loadPricePercent = t.loadPricePercent
-          more_default_loads = t.more_loads
           loadsCountLiveData.postValue(total)
 
           Single.zip(
@@ -151,7 +133,7 @@ class HomeLoadsViewModel @Inject constructor(
               val loads = _tRes.first
               val bids = _tRes.second
 
-              if (total == 0 && !infoSearch) {
+              if (total == 0) {
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
@@ -174,10 +156,9 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsRequestItem(load), Add))
                 }
 
-                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                if (!hasMoreData) {
                   add(Pair(HomeLoadsInfoItem(), AddUpdate))
                 }
-                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
               }
             }
                 .let { userLoadsData.postValue(it) }
