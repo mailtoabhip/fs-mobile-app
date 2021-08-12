@@ -22,8 +22,8 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
-import kotlin.math.abs
-import kotlin.math.roundToInt
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *
@@ -49,6 +49,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
+  @SerializedName("creation_time") val creationTime :String,
   @SerializedName("requested_capacity_mg") var requestedCapacityMg: Double,
   @SerializedName("pmt_rate") var pmtRate: Double,
   @SerializedName("distance") var distance: Double,
@@ -561,6 +562,30 @@ data class HomeBidsRequestItemData(
       }
     }
     return condition1 || condition2
+  }
+
+  /**return time lapse between bid creation and indent creation
+   *
+   */
+  fun timeLapse() :String{
+    val sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    val creationTime = sdf.parse(creationTime)
+    var time = Date().time - creationTime.time
+    val secondsInMilli: Long = 1000
+    val minutesInMilli = secondsInMilli * 60
+    val hoursInMilli = minutesInMilli * 60
+
+    val elapsedHours : Long  = time / hoursInMilli
+    time%=hoursInMilli
+
+    val elapsedMinutes :Long = time /minutesInMilli
+    time%=minutesInMilli
+
+    return if (elapsedHours.toInt() !=0) {
+      "$elapsedHours hours, $elapsedMinutes minutes"
+    } else{
+      "$elapsedMinutes minutes"
+    }
   }
 
   /**
