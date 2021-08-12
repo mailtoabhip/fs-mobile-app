@@ -149,7 +149,6 @@ class BidDetailsCreateEditDialog @Inject constructor(
         } else require(
             !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
         ) { "*Bid difference should be more than ₹500" }
-        var event: String ? = null
         if (transactionBid == null) {
           analyticsUtil.trackEvent(
                   EVENT_PLACE_BID,
@@ -161,23 +160,24 @@ class BidDetailsCreateEditDialog @Inject constructor(
               transaction.biddingType ?: "FTL", position
           )
         } else {
-          event = EVENT_EDIT_BID
-          analyticsUtil.trackEvent(
-                  EVENT_REVISE_BID_INTENT,
-                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId() , transaction.key() , userPrefs.userDemandType, userPrefs.userPerformance)
-          )
+          var event: String ? = null
+          if(transaction.layoutOneVisibility() || transaction.layoutTwoVisibility()) {
+            event = EVENT_EDIT_BID
+          }
+          else if(transaction.layoutThreeVisibility() || transaction.layoutFourVisibility()){
+            event = EVENT_REVISE_BID_INTENT
+          }
+          // Capture event
+          if (event != null) {
+            analyticsUtil.trackEvent(
+                    event,
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
+                    mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.userDemandType , userPrefs.userPerformance)
+            )
+          }
           dialogInterface.editBid(
               transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
               amount, pmtRate, transaction.biddingType ?: "FTL", position
-          )
-        }
-        // Capture event
-        if (event != null) {
-          analyticsUtil.trackEvent(
-                  event,
-                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.userDemandType , userPrefs.userPerformance)
           )
         }
         dismiss()
