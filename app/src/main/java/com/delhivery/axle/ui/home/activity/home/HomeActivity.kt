@@ -181,8 +181,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun markNotificationRead() {
     super.markNotificationRead()
-    Log.d("passed","passed"+userPrefs.userId()+userPrefs.userPerformance+notificationType)
-
     analyticsUtil.trackEvent(
             EVENT_NOTIFICATION_OPEN,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
