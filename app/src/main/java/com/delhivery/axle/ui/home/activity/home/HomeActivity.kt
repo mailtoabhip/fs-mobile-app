@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.activity.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.ViewCompat
@@ -26,10 +27,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
-import com.delhivery.axle.utils.EVENT_CALL_HELPLINE
-import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
-import com.delhivery.axle.utils.PROPERTY_PAGE
-import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -183,6 +181,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun markNotificationRead() {
     super.markNotificationRead()
+    Log.d("passed","passed"+userPrefs.userId()+userPrefs.userPerformance+notificationType)
+
+    analyticsUtil.trackEvent(
+            EVENT_NOTIFICATION_OPEN,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+            mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
+    )
+
     viewModel.markNotificationRead(notificationId)
   }
 

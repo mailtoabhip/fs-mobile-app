@@ -4,7 +4,10 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
@@ -16,10 +19,12 @@ import androidx.core.app.NotificationCompat.Builder
 import androidx.core.app.NotificationManagerCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.android.AndroidInjection
+import dagger.android.DaggerActivity
 import javax.inject.Inject
 
 /**
@@ -34,6 +39,19 @@ import javax.inject.Inject
 class DelhiveryFCMService : FirebaseMessagingService() {
 
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var analyticsUtil : AnalyticsUtil
+
+  private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+      val notificationType = intent?.extras?.get(ARGS_NOTIFICATION_TYPE)
+//      analyticsUtil.trackEvent(
+//              EVENT_NOTIFICATION_DISMISS,
+//              mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+//              mutableListOf(userPrefs.userId(), notificationType.toString() , userPrefs.userPerformance)
+//      )
+      unregisterReceiver(this)
+    }
+  }
 
   override fun onCreate() {
     AndroidInjection.inject(this)
@@ -63,6 +81,12 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     val transactions = remoteMessage.data["transaction_ids"] ?: ""
     val preferredTransactionId = remoteMessage.data["transaction_id"] ?: ""
 
+//    analyticsUtil.trackEvent(
+//            EVENT_NOTIFICATION_RECEIVE,
+//            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+//            mutableListOf(userPrefs.userId(), notificationType, userPrefs.userPerformance)
+//    )
+
     remoteMessage.notification?.let {
       val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
       val intent = Intent(this, HomeActivity::class.java).apply {
@@ -75,6 +99,14 @@ class DelhiveryFCMService : FirebaseMessagingService() {
       val pendingIntent = PendingIntent.getActivity(
           this, 0, intent, PendingIntent.FLAG_ONE_SHOT
       )
+
+      /*Dismiss Notification*/
+      val intentDismissNotification = Intent("NOTIFICATION_DELETED_ACTION").apply {
+        putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
+      }
+      val pendingIntentDismiss  = PendingIntent.getBroadcast(this , 0, intentDismissNotification , 0)
+      registerReceiver(receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"))
+
       val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
       notificationBuilder.setAutoCancel(true)
           .setDefaults(Notification.DEFAULT_ALL)
@@ -85,6 +117,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
           .setContentText(it.body)
           .setStyle(NotificationCompat.BigTextStyle().bigText(it.body))
           .setContentIntent(pendingIntent)
+          .setDeleteIntent(pendingIntentDismiss)
           .setAutoCancel(true)
           .setSound(soundUri)
 
