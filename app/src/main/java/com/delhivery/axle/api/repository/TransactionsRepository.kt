@@ -19,8 +19,11 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun fetchLoadBoardTransactions(offset: Int, speed: String) = transactionService.loadBoardTransactions(
-      userRepository.userId(), offset, UserTripsLoadLimit, "yes", speed
+  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,
+    speed: String?= null, excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null) =
+    transactionService.loadBoardTransactions(
+      userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
+      "yes", speed, excludeTruckTypes, filterVehicleType
   ).convertResponse()
 
   /**

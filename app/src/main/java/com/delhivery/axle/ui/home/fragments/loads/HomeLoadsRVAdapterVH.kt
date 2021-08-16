@@ -11,8 +11,10 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
+import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
@@ -149,6 +151,7 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
       binding.toggleRemovedMark.visibility = View.GONE
     }
     binding.llExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
+    binding.llVehicleFilter.clickToAction(HomeLoadsVehicleFilterAction, item, _interface)
   }
 }
 
@@ -182,16 +185,32 @@ internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
     val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
     val searchString = SpannableString(item.data.searchString)
     searchString.setSpan(
-        colorSpan, searchString.length - 13,
+        colorSpan, searchString.length - 12,
         searchString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     binding.textSearch.text = searchString
     binding.textSearch.clickToAction(HomeLoadsInfoAction_Search, item, _interface)
+  }
+}
+
+
+/**
+ * More Info item view holder
+ */
+internal class HomeLoadsMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsMoreInfoItemBinding, HomeLoadsMoreInfoItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsMoreInfoItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
 
     val editRouteString: Spannable = SpannableString(item.data.editRouteString)
     editRouteString.setSpan(
-        colorSpan, editRouteString.length - 6,
-        editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+      colorSpan, editRouteString.length - 6,
+      editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     binding.textEditRoute.text = editRouteString
     binding.textEditRoute.clickToAction(HomeLoadsInfoAction_EditRoute, item, _interface)

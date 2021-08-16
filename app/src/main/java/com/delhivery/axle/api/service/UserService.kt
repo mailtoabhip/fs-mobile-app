@@ -36,7 +36,8 @@ interface UserService {
    */
   @GET("/users/supplypartners/{user_id}")
   fun userDetails(
-    @Path("user_id") userId: String
+    @Path("user_id") userId: String,
+    @Query("include_parent") includeParent: Boolean = true
   ): Single<BaseResponse<UserModel>>
 
   /**

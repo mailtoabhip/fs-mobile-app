@@ -232,8 +232,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.IsParent, false)
 
   /**
-   *  Logout status
+   * Vendor truck types
    */
+  var truckTypes: String?
+    set(value) = editor.putString(PrefKeys.TruckTypes, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.TruckTypes, "")
+
+  /**
+   * Vendor type (Fleet / Orion / Internal)
+   */
+  var demandType: String
+    set(value) = editor.putString(PrefKeys.DemandType, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.DemandType, "")!!
+
   var logoutStatus: String
     set(value) = editor.putString(PrefKeys.LogoutStatus, value)
             .apply()
@@ -298,6 +311,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.IsParent)
         .apply()
+    editor.remove(PrefKeys.TruckTypes)
+        .apply()
+    editor.remove(PrefKeys.DemandType)
     editor.remove(PrefKeys.LogoutStatus)
         .apply()
     editor.remove(PrefKeys.StartTime)
@@ -328,6 +344,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     cityCode = user.baseCityCode
     isParent = user.isParent()
     userType = user.userType ?: ""
+    truckTypes = if (user.isParent()) {
+      user.truckTypes?.joinToString(separator = ",") {it}
+    } else {
+      user.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
+    }
+    demandType = user.demandType.joinToString(separator = ",") {it}
     userPerformance = user.overallPerformance ?: ""
     userDemandType = user.demandType.toString()
   }
@@ -376,6 +398,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val MaxCostPerKM = "max_cost_per_km"
     const val IsParent = "is_parent"
     const val UserType = "user_type"
+    const val TruckTypes = "truck_types"
+    const val DemandType = "demand_type"
     const val LogoutStatus = "logout_status"
     const val StartTime = "start_time"
     const val IsFirstRoute = "first_route"
