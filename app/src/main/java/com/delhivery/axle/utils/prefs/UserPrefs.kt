@@ -143,13 +143,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.UserOverallPerformance, value).apply()
     get() = prefs.getString(PrefKeys.UserOverallPerformance, "") ?: ""
 
-  /**
-   * User Demand type
-   */
-  var userDemandType: String
-    set(value) = editor.putString(PrefKeys.UserDemandType, value).apply()
-    get() = prefs.getString(PrefKeys.UserDemandType, "") ?: ""
-
 
   /**
    *  Has edited routes flag
@@ -322,8 +315,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.UserOverallPerformance)
         .apply()
-    editor.remove(PrefKeys.UserDemandType)
-        .apply()
     editor.commit()
   }
 
@@ -351,7 +342,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     }
     demandType = user.demandType.joinToString(separator = ",") {it}
     userPerformance = user.overallPerformance ?: ""
-    userDemandType = user.demandType.toString()
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -404,7 +394,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val StartTime = "start_time"
     const val IsFirstRoute = "first_route"
     const val UserOverallPerformance = "overall_performance"
-    const val UserDemandType = "demand_type"
   }
 }
 
