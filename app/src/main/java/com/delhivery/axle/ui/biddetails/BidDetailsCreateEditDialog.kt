@@ -153,7 +153,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
           analyticsUtil.trackEvent(
                   EVENT_PLACE_BID,
                   mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_TIME_LAPSE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.userDemandType , transaction.timeLapse(), userPrefs.userPerformance)
+                  mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , transaction.timeLapse(), userPrefs.userPerformance)
           )
           dialogInterface.createBid(
               transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
@@ -172,7 +172,7 @@ class BidDetailsCreateEditDialog @Inject constructor(
             analyticsUtil.trackEvent(
                     event,
                     mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                    mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.userDemandType , userPrefs.userPerformance)
+                    mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , userPrefs.userPerformance)
             )
           }
           dialogInterface.editBid(

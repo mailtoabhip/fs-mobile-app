@@ -174,7 +174,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           analyticsUtil.trackEvent(
                   EVENT_BID_INLINE_PROMPT,
                   mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.userDemandType, userPrefs.userPerformance)
+                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.demandType, userPrefs.userPerformance)
           )
 
         }
@@ -182,7 +182,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           analyticsUtil.trackEvent(
                   EVENT_BID_REVISE_PROMPT,
                   mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.userDemandType, userPrefs.userPerformance)
+                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.demandType, userPrefs.userPerformance)
           )
         }
 
