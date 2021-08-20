@@ -33,6 +33,7 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -124,13 +125,22 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     binding.btnResendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(EVENT_OTP_RESEND)
+      analyticsUtil.trackEvent(
+              EVENT_OTP_RESEND,
+              mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
+              mutableListOf(viewModel.phoneNo)
+      )
+      viewModel.otpSendCount +=1
       viewModel.sendOTP()
     }
 
     binding.btnSendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(EVENT_OTP_SEND)
+      analyticsUtil.trackEvent(
+              EVENT_OTP_SEND,
+              mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
+              mutableListOf(viewModel.phoneNo)
+      )
       viewModel.sendOTP()
     }
 
@@ -203,7 +213,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           SelectRoute -> {
             userPrefs.firstRoute = true
             // Capture event
-            analyticsUtil.trackEvent(EVENT_OTP_VERIFIED)
+            analyticsUtil.trackEvent(
+                    EVENT_OTP_VERIFIED,
+                    mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
+                    mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
+            )
             uiUtils.hideDelhiveryProgress()
             val bundle = Bundle()
             bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
@@ -215,7 +229,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
             // Capture event
-            analyticsUtil.trackEvent(EVENT_OTP_VERIFIED)
+            analyticsUtil.trackEvent(
+                    EVENT_OTP_VERIFIED,
+                    mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
+                    mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
+            )
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }

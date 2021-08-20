@@ -178,8 +178,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
                   true -> {
                     analyticsUtil.trackEvent(
                             EVENT_EDIT_PREFERENCES,
-                            mutableListOf(PROPERTY_USER_ID),
-                            mutableListOf(userPrefs.userId())
+                            mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
+                            mutableListOf(userPrefs.userId(), VALUE_COMPLETE_ROUTE)
                     )
                     setResult(Activity.RESULT_OK)
                     finish()
@@ -233,6 +233,13 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
 
           viewModel.updateUserRoutes(_routes, allRoutes) { _success ->
+
+            //Capture Event
+            analyticsUtil.trackEvent(
+                    EVENT_EDIT_PREFERENCES,
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
+                    mutableListOf(userPrefs.userId(), VALUE_DESTINATION_STATE)
+            )
             viewModel.setRoutesUpdated()
             finish()
           }

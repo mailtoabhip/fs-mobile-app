@@ -145,7 +145,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       if (it.first) {
         val data = adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
         BidDetailsCreateEditDialog(
-            context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs
+            context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs , "load_screen"
         ).show()
       }
     })
@@ -363,6 +363,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     builder.setPositiveButton("Filter") { _, _ ->
 
+      //Capture event
+      analyticsUtil.trackEvent(
+              EVENT_FILTER_VEHICLE_TYPE,
+              mutableListOf(PROPERTY_USER_ID),
+              mutableListOf(userPrefs.userId())
+      )
+
       var filterVehicleTypes = listOf<String>()
       for (vehicle in arrayVehicle) {
         if (arrayChecked[arrayVehicle.indexOf(vehicle)]) {
@@ -394,7 +401,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
               ).show()
             }
           }
