@@ -212,6 +212,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
   override fun onResume() {
     super.onResume()
+    viewModel.paginateCount = 0
     viewModel.checkUserRoutes()
     if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
@@ -220,7 +221,32 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     }
   }
 
+  override fun onStop() {
+    super.onStop()
+    if (viewModel.paginateCount > 0) {
+      analyticsUtil.trackEvent(
+              EVENT_LOAD_SCROLL,
+              mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE, PROPERTY_NO_OF_SCROLLS, PROPERTY_OVERALL_PERFORMANCE),
+              mutableListOf(userPrefs.userId(), userPrefs.demandType, viewModel.paginateCount.toString(), userPrefs.userPerformance)
+      )
+    }
+    viewModel.paginateCount = 0
+  }
+
+  override fun onPause() {
+    super.onPause()
+    if (viewModel.paginateCount > 0) {
+      analyticsUtil.trackEvent(
+              EVENT_LOAD_SCROLL,
+              mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE, PROPERTY_NO_OF_SCROLLS, PROPERTY_OVERALL_PERFORMANCE),
+              mutableListOf(userPrefs.userId(), userPrefs.demandType, viewModel.paginateCount.toString(), userPrefs.userPerformance)
+      )
+    }
+    viewModel.paginateCount = 0
+  }
+
   private fun refreshData() {
+    viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
@@ -303,6 +329,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       }
 
       HomeLoadsInfoAction_Search -> {
+        //Capture Event
+        analyticsUtil.trackEvent(
+                EVENT_SHOW_ADDITIONAL_LOADS,
+                mutableListOf(PROPERTY_USER_ID , PROPERTY_DEMAND_TYPE),
+                mutableListOf(userPrefs.userId(), userPrefs.demandType)
+        )
+
         viewModel.hasOrionLoadOnce = true
         adapter.removeInfoData()
         val all_truck_types = listOf("open", "closed", "trailer")

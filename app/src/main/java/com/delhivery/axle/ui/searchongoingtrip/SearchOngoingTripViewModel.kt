@@ -55,6 +55,8 @@ class SearchOngoingTripViewModel @Inject constructor(
   var searchText = ""
   var tripType: TripType = Unknown
   var request = SearchRequest()
+  var tripIdsRecd = mutableListOf<String>()
+  var searchProgress :Boolean = false
 
   fun searchTrips(paginate: Boolean = false) {
 
@@ -116,7 +118,9 @@ class SearchOngoingTripViewModel @Inject constructor(
               }
               /* post all trips with their respective payments as add */
               else {
+                tripIdsRecd.clear()
                 for (trip in trips) {
+                  tripIdsRecd.add(trip.transactionId)
                   trip.tds = userPrefs.tdsRate
                   trip.updatedTds = userPrefs.updatedTdsRate
                   try {
@@ -153,7 +157,7 @@ class SearchOngoingTripViewModel @Inject constructor(
             }
                 .let { searchLiveData.postValue(it) }
           }
-
+          searchProgress =true
           dataLoadingLiveData.postValue(false)
         }
   }

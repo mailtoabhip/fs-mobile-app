@@ -116,6 +116,8 @@ const val EVENT_NOTIFICATION_OPEN = "notification_open_event"
 const val EVENT_NOTIFICATION_RECEIVE = "notification_receive"
 const val EVENT_NOTIFICATION_DISMISS = "notification_dismiss"
 const val EVENT_APP_OPEN = "app_open"
+const val EVENT_VIEW_TRIP_RECOVERY_ADJUSTMENT = "view_trip_recovery_adjustment"
+const val EVENT_VIEW_TRIP_FUTURE_ADJUSTMENT = "view_trip_future_adjustment"
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
@@ -170,6 +172,10 @@ const val PROPERTY_NOTIFICATION_TYPE = "notification_type"
 const val PROPERTY_PAGE_NAME = "page_name"
 const val PROPERTY_OTP_SEND_COUNT = "otp_sent_count"
 const val PROPERTY_HOUR_OF_DAY = "hour_of_day"
+const val PROPERTY_NO_OF_SCROLLS = "no_of_scrolls"
+const val PROPERTY_AMOUNT_OF_RECOVERY_ADJUSTED = "amt_of_recovery_adjusted"
+const val PROPERTY_TRIP_AGAINST_RECOVERY_ADJUSTED = "trip_against_recovery_adjusted"
+const val PROPERTY_RECD_TRIP_IDS = "recd_trip_ids"
 
 
 
