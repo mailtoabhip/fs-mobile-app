@@ -21,6 +21,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import retrofit2.HttpException
+import java.util.*
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -114,10 +115,12 @@ class AuthenticationViewModel @Inject constructor(
               Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
+              userPrefs.lastLoginTime = Date().time
               LoadRequest
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
+              userPrefs.lastLoginTime = Date().time
               SelectRoute
             }
           } else {

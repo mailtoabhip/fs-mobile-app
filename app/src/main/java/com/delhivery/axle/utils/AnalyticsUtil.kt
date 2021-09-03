@@ -176,6 +176,7 @@ const val PROPERTY_NO_OF_SCROLLS = "no_of_scrolls"
 const val PROPERTY_AMOUNT_OF_RECOVERY_ADJUSTED = "amt_of_recovery_adjusted"
 const val PROPERTY_TRIP_AGAINST_RECOVERY_ADJUSTED = "trip_against_recovery_adjusted"
 const val PROPERTY_RECD_TRIP_IDS = "recd_trip_ids"
+const val PROPERTY_TIME_SINCE_LAST_LOGIN = "time_since_last_login"
 
 
 

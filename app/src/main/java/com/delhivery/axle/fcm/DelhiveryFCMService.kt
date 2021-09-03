@@ -39,7 +39,7 @@ import javax.inject.Inject
 class DelhiveryFCMService : FirebaseMessagingService() {
 
   @Inject lateinit var userPrefs: UserPrefs
-  //@Inject lateinit var analyticsUtil : AnalyticsUtil
+  @Inject lateinit var analyticsUtil : AnalyticsUtil
 
   private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
