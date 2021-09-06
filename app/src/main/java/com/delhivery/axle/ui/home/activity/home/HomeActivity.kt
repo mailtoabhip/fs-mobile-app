@@ -149,10 +149,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     return when (item?.itemId) {
       R.id.nav_call -> {
+         val fromPage :String = when (binding.viewpager.currentItem){
+          0 -> "loads_screen"
+          1 -> "bids_screen"
+          2 -> "pod_screen"
+          3 -> "trips_screen"
+          4 -> "profile_screen"
+           else -> "unknown"
+         }
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID),
-                mutableListOf(userPrefs.userId())
+                mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId() , fromPage)
         )
         callHelpline()
         true
