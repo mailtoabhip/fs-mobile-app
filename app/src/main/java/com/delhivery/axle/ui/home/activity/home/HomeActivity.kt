@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.home.activity.home
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -32,6 +33,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import javax.inject.Inject
 
 /**
@@ -107,6 +109,24 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
+
+    FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
+            .addOnSuccessListener(this){
+                Log.d("dynamicLink","Dynamic link Received")
+              var deepLink: Uri? = null
+              if (it != null) {
+                deepLink = it.link
+              }
+              if(deepLink != null){
+                Log.d("dynamicLink","Deep link Received" +deepLink.toString())
+                var type : String = deepLink.getQueryParameter("type")?:""
+                var tId :String = deepLink.getQueryParameter("transaction_id")?:""
+                Log.d("dynamicLink","Deep link Parameters $tId $type")
+              }
+            }
+            .addOnFailureListener(this){
+              Log.d("dynamicLink", "getDynamicLink:onFailure")
+            }
   }
 
   private fun processNotification() {

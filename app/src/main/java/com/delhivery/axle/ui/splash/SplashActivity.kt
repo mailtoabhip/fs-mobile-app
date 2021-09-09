@@ -7,6 +7,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
@@ -25,6 +26,7 @@ import com.delhivery.axle.ui.splash.SplashPostState.Onboarding
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import javax.inject.Inject
@@ -61,6 +63,27 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
     /* start splash animation */
     animate()
+    checkForDynamicLinks()
+  }
+
+  private fun checkForDynamicLinks() {
+    FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
+            .addOnSuccessListener(this){
+              Log.d("dynamicLinkFromSplash","Dynamic link Received")
+              var deepLink: Uri? = null
+              if (it != null) {
+                deepLink = it.link
+              }
+              if(deepLink != null){
+                Log.d("dynamicLinkFromSplash","Deep link Received" +deepLink.toString())
+                var type : String = deepLink.getQueryParameter("type")?:""
+                var tId :String = deepLink.getQueryParameter("transaction_id")?:""
+                Log.d("dynamicLinkFromSplash","Deep link Parameters $tId $type")
+              }
+            }
+            .addOnFailureListener(this){
+              Log.d("dynamicLinkFromSplash", "getDynamicLink:onFailure")
+            }
   }
 
   /**
