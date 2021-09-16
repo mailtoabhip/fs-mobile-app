@@ -545,10 +545,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           data.transactionId?.let {
             //Capture Event
             var event :String ?= null
-            if (data.eventType == "recovery_adjustment"){
+            if (data.eventType == VALUE_RECOVERY_ADJUSTMENT){
               event = EVENT_VIEW_TRIP_RECOVERY_ADJUSTMENT
             }
-            else if(data.eventType  == "future_adjustment"){
+            else if(data.eventType  == VALUE_FUTURE_ADJUSTMENT){
               event = EVENT_VIEW_TRIP_FUTURE_ADJUSTMENT
             }
             if (event != null) {
