@@ -11,11 +11,7 @@ import android.util.Log
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
-import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
-import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
+import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -23,6 +19,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
 import com.delhivery.axle.ui.splash.SplashPostState.Onboarding
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -45,7 +42,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   var latestCode :Int = 0
   var currentCode :Int =0
-
+  var type :String =""
+  var tid :String  = ""
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -76,9 +74,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               }
               if(deepLink != null){
                 Log.d("dynamicLinkFromSplash","Deep link Received" +deepLink.toString())
-                var type : String = deepLink.getQueryParameter("type")?:""
-                var tId :String = deepLink.getQueryParameter("transaction_id")?:""
-                Log.d("dynamicLinkFromSplash","Deep link Parameters $tId $type")
+                type = deepLink.getQueryParameter("type")?:""
+                tid = deepLink.getQueryParameter("id")?:""
+                Log.d("dynamicLinkFromSplash","Deep link Parameters $tid $type")
               }
             }
             .addOnFailureListener(this){
@@ -205,19 +203,28 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   }
 
   private fun postAnimate(state: SplashPostState) {
-    when (state) {
-      Onboarding -> OnboardingActivity::class
-      Auth -> AuthenticationActivity::class
-      Home -> HomeActivity::class
-    }.let {
+    /**
+     * Check If it's from deep link*/
+    if (state == Home && tid != "" && type == "dtl") {
       val bundle = Bundle()
-      if (!TextUtils.isEmpty(notificationId)) {
-        bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
-        bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
-        bundle.putString(ARGS_TRANSACTION_IDS, transactions)
-        bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+      bundle.putString(ARGS_DEEPLINK_TYPE , type)
+      bundle.putString(ARGS_DEEPLINK_ID , tid)
+      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+    } else {
+      when (state) {
+        Onboarding -> OnboardingActivity::class
+        Auth -> AuthenticationActivity::class
+        Home -> HomeActivity::class
+      }.let {
+        val bundle = Bundle()
+        if (!TextUtils.isEmpty(notificationId)) {
+          bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
+          bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
+          bundle.putString(ARGS_TRANSACTION_IDS, transactions)
+          bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+        }
+        navigationUtils.navigate(it.java, true, bundle)
       }
-      navigationUtils.navigate(it.java, true, bundle)
     }
   }
 }
