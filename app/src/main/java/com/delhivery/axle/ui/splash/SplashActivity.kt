@@ -10,23 +10,18 @@ import android.text.TextUtils
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
-import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
-import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
+import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
-import com.delhivery.axle.ui.splash.SplashPostState.Auth
-import com.delhivery.axle.ui.splash.SplashPostState.Home
-import com.delhivery.axle.ui.splash.SplashPostState.Onboarding
+import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -49,6 +44,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    //Capture event
+    val cal = Calendar.getInstance()
+    val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]
+    analyticsUtil.trackEvent(
+            EVENT_APP_OPEN,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_HOUR_OF_DAY),
+            mutableListOf(userPrefs.userId() , currentHourIn24Format.toString())
+    )
 
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
     transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""

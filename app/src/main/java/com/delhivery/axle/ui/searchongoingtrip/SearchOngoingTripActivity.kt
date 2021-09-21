@@ -16,10 +16,7 @@ import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchOngoingTripBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.utils.EVENT_SEARCH_TRIPS
-import com.delhivery.axle.utils.PROPERTY_ENTERED_VALUE
-import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -61,11 +58,14 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     }
 
     viewModel.searchLiveData.observe(this, Observer {
-      analyticsUtil.trackEvent(
-              EVENT_SEARCH_TRIPS,
-              mutableListOf(PROPERTY_USER_ID , PROPERTY_ENTERED_VALUE),
-              mutableListOf(userPrefs.userId() , binding.editQuery.text.toString())
-      )
+      if(viewModel.searchProgress) {
+        analyticsUtil.trackEvent(
+                EVENT_SEARCH_TRIPS,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_ENTERED_VALUE, PROPERTY_RECD_TRIP_IDS),
+                mutableListOf(userPrefs.userId(), binding.editQuery.text.toString(), viewModel.tripIdsRecd.joinToString(separator = ","))
+        )
+        viewModel.searchProgress=false
+      }
       adapter.resetStaticData()
       if (it != null) {
         adapter.operation(it)

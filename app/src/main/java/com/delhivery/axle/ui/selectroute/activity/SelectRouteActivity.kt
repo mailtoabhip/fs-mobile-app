@@ -159,8 +159,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             userPrefs.firstRoute = false
             analyticsUtil.trackEvent(
                     EVENT_ENTER_FIRST_OC,
-                    mutableListOf( PROPERTY_USER_ID , PROPERTY_ORIGIN_CITY_CAPTURED),
-                    mutableListOf( userPrefs.userId(), currentRoute!!.origin.city)
+                    mutableListOf( PROPERTY_USER_ID , PROPERTY_ORIGIN_CITY_CAPTURED , PROPERTY_TIME_SINCE_LAST_LOGIN),
+                    mutableListOf( userPrefs.userId(), currentRoute!!.origin.city ,  DateUtils.timeDiff(userPrefs.lastLoginTime))
             )
           }
           navigate(DestinationFragment)
@@ -178,8 +178,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
                   true -> {
                     analyticsUtil.trackEvent(
                             EVENT_EDIT_PREFERENCES,
-                            mutableListOf(PROPERTY_USER_ID),
-                            mutableListOf(userPrefs.userId())
+                            mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
+                            mutableListOf(userPrefs.userId(), VALUE_COMPLETE_ROUTE)
                     )
                     setResult(Activity.RESULT_OK)
                     finish()
@@ -211,8 +211,8 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             }
             analyticsUtil.trackEvent(
                     EVENT_CONFIRM_FIRST_ROUTE,
-                    mutableListOf(PROPERTY_USER_ID , PROPERTY_ROUTE_PREFERENCES),
-                    mutableListOf(userPrefs.userId() , currentRoute!!.origin.city + "to " + states.toString())
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_ROUTE_PREFERENCES , PROPERTY_TIME_SINCE_LAST_LOGIN),
+                    mutableListOf(userPrefs.userId() , currentRoute!!.origin.city + "to " + states.toString() , DateUtils.timeDiff(userPrefs.lastLoginTime))
             )
             navigationUtils.navigate(
                     HomeActivity::class.java, true
@@ -233,6 +233,13 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
 
           viewModel.updateUserRoutes(_routes, allRoutes) { _success ->
+
+            //Capture Event
+            analyticsUtil.trackEvent(
+                    EVENT_EDIT_PREFERENCES,
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
+                    mutableListOf(userPrefs.userId(), VALUE_DESTINATION_STATE)
+            )
             viewModel.setRoutesUpdated()
             finish()
           }

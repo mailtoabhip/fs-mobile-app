@@ -161,7 +161,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
               ).show()
             }
           }

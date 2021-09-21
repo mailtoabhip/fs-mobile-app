@@ -4,6 +4,7 @@ import android.content.Context
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -253,6 +254,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getLong(PrefKeys.StartTime , 0)
 
+  /**
+   *  Start Time
+   */
+  var lastLoginTime: Long
+    set(value) = editor.putLong(PrefKeys.LastLoginTime, value)
+            .apply()
+    get() = prefs.getLong(PrefKeys.LastLoginTime , Date().time)
+
   var firstRoute: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsFirstRoute, value)
             .apply()
@@ -310,6 +319,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.LogoutStatus)
         .apply()
     editor.remove(PrefKeys.StartTime)
+        .apply()
+    editor.remove((PrefKeys.LastLoginTime))
         .apply()
     editor.remove(PrefKeys.IsFirstRoute)
         .apply()
@@ -392,6 +403,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val DemandType = "demand_type"
     const val LogoutStatus = "logout_status"
     const val StartTime = "start_time"
+    const val LastLoginTime = "last_login_time"
     const val IsFirstRoute = "first_route"
     const val UserOverallPerformance = "overall_performance"
   }

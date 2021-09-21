@@ -109,6 +109,35 @@ object DateUtils {
     }
   }
 
+  fun timeDiff( startTime :Long , endTime : Long =Date().time) :String{
+    var milli: Long = endTime - startTime
+    val secondsInMilli: Long = 1000
+    val minutesInMilli = secondsInMilli * 60
+    val hoursInMilli = minutesInMilli * 60
+    val daysInMilli = hoursInMilli * 24
+
+    val elapsedDays: Long = milli / daysInMilli
+    milli %= daysInMilli
+
+    val elapsedHrs = milli / hoursInMilli
+    milli %= hoursInMilli
+
+    val elapsedMinutes  = milli / minutesInMilli
+    milli %= minutesInMilli
+
+    val elapsedSec = milli /secondsInMilli
+
+    return if (elapsedDays.toInt() != 0) {
+      "$elapsedDays days, $elapsedHrs hrs"
+    } else if (elapsedHrs.toInt() !=0){
+      "$elapsedHrs hrs, $elapsedMinutes minutes"
+    } else if(elapsedMinutes.toInt() != 0){
+      "$elapsedMinutes minutes, $elapsedSec sec"
+    } else{
+      "$elapsedSec sec"
+    }
+  }
+
   /**
    * @return parse date string and days diff of [date] from today
    */
