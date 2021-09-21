@@ -149,18 +149,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     return when (item?.itemId) {
       R.id.nav_call -> {
-         val fromPage :String = when (binding.viewpager.currentItem){
-          0 -> "loads_screen"
-          1 -> "bids_screen"
-          2 -> "pod_screen"
-          3 -> "trips_screen"
-          4 -> "profile_screen"
-           else -> "unknown"
-         }
+         //Capture Event
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
                 mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId() , fromPage)
+                mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
         )
         callHelpline()
         true
@@ -246,6 +239,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
  */
 interface TitleProvider {
   val title: CharSequence
+}
+
+enum class FragmentName(
+        val position: Int,
+        val frgName: String
+) {
+  LoadsFragment(0, "loads_screen"),
+  BidsFragment(1, "bids_screen"),
+  TripsFragment(3, "trips_screen" ),
+  ProfileFragment(4, "profile_screen"),
+  PODFragment(2, "pod_screeen"),
+  Unknown(-1, "unknown");
+
+  companion object {
+    /**
+     * Get FragmentName
+     */
+    fun fragmentName(pos: Int) = values().firstOrNull { it.position == pos }
+            ?: Unknown
+  }
 }
 
 private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
