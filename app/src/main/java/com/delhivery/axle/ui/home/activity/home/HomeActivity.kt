@@ -249,7 +249,7 @@ enum class FragmentName(
   BidsFragment(1, "bids_screen"),
   TripsFragment(3, "trips_screen" ),
   ProfileFragment(4, "profile_screen"),
-  PODFragment(2, "pod_screeen"),
+  PODFragment(2, "pod_screen"),
   Unknown(-1, "unknown");
 
   companion object {
