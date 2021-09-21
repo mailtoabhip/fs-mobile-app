@@ -13,4 +13,5 @@ object APIGenericExceptionMessage {
   const val UnauthorizedExceptionMessage = "Token Expired/Unauthorised"
   const val NotFoundExceptionMessage = "Not Found"
   const val InternalServerErrorExceptionMessage = "Internal server error"
+  const val BadGatewayExceptionMessage = "Bad Gateway"
 }
