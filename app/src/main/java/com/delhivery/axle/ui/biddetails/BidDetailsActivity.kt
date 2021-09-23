@@ -311,7 +311,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       APPROVED -> {
         binding.transaction?.let {
           BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
           ).show()
         }
       }

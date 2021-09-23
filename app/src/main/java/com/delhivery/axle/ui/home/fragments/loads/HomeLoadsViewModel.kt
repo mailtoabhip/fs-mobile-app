@@ -80,6 +80,8 @@ class HomeLoadsViewModel @Inject constructor(
   var vehicleStr = userPrefs.truckTypes
   var type = userPrefs.demandType
 
+  var paginateCount =0
+
   /**
    * Getter/Setter for route update flag to preferences
    */
@@ -113,6 +115,7 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     if (paginate) {
+      paginateCount += 1
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
     }
 
