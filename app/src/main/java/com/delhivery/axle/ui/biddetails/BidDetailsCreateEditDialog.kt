@@ -27,7 +27,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
   private val dialogInterface: BidDetailsCreateEditDialogInterface,
   private val position: Int = 0,
   private val analyticsUtil: AnalyticsUtil,
-  private var userPrefs: UserPrefs
+  private var userPrefs: UserPrefs,
+  private var fromPage :String
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -152,8 +153,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
         if (transactionBid == null) {
           analyticsUtil.trackEvent(
                   EVENT_PLACE_BID,
-                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_TIME_LAPSE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , transaction.timeLapse(), userPrefs.userPerformance)
+                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_TIME_LAPSE , PROPERTY_OVERALL_PERFORMANCE, PROPERTY_PAGE_NAME),
+                  mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , transaction.timeLapse(), userPrefs.userPerformance , fromPage)
           )
           dialogInterface.createBid(
               transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
@@ -171,8 +172,8 @@ class BidDetailsCreateEditDialog @Inject constructor(
           if (event != null) {
             analyticsUtil.trackEvent(
                     event,
-                    mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                    mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , userPrefs.userPerformance)
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE , PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), transaction.key() , userPrefs.demandType , userPrefs.userPerformance , fromPage)
             )
           }
           dialogInterface.editBid(

@@ -36,6 +36,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.VALUE_FUTURE_ADJUSTMENT
+import com.delhivery.axle.utils.VALUE_RECOVERY_ADJUSTMENT
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -389,7 +391,7 @@ class TripDetailsViewModel @Inject constructor(
                               charge.dnType ?: ""
                             }
                             deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: ${subHeading.capitalize()} of ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
-                                charge.appliedAmount, "", true, charge.transactionId))
+                                charge.appliedAmount, "", true, charge.transactionId, VALUE_FUTURE_ADJUSTMENT))
                           } else {
 
                           }
@@ -518,7 +520,7 @@ class TripDetailsViewModel @Inject constructor(
                         } ?: ""
                       }
                       recoveriesSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: $recoveryType of $vehicleNumber $loadedTime",
-                          data.recoveryAmount, "", true, data.recoveryTripId))
+                          data.recoveryAmount, "", true, data.recoveryTripId, VALUE_RECOVERY_ADJUSTMENT))
                     }
                   }
                 }
@@ -570,10 +572,10 @@ class TripDetailsViewModel @Inject constructor(
                       val title = "Recovered against: $recoveryType of $vehicleNumber $loadedTime"
                       if (utr.isNotNullOrEmpty()) {
                         recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
-                            data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId))
+                            data.recoveryAmount, "UTR: " + data.utrNumber, true, data.recoveryTripId, VALUE_RECOVERY_ADJUSTMENT))
                       } else {
                         recoveriesSummaryList.add(TripPaymentSummaryDetailItemData(title,
-                            data.recoveryAmount, "", true, data.recoveryTripId))
+                            data.recoveryAmount, "", true, data.recoveryTripId, VALUE_RECOVERY_ADJUSTMENT))
                       }
                     }
                   }

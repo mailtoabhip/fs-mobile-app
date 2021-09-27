@@ -543,6 +543,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         val data = item.data as TripPaymentSummaryDetailItemData
         if (data.redirectable == true) {
           data.transactionId?.let {
+            //Capture Event
+            var event :String ?= null
+            if (data.eventType == VALUE_RECOVERY_ADJUSTMENT){
+              event = EVENT_VIEW_TRIP_RECOVERY_ADJUSTMENT
+            }
+            else if(data.eventType  == VALUE_FUTURE_ADJUSTMENT){
+              event = EVENT_VIEW_TRIP_FUTURE_ADJUSTMENT
+            }
+            if (event != null) {
+              analyticsUtil.trackEvent(
+                        event,
+                        mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_TRIP_AGAINST_RECOVERY_ADJUSTED , PROPERTY_AMOUNT_OF_RECOVERY_ADJUSTED ),
+                        mutableListOf(userPrefs.userId() , viewModel.transactionId, data.transactionId ?: "" , data.formattedAmount() )
+                )
+            }
             startActivity(tripDetailsIntent(data.transactionId!!, this))
           }
         }

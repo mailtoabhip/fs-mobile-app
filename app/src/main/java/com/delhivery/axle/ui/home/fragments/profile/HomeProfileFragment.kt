@@ -157,8 +157,8 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
           it.dismiss()
           analyticsUtil.trackEvent(
                   EVENT_USER_LOGOUT,
-                  mutableListOf(PROPERTY_USER_ID),
-                  mutableListOf(userPrefs.userId())
+                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TIME_SINCE_LAST_LOGIN),
+                  mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))
           )
           viewModel.logout()
           navigationUtils.logout("Successfully logged out","fromUser")

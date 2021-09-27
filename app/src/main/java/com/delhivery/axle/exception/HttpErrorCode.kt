@@ -1,5 +1,6 @@
 package com.delhivery.axle.exception
 
+import com.delhivery.axle.exception.APIGenericExceptionMessage.BadGatewayExceptionMessage
 import com.delhivery.axle.exception.APIGenericExceptionMessage.BadRequestExceptionMessage
 import com.delhivery.axle.exception.APIGenericExceptionMessage.GenericClientExceptionMessage
 import com.delhivery.axle.exception.APIGenericExceptionMessage.GenericServerExceptionMessage
@@ -22,7 +23,8 @@ enum class HttpErrorCode(
   NotImplemented(501, GenericServerExceptionMessage),
   ClientError(4, GenericClientExceptionMessage),
   ServerError(5, GenericServerExceptionMessage),
-  UnknownError(-1, "Unknown error");
+  UnknownError(-1, "Unknown error"),
+  BadGateway(502, BadGatewayExceptionMessage);
 
   companion object {
     /**
