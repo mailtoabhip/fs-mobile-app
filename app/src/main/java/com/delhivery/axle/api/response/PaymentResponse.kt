@@ -90,7 +90,9 @@ data class  PaymentsResponse(
         @SerializedName("transaction_id") val transactionId: String = "",
         @SerializedName("vehicle_number") val vehicleNumber: String? = "",
         @SerializedName("loaded_time") val loadedTime: String? = "",
-        @SerializedName("tds_deducted") val tdsDeducted: Double
+        @SerializedName("tds_deducted") val tdsDeducted: Double,
+        @SerializedName("vendor_name") val vendorName: String? = "",
+        @SerializedName("payee_type") val payeeType: String? = ""
 )
 
 /**
