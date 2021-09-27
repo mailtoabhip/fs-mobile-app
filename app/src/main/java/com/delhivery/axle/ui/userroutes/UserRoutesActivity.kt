@@ -3,12 +3,15 @@ package com.delhivery.axle.ui.userroutes
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.routes.RouteModel
+import com.delhivery.axle.data.home.routes.RoutesAction_DeleteRoute
 import com.delhivery.axle.data.home.routes.RoutesAction_ViewDetails
 import com.delhivery.axle.databinding.ActivityUserRoutesBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.RouteDeleteDialog
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteOriginCityExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
@@ -92,6 +95,9 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
             intent = selectRouteIntent(this@UserRoutesActivity, EditRoute),
             requestCode = REQCODE_EDIT_ROUTE, extras = bundle
         )
+      }
+      RoutesAction_DeleteRoute -> {
+        RouteDeleteDialog(this, item.data as RouteModel , viewModel).show()
       }
     }
   }

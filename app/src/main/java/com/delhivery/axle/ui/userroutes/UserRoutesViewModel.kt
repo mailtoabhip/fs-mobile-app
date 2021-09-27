@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.userroutes
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.home.routes.RouteModel
@@ -8,6 +10,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.dialogs.RouteDeleteDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -22,7 +25,7 @@ import javax.inject.Inject
 class UserRoutesViewModel @Inject constructor(
   private val userRepository: UserRepository,
   val userPrefs: UserPrefs
-): BaseViewModel() {
+): BaseViewModel(), RouteDeleteDialogInterface {
 
   var routesLiveData =
     MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
@@ -67,4 +70,10 @@ class UserRoutesViewModel @Inject constructor(
           }
         }
   }
+
+  override fun deleteRoute() {
+    Log.d("delete","deleted")
+  }
+
+
 }

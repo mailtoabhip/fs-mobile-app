@@ -249,6 +249,7 @@
   <string name="label_destination_address">Destination Address</string>
   <string name="label_charge">Charge</string>
   <string name="label_current_status">Current Status</string>
+  <string name="label_delete_route">Delete Route?</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

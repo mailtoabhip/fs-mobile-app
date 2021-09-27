@@ -33,7 +33,7 @@
       <androidx.appcompat.widget.LinearLayoutCompat
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toStartOf="@id/img_route_detail"
+          app:layout_constraintEnd_toStartOf="@id/icon_delete_route"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:orientation="vertical">
@@ -98,12 +98,21 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/icon_delete_route"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          android:layout_marginEnd="@dimen/size_16dp"
+          app:srcCompat="@drawable/ic_close_black"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
 
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/img_route_detail"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintEnd_toStartOf="@id/icon_delete_route"
           android:layout_marginEnd="@dimen/size_16dp"
           app:srcCompat="@drawable/ic_chevron_right_dark"
           android:layout_width="wrap_content"
