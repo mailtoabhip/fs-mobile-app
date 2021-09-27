@@ -97,7 +97,7 @@ class TripDetailsViewModel @Inject constructor(
   var chargesListSummary = mutableListOf<ChargesResponse>()
 
   var chargeDaysList = arrayOf("detention_charge_origin","detention_charge_destination","pod_bonus","pod_penalty","delay")
-
+  var deductionChargesToIgnore = arrayOf("fuel_reimbursement_adj")
   /* trip history */
   var tripHistory = hashMapOf<Int, TripHistoryItem>()
 
@@ -310,31 +310,36 @@ class TripDetailsViewModel @Inject constructor(
     val jsonObject = JsonObject()
     val jsonElement = JsonPrimitive(transactionId)
     jsonObject.add("trip_id",jsonElement)
+    payeeId = userRepository.userId()
     compositeDisposable += payableRepository.fetchChargesList(jsonObject)
             .onBackground()
             .progress()
             .subscribe{
               _res, error ->
               if(!error){
-                payeeId = ""
                 chargesListSummary.clear()
                 if(_res.isNotEmpty()){
                   _res.let {
                     chargesSummaryList.clear()
                     deductionSummaryList.clear()
                     for (charge in _res){
-                      var subtitle = ""
-                      if (charge.days > 0) {
-                        subtitle = "(" + charge.days.toString() + " days)"
-                      }
-                      if (charge.action == "deduct") {
-                        deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
+                      if (charge.payeeId == payeeId){
+                        var subtitle = ""
+                        if (charge.days > 0) {
+                          subtitle = "(" + charge.days.toString() + " days)"
+                        }
+                        if (charge.action == "deduct") {
+                          if(charge.chargeHeadRef in deductionChargesToIgnore){
+                            continue
+                          }
+                          deductionSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
                             subtitle, false
-                        ))
-                      } else {
-                        chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
+                          ))
+                        } else {
+                          chargesSummaryList.add(TripPaymentSummaryDetailItemData(charge.getChargeTitle(), charge.chargeAmount,
                             subtitle, false
-                        ))
+                          ))
+                        }
                       }
                       //chargesListSummary.add(charge)
                       //payeeId = charge.payeeId
@@ -410,6 +415,12 @@ class TripDetailsViewModel @Inject constructor(
                             }
                             "balance" -> {
                               event = "Balance"
+                            }
+                            "fuel_reimbursement" -> {
+                              event = "Fuel Reimbursement"
+                            }
+                            "fuel" -> {
+                              event = "Fuel Payment to ${charge.vendorName} on Vendor’s Behalf"
                             }
                           }
                           if (charge.amount - charge.tdsDeducted > 0.0) {
