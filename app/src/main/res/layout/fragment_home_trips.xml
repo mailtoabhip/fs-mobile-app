@@ -111,154 +111,150 @@
                         android:textStyle="bold" />
                   </FrameLayout>
 
-                  <FrameLayout
+                  <androidx.constraintlayout.widget.ConstraintLayout
                       android:id="@+id/container_bucket"
                       android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="horizontal"
-                      android:padding="@dimen/size_2dp">
+                      android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:weightSum="3"
-                        android:orientation="horizontal">
+                        android:id="@+id/view_awaiting_arirval"
+                        style="@style/view_header_background_white"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/size_84dp"
+                        android:layout_marginStart="@dimen/size_8dp"
+                        android:layout_marginEnd="@dimen/size_2dp"
+                        android:orientation="vertical"
+                        bind:layout_constraintStart_toStartOf="parent"
+                        bind:layout_constraintBottom_toBottomOf="parent"
+                        bind:layout_constraintEnd_toStartOf="@id/view_in_transit"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
 
-                      <androidx.appcompat.widget.LinearLayoutCompat
-                          android:id="@+id/view_awaiting_arirval"
-                          style="@style/view_header_background_white"
-                          android:layout_width="match_parent"
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image1"
+                          android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:layout_marginStart="@dimen/size_4dp"
-                          android:layout_weight="1"
-                          android:layout_marginEnd="@dimen/size_4dp"
-                          android:orientation="vertical"
-                          bind:shadow="@{ @dimen/action_btn_elevation }">
+                          app:srcCompat="@drawable/ic_arrival" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/image1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/ic_arrival" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/id1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:lineSpacingExtra="@dimen/text_6sp"
-                            android:minWidth="@dimen/size_80dp"
-                            android:text="@string/label_awaiting_arrival"
-                            android:textSize="@dimen/size_12dp" />
-
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_awaiting_arrival_trip_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:text="@{viewModel.awaitingArrivalCount}"
-                            android:textColor="@color/trip_red"
-                            android:textSize="@dimen/text_14sp"
-                            android:textStyle="bold"
-                            tools:text="5 Trips"
-                            />
-                      </androidx.appcompat.widget.LinearLayoutCompat>
-
-                      <androidx.appcompat.widget.LinearLayoutCompat
-                          android:id="@+id/view_in_transit"
-                          style="@style/view_header_background_white"
-                          android:layout_width="match_parent"
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id1"
+                          android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:layout_gravity="center"
-                          android:layout_weight="1"
-                          android:layout_marginStart="@dimen/size_4dp"
-                          android:layout_marginEnd="@dimen/size_8dp"
-                          android:orientation="vertical"
-                          bind:shadow="@{ @dimen/action_btn_elevation }">
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_4sp"
+                          android:text="@string/label_awaiting_arrival"
+                          android:textSize="@dimen/text_12sp" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/image2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/ic_in_transit" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/id3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:lineSpacingExtra="@dimen/text_6sp"
-                            android:minWidth="@dimen/size_80dp"
-                            android:text="@string/label_in_transit"
-                            android:textSize="@dimen/size_12dp"
-
-                            />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_in_transit_trip_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:text="@{viewModel.inTransitCount}"
-                            android:textColor="@color/trip_red"
-                            android:textSize="@dimen/size_14dp"
-                            android:textStyle="bold"
-                            tools:text="5 Trips"
-                            />
-
-                      </androidx.appcompat.widget.LinearLayoutCompat>
-
-                      <androidx.appcompat.widget.LinearLayoutCompat
-                          android:id="@+id/view_awaiting_pod"
-                          style="@style/view_header_background_white"
-                          android:layout_width="match_parent"
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_arrival_trip_count"
+                          android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:layout_marginStart="@dimen/size_4dp"
-                          android:layout_marginEnd="@dimen/size_4dp"
-                          android:orientation="vertical"
-                          bind:shadow="@{ @dimen/action_btn_elevation }">
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingArrivalCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/text_14sp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/image3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/ic_pod" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_in_transit"
+                        style="@style/view_header_background_white"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/size_84dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/size_2dp"
+                        android:layout_marginEnd="@dimen/size_2dp"
+                        bind:layout_constraintStart_toEndOf="@id/view_awaiting_arirval"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintBottom_toBottomOf="parent"
+                        bind:layout_constraintEnd_toStartOf="@id/view_awaiting_pod"
+                        android:orientation="vertical"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/id2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:lineSpacingExtra="@dimen/text_6sp"
-                            android:minWidth="@dimen/size_80dp"
-                            android:text="@string/label_awaiting_pod"
-                            android:textSize="@dimen/size_12dp" />
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image2"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_in_transit" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_awaiting_pod_trip_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_4dp"
-                            android:fontFamily="sans-serif-medium"
-                            android:text="@{viewModel.awaitingPodCount}"
-                            android:textColor="@color/trip_red"
-                            android:textSize="@dimen/size_14dp"
-                            android:textStyle="bold"
-                            tools:text="5 Trips"
-                            />
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id3"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_4sp"
+                          android:text="@string/label_in_transit"
+                          android:textSize="@dimen/size_12dp"
 
-                      </androidx.appcompat.widget.LinearLayoutCompat>
+                          />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_in_transit_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.inTransitCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/size_14dp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                  </FrameLayout>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/view_awaiting_pod"
+                        style="@style/view_header_background_white"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/size_84dp"
+                        android:layout_marginStart="@dimen/size_2dp"
+                        android:layout_marginEnd="@dimen/size_8dp"
+                        android:orientation="vertical"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintStart_toEndOf="@id/view_in_transit"
+                        bind:layout_constraintBottom_toBottomOf="parent"
+                        bind:layout_constraintEnd_toEndOf="parent"
+                        bind:shadow="@{ @dimen/action_btn_elevation }">
+
+                      <androidx.appcompat.widget.AppCompatImageView
+                          android:id="@+id/image3"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          app:srcCompat="@drawable/ic_pod" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/id2"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:lineSpacingExtra="@dimen/text_4sp"
+                          android:text="@string/label_awaiting_pod"
+                          android:textSize="@dimen/size_12dp" />
+
+                      <androidx.appcompat.widget.AppCompatTextView
+                          android:id="@+id/text_awaiting_pod_trip_count"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="@dimen/size_3dp"
+                          android:fontFamily="sans-serif-medium"
+                          android:text="@{viewModel.awaitingPodCount}"
+                          android:textColor="@color/trip_red"
+                          android:textSize="@dimen/size_14dp"
+                          android:textStyle="bold"
+                          tools:text="5 Trips"
+                          />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                  </androidx.constraintlayout.widget.ConstraintLayout>
 
                   <FrameLayout
                       android:id="@+id/container_bucket_second"
