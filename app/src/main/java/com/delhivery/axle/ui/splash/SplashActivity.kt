@@ -7,6 +7,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
@@ -19,6 +20,7 @@ import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.util.*
@@ -38,7 +40,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   var latestCode :Int = 0
   var currentCode :Int =0
-
+  var type :String =""
+  var tid :String  = ""
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -65,6 +68,27 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
     /* start splash animation */
     animate()
+    checkForDynamicLinks()
+  }
+
+  private fun checkForDynamicLinks() {
+    FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
+            .addOnSuccessListener(this){
+              Log.d("dynamicLinkFromSplash","Dynamic link Received")
+              var deepLink: Uri? = null
+              if (it != null) {
+                deepLink = it.link
+              }
+              if(deepLink != null){
+                Log.d("dynamicLinkFromSplash","Deep link Received" +deepLink.toString())
+                type = deepLink.getQueryParameter("type")?:""
+                tid = deepLink.getQueryParameter("id")?:""
+                Log.d("dynamicLinkFromSplash","Deep link Parameters $tid $type")
+              }
+            }
+            .addOnFailureListener(this){
+              Log.d("dynamicLinkFromSplash", "getDynamicLink:onFailure")
+            }
   }
 
   /**
@@ -186,19 +210,28 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   }
 
   private fun postAnimate(state: SplashPostState) {
-    when (state) {
-      Onboarding -> OnboardingActivity::class
-      Auth -> AuthenticationActivity::class
-      Home -> HomeActivity::class
-    }.let {
+    /**
+     * Check If it's from deep link*/
+    if (state == Home && tid != "" && type == "dtl") {
       val bundle = Bundle()
-      if (!TextUtils.isEmpty(notificationId)) {
-        bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
-        bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
-        bundle.putString(ARGS_TRANSACTION_IDS, transactions)
-        bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+      bundle.putString(ARGS_DEEPLINK_TYPE , type)
+      bundle.putString(ARGS_DEEPLINK_ID , tid)
+      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+    } else {
+      when (state) {
+        Onboarding -> OnboardingActivity::class
+        Auth -> AuthenticationActivity::class
+        Home -> HomeActivity::class
+      }.let {
+        val bundle = Bundle()
+        if (!TextUtils.isEmpty(notificationId)) {
+          bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
+          bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
+          bundle.putString(ARGS_TRANSACTION_IDS, transactions)
+          bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+        }
+        navigationUtils.navigate(it.java, true, bundle)
       }
-      navigationUtils.navigate(it.java, true, bundle)
     }
   }
 }

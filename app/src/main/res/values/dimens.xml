@@ -27,6 +27,17 @@
   <dimen name="size_160dp">160dp</dimen>
   <dimen name="size_240dp">240dp</dimen>
   <dimen name="size_180dp">180dp</dimen>
+  <dimen name="size_260dp">260dp</dimen>
+  <dimen name="size_280dp">280dp</dimen>
+  <dimen name="size_300dp">300dp</dimen>
+  <dimen name="size_30dp">30dp</dimen>
+  <dimen name="size_120dp">120dp</dimen>
+  <dimen name="size_90dp">90dp</dimen>
+  <dimen name="size_230dp">230dp</dimen>
+  <dimen name="size_270dp">270dp</dimen>
+  <dimen name="size_11dp">11dp</dimen>
+  <dimen name="size_3dp">3dp</dimen>
+  <dimen name="size_84dp">84dp</dimen>
 
   <!-- Text sizes -->
   <dimen name="text_2sp">2sp</dimen>
@@ -57,14 +68,5 @@
   <!-- delhivery view pager indicator -->
   <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
   <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
-    <dimen name="size_260dp">260dp</dimen>
-  <dimen name="size_280dp">280dp</dimen>
-  <dimen name="size_300dp">300dp</dimen>
-    <dimen name="size_30dp">30dp</dimen>
-  <dimen name="size_120dp">120dp</dimen>
-  <dimen name="size_90dp">90dp</dimen>
-  <dimen name="size_230dp">230dp</dimen>
-    <dimen name="size_270dp">270dp</dimen>
-    <dimen name="size_11dp">11dp</dimen>
 
 </resources>

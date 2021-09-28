@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.home.activity.home
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,10 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
-import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
-import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
+import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
@@ -48,6 +46,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   var fragmentType : String ?= ""
 
+  var dplink_tid : String = ""
+  var dplink_type : String = ""
+
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -66,6 +67,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
 
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
+
+    dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
+    dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -107,6 +111,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
+
+    /**
+     * Process Deep Link */
+    processDeepLink()
+  }
+
+  private fun processDeepLink() {
+    if (dplink_tid != "" && dplink_type != "") {
+      startActivity(tripDetailsIntent(dplink_tid, this))
+      }
   }
 
   private fun processNotification() {
@@ -170,6 +184,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+
+    /**
+     * Get Deep Link Parameters*/
+    dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
+    dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+    processDeepLink()
+
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
           .map { it.trim() }
