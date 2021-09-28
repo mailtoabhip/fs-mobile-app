@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.request
 
 import com.delhivery.axle.data.RouteMappingModel
+import com.delhivery.axle.data.RouteMappingModelForDeletingRoutes
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
@@ -63,6 +64,16 @@ data class UpdateUserFCMTokenRequest(
     fun getRequest(fcmToken: String) = UpdateUserFCMTokenRequest(fcmToken)
   }
 }
+
+/**
+ * Payload for Route Deletion
+ */
+data class DeleteRouteRequest(
+  @SerializedName("name") val name :String,
+  @SerializedName("lane_preferences") val routes :List<RouteMappingModelForDeletingRoutes>,
+  @SerializedName("entity") val entity :String,
+  @SerializedName("originator") val originator :String
+)
 
 /* actions */
 const val EditTeamMemberAction_Edit = "edit_member"

@@ -4,6 +4,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.data.RouteMappingModelForDeletingRoutes
+import com.delhivery.axle.data.StateModelForDeletingRoutes
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -34,6 +36,7 @@ class UserRoutesViewModel @Inject constructor(
 
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
+  val lanePreferences = mutableListOf<RouteMappingModelForDeletingRoutes>()
 
   /**
    * Fetch user routes
@@ -71,8 +74,15 @@ class UserRoutesViewModel @Inject constructor(
         }
   }
 
-  override fun deleteRoute() {
-    Log.d("delete","deleted")
+  override fun deleteRoute(routeModel: RouteModel) {
+
+    for (i in routeModel.destinations){
+         lanePreferences.add(
+                 RouteMappingModelForDeletingRoutes(routeModel.origin, StateModelForDeletingRoutes(i.state,i.stateId))
+         )
+    }
+
+
   }
 
 

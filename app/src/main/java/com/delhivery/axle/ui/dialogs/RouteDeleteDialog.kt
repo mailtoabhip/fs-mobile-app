@@ -39,7 +39,7 @@ class RouteDeleteDialog @Inject constructor(
         }
 
         binding.btnConfirmDelete.setOnClickListener {
-            dialogInterface.deleteRoute()
+            dialogInterface.deleteRoute(route)
             dismiss()
         }
 
@@ -50,5 +50,5 @@ class RouteDeleteDialog @Inject constructor(
     fun String.capitalizeWords(): String = split(" ").joinToString(" ") { it.capitalize() }
 }
 interface RouteDeleteDialogInterface{
-    fun deleteRoute()
+    fun deleteRoute(route: RouteModel)
 }

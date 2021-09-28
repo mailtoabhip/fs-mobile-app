@@ -34,3 +34,8 @@ data class UserCity(
 
   fun cityName() = StringUtils.capitalize(city) ?: ""
 }
+
+data class RouteMappingModelForDeletingRoutes(
+    @SerializedName("origin") val origin: UserCity,
+    @SerializedName("destination") val destination: StateModelForDeletingRoutes
+)
