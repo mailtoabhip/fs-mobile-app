@@ -89,9 +89,9 @@ class UserRoutesViewModel @Inject constructor(
 
   private fun getLanePreferences(route: RouteModel): List<RouteMappingModel> {
         existingRoutes.clear()
-        val newRoutes = route.expandLocations()
+        val deletedRoute = route.expandLocations()
         for (routeVal in routes) {
-            for (newRoute in newRoutes) {
+            for (newRoute in deletedRoute) {
                 if (routeVal.origin.orion_db_city_code != newRoute.origin.orion_db_city_code) {
                     existingRoutes.add(routeVal)
                 }
