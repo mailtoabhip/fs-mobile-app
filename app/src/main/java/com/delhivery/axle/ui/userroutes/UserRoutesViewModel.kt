@@ -72,6 +72,9 @@ class UserRoutesViewModel @Inject constructor(
   }
 
   override fun deleteRoute(route: RouteModel) {
+      /**
+       * this route is going to be deleted by overwriting the routes(in db) with existing routes(after removing this route)
+       */
       val existingVendorRoutes = getLanePreferences(route)
       compositeDisposable += userRepository.deleteUserRoutes(existingVendorRoutes)
         .onBackground()
