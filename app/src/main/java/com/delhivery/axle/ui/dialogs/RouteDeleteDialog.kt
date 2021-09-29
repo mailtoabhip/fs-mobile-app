@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.WindowManager
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.DialogDeleteRouteBinding
+import com.delhivery.axle.utils.UiUtils
 import javax.inject.Inject
 
 class RouteDeleteDialog @Inject constructor(
         context :Context,
         private val route: RouteModel,
-        private val dialogInterface: RouteDeleteDialogInterface
+        private val dialogInterface: RouteDeleteDialogInterface,
+        private val uiUtils: UiUtils
 
 ) :AlertDialog(context){
     private lateinit var binding : DialogDeleteRouteBinding
@@ -41,6 +43,7 @@ class RouteDeleteDialog @Inject constructor(
         binding.btnConfirmDelete.setOnClickListener {
             dialogInterface.deleteRoute(route)
             dismiss()
+            uiUtils.showProgress("Updating Routes")
         }
 
         binding.btnCancelDelete.setOnClickListener { dismiss() }

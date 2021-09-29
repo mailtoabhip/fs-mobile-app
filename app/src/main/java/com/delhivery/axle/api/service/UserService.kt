@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.request.DeleteRouteRequest
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
@@ -102,6 +103,16 @@ interface UserService {
   fun updateSecondaryUser(
     @Path("uuid") uuid: String,
     @Body payload: JsonObject
+  ): Single<BaseMessageResponse>
+
+
+  /**
+   * Delete Route
+   */
+  @PATCH("/users/supplypartners/{user_id}")
+  fun deleteUserRoute(
+      @Path("user_id") userId: String,
+      @Body payload: DeleteRouteRequest
   ): Single<BaseMessageResponse>
 
 }

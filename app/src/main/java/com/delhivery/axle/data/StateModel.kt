@@ -73,8 +73,3 @@ val StateModelList = listOf(
     StateModel("Uttarakhand", "UK", "UK"),
     StateModel("West bengal", "WB", "WB")
 )
-
-data class StateModelForDeletingRoutes(
-    @SerializedName("state") val state: String,
-    @SerializedName("state_id") val stateId: String
-)

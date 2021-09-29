@@ -67,6 +67,16 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
       }
     })
 
+    viewModel.updatedLanes.observe(this, Observer {
+      uiUtils.hideProgress()
+      it?.let {
+        if(it){
+          refreshData()
+          viewModel.updatedLanes.postValue(false)
+        }
+      }
+    })
+
     binding.fabAddRoute.setOnClickListener {
       navigationUtils.navigateForActivityResult(
           intent = selectRouteIntent(this@UserRoutesActivity),
@@ -97,7 +107,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
         )
       }
       RoutesAction_DeleteRoute -> {
-        RouteDeleteDialog(this, item.data as RouteModel , viewModel).show()
+        RouteDeleteDialog(this, item.data as RouteModel , viewModel, uiUtils).show()
       }
     }
   }

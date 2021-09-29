@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
+import com.delhivery.axle.api.request.DeleteRouteRequest
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
@@ -113,4 +114,9 @@ class UserRepository @Inject constructor(
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
+
+  /**
+   * Delete User routes
+   */
+  fun deleteUserRoutes(deleteRouteRequest: DeleteRouteRequest) =userService.deleteUserRoute(userId(), deleteRouteRequest)
 }

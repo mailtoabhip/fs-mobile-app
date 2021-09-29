@@ -268,6 +268,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.IsFirstRoute, false)
 
   /**
+   * Vendor Entity
+   */
+  var vendorEntity: String
+    set(value) = editor.putString(PrefKeys.VendorEntity, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.VendorEntity , " ") ?: ""
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -326,6 +334,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.UserOverallPerformance)
         .apply()
+    editor.remove(PrefKeys.VendorEntity)
+        .apply()
     editor.commit()
   }
 
@@ -353,6 +363,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     }
     demandType = user.demandType.joinToString(separator = ",") {it}
     userPerformance = user.overallPerformance ?: ""
+    vendorEntity = user.vendorEntity
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -406,6 +417,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val LastLoginTime = "last_login_time"
     const val IsFirstRoute = "first_route"
     const val UserOverallPerformance = "overall_performance"
+    const val VendorEntity = "vendor_entity"
   }
 }
 
