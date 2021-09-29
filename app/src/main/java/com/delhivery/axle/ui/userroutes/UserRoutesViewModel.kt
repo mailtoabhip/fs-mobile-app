@@ -1,9 +1,7 @@
 package com.delhivery.axle.ui.userroutes
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.request.DeleteRouteRequest
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -16,8 +14,6 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import javax.inject.Inject
 
 /**
@@ -76,9 +72,8 @@ class UserRoutesViewModel @Inject constructor(
   }
 
   override fun deleteRoute(route: RouteModel) {
-      val jsonArray = getLanePreferences(route)
-      val deleteRouteRequest = DeleteRouteRequest(userPrefs.userName , jsonArray , userPrefs.vendorEntity,"axle-app")
-      compositeDisposable += userRepository.deleteUserRoutes(deleteRouteRequest)
+      val existingVendorRoutes = getLanePreferences(route)
+      compositeDisposable += userRepository.deleteUserRoutes(existingVendorRoutes)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -92,7 +87,7 @@ class UserRoutesViewModel @Inject constructor(
         }
   }
 
-  private fun getLanePreferences(route: RouteModel): JsonArray {
+  private fun getLanePreferences(route: RouteModel): List<RouteMappingModel> {
         existingRoutes.clear()
         val newRoutes = route.expandLocations()
         for (routeVal in routes) {
@@ -102,25 +97,10 @@ class UserRoutesViewModel @Inject constructor(
                 }
             }
         }
-        val routeMappings = mutableListOf<RouteMappingModel>().apply {
-            existingRoutes.forEach { addAll(it.toMapping()) }
-        }
 
-        val jsonArray = JsonArray()
-        routeMappings.forEach {
-            val json = JsonObject()
-            val originJson = JsonObject()
-            it.origin.city.let { it1 -> originJson.addProperty("city", it1) }
-            it.origin.orion_db_city_code?.let { it1 -> originJson.addProperty("city_id", it1) }
-            json.add("origin", originJson)
-
-            val destinationJson = JsonObject()
-            it.destination.state.let { it1 -> destinationJson.addProperty("state", it1) }
-            it.destination.stateId.let { it1 -> destinationJson.addProperty("state_id", it1) }
-            json.add("destination", destinationJson)
-            jsonArray.add(json)
-        }
-        return jsonArray
+      return mutableListOf<RouteMappingModel>().apply {
+          existingRoutes.forEach { addAll(it.toMapping()) }
+      }
   }
 
 }

@@ -64,16 +64,6 @@ data class UpdateUserFCMTokenRequest(
   }
 }
 
-/**
- * Payload for Route Deletion
- */
-data class DeleteRouteRequest(
-  @SerializedName("name") val name :String,
-  @SerializedName("lane_preferences") val routes :JsonArray,
-  @SerializedName("entity") val entity :String,
-  @SerializedName("originator") val originator :String
-)
-
 /* actions */
 const val EditTeamMemberAction_Edit = "edit_member"
 const val DeleteTeamMemberAction_Delete = "delete_member"

@@ -1,7 +1,6 @@
 package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
-import com.delhivery.axle.api.request.DeleteRouteRequest
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
@@ -118,5 +117,5 @@ class UserRepository @Inject constructor(
   /**
    * Delete User routes
    */
-  fun deleteUserRoutes(deleteRouteRequest: DeleteRouteRequest) =userService.deleteUserRoute(userId(), deleteRouteRequest)
+  fun deleteUserRoutes(routes: List<RouteMappingModel>) =userService.deleteUserRoute(userId(), UpdateUserRoutesRequest(routes).getRequest())
 }
