@@ -40,7 +40,7 @@ data class UserModel(
   @SerializedName("parent_details") var parentDetails: UserModel?,
   @SerializedName("overall_performance") var overallPerformance: String? = "",
   @SerializedName("demand_type") var demandType : List<String>,
-  @SerializedName("entity") var vendorEntity: String
+  @SerializedName("entity") var vendorEntity: String? = ""
 ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId

@@ -363,7 +363,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     }
     demandType = user.demandType.joinToString(separator = ",") {it}
     userPerformance = user.overallPerformance ?: ""
-    vendorEntity = user.vendorEntity
+    vendorEntity = user.vendorEntity ?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
