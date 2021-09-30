@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.userroutes
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.data.home.routes.RoutesAction_DeleteRoute
 import com.delhivery.axle.data.home.routes.RoutesAction_ViewDetails
 import com.delhivery.axle.databinding.ViewUserRoutesItemBinding
 import com.delhivery.axle.databinding.ViewUserRoutesProgressItemBinding
@@ -74,6 +75,7 @@ class UserRoutesItemVH(binding: ViewUserRoutesItemBinding) :
   ) {
     binding.route = item.data
     binding.layRoutes.clickToAction(RoutesAction_ViewDetails, item, _interface)
+    binding.iconDeleteRoute.clickToAction(RoutesAction_DeleteRoute, item, _interface)
   }
 }
 

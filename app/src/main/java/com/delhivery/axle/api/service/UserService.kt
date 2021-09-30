@@ -104,4 +104,14 @@ interface UserService {
     @Body payload: JsonObject
   ): Single<BaseMessageResponse>
 
+
+  /**
+   * Delete Route
+   */
+  @PATCH("/users/supplypartners/{user_id}")
+  fun deleteUserRoute(
+      @Path("user_id") userId: String,
+      @Body payload: JsonObject
+  ): Single<BaseMessageResponse>
+
 }

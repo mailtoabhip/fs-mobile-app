@@ -75,3 +75,4 @@ data class RouteModel(
 
 /* actions */
 const val RoutesAction_ViewDetails = "routes_detail"
+const val RoutesAction_DeleteRoute = "delete_route"

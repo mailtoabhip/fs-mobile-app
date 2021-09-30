@@ -2,12 +2,14 @@ package com.delhivery.axle.ui.userroutes
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.dialogs.RouteDeleteDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -22,7 +24,7 @@ import javax.inject.Inject
 class UserRoutesViewModel @Inject constructor(
   private val userRepository: UserRepository,
   val userPrefs: UserPrefs
-): BaseViewModel() {
+): BaseViewModel(), RouteDeleteDialogInterface {
 
   var routesLiveData =
     MutableLiveData<Pair<Pair<String, String>, MutableList<RouteModel>>>()
@@ -31,6 +33,8 @@ class UserRoutesViewModel @Inject constructor(
 
   /* selected route models */
   var routes = mutableListOf<RouteModel>()
+  var existingRoutes = mutableListOf<RouteModel>()
+  var updatedLanes = MutableLiveData<Boolean>()
 
   /**
    * Fetch user routes
@@ -53,8 +57,7 @@ class UserRoutesViewModel @Inject constructor(
             }.let {
               allRoutesLiveData.postValue(it)
             }
-
-            routes.addAll(_user.userRoutes())
+            routes = _user.userRoutes() as MutableList<RouteModel>
             routesLiveData.postValue(
                 Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
             )
@@ -67,4 +70,40 @@ class UserRoutesViewModel @Inject constructor(
           }
         }
   }
+
+  override fun deleteRoute(route: RouteModel) {
+      /**
+       * this route is going to be deleted by overwriting the routes(in db) with existing routes(after removing this route)
+       */
+      val existingVendorRoutes = getLanePreferences(route)
+      compositeDisposable += userRepository.deleteUserRoutes(existingVendorRoutes)
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if(!error){
+            updatedLanes.postValue(true)
+          }
+          else{
+            updatedLanes.postValue(false)
+            error.handle()
+          }
+        }
+  }
+
+  private fun getLanePreferences(route: RouteModel): List<RouteMappingModel> {
+        existingRoutes.clear()
+        val deletedRoute = route.expandLocations()
+        for (routeVal in routes) {
+            for (newRoute in deletedRoute) {
+                if (routeVal.origin.orion_db_city_code != newRoute.origin.orion_db_city_code) {
+                    existingRoutes.add(routeVal)
+                }
+            }
+        }
+
+      return mutableListOf<RouteMappingModel>().apply {
+          existingRoutes.forEach { addAll(it.toMapping()) }
+      }
+  }
+
 }

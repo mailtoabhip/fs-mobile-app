@@ -113,4 +113,9 @@ class UserRepository @Inject constructor(
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
+
+  /**
+   * Delete User routes
+   */
+  fun deleteUserRoutes(routes: List<RouteMappingModel>) =userService.deleteUserRoute(userId(), UpdateUserRoutesRequest(routes).getRequest())
 }
