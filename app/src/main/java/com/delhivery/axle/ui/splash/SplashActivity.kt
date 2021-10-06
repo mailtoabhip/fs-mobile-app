@@ -40,7 +40,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   var latestCode :Int = 0
   var currentCode :Int =0
-  var type :String =""
+  var type :String = ""
   var tid :String  = ""
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
@@ -212,7 +212,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   private fun postAnimate(state: SplashPostState) {
     /**
      * Check If it's from deep link*/
-    if (state == Home && tid != "" && type == "dtl") {
+    if (state == Home && type != "") {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
       bundle.putString(ARGS_DEEPLINK_ID , tid)
