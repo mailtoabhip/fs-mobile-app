@@ -131,12 +131,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           startActivity(consolidatedPageIntent(this))
         }
         PHYSICAL_POD_PENDING_REDIRECT -> {
+          userPrefs.dpLinkArg = "physicalPod"
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
         EPOD_PENDING_REDIRECT -> {
+          userPrefs.dpLinkArg = "ePod"
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
         DOWNLOAD_LEDGER_POPUP_REDIRECT -> {
+          userPrefs.dpLinkArg = "download_ledger"
           fragmentAction(NavigateHomeFragmentAction(TripsFragment))
         }
         TRIP_DETAIL_REDIRECT -> {

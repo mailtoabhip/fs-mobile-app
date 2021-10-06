@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
@@ -267,6 +268,17 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     downloadID = mgr.enqueue(request)
 
+  }
+
+  override fun onResume() {
+    super.onResume()
+    /**\
+     * Check if it's generated from deep link
+     */
+    if( userPrefs.dpLinkArg == "download_ledger"){
+      userPrefs.dpLinkArg = ""
+      DownloadLedgerDialog(context!!, viewModel,analyticsUtil,userPrefs).show()
+    }
   }
 
   override fun onDestroy() {

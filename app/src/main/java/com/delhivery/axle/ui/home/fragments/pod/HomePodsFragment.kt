@@ -48,6 +48,7 @@ import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import javax.inject.Inject
 
@@ -71,6 +72,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = HomePodViewModel::class.java
 
@@ -446,6 +448,26 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       if (_toolbarElevation != toolbarElevation) {
         toolbarElevation = _toolbarElevation
         toolbarElevationLiveData!!.postValue(toolbarElevation)
+      }
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    /**\
+     * Check if it's generated from deep link
+     */
+    if( userPrefs.dpLinkArg != ""){
+      if (!isLoadingData) {
+        if(userPrefs.dpLinkArg == "physicalPod") {
+          viewModel.status = EPodUploaded
+        }
+        else if(userPrefs.dpLinkArg == "ePod"){
+          viewModel.status = TruckUnloaded
+        }
+        viewModel.dispatch = false
+        userPrefs.dpLinkArg = ""
+        refreshData()
       }
     }
   }
