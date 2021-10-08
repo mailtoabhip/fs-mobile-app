@@ -4,6 +4,7 @@ import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.util.prefs.AbstractPreferences
 
 /**
  * User details model
@@ -40,7 +41,9 @@ data class UserModel(
   @SerializedName("parent_details") var parentDetails: UserModel?,
   @SerializedName("overall_performance") var overallPerformance: String? = "",
   @SerializedName("demand_type") var demandType : List<String>,
-  @SerializedName("entity") var vendorEntity: String? = ""
+  @SerializedName("entity") var vendorEntity: String? = "",
+  @SerializedName("diesel_card_preference") var dieselCardPreferences: String? = "no",
+  @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf()
 ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
@@ -89,5 +92,7 @@ data class UserModel(
   } else {
     false
   }
+
+  fun getDieselPreferences() :Boolean = dieselCardPreferences == "yes"
 
 }
