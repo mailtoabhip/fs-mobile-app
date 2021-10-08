@@ -55,17 +55,17 @@ class TeamMembersCreateDialog @Inject constructor(
     binding.tilName.editText?.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
-              s: CharSequence?,
-              start: Int,
-              count: Int,
-              after: Int
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
       ) = Unit
 
       override fun onTextChanged(
-              s: CharSequence?,
-              start: Int,
-              before: Int,
-              count: Int
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
       ) {
         if (s != null) {
           binding.tilName.error = null
@@ -85,17 +85,17 @@ class TeamMembersCreateDialog @Inject constructor(
     binding.tilNumber.editText?.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
-              s: CharSequence?,
-              start: Int,
-              count: Int,
-              after: Int
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
       ) = Unit
 
       override fun onTextChanged(
-              s: CharSequence?,
-              start: Int,
-              before: Int,
-              count: Int
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
       ) {
         if (s != null) {
           binding.tilNumber.error = null
