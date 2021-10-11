@@ -44,13 +44,20 @@ class AdminMemberDialog @Inject constructor(
             dieselCompanyVal = user.dieselCompany as MutableList<String>
         }
 
+        binding.dieselReliance.isEnabled = false
+        if(dieselCompanyVal.isNotEmpty()){
+            binding.dieselReliance.isChecked =true
+        }
         binding.adminDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
                 dieselPreference = "yes"
+                binding.dieselReliance.isChecked = true
+                dieselCompanyVal.clear()
                 dieselCompanyVal.add("reliance")
             }
             else{
                 dieselPreference = "no"
+                binding.dieselReliance.isChecked = false
                 dieselCompanyVal.clear()
             }
         })

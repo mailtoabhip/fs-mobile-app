@@ -49,6 +49,7 @@ class TeamMembersCreateDialog @Inject constructor(
     binding.apply {
       binding.tilName.hint = "Name"
       binding.tilNumber.hint = "Number"
+      dieselReliance.isEnabled = false
 
     }
 
@@ -118,10 +119,13 @@ class TeamMembersCreateDialog @Inject constructor(
     binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
       if(isChecked){
         dieselPreference = "yes"
+        binding.dieselReliance.isChecked = true
+        dieselCompany.clear()
         dieselCompany.add("reliance")
       }
       else{
         dieselPreference = "no"
+        binding.dieselReliance.isChecked = false
         dieselCompany.clear()
       }
     })

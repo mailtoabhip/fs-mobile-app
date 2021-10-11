@@ -147,26 +147,46 @@
               android:layout_gravity="center"
               android:textSize="@dimen/text_16sp"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_14dp"
+            android:padding="@dimen/size_6dp"
             android:orientation="horizontal">
-          <androidx.appcompat.widget.AppCompatTextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:textSize="@dimen/text_16sp"
-              android:text="@string/label_select_diesel_company"/>
-          <androidx.appcompat.widget.AppCompatTextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="@dimen/size_14dp"
-              android:text="Reliance"
-              android:textSize="@dimen/text_16sp"
-              android:textStyle="bold"
-              android:textColor="@color/black"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/appCompatTextView"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:lineSpacingExtra="@dimen/text_2sp"
+              android:text="@string/label_select_diesel_company"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintHorizontal_bias="0"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent" />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Reliance"
+              android:textColor="@color/black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintEnd_toStartOf="@id/diesel_reliance"
+              app:layout_constraintStart_toEndOf="@+id/appCompatTextView"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintHorizontal_bias="0.7"/>
+          <CheckBox
+              android:id="@+id/diesel_reliance"
+              android:layout_width="wrap_content"
+              android:layout_height="@dimen/size_40dp"
+              android:layout_marginStart="@dimen/size_11dp"
+              android:background="@drawable/checkbox_selection"
+              android:button="@drawable/ic_bank"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
       </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>
 
