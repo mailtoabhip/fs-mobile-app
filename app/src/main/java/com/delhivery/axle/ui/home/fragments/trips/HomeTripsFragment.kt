@@ -270,17 +270,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
   }
 
-  override fun onResume() {
-    super.onResume()
-    /**\
-     * Check if it's generated from deep link
-     */
-    if( userPrefs.dpLinkArg == "download_ledger"){
-      userPrefs.dpLinkArg = ""
-      DownloadLedgerDialog(context!!, viewModel,analyticsUtil,userPrefs).show()
-    }
-  }
-
   override fun onDestroy() {
     super.onDestroy()
     activity?.unregisterReceiver(onDownloadComplete)
