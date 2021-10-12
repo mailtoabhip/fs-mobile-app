@@ -66,6 +66,11 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Your Money"
 
+        val downloadIntent = intent?.getBooleanExtra(RandomKey , false)
+        if(downloadIntent == true){
+            openLedgerDialog()
+        }
+
         val df = SimpleDateFormat("yyyy-MM-dd")
         val formatted: String = df.format(Date())
         val endmonth = formatted.substring(5, 7)
@@ -90,13 +95,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         }
 
         binding.textRequestStatement.setOnClickListener{
-            val dialog = DownloadLedgerDialog(this, viewModel ,analyticsUtil, userPrefs)
-            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            dialog.setOwnerActivity(this)
-            if (!this.isFinishing)
-                dialog.show()
-            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            openLedgerDialog()
         }
 
         binding.spinnerShowing.apply {
@@ -207,6 +206,25 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 requestStoragePermission()
             }
         })
+    }
+
+    private fun openLedgerDialog() {
+        val dialog = DownloadLedgerDialog(this, viewModel, analyticsUtil, userPrefs)
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        dialog.setOwnerActivity(this)
+        if (!this.isFinishing)
+            dialog.show()
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val downloadIntent = intent?.getBooleanExtra(RandomKey , false)
+        if(downloadIntent == true){
+            openLedgerDialog()
+        }
+
     }
 
     override fun onDestroy() {
@@ -325,7 +343,8 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
 private const val RandomKey = "RandomKey"
 
 fun consolidatedPageIntent(
-        context: Context
+        context: Context,
+        downloadIntent: Boolean = false
 ) = Intent(context, ConsolidatedPageActivity::class.java).apply {
-    putExtra(RandomKey, "Hello")
+    putExtra(RandomKey, downloadIntent)
 }
