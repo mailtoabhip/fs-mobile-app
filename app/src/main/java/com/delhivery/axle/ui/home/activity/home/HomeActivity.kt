@@ -139,7 +139,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
         DOWNLOAD_LEDGER_POPUP_REDIRECT -> {
-          userPrefs.dpLinkArg = "download_ledger"
           startActivity(consolidatedPageIntent(this, true))
         }
         TRIP_DETAIL_REDIRECT -> {
