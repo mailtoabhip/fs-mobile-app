@@ -19,10 +19,11 @@ import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
@@ -118,9 +119,50 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processDeepLink() {
-    if (dplink_tid != "" && dplink_type != "") {
-      startActivity(tripDetailsIntent(dplink_tid, this))
+    if (dplink_type != "") {
+      when(dplink_type){
+        ROUTE_PREFERENCES_REDIRECT -> {
+          startActivity(userRoutesIntent(this))
+        }
+        TEAM_MEMBERS_REDIRECT -> {
+          startActivity(teamMembersIntent(this))
+        }
+        PAYMENT_SUMMARY_REDIRECT -> {
+          startActivity(consolidatedPageIntent(this))
+        }
+        PHYSICAL_POD_PENDING_REDIRECT -> {
+          userPrefs.dpLinkArg = "physicalPod"
+          fragmentAction(NavigateHomeFragmentAction(PodFragment))
+        }
+        EPOD_PENDING_REDIRECT -> {
+          userPrefs.dpLinkArg = "ePod"
+          fragmentAction(NavigateHomeFragmentAction(PodFragment))
+        }
+        DOWNLOAD_LEDGER_POPUP_REDIRECT -> {
+          startActivity(consolidatedPageIntent(this, true))
+        }
+        TRIP_DETAIL_REDIRECT -> {
+          if (dplink_tid != "") {
+            startActivity(tripDetailsIntent(dplink_tid, this))
+          }
+          else{
+            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          }
+        }
+        LOAD_DETAIL_REDIRECT -> {
+          if(dplink_tid != ""){
+            startActivity(bidDetailsIntent(dplink_tid, this))
+          }
+          else
+          {
+            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          }
+        }
+        else -> {
+          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+        }
       }
+    }
   }
 
   private fun processNotification() {
@@ -287,6 +329,15 @@ private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notifica
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
 private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
+
+private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
+private const val TEAM_MEMBERS_REDIRECT = "tmbrs"
+private const val PAYMENT_SUMMARY_REDIRECT = "pmtsmry"
+private const val PHYSICAL_POD_PENDING_REDIRECT = "pylpodtrp"
+private const val EPOD_PENDING_REDIRECT = "epodtrp"
+private const val DOWNLOAD_LEDGER_POPUP_REDIRECT = "dnldldgr"
+private const val TRIP_DETAIL_REDIRECT = "trpdtl"
+private const val LOAD_DETAIL_REDIRECT = "biddtl"
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"

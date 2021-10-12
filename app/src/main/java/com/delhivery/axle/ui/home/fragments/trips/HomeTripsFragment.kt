@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog

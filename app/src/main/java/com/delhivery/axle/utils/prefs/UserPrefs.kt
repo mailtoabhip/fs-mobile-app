@@ -275,6 +275,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.VendorEntity , " ") ?: ""
 
+  var dpLinkArg: String
+    set(value) = editor.putString(PrefKeys.DeepLinkArg ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
+
+
   /**
    * Clear all preferences
    */
@@ -335,6 +341,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.UserOverallPerformance)
         .apply()
     editor.remove(PrefKeys.VendorEntity)
+        .apply()
+    editor.remove(PrefKeys.DeepLinkArg)
         .apply()
     editor.commit()
   }
@@ -418,6 +426,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val IsFirstRoute = "first_route"
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
+    const val DeepLinkArg = "deep_link_argument"
   }
 }
 
