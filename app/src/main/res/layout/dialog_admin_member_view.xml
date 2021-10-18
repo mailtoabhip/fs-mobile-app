@@ -133,10 +133,11 @@
                 android:orientation="horizontal">
                 <CheckBox
                     android:id="@+id/diesel_reliance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
+                    android:layout_width="@dimen/size_56dp"
+                    android:layout_height="@dimen/size_56dp"
+                    android:textAlignment="center"
                     android:background="@drawable/checkbox_selection"
-                    android:button="@drawable/ic_bank"/>
+                    android:button="@drawable/ic_reliance"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
