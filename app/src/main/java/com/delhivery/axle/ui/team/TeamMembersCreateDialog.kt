@@ -4,13 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
-import com.delhivery.axle.databinding.DialogTeamMemberCreateEditBinding
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.databinding.DialogTeamMemberCreateBinding
 import javax.inject.Inject
 
 /**
@@ -19,50 +18,39 @@ import javax.inject.Inject
  */
 
 /**
- * Team member Create/Edit dialog
+ * Team member Create dialog
  */
-class TeamMembersCreateEditDialog @Inject constructor(
-  context: Context,
-  private val uuid: String,
-  private val userNumber: String,
-  private val dialogInterface: TeamMembersCreateEditDialogInterface
+class TeamMembersCreateDialog @Inject constructor(
+        context: Context,
+        private val dialogInterface: TeamMembersCreateDialogInterface
 ) : AlertDialog(context) {
 
   /* dialog binding */
-  private lateinit var binding: DialogTeamMemberCreateEditBinding
+  private lateinit var binding: DialogTeamMemberCreateBinding
   private var name = ""
   private var number = ""
+  private var dieselPreference = "no"
+  private var dieselCompany = mutableListOf<String>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     window?.clearFlags(
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
     )
 
     setCancelable(false)
 
     /* dialog binding */
-    binding = DialogTeamMemberCreateEditBinding.inflate(layoutInflater)
+    binding = DialogTeamMemberCreateBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
     /* set binding params */
     binding.apply {
-      number = userNumber
       binding.tilName.hint = "Name"
+      binding.tilNumber.hint = "Number"
+      dieselReliance.isEnabled = false
 
-      if (userNumber.isEmpty()) {
-        binding.tilNumber.hint = "Number"
-      }
-    }
-
-    if (uuid.isNotNullOrEmpty()) {
-      number = userNumber
-      binding.tilNumber.visibility = View.GONE
-      binding.llNumber.visibility = View.VISIBLE
-    } else {
-      binding.tilNumber.visibility = View.VISIBLE
-      binding.llNumber.visibility = View.GONE
     }
 
     binding.tilName.editText?.addTextChangedListener(object : TextWatcher {
@@ -128,6 +116,20 @@ class TeamMembersCreateEditDialog @Inject constructor(
       }
     })
 
+    binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+      if(isChecked){
+        dieselPreference = "yes"
+        binding.dieselReliance.isChecked = true
+        dieselCompany.clear()
+        dieselCompany.add("reliance")
+      }
+      else{
+        dieselPreference = "no"
+        binding.dieselReliance.isChecked = false
+        dieselCompany.clear()
+      }
+    })
+
     binding.btnConfirm.setOnClickListener {
       binding.editName.clearFocus()
       binding.editNumber.clearFocus()
@@ -143,11 +145,7 @@ class TeamMembersCreateEditDialog @Inject constructor(
         require(number.length == 10) {
           "Please enter valid phone number"
         }
-        if (userNumber.isNotNullOrEmpty()) {
-          dialogInterface.editMember(uuid, name)
-        } else {
-          dialogInterface.createMember(name, number)
-        }
+        dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
         dismiss()
       } else {
         throw IllegalArgumentException("*Invalid text")
@@ -161,21 +159,16 @@ class TeamMembersCreateEditDialog @Inject constructor(
   }
 }
 
-interface TeamMembersCreateEditDialogInterface {
+interface TeamMembersCreateDialogInterface {
 
   /**
    * Create team member
    */
   fun createMember(
-    name: String,
-    number: String
+          name: String,
+          number: String,
+          dieselPreference: String,
+          dieselCompany: List<String>
   )
 
-  /**
-   * Edit team member name
-   */
-  fun editMember(
-    uuid: String,
-    name: String
-  )
 }

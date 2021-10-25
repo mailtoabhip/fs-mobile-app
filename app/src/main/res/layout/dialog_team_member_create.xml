@@ -103,47 +103,91 @@
           android:textSize="@dimen/text_14sp"
           />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/ll_number"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/size_8dp"
-        android:paddingBottom="@dimen/size_8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="horizontal">
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/title_number"
-          android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:padding="@dimen/size_6dp">
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:padding="@dimen/size_6dp"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="@dimen/text_8sp"
-          android:text="Number: "
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          tools:text="Number: "
-          tools:visibility="visible"
-          />
+          android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_register_for_diesel_card"
+            android:gravity="center"
+            android:textSize="@dimen/text_16sp"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_14dp"
+            android:orientation="horizontal">
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/label_no"
+              android:layout_gravity="center"
+              android:textSize="@dimen/text_16sp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/crete_member_diesel_reference_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_gravity="center"
+            android:thumb="@drawable/switch_thumb"
+            app:track="@drawable/switch_track" />
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/label_yes"
+              android:layout_gravity="center"
+              android:textSize="@dimen/text_16sp"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_14dp"
+            android:padding="@dimen/size_6dp"
+            android:orientation="horizontal">
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_number"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-medium"
-          android:lineSpacingExtra="@dimen/text_8sp"
-          android:layout_marginStart="@dimen/size_8dp"
-          android:text="@{number}"
-          android:textColor="@color/heading_black"
-          android:textSize="@dimen/text_14sp"
-          tools:text="Existing phone number"
-          tools:visibility="visible"
-          />
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/appCompatTextView"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:lineSpacingExtra="@dimen/text_2sp"
+              android:text="@string/label_select_diesel_company"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintHorizontal_bias="0"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Reliance"
+              android:textColor="@color/black"
+              android:textSize="@dimen/text_16sp"
+              app:layout_constraintEnd_toStartOf="@id/diesel_reliance"
+              app:layout_constraintStart_toEndOf="@+id/appCompatTextView"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintHorizontal_bias="0.7"/>
+          <CheckBox
+              android:id="@+id/diesel_reliance"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@drawable/checkbox_selection"
+              android:button="@null"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+      </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

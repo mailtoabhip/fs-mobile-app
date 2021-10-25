@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.team
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -11,7 +13,9 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import org.json.JSONArray
 import javax.inject.Inject
 
 /**
@@ -22,12 +26,13 @@ import javax.inject.Inject
 class TeamMembersViewModel @Inject constructor(
   private val userRepository: UserRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), TeamMembersCreateEditDialogInterface {
+) : BaseViewModel(), TeamMembersCreateDialogInterface ,TeamMembersEditDialogInterface, AdminViewDialogInterface {
 
   var membersLiveData = MutableLiveData<List<Pair<BaseTeamMembersRVAdapterItem<*>, DataRVAdapterOperationType>>>()
   var createUserLiveData = MutableLiveData<String>()
   var updateUserLiveData = MutableLiveData<String>()
   var deleteUserLiveData = MutableLiveData<String>()
+  var updateAdminUserLiveData = MutableLiveData<String>()
   var total = 0
 
   /**
@@ -73,13 +78,21 @@ class TeamMembersViewModel @Inject constructor(
    * Create team member
    */
   override fun createMember(
-    name: String,
-    number: String
+      name: String,
+      number: String,
+      dieselPreference: String,
+      dieselCompany: List<String>
   ) {
     val jsonObject = JsonObject()
+    val jsonArray = JsonArray()
+    for (i in dieselCompany){
+        jsonArray.add(i)
+    }
     jsonObject.addProperty("name", name)
     jsonObject.addProperty("phone_no", number)
     jsonObject.addProperty("parent_sp_id", userRepository.userId())
+    jsonObject.addProperty("diesel_card_preference",dieselPreference)
+    jsonObject.add("diesel_company", jsonArray)
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += userRepository.createSecondaryUser(jsonObject)
@@ -99,9 +112,18 @@ class TeamMembersViewModel @Inject constructor(
    */
   override fun editMember(
     uuid: String,
-    name: String) {
+    name: String,
+    dieselPreference: String,
+    dieselCompany: List<String>
+  ) {
     val jsonObject = JsonObject()
+    val jsonArray = JsonArray()
+    for (i in dieselCompany){
+      jsonArray.add(i)
+    }
     jsonObject.addProperty("name", name)
+    jsonObject.addProperty("diesel_card_preference",dieselPreference)
+    jsonObject.add("diesel_company", jsonArray)
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += userRepository.updateSecondaryUser(uuid, jsonObject)
@@ -135,4 +157,29 @@ class TeamMembersViewModel @Inject constructor(
           }
         }
   }
+
+    override fun updateAdminMember(
+      uuid: String,
+      dieselPreference: String,
+      dieselCompany: List<String>) {
+      val jsonObject = JsonObject()
+      val jsonArray = JsonArray()
+      for (i in dieselCompany){
+        jsonArray.add(i)
+      }
+      jsonObject.addProperty("diesel_card_preference",dieselPreference)
+      jsonObject.add("diesel_company", jsonArray)
+      jsonObject.addProperty("originator", "axle-app")
+
+      compositeDisposable += userRepository.updateAdminUser( uuid , jsonObject)
+          .onBackground()
+          .progress()
+          .subscribe{ _res , error ->
+            if (!error && _res != null) {
+              updateAdminUserLiveData.postValue(_res)
+            } else {
+              error.handle()
+            }
+          }
+    }
 }

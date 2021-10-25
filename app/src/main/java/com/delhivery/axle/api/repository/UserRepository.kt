@@ -109,6 +109,12 @@ class UserRepository @Inject constructor(
   fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
     userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
 
+
+  /**
+   * Update Admin user
+   */
+  fun updateAdminUser(uuid: String, jsonObject: JsonObject) =
+      userService.updateAdminUser(uuid, jsonObject).convertMessageResponse()
   /**
    * Fetch roles and permissions
    */
