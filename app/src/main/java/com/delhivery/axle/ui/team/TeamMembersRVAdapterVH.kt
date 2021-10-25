@@ -4,6 +4,7 @@ import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
+import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewTeamMemberAdminItemBinding
@@ -77,6 +78,7 @@ class TeamMembersAdminUserItemVH(binding: ViewTeamMemberAdminItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
+    binding.adminCardContainer.clickToAction(ViewAdminMember, item, _interface)
   }
 }
 

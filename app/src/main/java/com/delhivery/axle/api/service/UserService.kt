@@ -104,6 +104,15 @@ interface UserService {
     @Body payload: JsonObject
   ): Single<BaseMessageResponse>
 
+  /**
+   * Update Admin user
+   */
+  @PATCH("/users/supplypartners/{uuid}")
+  fun updateAdminUser(
+    @Path("uuid") uuid: String,
+    @Body payload: JsonObject
+  ): Single<BaseMessageResponse>
+
 
   /**
    * Delete Route
