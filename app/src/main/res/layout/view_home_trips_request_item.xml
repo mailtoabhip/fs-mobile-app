@@ -241,15 +241,14 @@
               android:id="@+id/text_trip_state"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_4dp"
               android:layout_gravity="center"
-              android:gravity="center"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:layout_weight="1"
               android:fontFamily="sans-serif"
+              android:gravity="center"
               android:text="@{trip.tripStatusText()}"
               android:textColor="@color/orange"
-              android:layout_weight="1"
-              tools:text="Awaiting Arrival"
-              />
+              tools:text="Awaiting Arrival" />
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_destination_state"
@@ -317,6 +316,29 @@
             app:layout_constraintTop_toTopOf="@id/img_forward"
             tools:text="Andheri East"
             />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/ll_change_payment_mode"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:background="@color/light_red"
+          android:paddingTop="@dimen/size_4dp"
+          android:paddingBottom="@dimen/size_4dp"
+          android:layout_width="match_parent"
+          android:visibility="@{trip.changePaymentModeVisibility()}"
+          android:layout_height="wrap_content"
+          tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_change_payment"
+            android:text="@string/label_change_payment_mode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorDelhiveryRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 

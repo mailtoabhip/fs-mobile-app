@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
@@ -33,6 +34,7 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
@@ -63,7 +65,7 @@ class TripDetailsViewModel @Inject constructor(
   private var userRepository: UserRepository,
   private val payableRepository: PayableRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel() {
+) : BaseViewModel(), ChangePaymentModeInterface {
 
   /* transaction id */
   lateinit var transactionId: String
@@ -147,6 +149,7 @@ class TripDetailsViewModel @Inject constructor(
             isApReconPending = _res.second.isApReconPending?:false
             tripLiveData.postValue(_res)
           } else {
+            error.handle()
             tripLiveData.postValue(null)
           }
         }
@@ -917,5 +920,9 @@ class TripDetailsViewModel @Inject constructor(
           } else
             error.handle()
         }
+  }
+
+  override fun done() {
+    Log.d("wr","srr")
   }
 }

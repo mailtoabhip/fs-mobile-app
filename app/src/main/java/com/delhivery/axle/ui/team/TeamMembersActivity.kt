@@ -52,6 +52,12 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       refreshData()
     }
 
+    val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
+
+    if(userCreate == true){
+      createTeamMember()
+    }
+
     /* setup recycler view */
     binding.rvMembers.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@TeamMembersActivity)
@@ -186,7 +192,12 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 }
 
 fun teamMembersIntent(
-  context: Context
+  context: Context,
+  createUserIntent:Boolean = false
+
 ): Intent = Intent(context, TeamMembersActivity::class.java).apply {
+    putExtra(USER_CREATE,createUserIntent)
 
 }
+
+const val USER_CREATE = "user_create"

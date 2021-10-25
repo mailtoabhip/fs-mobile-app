@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.bids.ViewPaymentType.AdvancePending
 import com.delhivery.axle.ui.bids.ViewPaymentType.BalancePending
 import com.delhivery.axle.ui.bids.ViewPaymentType.NA
 import com.delhivery.axle.ui.bids.ViewPaymentType.RecoveryPending
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
 import com.delhivery.axle.ui.dialogs.FilterTripsInterface
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsItem
@@ -62,7 +63,7 @@ class TripsViewModel @Inject constructor(
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs
-) : BaseViewModel(), FilterTripsInterface {
+) : BaseViewModel(), FilterTripsInterface, ChangePaymentModeInterface{
 
   /* user trips live data */
   var userTripsData =
@@ -382,6 +383,10 @@ class TripsViewModel @Inject constructor(
   override fun onConfirmClick(filter: String) {
     tripsFilter = filter
     filterAppliedLiveData.postValue(true)
+  }
+
+  override fun done() {
+    Log.d("Ma", "ere")
   }
 
 }

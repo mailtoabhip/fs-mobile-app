@@ -2,11 +2,7 @@ package com.delhivery.axle.ui.home.fragments.trips
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
-import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.databinding.ViewCompletedTripItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsHeaderItemBinding
@@ -69,6 +65,7 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.trip = item.data
+    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, _interface )
   }
 }
 

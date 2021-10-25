@@ -40,6 +40,6 @@ ext {
   retrofitVersion = '2.3.0'
   timberVersion = '4.7.0'
   okhttpVersion = '3.9.0'
-  glideVersion = '4.9.0'
+  glideVersion = '4.11.0'
   room_version = '1.1.1'
 }

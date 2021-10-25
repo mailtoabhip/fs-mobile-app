@@ -21,8 +21,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
     targetSdkVersion 29
-    versionCode 60
-    versionName "1.59"
+    versionCode 61
+    versionName "1.60"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -183,7 +183,7 @@ dependencies {
 
   implementation 'com.google.firebase:firebase-analytics:18.0.3'
   implementation 'com.google.firebase:firebase-dynamic-links:20.1.1'
-
+  implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.0'
 
   //AWS sdk
   implementation 'com.amazonaws:aws-android-sdk-s3:2.15+'

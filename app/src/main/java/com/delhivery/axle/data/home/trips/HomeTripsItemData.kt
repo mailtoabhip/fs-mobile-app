@@ -9,12 +9,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.InTransit
 import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
-import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
-import com.delhivery.axle.data.home.trips.TripStatus.In_Transit
-import com.delhivery.axle.data.home.trips.TripStatus.TruckArrived
-import com.delhivery.axle.data.home.trips.TripStatus.TruckReached
-import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
-import com.delhivery.axle.data.home.trips.TripStatus.Unknown
+import com.delhivery.axle.data.home.trips.TripStatus.*
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.ViewPaymentType
 import com.delhivery.axle.utils.ColorProviderUtils
@@ -891,6 +886,22 @@ data class HomeTripsItemData(
     ""
   }
 
+  fun changePaymentModeVisibility(): Int{
+    var visibility = false
+    val status = tripStatusText()
+    val statuses = mutableListOf<String>(TruckArrived.status,TruckConfirmed.status,TruckReached.status)
+
+    if (status in statuses){
+      visibility = true
+    }
+
+    return if (visibility){
+      View.VISIBLE
+    } else{
+      View.GONE
+    }
+  }
+
 }
 
 enum class PODStatus(
@@ -907,6 +918,7 @@ enum class PODStatus(
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 const val HomeTripsRequestAction_UploadEpod = "upload_epod"
 const val HomeTripsRequestAction_UploadTracking = "upload_tracking"
+const val HomeAdvancePendingPaymentMode = "change_payment_mode"
 
 /**
  * Trip Driver details
@@ -1037,3 +1049,8 @@ enum class PaymentStatus(
   BalancePending("balance_pending", "Balance Pending"),
   RecoveryPending("recovery_pending", "Recovery Pending");
 }
+
+data class FuelUserSpinnerOptions(
+        val userName: String,
+        val userType: String = ""
+)

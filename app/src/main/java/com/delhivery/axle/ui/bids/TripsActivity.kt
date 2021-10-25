@@ -17,10 +17,6 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.SearchRequest
-import com.delhivery.axle.data.home.trips.HomeTripsItemData
-import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
-import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoTrips
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
@@ -34,6 +30,8 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.data.home.trips.*
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
@@ -444,7 +442,15 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         finish()
       }
 
+      HomeAdvancePendingPaymentMode ->{
+        initChangePaymentMode(item.data as HomeTripsItemData)
+      }
+
     }
+  }
+
+  private fun initChangePaymentMode(data: HomeTripsItemData) {
+    ChangePaymentModeDialog(this, compositeDisposable, viewModel, data,uiUtils, userPrefs).show()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {

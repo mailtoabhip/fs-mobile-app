@@ -35,6 +35,7 @@ import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
@@ -109,7 +110,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.tripLiveData.observe(this, TransactionObserver())
     viewModel.paymentSummaryLiveData.observe(this, Observer {
       binding.tripDetails = viewModel.tripDetail
+      binding.actionChangePaymentMode.isEnabled = true
     })
+
     viewModel.warehouseLiveData.observe(this, Observer {
       // binding.labelWarehouse.text = it
     })
@@ -171,6 +174,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               uiUtils.showSnackbar(getString(string.msg_call_permission))
             }
           }
+    }
+
+    binding.actionChangePaymentMode.setOnClickListener {
+      ChangePaymentModeDialog(this,compositeDisposable,viewModel, viewModel.tripDetail,uiUtils,userPrefs).show()
     }
 
     viewModel.chargesLiveData.observe(this, Observer {

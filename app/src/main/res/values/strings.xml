@@ -102,6 +102,7 @@
   <string name="action_update_route">Update Route</string>
   <string name="action_call_driver">Call Driver</string>
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
+  <string name="action_done">Done !</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -250,6 +251,12 @@
   <string name="label_charge">Charge</string>
   <string name="label_current_status">Current Status</string>
   <string name="label_delete_route">Delete Route?</string>
+  <string name="label_add_diesel_payout">Add Diesel Payout</string>
+  <string name="label_diesel_payment">Diesel Payment</string>
+  <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
+  <string name="label_bank_transfer">Bank Transfer</string>
+  <string name="label_change_payment_mode">Change Payment Mode</string>
+
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
