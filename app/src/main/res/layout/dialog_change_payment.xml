@@ -272,22 +272,27 @@
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:weightSum="3">
+                            android:padding="@dimen/size_4dp"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/omc_reliance_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:button="@null"
+                                android:enabled="false"
+                                android:background="@drawable/ic_reliance" />
 
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:visibility="gone"
                                 android:layout_weight="1" />
 
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-
-                            <CheckBox
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:visibility="gone"
                                 android:layout_weight="1" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
 

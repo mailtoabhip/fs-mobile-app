@@ -58,6 +58,7 @@
   <string name="msg_call_permission">Please provide permission to call</string>
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
+  <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>

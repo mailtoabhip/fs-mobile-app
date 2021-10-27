@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.DialogChangePaymentBinding
@@ -89,10 +90,13 @@ class ChangePaymentModeDialog @Inject constructor(
                             context.startActivity(teamMembersIntent(context, true))
                         }
                         else{
-                            Toast.makeText(context, "Ask Admin to Create New User", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.msg_ask_admin , Toast.LENGTH_SHORT).show()
                         }
                         setSelection(0)
 
+                    }
+                    else{
+                        binding.layoutDieselCompany.visibility= View.VISIBLE
                     }
                 }
             }
@@ -110,6 +114,8 @@ class ChangePaymentModeDialog @Inject constructor(
                         }
                         else{
                             binding.layoutAddPerson.visibility = View.GONE
+                            binding.layoutDieselCompany.visibility = View.GONE
+                            binding.selectMemberSpinner.setSelection(0)
                             binding.advancePendingBankAmt.text = advanceAmt.toString()
                             binding.advancePendingDieselAmt.setText("0")
 
@@ -120,11 +126,15 @@ class ChangePaymentModeDialog @Inject constructor(
                     }
                     else if (dieselAmt == 0 ){
                         binding.layoutAddPerson.visibility = View.GONE
+                        binding.layoutDieselCompany.visibility = View.GONE
+                        binding.selectMemberSpinner.setSelection(0)
                     }
 
                 }
                 else{
                     binding.layoutAddPerson.visibility = View.GONE
+                    binding.layoutDieselCompany.visibility = View.GONE
+                    binding.selectMemberSpinner.setSelection(0)
                     binding.advancePendingBankAmt.text = advanceAmt.toString()
                 }
             }
