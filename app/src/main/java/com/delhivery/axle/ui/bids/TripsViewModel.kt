@@ -2,13 +2,12 @@ package com.delhivery.axle.ui.bids
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.ExpenseRepository
-import com.delhivery.axle.api.repository.LoadCycleRepository
-import com.delhivery.axle.api.repository.TripsRepository
-import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.request.SearchRequest
+import com.delhivery.axle.api.response.OMCResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
+import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.PaymentStatus
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -62,6 +61,7 @@ class TripsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
+  private val omcRepository: OMCRepository,
   private val userPrefs: UserPrefs
 ) : BaseViewModel(), FilterTripsInterface, ChangePaymentModeInterface{
 
@@ -107,6 +107,11 @@ class TripsViewModel @Inject constructor(
   var balancePendingTotal = 0.0
   var recoveryPendingTotal = 0.0
 
+  var fuelUserSpinnerOptions = mutableListOf<FuelUserSpinnerOptions>()
+  var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
+
+  var omcLiveData = MutableLiveData<Triple<String,Int,OMCResponse>>()
+  var fuelPayoutLiveData = MutableLiveData<Pair<Int,OMCResponse>>()
   /**
    * Fetch trips summary
    */
@@ -385,8 +390,63 @@ class TripsViewModel @Inject constructor(
     filterAppliedLiveData.postValue(true)
   }
 
-  override fun done() {
-    Log.d("Ma", "ere")
+  override fun done(
+      omcRequest: OMCRequest,
+      omcType: String,
+      position: Int
+  ) {
+    compositeDisposable += omcRepository.omcCard(omcRequest)
+        .onBackground()
+        .progress()
+        .subscribe{ _res ,error ->
+          if(!error && _res != null){
+            omcLiveData.postValue(Triple(omcType, position, _res))
+          }
+          else{
+            error.handle()
+            omcLiveData.postValue(null)
+          }
+        }
+  }
+
+  fun updateTripWithFuelPayout(
+    omcType: String,
+    pos: Int
+  ){
+
+  }
+
+  fun fetchTeamMembers()
+  {
+    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            fuelUserSpinnerOptions.clear()
+            if (_res.total > 0) {
+              for (user in _res.users) {
+                if (user.phoneNo != null) {
+                  if (user.phoneNo == userPrefs.phoneNumber)
+                  {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Your No."))
+                  }
+                  else if (user.isParent()) {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Admin"))
+                  }
+                  else {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Child"))
+                  }
+                }
+              }
+              teamMembersLiveData.postValue(fuelUserSpinnerOptions)
+            }
+          }
+          else{
+            teamMembersLiveData.postValue(null)
+            error.handle()
+          }
+        }
   }
 
 }

@@ -141,6 +141,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     })
 
+    viewModel.teamMembersLiveData.observe(this , Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        ChangePaymentModeDialog(this,compositeDisposable,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils ).show()
+      }
+    })
+
+    viewModel.omcLiveData.observe(this, Observer{
+      uiUtils.hideProgress()
+      if(it != null){
+        uiUtils.showProgress()
+        viewModel.getOMCResult(it.first)
+      }
+    })
+
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
     }
@@ -177,7 +192,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.actionChangePaymentMode.setOnClickListener {
-      ChangePaymentModeDialog(this,compositeDisposable,viewModel, viewModel.tripDetail,uiUtils,userPrefs).show()
+      uiUtils.showProgress()
+      viewModel.fetchTeamMembers()
+
     }
 
     viewModel.chargesLiveData.observe(this, Observer {

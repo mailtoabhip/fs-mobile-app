@@ -32,6 +32,16 @@ abstract class BaseHomeTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
   ) = setOnClickListener { action(actionId, item, _interface) }
 
   /**
+   * Add on click listener for action with position
+   */
+  protected fun View.clickToAction(
+    actionId: String,
+    item: IT,
+    position: Int,
+    _interface: HomeTripsRVAdapterInterface
+  ) = setOnClickListener { action(actionId, item, position, _interface) }
+
+  /**
    * Post action to UI
    */
   protected fun View.action(
@@ -39,6 +49,16 @@ abstract class BaseHomeTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
     item: IT,
     _interface: HomeTripsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item) }
+
+  /**
+   * Post action to UI with position
+   */
+  protected fun View.action(
+      actionId: String,
+      item: IT,
+      position: Int,
+      _interface: HomeTripsRVAdapterInterface
+  ) = post { _interface.handleAction(actionId, item, position) }
 }
 
 /**
@@ -65,7 +85,7 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.trip = item.data
-    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, _interface )
+    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, adapterPosition, _interface )
   }
 }
 

@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.service.OMCService
 import com.delhivery.axle.utils.extensions.convertResponse
 import javax.inject.Inject
@@ -10,5 +11,5 @@ class OMCRepository @Inject constructor(
     private val omcService: OMCService
 ) : BaseRepository(){
 
-    fun omcCard() = omcService.omcCard().convertResponse()
+    fun omcCard(omcRequest: OMCRequest) = omcService.omcCard(omcRequest).convertResponse()
 }

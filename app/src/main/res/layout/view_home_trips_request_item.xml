@@ -111,6 +111,51 @@
             tools:textColor="@color/status_active"
             tools:visibility="visible"
             />
+        <LinearLayout
+            android:id="@+id/layout_bank_amt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_trip_payment"
+            app:layout_constraintBottom_toTopOf="@id/layout_diesel_amt"
+            android:visibility="@{trip.changePaymentModeVisibility()}"
+            android:orientation="horizontal">
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:srcCompat="@drawable/ic_person_add"/>
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+              android:text="34536"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_diesel_amt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_bank_amt"
+            app:layout_constraintBottom_toTopOf="@id/lay_promise_date_ageing"
+            android:visibility="@{trip.changePaymentModeVisibility()}"
+            android:orientation="horizontal">
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:srcCompat="@drawable/ic_person_add" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
+              android:text="32004"/>
+
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/seperator"
@@ -137,7 +182,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/lay_promise_date_ageing"
             android:layout_marginTop="@dimen/size_4dp"
-            app:layout_constraintTop_toBottomOf="@+id/text_driver_details"
+            app:layout_constraintTop_toBottomOf="@+id/layout_diesel_amt"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

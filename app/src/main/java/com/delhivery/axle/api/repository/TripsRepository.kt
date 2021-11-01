@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
 import com.delhivery.axle.api.response.TripPaymentResponse
@@ -71,6 +72,11 @@ class TripsRepository @Inject constructor(
     tripsService.fetchTripsPayments(request)
         .convertResponse()
         .map { Pair(trips, it) }
+
+  fun updateTripWithFuelCardUser(
+     transactionId: String,
+     fuelPayoutRequest: FuelPayoutRequest
+  ) = tripsService.updateTripForFuelPayout(transactionId, fuelPayoutRequest)
 }
 
 /* User trips pagination load limit */

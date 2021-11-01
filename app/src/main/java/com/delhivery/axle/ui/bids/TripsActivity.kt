@@ -64,6 +64,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
    var isLoadingData = true
    var intentRefresh= false
    var finalTime :Long = 0
+   var tripDataItem : HomeTripsItemData? = null
+   var itemPos = 0
 
   @Inject lateinit var userPrefs :UserPrefs
   /* search menu item ref */
@@ -283,6 +285,21 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       refreshData()
     })
 
+    viewModel.teamMembersLiveData.observe(this , Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,compositeDisposable,viewModel, it1, it, userPrefs, uiUtils, itemPos).show() }
+      }
+    })
+
+    viewModel.omcLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if( it != null){
+        viewModel.updateTripWithFuelPayout(it.first, it.second)
+      }
+    })
+
+
     binding.viewAdvancePending.setOnClickListener {
       userPrefs.startTime = Date().time
       viewModel.viewPaymentType = ViewPaymentType.byTypeId(0)
@@ -441,16 +458,26 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         setResult(RESULT_OK)
         finish()
       }
-
-      HomeAdvancePendingPaymentMode ->{
-        initChangePaymentMode(item.data as HomeTripsItemData)
-      }
-
     }
   }
 
-  private fun initChangePaymentMode(data: HomeTripsItemData) {
-    ChangePaymentModeDialog(this, compositeDisposable, viewModel, data,uiUtils, userPrefs).show()
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeTripsRVAdapterItem<*>,
+    position: Int) {
+    when (actionId){
+      HomeAdvancePendingPaymentMode ->{
+        initChangePaymentMode(item.data as HomeTripsItemData, position)
+    }
+    }
+
+  }
+
+  private fun initChangePaymentMode(data: HomeTripsItemData ,position: Int) {
+    tripDataItem = data
+    itemPos = position
+    uiUtils.showProgress()
+    viewModel.fetchTeamMembers()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {

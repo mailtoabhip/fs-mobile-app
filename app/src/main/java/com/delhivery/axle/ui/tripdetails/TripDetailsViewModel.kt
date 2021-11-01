@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
@@ -24,6 +26,7 @@ import com.delhivery.axle.data.TruckLoaded
 import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.TruckUnloaded
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
@@ -35,6 +38,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
+import com.delhivery.axle.ui.team.TeamMemberAdminUserItem
+import com.delhivery.axle.ui.team.TeamMemberSubUserItem
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
@@ -64,6 +69,7 @@ class TripDetailsViewModel @Inject constructor(
   private val utilityRepository: UtilityRepository,
   private var userRepository: UserRepository,
   private val payableRepository: PayableRepository,
+  private val omcRepository: OMCRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -135,6 +141,14 @@ class TripDetailsViewModel @Inject constructor(
   var recoveriesSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
   var pendingRecoveryList = mutableListOf<TripPaymentSummaryDetailItemData>()
 
+  var fuelUserSpinnerOptions = mutableListOf<FuelUserSpinnerOptions>()
+  var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
+
+  var omcLiveData = MutableLiveData<Pair<String,OMCResponse>>()
+  var fuelPayoutLiveData = MutableLiveData<OMCResponse>()
+  var omcGetLiveData = MutableLiveData<Pair<String,FuelPayoutRequest>>()
+
+  var omcID : String = ""
   /**
    * Fetch trip details
    */
@@ -905,6 +919,38 @@ class TripDetailsViewModel @Inject constructor(
     }
   }
 
+  fun fetchTeamMembers()
+  {
+    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            fuelUserSpinnerOptions.clear()
+            if (_res.total > 0) {
+              for (user in _res.users) {
+                if (user.phoneNo != null) {
+                  if (user.phoneNo == userPrefs.phoneNumber)
+                  {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Your No."))
+                  }
+                  else if (user.isParent()) {
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Admin"))
+                    }
+                  else {
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Child"))
+                    }
+                }
+              }
+              teamMembersLiveData.postValue(fuelUserSpinnerOptions)
+            }
+          }
+          else{
+            teamMembersLiveData.postValue(null)
+            error.handle()
+          }
+        }
+  }
   /**
    * Get delegation token for AWS
    */
@@ -922,7 +968,40 @@ class TripDetailsViewModel @Inject constructor(
         }
   }
 
-  override fun done() {
-    Log.d("wr","srr")
+  override fun done(
+    omcRequest: OMCRequest,
+    omcType: String,
+    position: Int
+  ) {
+    compositeDisposable += omcRepository.omcCard(omcRequest)
+      .onBackground()
+      .progress()
+      .subscribe{ _res ,error ->
+        if(!error && _res != null){
+          omcLiveData.postValue(Pair(omcType,_res))
+        }
+        else{
+          error.handle()
+          omcLiveData.postValue(null)
+        }
+      }
+  }
+
+  fun getOMCResult(omcType: String){
+    compositeDisposable+=userRepository.getOMCs(0, 100, "omc")
+        .onBackground()
+        .progress()
+        .subscribe{ _res, error ->
+          if(!error && _res!= null){
+
+          }
+
+        }
+  }
+
+  fun updateTripWithFuelUser(
+
+  ){
+
   }
 }
