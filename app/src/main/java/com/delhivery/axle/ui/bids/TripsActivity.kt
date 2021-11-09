@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
@@ -288,15 +289,35 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.teamMembersLiveData.observe(this , Observer {
       uiUtils.hideProgress()
       if(it!= null){
-        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,compositeDisposable,viewModel, it1, it, userPrefs, uiUtils, itemPos).show() }
+        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,viewModel, it1, it, userPrefs, uiUtils, itemPos).show() }
       }
     })
 
     viewModel.omcLiveData.observe(this, Observer {
       uiUtils.hideProgress()
       if( it != null){
+        uiUtils.showProgress()
+        viewModel.getOMCResult(it.first, it.second)
+      }
+    })
+
+    viewModel.omcGetLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        uiUtils.showProgress()
         viewModel.updateTripWithFuelPayout(it.first, it.second)
       }
+    })
+
+    viewModel.fuelPayoutLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        val data = adapter.itemsList()[it.second].data as? HomeTripsItemData
+        data?.payment!!.apply {
+          fuelPayout = it.third
+        }
+      }
+      adapter.notifyItemChanged(it.second)
     })
 
 

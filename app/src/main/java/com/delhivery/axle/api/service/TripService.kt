@@ -71,9 +71,4 @@ interface TripService {
     @Body request: JsonObject
   ): Single<BaseResponse<List<TripPaymentResponse>>>
 
-  @PATCH("trips/actions/{transactionId}/")
-  fun updateTripForFuelPayout(
-    @Path("transactionId") transactionId: String,
-    @Body request: FuelPayoutRequest
-  ): Single<BaseMessageResponse>
 }

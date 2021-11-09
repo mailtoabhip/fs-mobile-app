@@ -265,6 +265,7 @@
   <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
   <string name="label_bank_transfer">Bank Transfer</string>
   <string name="label_change_payment_mode">Change Payment Mode</string>
+  <string name="label_with_sign_value">₹ %$s</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

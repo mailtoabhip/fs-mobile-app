@@ -601,9 +601,48 @@ data class HomeTripsItemData(
    */
   fun tripPayment(): String {
     payment?.let {
-      return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
+      if (changePaymentModeVisibility() == View.VISIBLE){
+        if(it.fuelPayout != 0.0){
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount!! - it.fuelPayout!!)}"
+        }
+        else{
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
+        }
+      }
+      else {
+        return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
+      }
     }
     return ""
+  }
+
+  /**
+   * Fuel Layout Visibility
+   */
+  fun fuelPayment(): String {
+    payment?.let {
+      if (changePaymentModeVisibility() == View.VISIBLE) {
+        if (it.fuelPayout != 0.0) {
+          return "₹ ${StringUtils.formatAmount(it.fuelPayout!!)}"
+        }
+      }
+    }
+    return ""
+  }
+
+  /**
+   * Fuel Amount Visibility
+   */
+
+  fun fuelPaymentVisibility(): Int{
+    payment?.let {
+      if (it.fuelPayout != 0.0) {
+        return View.VISIBLE
+      } else {
+        View.GONE
+      }
+    }
+    return View.GONE
   }
 
   /**
@@ -613,7 +652,17 @@ data class HomeTripsItemData(
     payment?.let {
       when {
         paymentStatus() == PaymentStatus.AdvancePending.statusKey -> {
-          return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid when the loading is completed"
+          if (changePaymentModeVisibility() == View.VISIBLE){
+            return if( it.fuelPayout != 0.0){
+              "₹ ${StringUtils.formatAmount(it.paymentAmount!!- it.fuelPayout!!)} will be paid in your bank account and " +
+                      "₹ ${StringUtils.formatAmount(it.fuelPayout?: 0.0)} will be given as Diesel Credits against mobile number ${it.fuelNumber} once loading is complete"
+            } else{
+              "₹ ${StringUtils.formatAmount(it.paymentAmount!!)} will be paid in your bank account when loading is completed"
+            }
+          }
+          else {
+            return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid when the loading is completed"
+          }
         }
         paymentStatus() == PaymentStatus.BalancePending.statusKey -> {
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)} will be paid as balance soon"
@@ -630,9 +679,21 @@ data class HomeTripsItemData(
   /**
    * payment amount visibility
    */
-  fun paymentVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+  fun paymentVisibility() = if (((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
       paymentStatus() == PaymentStatus.BalancePending.statusKey ||
           paymentStatus() == PaymentStatus.RecoveryPending.statusKey) ||
+      (paymentStatus() == TripStatus.TripCompleted.statusKey && isSettled)) && (changePaymentModeVisibility() == View.GONE)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * payment type visibility
+   */
+  fun paymentTextVisibility() = if ((paymentStatus() == PaymentStatus.AdvancePending.statusKey ||
+      paymentStatus() == PaymentStatus.BalancePending.statusKey ||
+      paymentStatus() == PaymentStatus.RecoveryPending.statusKey) ||
       (paymentStatus() == TripStatus.TripCompleted.statusKey && isSettled)) {
     View.VISIBLE
   } else {

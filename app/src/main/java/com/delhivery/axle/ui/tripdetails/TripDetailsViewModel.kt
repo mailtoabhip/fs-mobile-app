@@ -70,6 +70,7 @@ class TripDetailsViewModel @Inject constructor(
   private var userRepository: UserRepository,
   private val payableRepository: PayableRepository,
   private val omcRepository: OMCRepository,
+  private val transactionsRepository: TransactionsRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -145,10 +146,12 @@ class TripDetailsViewModel @Inject constructor(
   var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
 
   var omcLiveData = MutableLiveData<Pair<String,OMCResponse>>()
-  var fuelPayoutLiveData = MutableLiveData<OMCResponse>()
-  var omcGetLiveData = MutableLiveData<Pair<String,FuelPayoutRequest>>()
+  var fuelPayoutLiveData = MutableLiveData<String>()
+  var omcGetLiveData = MutableLiveData<Pair<String,String>>()
 
   var omcID : String = ""
+  var fuelCardNumber = ""
+  var fuelCardAmt = ""
   /**
    * Fetch trip details
    */
@@ -932,13 +935,13 @@ class TripDetailsViewModel @Inject constructor(
                 if (user.phoneNo != null) {
                   if (user.phoneNo == userPrefs.phoneNumber)
                   {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Your No."))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Your No.)"))
                   }
                   else if (user.isParent()) {
-                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Admin"))
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Admin)"))
                     }
                   else {
-                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Child"))
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Child)"))
                     }
                 }
               }
@@ -969,10 +972,15 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   override fun done(
+    transactionId: String,
     omcRequest: OMCRequest,
     omcType: String,
+    fuelNumber: String,
+    fuelAmt: String,
     position: Int
   ) {
+    fuelCardNumber= fuelNumber
+    fuelCardAmt = fuelAmt
     compositeDisposable += omcRepository.omcCard(omcRequest)
       .onBackground()
       .progress()
@@ -988,20 +996,45 @@ class TripDetailsViewModel @Inject constructor(
   }
 
   fun getOMCResult(omcType: String){
-    compositeDisposable+=userRepository.getOMCs(0, 100, "omc")
+    compositeDisposable += userRepository.getOMCs(0, 100, "omc")
         .onBackground()
         .progress()
         .subscribe{ _res, error ->
           if(!error && _res!= null){
-
+            for(item in _res.responseData!!.omcDetailsList){
+              if (omcType == item.name){
+                omcID = item.uuid
+              }
+            }
+            if(omcID!= "") {
+              omcGetLiveData.postValue(Pair(omcType, omcID))
+            }
+            else
+              omcGetLiveData.postValue(null)
           }
-
+          else{
+            error.handle()
+            omcGetLiveData.postValue(null)
+          }
         }
   }
 
   fun updateTripWithFuelUser(
-
+    omcType:String
   ){
+    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update")
+    compositeDisposable += transactionsRepository.updateTripWithFuelCardUser(transactionId, fuelPayoutRequest)
+        .onBackground()
+        .progress()
+        .subscribe(){_res, error ->
+          if(!error && _res!= null){
+            fuelPayoutLiveData.postValue(_res)
+          }
+          else{
+            error.handle()
+            fuelPayoutLiveData.postValue(null)
+          }
 
+        }
   }
 }

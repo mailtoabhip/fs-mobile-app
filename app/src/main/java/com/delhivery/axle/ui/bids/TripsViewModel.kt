@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.bids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.api.response.OMCResponse
@@ -62,6 +63,7 @@ class TripsViewModel @Inject constructor(
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
   private val omcRepository: OMCRepository,
+  private val transactionsRepository: TransactionsRepository,
   private val userPrefs: UserPrefs
 ) : BaseViewModel(), FilterTripsInterface, ChangePaymentModeInterface{
 
@@ -107,11 +109,16 @@ class TripsViewModel @Inject constructor(
   var balancePendingTotal = 0.0
   var recoveryPendingTotal = 0.0
 
+  var fuelCardNumber = ""
+  var fuelCardAmt = ""
+  var omcID : String = ""
+  var tripId: String = ""
   var fuelUserSpinnerOptions = mutableListOf<FuelUserSpinnerOptions>()
   var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
 
   var omcLiveData = MutableLiveData<Triple<String,Int,OMCResponse>>()
-  var fuelPayoutLiveData = MutableLiveData<Pair<Int,OMCResponse>>()
+  var omcGetLiveData = MutableLiveData<Pair<String,Int>>()
+  var fuelPayoutLiveData = MutableLiveData<Triple<String,Int,Double>>()
   /**
    * Fetch trips summary
    */
@@ -391,10 +398,16 @@ class TripsViewModel @Inject constructor(
   }
 
   override fun done(
+      transactionId: String,
       omcRequest: OMCRequest,
       omcType: String,
+      fuelNumber: String,
+      fuelAmt: String,
       position: Int
   ) {
+    fuelCardAmt= fuelAmt
+    fuelCardNumber = fuelNumber
+    tripId = transactionId
     compositeDisposable += omcRepository.omcCard(omcRequest)
         .onBackground()
         .progress()
@@ -409,10 +422,50 @@ class TripsViewModel @Inject constructor(
         }
   }
 
+  fun getOMCResult(
+    omcType: String,
+    position: Int){
+    compositeDisposable += userRepository.getOMCs(0, 100, "omc")
+        .onBackground()
+        .progress()
+        .subscribe{ _res, error ->
+          if(!error && _res!= null){
+            for(item in _res.responseData!!.omcDetailsList){
+              if (omcType == item.name){
+                omcID = item.uuid
+              }
+            }
+            if(omcID!= "") {
+              omcGetLiveData.postValue(Pair(omcType, position))
+            }
+            else
+              omcGetLiveData.postValue(null)
+          }
+          else{
+            error.handle()
+            omcGetLiveData.postValue(null)
+          }
+        }
+  }
+
   fun updateTripWithFuelPayout(
     omcType: String,
     pos: Int
   ){
+    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update")
+    compositeDisposable += transactionsRepository.updateTripWithFuelCardUser(tripId, fuelPayoutRequest)
+          .onBackground()
+          .progress()
+          .subscribe(){_res, error ->
+            if(!error && _res!= null){
+              fuelPayoutLiveData.postValue(Triple(_res, pos, fuelCardAmt.toDouble()))
+            }
+            else{
+              error.handle()
+              fuelPayoutLiveData.postValue(null)
+            }
+
+          }
 
   }
 
@@ -429,13 +482,13 @@ class TripsViewModel @Inject constructor(
                 if (user.phoneNo != null) {
                   if (user.phoneNo == userPrefs.phoneNumber)
                   {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Your No."))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Your No.)"))
                   }
                   else if (user.isParent()) {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Admin"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Admin)"))
                   }
                   else {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "Child"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Child)"))
                   }
                 }
               }

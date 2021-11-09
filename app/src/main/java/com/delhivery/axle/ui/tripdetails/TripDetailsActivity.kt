@@ -54,6 +54,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import javax.inject.Inject
 
@@ -144,7 +145,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.teamMembersLiveData.observe(this , Observer {
       uiUtils.hideProgress()
       if(it!= null){
-        ChangePaymentModeDialog(this,compositeDisposable,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils ).show()
+        ChangePaymentModeDialog(this,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils ).show()
       }
     })
 
@@ -153,6 +154,21 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if(it != null){
         uiUtils.showProgress()
         viewModel.getOMCResult(it.first)
+      }
+    })
+
+    viewModel.omcGetLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it != null){
+        uiUtils.showProgress()
+        viewModel.updateTripWithFuelUser(it.first)
+      }
+
+    })
+    viewModel.fuelPayoutLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!=null){
+        refreshData()
       }
     })
 

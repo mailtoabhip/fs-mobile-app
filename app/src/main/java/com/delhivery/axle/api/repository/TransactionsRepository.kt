@@ -2,8 +2,10 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
+import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -57,6 +59,12 @@ class TransactionsRepository @Inject constructor(
    */
   fun transactionTripMeter() =
     transactionService.transactionsTripMeter(userRepository.userId()).convertResponse()
+
+
+  fun updateTripWithFuelCardUser(
+    transactionId: String,
+    fuelPayoutRequest: FuelPayoutRequest
+  ) = transactionService.updateTripForFuelPayout(transactionId, fuelPayoutRequest).convertMessageResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {

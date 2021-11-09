@@ -73,10 +73,7 @@ class TripsRepository @Inject constructor(
         .convertResponse()
         .map { Pair(trips, it) }
 
-  fun updateTripWithFuelCardUser(
-     transactionId: String,
-     fuelPayoutRequest: FuelPayoutRequest
-  ) = tripsService.updateTripForFuelPayout(transactionId, fuelPayoutRequest)
+
 }
 
 /* User trips pagination load limit */

@@ -30,7 +30,6 @@ import javax.inject.Inject
 
 class ChangePaymentModeDialog @Inject constructor(
         context: Context,
-        private val compositeDisposable: CompositeDisposable,
         private val dialogInterface: ChangePaymentModeInterface,
         private val data: HomeTripsItemData,
         private val fuelUserSpinnerOptionsList: List<FuelUserSpinnerOptions>,
@@ -61,7 +60,7 @@ class ChangePaymentModeDialog @Inject constructor(
 
         fuelUserSpinnerOptions.addAll(fuelUserSpinnerOptionsList)
         if(data.driverDetails?.driverPhoneNo != null){
-            fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(data.driverDetails.driverPhoneNo, "Driver"))
+            fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(data.driverDetails.driverPhoneNo, "(Driver)"))
         }
         fuelUserSpinnerOptions.add(FuelUserSpinnerOptions("Different Number"))
 
@@ -69,11 +68,18 @@ class ChangePaymentModeDialog @Inject constructor(
         binding.apply {
             dialogTextVehicleNo.text = data.vehicleDetails.vehicleNo
             dialogTextDriverNo.text = data.formattedDriverDetails()
-            amtAdvancePending.text =  data.tripPayment()
+            amtAdvancePending.text =  "₹ "+data.payment!!.paymentAmount!!.toInt().toString()
 
             advanceAmt = (data.payment?.paymentAmount ?: 0.0).toInt()
             bankAcNumberText.text = "Bank A/c: " +userPrefs.accNumber
             advancePendingBankAmt.text = data.tripPayment()
+        }
+
+        if(data.payment != null && data.payment!!.fuelPayout != 0.0){
+            binding.dieselPayoutIdentifier.visibility = View.GONE
+            binding.layoutDieselAddAmt.visibility = View.VISIBLE
+            binding.layoutAddPerson.visibility = View.VISIBLE
+            binding.advancePendingDieselAmt.setText(data.payment!!.fuelPayout!!.toInt().toString())
         }
 
         binding.dieselPayoutIdentifier.setOnClickListener{
@@ -188,7 +194,7 @@ class ChangePaymentModeDialog @Inject constructor(
 
         if((fuelAmt > 0 && userNumber != "") || fuelAmt ==0 ){
             val omcRequest= OMCRequest(userNumber, "reliance", data.transactionId)
-            dialogInterface.done(omcRequest, "reliance", position)
+            dialogInterface.done(data.transactionId, omcRequest, "reliance", userNumber, fuelAmt.toString(),position)
             uiUtils.showProgress()
             dismiss()
         }
@@ -200,8 +206,11 @@ class ChangePaymentModeDialog @Inject constructor(
 }
 interface ChangePaymentModeInterface{
     fun done(
+        transactionId: String,
         omcRequest : OMCRequest,
         omcType: String,
+        fuelNumber: String,
+        fuelAmt: String,
         position: Int
     )
 }

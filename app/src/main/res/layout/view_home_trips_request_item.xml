@@ -90,7 +90,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             bind:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
-            android:visibility="@{trip.paymentVisibility()}"
+            android:visibility="@{trip.paymentTextVisibility()}"
             tools:text="Load picked up"
             tools:textColor="@color/status_active"
             tools:visibility="visible"
@@ -123,13 +123,16 @@
           <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              app:srcCompat="@drawable/ic_person_add"/>
+              android:layout_gravity="center"
+              app:srcCompat="@drawable/ic_bank_small"/>
           <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginStart="@dimen/size_4dp"
+              android:layout_gravity="center"
               android:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
-              android:text="34536"/>
+              android:text="@{trip.tripPayment()}"
+              tools:text="35000"/>
 
 
         </LinearLayout>
@@ -141,18 +144,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_bank_amt"
             app:layout_constraintBottom_toTopOf="@id/lay_promise_date_ageing"
-            android:visibility="@{trip.changePaymentModeVisibility()}"
+            android:visibility="@{trip.fuelPaymentVisibility()}"
             android:orientation="horizontal">
           <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              app:srcCompat="@drawable/ic_person_add" />
+              app:srcCompat="@drawable/ic_fuel_small"
+              android:layout_gravity="center"/>
           <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginStart="@dimen/size_4dp"
               android:textColor="@{ ContextCompat.getColor(context, trip.requiredTextColor()) }"
-              android:text="32004"/>
+              android:text="@{trip.fuelPayment()}"
+              android:layout_gravity="center"
+              tools:text="35000"/>
 
 
         </LinearLayout>
