@@ -43,7 +43,7 @@ android {
     development {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
-      resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resValue("bool", "FIREBASE_ACTIVATED", "true")
       resConfigs "en", "xxhdpi"
     }
     uat {
@@ -183,6 +183,7 @@ dependencies {
 
   implementation 'com.google.firebase:firebase-analytics:18.0.3'
   implementation 'com.google.firebase:firebase-dynamic-links:20.1.1'
+  implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.1.1'
 
 
   //AWS sdk

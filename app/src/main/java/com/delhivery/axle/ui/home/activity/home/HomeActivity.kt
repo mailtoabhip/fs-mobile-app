@@ -15,6 +15,7 @@ import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
@@ -31,6 +32,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -157,6 +159,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           {
             fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
           }
+        }
+
+        ADVANCE_PENDING_REDIRECT -> {
+          userPrefs.startTime = Date().time
+          startActivity(userTripsIntent(this, "payment_view", 0))
         }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -338,6 +345,7 @@ private const val EPOD_PENDING_REDIRECT = "epodtrp"
 private const val DOWNLOAD_LEDGER_POPUP_REDIRECT = "dnldldgr"
 private const val TRIP_DETAIL_REDIRECT = "trpdtl"
 private const val LOAD_DETAIL_REDIRECT = "biddtl"
+private const val ADVANCE_PENDING_REDIRECT = "advpend"
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"
