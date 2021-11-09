@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.home.activity.home
 
+import android.R.attr.action
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,13 +16,8 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
-import com.delhivery.axle.ui.home.fragments.BaseHomeFragmentAction
-import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType
+import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
-import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
-import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
@@ -32,14 +27,20 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
+import com.google.firebase.inappmessaging.model.Action
+import com.google.firebase.inappmessaging.model.CampaignMetadata
+import com.google.firebase.inappmessaging.model.InAppMessage
 import java.util.*
 import javax.inject.Inject
+
 
 /**
  * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
-    OnNavigationItemSelectedListener {
+    OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
 
   override fun getViewModelClass() = HomeViewModel::class.java
 
@@ -97,6 +98,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
               observeFragmentLiveData(p)
             }
       }
+      FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
     }
 
     binding.viewpager.disableScroll(true)
@@ -146,17 +148,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         TRIP_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
             startActivity(tripDetailsIntent(dplink_tid, this))
-          }
-          else{
+          } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
           }
         }
         LOAD_DETAIL_REDIRECT -> {
-          if(dplink_tid != ""){
+          if (dplink_tid != "") {
             startActivity(bidDetailsIntent(dplink_tid, this))
-          }
-          else
-          {
+          } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
           }
         }
@@ -212,11 +211,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onOptionsItemSelected(item: MenuItem?): Boolean {
     return when (item?.itemId) {
       R.id.nav_call -> {
-         //Capture Event
+        //Capture Event
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId(), FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
         )
         callHelpline()
         true
@@ -255,7 +254,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     analyticsUtil.trackEvent(
             EVENT_NOTIFICATION_OPEN,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-            mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
+            mutableListOf(userPrefs.userId(), notificationType, userPrefs.userPerformance)
     )
 
     viewModel.markNotificationRead(notificationId)
@@ -270,8 +269,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     } else {
       elevationLiveData.observe(this, Observer {
         ViewCompat.setElevation(
-            binding.toolbar,
-            it ?: resources.getDimension(R.dimen.toolbar_elevation)
+                binding.toolbar,
+                it ?: resources.getDimension(R.dimen.toolbar_elevation)
         )
       })
     }
@@ -302,6 +301,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         pos != -1
       }
+
+  override fun messageClicked(p0: InAppMessage, p1: Action) {
+    val url: String? = p1.actionUrl
+    val metadata: CampaignMetadata? = p0.campaignMetadata
+    Log.d("parameters",url+metadata.toString())
+    userPrefs.startTime = Date().time
+    startActivity(userTripsIntent(this, "payment_view", 0))
+
+  }
 }
 
 /**
@@ -354,8 +362,8 @@ private const val IntentExtraFragmentTypeKey = "fragment_type"
  * Trip details intent
  */
 fun homeActivityIntent(
-  fragmentType: String,
-  context: Context
+        fragmentType: String,
+        context: Context
 ) = Intent(context, HomeActivity::class.java).apply {
   putExtra(IntentExtraFragmentTypeKey, fragmentType)
 }
