@@ -68,7 +68,7 @@ class ChangePaymentModeDialog @Inject constructor(
         binding.apply {
             dialogTextVehicleNo.text = data.vehicleDetails.vehicleNo
             dialogTextDriverNo.text = data.formattedDriverDetails()
-            amtAdvancePending.text =  "₹ "+data.payment!!.paymentAmount!!.toInt().toString()
+            amtAdvancePending.text = String.format(context.getString(R.string.label_with_sign_value),data.payment!!.paymentAmount!!.toInt())
 
             advanceAmt = (data.payment?.paymentAmount ?: 0.0).toInt()
             bankAcNumberText.text = "Bank A/c: " +userPrefs.accNumber
@@ -131,7 +131,7 @@ class ChangePaymentModeDialog @Inject constructor(
                     val dieselAmt = s.toString().toInt()
                     if(dieselAmt > 0){
                         if((advanceAmt - dieselAmt) >= 0) {
-                            binding.advancePendingBankAmt.text = (advanceAmt - dieselAmt).toString()
+                            binding.advancePendingBankAmt.text = String.format(context.getString(R.string.label_with_sign_value),(advanceAmt - dieselAmt))
                             binding.layoutAddPerson.visibility = View.VISIBLE
                         }
                         else{
@@ -139,7 +139,7 @@ class ChangePaymentModeDialog @Inject constructor(
                             binding.layoutDieselCompany.visibility = View.GONE
                             binding.selectMemberSpinner.setSelection(0)
                             userNumber = ""
-                            binding.advancePendingBankAmt.text = advanceAmt.toString()
+                            binding.advancePendingBankAmt.text = String.format(context.getString(R.string.label_with_sign_value), advanceAmt)
                             binding.advancePendingDieselAmt.setText("0")
 
                             binding.advancePendingDieselAmt.setError("Can't be greater than Advance Pending Amount")
@@ -159,7 +159,7 @@ class ChangePaymentModeDialog @Inject constructor(
                     binding.layoutAddPerson.visibility = View.GONE
                     binding.layoutDieselCompany.visibility = View.GONE
                     binding.selectMemberSpinner.setSelection(0)
-                    binding.advancePendingBankAmt.text = advanceAmt.toString()
+                    binding.advancePendingBankAmt.text = String.format(context.getString(R.string.label_with_sign_value), advanceAmt)
                     userNumber = ""
                 }
             }
