@@ -602,8 +602,8 @@ data class HomeTripsItemData(
   fun tripPayment(): String {
     payment?.let {
       if (changePaymentModeVisibility() == View.VISIBLE){
-        if(it.fuelPayout != 0.0){
-          return "₹ ${StringUtils.formatAmount(it.paymentAmount!! - it.fuelPayout!!)}"
+        if(it.fuelPayout!=null && it.fuelPayout != 0.0){
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount?:0.0 - it.fuelPayout!!)}"
         }
         else{
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
@@ -622,7 +622,7 @@ data class HomeTripsItemData(
   fun fuelPayment(): String {
     payment?.let {
       if (changePaymentModeVisibility() == View.VISIBLE) {
-        if (it.fuelPayout != 0.0) {
+        if (it.fuelPayout!=null && it.fuelPayout != 0.0) {
           return "₹ ${StringUtils.formatAmount(it.fuelPayout!!)}"
         }
       }
@@ -636,7 +636,7 @@ data class HomeTripsItemData(
 
   fun fuelPaymentVisibility(): Int{
     payment?.let {
-      if (it.fuelPayout != 0.0) {
+      if (it.fuelPayout!=null && it.fuelPayout != 0.0) {
         return View.VISIBLE
       } else {
         View.GONE
@@ -653,7 +653,7 @@ data class HomeTripsItemData(
       when {
         paymentStatus() == PaymentStatus.AdvancePending.statusKey -> {
           if (changePaymentModeVisibility() == View.VISIBLE){
-            return if( it.fuelPayout != 0.0){
+            return if( it.fuelPayout!=null && it.fuelPayout != 0.0){
               "₹ ${StringUtils.formatAmount(it.paymentAmount!!- it.fuelPayout!!)} will be paid in your bank account and " +
                       "₹ ${StringUtils.formatAmount(it.fuelPayout?: 0.0)} will be given as Diesel Credits against mobile number ${it.fuelNumber} once loading is complete"
             } else{
@@ -948,19 +948,22 @@ data class HomeTripsItemData(
   }
 
   fun changePaymentModeVisibility(): Int{
-    var visibility = false
-    val status = tripStatusText()
-    val statuses = mutableListOf<String>(TruckArrived.status,TruckConfirmed.status,TruckReached.status)
+    payment?.let {
+      var visibility = false
+      val status = tripStatusText()
+      val statuses = mutableListOf<String>(TruckArrived.status, TruckConfirmed.status, TruckReached.status)
 
-    if (status in statuses){
-      visibility = true
-    }
+      if (status in statuses) {
+        visibility = true
+      }
 
-    return if (visibility){
-      View.VISIBLE
-    } else{
-      View.GONE
+      return if (visibility) {
+        View.VISIBLE
+      } else {
+        View.GONE
+      }
     }
+    return View.GONE
   }
 
 }

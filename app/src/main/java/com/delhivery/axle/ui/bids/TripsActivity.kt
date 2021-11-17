@@ -316,8 +316,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         data?.payment!!.apply {
           fuelPayout = it.third
         }
+        adapter.notifyItemChanged(it.second)
       }
-      adapter.notifyItemChanged(it.second)
     })
 
 

@@ -75,7 +75,7 @@ class ChangePaymentModeDialog @Inject constructor(
             advancePendingBankAmt.text = data.tripPayment()
         }
 
-        if(data.payment != null && data.payment!!.fuelPayout != 0.0){
+        if(data.payment != null && data.payment!!.fuelPayout!=null && data.payment!!.fuelPayout != 0.0){
             binding.dieselPayoutIdentifier.visibility = View.GONE
             binding.layoutDieselAddAmt.visibility = View.VISIBLE
             binding.layoutAddPerson.visibility = View.VISIBLE
