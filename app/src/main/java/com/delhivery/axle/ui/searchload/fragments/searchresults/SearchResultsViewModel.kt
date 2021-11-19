@@ -65,7 +65,7 @@ class SearchResultsViewModel @Inject constructor(
                   }
                       .get(0)
               } catch (e: Exception) {
-                Log.d("No Bid found for: ", load.transactionId)
+                load.transactionId?.let { Log.d("No Bid found for: ", it) }
               }
             }
             searchResults.postValue(loads)

@@ -167,7 +167,7 @@ class LocationUtils @Inject constructor(
           LocationManager.NETWORK_PROVIDER, UPDATE_MIN_TIME,
           UPDATE_MIN_DISTANCE,
           object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
+            override fun onLocationChanged(location: Location) {
               Log.d(LOG_TAG, "onLocationChanged(location: ${location.toString()})")
               location?.let { it1 -> it.onNext(it1) }
             }
@@ -182,11 +182,11 @@ class LocationUtils @Inject constructor(
               )
             }
 
-            override fun onProviderEnabled(provider: String?) {
+            override fun onProviderEnabled(provider: String) {
               Log.d(LOG_TAG, "onProviderEnabled(provider: $provider)")
             }
 
-            override fun onProviderDisabled(provider: String?) {
+            override fun onProviderDisabled(provider: String) {
               Log.d(LOG_TAG, "onProviderDisabled(provider: $provider)")
             }
           }, Looper.getMainLooper()
@@ -200,7 +200,7 @@ class LocationUtils @Inject constructor(
       locationManager.requestSingleUpdate(
           LocationManager.NETWORK_PROVIDER,
           object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
+            override fun onLocationChanged(location: Location) {
               Log.d(LOG_TAG, "onLocationChanged(location: ${location.toString()})")
               location?.let { it1 -> it.onSuccess(it1) }
             }
@@ -215,11 +215,11 @@ class LocationUtils @Inject constructor(
               )
             }
 
-            override fun onProviderEnabled(provider: String?) {
+            override fun onProviderEnabled(provider: String) {
               Log.d(LOG_TAG, "onProviderEnabled(provider: $provider)")
             }
 
-            override fun onProviderDisabled(provider: String?) {
+            override fun onProviderDisabled(provider: String) {
               Log.d(LOG_TAG, "onProviderDisabled(provider: $provider)")
             }
           }, Looper.getMainLooper()

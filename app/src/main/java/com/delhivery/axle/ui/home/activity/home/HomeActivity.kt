@@ -202,8 +202,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     return true
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    return when (item?.itemId) {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
       R.id.nav_call -> {
          //Capture Event
         analyticsUtil.trackEvent(
