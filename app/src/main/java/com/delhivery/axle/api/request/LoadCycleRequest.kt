@@ -30,6 +30,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var operationTripStatus: String?= null
   var sortBy: String?= null
   var sortDir: String?= null
+  var entityName: String? = "Orion"
 
   constructor(
     vehicleNumber: String? = null,
@@ -109,7 +110,9 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     sortDir?.let {
       jsonObject.addProperty("sort_dir", sortDir)
     }
-
+    entityName?.let{
+      jsonObject.addProperty("entity_name", it)
+    }
     return jsonObject
   }
 
