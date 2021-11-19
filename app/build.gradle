@@ -20,7 +20,7 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
-    targetSdkVersion 29
+    targetSdkVersion 30
     versionCode 62
     versionName "1.61"
     multiDexEnabled true
