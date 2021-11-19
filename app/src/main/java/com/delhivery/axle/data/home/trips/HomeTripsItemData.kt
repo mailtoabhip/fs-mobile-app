@@ -603,7 +603,7 @@ data class HomeTripsItemData(
     payment?.let {
       if (changePaymentModeVisibility() == View.VISIBLE){
         if(it.fuelPayout!=null && it.fuelPayout != 0.0){
-          return "₹ ${StringUtils.formatAmount(it.paymentAmount?:0.0 - it.fuelPayout!!)}"
+          return "₹ ${StringUtils.formatAmount(it.paymentAmount!! - it.fuelPayout!!)}"
         }
         else{
           return "₹ ${StringUtils.formatAmount(it.paymentAmount ?: 0.0)}"
