@@ -159,7 +159,7 @@ class HomeBidsViewModel @Inject constructor(
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
                   } catch (e: Exception) {
-                    Log.d("No Bid found for: ", transaction.transactionId)
+                    transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
                   add(Pair(HomeBidsRequestItem(transaction), Add))
                 }

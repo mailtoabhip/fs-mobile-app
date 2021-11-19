@@ -230,8 +230,8 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     }
   }
 
-  override fun onOptionsItemSelected(item: MenuItem?): Boolean =
-    when (item?.itemId) {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean =
+    when (item.itemId) {
       android.R.id.home -> {
         onBackPressed()
         true

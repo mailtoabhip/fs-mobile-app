@@ -126,7 +126,7 @@ class ConnectionLiveData constructor(private val context: Context) : MutableLive
    */
   fun isConnected(): Boolean {
     return (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).let {
-      it.activeNetworkInfo != null && it.activeNetworkInfo.isConnected
+      it.activeNetworkInfo != null && it.activeNetworkInfo!!.isConnected
     }
   }
 }
