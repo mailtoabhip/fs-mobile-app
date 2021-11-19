@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
+import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -85,6 +86,11 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       uiUtils.showSnackbar(it)
     })
 
+    viewModel.updateAdminUserLiveData.observe( this, Observer {
+      refreshData()
+      uiUtils.showSnackbar(it)
+    })
+
     binding.fabAddMember.setOnClickListener {
       createTeamMember()
     }
@@ -108,9 +114,12 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       EditTeamMemberAction_Edit -> {
         val data = item.data as UserModel
         val uuid = data.userId
+        val name = data.name
         val number = data.phoneNo
+        val dieselPreference = data.getDieselPreferences()
+        val dieselCompany = data.dieselCompany?: mutableListOf()
         if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
-          editTeamMember(uuid, number!!)
+          editTeamMember(uuid, name, number!!, dieselPreference, dieselCompany )
         }
       }
 
@@ -120,6 +129,10 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
         if (uuid.isNotNullOrEmpty()) {
           confirmAndDelete(uuid)
         }
+      }
+
+      ViewAdminMember -> {
+        AdminMemberDialog(this, item.data as UserModel , viewModel).show()
       }
     }
   }
@@ -152,14 +165,14 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
    * Create team member
    */
   fun createTeamMember() {
-    TeamMembersCreateEditDialog(this, "", "", viewModel).show()
+    TeamMembersCreateDialog(this, viewModel).show()
   }
 
   /**
    * Edit team member
    */
-  fun editTeamMember(uuid: String, number: String) {
-    TeamMembersCreateEditDialog(this, uuid, number, viewModel).show()
+  fun editTeamMember(uuid: String, name: String, number: String, dieselPreference: Boolean, dieselCompany :List<String>) {
+    TeamMembersEditDialog(this, uuid, name, number, dieselPreference, dieselCompany, viewModel).show()
   }
 
   /**

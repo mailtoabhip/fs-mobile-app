@@ -2,6 +2,7 @@
 <resources>
 
   <!-- dimens/sizes/margins/paddings -->
+  <dimen name="size_1dp">1dp</dimen>
   <dimen name="size_2dp">2dp</dimen>
   <dimen name="size_4dp">4dp</dimen>
   <dimen name="size_6dp">6dp</dimen>
@@ -68,5 +69,6 @@
   <!-- delhivery view pager indicator -->
   <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
   <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
+
 
 </resources>

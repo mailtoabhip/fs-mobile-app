@@ -250,6 +250,14 @@
   <string name="label_charge">Charge</string>
   <string name="label_current_status">Current Status</string>
   <string name="label_delete_route">Delete Route?</string>
+  <string name="label_admin">Admin</string>
+  <string name="label_diesel_card">Diesel Card</string>
+  <string name="label_register_for_diesel_card">Register Team Member for Diesel Card?</string>
+  <string name="label_select_diesel_company">Select Diesel\nCompany</string>
+  <string name="label_edit_team_member">Edit Team Member</string>
+  <string name="label_yes">Yes</string>
+  <string name="label_no">No</string>
+  <string name="label_diesel_company">Diesel Company</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
