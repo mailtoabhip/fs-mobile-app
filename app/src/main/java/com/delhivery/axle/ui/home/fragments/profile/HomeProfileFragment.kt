@@ -58,12 +58,19 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         binding.error = false
         updateTripMeter(t)
       } else {
-        binding.error = true
-        binding.containerError.title = "Session Timed out"
-        binding.containerError.subTitle =
-          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
-              " Kindly refresh."
-        binding.containerError.actionLabel = "REFRESH"
+        binding.name = viewModel.userPrefs.userName
+        binding.company = viewModel.userPrefs.companyName
+        binding.mobile = viewModel.userPrefs.phoneNumber
+        binding.bankAcc = viewModel.userPrefs.accNumber
+        binding.ifsc = viewModel.userPrefs.ifscCode
+        binding.pan = viewModel.userPrefs.pancard
+//        binding.error = true
+//        binding.containerError.title = "Session Timed out"
+//        binding.containerError.subTitle =
+//          "Unfortunately, we couldn't fetch the data you are looking for. \n" +
+//              " Kindly refresh."
+//        binding.containerError.actionLabel = "REFRESH"
+//      }
       }
       binding.executePendingBindings()
     })

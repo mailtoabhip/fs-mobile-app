@@ -11,3 +11,6 @@ data class FuelPayoutRequest(
     @SerializedName("update_type") var updateType : String
 )
 
+data class FuelPayoutResponse(
+    @SerializedName("message") var message: String
+)

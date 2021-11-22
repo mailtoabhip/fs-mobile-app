@@ -458,7 +458,7 @@ class TripsViewModel @Inject constructor(
           .progress()
           .subscribe(){_res, error ->
             if(!error && _res!= null){
-              fuelPayoutLiveData.postValue(Triple(_res, pos, fuelCardAmt.toDouble()))
+              fuelPayoutLiveData.postValue(Triple(_res.message, pos, fuelCardAmt.toDouble()))
             }
             else{
               error.handle()

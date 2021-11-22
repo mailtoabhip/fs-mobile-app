@@ -64,7 +64,7 @@ class TransactionsRepository @Inject constructor(
   fun updateTripWithFuelCardUser(
     transactionId: String,
     fuelPayoutRequest: FuelPayoutRequest
-  ) = transactionService.updateTripForFuelPayout(transactionId, fuelPayoutRequest).convertMessageResponse()
+  ) = transactionService.updateTripForFuelPayout(transactionId, fuelPayoutRequest).convertResponse()
 }
 
 enum class TransactionStatus(val statusId: String) {

@@ -1028,7 +1028,7 @@ class TripDetailsViewModel @Inject constructor(
         .progress()
         .subscribe(){_res, error ->
           if(!error && _res!= null){
-            fuelPayoutLiveData.postValue(_res)
+            fuelPayoutLiveData.postValue(_res.message)
           }
           else{
             error.handle()

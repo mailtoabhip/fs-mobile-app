@@ -168,6 +168,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.fuelPayoutLiveData.observe(this, Observer {
       uiUtils.hideProgress()
       if(it!=null){
+        uiUtils.showSnackbar(it)
         refreshData()
       }
     })

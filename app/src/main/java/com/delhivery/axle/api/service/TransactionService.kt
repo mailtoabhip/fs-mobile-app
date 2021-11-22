@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TransactionsResponse
@@ -74,5 +75,5 @@ interface TransactionService {
   fun updateTripForFuelPayout(
       @Path("transactionId") transactionId: String,
       @Body request: FuelPayoutRequest
-  ): Single<BaseMessageResponse>
+  ): Single<BaseResponse<FuelPayoutResponse>>
 }
