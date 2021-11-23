@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 
 android {
-  compileSdkVersion 29
+  compileSdkVersion 30
 
   signingConfigs {
     release {
@@ -20,9 +20,9 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
-    targetSdkVersion 29
-    versionCode 61
-    versionName "1.60"
+    targetSdkVersion 30
+    versionCode 62
+    versionName "1.61"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
