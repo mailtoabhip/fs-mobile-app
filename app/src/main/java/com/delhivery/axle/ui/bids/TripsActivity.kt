@@ -316,6 +316,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         data?.payment!!.apply {
           fuelPayout = it.third
         }
+        uiUtils.showSnackbar(it.first)
         adapter.notifyItemChanged(it.second)
       }
     })
