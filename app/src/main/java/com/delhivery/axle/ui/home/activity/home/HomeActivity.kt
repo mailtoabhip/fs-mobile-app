@@ -190,7 +190,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       LOWEST_BID_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
           startActivity(bidDetailsIntent(transactionIds[0], this))
-        } else {
+        }
+        else
+        {
           fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
         }
       }
@@ -214,8 +216,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         //Capture Event
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId(), FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
+                mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
         )
         callHelpline()
         true
@@ -254,7 +256,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     analyticsUtil.trackEvent(
             EVENT_NOTIFICATION_OPEN,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-            mutableListOf(userPrefs.userId(), notificationType, userPrefs.userPerformance)
+            mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
     )
 
     viewModel.markNotificationRead(notificationId)
@@ -269,8 +271,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     } else {
       elevationLiveData.observe(this, Observer {
         ViewCompat.setElevation(
-                binding.toolbar,
-                it ?: resources.getDimension(R.dimen.toolbar_elevation)
+            binding.toolbar,
+            it ?: resources.getDimension(R.dimen.toolbar_elevation)
         )
       })
     }
@@ -362,8 +364,8 @@ private const val IntentExtraFragmentTypeKey = "fragment_type"
  * Trip details intent
  */
 fun homeActivityIntent(
-        fragmentType: String,
-        context: Context
+  fragmentType: String,
+  context: Context
 ) = Intent(context, HomeActivity::class.java).apply {
   putExtra(IntentExtraFragmentTypeKey, fragmentType)
 }
