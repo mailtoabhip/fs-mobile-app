@@ -191,6 +191,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       LANE_PREFERENCE_UPDATE_NOTIFICATION -> {
         startActivity(userRoutesIntent(this))
       }
+      REDIRECT_TO_TRIP -> {
+        startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
       }
@@ -329,6 +332,8 @@ private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notifica
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
 private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
+private const val REDIRECT_TO_TRIP = "redirect_to_trip"
+
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
 private const val TEAM_MEMBERS_REDIRECT = "tmbrs"
