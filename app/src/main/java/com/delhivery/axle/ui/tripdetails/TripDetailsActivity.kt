@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -160,10 +161,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.omcGetLiveData.observe(this, Observer {
       uiUtils.hideProgress()
       if(it != null){
-        uiUtils.showProgress()
-        viewModel.updateTripWithFuelUser(it.first)
+         if(it.second != "") {
+           uiUtils.showProgress()
+           viewModel.updateTripWithFuelUser(it.first)
+         }
+        else{
+          uiUtils.showSnackbar("OMC not found")
+         }
       }
-
     })
     viewModel.fuelPayoutLiveData.observe(this, Observer {
       uiUtils.hideProgress()

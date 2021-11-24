@@ -1010,7 +1010,7 @@ class TripDetailsViewModel @Inject constructor(
               omcGetLiveData.postValue(Pair(omcType, omcID))
             }
             else
-              omcGetLiveData.postValue(null)
+              omcGetLiveData.postValue(Pair(omcType,""))
           }
           else{
             error.handle()

@@ -636,7 +636,7 @@ data class HomeTripsItemData(
 
   fun fuelPaymentVisibility(): Int{
     payment?.let {
-      if (it.fuelPayout!=null && it.fuelPayout != 0.0) {
+      if (it.fuelPayout!=null && it.fuelPayout != 0.0 && changePaymentModeVisibility()== View.VISIBLE) {
         return View.VISIBLE
       } else {
         View.GONE

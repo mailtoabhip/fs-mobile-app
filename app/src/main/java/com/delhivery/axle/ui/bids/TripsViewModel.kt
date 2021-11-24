@@ -439,7 +439,7 @@ class TripsViewModel @Inject constructor(
               omcGetLiveData.postValue(Pair(omcType, position))
             }
             else
-              omcGetLiveData.postValue(null)
+              omcGetLiveData.postValue(Pair("",position))
           }
           else{
             error.handle()
