@@ -304,8 +304,13 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.omcGetLiveData.observe(this, Observer {
       uiUtils.hideProgress()
       if(it!= null){
-        uiUtils.showProgress()
-        viewModel.updateTripWithFuelPayout(it.first, it.second)
+        if(it.first!= "") {
+          uiUtils.showProgress()
+          viewModel.updateTripWithFuelPayout(it.first, it.second)
+        }
+        else{
+          uiUtils.showSnackbar("OMC not found")
+        }
       }
     })
 
