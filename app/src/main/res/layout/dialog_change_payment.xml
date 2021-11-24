@@ -279,25 +279,29 @@
                             android:padding="@dimen/size_4dp"
                             android:orientation="horizontal">
 
-                            <CheckBox
+
+                            <RadioGroup
+                                android:id="@+id/radio_group_omc"
+                                android:layout_width="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_height="wrap_content">
+                            <RadioButton
                                 android:id="@+id/omc_reliance_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_48dp"
                                 android:button="@null"
-                                android:enabled="false"
-                                android:background="@drawable/ic_reliance" />
+                                android:background="@drawable/checkbox_selection"
+                                 />
 
-                            <CheckBox
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                android:layout_weight="1" />
+                            <RadioButton
+                                android:id="@+id/omc_iocl_icon"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_48dp"
+                                android:button="@null"
+                                android:background="@drawable/checkbox_selection_iocl"
+                                android:layout_marginStart="@dimen/text_16sp" />
 
-                            <CheckBox
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                android:layout_weight="1" />
+                            </RadioGroup>
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>

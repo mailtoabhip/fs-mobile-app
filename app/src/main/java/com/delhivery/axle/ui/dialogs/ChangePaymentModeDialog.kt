@@ -42,6 +42,7 @@ class ChangePaymentModeDialog @Inject constructor(
     var advanceAmt = 0
     var fuelAmt = 0
     var userNumber = ""
+    var userOmc = ""
 
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
@@ -191,15 +192,21 @@ class ChangePaymentModeDialog @Inject constructor(
             binding.advancePendingDieselAmt.text.toString().toInt()
         }
         else{ 0 }
+        if(binding.omcIoclIcon.isChecked){
+            userOmc = "iocl"
+        }
+        else if(binding.omcRelianceIcon.isChecked){
+            userOmc = "reliance"
+        }
 
-        if((fuelAmt > 0 && userNumber != "") || fuelAmt ==0 ){
-            val omcRequest= OMCRequest(userNumber, "reliance", data.transactionId)
-            dialogInterface.done(data.transactionId, omcRequest, "reliance", userNumber, fuelAmt.toString(),position)
+        if((fuelAmt > 0 && userNumber != "" && userOmc!= "") || fuelAmt ==0 ){
+            val omcRequest= OMCRequest(userNumber, userOmc, data.transactionId)
+            dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
             uiUtils.showProgress()
             dismiss()
         }
         else{
-            Toast.makeText(context," Select Diesel Card Number",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context," Select Diesel Card Number and Omc Value",Toast.LENGTH_SHORT).show()
         }
 
     }
