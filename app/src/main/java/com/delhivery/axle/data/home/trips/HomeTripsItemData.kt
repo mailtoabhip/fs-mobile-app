@@ -46,7 +46,7 @@ data class HomeTripsItemData(
   @SerializedName("reached_time") val reachedTime: String?,
   @SerializedName("unloaded_time") val unloadingTime: String?,
   @SerializedName("required_on") val requiredOn: String,
-  @SerializedName("required_on_time") val requiredOnTime: String,
+  @SerializedName("required_on_time") val requiredOnTime: String?,
   @SerializedName("unloading_location") val unloadingLocation: String?,
   @SerializedName("unloading_location_contact_no") val unloadingLocationContactNo: String?,
   @SerializedName("payment_mode") val paymentMode: String? = null,
@@ -254,8 +254,8 @@ data class HomeTripsItemData(
    * @return formatted display time
    */
   private fun displayTime() = when (tripStatus) {
-    TripStatus.TruckConfirmed.statusKey -> requiredOnTime
-    else -> arrivalTime ?: requiredOnTime
+    TripStatus.TruckConfirmed.statusKey -> (requiredOnTime?:requiredOn)
+    else -> arrivalTime ?: (requiredOnTime?: requiredOn)
   }
 
   /**
