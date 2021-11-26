@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
