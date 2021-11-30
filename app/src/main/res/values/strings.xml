@@ -258,6 +258,10 @@
   <string name="label_yes">Yes</string>
   <string name="label_no">No</string>
   <string name="label_diesel_company">Diesel Company</string>
+  <string name="label_lowest_bid">lowest bid</string>
+  <string name="label_pmt_rate">PMT Rate</string>
+  <string name="label_truck_count">Truck Count</string>
+  <string name="label_status">Status</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

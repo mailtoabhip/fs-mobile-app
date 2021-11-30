@@ -7,16 +7,15 @@ import android.os.Handler
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.lifecycle.Observer
-import androidx.transition.Fade
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
+import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -30,7 +29,7 @@ import javax.inject.Inject
 /**
  * Bid detail screen
  */
-class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
+class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -43,6 +42,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   override fun layoutId() = R.layout.activity_bid_details
 
   override fun requireConnection() = true
+
+  private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -289,6 +290,26 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 textUserHighestBid.text = bidText
               }
           }
+
+          is BidDetailsUserBidState_BulkLoad_Edit -> {
+            ViewBidDetailsBulkLoadEditBinding.inflate(
+                    layoutInflater, binding.containerActions, false
+            ).apply {
+              bidsRecieved = state.bidsCount
+              rvBidSummary.apply {
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                adapter = this@BidDetailsActivity.adapter
+                (adapter as BulkBidsRVAdapter).clearItems()
+
+                /**To be changed after integrating API*/
+                (adapter as BulkBidsRVAdapter).operation(listOf(Pair(BulkBidSummaryItem(BulkBidSummaryItemData("6_Tyre (7.5 MT)",1050.0,4,"open",false)), DataRVAdapterOperationType.Add),
+                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("12_Tyre (21 MT)",1060.0,2,"open",false)), DataRVAdapterOperationType.Add),
+                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("18_Tyre (32 MT)",1070.0,1,"open",false)), DataRVAdapterOperationType.Add)))
+              }
+
+              btnReviseBidInsider.setOnClickListener{ bidDialog()}
+            }
+          }
           else -> null
         }?.let { _binding ->
           /* bidding ended */
@@ -330,6 +351,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             getString(string.label_call_us), getString(string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
+      }
+    }
+  }
+
+  override fun handleAction(actionId: String, position: Int, item: BaseBulkBidSummaryRVAdapterItem<*>) {
+    when(actionId){
+      EXPAND_CARD -> {
+        val bidData = item.data as BulkBidSummaryItemData
+        bidData.expanded = !bidData.expanded
+        adapter.notifyItemChanged(position)
       }
     }
   }

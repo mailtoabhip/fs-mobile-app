@@ -127,7 +127,7 @@ class BidDetailsViewModel @Inject constructor(
                         analyticsBucket=true
                     }
                   transactionBidLiveData.postValue(
-                      BidDetailsUserBidState_EditBid(
+                      BidDetailsUserBidState_BulkLoad_Edit(
                           _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
                       )
                   )
