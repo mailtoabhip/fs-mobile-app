@@ -60,6 +60,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
+  @SerializedName("request_type") val requestType: String? = "DMT",
+  @SerializedName("unallocated_volume") val unAllocatedVolume: Double? = 0.0,
+  @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -79,6 +82,14 @@ data class HomeBidsRequestItemData(
    * if trip is Multidrop
    */
   fun setMutidrop() = if (isMultidrop != null && isMultidrop == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+  /**
+   * if trip is DMT
+   */
+  fun setDMTType() = if (requestType != null && requestType == "DMT") {
     View.VISIBLE
   } else {
     View.GONE
@@ -255,7 +266,11 @@ data class HomeBidsRequestItemData(
    * Get truck details/type
    */
   fun truckDetail() = truckSpecification?.let {
-    it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+    if (isDMTIndent()){
+      it.truckType
+    }else{
+      it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+    }
   }
 
   /**
@@ -363,6 +378,11 @@ data class HomeBidsRequestItemData(
    * @return true if indent type(pmt/ftl)
    */
   fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
+  /**
+   * @return true if request type(dmt)
+   */
+  fun isDMTIndent() = requestType?.toLowerCase() == "dmt"
 
   /**
    * @return true if speed is express
@@ -641,10 +661,12 @@ data class HomeBidsRequestItemData(
  * Truck specification detail
  */
 data class TruckSpecification(
-  @SerializedName("default_MG") val defaultMG: Double,
-  @SerializedName("truck_display_name") val truckDispName: String
+  @SerializedName("default_MG") val defaultMG: Double?,
+  @SerializedName("truck_display_name") val truckDispName: String?,
+  @SerializedName("truck_type")val truckType:String?
 )
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
+const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"

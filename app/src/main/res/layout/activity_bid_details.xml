@@ -24,7 +24,10 @@
         name="error"
         type="Boolean"
         />
-
+    <variable
+        name="unallocated"
+        type="String"
+        />
     <import type="android.view.View" />
   </data>
 
@@ -182,12 +185,13 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_via_destination"
-                tools:text="Bulk Load : 200 MT"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
+                android:visibility="@{transaction.setDMTType()}"
                 android:layout_marginTop="@dimen/size_6dp"
-                android:text="Bulk Load: 200 MT"
-                android:textColor="@color/bid_placed_red"/>
+                android:text="@{unallocated}"
+                android:textColor="@color/bid_placed_red"
+                tools:text="Bulk Load: 200MT"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_date_time"

@@ -151,16 +151,19 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open"/>
+                    android:visibility="@{item.openStatusVisibility()}"
+                    android:text="@{item.openCount()}"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Confirmed"
+                    android:visibility="@{item.confirmedStatusVisibility()}"
+                    android:text="@{item.confirmedCount()}"
                     android:textColor="@color/bid_placed_green"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lost"
+                    android:visibility="@{item.lostStatusVisibility()}"
+                    android:text="@{item.lostCount()}"
                     android:textColor="@color/bid_placed_red"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

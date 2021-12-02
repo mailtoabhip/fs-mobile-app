@@ -267,7 +267,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(data.key(), it)) }
+        context?.let { startActivity(bidDetailsIntent(data.key(), it,data.requestType)) }
       }
 
       HomeLoadsSearchAction_Search -> {

@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
@@ -12,17 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_LostBids
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_MyBids
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
-import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
-import com.delhivery.axle.data.home.bids.HomeBidsSearchItemData
-import com.delhivery.axle.data.home.bids.HomeBidsTimeOutAction
-import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_NoBids
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
+import com.delhivery.axle.data.biddetail.EXPAND_CARD
+import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
 import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
 import com.delhivery.axle.ui.bids.BidType.LostBid
@@ -65,6 +60,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   /* RV adapter */
   private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
+
 
   override fun onViewCreated(
     view: View,
@@ -187,6 +183,18 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         }
       }
 
+      HomeBidsRequestAction_ViewOtherDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
+      }
+
       HomeBidsSearchAction_Search -> context?.let {
         // Capture event
         analyticsUtil.trackEvent(
@@ -231,6 +239,15 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
   }
 
+  private fun bidDialog(bid: HomeBidsRequestItemData? = null) {
+      //  binding.transaction?.let {
+          BulkBidDetailsDialog(
+            context!!, bid!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+          ).show()
+      //  }
+
+
+  }
   override fun postElevation(elevation: Float) {
     toolbarElevationLiveData!!.postValue(elevation)
   }
@@ -322,4 +339,5 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
     }
   }
+
 }

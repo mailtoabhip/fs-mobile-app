@@ -13,3 +13,4 @@ private const val HomeBidsSearchItemDataKey = "search"
 
 /* action id */
 const val HomeBidsSearchAction_Search = "search"
+

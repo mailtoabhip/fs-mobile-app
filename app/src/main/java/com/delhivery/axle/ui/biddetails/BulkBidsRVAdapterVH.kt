@@ -46,7 +46,7 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
         _interface: BulkBidsRVAdapterInterface) {
         binding.item = item.data
         binding.textVehicleType.text = item.data.vehicleType
-        binding.expandButton.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
+        binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
 
     }
 }

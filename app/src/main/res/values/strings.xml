@@ -31,6 +31,7 @@
   <string name="msg_be_first_to_bid">Be the first to Bid</string>
   <string name="msg_no_bids_received">No bids received yet.</string>
   <string name="msg_bids_received_till_now">%1$d bids received till now</string>
+  <string name="unallocated_bulk_order">Bulk Load:</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
   <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
   <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
@@ -58,6 +59,7 @@
   <string name="msg_call_permission">Please provide permission to call</string>
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
+  <string name="msg_more_bids_with_this_bid">%1$d more bids placed with this bid</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -262,6 +264,7 @@
   <string name="label_pmt_rate">PMT Rate</string>
   <string name="label_truck_count">Truck Count</string>
   <string name="label_status">Status</string>
+  <string name="status_of_other_bid">Status of bids placed along with this bids</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
