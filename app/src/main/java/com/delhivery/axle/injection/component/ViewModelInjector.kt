@@ -4,6 +4,7 @@ import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
+import com.delhivery.axle.ui.bids.DmtBidsViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
@@ -50,6 +51,10 @@ interface ViewModelInjector {
    * Injects [AuthenticationViewModel]
    */
   fun inject(viewModel: AuthenticationViewModel)
+
+
+  fun inject(viewModel: DmtBidsViewModel)
+
 
   /**
    * Injects [OnboardingViewModel]
