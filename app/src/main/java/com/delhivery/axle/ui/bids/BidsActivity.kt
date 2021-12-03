@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.bids
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
@@ -10,12 +11,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
-import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.bids.HomeBidsTimeOutAction
-import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_NoBids
+import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.ActivityBidsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.biddetails.BulkBidDetailsDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
@@ -27,6 +26,8 @@ import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_BID
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Bid listing screen basis [BidType]
@@ -37,6 +38,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   init {
     hasInlineProgress = true
   }
+  @Inject
+  lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidsViewModel::class.java
 
@@ -142,12 +145,32 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
         startActivity(bidDetailsIntent(_item.key(), this))
       }
+      HomeBidsRequestAction_ViewOtherDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
+      }
 
       HomeBidsTimeOutAction ->
         refreshData()
     }
   }
 
+  private fun bidDialog(bid: HomeBidsRequestItemData? = null) {
+    //  binding.transaction?.let {
+    BulkBidDetailsDialog(
+      this!!, bid!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+    ).show()
+    //  }
+
+
+  }
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_search, menu)
     val searchItem = menu?.findItem(R.id.action_search)

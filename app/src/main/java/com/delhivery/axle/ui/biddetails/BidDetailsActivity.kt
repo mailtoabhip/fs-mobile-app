@@ -4,19 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.lifecycle.Observer
-import androidx.transition.Fade
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
+import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -24,13 +24,16 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
  * Bid detail screen
  */
-class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
+class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -43,6 +46,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   override fun layoutId() = R.layout.activity_bid_details
 
   override fun requireConnection() = true
+
+  private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -58,6 +63,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.requestType = intent.getStringExtra(RequestTypeIntentKey) ?: "dmt"
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -133,6 +139,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         t.let { _transaction ->
           binding.error = false
           binding.transaction = _transaction
+          if(_transaction.isDMTIndent()){
+              binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
+           }
+
           title = _transaction.tripDisplayName()
         }
       } else {
@@ -289,6 +299,81 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 textUserHighestBid.text = bidText
               }
           }
+
+          is BidDetailsUserBidState_BulkLoad_Edit -> {
+            ViewBidDetailsBulkLoadEditBinding.inflate(
+                    layoutInflater, binding.containerActions, false
+            ).apply {
+              bidsRecieved = state.bidsCount
+              rvBidSummary.apply {
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                adapter = this@BidDetailsActivity.adapter
+                (adapter as BulkBidsRVAdapter).clearItems()
+                val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()
+                val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
+                //Test data
+                val bids: ArrayList<TransactionBid>?=ArrayList()
+                bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE"))
+                bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE"))
+                bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE"))
+                bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","7_TYRE"))
+                bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE"))
+
+                //map same vehicle type with bids
+                val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
+                for (bid in bids!!) {
+                  val key: String = bid.vehicleType!!
+                  if (map.containsKey(key)) {
+                    val list: MutableList<TransactionBid>? = map[key]
+                    list!!.add(bid)
+                  } else {
+                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+                    list.add(bid)
+                    map[key] = list
+                  }
+                }
+                //get count of status
+                for(key in map.keys){
+                  var openStat: String?=null
+                  var lostStat: String?=null
+                  var confirmedStat: String?=null
+                  val truckCount:Int?=map[key]?.size
+                  var openStatus:Int=0
+                  var lostStatus:Int=0
+                  var confirmedStatus:Int=0
+                  for(bid in map[key]!!){
+                    if(bid._status == "open"){
+                      openStatus+=1
+                    }else if(bid._status == "confirmed"){
+                      confirmedStatus+=1
+                    }else if(bid._status == "rejected"){
+                      lostStatus+=1
+                    }
+                  }
+                  if(openStatus>0){
+                    openStat=("$openStatus Open:")
+                  }
+                  if(lostStatus>0){
+                    lostStat=("$lostStatus Lost:")
+                  }
+                  if(confirmedStatus>0){
+                    confirmedStat=("$confirmedStatus Confirmed")
+                  }
+                  val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat)
+                  bulkBidSummaryItemDataList?.add(bulkBidsItem)
+                  bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
+                }
+                (adapter as BulkBidsRVAdapter).operation(bulkBidSummaryItemList!!)
+
+              /* To be changed after integrating API*/
+               /* (adapter as BulkBidsRVAdapter).operation(listOf(Pair(BulkBidSummaryItem(BulkBidSummaryItemData("6_Tyre (7.5 MT)",1050.0,4,"open",true)), DataRVAdapterOperationType.Add),
+                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("12_Tyre (21 MT)",1060.0,2,"open",false)), DataRVAdapterOperationType.Add),
+                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("18_Tyre (32 MT)",1070.0,1,"open",false)), DataRVAdapterOperationType.Add)))*/
+              }
+
+              btnReviseBidInsider.setOnClickListener{ bidDialog()}
+            }
+          }
           else -> null
         }?.let { _binding ->
           /* bidding ended */
@@ -333,17 +418,32 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     }
   }
+
+  override fun handleAction(actionId: String, position: Int, item: BaseBulkBidSummaryRVAdapterItem<*>) {
+    when(actionId){
+      EXPAND_CARD -> {
+        val bidData = item.data as BulkBidSummaryItemData
+        bidData.expanded = !bidData.expanded
+        adapter.notifyItemChanged(position)
+      }
+    }
+  }
 }
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
 
+/* intent keys */
+private const val RequestTypeIntentKey = "request_type"
 /**
  * Bid details intent
  */
 fun bidDetailsIntent(
   transactionId: String,
-  context: Context
+  context: Context,
+  requestType:String?=null
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  if(requestType!=null)
+  putExtra(RequestTypeIntentKey, requestType)
 }

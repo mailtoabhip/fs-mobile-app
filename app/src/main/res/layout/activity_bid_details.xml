@@ -24,7 +24,10 @@
         name="error"
         type="Boolean"
         />
-
+    <variable
+        name="unallocated"
+        type="String"
+        />
     <import type="android.view.View" />
   </data>
 
@@ -89,18 +92,6 @@
               >
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_from_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/label_from"
-                android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_source"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,22 +102,22 @@
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_from_label"
-                tools:text="North Goa, Panjim, Goa"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="North Goa\nPanjim, Goa"
                 />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_to_label"
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_forward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_10dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/label_to"
-                android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_12sp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_source"
-                />
+                app:layout_constraintTop_toTopOf="@id/text_destination"
+
+                app:srcCompat="@drawable/ic_arrow_forward_black" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_destination"
@@ -136,10 +127,11 @@
                 android:fontFamily="sans-serif"
                 android:text="@{transaction.destinationDistrictCityState()}"
                 android:textColor="@color/heading_black"
+                android:textAlignment="textEnd"
                 android:textSize="@dimen/text_16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_to_label"
-                tools:text="Andheri east, Mumbai, Maharashtra"
+               app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Andheri east\nMumbai, Maharashtra"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -172,6 +164,36 @@
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_load_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_6dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:text="@{ transaction.loadDetails() }"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_via_destination"
+                tools:text="Load: Pharmaceuticals"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_bulk_load"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_via_destination"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                android:visibility="@{transaction.setDMTType()}"
+                android:layout_marginTop="@dimen/size_6dp"
+                android:text="@{unallocated}"
+                android:textColor="@color/bid_placed_red"
+                tools:text="Bulk Load: 200MT"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_date_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -181,7 +203,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_via_destination"
+                app:layout_constraintTop_toBottomOf="@id/text_load_details"
                 bind:drawableResId="@{ transaction.requiredAtBg() }"
                 tools:background="@drawable/bg_date_today"
                 tools:text="TODAY"
@@ -227,21 +249,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_load_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_6dp"
-                android:fontFamily="sans-serif"
-                android:gravity="end"
-                android:text="@{ transaction.loadDetails() }"
-                android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_is_multidrop"
-                tools:text="Load: Pharmaceuticals"
-                />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"
@@ -253,7 +260,7 @@
                 android:textSize="@dimen/text_12sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_load_details"
+                app:layout_constraintTop_toBottomOf="@id/text_is_multidrop"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView

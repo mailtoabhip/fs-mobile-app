@@ -2,10 +2,7 @@ package com.delhivery.axle.ui.home.fragments.bids
 
 import androidx.databinding.ViewDataBinding
 import android.view.View
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_ConfirmedBids
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_LostBids
-import com.delhivery.axle.data.home.bids.HomeBidsHeaderAction_MyBids
-import com.delhivery.axle.data.home.bids.HomeBidsSearchAction_Search
+import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
@@ -13,6 +10,7 @@ import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.utils.extensions.underline
 
 /**
  * Base Home bids RV adapter view holder
@@ -95,6 +93,9 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
     binding.request = item.data
+    binding.moreBidsRecieved = 2
+    binding.textMoreBids.underline = true
+    binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
   }
 }
 

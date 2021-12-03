@@ -33,7 +33,7 @@ class BidDetailsViewModel @Inject constructor(
 
   /* transaction id */
   lateinit var transactionId: String
-
+    lateinit var requestType: String
   /* live data */
   var transactionLiveData = MutableLiveData<HomeBidsRequestItemData>()
 
@@ -126,12 +126,21 @@ class BidDetailsViewModel @Inject constructor(
                     if(action){
                         analyticsBucket=true
                     }
-                  transactionBidLiveData.postValue(
-                      BidDetailsUserBidState_EditBid(
-                          _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
-                      )
-                  )
-                  bidPriceLiveData.postValue(null)
+                    if(requestType=="dmt"){
+                        transactionBidLiveData.postValue(
+                            BidDetailsUserBidState_BulkLoad_Edit(
+                                _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
+                            )
+                        )
+                        bidPriceLiveData.postValue(null)
+                    }else{
+                        transactionBidLiveData.postValue(
+                            BidDetailsUserBidState_EditBid(
+                                _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
+                            )
+                        )
+                        bidPriceLiveData.postValue(null)
+                    }
                 }
               }
             }
@@ -206,10 +215,6 @@ class BidDetailsViewModel @Inject constructor(
           }
         }
   }
-
-
-
-
 
 
   /**
