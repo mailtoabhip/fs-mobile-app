@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.bids.DmtBidsActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -395,8 +396,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+          DmtBidsActivity(
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
           ).show()
         }
       }

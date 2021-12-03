@@ -435,7 +435,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
               DmtBidsActivity(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
+                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
               ).show()
             }
 
