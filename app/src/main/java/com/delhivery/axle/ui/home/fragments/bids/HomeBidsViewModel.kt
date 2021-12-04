@@ -6,6 +6,7 @@ import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
+import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.exception.NoBidsFoundException
@@ -22,6 +23,7 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import javax.inject.Inject
 
 /**
@@ -112,21 +114,22 @@ class HomeBidsViewModel @Inject constructor(
     dataLoadingLiveData.postValue(true)
 
     compositeDisposable += bidsRepository.userBids(offset, statuses)
-        .flatMap { _res ->
-          total = _res.first
-          bidsCountLiveData.postValue(total)
-          if (!paginate && total == 0) {
-            Single.error(NoBidsFoundException())
-          } else {
-            Single.zip(
-                transactionsRepository.bulkTransactions(_res.second),
-                bidsRepository.bulkLowestBidsForTransactions(_res.second),
-                BiFunction<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,
-                    Triple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>>> { t1, t2 ->
-                  Triple(t1.first, t1.second, t2)
-                })
-          }
+      .flatMap { _res ->
+        total = _res.first
+        bidsCountLiveData.postValue(total)
+        if (!paginate && _res.first == 0) {
+          Single.error(NoBidsFoundException())
+        } else {
+          Single.zip(
+            transactionsRepository.bulkTransactions(_res.second),
+            bidsRepository.bulkLowestBidsForTransactions(_res.second),
+            bidsRepository.bidsForBulkLoads(_res.second),
+            Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
+                    Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
+              Quintuple(t1.first, t1.second, t2,t3.first,t3.second)
+            })
         }
+      }
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
@@ -147,6 +150,18 @@ class HomeBidsViewModel @Inject constructor(
 
                 val bids = _res.first
                 val transactions = _res.second.transactions
+                val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
+                for (bid in _res.fifth) {
+                  val key: String = bid.transactionId!!
+                  if (map.containsKey(key)) {
+                    val list: MutableList<TransactionBid>? = map[key]
+                    list!!.add(bid)
+                  } else {
+                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+                    list.add(bid)
+                    map[key] = list
+                  }
+                }
                 for (transaction in transactions) {
                   try {
                     val lowestBid = _res.third.filter { b ->
@@ -158,6 +173,7 @@ class HomeBidsViewModel @Inject constructor(
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
+                    transaction.bulkTransactionBids = map.get(transaction.transactionId)
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }

@@ -82,7 +82,21 @@ class BidsRepository @Inject constructor(
         Pair(transactions, it.bids)
       }!!
 
-  /**
+    /**
+     * Bulk call to fetch bids
+     */
+    fun bidsForBulkLoads(
+        bids: List<TransactionBid>
+    ) = bidService.bidsForLoads(
+        userRepository.userId(),
+        bids.map { it.transactionId }.joinToString(",") { it.toString() }
+    )
+        .convertResponse()
+        .map {
+            Pair(bids, it.bids)
+        }!!
+
+    /**
    * Create Bid
    */
   fun createBid(

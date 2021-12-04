@@ -239,10 +239,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     }
   }
 
-  private fun bidDialog(bid: HomeBidsRequestItemData? = null) {
+  private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
       //  binding.transaction?.let {
           BulkBidDetailsDialog(
-            context!!, bid!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+            context!!, transaction!!,transaction.bulkTransactionBids, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
           ).show()
       //  }
 
@@ -339,5 +339,4 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
     }
   }
-
 }

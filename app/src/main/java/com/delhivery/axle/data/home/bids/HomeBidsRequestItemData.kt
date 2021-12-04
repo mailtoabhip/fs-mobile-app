@@ -66,7 +66,8 @@ data class HomeBidsRequestItemData(
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
-  var showing: Boolean = false
+  var showing: Boolean = false,
+  var bulkTransactionBids: List<TransactionBid>? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 

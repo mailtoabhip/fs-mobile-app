@@ -229,6 +229,7 @@ class BidDetailsViewModel @Inject constructor(
     if (transactionBidLiveData.value !is BidDetailsUserBidState_LoadingBids)
       transactionBidLiveData.postValue(BidDetailsUserBidState_LoadingBids())
   }
+
 }
 
 private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating

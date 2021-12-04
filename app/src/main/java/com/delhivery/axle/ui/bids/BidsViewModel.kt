@@ -6,14 +6,17 @@ import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
+import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.Unknown
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
@@ -26,6 +29,7 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import javax.inject.Inject
 
 /**
@@ -54,6 +58,9 @@ class BidsViewModel @Inject constructor(
   var offset = 0
   var hasMoreData = true
 
+  /* transaction id */
+  lateinit var transactionId: String
+  lateinit var requestType: String
   /**
    * Fetch bids
    */
@@ -93,9 +100,10 @@ class BidsViewModel @Inject constructor(
             Single.zip(
                 transactionsRepository.bulkTransactions(_res.second),
                 bidsRepository.bulkLowestBidsForTransactions(_res.second),
-                BiFunction<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,
-                    Triple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>>> { t1, t2 ->
-                  Triple(t1.first, t1.second, t2)
+                bidsRepository.bidsForBulkLoads(_res.second),
+                Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
+                        Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
+                  Quintuple(t1.first, t1.second, t2,t3.first,t3.second)
                 })
           }
         }
@@ -116,7 +124,18 @@ class BidsViewModel @Inject constructor(
               } else {
                 val bids = _res.first
                 val transactions = _res.second.transactions
-
+                val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
+                for (bid in _res.fifth) {
+                  val key: String = bid.transactionId!!
+                  if (map.containsKey(key)) {
+                    val list: MutableList<TransactionBid>? = map[key]
+                    list!!.add(bid)
+                  } else {
+                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+                    list.add(bid)
+                    map[key] = list
+                  }
+                }
                 var index = 0
                 for (transaction in transactions) {
                   try {
@@ -125,6 +144,7 @@ class BidsViewModel @Inject constructor(
                           transaction.transactionId
                       )
                     }[0]
+                   // transaction.bulkTransactionBids = _res.fourth
                     transaction.numBids = lowestBid.numBids
                     transaction.lowestBid = lowestBid.minBid
                     transaction.loadPricePercent = _res.second.loadPricePercent
@@ -132,7 +152,7 @@ class BidsViewModel @Inject constructor(
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
-
+                    transaction.bulkTransactionBids= map.get(transaction.transactionId)
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
@@ -161,4 +181,33 @@ class BidsViewModel @Inject constructor(
           dataLoadingLiveData.postValue(false)
         }
   }
+
+  /**
+   * Fetch transaction bids and update UI as per response
+   */
+  var transactionBidLiveData = MutableLiveData<BidDetailsUserBidState>()
+  lateinit var transaction: HomeBidsRequestItemData
+
+   fun fetchTransactionBids() {
+    compositeDisposable += bidsRepository.transactionBids(transactionId)
+      .onBackground()
+      .progress()
+      .subscribe { _bRes, error ->
+        if (!error) {
+          //determine bid state and post to live data
+         // if (requestType == "dmt") {
+            transactionBidLiveData.postValue(
+              BidDetailsUserBidState_BulkLoad_Edit(
+                _bRes.third, _bRes.second, _bRes.first,true
+              )
+            )
+
+         // }
+        }
+        else {
+          error.handle()
+        }
+      }
+  }
+
 }

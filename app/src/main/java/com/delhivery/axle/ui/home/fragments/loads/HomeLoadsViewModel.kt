@@ -153,6 +153,7 @@ class HomeLoadsViewModel @Inject constructor(
 
               val loads = _tRes.first
               val bids = _tRes.second
+              val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
 
               if (total == 0 && !infoSearch) {
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
@@ -171,6 +172,8 @@ class HomeLoadsViewModel @Inject constructor(
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
                       }[0]
+                    Log.i("transId",load.transactionId.toString()+":"+map.get(load.transactionId)?.size)
+                    load.bulkTransactionBids = map.get(load.transactionId)
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", load.transactionId ?: "")
                   }

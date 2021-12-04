@@ -3,29 +3,30 @@ package com.delhivery.axle.ui.bids
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
+import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.*
-import com.delhivery.axle.databinding.ActivityBidsBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.BulkBidDetailsDialog
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.VALUE_BID
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -114,6 +115,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     })
 
     viewModel.fetchBids(false)
+
+   /* viewModel.transactionBidLiveData.observe(this, Observer {
+      when (it) {
+        is BidDetailsUserBidState_BulkLoad_Edit -> {
+
+        }
+        else -> null
+      }
+    })*/
   }
 
   private fun refreshData() {
@@ -162,15 +172,19 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     }
   }
 
-  private fun bidDialog(bid: HomeBidsRequestItemData? = null) {
+  private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
     //  binding.transaction?.let {
+    /* set transaction id */
+    viewModel.transactionId = transaction?.transactionId ?: ""
+    viewModel.requestType = transaction?.requestType ?:""
+    viewModel.transaction = transaction!!
+     // viewModel.fetchTransactionBids()
     BulkBidDetailsDialog(
-      this!!, bid!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
     ).show()
-    //  }
-
 
   }
+
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_search, menu)
     val searchItem = menu?.findItem(R.id.action_search)

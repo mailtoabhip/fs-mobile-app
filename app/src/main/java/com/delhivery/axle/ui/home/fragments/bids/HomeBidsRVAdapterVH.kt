@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.bids
 
+import android.util.Log
 import androidx.databinding.ViewDataBinding
 import android.view.View
 import com.delhivery.axle.data.home.bids.*
@@ -93,7 +94,9 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
     binding.request = item.data
-    binding.moreBidsRecieved = 2
+    Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
+    binding.moreBidsRecieved = item.data.bulkTransactionBids?.size
+   // binding.moreBidsRecieved = 2
     binding.textMoreBids.underline = true
     binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
   }
