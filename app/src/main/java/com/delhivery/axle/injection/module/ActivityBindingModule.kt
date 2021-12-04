@@ -7,6 +7,7 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
+import com.delhivery.axle.ui.bids.DmtBidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
@@ -59,6 +60,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSelectRouteWelcomeActivityModule::class])
   internal abstract fun bindSelectRouteWelcomeActivity(): SelectRouteWelcomeActivity
+
+//  @ActivityScope
+//  @ContributesAndroidInjector(modules = [AbsDmtBidsActivityModule::class])
+//  internal abstract fun bindDmtBidsActivity(): DmtBidsActivity
 
   /* Route selection fragments activity */
   @ActivityScope
@@ -187,6 +192,9 @@ internal abstract class AbsAuthenticationActivityModule : ActivityModule<Authent
 
 @Module
 internal abstract class AbsSelectRouteWelcomeActivityModule : ActivityModule<SelectRouteWelcomeActivity>()
+//@Module
+//internal abstract class AbsDmtBidsActivityModule : ActivityModule<DmtBidsActivity>()
+
 
 @Module
 internal abstract class AbsSelectRouteActivityModule : ActivityModule<SelectRouteActivity>()
