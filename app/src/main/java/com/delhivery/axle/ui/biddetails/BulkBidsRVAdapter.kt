@@ -3,9 +3,15 @@ package com.delhivery.axle.ui.biddetails
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseSummaryDataRVAdapter
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsHeaderItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType
 import com.delhivery.axle.ui.tripdetails.TripPaymentSummaryRVAdapterItemType
 
 class BulkBidsRVAdapter(private val _interface : BulkBidsRVAdapterInterface):

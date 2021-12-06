@@ -6,7 +6,6 @@ import com.delhivery.axle.injection.scope.ViewModelScope
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
-import com.delhivery.axle.ui.bids.DmtBidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
@@ -71,10 +70,6 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(OnboardingViewModel::class)
   abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
 
-  @Binds
-  @IntoMap
-  @ViewModelScope(DmtBidsViewModel::class)
-  abstract fun bindDmtBidsViewModel(dmtBidsViewModel: DmtBidsViewModel): ViewModel
 
   @Binds
   @IntoMap

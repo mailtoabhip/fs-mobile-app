@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
-import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
 import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
 import com.delhivery.axle.ui.bids.BidType.LostBid
+import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
@@ -242,11 +241,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
       //  binding.transaction?.let {
           BulkBidDetailsDialog(
-            context!!, transaction!!,transaction.bulkTransactionBids, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+            context!!, transaction!!,transaction.bulkTransactionBids,0,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
           ).show()
       //  }
-
-
   }
   override fun postElevation(elevation: Float) {
     toolbarElevationLiveData!!.postValue(elevation)

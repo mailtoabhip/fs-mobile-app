@@ -29,7 +29,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
-import com.delhivery.axle.ui.bids.DmtBidsActivity
+import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -434,7 +434,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
             (item.data as HomeBidsRequestItemData).let {
-              DmtBidsActivity(
+              BulkBidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
               ).show()
             }

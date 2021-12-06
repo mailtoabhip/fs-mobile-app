@@ -262,6 +262,7 @@
   <string name="label_diesel_company">Diesel Company</string>
   <string name="label_lowest_bid">lowest bid</string>
   <string name="label_pmt_rate">PMT Rate</string>
+  <string name="label_no_of_trucks">No. of Trucks</string>
   <string name="label_truck_count">Truck Count</string>
   <string name="label_status">Status</string>
   <string name="status_of_other_bid">Status of bids placed along with this bids</string>

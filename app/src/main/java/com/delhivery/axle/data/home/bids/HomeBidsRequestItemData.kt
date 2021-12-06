@@ -182,6 +182,17 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * @return intermediary stops
+   */
+  fun tripRouteOriginDes(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+      .append(" > ")
+    stopBuilder.append(destinationCityName())
+    return stopBuilder.toString()
+  }
+
+  /**
    * @return is trips is multi drop
    */
   fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())

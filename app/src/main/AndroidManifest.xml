@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-        <activity android:name=".ui.bids.DmtBidsActivity"></activity>
+        <activity android:name=".ui.biddetails.BulkBidDetailsCreateEditDialog"></activity>
 
         <service
             android:name=".fcm.DelhiveryFCMService"

@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.exception.NoBidsFoundException
@@ -16,7 +17,10 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.axle.ui.biddetails.BaseBulkBidSummaryRVAdapterItem
+import com.delhivery.axle.ui.biddetails.BulkBidSummaryItem
 import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -38,7 +42,7 @@ import javax.inject.Inject
 class HomeBidsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository
-) : BaseViewModel() {
+) : BaseViewModel(),BulkBidDetailsDialog.BulkBidDetailsDialogInterface {
 
   /* user bids live data */
   var userBidsData =
@@ -202,5 +206,68 @@ class HomeBidsViewModel @Inject constructor(
           dataLoadingLiveData.postValue(false)
         }
   }
+
+  override fun getUserBulkBidsAgainstTrans(userBids: List<TransactionBid>?): ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? {
+    val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()
+    val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
+    //Test data
+    val bids: ArrayList<TransactionBid>?=ArrayList()
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE"))
+    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE"))
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE"))
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","7_TYRE"))
+    bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE"))
+
+    //map same vehicle type with bids
+    val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
+    for (bid in bids!!) {
+      val key: String = bid.vehicleType!!
+      if (map.containsKey(key)) {
+        val list: MutableList<TransactionBid>? = map[key]
+        list!!.add(bid)
+      } else {
+        val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+        list.add(bid)
+        map[key] = list
+      }
+    }
+    //get count of status
+    for(key in map.keys){
+      var openStat: String?=null
+      var lostStat: String?=null
+      var confirmedStat: String?=null
+      val truckCount:Int?=map[key]?.size
+      var openStatus:Int=0
+      var lostStatus:Int=0
+      var confirmedStatus:Int=0
+      for(bid in map[key]!!){
+        when (bid._status) {
+          "open" -> {
+            openStatus+=1
+          }
+          "confirmed" -> {
+            confirmedStatus+=1
+          }
+          "rejected" -> {
+            lostStatus+=1
+          }
+        }
+      }
+      if(openStatus>0){
+        openStat=("$openStatus Open:")
+      }
+      if(lostStatus>0){
+        lostStat=("$lostStatus Lost:")
+      }
+      if(confirmedStatus>0){
+        confirmedStat=("$confirmedStatus Confirmed")
+      }
+      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat)
+      bulkBidSummaryItemDataList?.add(bulkBidsItem)
+      bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
+    }
+    return bulkBidSummaryItemList
+  }
+
 
 }

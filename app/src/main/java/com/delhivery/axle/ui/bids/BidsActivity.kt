@@ -3,30 +3,23 @@ package com.delhivery.axle.ui.bids
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
-import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
-import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -180,7 +173,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     viewModel.transaction = transaction!!
      // viewModel.fetchTransactionBids()
     BulkBidDetailsDialog(
-      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids,0,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
     ).show()
 
   }

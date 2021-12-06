@@ -1,33 +1,24 @@
-package com.delhivery.axle.ui.bids
+package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import com.delhivery.axle.R
-import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
-import com.delhivery.axle.data.bids.DELETE_ITEM
-import com.delhivery.axle.data.bids.DmtBidSummaryItemData
-import com.delhivery.axle.data.bids.EXPAND_CARD
-import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.databinding.ActivityBidsDmtBinding
-import com.delhivery.axle.databinding.DialogBidCreateEditBinding
-import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.databinding.DialogBulkBidCreateEditBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.biddetails.BaseBulkBidSummaryRVAdapterItem
-import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
-import com.delhivery.axle.ui.biddetails.BulkBidSummaryItem
-import com.delhivery.axle.ui.biddetails.BulkBidsRVAdapter
+import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
+import com.delhivery.axle.ui.bids.DmtBidSummaryItem
+import com.delhivery.axle.ui.bids.DmtBidsRVAdapter
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_bids_dmt.*
+import kotlinx.android.synthetic.main.view_bid_create_edit_item.view.*
 import javax.inject.Inject
 
-class DmtBidsActivity @Inject constructor(
+class BulkBidDetailsCreateEditDialog @Inject constructor(
     context: Context,
     private val transaction: HomeBidsRequestItemData,
     private val transactionBid: TransactionBid? = null, /* transaction bid null for create new bid */
@@ -38,44 +29,34 @@ class DmtBidsActivity @Inject constructor(
     private var fromPage :String,
     private var pageTitle :String
 
-):AlertDialog(context),DmtBidsAdapterInterface{
-    private lateinit var binding: ActivityBidsDmtBinding
-
+):AlertDialog(context), DmtBidsAdapterInterface {
+    private lateinit var binding: DialogBulkBidCreateEditBinding
+    private val listDmtBidSummaryItemData : ArrayList<DmtBidSummaryItemData> = ArrayList()
+    val dmtBidSummaryItemList:ArrayList<Pair<BaseDmtBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
-
         super.onCreate(savedInstanceState)
-
         /* dialog binding */
-        binding = ActivityBidsDmtBinding.inflate(layoutInflater)
+        binding = DialogBulkBidCreateEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.tvOrigin.setText(transaction.origin);
-        binding.tvDestination.setText(transaction.destination)
-        binding.tvLoadAmount.setText(""+transaction.allocatedVolume+transaction.unAllocatedVolume)
-
-            binding.tvTitle.setText(pageTitle)
-
-
-
+        binding.route = transaction.tripRouteOriginDes()
+        binding.page=pageTitle
         window?.clearFlags(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
         )
-
         setCancelable(false)
-
 
         if(pageTitle=="EDIT BIDS"){
 
-            rvBids.apply {
+            binding.rvBids.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-                adapter = this@DmtBidsActivity.adapter
+                adapter = this@BulkBidDetailsCreateEditDialog.adapter
                 (adapter as DmtBidsRVAdapter).clearItems()
-
+                var listVehicleData:ArrayList<VehicleBidData>?=ArrayList()
+                for(item in (adapter as DmtBidsRVAdapter).itemsList()){
+                    item.data
+                }
                 val dmtBidSummaryItemDataList: ArrayList<DmtBidSummaryItemData>? = ArrayList()
-                val dmtBidSummaryItemList:ArrayList<Pair<BaseDmtBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
                 //test data to be replaced with api data
                 val bids: ArrayList<TransactionBid>?=ArrayList()
                 bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE"))
@@ -108,27 +89,29 @@ class DmtBidsActivity @Inject constructor(
                     var lostStatus:Int=0
                     var confirmedStatus:Int=0
                     for(bid in map1[key]!!){
-                        if(bid._status == "open"){
-                            openStatus+=1
-                        }else if(bid._status == "confirmed"){
-                            confirmedStatus+=1
-                        }else if(bid._status == "rejected"){
-                            lostStatus+=1
+                        when (bid._status) {
+                            "open" -> {
+                                openStatus+=1
+                            }
+                            "confirmed" -> {
+                                confirmedStatus+=1
+                            }
+                            "rejected" -> {
+                                lostStatus+=1
+                            }
                         }
                     }
                     if(openStatus>0){
                         openStat=("$openStatus Open:")
                     }
-                    val dmtBidsItem = DmtBidSummaryItemData(key,map1[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false)
+                    Log.i("openstat", openStat.toString())
+                    val dmtBidsItem = DmtBidSummaryItemData(key,map1[key]!!.get(0).pmtRate!!,truckCount!!,"1 Open",false)
                     dmtBidSummaryItemDataList?.add(dmtBidsItem)
                   //  dmtBidSummaryItemList?.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
                     (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add)))
 
 
                 }
-
-
-
 
                 val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
 
@@ -170,63 +153,39 @@ class DmtBidsActivity @Inject constructor(
 
                     val dmtBidsItem = DmtBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false)
                     dmtBidSummaryItemDataList?.add(dmtBidsItem)
-                  //  dmtBidSummaryItemList?.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
                     (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add)))
-
                 }
-
-
-//                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("6_Tyre (7.5 MT)",0.0,0,"open",true)), DataRVAdapterOperationType.Add)))
-
             }
             adapter.notifyDataSetChanged()
 
         }else{
-            rvBids.apply {
+            binding.rvBids.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-                adapter = this@DmtBidsActivity.adapter
+                adapter = this@BulkBidDetailsCreateEditDialog.adapter
 
                 /**To be changed after integrating API*/
-                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("6_Tyre (7.5 MT)",0.0,0,"open",false)), DataRVAdapterOperationType.Add)
-
-
+                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("",0.0,0,"open",true)), DataRVAdapterOperationType.Add)
                 ))
+
             }
-
         }
-
-
-
-
-
 
         binding.btnCancel.setOnClickListener { dismiss() }
+        binding.btnConfirm.setOnClickListener {
+           // Log.i("dataClicked",adapter.itemsList().get(0).data.toString())
+            for(item in adapter.itemsList()){
+                val bidData = item.data as DmtBidSummaryItemData
 
-        tvAdd.setOnClickListener {
-            rvBids.apply {
-                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-                adapter = this@DmtBidsActivity.adapter
-                (
-
-                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("6_Tyre (7.5 MT)",0.0,0,"open",true)), DataRVAdapterOperationType.Add)
-
-                )))
             }
-            adapter.notifyDataSetChanged()
         }
 
-
-      //  setContentView(R.layout.activity_bids_dmt)
+        binding.tvAdd.setOnClickListener {
+            adapter.operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("",0.0,0,"open",true)), DataRVAdapterOperationType.Add)))
+            adapter.notifyDataSetChanged()
+        }
     }
+
     private val adapter: DmtBidsRVAdapter by lazy { DmtBidsRVAdapter(this) }
-
-//    override fun getViewModelClass() = DmtBidsViewModel::class.java
-//
-//    override fun layoutId() = R.layout.activity_bids_dmt
-//    override fun requireConnection() = true
-
-
-
 
     override fun handleAction(actionId: String, position: Int, item: BaseDmtBidSummaryRVAdapterItem<*>) {
         when(actionId){
@@ -237,32 +196,11 @@ class DmtBidsActivity @Inject constructor(
             }
             DELETE_ITEM ->{
                 val bidData = item.data as DmtBidSummaryItemData
-
-                rvBids.apply {
-                    layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-                    adapter = this@DmtBidsActivity.adapter
-                    (
-
-                    (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData(bidData.vehicleType,bidData.pmtRate,bidData.truckCount,bidData.status,bidData.expanded)), DataRVAdapterOperationType.Remove))))
-                }
-                     System.out.println("truckCountAs"+ bidData.truckCount)
-
+                    adapter.operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData(bidData.vehicleType,bidData.pmtRate,bidData.truckCount,bidData.status,bidData.expanded)), DataRVAdapterOperationType.Remove)))
+                    adapter.notifyDataSetChanged()
 
             }
         }
-    }
-
-
-
-
-
-
-
-
-    fun dmtBidsIntent(
-        context: Context
-    ) = Intent(context, DmtBidsActivity::class.java).apply {
-
     }
 
 }

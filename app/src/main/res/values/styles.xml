@@ -100,4 +100,5 @@
     <item name="android:layout_marginTop">@dimen/size_8dp</item>
     <item name="android:layout_marginBottom">@dimen/size_8dp</item>
   </style>
+
 </resources>

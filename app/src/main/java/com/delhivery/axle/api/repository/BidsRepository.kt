@@ -126,6 +126,23 @@ class BidsRepository @Inject constructor(
   )
       .let { bidService.updateTransactionBid(it) }
 
+
+
+    /**
+     * Edit bulk bid
+     */
+    fun editBulkBid(
+        isPMT: Boolean,
+        transactionId: String,
+        bidId: String,
+        amount: Int,
+        commercialType: String,
+        pmtRate: Int
+    ) = UpdateTransactionBidRequest.getRequest(
+        isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType
+    )
+        .let { bidService.updateTransactionBid(it) }
+
   /**
    * User/supplier bids by status as [Pair] of Total bids count and List of [TransactionBid]
    */
