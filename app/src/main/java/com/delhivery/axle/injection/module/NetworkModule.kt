@@ -153,6 +153,17 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.TripService).create(
       TripService::class.java
   )
+  /**
+   * Provide [TruckService]
+   */
+  @Provides
+  @Singleton
+  fun provideTruckService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.TruckService).create(
+    TruckService::class.java
+  )
 
   /**
    * Provide [PaymentService]

@@ -433,9 +433,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       APPROVED -> {
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
+            viewModel.fetchTruckType()
             (item.data as HomeBidsRequestItemData).let {
               BulkBidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
+              context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
               ).show()
             }
 

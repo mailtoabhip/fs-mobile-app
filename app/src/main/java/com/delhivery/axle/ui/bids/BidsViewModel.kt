@@ -209,6 +209,10 @@ class BidsViewModel @Inject constructor(
         }
       }
   }
+  //fetch truck type
+
+
+
 
   override fun getUserBulkBidsAgainstTrans(userBids: List<TransactionBid>?): ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? {
     val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()

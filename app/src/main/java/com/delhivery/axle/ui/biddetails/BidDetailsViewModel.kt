@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -28,6 +29,7 @@ class BidDetailsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository,
   private val tripsRepository: TripsRepository,
+  private val truckRepository: TruckRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface{
 
@@ -66,6 +68,14 @@ class BidDetailsViewModel @Inject constructor(
           }
         }
   }
+    fun fetchTruckType() {
+        compositeDisposable += truckRepository.getTruckType()
+            .onBackground()
+            .subscribe { _tRes, error ->
+                System.out.println("truckType"+_tRes +error)
+            }
+    }
+
 
   /**
    * Fetch transaction bids and update UI as per response

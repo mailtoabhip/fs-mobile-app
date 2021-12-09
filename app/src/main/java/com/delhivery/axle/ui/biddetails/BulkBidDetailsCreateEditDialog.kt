@@ -14,6 +14,8 @@ import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
 import com.delhivery.axle.ui.bids.DmtBidSummaryItem
 import com.delhivery.axle.ui.bids.DmtBidsRVAdapter
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_bid_create_edit_item.view.*
 import javax.inject.Inject
@@ -30,6 +32,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
     private var pageTitle :String
 
 ):AlertDialog(context), DmtBidsAdapterInterface {
+
     private lateinit var binding: DialogBulkBidCreateEditBinding
     private val listDmtBidSummaryItemData : ArrayList<DmtBidSummaryItemData> = ArrayList()
     val dmtBidSummaryItemList:ArrayList<Pair<BaseDmtBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
@@ -64,6 +67,8 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE"))
                 bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","7_TYRE"))
                 bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE"))
+//
+
 
                 val map1: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
                 for (bid in bids!!) {

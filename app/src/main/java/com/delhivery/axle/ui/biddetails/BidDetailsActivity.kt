@@ -347,6 +347,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
+          viewModel.fetchTruckType();
           BulkBidDetailsCreateEditDialog(
               this@BidDetailsActivity, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
           ).show()

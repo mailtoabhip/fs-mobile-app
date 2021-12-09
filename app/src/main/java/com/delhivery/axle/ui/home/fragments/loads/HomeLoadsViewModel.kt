@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.data.bids.TransactionBid
@@ -40,6 +41,7 @@ class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository,
+  private val truckRepository: TruckRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface {
 
@@ -214,6 +216,13 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+  fun fetchTruckType() {
+    compositeDisposable += truckRepository.getTruckType()
+      .onBackground()
+      .subscribe { _tRes, error ->
+        System.out.println("truckType"+_tRes+error)
+      }
   }
 
   override fun createBid(
