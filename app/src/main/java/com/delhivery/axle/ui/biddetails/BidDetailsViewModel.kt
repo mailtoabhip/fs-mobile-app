@@ -251,11 +251,11 @@ companion object{
         val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
         //Test data
         val bids: ArrayList<TransactionBid>?=ArrayList()
-        bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678","12"))
-        bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678","21"))
-        bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678","12"))
-        bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678","12"))
-        bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678","12"))
+        bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678","109350"))
+        bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678","109350"))
+        bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678","109350"))
+        bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678","109350"))
+        bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678","109350"))
 
         //map same vehicle type with bids
         val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
