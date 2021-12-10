@@ -11,11 +11,14 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
+import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -378,6 +381,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         val bidData = item.data as BulkBidSummaryItemData
         bidData.expanded = !bidData.expanded
         adapter.notifyItemChanged(position)
+      }
+      OPEN_CONFIRMED_BID -> {
+        userBidsIntent(this, BidType.ConfirmedBid)
       }
     }
   }

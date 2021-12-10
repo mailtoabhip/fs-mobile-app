@@ -1,11 +1,20 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.graphics.Color
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
+import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.tripdetails.*
 
 
@@ -46,8 +55,29 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
         _interface: BulkBidsRVAdapterInterface) {
         binding.item = item.data
         binding.textVehicleType.text = item.data.vehicleType
-        binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
+    if(!item.data.vehicleNumber.isNullOrEmpty()) {
+        for (i in item.data.vehicleNumber!!) {
 
+          val textView = TextView(context)
+          textView.setText(i)
+            textView.setTextColor(Color.BLUE)
+          textView.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+          )
+          textView.setOnClickListener()
+           {
+             // userBidsIntent(context,BidType.ConfirmedBid)
+               Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+           }
+            textView.clickToAction(OPEN_CONFIRMED_BID,item,adapterPosition,_interface)
+
+        // Add TextView to LinearLayout
+        binding.VehicleNumLayout?.addView(textView)
+
+    }
+}
+        binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
     }
 }
 

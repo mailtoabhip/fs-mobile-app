@@ -195,14 +195,14 @@ class BidsViewModel @Inject constructor(
       .subscribe { _bRes, error ->
         if (!error) {
           //determine bid state and post to live data
-         // if (requestType == "dmt") {
+        //  if (requestType == "dmt") {
             transactionBidLiveData.postValue(
               BidDetailsUserBidState_BulkLoad_Edit(
                 _bRes.third, _bRes.second, _bRes.first,true
               )
             )
 
-         // }
+        //  }
         }
         else {
           error.handle()
@@ -219,11 +219,12 @@ class BidsViewModel @Inject constructor(
     val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
     //Test data
     val bids: ArrayList<TransactionBid>?=ArrayList()
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE"))
-    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE"))
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE"))
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","7_TYRE"))
-    bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE"))
+   // bids?.add()
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678"))
+    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678"))
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678"))
+    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678"))
+    bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678"))
 
     //map same vehicle type with bids
     val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
@@ -247,6 +248,9 @@ class BidsViewModel @Inject constructor(
       var openStatus:Int=0
       var lostStatus:Int=0
       var confirmedStatus:Int=0
+    //  var vehicleNumberloc: Array<String?>?=null
+      val vehicleNumberLoc: MutableList<String> = ArrayList()
+
       for(bid in map[key]!!){
         when (bid._status) {
           "open" -> {
@@ -254,6 +258,8 @@ class BidsViewModel @Inject constructor(
           }
           "confirmed" -> {
             confirmedStatus+=1
+            vehicleNumberLoc.add(bid.vehicleNumber.toString())
+            System.out.println("vehicle"+bid.vehicleNumber)
           }
           "rejected" -> {
             lostStatus+=1
@@ -269,7 +275,7 @@ class BidsViewModel @Inject constructor(
       if(confirmedStatus>0){
         confirmedStat=("$confirmedStatus Confirmed")
       }
-      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat)
+      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc)
       bulkBidSummaryItemDataList?.add(bulkBidsItem)
       bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
     }

@@ -2,19 +2,18 @@ package com.delhivery.axle.data.biddetail
 
 import android.view.View
 import androidx.annotation.DrawableRes
-import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DrawableProviderUtils
 
 data class BulkBidSummaryItemData(
     var vehicleType: String,
     var pmtRate: Double,
     var truckCount: Int,
-    var openStatus :String?,
+    var openStatus:String?,
     var expanded: Boolean = false,
-    var confirmedStatus :String?=null,
-    var lostStatus :String?=null
+    var confirmedStatus:String?=null,
+    var lostStatus:String?=null,
+    val vehicleNumber: MutableList<String> = ArrayList()
 ): BaseKeyTypeModel<String>() {
 
     override fun key() = vehicleType
@@ -51,4 +50,7 @@ data class BulkBidSummaryItemData(
 
 }
 const val EXPAND_CARD = "expand"
+const val OPEN_CONFIRMED_BID = "open"
+
+
 

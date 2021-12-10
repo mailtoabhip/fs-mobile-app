@@ -165,6 +165,17 @@
                     android:visibility="@{item.lostStatusVisibility()}"
                     android:text="@{item.lostCount()}"
                     android:textColor="@color/bid_placed_red"/>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Vehicle_num_layout"
+                    android:text="Textview"
+                    visibility="@{item.confirmedStatusVisibility()}"
+                    android:orientation="vertical"
+                    android:textColor="@color/bid_placed_green">
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
