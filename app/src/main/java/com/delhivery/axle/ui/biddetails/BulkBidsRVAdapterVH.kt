@@ -1,19 +1,23 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.tripdetails.*
 
@@ -56,21 +60,26 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
         binding.item = item.data
         binding.textVehicleType.text = item.data.vehicleType
     if(!item.data.vehicleNumber.isNullOrEmpty()) {
-        for (i in item.data.vehicleNumber!!) {
+        binding.VehicleNumLayout.removeAllViews()
 
+        for (i in item.data.vehicleNumber!!) {
           val textView = TextView(context)
           textView.setText(i)
-            textView.setTextColor(Color.BLUE)
+            textView.setTextColor(ContextCompat.getColor(context,R.color.blue))
           textView.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
           )
+            val drawable = ContextCompat.getDrawable(context, R.drawable.ic_open_external_link)
+            textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
           textView.setOnClickListener()
            {
-             // userBidsIntent(context,BidType.ConfirmedBid)
-               Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+             if(!item.data.childTransactionId.isNullOrEmpty()) {
+                 context.startActivity(tripDetailsIntent(item.data.childTransactionId!!, context))
+             }
+             //  Toast.makeText(context, ""+i, Toast.LENGTH_SHORT).show()
            }
-            textView.clickToAction(OPEN_CONFIRMED_BID,item,adapterPosition,_interface)
+            binding.VehicleNumLayout.clickToAction(OPEN_CONFIRMED_BID,item,adapterPosition,_interface)
 
         // Add TextView to LinearLayout
         binding.VehicleNumLayout?.addView(textView)

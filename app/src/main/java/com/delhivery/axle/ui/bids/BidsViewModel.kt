@@ -222,7 +222,7 @@ class BidsViewModel @Inject constructor(
    // bids?.add()
     bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678"))
     bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678"))
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678"))
+    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678"))
     bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678"))
     bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678"))
 
@@ -275,7 +275,7 @@ class BidsViewModel @Inject constructor(
       if(confirmedStatus>0){
         confirmedStat=("$confirmedStatus Confirmed")
       }
-      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc)
+      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId)
       bulkBidSummaryItemDataList?.add(bulkBidsItem)
       bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
     }

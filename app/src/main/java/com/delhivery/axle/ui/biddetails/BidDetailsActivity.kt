@@ -380,10 +380,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       EXPAND_CARD -> {
         val bidData = item.data as BulkBidSummaryItemData
         bidData.expanded = !bidData.expanded
+        BidDetailsViewModel.truckNumTextViewAdded =!BidDetailsViewModel.truckNumTextViewAdded
         adapter.notifyItemChanged(position)
       }
       OPEN_CONFIRMED_BID -> {
-        userBidsIntent(this, BidType.ConfirmedBid)
+
       }
     }
   }

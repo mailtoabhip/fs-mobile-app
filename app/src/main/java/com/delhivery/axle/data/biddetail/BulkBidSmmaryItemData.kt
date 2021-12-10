@@ -13,7 +13,8 @@ data class BulkBidSummaryItemData(
     var expanded: Boolean = false,
     var confirmedStatus:String?=null,
     var lostStatus:String?=null,
-    val vehicleNumber: MutableList<String> = ArrayList()
+    val vehicleNumber: MutableList<String>? = ArrayList(),
+    val childTransactionId: String?=null
 ): BaseKeyTypeModel<String>() {
 
     override fun key() = vehicleType
