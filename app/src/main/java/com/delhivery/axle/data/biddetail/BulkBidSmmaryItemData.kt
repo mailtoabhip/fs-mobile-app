@@ -49,7 +49,7 @@ data class BulkBidSummaryItemData(
         View.VISIBLE
     else
         View.GONE
-    fun lowestBidVisibility()=if(fromPage!=null)
+    fun lowestBidVisibility()=if(fromPage!=null && expanded)
         View.VISIBLE
     else
         View.GONE

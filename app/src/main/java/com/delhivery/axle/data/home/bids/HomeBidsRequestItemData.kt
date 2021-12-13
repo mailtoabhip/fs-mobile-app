@@ -45,7 +45,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2") val stop2City: String,
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
-  @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
@@ -60,7 +60,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
-  @SerializedName("request_type") val requestType: String? = "DMT",
+  @SerializedName("request_type") val requestType: String? = "",
   @SerializedName("unallocated_volume") val unAllocatedVolume: Double? = 0.0,
   @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
   var lowestBid: Double? = 0.0,
@@ -90,11 +90,12 @@ data class HomeBidsRequestItemData(
   /**
    * if trip is DMT
    */
-  fun setDMTType() = if (requestType != null && requestType == "DMT") {
+  fun setDMTType() = if (requestType != null && requestType!= "" && requestType.capitalize() == "DMT") {
     View.VISIBLE
   } else {
     View.GONE
   }
+
   fun setMoreBidsVisibility() = if (requestType != null && requestType == "DMT") {
     if(numBids>1) {
       View.VISIBLE

@@ -9,9 +9,7 @@ import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.data.bids.ModifyVehicleData
-import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.bids.VehicleBidData
+import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -89,6 +87,11 @@ class HomeLoadsViewModel @Inject constructor(
   var type = userPrefs.demandType
 
   var paginateCount =0
+
+
+  var editBulkLiveData= MutableLiveData<String>()
+  var editFlg= mutableListOf<Boolean>(false,false,false)
+
 
   /**
    * Getter/Setter for route update flag to preferences
@@ -339,7 +342,19 @@ class HomeLoadsViewModel @Inject constructor(
       createPayload: List<VehicleBidData>,
       unAllocatedLoad: Double
   ) {
-    TODO("Not yet implemented")
+    val bulkBidRequest= BulkBidCreateRequest("PMT","axle-app", userPrefs.userId(),unAllocatedLoad, userPrefs.userName,
+            transactionId, createPayload)
+    compositeDisposable += bidsRepository.createBulkBids(bulkBidRequest)
+          .onBackground()
+          .progress()
+          .subscribe { _res, error ->
+            if (!error && _res!=null) {
+//              fetchTransactionBids(true)
+
+            } else {
+              error.handle()
+            }
+          }
   }
 
   override fun editBids(
@@ -350,7 +365,91 @@ class HomeLoadsViewModel @Inject constructor(
     removedBids: List<String>,
     unAllocatedLoad: Double
   ) {
-    TODO("Not yet implemented")
+    var bulkBidCreateRequest : BulkBidCreateRequest? = null
+    var bulkBidUpdateRequest: BulkBidUpdateRequest? = null
+    var bulkBidRemoveRequest : BulkBidRemoveRequest? = null
+
+    if(createPayload.isNotEmpty()) {
+      bulkBidCreateRequest = BulkBidCreateRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, userPrefs.userName,
+              transactionId, createPayload)
+    }
+    if(modifyPayload.isNotEmpty()){
+      bulkBidUpdateRequest = BulkBidUpdateRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, "bid_update",
+              transactionId, modifyPayload)
+    }
+    if(removedBids.isNotEmpty()){
+      bulkBidRemoveRequest = BulkBidRemoveRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, "bid_delete",
+              "remove", transactionId, removedBids)
+    }
+
+
+
+
+    if ( bulkBidCreateRequest != null){
+      compositeDisposable += bidsRepository.createBulkBids(bulkBidCreateRequest)
+              .onBackground()
+              .progress()
+              .subscribe { _res, error ->
+                if (!error && _res!=null) {
+                  editFlg[0] = true
+                  editBulkLiveData.postValue("Success")
+                } else {
+                  error.handle()
+                  editFlg[0] = true
+                  editBulkLiveData.postValue("Failure")
+                }
+              }
+
+    }
+    else{
+      editFlg[0] = true
+    }
+    if(bulkBidUpdateRequest != null) {
+      compositeDisposable += bidsRepository.editBulkBid(bulkBidUpdateRequest)
+              .onBackground()
+              .progress()
+              .subscribe { _res, error ->
+                if (!error && _res != null) {
+                  editFlg[1]= true
+                  editBulkLiveData.postValue("Success")
+                }
+                else
+                {
+                  error.handle()
+                  editFlg[1]= true
+                  editBulkLiveData.postValue("Failure")
+
+                }
+              }
+
+    }
+    else{
+      editFlg[1]= true
+    }
+
+    if(bulkBidRemoveRequest != null){
+      compositeDisposable+= bidsRepository.removeBulkBids(bulkBidRemoveRequest)
+              .onBackground()
+              .progress()
+              .subscribe{_res, error ->
+                if (!error && _res != null) {
+                  editFlg[2]= true
+                  editBulkLiveData.postValue("Success")
+                }
+                else{
+                  error.handle()
+                  editFlg[2]= true
+                  editBulkLiveData.postValue("Failure")
+
+                }
+              }
+
+    }
+    else
+    {
+      editFlg[2]= true
+    }
+
   }
 }
 
