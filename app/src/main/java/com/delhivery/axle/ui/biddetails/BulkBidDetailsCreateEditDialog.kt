@@ -141,8 +141,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BulkBidDetailsCreateEditDialog.adapter
 
-                /**To be changed after integrating API*/
-                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData("6_TYRE(19FT)",7.5,0.0,0,"open",true,truckTypes)), DataRVAdapterOperationType.Add)
+                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData(truckTypes[0].truckUuid!!,truckTypes[0].defaultMG!!,0.0,0,"open",true,truckTypes)), DataRVAdapterOperationType.Add)
                 ))
 
             }
