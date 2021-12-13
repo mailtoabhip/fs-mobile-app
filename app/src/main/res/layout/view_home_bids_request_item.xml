@@ -47,6 +47,7 @@
           android:layout_marginTop="@dimen/size_4dp"
           android:layout_marginBottom="@dimen/size_4dp"
           android:gravity="center_vertical"
+          android:visibility="@{request.setMoreBidsVisibility()}"
           android:drawablePadding="@dimen/size_2dp"
           android:fontFamily="sans-serif"
           android:drawableStart="@drawable/ic_info"
