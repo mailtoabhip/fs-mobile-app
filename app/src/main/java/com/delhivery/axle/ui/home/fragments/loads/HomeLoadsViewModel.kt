@@ -8,7 +8,10 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.data.bids.ModifyVehicleData
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.VehicleBidData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -17,6 +20,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
+import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -43,7 +47,7 @@ class HomeLoadsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val truckRepository: TruckRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface {
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface, BulkBidsCreateEditInterface {
 
   /* user bids live data */
   var userLoadsData =
@@ -65,6 +69,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
   var loadPricePercent = 0
 
@@ -217,11 +223,17 @@ class HomeLoadsViewModel @Inject constructor(
           }
         }
   }
-  fun fetchTruckType() {
+  fun fetchTruckType(data :HomeBidsRequestItemData) {
     compositeDisposable += truckRepository.getTruckType()
       .onBackground()
       .subscribe { _tRes, error ->
-        System.out.println("truckType"+_tRes+error)
+         if(!error && _tRes != null){
+           truckGetLiveData.postValue(Pair(_tRes,data))
+         }
+        else{
+          error.handle()
+          truckGetLiveData.postValue(null)
+         }
       }
   }
 
@@ -319,6 +331,26 @@ class HomeLoadsViewModel @Inject constructor(
             lowestBidLiveData.postValue(Pair(pos, transaction))
           }
         }
+  }
+
+  override fun createBids(
+      transactionId: String,
+      position: Int,
+      createPayload: List<VehicleBidData>,
+      unAllocatedLoad: Double
+  ) {
+    TODO("Not yet implemented")
+  }
+
+  override fun editBids(
+    transactionId: String,
+    position: Int,
+    createPayload: List<VehicleBidData>,
+    modifyPayload: List<ModifyVehicleData>,
+    removedBids: List<String>,
+    unAllocatedLoad: Double
+  ) {
+    TODO("Not yet implemented")
   }
 }
 

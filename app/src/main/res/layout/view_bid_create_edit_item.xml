@@ -19,13 +19,29 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/confirmedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:layout_marginStart="@dimen/size_6dp"
+            android:text="Confirmed!!"
+            android:textColor="@color/bid_placed_green"
+            android:visibility="@{item.confirmVisibility()}" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="@dimen/size_8dp">
+                android:padding="@dimen/size_4dp">
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/expandButton"
                     android:layout_width="wrap_content"
@@ -41,124 +57,118 @@
                 android:id="@+id/expandableLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_2dp">
+                android:padding="@dimen/size_4dp">
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_vehicle"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
-                    android:text="@string/label_vehicle_type"
-                    android:layout_gravity="center"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingStart="@dimen/size_1dp"
-                    android:textColor="@color/black"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/size_10dp"
-                    android:textSize="@dimen/text_16sp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_alignParentStart="true"
-                    android:textStyle="bold"
-                    android:layout_alignParentTop="true"/>
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/size_1dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:text="@string/label_vehicle_type"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/sp_vehicle_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
+                    android:layout_width="@dimen/size_230dp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_marginStart="@dimen/size_8dp"
-                    android:layout_marginTop="@dimen/size_10dp"
-                    android:layout_toStartOf="@+id/deleteItem"
                     android:layout_toEndOf="@id/label_vehicle"
                     android:background="@drawable/background_rectangle_border"
                     android:paddingStart="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
                     android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:text="6_TYRE(7.5MT)"
                     android:textColor="@color/black" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/deleteItem"
-                    android:layout_width="@dimen/size_40dp"
-                    android:layout_height="@dimen/size_40dp"
-                    android:padding="@dimen/size_2dp"
+                    android:layout_width="@dimen/size_28dp"
+                    android:layout_height="@dimen/size_28dp"
                     android:layout_alignParentEnd="true"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_delete"
-                    android:layout_marginTop="@dimen/size_10dp"
+                    android:layout_marginStart="@dimen/size_2dp"
+                    android:padding="@dimen/size_2dp"
                     android:tint="@color/price_red"
-                    android:layout_marginStart="@dimen/size_2dp" />
+                    android:visibility="@{item.deleteVisibility()}"
+                    app:srcCompat="@drawable/ic_delete" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_pmt"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_alignParentStart="true"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingStart="@dimen/size_1dp"
-                    android:layout_marginTop="@dimen/size_11dp"
-                    android:visibility="@{item.visibility()}"
-                    android:textSize="@dimen/text_16sp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_below="@id/label_vehicle"
-                    android:text="@string/label_no_of_trucks"/>
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/size_11dp"
+                    android:paddingStart="@dimen/size_1dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:gravity="center"
+                    android:text="@string/label_no_of_trucks"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold"
+                    android:visibility="@{item.visibility()}" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_trucks"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingStart="@dimen/size_8dp"
-                    android:background="@drawable/background_rectangle_border"
-                    android:text="@{item.truckCount()}"
+                    android:layout_width="@dimen/size_230dp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_below="@id/label_vehicle"
-                    android:layout_toEndOf="@id/label_pmt"
-                    android:textColor="@color/black"
-                    android:inputType="number"
-                    android:layout_toStartOf="@+id/deleteItem"
-                    android:visibility="@{item.visibility()}"
-                    android:layout_marginTop="@dimen/size_11dp"
                     android:layout_alignStart="@id/sp_vehicle_type"
-                    tools:text="2"/>
+                    android:layout_alignEnd="@id/sp_vehicle_type"
+                    android:layout_marginTop="@dimen/size_11dp"
+                    android:layout_toEndOf="@id/label_pmt"
+                    android:background="@drawable/background_rectangle_border"
+                    android:focusableInTouchMode="@{item.enabled}"
+                    android:inputType="number"
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:text="@{item.truckCount()}"
+                    android:textColor="@color/black"
+                    android:visibility="@{item.visibility()}"
+                    tools:text="2" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_count_truck"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_below="@id/edit_trucks"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingStart="@dimen/size_1dp"
                     android:layout_alignParentStart="true"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
                     android:layout_marginTop="@dimen/size_8dp"
-                    android:textSize="@dimen/text_16sp"
-                    android:visibility="@{item.visibility()}"
-                    android:text="@string/label_pmt_rate"/>
+                    android:paddingStart="@dimen/size_1dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:gravity="center"
+                    android:text="@string/label_pmt_rate"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold"
+                    android:visibility="@{item.visibility()}" />
+
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/editPmtAmount"
-                    android:layout_width="match_parent"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingStart="@dimen/size_8dp"
-                    android:layout_height="@dimen/size_40dp"
-                    android:background="@drawable/background_rectangle_border"
-                    android:layout_toEndOf="@id/label_count_truck"
-                    android:layout_marginTop="@dimen/size_8dp"
-                    android:layout_alignStart="@id/sp_vehicle_type"
-                    android:visibility="@{item.visibility()}"
+                    android:layout_width="@dimen/size_230dp"
+                    android:layout_height="@dimen/size_32dp"
                     android:layout_below="@id/edit_trucks"
-                    android:layout_toStartOf="@+id/deleteItem"
-                    android:inputType="numberDecimal"
-                    android:textColor="@color/black"
-                    android:text="@{item.pmtRate()}"
+                    android:layout_alignStart="@id/sp_vehicle_type"
+                    android:layout_alignEnd="@id/sp_vehicle_type"
+                    android:layout_marginTop="@dimen/size_8dp"
                     android:layout_marginBottom="@dimen/size_10dp"
-                    tools:text="1050"/>
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:layout_toEndOf="@id/label_count_truck"
+                    android:background="@drawable/background_rectangle_border"
+                    android:focusableInTouchMode="@{item.enabled}"
+                    android:inputType="numberDecimal"
+                    android:text="@{item.pmtRate()}"
+                    android:textColor="@color/black"
+                    android:visibility="@{item.visibility()}"
+                    tools:text="1050" />
             </RelativeLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>
 

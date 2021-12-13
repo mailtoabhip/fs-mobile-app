@@ -2,11 +2,10 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.BidSummaryResponse
-import com.delhivery.axle.api.response.CreateTransactionBidResponse
-import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionBidsResponseBody
+import com.delhivery.axle.api.response.*
+import com.delhivery.axle.data.bids.BulkBidCreateRequest
+import com.delhivery.axle.data.bids.BulkBidRemoveRequest
+import com.delhivery.axle.data.bids.BulkBidUpdateRequest
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -40,6 +39,30 @@ interface BidService {
   fun updateTransactionBid(
     @Body request: UpdateTransactionBidRequest
   ): Single<BaseResponse<CreateTransactionBidResponse>>
+
+  /**
+   * Create new bulk Bids
+   */
+  @POST("bids/")
+  fun createBulkTransactionBids(
+    @Body request: BulkBidCreateRequest
+  ): Single<BaseResponse<List<CreateTransactionBidResponseForBulkLoad>>>
+
+  /**
+   * Update bulk bids
+   */
+  @PATCH("/bids/")
+  fun updateBulkTransactionBids(
+    @Body request: BulkBidUpdateRequest
+  ): Single<BaseResponse<List<CreateTransactionBidResponseForBulkLoad>>>
+
+  /**
+   * Update bulk bids
+   */
+  @PATCH("/bids/")
+  fun removeBulkTransactionBids(
+      @Body request: BulkBidRemoveRequest
+  ): Single<BaseResponse<List<CreateTransactionBidResponseForBulkLoad>>>
 
   /**
    * Get User/supplier bids by status

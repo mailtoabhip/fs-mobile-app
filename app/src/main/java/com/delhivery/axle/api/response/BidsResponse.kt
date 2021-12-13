@@ -25,3 +25,11 @@ data class LowestBidResponse(
   @SerializedName("min_price") val minBid: Double? = null,
   @SerializedName("transaction_id") val transactionId: String
 )
+
+data class CreateTransactionBidResponseForBulkLoad(
+    @SerializedName("message") val message: String,
+    @SerializedName("id") val bidId: String,
+    @SerializedName("transaction_id") val transactionId: String,
+    @SerializedName("vehicle_type") val vehicleType: String,
+    @SerializedName("bid_price") val bidPrice: Double
+)

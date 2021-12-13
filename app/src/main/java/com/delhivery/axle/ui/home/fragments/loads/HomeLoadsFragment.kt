@@ -59,6 +59,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
   var visible = false
   var express: String?= null
   var isExpress = false
+  var pos = 0
 
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
@@ -209,6 +210,14 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     refreshData()
 
     viewModel.updateUserAppAccess()
+
+    viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!= null ){
+        BulkBidDetailsCreateEditDialog(
+              context!!, it.second, it.second.transactionBid, it.first, viewModel, pos, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
+              ).show()
+      }
+    })
   }
 
   override fun onResume() {
@@ -433,12 +442,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       APPROVED -> {
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
-            viewModel.fetchTruckType()
-            (item.data as HomeBidsRequestItemData).let {
-              BulkBidDetailsCreateEditDialog(
-              context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
-              ).show()
-            }
+            pos =position
+            viewModel.fetchTruckType(item.data as HomeBidsRequestItemData)
+//            (item.data as HomeBidsRequestItemData).let {
+//              BulkBidDetailsCreateEditDialog(
+//              context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
+//              ).show()
+//            }
 
 //            context?.let {
 //              startActivity(

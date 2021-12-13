@@ -3,15 +3,20 @@ package com.delhivery.axle.ui.bids
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.AdapterView
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.bids.DELETE_ITEM
 import com.delhivery.axle.data.bids.DmtBidSummaryItemData
 import com.delhivery.axle.data.bids.EXPAND_CARD
+import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
 import com.delhivery.axle.databinding.ViewBidCreateEditItemBinding
 import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.biddetails.DmtBidsAdapterInterface
+import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
+import com.delhivery.axle.ui.ledger.LedgerSpinnerAdapter
 import kotlin.math.abs
 
 abstract class BaseDmtBidsRVAdapterVH<out B: ViewDataBinding,
@@ -50,9 +55,35 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
         _interface: DmtBidsAdapterInterface
     ) {
         binding.item = item.data
-      //  val bidData = item.data as DmtBidSummaryItemData
-
-      //  binding.spinnerVehicleType.selectedView = item.data.vehicleType
+       val truckSpinnerAdapter: TruckSpinnerAdapter by lazy { TruckSpinnerAdapter() }
+        binding.spVehicleType.apply {
+            adapter = truckSpinnerAdapter
+            truckSpinnerAdapter.setItems(item.data.truckTypes)
+            var index=0
+            for( i in item.data.truckTypes){
+                if (i.truckUuid == item.data.vehicleType){
+                    break
+                }
+                index+=1
+            }
+            setSelection(index)
+            if (!item.data.isVehicleEnabled()){
+                binding.spVehicleType.isEnabled = false
+            }
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>) = Unit
+                override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View,
+                        position: Int,
+                        id: Long
+                ) {
+                    val option = parent.getItemAtPosition(position) as TruckResponseArray
+                    binding.item?.vehicleCapacity = option.defaultMG!!.toDouble()
+                    binding.item?.vehicleType = option.truckUuid!!
+                }
+                }
+        }
         binding.editTrucks.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
             override fun beforeTextChanged(

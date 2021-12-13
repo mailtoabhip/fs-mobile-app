@@ -148,7 +148,7 @@ data class HomeBidsRequestItemData(
    * @return formatted origin district, city, state
    */
   fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
-    originCityName() + "\n" + originDistrictName() + ", " + originStateName()
+    originCityName() + "\n" + originDistrictName() + "\n" + originStateName()
   } else {
     originCityName() + "\n" + originStateName()
   }
@@ -157,7 +157,7 @@ data class HomeBidsRequestItemData(
    * @return formatted destination city, state
    */
   fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
-    destinationCityName() + "\n" + destinationDistrictName() + ", " + destinationStateName()
+    destinationCityName() + "\n" + destinationDistrictName() + "\n" + destinationStateName()
   } else {
     destinationCityName() + "\n" + destinationStateName()
   }

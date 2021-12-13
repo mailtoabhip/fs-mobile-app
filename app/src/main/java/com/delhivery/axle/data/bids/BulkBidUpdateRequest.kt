@@ -9,7 +9,7 @@ data class BulkBidUpdateRequest(
     @SerializedName("unallocated_load")var unallocatedLoad: Double,
     @SerializedName("action")var action: String="bid_update",
     @SerializedName("transaction_id")var transactionId: String,
-    @SerializedName("vehicle_data")var vehicleData: List<VehicleBidData>
+    @SerializedName("vehicle_data")var vehicleData: List<ModifyVehicleData>
 ): BaseKeyTypeModel<String>() {
     override fun key() =biddingType+":"+transactionId
 

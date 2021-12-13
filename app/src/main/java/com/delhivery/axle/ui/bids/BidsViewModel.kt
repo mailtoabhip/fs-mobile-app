@@ -209,8 +209,6 @@ class BidsViewModel @Inject constructor(
         }
       }
   }
-  //fetch truck type
-
 
 
 

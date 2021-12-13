@@ -7,17 +7,22 @@ import android.widget.EditText
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingListener
+import com.delhivery.axle.R
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
 
 data class DmtBidSummaryItemData (
     var vehicleType: String,
+    var vehicleCapacity:Double,
     var pmtRate: Double,
     var truckCount: Int,
     var status :String,
     var expanded: Boolean = false,
+    var truckTypes : List<TruckResponseArray> = mutableListOf(),
+    var bidIds: List<String> = mutableListOf(),
+    var added: Boolean = false,
     var deleted: Boolean = false
-
     ): BaseKeyTypeModel<String>() {
 
         override fun key() = vehicleType
@@ -33,6 +38,28 @@ data class DmtBidSummaryItemData (
         fun pmtRate() = pmtRate.toString()
 
         fun truckCount() =truckCount.toString()
+
+        fun isEnabled()= status != "confirmed"
+
+        fun isVehicleEnabled() = status!="confirmed" && !added
+
+        fun deleteVisibility() = if(status == "confirmed")
+            View.GONE
+        else
+            View.VISIBLE
+
+        fun confirmVisibility() = if(status != "confirmed")
+            View.GONE
+        else
+            View.VISIBLE
+
+
+    @DrawableRes
+    fun background() = if(status == "confirmed")
+        R.drawable.background_border_disable
+    else
+        R.drawable.background_rectangle_border
+
 
     @BindingAdapter("android:text")
     fun setTextChangeListener(editText: EditText, listener: InverseBindingListener) {

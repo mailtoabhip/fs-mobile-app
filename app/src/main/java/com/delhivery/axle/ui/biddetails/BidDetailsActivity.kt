@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.bids.TransactionBid
@@ -94,6 +95,23 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       if (it != null) {
        adapter.operation(it)
       }
+    })
+
+    viewModel.truckGetLiveData.observe(this, Observer{
+      uiUtils.hideProgress()
+      if(it!= null){
+        BulkBidDetailsCreateEditDialog(
+              this@BidDetailsActivity, it.second, it.second.transactionBid, it.first, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
+          ).show()
+      }
+    })
+
+    viewModel.editBulkLiveData.observe(this, Observer {
+        if (it!=null){
+          if(viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]){
+            viewModel.fetchTransactionBids()
+          }
+        }
     })
 
 
@@ -315,12 +333,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
                 viewModel.getUserBulkBids(state.bids)
-               // (adapter as BulkBidsRVAdapter).operation(bulkBidSummaryItemList!!)
-
-              /* To be changed after integrating API*/
-               /* (adapter as BulkBidsRVAdapter).operation(listOf(Pair(BulkBidSummaryItem(BulkBidSummaryItemData("6_Tyre (7.5 MT)",1050.0,4,"open",true)), DataRVAdapterOperationType.Add),
-                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("12_Tyre (21 MT)",1060.0,2,"open",false)), DataRVAdapterOperationType.Add),
-                        Pair(BulkBidSummaryItem(BulkBidSummaryItemData("18_Tyre (32 MT)",1070.0,1,"open",false)), DataRVAdapterOperationType.Add)))*/
               }
 
               btnReviseBidInsider.setOnClickListener{ bidDialog()}
@@ -347,10 +359,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          viewModel.fetchTruckType();
-          BulkBidDetailsCreateEditDialog(
-              this@BidDetailsActivity, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
-          ).show()
+          if(viewModel.requestType == "dmt") {
+            uiUtils.showProgress()
+            viewModel.fetchTruckType(it);
+          }
+          else{
+            BidDetailsCreateEditDialog(
+                    this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+            ).show()
+          }
         }
       }
       UNAPPROVED -> {
