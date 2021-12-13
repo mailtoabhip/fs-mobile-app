@@ -14,7 +14,9 @@ data class BulkBidSummaryItemData(
     var confirmedStatus:String?=null,
     var lostStatus:String?=null,
     val vehicleNumber: MutableList<String>? = ArrayList(),
-    val childTransactionId: String?=null
+    val childTransactionId: String?=null,
+    val fromPage: String?=null
+
 ): BaseKeyTypeModel<String>() {
 
     override fun key() = vehicleType
@@ -44,6 +46,10 @@ data class BulkBidSummaryItemData(
     else
         View.GONE
     fun lostStatusVisibility()= if(lostStatus!=null)
+        View.VISIBLE
+    else
+        View.GONE
+    fun lowestBidVisibility()=if(fromPage!=null)
         View.VISIBLE
     else
         View.GONE

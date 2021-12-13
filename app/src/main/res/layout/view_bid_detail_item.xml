@@ -98,7 +98,7 @@
                     android:layout_marginStart="25dp"
                     android:textColor="@color/bid_placed_green"
                     android:text="@string/label_lowest_bid"
-                    android:visibility="@{item.visibility()}"
+                    android:visibility="@{item.lowestBidVisibility()}"
                     android:layout_marginTop="@dimen/size_11dp"
                     android:textStyle="italic"
                     android:layout_below="@id/text_vehicle_type"

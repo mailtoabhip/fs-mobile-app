@@ -306,7 +306,7 @@ companion object{
             if(confirmedStatus>0){
                 confirmedStat=("$confirmedStatus Confirmed")
             }
-            val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId)
+            val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId,"BidDetail")
             bulkBidSummaryItemDataList?.add(bulkBidsItem)
             bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
         }
