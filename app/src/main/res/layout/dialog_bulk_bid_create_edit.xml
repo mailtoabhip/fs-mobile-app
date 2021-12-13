@@ -181,8 +181,22 @@
             android:layout_marginTop="@dimen/size_12dp"
             app:layout_constraintTop_toBottomOf="@+id/additional_txt"
             app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="end"
+            android:orientation="horizontal"
             >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="@dimen/size_160dp"
+                android:layout_height="wrap_content"
+                tools:text="Total Volume being placed: 89 MT"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textColor="@color/bid_placed_green"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:gravity="end"
+                android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_cancel"
@@ -213,6 +227,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_14sp"
                 />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.constraintlayout.widget.ConstraintLayout>
