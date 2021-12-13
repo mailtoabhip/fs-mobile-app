@@ -11,6 +11,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
@@ -132,6 +133,9 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   ) {
     // handle actions here
     when (actionId) {
+      OPEN_CONFIRMED_BID -> {
+
+      }
       HomeBidsWarningAction_NoBids -> {
         setResult(RESULT_OK)
         finish()

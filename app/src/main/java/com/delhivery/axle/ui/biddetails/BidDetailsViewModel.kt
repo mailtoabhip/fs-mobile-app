@@ -15,7 +15,6 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -49,6 +48,10 @@ class BidDetailsViewModel @Inject constructor(
 
     var analyticsBucket :Boolean = false
 
+companion object{
+    var truckNumTextViewAdded :Boolean=false
+
+}
     lateinit var transaction: HomeBidsRequestItemData
 
     /* user bids live data */
@@ -379,13 +382,15 @@ class BidDetailsViewModel @Inject constructor(
     fun getUserBulkBids(userBids:List<TransactionBid>?) {
         val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()
         val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
-        //Test data
-        val bids: ArrayList<TransactionBid> =ArrayList()
-        bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE"))
-        bids.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE"))
-        bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE"))
-        bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","7_TYRE"))
-        bids.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE"))
+
+
+        val bids = mutableListOf<TransactionBid>()
+        bids.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678","109350"))
+        bids.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678","109350"))
+        bids.add(TransactionBid("","confirmed",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678","109350"))
+        bids.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678","109350"))
+        bids.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678","109350"))
+
 
         //map same vehicle type with bids
         val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
@@ -409,6 +414,9 @@ class BidDetailsViewModel @Inject constructor(
             var openStatus:Int=0
             var lostStatus:Int=0
             var confirmedStatus:Int=0
+//            var vehicleNumberLoc: Array<String?>?=null
+            val vehicleNumberLoc: MutableList<String> = ArrayList()
+
             for(bid in map[key]!!){
                 when (bid._status) {
                     "open" -> {
@@ -416,6 +424,8 @@ class BidDetailsViewModel @Inject constructor(
                     }
                     "confirmed" -> {
                         confirmedStatus+=1
+                        vehicleNumberLoc.add(bid.vehicleNumber.toString())
+                        System.out.println("Arv"+ vehicleNumberLoc[0])
                     }
                     "rejected" -> {
                         lostStatus+=1
@@ -431,7 +441,7 @@ class BidDetailsViewModel @Inject constructor(
             if(confirmedStatus>0){
                 confirmedStat=("$confirmedStatus Confirmed")
             }
-            val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat)
+            val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId,"BidDetail")
             bulkBidSummaryItemDataList?.add(bulkBidsItem)
             bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
         }

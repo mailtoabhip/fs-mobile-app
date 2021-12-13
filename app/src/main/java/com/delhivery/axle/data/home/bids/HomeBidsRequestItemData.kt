@@ -95,6 +95,15 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+  fun setMoreBidsVisibility() = if (requestType != null && requestType == "DMT") {
+    if(numBids>1) {
+      View.VISIBLE
+    }else{
+      View.GONE
+    }
+  } else {
+    View.GONE
+  }
 
   /**
    * @return formatted origin city name

@@ -98,7 +98,7 @@
                     android:layout_marginStart="25dp"
                     android:textColor="@color/bid_placed_green"
                     android:text="@string/label_lowest_bid"
-                    android:visibility="@{item.visibility()}"
+                    android:visibility="@{item.lowestBidVisibility()}"
                     android:layout_marginTop="@dimen/size_11dp"
                     android:textStyle="italic"
                     android:layout_below="@id/text_vehicle_type"
@@ -165,6 +165,17 @@
                     android:visibility="@{item.lostStatusVisibility()}"
                     android:text="@{item.lostCount()}"
                     android:textColor="@color/bid_placed_red"/>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Vehicle_num_layout"
+                    android:text="Textview"
+                    visibility="@{item.confirmedStatusVisibility()}"
+                    android:orientation="vertical"
+                    android:textColor="@color/bid_placed_green">
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
