@@ -169,6 +169,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           }
     })
 
+    viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it != null){
+
+
+      }
+    })
+
     viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.hideProgress()
       if (it != null) {
@@ -212,9 +219,11 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     viewModel.updateUserAppAccess()
 
     viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
       if(it!= null ){
         BulkBidDetailsCreateEditDialog(
-              context!!, it.second, it.second.transactionBid, it.first, viewModel, pos, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
+              context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,pos, analyticsUtil,
+                userPrefs , "load_screen","PLACE BIDS"
               ).show()
       }
     })
@@ -443,18 +452,18 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
-            viewModel.fetchTruckType(item.data as HomeBidsRequestItemData)
-//            (item.data as HomeBidsRequestItemData).let {
-//              BulkBidDetailsCreateEditDialog(
-//              context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen","PLACE BIDS"
-//              ).show()
-//            }
-
-//            context?.let {
-//              startActivity(
-//                Intent(it, DmtBidsActivity::class.java)
-//              )
-//            }
+            val data = item.data as HomeBidsRequestItemData
+            if (data.requestType!= null && data.requestType =="dmt") {
+              uiUtils.showProgress()
+              viewModel.fetchTruckType(data)
+            }
+            else{
+              item.data.let {
+                BidDetailsCreateEditDialog(
+                        context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
+                ).show()
+              }
+            }
           }
         }
       }

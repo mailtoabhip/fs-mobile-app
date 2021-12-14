@@ -26,9 +26,10 @@ import javax.inject.Inject
 class BulkBidDetailsCreateEditDialog @Inject constructor(
     context: Context,
     private val transaction: HomeBidsRequestItemData,
-    private val transactionBid: TransactionBid? = null,/* transaction bid null for create new bid */
+    private val transactionBids: List<TransactionBid>? = mutableListOf(),/* transaction bid null for create new bid */
     private val truckTypes: List<TruckResponseArray>,
     private val dialogInterface: BulkBidsCreateEditInterface,
+    private val unAllocatedLoad: Double,
     private val position: Int = 0,
     private val analyticsUtil: AnalyticsUtil,
     private var userPrefs: UserPrefs,
@@ -63,19 +64,12 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 for(item in (adapter as DmtBidsRVAdapter).itemsList()){
                     item.data
                 }
-                //test data to be replaced with api data
-                val bids: ArrayList<TransactionBid> =ArrayList()
-                bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"1","","","","","6_TYRE(19FT)"))
-                bids.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE(19FT)"))
-                bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"3","","","","","6_TYRE(19FT)"))
-                bids.add(TransactionBid("","open",false,"","","","",6000.0,9000.0,"4","","","","","10_TYRE"))
-                bids.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","10_TYRE"))
 
                 val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
                 val confirmedBidsMap: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
 
                 // map same vehicle type with bids for open and confirmed bids
-                for (bid in bids) {
+                for (bid in transactionBids!!) {
                     val key: String = bid.vehicleType!!
                     if(bid._status == "confirmed"){
                         if (confirmedBidsMap.containsKey(key)) {
@@ -108,7 +102,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             vehicleCapacity = i.defaultMG!!
                         }
                     }
-                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].pmtRate!!,truckCount!!,"confirmed",false,truckTypes,added = true)
+                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].bidAmount,truckCount!!,"confirmed",false,truckTypes,added = true)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
                 }
 
@@ -127,7 +121,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                         }
                     }
 
-                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].pmtRate!!,truckCount!!,"open",false,truckTypes,bidIdsList,true)
+                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].bidAmount,truckCount!!,"open",false,truckTypes,bidIdsList,true)
                     dmtBidSummaryItemDataList.add(dmtBidsItem)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem.copy()), DataRVAdapterOperationType.Add))
 
@@ -199,7 +193,8 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             }
                             if (!match) {
                                 if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
-                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType))
+                                    val freightCost = bidData.pmtRate * bidData.vehicleCapacity
+                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity.toInt(), bidData.truckCount, bidData.vehicleType, freightCost))
                                 }
                             }
 
@@ -209,15 +204,16 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                         removedBids.addAll(i.bidIds)
                     }
 
-                    dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, 200.0)
+                    dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
                 } else {
                     for (item in adapter.itemsList()) {
                         val bidData = item.data as DmtBidSummaryItemData
                         if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
-                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType))
+                            val freightCost = bidData.pmtRate * bidData.vehicleCapacity
+                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity.toInt(), bidData.truckCount, bidData.vehicleType, freightCost))
                         }
                     }
-                    dialogInterface.createBids(transaction.key(), position, createPayload, 200.0)
+                    dialogInterface.createBids(transaction.key(), position, createPayload, unAllocatedLoad)
                 }
                 dismiss()
             }
@@ -225,7 +221,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
         binding.tvAdd.setOnClickListener {
             adapter.operation(listOf(Pair(DmtBidSummaryItem(
-                    DmtBidSummaryItemData("6_TYRE(19FT)",7.5,0.0,0,"open",true,truckTypes)),
+                    DmtBidSummaryItemData(truckTypes[0].truckUuid!!,truckTypes[0].defaultMG!!,0.0,0,"open",true,truckTypes)),
                     DataRVAdapterOperationType.Add)))
         }
     }

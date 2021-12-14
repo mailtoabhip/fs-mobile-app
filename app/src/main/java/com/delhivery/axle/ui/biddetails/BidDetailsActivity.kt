@@ -104,7 +104,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       uiUtils.hideProgress()
       if(it!= null){
         BulkBidDetailsCreateEditDialog(
-              this@BidDetailsActivity, it.second, it.second.transactionBid, it.first, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
+              this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,
+                analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
           ).show()
       }
     })

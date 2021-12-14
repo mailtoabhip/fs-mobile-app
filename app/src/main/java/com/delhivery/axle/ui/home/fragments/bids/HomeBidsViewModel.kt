@@ -155,7 +155,7 @@ class HomeBidsViewModel @Inject constructor(
                 val transactions = _res.second.transactions
                 val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
                 for (bid in _res.fifth) {
-                  val key: String = bid.transactionId!!
+                  val key: String = bid.transactionId
                   if (map.containsKey(key)) {
                     val list: MutableList<TransactionBid>? = map[key]
                     list!!.add(bid)
@@ -176,7 +176,7 @@ class HomeBidsViewModel @Inject constructor(
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
-                    transaction.bulkTransactionBids = map.get(transaction.transactionId)
+                    transaction.bulkTransactionBids = map[transaction.transactionId]!!
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }

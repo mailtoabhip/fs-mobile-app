@@ -187,20 +187,23 @@
             android:id="@+id/text_is_bulk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bulk Load"
+            android:text="@{request.setDmtText()}"
             android:layout_marginTop="@dimen/size_8dp"
             android:textColor="@color/bid_placed_red"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             android:visibility="@{request.setDMTType()}"
-            app:layout_constraintTop_toBottomOf="@id/text_date_time"/>
+            app:layout_constraintTop_toBottomOf="@id/text_date_time"
+            tools:text="Bulk Load: 100 MT"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_vehicle_type_bulk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/text_is_bulk"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="Open"
+            android:text="@{request.setTruckTypeText()}"
             android:visibility="@{request.setDMTType()}"
+            tools:text="open"
             app:layout_constraintTop_toTopOf="@+id/text_is_bulk"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -344,6 +347,7 @@
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toStartOf="@+id/text_edit"
               android:layout_width="0dp"
+              android:visibility="@{!request.setDMTType()}"
               android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView

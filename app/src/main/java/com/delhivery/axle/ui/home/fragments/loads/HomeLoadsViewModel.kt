@@ -57,6 +57,8 @@ class HomeLoadsViewModel @Inject constructor(
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
+  var bulkBidActionLiveData = MutableLiveData<Pair<Int,String>>()
+
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
 
   /* revise bid live data */
@@ -183,8 +185,12 @@ class HomeLoadsViewModel @Inject constructor(
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
                       }[0]
-                    Log.i("transId",load.transactionId.toString()+":"+map.get(load.transactionId)?.size)
-                    load.bulkTransactionBids = map.get(load.transactionId)
+                    if(load.requestType == "dmt"){
+                        load.bulkTransactionBids =
+                            bids.filter { b ->
+                                b.transactionId.safeEquals(load.transactionId)
+                            }
+                    }
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", load.transactionId ?: "")
                   }
@@ -349,10 +355,11 @@ class HomeLoadsViewModel @Inject constructor(
           .progress()
           .subscribe { _res, error ->
             if (!error && _res!=null) {
-//              fetchTransactionBids(true)
+              bulkBidActionLiveData.postValue(Pair(position, transactionId))
 
             } else {
               error.handle()
+              bulkBidActionLiveData.postValue(null)
             }
           }
   }

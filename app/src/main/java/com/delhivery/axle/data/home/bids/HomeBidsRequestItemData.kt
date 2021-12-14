@@ -63,11 +63,12 @@ data class HomeBidsRequestItemData(
   @SerializedName("request_type") val requestType: String? = "",
   @SerializedName("unallocated_volume") val unAllocatedVolume: Double? = 0.0,
   @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
+  @SerializedName("child_transactions") val childTransactions: List<String> = mutableListOf(),
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
   var showing: Boolean = false,
-  var bulkTransactionBids: List<TransactionBid>? = null
+  var bulkTransactionBids: List<TransactionBid> = mutableListOf()
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
@@ -90,11 +91,13 @@ data class HomeBidsRequestItemData(
   /**
    * if trip is DMT
    */
-  fun setDMTType() = if (requestType != null && requestType!= "" && requestType.capitalize() == "DMT") {
+  fun setDMTType() = if (requestType != null && requestType!= "" && requestType == "dmt") {
     View.VISIBLE
   } else {
     View.GONE
   }
+
+
 
   fun setMoreBidsVisibility() = if (requestType != null && requestType == "DMT") {
     if(numBids>1) {
@@ -105,6 +108,10 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+  fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
+
+  fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
   /**
    * @return formatted origin city name
@@ -333,9 +340,15 @@ data class HomeBidsRequestItemData(
   /**
    * @return bid text
    */
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
-      transactionBid?.bidAmount ?: 0.0
-  )}" + if (isPMTIndent()) " /MT" else ""
+  fun bidText(): String {
+    return if(requestType!= "dmt")
+      "Bid placed for ₹ ${StringUtils.formatAmount(
+              transactionBid?.bidAmount ?: 0.0
+      )}" + if (isPMTIndent()) " /MT" else ""
+    else{
+      "Bid Placed"
+    }
+  }
 
   /**
    * @return lowest bid difference

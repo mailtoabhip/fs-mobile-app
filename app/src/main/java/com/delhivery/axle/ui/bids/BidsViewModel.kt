@@ -152,7 +152,7 @@ class BidsViewModel @Inject constructor(
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]
-                    transaction.bulkTransactionBids= map.get(transaction.transactionId)
+                    transaction.bulkTransactionBids= map[transaction.transactionId]!!
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
