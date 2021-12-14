@@ -70,6 +70,30 @@ class BidsRepository @Inject constructor(
       }!!
 
   /**
+  * Add/Update bid for bulkloads
+  */
+  fun transactionBidForBulk(transactionId: String) = bidService.transactionBids(transactionId)
+    .convertResponse()
+    .map {
+        val userId = userRepository.userId()
+        val userBids = mutableListOf<TransactionBid>()
+        if (userPrefs.isParent) {
+            for( i in it.bids){
+                if( i.supplierId == userId){
+                    userBids.add(i)
+                }
+            }
+        } else {
+            for( i in it.bids){
+                if( i.secondaryVendorId == userId){
+                    userBids.add(i)
+                }
+            }
+        }
+        userBids
+    }!!
+
+  /**
    * Bulk call to fetch bids
    */
   fun bidsForLoads(

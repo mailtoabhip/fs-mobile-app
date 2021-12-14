@@ -97,6 +97,22 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun bidInfoVisibility() = if (requestType != null && requestType!= "" && requestType == "dmt") {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun bidInfoLayoutVisibility()= if( transactionBid!=null || (bulkTransactionBids!= null &&bulkTransactionBids.isNotEmpty() ))
+    View.VISIBLE
+  else
+    View.INVISIBLE
+
+  fun bidPlaceLayoutVisibility()= if(  (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null)
+    View.VISIBLE
+  else
+    View.INVISIBLE
+
 
 
   fun setMoreBidsVisibility() = if (requestType != null && requestType == "DMT") {

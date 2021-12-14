@@ -306,7 +306,7 @@
             android:paddingTop="@dimen/size_16dp"
             android:paddingRight="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_14dp"
-            android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{ request.bidInfoLayoutVisibility() }"
             tools:visibility="visible"
             >
 
@@ -347,7 +347,7 @@
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toStartOf="@+id/text_edit"
               android:layout_width="0dp"
-              android:visibility="@{!request.setDMTType()}"
+              android:visibility="@{request.bidInfoVisibility()}"
               android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -413,7 +413,7 @@
             android:paddingTop="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_8dp"
-            android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
+            android:visibility="@{ request.bidPlaceLayoutVisibility()}"
             tools:visibility="gone"
             >
 

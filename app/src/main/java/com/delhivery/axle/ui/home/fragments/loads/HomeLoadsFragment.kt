@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -171,9 +172,26 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it != null){
-
-
+        val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        data?.bulkTransactionBids = it.second
+        adapter.notifyItemChanged(it.first)
       }
+    })
+
+    viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it.first == 10){
+        Toast.makeText(context,"Bids Created Successfully",Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 20){
+        Toast.makeText(context,"Bids Updated Successfully",Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 30){
+        Toast.makeText(context,"Bids Deleted Successfully",Toast.LENGTH_SHORT).show()
+      }
+        if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
+          viewModel.transactionBidForBulk(it.second, pos)
+          viewModel.editFlg = mutableListOf(false, false, false)
+        }
     })
 
     viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -221,9 +239,10 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
     viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.hideProgress()
       if(it!= null ){
+        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         BulkBidDetailsCreateEditDialog(
               context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,pos, analyticsUtil,
-                userPrefs , "load_screen","PLACE BIDS"
+                userPrefs , "load_screen",pageTitle
               ).show()
       }
     })

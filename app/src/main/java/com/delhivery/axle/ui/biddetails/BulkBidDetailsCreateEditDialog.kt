@@ -162,8 +162,21 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     }
                 }
             }
-            if( duplicate ){
+            var isZero = false
+            for(item in adapter.itemsList()) {
+                val bidData = item.data as DmtBidSummaryItemData
+                if( bidData.status != "confirmed") {
+                    if(bidData.pmtRate== 0.0 || bidData.truckCount ==0){
+                        isZero = true
+                        break
+                    }
+                }
+            }
+            if( duplicate  ){
                 Toast.makeText(context, "Duplicate Vehicle types Found", Toast.LENGTH_SHORT).show()
+            }
+            else if(isZero){
+                Toast.makeText(context, "Truck Count or PMT rate can't be zero", Toast.LENGTH_SHORT).show()
             }
             else {
                 if (pageTitle == "EDIT BIDS") {
@@ -178,7 +191,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                                     if (bidData.truckCount != i.truckCount) {
                                         diff = bidData.truckCount - i.truckCount
                                     }
-                                    if (bidData.pmtRate != i.pmtRate) {
+                                    if (bidData.pmtRate !=0.0 && bidData.pmtRate != i.pmtRate) {
                                         pmtFlag = true
                                     }
 

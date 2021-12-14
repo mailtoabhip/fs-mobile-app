@@ -57,7 +57,7 @@ class HomeLoadsViewModel @Inject constructor(
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
-  var bulkBidActionLiveData = MutableLiveData<Pair<Int,String>>()
+  var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
 
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
 
@@ -91,7 +91,7 @@ class HomeLoadsViewModel @Inject constructor(
   var paginateCount =0
 
 
-  var editBulkLiveData= MutableLiveData<String>()
+  var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
   var editFlg= mutableListOf<Boolean>(false,false,false)
 
 
@@ -351,17 +351,21 @@ class HomeLoadsViewModel @Inject constructor(
     val bulkBidRequest= BulkBidCreateRequest("PMT","axle-app", userPrefs.userId(),unAllocatedLoad, userPrefs.userName,
             transactionId, createPayload)
     compositeDisposable += bidsRepository.createBulkBids(bulkBidRequest)
-          .onBackground()
-          .progress()
-          .subscribe { _res, error ->
-            if (!error && _res!=null) {
-              bulkBidActionLiveData.postValue(Pair(position, transactionId))
+        .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+            bidsRepository.transactionBidForBulk(transactionId)
+        }
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+        if (!error && _res!=null) {
+          bulkBidActionLiveData.postValue(Pair(position, _res))
 
-            } else {
-              error.handle()
-              bulkBidActionLiveData.postValue(null)
-            }
-          }
+        } else {
+          error.handle()
+          bulkBidActionLiveData.postValue(null)
+        }
+      }
   }
 
   override fun editBids(
@@ -399,11 +403,11 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe { _res, error ->
                 if (!error && _res!=null) {
                   editFlg[0] = true
-                  editBulkLiveData.postValue("Success")
+                  editBulkLiveData.postValue(Pair(10, transactionId))
                 } else {
                   error.handle()
                   editFlg[0] = true
-                  editBulkLiveData.postValue("Failure")
+                  editBulkLiveData.postValue(Pair(11,transactionId))
                 }
               }
 
@@ -418,13 +422,13 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe { _res, error ->
                 if (!error && _res != null) {
                   editFlg[1]= true
-                  editBulkLiveData.postValue("Success")
+                  editBulkLiveData.postValue(Pair(20, transactionId))
                 }
                 else
                 {
                   error.handle()
                   editFlg[1]= true
-                  editBulkLiveData.postValue("Failure")
+                  editBulkLiveData.postValue(Pair(21,transactionId))
 
                 }
               }
@@ -441,12 +445,12 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe{_res, error ->
                 if (!error && _res != null) {
                   editFlg[2]= true
-                  editBulkLiveData.postValue("Success")
+                  editBulkLiveData.postValue(Pair(30, transactionId))
                 }
                 else{
                   error.handle()
                   editFlg[2]= true
-                  editBulkLiveData.postValue("Failure")
+                  editBulkLiveData.postValue(Pair(31,transactionId))
 
                 }
               }
@@ -458,6 +462,22 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
   }
+
+    fun transactionBidForBulk(transactionId: String,position: Int) {
+        compositeDisposable += bidsRepository.transactionBidForBulk(transactionId)
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error && _res != null) {
+                        bulkBidActionLiveData.postValue(Pair(position, _res))
+                    } else {
+                        error.handle()
+                        bulkBidActionLiveData.postValue(null)
+                    }
+                }
+    }
 }
+
+
 
 private const val BidsUpdateDelay = 1L

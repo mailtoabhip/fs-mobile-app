@@ -184,7 +184,7 @@
             android:orientation="horizontal"
             >
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="@dimen/size_160dp"
+                android:layout_width="@dimen/size_130dp"
                 android:layout_height="wrap_content"
                 tools:text="Total Volume being placed: 89 MT"
                 android:textSize="@dimen/text_14sp"
@@ -211,7 +211,7 @@
                 />
 
             <View
-                android:layout_width="@dimen/size_16dp"
+                android:layout_width="@dimen/size_14dp"
                 android:layout_height="0dp"
                 />
 
