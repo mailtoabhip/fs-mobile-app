@@ -186,13 +186,13 @@
             android:orientation="horizontal"
             >
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/volume_placed"
                 android:layout_width="@dimen/size_96dp"
                 android:layout_height="wrap_content"
                 tools:text="Total Volume being placed: 89 MT"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"
-                android:text="@{request.setAllocatedText()}"
                 android:textColor="@color/bid_placed_green"/>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"

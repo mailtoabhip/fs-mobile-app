@@ -41,6 +41,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
     private lateinit var binding: DialogBulkBidCreateEditBinding
     val dmtBidSummaryItemDataList = mutableListOf<DmtBidSummaryItemData>()
     val dmtBidSummaryItemOperationList = mutableListOf<Pair<BaseDmtBidSummaryRVAdapterItem<*>,DataRVAdapterOperationType>>()
+    var volumePlaced =0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +83,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 // map same vehicle type with bids for open and confirmed bids
                 for (bid in transactionBids!!) {
                     val key: String = bid.vehicleType!!
-                    if(bid._status == "confirmed"){
+                    if(bid._status == "accepted"){
                         if (confirmedBidsMap.containsKey(key)) {
                             val list: MutableList<TransactionBid>? = confirmedBidsMap[key]
                             list!!.add(bid)
@@ -113,6 +114,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             vehicleCapacity = i.defaultMG!!
                         }
                     }
+                    volumePlaced += (truckCount!! * vehicleCapacity)
                     val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].bidAmount,truckCount!!,"confirmed",
                             false, truckTypesFiltered,added = true)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
@@ -132,7 +134,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             vehicleCapacity = i.defaultMG!!
                         }
                     }
-
+                    volumePlaced += (truckCount!! * vehicleCapacity)
                     val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].bidAmount,truckCount!!,"open",false,
                             truckTypesFiltered,bidIdsList,true)
                     dmtBidSummaryItemDataList.add(dmtBidsItem)
@@ -222,7 +224,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             if (!match) {
                                 if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
                                     val freightCost = bidData.pmtRate * bidData.vehicleCapacity
-                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity.toInt(), bidData.truckCount, bidData.vehicleType, freightCost))
+                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost))
                                 }
                             }
 
@@ -238,7 +240,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                         val bidData = item.data as DmtBidSummaryItemData
                         if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
                             val freightCost = bidData.pmtRate * bidData.vehicleCapacity
-                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity.toInt(), bidData.truckCount, bidData.vehicleType, freightCost))
+                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost))
                         }
                     }
                     dialogInterface.createBids(transaction.key(), position, createPayload, unAllocatedLoad)
@@ -268,11 +270,18 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
             }
             DELETE_ITEM ->{
                 val bidData = item.data as DmtBidSummaryItemData
+                volumePlaced -= (bidData.truckCount * bidData.vehicleCapacity)
+                binding.volumePlaced.text ="Total Volume being placed: $volumePlaced MT"
                 adapter.operation(listOf(Pair(DmtBidSummaryItem(bidData), DataRVAdapterOperationType.Remove)))
                 adapter.notifyDataSetChanged()
 
             }
         }
+    }
+
+    override fun itemCapacity(capacity: Double) {
+        volumePlaced+=capacity
+        binding.volumePlaced.text ="Total Volume being placed: $volumePlaced MT"
     }
 
 }

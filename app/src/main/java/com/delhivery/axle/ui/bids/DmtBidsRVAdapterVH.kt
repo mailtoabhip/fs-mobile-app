@@ -100,7 +100,9 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                 count: Int
             ) {
                 if (s != null && s.length>0) {
+                    val diff = Integer.parseInt(s.toString())- binding.item!!.truckCount
                   binding.item!!.truckCount = Integer.parseInt(s.toString())
+                    _interface.itemCapacity(diff * item.data.vehicleCapacity)
                 }
             }
         })

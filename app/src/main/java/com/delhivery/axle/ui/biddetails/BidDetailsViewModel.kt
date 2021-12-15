@@ -119,59 +119,59 @@ companion object{
                 )
                 bidPriceLiveData.postValue(null)
               }
-              else -> when (_bRes.first.first!!.status()) {
-                Accepted -> {
-                  bidPriceLiveData.postValue(_bRes.first.first)
-                  fetchTripDetails()
-                }
-                Rejected -> {
-                  try {
-                    transactionBidLiveData.postValue(
-                        BidDetailsUserBidState_RejectedBid(
-                            _bRes.second.acceptedBid()!!, _bRes.first.first!!,
-                            transaction.isPMTIndent()
-                        )
-                    )
-                  } catch (e: Exception) {
+              else -> if(requestType == "dmt"){
+                  transactionBidLiveData.postValue(
+                          BidDetailsUserBidState_BulkLoad_Edit(
+                                  _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
+                          )
+                  )
+                  bidPriceLiveData.postValue(null)
+              }else{
+                  when (_bRes.first.first!!.status()) {
+                      Accepted -> {
+                          bidPriceLiveData.postValue(_bRes.first.first)
+                          fetchTripDetails()
+                      }
+                      Rejected -> {
+                          try {
+                              transactionBidLiveData.postValue(
+                                      BidDetailsUserBidState_RejectedBid(
+                                              _bRes.second.acceptedBid()!!, _bRes.first.first!!,
+                                              transaction.isPMTIndent()
+                                      )
+                              )
+                          } catch (e: Exception) {
 
-                  } finally {
-                    bidPriceLiveData.postValue(null)
-                  }
-                }
-                Cancelled -> {
-                  try {
-                    transactionBidLiveData.postValue(
-                      BidDetailsUserBidState_CancelledBid(
-                        _bRes.first.first!!,
-                        transaction.isPMTIndent()
-                      )
-                    )
-                  } catch (e: Exception) {
+                          } finally {
+                              bidPriceLiveData.postValue(null)
+                          }
+                      }
+                      Cancelled -> {
+                          try {
+                              transactionBidLiveData.postValue(
+                                      BidDetailsUserBidState_CancelledBid(
+                                              _bRes.first.first!!,
+                                              transaction.isPMTIndent()
+                                      )
+                              )
+                          } catch (e: Exception) {
 
-                  } finally {
-                    bidPriceLiveData.postValue(null)
+                          } finally {
+                              bidPriceLiveData.postValue(null)
+                          }
+                      }
+                      else -> {
+                          if(action){
+                              analyticsBucket=true
+                          }
+                          transactionBidLiveData.postValue(
+                                  BidDetailsUserBidState_EditBid(
+                                          _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
+                                  )
+                          )
+                          bidPriceLiveData.postValue(null)
+                      }
                   }
-                }
-                else -> {
-                    if(requestType == "dmt"){
-                        transactionBidLiveData.postValue(
-                            BidDetailsUserBidState_BulkLoad_Edit(
-                                _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
-                            )
-                        )
-                        bidPriceLiveData.postValue(null)
-                    }else{
-                        if(action){
-                            analyticsBucket=true
-                        }
-                        transactionBidLiveData.postValue(
-                            BidDetailsUserBidState_EditBid(
-                                _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
-                            )
-                        )
-                        bidPriceLiveData.postValue(null)
-                    }
-                }
               }
             }
           } else {
@@ -403,9 +403,9 @@ companion object{
         }
         //get count of status
         for(key in map.keys){
-            var openStat: String?=null
-            var lostStat: String?=null
-            var confirmedStat: String?=null
+            var openStat: String= ""
+            var lostStat: String =""
+            var confirmedStat: String= ""
             val truckCount:Int?=map[key]?.size
             var openStatus:Int=0
             var lostStatus:Int=0
@@ -439,7 +439,8 @@ companion object{
                 confirmedStat=("$confirmedStatus Confirmed")
             }
             val lowestBidVis = if(lowestBid!=0.0 ) bidAmt<=lowestBid!! else false
-            val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt ,truckCount!!,openStat!!,lowestBidVis,false,confirmedStat ,
+
+            val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt ,truckCount!!, openStat,lowestBidVis,false, confirmedStat ,
                     lostStat , vehicleNumberLoc, map[key]!![0].childTransactionId,"BidDetail")
             bulkBidSummaryItemDataList.add(bulkBidsItem)
             bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))

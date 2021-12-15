@@ -15,8 +15,8 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 data class DmtBidSummaryItemData (
     var vehicleType: String,
     var vehicleCapacity:Double,
-    var pmtRate: Double,
-    var truckCount: Int,
+    var pmtRate: Double =0.0,
+    var truckCount: Int =0,
     var status :String,
     var expanded: Boolean = false,
     var truckTypes : List<TruckResponseArray> = mutableListOf(),

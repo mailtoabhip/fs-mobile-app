@@ -13,5 +13,7 @@ interface DmtBidsAdapterInterface: BaseSummaryDataRVAdapter.ItemClickListener<Ba
         item: BaseDmtBidSummaryRVAdapterItem<*>
     )
 
+    fun itemCapacity(capacity:Double)
+
 
 }
