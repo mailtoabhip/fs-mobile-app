@@ -4,6 +4,7 @@ import android.view.View
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.DrawableProviderUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 data class BulkBidSummaryItemData(
     var vehicleType: String,
@@ -38,15 +39,15 @@ data class BulkBidSummaryItemData(
     fun lostCount()=if(lostStatus==null){""}else{lostStatus}
     fun confirmedCount()=if(confirmedStatus==null){""}else{confirmedStatus}
 
-    fun openStatusVisibility()= if(openStatus!=null)
+    fun openStatusVisibility()= if(openStatus!=null && openStatus!!.isNotEmpty())
         View.VISIBLE
     else
         View.GONE
-    fun confirmedStatusVisibility()= if(confirmedStatus!=null)
+    fun confirmedStatusVisibility()= if(confirmedStatus!=null && confirmedStatus!!.isNotEmpty())
         View.VISIBLE
     else
         View.GONE
-    fun lostStatusVisibility()= if(lostStatus!=null)
+    fun lostStatusVisibility()= if(lostStatus!=null && lostStatus!!.isNotEmpty())
         View.VISIBLE
     else
         View.GONE

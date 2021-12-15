@@ -35,9 +35,11 @@ data class DmtBidSummaryItemData (
         @DrawableRes
         fun toggleButton() = DrawableProviderUtils.expandedRes(expanded)
 
-        fun pmtRate() = pmtRate.toString()
+        fun pmtRate() = if(pmtRate!=0.0)pmtRate.toString()
+        else ""
 
-        fun truckCount() =truckCount.toString()
+        fun truckCount() = if(truckCount!=0) truckCount.toString()
+           else ""
 
         fun isEnabled()= status != "confirmed"
 
