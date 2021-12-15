@@ -319,7 +319,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       if(it!= null){
         val data = adapter.itemsList()[it.second].data as? HomeTripsItemData
         data?.payment!!.apply {
-          fuelPayout = it.third
+          fuelPayout = it.third.first
+          fuelNumber = it.third.second
         }
         uiUtils.showSnackbar(it.first)
         adapter.notifyItemChanged(it.second)

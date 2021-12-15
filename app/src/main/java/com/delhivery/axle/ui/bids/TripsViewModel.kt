@@ -118,7 +118,7 @@ class TripsViewModel @Inject constructor(
 
   var omcLiveData = MutableLiveData<Triple<String,Int,OMCResponse>>()
   var omcGetLiveData = MutableLiveData<Pair<String,Int>>()
-  var fuelPayoutLiveData = MutableLiveData<Triple<String,Int,Double>>()
+  var fuelPayoutLiveData = MutableLiveData<Triple<String,Int,Pair<Double,String>>>()
   /**
    * Fetch trips summary
    */
@@ -458,7 +458,7 @@ class TripsViewModel @Inject constructor(
           .progress()
           .subscribe(){_res, error ->
             if(!error && _res!= null){
-              fuelPayoutLiveData.postValue(Triple(_res.message, pos, fuelCardAmt.toDouble()))
+              fuelPayoutLiveData.postValue(Triple(_res.message, pos, Pair(fuelCardAmt.toDouble(),fuelCardNumber)))
             }
             else{
               error.handle()
