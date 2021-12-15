@@ -129,6 +129,8 @@ data class HomeBidsRequestItemData(
 
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
+  fun setAllocatedText() = "Total volume being placed: ${allocatedVolume!!} MT"
+
   /**
    * @return formatted origin city name
    */

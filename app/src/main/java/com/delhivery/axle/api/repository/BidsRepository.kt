@@ -32,6 +32,22 @@ class BidsRepository @Inject constructor(
         val userId = userRepository.userId()
         var hasPMT = false
         var hasFTL = false
+
+      val userBids = mutableListOf<TransactionBid>()
+      if (userPrefs.isParent) {
+          for( i in it.bids){
+              if( i.supplierId == userId){
+                  userBids.add(i)
+              }
+          }
+      } else {
+          for( i in it.bids){
+              if( i.secondaryVendorId == userId){
+                  userBids.add(i)
+              }
+          }
+      }
+
         val userBid :TransactionBid?
         it.bids.forEach { it1 ->
           when (it1.biddingType.toLowerCase()) {
@@ -49,7 +65,7 @@ class BidsRepository @Inject constructor(
           it.bids.firstOrNull { _b -> _b.secondaryVendorId.safeEquals(userId) }
         }
         Triple(
-            Pair(userBid, lowestBid), it.bids, it.totalBids
+            Pair(userBid, lowestBid), userBids , it.totalBids
         )
       }!!
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -21,6 +22,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -103,21 +105,29 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.truckGetLiveData.observe(this, Observer{
       uiUtils.hideProgress()
       if(it!= null){
+        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         BulkBidDetailsCreateEditDialog(
               this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,
-                analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = "EDIT BIDS"
+                analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = pageTitle
           ).show()
       }
     })
 
     viewModel.editBulkLiveData.observe(this, Observer {
-        if (it!=null){
-          if(viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]){
-            viewModel.fetchTransactionBids()
-          }
-        }
+      if(it.first == 10){
+        Toast.makeText(this,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 20){
+        Toast.makeText(this,"Bids Updated Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 30){
+        Toast.makeText(this,"Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
+        viewModel.fetchTransactionBids()
+        viewModel.editFlg = mutableListOf(false, false, false)
+      }
     })
-
 
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
@@ -331,12 +341,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsBulkLoadEditBinding.inflate(
                     layoutInflater, binding.containerActions, false
             ).apply {
+              val data = viewModel.transaction as HomeBidsRequestItemData
+              data.bulkTransactionBids = state.bids
               bidsRecieved = state.bidsCount
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
                 viewModel.getUserBulkBids(state.bids)
+
               }
 
               btnReviseBidInsider.setOnClickListener{ bidDialog()}

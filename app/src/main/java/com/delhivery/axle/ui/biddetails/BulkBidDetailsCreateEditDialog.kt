@@ -48,7 +48,18 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
         binding = DialogBulkBidCreateEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.route = transaction.tripRouteOriginDes()
+        binding.request = transaction
         binding.page=pageTitle
+        val availableTrucks = transaction.truckDisplayName as List<*>
+        val truckTypesFiltered = mutableListOf<TruckResponseArray>()
+        for(truck in truckTypes){
+            for (item in availableTrucks){
+                if(item == truck.truckUuid){
+                    truckTypesFiltered.add(truck)
+                    break
+                }
+            }
+        }
         window?.clearFlags(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
         )
@@ -97,12 +108,13 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 for (key in confirmedBidsMap.keys){
                     val truckCount:Int?=confirmedBidsMap[key]?.size
                     var vehicleCapacity = 0.0
-                    for ( i in truckTypes){
+                    for ( i in truckTypesFiltered){
                         if(i.truckUuid == key){
                             vehicleCapacity = i.defaultMG!!
                         }
                     }
-                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].bidAmount,truckCount!!,"confirmed",false,truckTypes,added = true)
+                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].bidAmount,truckCount!!,"confirmed",
+                            false, truckTypesFiltered,added = true)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
                 }
 
@@ -115,13 +127,14 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                         bidIdsList.add(bid.id)
                     }
                     var vehicleCapacity = 0.0
-                    for ( i in truckTypes){
+                    for ( i in truckTypesFiltered){
                         if(i.truckUuid == key){
                             vehicleCapacity = i.defaultMG!!
                         }
                     }
 
-                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].bidAmount,truckCount!!,"open",false,truckTypes,bidIdsList,true)
+                    val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].bidAmount,truckCount!!,"open",false,
+                            truckTypesFiltered,bidIdsList,true)
                     dmtBidSummaryItemDataList.add(dmtBidsItem)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem.copy()), DataRVAdapterOperationType.Add))
 
@@ -135,7 +148,9 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BulkBidDetailsCreateEditDialog.adapter
 
-                (adapter as DmtBidsRVAdapter).operation(listOf(Pair(DmtBidSummaryItem(DmtBidSummaryItemData(truckTypes[0].truckUuid!!,truckTypes[0].defaultMG!!,0.0,0,"open",true,truckTypes)), DataRVAdapterOperationType.Add)
+                (adapter as DmtBidsRVAdapter).operation(listOf(
+                        Pair(DmtBidSummaryItem(DmtBidSummaryItemData(truckTypesFiltered[0].truckUuid!!,truckTypesFiltered[0].defaultMG!!,0.0,0,
+                                "open",true,truckTypesFiltered)), DataRVAdapterOperationType.Add)
                 ))
 
             }
@@ -234,7 +249,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
         binding.tvAdd.setOnClickListener {
             adapter.operation(listOf(Pair(DmtBidSummaryItem(
-                    DmtBidSummaryItemData(truckTypes[0].truckUuid!!,truckTypes[0].defaultMG!!,0.0,0,"open",true,truckTypes)),
+                    DmtBidSummaryItemData(truckTypesFiltered[0].truckUuid!!,truckTypesFiltered[0].defaultMG!!,0.0,0,"open",true,truckTypesFiltered)),
                     DataRVAdapterOperationType.Add)))
         }
     }

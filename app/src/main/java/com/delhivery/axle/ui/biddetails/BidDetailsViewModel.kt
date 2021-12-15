@@ -58,7 +58,7 @@ companion object{
     var userBidsData =
         MutableLiveData<List<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-    var editBulkLiveData= MutableLiveData<String>()
+    var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
     var editFlg= mutableListOf<Boolean>(false,false,false)
 
 
@@ -153,9 +153,6 @@ companion object{
                   }
                 }
                 else -> {
-                    if(action){
-                        analyticsBucket=true
-                    }
                     if(requestType == "dmt"){
                         transactionBidLiveData.postValue(
                             BidDetailsUserBidState_BulkLoad_Edit(
@@ -164,6 +161,9 @@ companion object{
                         )
                         bidPriceLiveData.postValue(null)
                     }else{
+                        if(action){
+                            analyticsBucket=true
+                        }
                         transactionBidLiveData.postValue(
                             BidDetailsUserBidState_EditBid(
                                 _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -304,11 +304,11 @@ companion object{
               .subscribe { _res, error ->
                   if (!error && _res!=null) {
                       editFlg[0] = true
-                      editBulkLiveData.postValue("Success")
+                      editBulkLiveData.postValue(Pair(10, transactionId))
                   } else {
                       error.handle()
                       editFlg[0] = true
-                      editBulkLiveData.postValue("Failure")
+                      editBulkLiveData.postValue(Pair(11,transactionId))
                   }
               }
 
@@ -323,13 +323,13 @@ companion object{
               .subscribe { _res, error ->
                   if (!error && _res != null) {
                       editFlg[1]= true
-                      editBulkLiveData.postValue("Success")
+                      editBulkLiveData.postValue(Pair(20, transactionId))
                   }
                   else
                   {
                       error.handle()
                       editFlg[1]= true
-                      editBulkLiveData.postValue("Failure")
+                      editBulkLiveData.postValue(Pair(21,transactionId))
 
                   }
               }
@@ -346,12 +346,12 @@ companion object{
               .subscribe{_res, error ->
                   if (!error && _res != null) {
                       editFlg[2]= true
-                      editBulkLiveData.postValue("Success")
+                      editBulkLiveData.postValue(Pair(30, transactionId))
                   }
                   else{
                       error.handle()
                       editFlg[2]= true
-                      editBulkLiveData.postValue("Failure")
+                      editBulkLiveData.postValue(Pair(31, transactionId))
 
                   }
               }
@@ -389,17 +389,16 @@ companion object{
         val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
         if (userBids != null) {
             for (bid in userBids) {
-                if(bid.supplierId == userPrefs.userId()) {
-                    val key: String = bid.vehicleType!!
-                    if (map.containsKey(key)) {
-                        val list: MutableList<TransactionBid>? = map[key]
-                        list!!.add(bid)
-                    } else {
-                        val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
-                        list.add(bid)
-                        map[key] = list
-                    }
+                val key: String = bid.vehicleType!!
+                if (map.containsKey(key)) {
+                    val list: MutableList<TransactionBid>? = map[key]
+                    list!!.add(bid)
+                } else {
+                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+                    list.add(bid)
+                    map[key] = list
                 }
+
             }
         }
         //get count of status
@@ -411,7 +410,6 @@ companion object{
             var openStatus:Int=0
             var lostStatus:Int=0
             var confirmedStatus:Int=0
-//            var vehicleNumberLoc: Array<String?>?=null
             val vehicleNumberLoc: MutableList<String> = ArrayList()
 
             for(bid in map[key]!!){
@@ -438,7 +436,7 @@ companion object{
             if(confirmedStatus>0){
                 confirmedStat=("$confirmedStatus Confirmed")
             }
-            val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).bidAmount,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId,"BidDetail")
+            val bulkBidsItem = BulkBidSummaryItemData(key, map[key]!![0].bidAmount,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc, map[key]!![0].childTransactionId,"BidDetail")
             bulkBidSummaryItemDataList?.add(bulkBidsItem)
             bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
         }
