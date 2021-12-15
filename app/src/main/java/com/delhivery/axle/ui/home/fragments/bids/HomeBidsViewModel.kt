@@ -227,9 +227,9 @@ class HomeBidsViewModel @Inject constructor(
 
     //get count of status
     for(key in map.keys){
-      var openStat: String?=null
-      var lostStat: String?=null
-      var confirmedStat: String?=null
+      var openStat: String=""
+      var lostStat: String=""
+      var confirmedStat: String=""
       val truckCount:Int?=map[key]?.size
       var openStatus:Int=0
       var lostStatus:Int=0
@@ -244,7 +244,7 @@ class HomeBidsViewModel @Inject constructor(
             openStatus+=1
             bidAmt = bid.bidAmount
           }
-          "confirmed" -> {
+          "accepted" -> {
             confirmedStatus+=1
             vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
           }

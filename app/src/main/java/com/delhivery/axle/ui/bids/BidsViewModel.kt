@@ -233,9 +233,9 @@ class BidsViewModel @Inject constructor(
     }
     //get count of status
     for(key in map.keys){
-      var openStat: String?=null
-      var lostStat: String?=null
-      var confirmedStat: String?=null
+      var openStat: String= ""
+      var lostStat: String=""
+      var confirmedStat: String=""
       val truckCount:Int?=map[key]?.size
       var openStatus:Int=0
       var lostStatus:Int=0
@@ -271,8 +271,8 @@ class BidsViewModel @Inject constructor(
         confirmedStat=("$confirmedStatus Confirmed")
       }
 
-      val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt, truckCount!!, openStat!!, lowestBidStatus = false, expanded = false,
-              confirmedStatus = confirmedStat, lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![1].childTransactionId)
+      val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt, truckCount!!, openStat , lowestBidStatus = false, expanded = false,
+              confirmedStatus = confirmedStat, lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![0].childTransactionId)
       bulkBidSummaryItemDataList.add(bulkBidsItem)
       System.out.println("childTransaction"+map[key]!![0].childTransactionId)
 
