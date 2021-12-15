@@ -14,7 +14,7 @@ data class BulkBidSummaryItemData(
     var expanded: Boolean = false,
     var confirmedStatus:String?=null,
     var lostStatus:String?=null,
-    val vehicleNumber: MutableList<String>? = ArrayList(),
+    val vehicleNumber: MutableMap<String, String> = mutableMapOf<String, String>(),
     val childTransactionId: String?=null,
     val fromPage: String?=null
 

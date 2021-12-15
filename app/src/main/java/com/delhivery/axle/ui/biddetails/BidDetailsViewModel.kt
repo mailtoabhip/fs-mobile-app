@@ -410,10 +410,10 @@ companion object{
             var openStatus:Int=0
             var lostStatus:Int=0
             var confirmedStatus:Int=0
-            val vehicleNumberLoc: MutableList<String> = ArrayList()
+            val vehicleNumberLoc: MutableMap<String, String> = mutableMapOf<String, String>()
+
 
             var bidAmt = 0.0
-
             for(bid in map[key]!!){
                 when (bid._status) {
                     "open" -> {
@@ -422,7 +422,9 @@ companion object{
                     }
                     "accepted" -> {
                         confirmedStatus+=1
-                        vehicleNumberLoc.add(bid.vehicleNumber.toString())
+                        System.out.println("#########"+bid.childTransactionId)
+                       // vehicleNumberLoc.add(bid.vehicleNumber.toString())
+                        vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
                     }
                     "rejected" -> {
                         lostStatus+=1
@@ -440,7 +442,7 @@ companion object{
             }
             val lowestBidVis = if(lowestBid!=0.0 ) bidAmt<=lowestBid!! else false
             val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt ,truckCount!!,openStat!!,lowestBidVis,false,confirmedStat ,
-                    lostStat , vehicleNumberLoc, map[key]!![0].childTransactionId,"BidDetail")
+                    lostStat , vehicleNumberLoc, map[key]!![1].childTransactionId,"BidDetail")
             bulkBidSummaryItemDataList.add(bulkBidsItem)
             bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
         }

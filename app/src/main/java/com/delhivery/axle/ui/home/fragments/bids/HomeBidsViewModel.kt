@@ -234,7 +234,7 @@ class HomeBidsViewModel @Inject constructor(
       var openStatus:Int=0
       var lostStatus:Int=0
       var confirmedStatus:Int=0
-      val vehicleNumberLoc: MutableList<String> = ArrayList()
+      val vehicleNumberLoc: MutableMap<String, String> = mutableMapOf<String, String>()
 
       var bidAmt = 0.0
 
@@ -246,7 +246,7 @@ class HomeBidsViewModel @Inject constructor(
           }
           "confirmed" -> {
             confirmedStatus+=1
-            vehicleNumberLoc.add(bid.vehicleNumber.toString())
+            vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
           }
           "rejected" -> {
             lostStatus+=1

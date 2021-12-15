@@ -153,18 +153,19 @@
                     android:layout_height="wrap_content"
                     android:visibility="@{item.openStatusVisibility()}"
                     android:text="@{item.openCount()}"/>
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="@{item.confirmedStatusVisibility()}"
-                    android:text="@{item.confirmedCount()}"
-                    android:textColor="@color/bid_placed_green"/>
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="@{item.lostStatusVisibility()}"
                     android:text="@{item.lostCount()}"
                     android:textColor="@color/bid_placed_red"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{item.confirmedStatusVisibility()}"
+                    android:text="@{item.confirmedCount()}"
+                    android:textColor="@color/bid_placed_green"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -241,7 +241,7 @@ class BidsViewModel @Inject constructor(
       var lostStatus:Int=0
       var confirmedStatus:Int=0
 
-      val vehicleNumberLoc: MutableList<String> = ArrayList()
+      val vehicleNumberLoc: MutableMap<String, String> = mutableMapOf<String, String>()
 
       var bidAmt =0.0
 
@@ -251,9 +251,10 @@ class BidsViewModel @Inject constructor(
             openStatus+=1
             bidAmt = bid.bidAmount
           }
-          "confirmed" -> {
+          "accepted" -> {
             confirmedStatus+=1
-            vehicleNumberLoc.add(bid.vehicleNumber.toString())
+            System.out.println("#########"+bid.childTransactionId)
+            vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
           }
           "rejected" -> {
             lostStatus+=1
@@ -271,8 +272,10 @@ class BidsViewModel @Inject constructor(
       }
 
       val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt, truckCount!!, openStat!!, lowestBidStatus = false, expanded = false,
-              confirmedStatus = confirmedStat, lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![0].childTransactionId)
+              confirmedStatus = confirmedStat, lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![1].childTransactionId)
       bulkBidSummaryItemDataList.add(bulkBidsItem)
+      System.out.println("childTransaction"+map[key]!![0].childTransactionId)
+
       bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), Add))
     }
       return bulkBidSummaryItemList
