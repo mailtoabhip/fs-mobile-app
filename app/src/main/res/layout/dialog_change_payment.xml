@@ -297,6 +297,7 @@
                                 android:id="@+id/omc_iocl_icon"
                                 android:layout_width="@dimen/size_64dp"
                                 android:layout_height="@dimen/size_48dp"
+                                android:visibility="gone"
                                 android:button="@null"
                                 android:background="@drawable/checkbox_selection_iocl"
                                 android:layout_marginStart="@dimen/text_16sp" />

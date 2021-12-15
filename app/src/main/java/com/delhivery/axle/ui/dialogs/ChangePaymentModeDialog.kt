@@ -43,6 +43,7 @@ class ChangePaymentModeDialog @Inject constructor(
     var fuelAmt = 0
     var userNumber = ""
     var userOmc = ""
+    var fuelNumberIndex=0
 
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
@@ -81,6 +82,21 @@ class ChangePaymentModeDialog @Inject constructor(
             binding.layoutDieselAddAmt.visibility = View.VISIBLE
             binding.layoutAddPerson.visibility = View.VISIBLE
             binding.advancePendingDieselAmt.setText(data.payment!!.fuelPayout!!.toInt().toString())
+            if(!(data.payment!!.fuelNumber).isNullOrEmpty() ){
+                var count=0
+               for(i in fuelUserSpinnerOptions){
+                   if(i.userName.equals(data.payment!!.fuelNumber)){
+                       fuelNumberIndex=count
+                       break
+                   }else{
+                       count++
+                   }
+
+               }
+                System.out.println("fuel"+data.payment!!.fuelNumber)
+                System.out.println("fuel"+fuelNumberIndex)
+
+            }
         }
 
         binding.dieselPayoutIdentifier.setOnClickListener{
@@ -92,7 +108,7 @@ class ChangePaymentModeDialog @Inject constructor(
         binding.selectMemberSpinner.apply {
             adapter = fuelUserSpinnerAdapter
             fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
-            setSelection(0)
+            setSelection(fuelNumberIndex)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onNothingSelected(parent: AdapterView<*>) = Unit
@@ -201,6 +217,7 @@ class ChangePaymentModeDialog @Inject constructor(
 
         if((fuelAmt > 0 && userNumber != "" && userOmc!= "") || fuelAmt ==0 ){
             val omcRequest= OMCRequest(userNumber, userOmc, data.transactionId)
+            fuelNumberIndex=0
             dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
             uiUtils.showProgress()
             dismiss()
