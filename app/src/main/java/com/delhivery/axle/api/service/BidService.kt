@@ -62,7 +62,7 @@ interface BidService {
   @PATCH("/bids/")
   fun removeBulkTransactionBids(
       @Body request: BulkBidRemoveRequest
-  ): Single<BaseResponse<List<CreateTransactionBidResponseForBulkLoad>>>
+  ): Single<BaseResponse<CreateTransactionBidResponse>>
 
   /**
    * Get User/supplier bids by status

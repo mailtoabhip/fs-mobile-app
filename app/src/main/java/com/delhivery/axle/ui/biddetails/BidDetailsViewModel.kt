@@ -420,7 +420,7 @@ companion object{
                         openStatus+=1
                         bidAmt = bid.bidAmount
                     }
-                    "confirmed" -> {
+                    "accepted" -> {
                         confirmedStatus+=1
                         vehicleNumberLoc.add(bid.vehicleNumber.toString())
                     }
