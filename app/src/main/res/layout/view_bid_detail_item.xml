@@ -91,18 +91,18 @@
                     android:layout_alignStart="@id/text_vehicle_type"
                     tools:text="1050"/>
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/amt_compare_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:textColor="@color/bid_placed_green"
-                    android:text="@string/label_lowest_bid"
-                    android:visibility="@{item.lowestBidVisibility()}"
-                    android:layout_marginTop="@dimen/size_11dp"
-                    android:textStyle="italic"
-                    android:layout_below="@id/text_vehicle_type"
-                    android:layout_toEndOf="@id/edit_trucks"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/amt_compare_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_vehicle_type"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="@dimen/size_11dp"
+                android:layout_toEndOf="@id/edit_trucks"
+                android:text="@string/label_lowest_bid"
+                android:textColor="@color/bid_placed_green"
+                android:textStyle="italic"
+                android:visibility="@{item.lowestBidVisibility()}" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/label_count_truck"

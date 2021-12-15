@@ -114,9 +114,14 @@ data class HomeBidsRequestItemData(
     View.INVISIBLE
 
 
+  fun requestedCapacityVisibility() = if(isPMTIndent() && requestType!="dmt")
+    View.VISIBLE
+  else
+    View.GONE
 
-  fun setMoreBidsVisibility() = if (requestType != null && requestType == "DMT") {
-    if(numBids>1) {
+
+  fun setMoreBidsVisibility() = if (requestType != null && requestType == "dmt") {
+    if(bulkTransactionBids!=null && bulkTransactionBids.isNotEmpty() && bulkTransactionBids.size> 1) {
       View.VISIBLE
     }else{
       View.GONE
@@ -312,10 +317,10 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = truckSpecification?.let {
-    if (isDMTIndent()){
-      it.truckType
+  fun truckDetail() = if (isDMTIndent()){
+      truckType!!.capitalize() ?:""
     }else{
+    truckSpecification?.let {
       it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
     }
   }

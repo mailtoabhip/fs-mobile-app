@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
@@ -149,8 +150,10 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-
-        startActivity(bidDetailsIntent(_item.key(), this))
+        val requestType = if(_item.setMoreBidsVisibility() == View.VISIBLE)
+          "dmt"
+        else ""
+        startActivity(bidDetailsIntent(_item.key(), this, requestType))
       }
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData
@@ -177,7 +180,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     viewModel.transaction = transaction!!
      // viewModel.fetchTransactionBids()
     BulkBidDetailsDialog(
-      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids,0,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
     ).show()
 
   }

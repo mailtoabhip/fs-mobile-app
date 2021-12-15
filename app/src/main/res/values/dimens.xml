@@ -40,6 +40,7 @@
   <dimen name="size_3dp">3dp</dimen>
   <dimen name="size_84dp">84dp</dimen>
   <dimen name="size_130dp">130dp</dimen>
+  <dimen name="size_210dp">210dp</dimen>
 
   <!-- Text sizes -->
   <dimen name="text_2sp">2sp</dimen>

@@ -207,19 +207,13 @@ class HomeBidsViewModel @Inject constructor(
   }
 
   override fun getUserBulkBidsAgainstTrans(userBids: List<TransactionBid>?): ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? {
-    val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()
-    val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
-    //Test data
-    val bids: ArrayList<TransactionBid>?=ArrayList()
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"1","","","","","6_TYRE","KA08C5678","109350"))
-    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,4444.0,"2","","","","","6_TYRE","KA08C5678","109350"))
-    bids?.add(TransactionBid("","confirmed",false,"","","","",6000.0,12000.0,"3","","","","","6_TYRE","KA08C5678","109350"))
-    bids?.add(TransactionBid("","open",false,"","","","",6000.0,12000.0,"4","","","","","7_TYRE","KA08C5678","109350"))
-    bids?.add(TransactionBid("","rejected",false,"","","","",6000.0,5555.0,"5","","","","","7_TYRE","KA08C5678","109350"))
+    val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData> = ArrayList()
+    val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>> = ArrayList()
+
 
     //map same vehicle type with bids
     val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
-    for (bid in bids!!) {
+    for (bid in userBids!!) {
       val key: String = bid.vehicleType!!
       if (map.containsKey(key)) {
         val list: MutableList<TransactionBid>? = map[key]
@@ -230,6 +224,7 @@ class HomeBidsViewModel @Inject constructor(
         map[key] = list
       }
     }
+
     //get count of status
     for(key in map.keys){
       var openStat: String?=null
@@ -241,15 +236,17 @@ class HomeBidsViewModel @Inject constructor(
       var confirmedStatus:Int=0
       val vehicleNumberLoc: MutableList<String> = ArrayList()
 
+      var bidAmt = 0.0
+
       for(bid in map[key]!!){
         when (bid._status) {
           "open" -> {
             openStatus+=1
+            bidAmt = bid.bidAmount
           }
           "confirmed" -> {
             confirmedStatus+=1
             vehicleNumberLoc.add(bid.vehicleNumber.toString())
-            System.out.println("Arv"+ vehicleNumberLoc[0])
           }
           "rejected" -> {
             lostStatus+=1
@@ -265,9 +262,10 @@ class HomeBidsViewModel @Inject constructor(
       if(confirmedStatus>0){
         confirmedStat=("$confirmedStatus Confirmed")
       }
-      val bulkBidsItem = BulkBidSummaryItemData(key,map[key]!!.get(0).pmtRate!!,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc,map[key]!!.get(0).childTransactionId)
-      bulkBidSummaryItemDataList?.add(bulkBidsItem)
-      bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
+      val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt, truckCount!!,openStat!!, lowestBidStatus = false, expanded = false, confirmedStatus = confirmedStat,
+              lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![0].childTransactionId)
+      bulkBidSummaryItemDataList.add(bulkBidsItem)
+      bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
     }
     return bulkBidSummaryItemList
   }

@@ -189,7 +189,7 @@
                 android:textStyle="bold"
                 android:visibility="@{transaction.setDMTType()}"
                 android:layout_marginTop="@dimen/size_6dp"
-                android:text="@{unallocated}"
+                android:text="@{transaction.setDmtText()}"
                 android:textColor="@color/bid_placed_red"
                 tools:text="Bulk Load: 200MT"/>
 

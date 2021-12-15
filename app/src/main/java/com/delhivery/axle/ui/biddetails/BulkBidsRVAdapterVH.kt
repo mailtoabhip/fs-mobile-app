@@ -62,9 +62,9 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
     if(!item.data.vehicleNumber.isNullOrEmpty()) {
         binding.VehicleNumLayout.removeAllViews()
 
-        for (i in item.data.vehicleNumber!!) {
+        for (i in item.data.vehicleNumber) {
           val textView = TextView(context)
-          textView.setText(i)
+            textView.text = i
             textView.setTextColor(ContextCompat.getColor(context,R.color.blue))
           textView.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -75,14 +75,14 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
           textView.setOnClickListener()
            {
              if(!item.data.childTransactionId.isNullOrEmpty()) {
-                 context.startActivity(tripDetailsIntent(item.data.childTransactionId!!, context))
+                 context.startActivity(tripDetailsIntent(item.data.childTransactionId, context))
              }
              //  Toast.makeText(context, ""+i, Toast.LENGTH_SHORT).show()
            }
             binding.VehicleNumLayout.clickToAction(OPEN_CONFIRMED_BID,item,adapterPosition,_interface)
 
         // Add TextView to LinearLayout
-        binding.VehicleNumLayout?.addView(textView)
+        binding.VehicleNumLayout.addView(textView)
 
     }
 }

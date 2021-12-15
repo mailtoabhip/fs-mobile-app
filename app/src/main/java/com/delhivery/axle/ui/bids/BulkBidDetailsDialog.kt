@@ -24,11 +24,9 @@ class BulkBidDetailsDialog  @Inject constructor(
     context: Context,
     private val transaction: HomeBidsRequestItemData,
     private val transactionBids: List<TransactionBid>? = null, /* transaction bid null for create new bid */
-    private val position: Int = 0,
     private val dialogInterface: BulkBidDetailsDialogInterface?=null,
     private val analyticsUtil: AnalyticsUtil,
-    private var userPrefs: UserPrefs,
-    private var fromPage :String?
+    private var userPrefs: UserPrefs
 ) : AlertDialog(context), BulkBidsRVAdapterInterface {
 
     /* dialog binding */

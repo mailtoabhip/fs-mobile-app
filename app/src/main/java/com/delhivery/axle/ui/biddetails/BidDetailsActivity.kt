@@ -68,7 +68,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
-    viewModel.requestType = intent.getStringExtra(RequestTypeIntentKey) ?: "dmt"
+    viewModel.requestType = intent.getStringExtra(RequestTypeIntentKey) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -348,7 +348,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
-                viewModel.getUserBulkBids(state.bids)
+                viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.first.let { it!!.bidAmount } )
 
               }
 

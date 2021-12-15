@@ -176,9 +176,11 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-
+        val requestType = if(_item.setMoreBidsVisibility() == View.VISIBLE)
+          "dmt"
+        else ""
         context?.let {
-          startActivity(bidDetailsIntent(_item.key(), it))
+          startActivity(bidDetailsIntent(_item.key(), it, requestType))
         }
       }
 
@@ -241,7 +243,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
       //  binding.transaction?.let {
           BulkBidDetailsDialog(
-            context!!, transaction!!,transaction.bulkTransactionBids,0,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+            context!!, transaction!!,transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
       //  }
   }

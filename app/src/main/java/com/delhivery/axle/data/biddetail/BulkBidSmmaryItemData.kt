@@ -10,6 +10,7 @@ data class BulkBidSummaryItemData(
     var pmtRate: Double,
     var truckCount: Int,
     var openStatus:String?,
+    var lowestBidStatus : Boolean =false,
     var expanded: Boolean = false,
     var confirmedStatus:String?=null,
     var lostStatus:String?=null,
@@ -49,7 +50,7 @@ data class BulkBidSummaryItemData(
         View.VISIBLE
     else
         View.GONE
-    fun lowestBidVisibility()=if(fromPage!=null && expanded)
+    fun lowestBidVisibility()=if(fromPage!=null && expanded && lowestBidStatus)
         View.VISIBLE
     else
         View.GONE

@@ -379,9 +379,9 @@ companion object{
       transactionBidLiveData.postValue(BidDetailsUserBidState_LoadingBids())
   }
 
-    fun getUserBulkBids(userBids:List<TransactionBid>?) {
-        val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData>? = ArrayList()
-        val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? = ArrayList()
+    fun getUserBulkBids(userBids:List<TransactionBid>? , lowestBid: Double?= 0.0) {
+        val bulkBidSummaryItemDataList: ArrayList<BulkBidSummaryItemData> = ArrayList()
+        val bulkBidSummaryItemList:ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>> = ArrayList()
 
 
         val bids = mutableListOf<TransactionBid>()
@@ -412,15 +412,17 @@ companion object{
             var confirmedStatus:Int=0
             val vehicleNumberLoc: MutableList<String> = ArrayList()
 
+            var bidAmt = 0.0
+
             for(bid in map[key]!!){
                 when (bid._status) {
                     "open" -> {
                         openStatus+=1
+                        bidAmt = bid.bidAmount
                     }
                     "confirmed" -> {
                         confirmedStatus+=1
                         vehicleNumberLoc.add(bid.vehicleNumber.toString())
-                        System.out.println("Arv"+ vehicleNumberLoc[0])
                     }
                     "rejected" -> {
                         lostStatus+=1
@@ -436,9 +438,11 @@ companion object{
             if(confirmedStatus>0){
                 confirmedStat=("$confirmedStatus Confirmed")
             }
-            val bulkBidsItem = BulkBidSummaryItemData(key, map[key]!![0].bidAmount,truckCount!!,openStat!!,false,confirmedStat,lostStat,vehicleNumberLoc, map[key]!![0].childTransactionId,"BidDetail")
-            bulkBidSummaryItemDataList?.add(bulkBidsItem)
-            bulkBidSummaryItemList?.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
+            val lowestBidVis = if(lowestBid!=0.0 ) bidAmt<=lowestBid!! else false
+            val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt ,truckCount!!,openStat!!,lowestBidVis,false,confirmedStat ,
+                    lostStat , vehicleNumberLoc, map[key]!![0].childTransactionId,"BidDetail")
+            bulkBidSummaryItemDataList.add(bulkBidsItem)
+            bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
         }
             userBidsData.postValue(bulkBidSummaryItemList)
 
