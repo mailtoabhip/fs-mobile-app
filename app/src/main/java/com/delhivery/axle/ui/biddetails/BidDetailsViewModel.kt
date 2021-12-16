@@ -37,6 +37,7 @@ class BidDetailsViewModel @Inject constructor(
   /* transaction id */
   lateinit var transactionId: String
     lateinit var requestType: String
+    var fromPage: Boolean = false
   /* live data */
   var transactionLiveData = MutableLiveData<HomeBidsRequestItemData>()
 

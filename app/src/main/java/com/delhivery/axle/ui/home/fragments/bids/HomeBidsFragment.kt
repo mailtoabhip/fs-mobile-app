@@ -180,7 +180,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           "dmt"
         else ""
         context?.let {
-          startActivity(bidDetailsIntent(_item.key(), it, requestType))
+          startActivity(bidDetailsIntent(_item.key(), it, requestType, true))
         }
       }
 

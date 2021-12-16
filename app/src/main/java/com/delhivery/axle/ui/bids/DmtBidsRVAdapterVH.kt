@@ -85,7 +85,11 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                 }
         }
         binding.editTrucks.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
+            override fun afterTextChanged(s: Editable?){
+                if(s==null || s.toString() ==""){
+                    binding.item!!.truckCount = 0
+                }
+            }
             override fun beforeTextChanged(
                 s: CharSequence?,
                 start: Int,
@@ -104,10 +108,19 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                   binding.item!!.truckCount = Integer.parseInt(s.toString())
                     _interface.itemCapacity(diff * item.data.vehicleCapacity)
                 }
+                else if (s == null || s == ""){
+                    val diff = 0 - binding.item!!.truckCount
+                    binding.item!!.truckCount = 0
+                    _interface.itemCapacity(diff * item.data.vehicleCapacity)
+                }
             }
         })
         binding.editPmtAmount.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                if(s==null || s.toString() ==""){
+                    binding.item!!.pmtRate = 0.0
+                }
+            }
             override fun beforeTextChanged(
                 s: CharSequence?,
                 start: Int,
@@ -123,6 +136,9 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
             ) {
                 if (s != null && s.length>0) {
                     binding.item!!.pmtRate = (s.toString().toDouble())
+                }
+                else if (s == null || s == ""){
+                    binding.item!!.pmtRate = 0.0
                 }
             }
         })

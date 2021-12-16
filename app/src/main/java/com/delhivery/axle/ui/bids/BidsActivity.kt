@@ -153,7 +153,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         val requestType = if(_item.setMoreBidsVisibility() == View.VISIBLE)
           "dmt"
         else ""
-        startActivity(bidDetailsIntent(_item.key(), this, requestType))
+        startActivity(bidDetailsIntent(_item.key(), this, requestType, true))
       }
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData

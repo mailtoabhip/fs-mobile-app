@@ -1,20 +1,16 @@
 package com.delhivery.axle.data.home.bids
 
-import android.text.Html
-import android.text.Spanned
 import android.text.TextUtils
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
-import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -96,6 +92,16 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+  /**
+   * if trip is DMT
+   */
+  fun setDMTTypeForBid(visibility: Boolean) = if (requestType != null && requestType!= "" && requestType == "dmt" && !visibility) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
 
   fun bidInfoVisibility() = if (requestType != null && requestType!= "" && requestType == "dmt") {
     View.GONE

@@ -187,7 +187,7 @@
                 app:layout_constraintTop_toBottomOf="@id/text_via_destination"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
-                android:visibility="@{transaction.setDMTType()}"
+                android:visibility="@{transaction.setDMTTypeForBid(viewModel.fromPage)}"
                 android:layout_marginTop="@dimen/size_6dp"
                 android:text="@{transaction.setDmtText()}"
                 android:textColor="@color/bid_placed_red"
