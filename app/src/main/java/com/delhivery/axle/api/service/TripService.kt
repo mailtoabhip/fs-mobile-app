@@ -1,7 +1,9 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
@@ -68,4 +70,5 @@ interface TripService {
   fun fetchTripsPayments(
     @Body request: JsonObject
   ): Single<BaseResponse<List<TripPaymentResponse>>>
+
 }

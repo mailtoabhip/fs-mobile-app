@@ -3,10 +3,7 @@ package com.delhivery.axle.api.service
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserBaseCityRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
-import com.delhivery.axle.api.response.BaseMessageResponse
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.CreateUserResponse
-import com.delhivery.axle.api.response.UserDetailResponse
+import com.delhivery.axle.api.response.*
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.UserModel
 import com.google.gson.JsonObject
@@ -122,5 +119,12 @@ interface UserService {
       @Path("user_id") userId: String,
       @Body payload: JsonObject
   ): Single<BaseMessageResponse>
+
+  @GET("/users/supplypartners")
+  fun getOMCs(
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int,
+    @Query("payee_type") payeeType: String
+  ): Single<BaseResponse<OMCDetails>>
 
 }

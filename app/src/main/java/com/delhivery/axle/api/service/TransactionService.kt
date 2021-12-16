@@ -1,13 +1,14 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.FuelPayoutResponse
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * Handle network calls to Transaction Service
@@ -69,4 +70,10 @@ interface TransactionService {
   fun transactionsTripMeter(
     @Path("sp_id") userId: String
   ): Single<BaseResponse<TripMeterResponse>>
+
+  @PATCH("/admin/transactions/{transactionId}/")
+  fun updateTripForFuelPayout(
+      @Path("transactionId") transactionId: String,
+      @Body request: FuelPayoutRequest
+  ): Single<BaseResponse<FuelPayoutResponse>>
 }

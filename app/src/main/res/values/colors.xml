@@ -41,7 +41,8 @@
   <color name="trip_red">#d36a1b</color>
   <color name="head_black">#262727</color>
   <color name="bid_placed_red">#DC6A64</color>
-    <color name="blue">#388BCE</color>
+  <color name="blue">#388BCE</color>
+  <color name="payment_red">#dbaeb0</color>
 
 
 </resources>

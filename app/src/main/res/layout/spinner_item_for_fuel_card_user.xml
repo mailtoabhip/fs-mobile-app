@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/size_4dp"
+    android:gravity="center"
+    android:layout_marginEnd="@dimen/size_4dp"
+    android:orientation="horizontal">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/userImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_person_add"
+        android:visibility="invisible"
+        />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/userDetailLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_4dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aakash"
+            android:textColor="@color/black"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_2dp"
+            android:textColor="@color/black"
+            android:text="(Admin)"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+        
+        
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -100,6 +100,11 @@ enum class UrlConfig(
       "https://orion-utility-api-dev.delhivery.com",
       "https://orion-utility-api-uat.delhivery.com"
   ),
+  OMCService(
+      "https://orion-omc-channel.delhivery.com",
+      "https://orion-omc-dev.delhivery.com",
+      "https://orion-omc-uat.delhivery.com"
+  ),
   AppID(
   "83", "371", "371"
   );

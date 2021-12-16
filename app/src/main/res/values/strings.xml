@@ -60,6 +60,8 @@
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
   <string name="msg_more_bids_with_this_bid">%1$d more bids placed with this bid</string>
+  <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
+>>>>>>> 58d64c12360ee59f41d2159a2a43141836570e51
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -104,6 +106,7 @@
   <string name="action_update_route">Update Route</string>
   <string name="action_call_driver">Call Driver</string>
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
+  <string name="action_done">Done !</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -266,6 +269,13 @@
   <string name="label_truck_count">Truck Count</string>
   <string name="label_status">Status</string>
   <string name="status_of_other_bid">Status of bids placed along with this bids</string>
+  <string name="label_add_diesel_payout">Add Diesel Payout</string>
+  <string name="label_diesel_payment">Diesel Payment</string>
+  <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
+  <string name="label_bank_transfer">Bank Transfer</string>
+  <string name="label_change_payment_mode">Change Payment Mode</string>
+  <string name="label_with_sign_value">₹ %1$d</string>
+
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

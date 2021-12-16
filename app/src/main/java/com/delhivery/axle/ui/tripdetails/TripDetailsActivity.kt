@@ -13,6 +13,7 @@ import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -35,6 +36,7 @@ import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
@@ -53,6 +55,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import javax.inject.Inject
 
@@ -109,7 +112,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.tripLiveData.observe(this, TransactionObserver())
     viewModel.paymentSummaryLiveData.observe(this, Observer {
       binding.tripDetails = viewModel.tripDetail
+      binding.actionChangePaymentMode.isEnabled = true
     })
+
     viewModel.warehouseLiveData.observe(this, Observer {
       // binding.labelWarehouse.text = it
     })
@@ -135,6 +140,41 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.refreshLayout.isRefreshing = false
       it?.let { _items ->
         adapter.operation(_items)
+      }
+    })
+
+    viewModel.teamMembersLiveData.observe(this , Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        ChangePaymentModeDialog(this,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils ).show()
+      }
+    })
+
+    viewModel.omcLiveData.observe(this, Observer{
+      uiUtils.hideProgress()
+      if(it != null){
+        uiUtils.showProgress()
+        viewModel.getOMCResult(it.first)
+      }
+    })
+
+    viewModel.omcGetLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it != null){
+         if(it.second != "") {
+           uiUtils.showProgress()
+           viewModel.updateTripWithFuelUser(it.first)
+         }
+        else{
+          uiUtils.showSnackbar("OMC not found")
+         }
+      }
+    })
+    viewModel.fuelPayoutLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!=null){
+        uiUtils.showSnackbar(it)
+        refreshData()
       }
     })
 
@@ -171,6 +211,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               uiUtils.showSnackbar(getString(string.msg_call_permission))
             }
           }
+    }
+
+    binding.actionChangePaymentMode.setOnClickListener {
+      uiUtils.showProgress()
+      viewModel.fetchTeamMembers()
+
     }
 
     viewModel.chargesLiveData.observe(this, Observer {
