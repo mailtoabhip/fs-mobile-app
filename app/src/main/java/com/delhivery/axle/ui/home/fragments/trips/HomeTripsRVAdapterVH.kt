@@ -2,11 +2,7 @@ package com.delhivery.axle.ui.home.fragments.trips
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_AdvancePending
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_Completed
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_InTransit
-import com.delhivery.axle.data.home.trips.HomeTripsHeaderAction_PODPending
-import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.databinding.ViewCompletedTripItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewHomeTripsHeaderItemBinding
@@ -36,6 +32,16 @@ abstract class BaseHomeTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
   ) = setOnClickListener { action(actionId, item, _interface) }
 
   /**
+   * Add on click listener for action with position
+   */
+  protected fun View.clickToAction(
+    actionId: String,
+    item: IT,
+    position: Int,
+    _interface: HomeTripsRVAdapterInterface
+  ) = setOnClickListener { action(actionId, item, position, _interface) }
+
+  /**
    * Post action to UI
    */
   protected fun View.action(
@@ -43,6 +49,16 @@ abstract class BaseHomeTripsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
     item: IT,
     _interface: HomeTripsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item) }
+
+  /**
+   * Post action to UI with position
+   */
+  protected fun View.action(
+      actionId: String,
+      item: IT,
+      position: Int,
+      _interface: HomeTripsRVAdapterInterface
+  ) = post { _interface.handleAction(actionId, item, position) }
 }
 
 /**
@@ -69,6 +85,7 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.trip = item.data
+    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, adapterPosition, _interface )
   }
 }
 

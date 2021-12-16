@@ -124,4 +124,9 @@ class UserRepository @Inject constructor(
    * Delete User routes
    */
   fun deleteUserRoutes(routes: List<RouteMappingModel>) =userService.deleteUserRoute(userId(), UpdateUserRoutesRequest(routes).getRequest())
+
+  /**
+   * get omc details
+   */
+  fun getOMCs(offset: Int, limit: Int, payee: String) = userService.getOMCs(offset, limit, payee)
 }

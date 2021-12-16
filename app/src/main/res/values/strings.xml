@@ -58,6 +58,7 @@
   <string name="msg_call_permission">Please provide permission to call</string>
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
+  <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -102,6 +103,7 @@
   <string name="action_update_route">Update Route</string>
   <string name="action_call_driver">Call Driver</string>
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
+  <string name="action_done">Done !</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -258,6 +260,12 @@
   <string name="label_yes">Yes</string>
   <string name="label_no">No</string>
   <string name="label_diesel_company">Diesel Company</string>
+  <string name="label_add_diesel_payout">Add Diesel Payout</string>
+  <string name="label_diesel_payment">Diesel Payment</string>
+  <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
+  <string name="label_bank_transfer">Bank Transfer</string>
+  <string name="label_change_payment_mode">Change Payment Mode</string>
+  <string name="label_with_sign_value">₹ %1$d</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

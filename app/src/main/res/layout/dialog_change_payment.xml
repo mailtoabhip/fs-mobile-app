@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/size_16dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dialog_text_vehicle_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_18sp"
+            android:text="KT1234223"
+            android:textStyle="bold"
+            tools:text="KT123456" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dialog_text_driver_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Driver :7427048082"
+            android:textSize="@dimen/text_16sp"
+            tools:text="Driver :7427048082" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:src="@drawable/seprator_dotted" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/label_advance_pending"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_16sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/amt_advance_pending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/size_20dp"
+                android:gravity="center"
+                android:text="3520"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_16sp"
+                tools:text="3520" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginStart="@dimen/size_4dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:src="@drawable/separator_red_line" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorDelhiveryRed" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_8dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/dialog_container_bank"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/size_32dp"
+                            android:layout_height="@dimen/size_32dp"
+                            android:layout_gravity="center"
+                            app:srcCompat="@drawable/ic_bank" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="@dimen/size_8dp"
+                            android:orientation="vertical">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_bank_transfer"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_16sp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/bank_ac_number_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:text="Bank A/c : 39508699162" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/advance_pending_bank_amt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="@dimen/size_12dp"
+                        android:gravity="center"
+                        android:text="3520"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_16sp"
+                        tools:text="3520" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/diesel_payout_identifier"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:orientation="horizontal"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="@dimen/size_32dp"
+                        android:layout_height="@dimen/size_32dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_fuel_blue" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/size_8dp"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_add_diesel_payout"
+                            android:textColor="@color/blue"
+                            android:textSize="@dimen/text_16sp" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="5dp"
+                            android:src="@drawable/separator_blue_line" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/diesel_payout_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/layout_diesel_add_amt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/size_32dp"
+                                android:layout_height="@dimen/size_32dp"
+                                android:layout_gravity="center"
+                                app:srcCompat="@drawable/ic_fuel_blue" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                android:text="@string/label_diesel_payment"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_16sp" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                      <androidx.appcompat.widget.AppCompatEditText
+                          android:id="@+id/advance_pending_diesel_amt"
+                          android:layout_width="@dimen/size_90dp"
+                          android:layout_height="wrap_content"
+                          android:hint="Enter Amt"
+                          android:inputType="number"
+                          android:padding="@dimen/size_4dp"
+                          android:gravity="end"
+                          android:drawableLeft="@drawable/ic_rupee_indian_small"
+                          android:layout_gravity="center"
+                          android:background="@drawable/bg_payment_box"
+                          android:textSize="@dimen/text_14sp"/>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/layout_add_person"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/label_mobile_number_diesel_payout"
+                            android:textColor="@color/black"
+                            android:layout_marginEnd="@dimen/size_2dp"
+                            android:textSize="@dimen/text_16sp" />
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/select_member_spinner"
+                            android:layout_width="@dimen/size_180dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_payment_box"
+                            android:spinnerMode="dropdown"
+                            android:popupBackground="@color/light_grey"
+                            android:layout_gravity="center" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/layout_diesel_company"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Diesel Company"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_16sp" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/size_4dp"
+                            android:orientation="horizontal">
+
+
+                            <RadioGroup
+                                android:id="@+id/radio_group_omc"
+                                android:layout_width="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_height="wrap_content">
+                            <RadioButton
+                                android:id="@+id/omc_reliance_icon"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_48dp"
+                                android:button="@null"
+                                android:background="@drawable/checkbox_selection"
+                                 />
+
+                            <RadioButton
+                                android:id="@+id/omc_iocl_icon"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_48dp"
+                                android:visibility="gone"
+                                android:button="@null"
+                                android:background="@drawable/checkbox_selection_iocl"
+                                android:layout_marginStart="@dimen/text_16sp" />
+
+                            </RadioGroup>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/doneButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_14dp"
+            android:background="@drawable/bg_blue"
+            android:text="@string/action_done"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

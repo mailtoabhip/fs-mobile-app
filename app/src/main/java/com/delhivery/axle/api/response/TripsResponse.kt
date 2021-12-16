@@ -53,5 +53,7 @@ data class Summary(
 data class TripPaymentResponse(
   @SerializedName("transaction_id") val transactionId: String,
   @SerializedName("status") val status: String,
-  @SerializedName("amount") val paymentAmount: Double?
+  @SerializedName("amount") val paymentAmount: Double ?=0.0,
+  @SerializedName("fuel_payout") var fuelPayout: Double ?=0.0,
+  @SerializedName("fuel_mobile_no") var fuelNumber : String? =""
 )

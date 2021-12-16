@@ -1,9 +1,12 @@
 package com.delhivery.axle.ui.tripdetails
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
@@ -23,6 +26,7 @@ import com.delhivery.axle.data.TruckLoaded
 import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.TruckUnloaded
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
@@ -33,6 +37,9 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
+import com.delhivery.axle.ui.team.TeamMemberAdminUserItem
+import com.delhivery.axle.ui.team.TeamMemberSubUserItem
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
 import com.delhivery.axle.utils.DateUtils
@@ -62,8 +69,10 @@ class TripDetailsViewModel @Inject constructor(
   private val utilityRepository: UtilityRepository,
   private var userRepository: UserRepository,
   private val payableRepository: PayableRepository,
+  private val omcRepository: OMCRepository,
+  private val transactionsRepository: TransactionsRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel() {
+) : BaseViewModel(), ChangePaymentModeInterface {
 
   /* transaction id */
   lateinit var transactionId: String
@@ -133,6 +142,16 @@ class TripDetailsViewModel @Inject constructor(
   var recoveriesSummaryList = mutableListOf<TripPaymentSummaryDetailItemData>()
   var pendingRecoveryList = mutableListOf<TripPaymentSummaryDetailItemData>()
 
+  var fuelUserSpinnerOptions = mutableListOf<FuelUserSpinnerOptions>()
+  var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
+
+  var omcLiveData = MutableLiveData<Pair<String,OMCResponse>>()
+  var fuelPayoutLiveData = MutableLiveData<String>()
+  var omcGetLiveData = MutableLiveData<Pair<String,String>>()
+
+  var omcID : String = ""
+  var fuelCardNumber = ""
+  var fuelCardAmt = ""
   /**
    * Fetch trip details
    */
@@ -147,6 +166,7 @@ class TripDetailsViewModel @Inject constructor(
             isApReconPending = _res.second.isApReconPending?:false
             tripLiveData.postValue(_res)
           } else {
+            error.handle()
             tripLiveData.postValue(null)
           }
         }
@@ -902,6 +922,38 @@ class TripDetailsViewModel @Inject constructor(
     }
   }
 
+  fun fetchTeamMembers()
+  {
+    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            fuelUserSpinnerOptions.clear()
+            if (_res.total > 0) {
+              for (user in _res.users) {
+                if (user.phoneNo != null) {
+                  if (user.phoneNo == userPrefs.phoneNumber)
+                  {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Your No.)"))
+                  }
+                  else if (user.isParent()) {
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Admin)"))
+                    }
+                  else {
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Child)"))
+                    }
+                }
+              }
+              teamMembersLiveData.postValue(fuelUserSpinnerOptions)
+            }
+          }
+          else{
+            teamMembersLiveData.postValue(null)
+            error.handle()
+          }
+        }
+  }
   /**
    * Get delegation token for AWS
    */
@@ -916,6 +968,73 @@ class TripDetailsViewModel @Inject constructor(
             delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
           } else
             error.handle()
+        }
+  }
+
+  override fun done(
+    transactionId: String,
+    omcRequest: OMCRequest,
+    omcType: String,
+    fuelNumber: String,
+    fuelAmt: String,
+    position: Int
+  ) {
+    fuelCardNumber= fuelNumber
+    fuelCardAmt = fuelAmt
+    compositeDisposable += omcRepository.omcCard(omcRequest)
+      .onBackground()
+      .progress()
+      .subscribe{ _res ,error ->
+        if(!error && _res != null){
+          omcLiveData.postValue(Pair(omcType,_res))
+        }
+        else{
+          error.handle()
+          omcLiveData.postValue(null)
+        }
+      }
+  }
+
+  fun getOMCResult(omcType: String){
+    compositeDisposable += userRepository.getOMCs(0, 100, "omc")
+        .onBackground()
+        .progress()
+        .subscribe{ _res, error ->
+          if(!error && _res!= null){
+            for(item in _res.responseData!!.omcDetailsList){
+              if (omcType == item.name){
+                omcID = item.uuid
+              }
+            }
+            if(omcID!= "") {
+              omcGetLiveData.postValue(Pair(omcType, omcID))
+            }
+            else
+              omcGetLiveData.postValue(Pair(omcType,""))
+          }
+          else{
+            error.handle()
+            omcGetLiveData.postValue(null)
+          }
+        }
+  }
+
+  fun updateTripWithFuelUser(
+    omcType:String
+  ){
+    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update")
+    compositeDisposable += transactionsRepository.updateTripWithFuelCardUser(transactionId, fuelPayoutRequest)
+        .onBackground()
+        .progress()
+        .subscribe(){_res, error ->
+          if(!error && _res!= null){
+            fuelPayoutLiveData.postValue(_res.message)
+          }
+          else{
+            error.handle()
+            fuelPayoutLiveData.postValue(null)
+          }
+
         }
   }
 }

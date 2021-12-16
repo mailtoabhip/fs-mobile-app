@@ -17,10 +17,6 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.SearchRequest
-import com.delhivery.axle.data.home.trips.HomeTripsItemData
-import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
-import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.HomeTripsWarningAction_NoTrips
 import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
@@ -34,6 +30,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.api.repository.UserSearchLimit
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trips.*
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
@@ -66,6 +65,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
    var isLoadingData = true
    var intentRefresh= false
    var finalTime :Long = 0
+   var tripDataItem : HomeTripsItemData? = null
+   var itemPos = 0
 
   @Inject lateinit var userPrefs :UserPrefs
   /* search menu item ref */
@@ -285,6 +286,48 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       refreshData()
     })
 
+    viewModel.teamMembersLiveData.observe(this , Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,viewModel, it1, it, userPrefs, uiUtils, itemPos).show() }
+      }
+    })
+
+    viewModel.omcLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if( it != null){
+        uiUtils.showProgress()
+        viewModel.getOMCResult(it.first, it.second)
+      }
+    })
+
+    viewModel.omcGetLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        if(it.first!= "") {
+          uiUtils.showProgress()
+          viewModel.updateTripWithFuelPayout(it.first, it.second)
+        }
+        else{
+          uiUtils.showSnackbar("OMC not found")
+        }
+      }
+    })
+
+    viewModel.fuelPayoutLiveData.observe(this, Observer {
+      uiUtils.hideProgress()
+      if(it!= null){
+        val data = adapter.itemsList()[it.second].data as? HomeTripsItemData
+        data?.payment!!.apply {
+          fuelPayout = it.third.first
+          fuelNumber = it.third.second
+        }
+        uiUtils.showSnackbar(it.first)
+        adapter.notifyItemChanged(it.second)
+      }
+    })
+
+
     binding.viewAdvancePending.setOnClickListener {
       userPrefs.startTime = Date().time
       viewModel.viewPaymentType = ViewPaymentType.byTypeId(0)
@@ -443,8 +486,26 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         setResult(RESULT_OK)
         finish()
       }
-
     }
+  }
+
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeTripsRVAdapterItem<*>,
+    position: Int) {
+    when (actionId){
+      HomeAdvancePendingPaymentMode ->{
+        initChangePaymentMode(item.data as HomeTripsItemData, position)
+    }
+    }
+
+  }
+
+  private fun initChangePaymentMode(data: HomeTripsItemData ,position: Int) {
+    tripDataItem = data
+    itemPos = position
+    uiUtils.showProgress()
+    viewModel.fetchTeamMembers()
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
