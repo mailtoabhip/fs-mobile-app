@@ -60,8 +60,20 @@ class TeamMembersEditDialog @Inject constructor(
             binding.tilNameEdit.hint = "Name"
             editMemberDieselReferenceSwitch.isChecked = dieselCardPreference
             dieselReliance.isEnabled = false
+            dieselIocl.isEnabled =false
             if(dieselCompany.isNotEmpty()){
-                dieselReliance.isChecked =true
+                dieselReliance.isEnabled = true
+                dieselIocl.isEnabled= true
+                if(dieselCompany.contains("reliance"))
+                    dieselReliance.isChecked = true
+                else
+                    dieselReliance.isChecked = false
+
+                if(dieselCompany.contains("iocl"))
+                    dieselIocl.isChecked = true
+                else
+                    dieselIocl.isChecked = false
+
             }
 
         }
@@ -109,14 +121,34 @@ class TeamMembersEditDialog @Inject constructor(
         binding.editMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
                 dieselPreference = "yes"
-                binding.dieselReliance.isChecked = true
                 dieselCompanyVal.clear()
-                dieselCompanyVal.add("reliance")
+                binding.dieselReliance.isEnabled = true
+                binding.dieselIocl.isEnabled= true
             }
             else{
                 dieselPreference = "no"
-                binding.dieselReliance.isChecked = false
+                binding.dieselReliance.isEnabled = false
+                binding.dieselIocl.isEnabled= false
                 dieselCompanyVal.clear()
+            }
+        })
+
+        binding.dieselReliance.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                binding.dieselReliance.isChecked = true
+                dieselCompanyVal.add("reliance")
+            }
+            else{
+                binding.dieselReliance.isChecked = false
+            }
+        })
+        binding.dieselIocl.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                binding.dieselIocl.isChecked = true
+                dieselCompanyVal.add("iocl")
+            }
+            else{
+                binding.dieselIocl.isChecked = false
             }
         })
 

@@ -50,7 +50,7 @@ class TeamMembersCreateDialog @Inject constructor(
       binding.tilName.hint = "Name"
       binding.tilNumber.hint = "Number"
       dieselReliance.isEnabled = false
-
+      dieselIocl.isEnabled= false
     }
 
     binding.tilName.editText?.addTextChangedListener(object : TextWatcher {
@@ -115,18 +115,35 @@ class TeamMembersCreateDialog @Inject constructor(
         }
       }
     })
-
     binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
       if(isChecked){
         dieselPreference = "yes"
-        binding.dieselReliance.isChecked = true
-        dieselCompany.clear()
-        dieselCompany.add("reliance")
+        binding.dieselReliance.isEnabled = true
+        binding.dieselIocl.isEnabled= true
       }
       else{
         dieselPreference = "no"
-        binding.dieselReliance.isChecked = false
+        binding.dieselReliance.isEnabled = false
+        binding.dieselIocl.isEnabled= false
         dieselCompany.clear()
+      }
+    })
+    binding.dieselReliance.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+      if(isChecked){
+        binding.dieselReliance.isChecked = true
+        dieselCompany.add("reliance")
+      }
+      else{
+        binding.dieselReliance.isChecked = false
+      }
+    })
+    binding.dieselIocl.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+      if(isChecked){
+        binding.dieselIocl.isChecked = true
+        dieselCompany.add("iocl")
+      }
+      else{
+        binding.dieselIocl.isChecked = false
       }
     })
 

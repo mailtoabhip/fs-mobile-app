@@ -220,11 +220,9 @@
                           android:layout_height="wrap_content"
                           android:hint="Enter Amt"
                           android:inputType="number"
-                          android:padding="@dimen/size_4dp"
                           android:gravity="end"
                           android:drawableLeft="@drawable/ic_rupee_indian_small"
                           android:layout_gravity="center"
-                          android:background="@drawable/bg_payment_box"
                           android:textSize="@dimen/text_14sp"/>
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -252,7 +250,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_payment_box"
                             android:spinnerMode="dropdown"
-                            android:popupBackground="@color/light_grey"
+                            android:popupBackground="@color/white"
                             android:layout_gravity="center" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
