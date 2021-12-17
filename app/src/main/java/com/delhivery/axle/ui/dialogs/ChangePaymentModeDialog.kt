@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.dialogs
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
@@ -50,6 +52,7 @@ class ChangePaymentModeDialog @Inject constructor(
             FuelUserSpinnerOptions("Select Diesel Card No.")
     )
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,7 +74,11 @@ class ChangePaymentModeDialog @Inject constructor(
             dialogTextVehicleNo.text = data.vehicleDetails.vehicleNo
             dialogTextDriverNo.text = data.formattedDriverDetails()
             amtAdvancePending.text = String.format(context.getString(R.string.label_with_sign_value),data.payment!!.paymentAmount!!.toInt())
-
+            binding.dieselPayoutIdentifier.visibility = View.GONE
+            binding.layoutDieselAddAmt.visibility = View.VISIBLE
+            binding.advancePendingDieselAmt.setFocusableInTouchMode(true);
+            binding.advancePendingDieselAmt.requestFocus()
+            binding.advancePendingDieselAmt.showSoftInputOnFocus
             advanceAmt = (data.payment?.paymentAmount ?: 0.0).toInt()
             bankAcNumberText.text = "Bank A/c: " +userPrefs.accNumber
             advancePendingBankAmt.text = data.tripPayment()
@@ -99,9 +106,10 @@ class ChangePaymentModeDialog @Inject constructor(
             }
         }
 
+
         binding.dieselPayoutIdentifier.setOnClickListener{
-            binding.dieselPayoutIdentifier.visibility = View.GONE
-            binding.layoutDieselAddAmt.visibility = View.VISIBLE
+//            binding.dieselPayoutIdentifier.visibility = View.GONE
+//            binding.layoutDieselAddAmt.visibility = View.VISIBLE
 
         }
 

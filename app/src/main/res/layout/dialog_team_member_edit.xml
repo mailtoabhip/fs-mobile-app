@@ -193,8 +193,8 @@
                 android:orientation="horizontal">
                 <CheckBox
                     android:id="@+id/diesel_iocl"
-                    android:layout_width="56sp"
-                    android:layout_height="44sp"
+                    android:layout_width="60sp"
+                    android:layout_height="48sp"
                     android:layout_marginRight="@dimen/size_20dp"
                     android:background="@drawable/checkbox_selection_iocl"
                     android:button="@null"

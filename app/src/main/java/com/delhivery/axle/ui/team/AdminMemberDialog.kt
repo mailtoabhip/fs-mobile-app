@@ -46,19 +46,53 @@ class AdminMemberDialog @Inject constructor(
 
         binding.dieselReliance.isEnabled = false
         if(dieselCompanyVal.isNotEmpty()){
-            binding.dieselReliance.isChecked =true
+            binding.dieselReliance.isEnabled = true
+            binding.dieselIocl.isEnabled= true
+            if(dieselCompanyVal.contains("reliance"))
+                binding.dieselReliance.isChecked = true
+            else
+                binding.dieselReliance.isChecked = false
+
+            if(dieselCompanyVal.contains("iocl"))
+                binding.dieselIocl.isChecked = true
+            else
+                binding.dieselIocl.isChecked = false
+
         }
         binding.adminDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
-                dieselPreference = "yes"
-                binding.dieselReliance.isChecked = true
                 dieselCompanyVal.clear()
-                dieselCompanyVal.add("reliance")
+                binding.dieselReliance.isEnabled = true
+                binding.dieselIocl.isEnabled= true
             }
             else{
                 dieselPreference = "no"
+                binding.dieselReliance.isEnabled = false
+                binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
+                binding.dieselIocl.isChecked = false
                 dieselCompanyVal.clear()
+
+            }
+        })
+        binding.dieselReliance.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                binding.dieselReliance.isChecked = true
+                dieselCompanyVal.add("reliance")
+            }
+            else{
+                binding.dieselReliance.isChecked = false
+                dieselCompanyVal.remove("reliance")
+            }
+        })
+        binding.dieselIocl.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                binding.dieselIocl.isChecked = true
+                dieselCompanyVal.add("iocl")
+            }
+            else{
+                binding.dieselIocl.isChecked = false
+                dieselCompanyVal.remove("iocl")
             }
         })
 

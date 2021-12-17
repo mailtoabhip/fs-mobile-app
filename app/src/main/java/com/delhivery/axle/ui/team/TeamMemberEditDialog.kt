@@ -129,6 +129,9 @@ class TeamMembersEditDialog @Inject constructor(
                 dieselPreference = "no"
                 binding.dieselReliance.isEnabled = false
                 binding.dieselIocl.isEnabled= false
+                binding.dieselReliance.isChecked = false
+                binding.dieselIocl.isChecked = false
+
                 dieselCompanyVal.clear()
             }
         })
@@ -140,6 +143,7 @@ class TeamMembersEditDialog @Inject constructor(
             }
             else{
                 binding.dieselReliance.isChecked = false
+                dieselCompanyVal.remove("reliance")
             }
         })
         binding.dieselIocl.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
@@ -149,6 +153,7 @@ class TeamMembersEditDialog @Inject constructor(
             }
             else{
                 binding.dieselIocl.isChecked = false
+                dieselCompanyVal.remove("iocl")
             }
         })
 
