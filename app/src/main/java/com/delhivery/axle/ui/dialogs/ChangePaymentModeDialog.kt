@@ -223,7 +223,7 @@ class ChangePaymentModeDialog @Inject constructor(
             userOmc = "reliance"
         }
 
-        if((fuelAmt > 0 && userNumber != "" && userOmc!= "") || fuelAmt ==0 ){
+        if((fuelAmt > 0 && userNumber != "" && userOmc!= "") ){
             val omcRequest= OMCRequest(userNumber, userOmc, data.transactionId)
             fuelNumberIndex=0
             dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
@@ -231,7 +231,7 @@ class ChangePaymentModeDialog @Inject constructor(
             dismiss()
         }
         else{
-            Toast.makeText(context," Select Diesel Card Number and Omc Value",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Fuel Amount is Zero or Diesel Card Number and Omc Value is not selected",Toast.LENGTH_SHORT).show()
         }
 
     }
