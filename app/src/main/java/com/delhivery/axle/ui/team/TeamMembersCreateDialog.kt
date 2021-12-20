@@ -30,8 +30,6 @@ class TeamMembersCreateDialog @Inject constructor(
   private lateinit var binding: DialogTeamMemberCreateBinding
   private var name = ""
   private var number = ""
-  private var dieselPreference = "no"
-  private var dieselCompany = mutableListOf<String>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -118,37 +116,15 @@ class TeamMembersCreateDialog @Inject constructor(
     })
     binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
       if(isChecked){
-        dieselPreference = "yes"
         binding.dieselReliance.isEnabled = true
         binding.dieselIocl.isEnabled= true
       }
       else{
-        dieselPreference = "no"
         binding.dieselReliance.isEnabled = false
         binding.dieselIocl.isEnabled= false
         binding.dieselReliance.isChecked = false
         binding.dieselIocl.isChecked = false
-        dieselCompany.clear()
-      }
-    })
-    binding.dieselReliance.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-      if(isChecked){
-        binding.dieselReliance.isChecked = true
-        dieselCompany.add("reliance")
-      }
-      else{
-        binding.dieselReliance.isChecked = false
-        dieselCompany.remove("reliance")
-      }
-    })
-    binding.dieselIocl.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-      if(isChecked){
-        binding.dieselIocl.isChecked = true
-        dieselCompany.add("iocl")
-      }
-      else{
-        binding.dieselIocl.isChecked = false
-        dieselCompany.remove("iocl")
+
       }
     })
 
@@ -166,6 +142,13 @@ class TeamMembersCreateDialog @Inject constructor(
       if (name.isNotEmpty() || number.isNotEmpty()) {
         require(number.length == 10) {
           "Please enter valid phone number"
+        }
+         var dieselPreference = "no"
+         val dieselCompany = mutableListOf<String>()
+        dieselPreference = if(binding.creteMemberDieselReferenceSwitch.isChecked) "yes" else "no"
+        if(binding.creteMemberDieselReferenceSwitch.isChecked){
+          if(binding.dieselReliance.isChecked) dieselCompany.add("reliance")
+          if(binding.dieselIocl.isChecked) dieselCompany.add("iocl")
         }
         if(dieselPreference!="no" && dieselCompany.isNotEmpty() || dieselPreference == "no") {
           dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
