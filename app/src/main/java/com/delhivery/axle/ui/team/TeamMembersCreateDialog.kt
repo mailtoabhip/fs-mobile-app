@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberCreateBinding
@@ -166,16 +167,22 @@ class TeamMembersCreateDialog @Inject constructor(
         require(number.length == 10) {
           "Please enter valid phone number"
         }
-        dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
-        dismiss()
+        if(dieselPreference!="no" && dieselCompany.isNotEmpty()) {
+          dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
+          dismiss()
+        }
+        else{
+          Toast.makeText(context, "Select Diesel Company", Toast.LENGTH_SHORT).show()
+        }
+
       } else {
         throw IllegalArgumentException("*Invalid text")
       }
     } catch (e: IllegalArgumentException) {
-      binding.tilName.isErrorEnabled = true
-      binding.tilName.error = e.message
+      binding.tilNumber.isErrorEnabled = true
+      binding.tilNumber.error = e.message
       val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-      binding.tilName.startAnimation(shake)
+      binding.tilNumber.startAnimation(shake)
     }
   }
 }
