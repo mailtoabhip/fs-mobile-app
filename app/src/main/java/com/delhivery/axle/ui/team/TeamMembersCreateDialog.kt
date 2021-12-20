@@ -167,7 +167,7 @@ class TeamMembersCreateDialog @Inject constructor(
         require(number.length == 10) {
           "Please enter valid phone number"
         }
-        if(dieselPreference!="no" && dieselCompany.isNotEmpty()) {
+        if(dieselPreference!="no" && dieselCompany.isNotEmpty() || dieselPreference == "no") {
           dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
           dismiss()
         }
