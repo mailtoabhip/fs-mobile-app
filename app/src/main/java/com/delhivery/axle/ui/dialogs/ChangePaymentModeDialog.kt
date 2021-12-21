@@ -130,11 +130,15 @@ class ChangePaymentModeDialog @Inject constructor(
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
                             context.startActivity(teamMembersIntent(context, true))
+                            dismiss()
                         }
                         else{
                             Toast.makeText(context, R.string.msg_ask_admin , Toast.LENGTH_SHORT).show()
+                            setSelection(0)
+                            userNumber =""
+                            binding.layoutDieselCompany.visibility= View.GONE
                         }
-                        dismiss()
+
 
                     }
                     else if (item.userName == "Select Diesel Card No."){
