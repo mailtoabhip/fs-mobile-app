@@ -70,6 +70,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.requestType = intent.getStringExtra(RequestTypeIntentKey) ?: ""
     viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
+    viewModel.active = intent.getBooleanExtra(ActiveBid, false)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -434,6 +435,7 @@ private const val TransactionIdIntentKey = "transaction_id"
 /* intent keys */
 private const val RequestTypeIntentKey = "request_type"
 private const val FromPage = "from_page"
+private const val ActiveBid= "active_bid"
 /**
  * Bid details intent
  */
@@ -441,10 +443,12 @@ fun bidDetailsIntent(
   transactionId: String,
   context: Context,
   requestType:String?=null,
-  fromBidsPage:Boolean = false
+  fromBidsPage:Boolean = false,
+  active:Boolean = false
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
   putExtra(RequestTypeIntentKey, requestType)
   putExtra(FromPage,fromBidsPage)
+  putExtra(ActiveBid,active)
 }

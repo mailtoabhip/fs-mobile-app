@@ -38,6 +38,7 @@ class BidDetailsViewModel @Inject constructor(
   lateinit var transactionId: String
     lateinit var requestType: String
     var fromPage: Boolean = false
+    var active = false
   /* live data */
   var transactionLiveData = MutableLiveData<HomeBidsRequestItemData>()
 
@@ -120,7 +121,7 @@ companion object{
                 )
                 bidPriceLiveData.postValue(null)
               }
-              else -> if(requestType == "dmt"){
+              else -> if(requestType == "dmt" && !fromPage || (requestType == "dmt" && active)){
                   transactionBidLiveData.postValue(
                           BidDetailsUserBidState_BulkLoad_Edit(
                                   _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -428,6 +429,9 @@ companion object{
                         vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
                     }
                     "rejected" -> {
+                        lostStatus+=1
+                    }
+                    "cancelled" ->{
                         lostStatus+=1
                     }
                 }

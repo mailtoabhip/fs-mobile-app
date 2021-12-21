@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
@@ -150,10 +151,18 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-        val requestType = if(_item.setMoreBidsVisibility() == View.VISIBLE)
+        val requestType = if(_item.requestType != null && _item.requestType == "dmt")
           "dmt"
         else ""
-        startActivity(bidDetailsIntent(_item.key(), this, requestType, true))
+
+        val active = requestType =="dmt" && _item.bidStatus().status == "Active"
+        val id = if(requestType =="dmt" && _item.bidStatus().status == "Confirmed") _item.transactionBid!!.childTransactionId else _item.key()
+        if(id!=null) {
+          startActivity(bidDetailsIntent(id, this, requestType, true, active))
+        }
+        else{
+          Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
+        }
       }
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData

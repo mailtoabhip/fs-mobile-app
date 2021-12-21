@@ -156,6 +156,9 @@ class BidsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
+                  if(transaction.requestType == "dmt" && transaction.bidStatus().status == "Confirmed" && transaction.transactionBid!!.childTransactionId ==null){
+                    continue
+                  }
                   add(Pair(HomeBidsRequestItem(transaction), Add))
                 }
               }
@@ -257,6 +260,9 @@ class BidsViewModel @Inject constructor(
             vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
           }
           "rejected" -> {
+            lostStatus+=1
+          }
+          "cancelled" ->{
             lostStatus+=1
           }
         }

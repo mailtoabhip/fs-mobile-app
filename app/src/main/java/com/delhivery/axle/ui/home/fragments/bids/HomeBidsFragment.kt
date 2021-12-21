@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -176,11 +177,17 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-        val requestType = if(_item.setMoreBidsVisibility() == View.VISIBLE)
+        val requestType = if(_item.requestType != null && _item.requestType == "dmt")
           "dmt"
         else ""
+        val active = requestType =="dmt" && _item.bidStatus().status == "Active"
+        val id = if(requestType =="dmt" && _item.bidStatus().status == "Confirmed") _item.transactionBid!!.childTransactionId else _item.key()
+        if(id!=null)
         context?.let {
-          startActivity(bidDetailsIntent(_item.key(), it, requestType, true))
+          startActivity(bidDetailsIntent(id, it, requestType, true, active))
+        }
+        else{
+          Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
         }
       }
 
