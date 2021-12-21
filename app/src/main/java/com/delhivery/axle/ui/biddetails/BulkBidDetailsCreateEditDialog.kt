@@ -51,7 +51,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
         binding.route = transaction.tripRouteOriginDes()
         binding.request = transaction
         binding.page=pageTitle
-        val availableTrucks = transaction.truckDisplayName as List<*>
+        val availableTrucks = transaction.truckUUID as List<*>
         val truckTypesFiltered = mutableListOf<TruckResponseArray>()
         for(truck in truckTypes){
             for (item in availableTrucks){

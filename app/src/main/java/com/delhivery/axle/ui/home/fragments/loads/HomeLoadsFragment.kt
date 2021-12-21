@@ -240,10 +240,13 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
       uiUtils.hideProgress()
       if(it!= null ){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
-        BulkBidDetailsCreateEditDialog(
-              context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,pos, analyticsUtil,
-                userPrefs , "load_screen",pageTitle
-              ).show()
+        if(it.second.truckUUID != null) {
+          BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
+            pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
+        }
+        else{
+          Toast.makeText(context, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+        }
       }
     })
   }

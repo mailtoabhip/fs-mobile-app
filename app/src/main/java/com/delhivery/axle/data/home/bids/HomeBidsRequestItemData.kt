@@ -60,6 +60,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("unallocated_volume") val unAllocatedVolume: Double? = 0.0,
   @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
   @SerializedName("child_transactions") val childTransactions: List<String> = mutableListOf(),
+  @SerializedName("truck_uuid") val truckUUID: Any?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,

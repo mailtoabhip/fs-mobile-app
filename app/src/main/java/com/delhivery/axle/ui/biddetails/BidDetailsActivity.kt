@@ -107,10 +107,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       uiUtils.hideProgress()
       if(it!= null){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
-        BulkBidDetailsCreateEditDialog(
-              this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!! ,
-                analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail",pageTitle = pageTitle
+        if(it.second.truckUUID != null) {
+          BulkBidDetailsCreateEditDialog(this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
+            viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
           ).show()
+        }
+        else{
+          Toast.makeText(this, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+
+        }
       }
     })
 

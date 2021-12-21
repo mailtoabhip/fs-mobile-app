@@ -87,7 +87,10 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
         binding.editTrucks.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?){
                 if(s==null || s.toString() ==""){
+                   // binding.item!!.truckCount = 0
+                    val diff = 0 - binding.item!!.truckCount
                     binding.item!!.truckCount = 0
+                    _interface.itemCapacity(diff * item.data.vehicleCapacity)
                 }
             }
             override fun beforeTextChanged(
