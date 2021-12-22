@@ -211,6 +211,18 @@
             tools:text="Agriculture/Grains"
             />
 
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_unAllocatedLoad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{request.setUnAllocatedText()}"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:visibility="@{request.setDMTType()}"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            android:textColor="@color/bid_placed_red"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_detention"
             android:layout_width="wrap_content"
@@ -224,7 +236,7 @@
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -241,7 +253,7 @@
             app:layout_constraintStart_toEndOf="@+id/text_detention"
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -258,7 +270,7 @@
             app:layout_constraintStart_toEndOf="@+id/text_gps"
             android:text="@{request.expressText(false)}"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             tools:text="Express"
             />
 

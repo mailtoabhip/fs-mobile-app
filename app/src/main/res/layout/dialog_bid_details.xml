@@ -45,6 +45,7 @@
                         android:lineSpacingExtra="@dimen/text_2sp"
                         android:text="@string/status_of_other_bid"
                         android:textColor="@color/black"
+                        android:maxWidth="@dimen/size_160dp"
                         android:layout_weight="1"
                         android:textSize="@dimen/text_16sp"
                         />

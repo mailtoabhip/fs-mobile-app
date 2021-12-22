@@ -180,7 +180,8 @@ class HomeBidsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
-                  if(transaction.requestType == "dmt" && transaction.bidStatus().status == "Confirmed" && transaction.transactionBid!!.childTransactionId ==null){
+                  if(transaction.requestType == "dmt" && (transaction.bidStatus().status == "Confirmed" ||transaction.bidStatus().status == "Lost"||
+                            transaction.bidStatus().status =="Cancelled") && transaction.transactionBid!!.childTransactionId ==null){
                     continue
                   }
                   add(Pair(HomeBidsRequestItem(transaction), Add))
@@ -240,6 +241,8 @@ class HomeBidsViewModel @Inject constructor(
       val vehicleNumberLoc: MutableMap<String, String> = mutableMapOf<String, String>()
 
       var bidAmt = 0.0
+      var confirmAmt =0.0
+      var lostAmt= 0.0
 
       for(bid in map[key]!!){
         when (bid._status) {
@@ -249,15 +252,24 @@ class HomeBidsViewModel @Inject constructor(
           }
           "accepted" -> {
             confirmedStatus+=1
+            confirmAmt= bid.bidAmount
             vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
           }
           "rejected" -> {
+            lostAmt= bid.bidAmount
             lostStatus+=1
           }
           "cancelled" ->{
+            lostAmt=bid.bidAmount
             lostStatus+=1
           }
         }
+      }
+      if(bidAmt == 0.0 && confirmAmt!= 0.0){
+        bidAmt= confirmAmt
+      }
+      else if(bidAmt==0.0 && lostAmt!= 0.0){
+        bidAmt=lostAmt
       }
       if(openStatus>0){
         openStat=("$openStatus Open:")

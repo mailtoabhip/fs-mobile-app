@@ -141,6 +141,8 @@ data class HomeBidsRequestItemData(
 
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
+  fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
+
   fun setAllocatedText() = "Total volume being placed: ${allocatedVolume!!} MT"
 
   /**

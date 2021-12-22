@@ -416,6 +416,10 @@ companion object{
 
 
             var bidAmt = 0.0
+            var confirmAmt =0.0
+            var lostAmt= 0.0
+
+
             for(bid in map[key]!!){
                 when (bid._status) {
                     "open" -> {
@@ -424,18 +428,29 @@ companion object{
                     }
                     "accepted" -> {
                         confirmedStatus+=1
-                        System.out.println("#########"+bid.childTransactionId)
-                       // vehicleNumberLoc.add(bid.vehicleNumber.toString())
+                        confirmAmt = bid.bidAmount
+
                         vehicleNumberLoc.put(bid.vehicleNumber.toString(),bid.childTransactionId.toString())
                     }
                     "rejected" -> {
+                        lostAmt= bid.bidAmount
                         lostStatus+=1
                     }
                     "cancelled" ->{
+                        lostAmt= bid.bidAmount
                         lostStatus+=1
                     }
                 }
             }
+
+
+            if(bidAmt == 0.0 && confirmAmt!= 0.0){
+                bidAmt= confirmAmt
+            }
+            else if(bidAmt==0.0 && lostAmt!= 0.0){
+                bidAmt=lostAmt
+            }
+
             if(openStatus>0){
                 openStat=("$openStatus Open:")
             }

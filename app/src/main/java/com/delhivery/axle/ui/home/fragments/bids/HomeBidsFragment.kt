@@ -181,7 +181,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           "dmt"
         else ""
         val active = requestType =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(requestType =="dmt" && _item.bidStatus().status == "Confirmed") _item.transactionBid!!.childTransactionId else _item.key()
+        val id = if(requestType =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
+          _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null)
         context?.let {
           startActivity(bidDetailsIntent(id, it, requestType, true, active))
