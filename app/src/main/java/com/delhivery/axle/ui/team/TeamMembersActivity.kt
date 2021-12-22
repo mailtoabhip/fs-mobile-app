@@ -12,6 +12,8 @@ import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.ChangeNum
+import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 
@@ -20,12 +22,15 @@ import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
  * on 30/12/20
  */
 
-class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
+class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
   TeamMembersRVAdapterInterface {
+
 
   init {
     hasInlineProgress = true
   }
+
+
 
   override fun getViewModelClass() = TeamMembersViewModel::class.java
 
@@ -37,7 +42,6 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -54,6 +58,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     }
 
     val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
+    val _inerface = intent.extras?.get("INTERFACE") as ChangeNum
 
     if(userCreate == true){
       createTeamMember()
@@ -80,6 +85,10 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     viewModel.createUserLiveData.observe(this, Observer {
       refreshData()
       uiUtils.showSnackbar(it)
+      if (userCreate==true){
+        _inerface.getPhone("9876545323")
+        finish()
+      }
     })
 
     viewModel.updateUserLiveData.observe(this, Observer {
@@ -111,6 +120,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     viewModel.fetchTeamMembers()
     binding.executePendingBindings()
   }
+
 
   override fun handleAction(
     actionId: String,
@@ -210,6 +220,16 @@ fun teamMembersIntent(
 
 ): Intent = Intent(context, TeamMembersActivity::class.java).apply {
     putExtra(USER_CREATE,createUserIntent)
+
+}
+fun teamMembersIntentFromChangeDialog(
+  context: Context,
+  createUserIntent:Boolean = false,
+  interface1 :ChangeNum
+
+): Intent = Intent(context, TeamMembersActivity::class.java).apply {
+  putExtra(USER_CREATE,createUserIntent)
+  putExtra("INTERFACE",interface1)
 
 }
 

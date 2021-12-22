@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
@@ -17,17 +16,12 @@ import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.DialogChangePaymentBinding
-import com.delhivery.axle.databinding.DialogConfirmBidBinding
-import com.delhivery.axle.ui.ledger.LedgerSpinnerAdapter
 import com.delhivery.axle.ui.team.teamMembersIntent
+import com.delhivery.axle.ui.team.teamMembersIntentFromChangeDialog
 import com.delhivery.axle.ui.tripdetails.FuelUserSpinnerAdapter
 import com.delhivery.axle.utils.UiUtils
-import com.delhivery.axle.utils.extensions.not
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.disposables.ArrayCompositeDisposable
+import java.io.Serializable
 import javax.inject.Inject
 
 class ChangePaymentModeDialog @Inject constructor(
@@ -38,7 +32,7 @@ class ChangePaymentModeDialog @Inject constructor(
         private val userPrefs: UserPrefs,
         private val uiUtils: UiUtils,
         private val position: Int =0
-) :AlertDialog(context) {
+) :AlertDialog(context),ChangeNum {
 
     private lateinit var binding: DialogChangePaymentBinding
     var advanceAmt = 0
@@ -46,6 +40,13 @@ class ChangePaymentModeDialog @Inject constructor(
     var userNumber = ""
     var userOmc = ""
     var fuelNumberIndex=0
+
+    val interface1 = object:ChangeNum{
+
+        override fun getPhone(phone: String) {
+            fuelUserSpinnerOptions.add(fuelUserSpinnerOptions.size-1,FuelUserSpinnerOptions(phone,"(child)"))
+        }
+    }
 
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
@@ -129,8 +130,8 @@ class ChangePaymentModeDialog @Inject constructor(
                     val item = parent.getItemAtPosition(position) as FuelUserSpinnerOptions
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
-                            context.startActivity(teamMembersIntent(context, true))
-                            dismiss()
+                            context.startActivity(teamMembersIntentFromChangeDialog(context, true,interface1))
+                           // dismiss()
                         }
                         else{
                             Toast.makeText(context, R.string.msg_ask_admin , Toast.LENGTH_SHORT).show()
@@ -239,6 +240,12 @@ class ChangePaymentModeDialog @Inject constructor(
         }
 
     }
+
+    override fun getPhone(phone: String) {
+
+    }
+
+
 }
 interface ChangePaymentModeInterface{
     fun done(
@@ -249,4 +256,9 @@ interface ChangePaymentModeInterface{
         fuelAmt: String,
         position: Int
     )
+
+}
+interface ChangeNum : Serializable{
+    fun getPhone(phone : String)
+
 }
