@@ -47,7 +47,7 @@
                         android:textColor="@color/black"
                         android:maxWidth="@dimen/size_160dp"
                         android:layout_weight="1"
-                        android:textSize="@dimen/text_16sp"
+                        android:textSize="@dimen/text_18sp"
                         />
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/btn_cancel"

@@ -95,7 +95,7 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
   ) {
     binding.request = item.data
     Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
-    binding.moreBidsRecieved = item.data.bulkTransactionBids?.size
+    binding.moreBidsRecieved = item.data.bulkTransactionBids?.size -1
    // binding.moreBidsRecieved = 2
     binding.textMoreBids.underline = true
     binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)

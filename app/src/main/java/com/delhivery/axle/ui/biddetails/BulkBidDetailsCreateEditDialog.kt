@@ -51,6 +51,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
         binding.route = transaction.tripRouteOriginDes()
         binding.request = transaction
         binding.page=pageTitle
+        // val availableTrucks = listOf<String>(*((transaction.truckUUID as String).split(",")).toTypedArray())
         val availableTrucks = transaction.truckUUID as List<*>
         val truckTypesFiltered = mutableListOf<TruckResponseArray>()
         for(truck in truckTypes){
@@ -271,7 +272,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
             DELETE_ITEM ->{
                 val bidData = item.data as DmtBidSummaryItemData
                 volumePlaced -= (bidData.truckCount * bidData.vehicleCapacity)
-                binding.volumePlaced.text ="Total Volume being placed: $volumePlaced MT"
+                binding.volumePlaced.text ="Total volume of Bids: $volumePlaced MT"
                 adapter.operation(listOf(Pair(DmtBidSummaryItem(bidData), DataRVAdapterOperationType.Remove)))
                 adapter.notifyDataSetChanged()
 
@@ -281,7 +282,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
     override fun itemCapacity(capacity: Double) {
         volumePlaced+=capacity
-        binding.volumePlaced.text ="Total Volume being placed: $volumePlaced MT"
+        binding.volumePlaced.text ="Total volume of Bids : $volumePlaced MT"
     }
 
 }

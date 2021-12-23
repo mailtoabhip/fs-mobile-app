@@ -59,34 +59,34 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
         _interface: BulkBidsRVAdapterInterface) {
         binding.item = item.data
         binding.textVehicleType.text = item.data.vehicleType
-    if(!item.data.vehicleNumber.isNullOrEmpty()) {
-        binding.VehicleNumLayout.removeAllViews()
+        if(!item.data.vehicleNumber.isNullOrEmpty()) {
+            binding.VehicleNumLayout.removeAllViews()
 
-        for (i in item.data.vehicleNumber) {
-          val textView = TextView(context)
-            textView.text = i.key
-            textView.setTextColor(ContextCompat.getColor(context,R.color.blue))
-          textView.layoutParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-          )
-            val drawable = ContextCompat.getDrawable(context, R.drawable.ic_open_external_link)
-            textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
-          textView.setOnClickListener()
-           {
-             if(!item.data.childTransactionId.isNullOrEmpty()) {
-                 context.startActivity(tripDetailsIntent(i.value, context))
-             }
-             //  Toast.makeText(context, ""+i.value, Toast.LENGTH_SHORT).show()
-           }
-           // binding.VehicleNumLayout.clickToAction(OPEN_CONFIRMED_BID,item,adapterPosition,_interface)
+            for (i in item.data.vehicleNumber) {
+              val textView = TextView(context)
+                textView.text = i.key
+                textView.setTextColor(ContextCompat.getColor(context,R.color.blue))
+              textView.layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+              )
+                val drawable = ContextCompat.getDrawable(context, R.drawable.ic_open_external_link)
+                textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+              textView.setOnClickListener()
+               {
+                 if(!item.data.childTransactionId.isNullOrEmpty()) {
+                     context.startActivity(tripDetailsIntent(i.value, context))
+                 }
 
-        // Add TextView to LinearLayout
-        binding.VehicleNumLayout.addView(textView)
+               }
 
+                // Add TextView to LinearLayout
+            binding.VehicleNumLayout.addView(textView)
+
+        }
     }
-}
         binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
+        binding.expandButton.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
     }
 }
 
