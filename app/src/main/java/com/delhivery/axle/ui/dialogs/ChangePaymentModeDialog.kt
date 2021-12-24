@@ -61,7 +61,7 @@ class ChangePaymentModeDialog @Inject constructor(
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
             val message = intent.getStringExtra("message")
-            if(!message.equals("0")) {
+            if(message!=null && !message.equals("0")) {
                 var n: Int = fuelUserSpinnerOptions.size
                 fuelUserSpinnerOptions.add(n - 2, FuelUserSpinnerOptions(message!!, "(Child)"))
                 for (i in fuelUserSpinnerOptions) {
@@ -72,11 +72,15 @@ class ChangePaymentModeDialog @Inject constructor(
 
                     setSelection(n - 2)
                 }
+                userNumber = message
+                binding.layoutDieselCompany.visibility = View.VISIBLE
             }else{
                 binding.selectMemberSpinner.apply {
-
                     setSelection(0)
                 }
+                userNumber =""
+                binding.layoutDieselCompany.visibility= View.GONE
+                Toast.makeText(context, "Member not added, Try again", Toast.LENGTH_SHORT).show()
             }
                 //
             Log.i("receiver", "Got message: $message")
