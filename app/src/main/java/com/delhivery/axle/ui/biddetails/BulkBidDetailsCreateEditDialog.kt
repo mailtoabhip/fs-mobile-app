@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -51,8 +52,12 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
         binding.route = transaction.tripRouteOriginDes()
         binding.request = transaction
         binding.page=pageTitle
-        // val availableTrucks = listOf<String>(*((transaction.truckUUID as String).split(",")).toTypedArray())
-        val availableTrucks = transaction.truckUUID as List<*>
+        var availableTrucks: List<String>? = null
+        availableTrucks = if( transaction.truckUUID is String) {
+            listOf<String>(*((transaction.truckUUID as String).split(",")).toTypedArray())
+        } else {
+            transaction.truckUUID as List<String>
+        }
         val truckTypesFiltered = mutableListOf<TruckResponseArray>()
         for(truck in truckTypes){
             for (item in availableTrucks){
@@ -266,13 +271,14 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 bidData.expanded = !bidData.expanded
                 if(currentFocus!=null) {
                     currentFocus?.clearFocus()
+                    binding.root.clearFocus()
                 }
                 adapter.notifyItemChanged(position)
             }
             DELETE_ITEM ->{
                 val bidData = item.data as DmtBidSummaryItemData
                 volumePlaced -= (bidData.truckCount * bidData.vehicleCapacity)
-                binding.volumePlaced.text ="Total volume of Bids: $volumePlaced MT"
+                binding.volumePlaced.text = String.format(context.getString(R.string.msg_volume_of_bids),volumePlaced)
                 adapter.operation(listOf(Pair(DmtBidSummaryItem(bidData), DataRVAdapterOperationType.Remove)))
                 adapter.notifyDataSetChanged()
 
@@ -282,7 +288,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
     override fun itemCapacity(capacity: Double) {
         volumePlaced+=capacity
-        binding.volumePlaced.text ="Total volume of Bids : $volumePlaced MT"
+        binding.volumePlaced.text = String.format(context.getString(R.string.msg_volume_of_bids),volumePlaced)
     }
 
 }
