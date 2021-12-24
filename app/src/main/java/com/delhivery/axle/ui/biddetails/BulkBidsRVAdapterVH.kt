@@ -65,6 +65,7 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
             for (i in item.data.vehicleNumber) {
               val textView = TextView(context)
                 textView.text = i.key
+                textView.setPadding(0,4,0,2)
                 textView.setTextColor(ContextCompat.getColor(context,R.color.blue))
               textView.layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
