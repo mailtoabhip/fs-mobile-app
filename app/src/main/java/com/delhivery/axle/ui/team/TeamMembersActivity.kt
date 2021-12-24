@@ -12,7 +12,7 @@ import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.ChangeNum
+import com.delhivery.axle.ui.dialogs.ChangeNumFromTeam
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
@@ -57,7 +57,7 @@ class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembe
     }
 
     val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
-    val _inerface1 = intent?.extras?.get("INTERFACE") as? ChangeNum
+    val _inerface1 = intent?.extras?.get("INTERFACE") as? ChangeNumFromTeam
 
 
     if(userCreate == true){
@@ -225,7 +225,7 @@ fun teamMembersIntent(
 fun teamMembersIntentFromChangeDialog(
   context: Context,
   createUserIntent:Boolean = false,
-  changeNum: ChangeNum
+  changeNum: ChangeNumFromTeam
 
 ): Intent = Intent(context, TeamMembersActivity::class.java).apply {
   putExtra(USER_CREATE,createUserIntent)
