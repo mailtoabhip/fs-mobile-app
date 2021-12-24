@@ -143,7 +143,7 @@ data class HomeBidsRequestItemData(
 
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
-  fun setAllocatedText() = "Total volume being placed: ${allocatedVolume!!} MT"
+  fun setUnAllocatedVol() = if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
 
   /**
    * @return formatted origin city name
