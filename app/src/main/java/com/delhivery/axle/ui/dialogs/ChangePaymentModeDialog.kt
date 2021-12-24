@@ -1,10 +1,7 @@
 package com.delhivery.axle.ui.dialogs
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -21,7 +18,7 @@ import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.DialogChangePaymentBinding
-import com.delhivery.axle.ui.team.teamMembersIntentFromChangeDialog
+import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.FuelUserSpinnerAdapter
 import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -37,7 +34,7 @@ class ChangePaymentModeDialog @Inject constructor(
         private val userPrefs: UserPrefs,
         private val uiUtils: UiUtils,
         private val position: Int =0
-) :AlertDialog(context),ChangeNumFromTeam {
+) :AlertDialog(context) {
 
     private lateinit var binding: DialogChangePaymentBinding
     var advanceAmt = 0
@@ -48,15 +45,6 @@ class ChangePaymentModeDialog @Inject constructor(
 
 
 
-   var  changeNumberFromTeam = object :ChangeNumFromTeam{
-       override fun getPhone(phone: String) {
-           Log.i("PHONE",phone)
-
-//           fuelUserSpinnerOptions.add(fuelUserSpinnerOptions.size-1,FuelUserSpinnerOptions(phone,"(Child)"))
-//           fuelNumberIndex=fuelUserSpinnerOptions.size-1
-       }
-
-   }
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
@@ -87,7 +75,6 @@ class ChangePaymentModeDialog @Inject constructor(
         }
     }
     var filter = IntentFilter("custom-event-name")
- //   var changeNumberFromTeam = ChangePaymentModeDialog(context,this.dialogInterface,this.data,this.fuelUserSpinnerOptionsList,this.userPrefs,this.uiUtils,this.position)
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
             FuelUserSpinnerOptions("Select Diesel Card No.")
@@ -174,7 +161,7 @@ class ChangePaymentModeDialog @Inject constructor(
                     val item = parent.getItemAtPosition(position) as FuelUserSpinnerOptions
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
-                            context.startActivity(teamMembersIntentFromChangeDialog(context, true,changeNumberFromTeam))
+                            context.startActivity(teamMembersIntent(context, true))
                            // dismiss()
 
                         }
@@ -261,6 +248,10 @@ class ChangePaymentModeDialog @Inject constructor(
 
     }
 
+    override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
+        super.setOnCancelListener(listener)
+    }
     private fun submit() {
         fuelAmt = if(binding.advancePendingDieselAmt.text.toString() != "") {
             binding.advancePendingDieselAmt.text.toString().toInt()
@@ -278,18 +269,14 @@ class ChangePaymentModeDialog @Inject constructor(
             fuelNumberIndex=0
             dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
             uiUtils.showProgress()
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
             dismiss()
+
         }
         else{
             Toast.makeText(context,"Fuel Amount is Zero or Diesel Card Number and Omc Value is not selected",Toast.LENGTH_SHORT).show()
         }
 
-    }
-
-    override fun getPhone(phone: String) {
-    fuelUserSpinnerOptions.add(fuelUserSpinnerOptions.size-1,
-        FuelUserSpinnerOptions(phone,"(child)")
-    )
     }
 
 
@@ -305,6 +292,4 @@ interface ChangePaymentModeInterface{
     )
 
 }
-interface ChangeNumFromTeam : Serializable{
-    fun getPhone(phone : String)
-}
+

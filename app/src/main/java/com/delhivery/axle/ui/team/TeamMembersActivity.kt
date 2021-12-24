@@ -13,7 +13,6 @@ import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.ChangeNumFromTeam
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.Serializable
 
@@ -22,7 +21,7 @@ import java.io.Serializable
  * on 30/12/20
  */
 
-class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
+class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
   TeamMembersRVAdapterInterface {
 
 
@@ -88,7 +87,6 @@ class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembe
         refreshData()
         uiUtils.showSnackbar(it.first)
         if (userCreate == true) {
-          // _inerface1!!.getPhone("9876545323")
           val intent = Intent("custom-event-name")
           // You can also include some extra data.
           var num: String = it.second
@@ -240,15 +238,6 @@ fun teamMembersIntent(
     putExtra(USER_CREATE,createUserIntent)
 
 }
-fun teamMembersIntentFromChangeDialog(
-  context: Context,
-  createUserIntent:Boolean = false,
-  changeNum: ChangeNumFromTeam
 
-): Intent = Intent(context, TeamMembersActivity::class.java).apply {
-  putExtra(USER_CREATE,createUserIntent)
-  putExtra("INTERFACE",changeNum as Serializable)
-
-}
 
 const val USER_CREATE = "user_create"
