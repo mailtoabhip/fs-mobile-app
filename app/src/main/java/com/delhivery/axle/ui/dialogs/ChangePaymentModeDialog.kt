@@ -1,17 +1,21 @@
 package com.delhivery.axle.ui.dialogs
 
 import android.app.AlertDialog
-import android.app.Instrumentation
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
@@ -23,6 +27,7 @@ import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.Serializable
 import javax.inject.Inject
+
 
 class ChangePaymentModeDialog @Inject constructor(
         context: Context,
@@ -43,6 +48,42 @@ class ChangePaymentModeDialog @Inject constructor(
 
 
 
+   var  changeNumberFromTeam = object :ChangeNumFromTeam{
+       override fun getPhone(phone: String) {
+           Log.i("PHONE",phone)
+
+//           fuelUserSpinnerOptions.add(fuelUserSpinnerOptions.size-1,FuelUserSpinnerOptions(phone,"(Child)"))
+//           fuelNumberIndex=fuelUserSpinnerOptions.size-1
+       }
+
+   }
+    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Get extra data included in the Intent
+            val message = intent.getStringExtra("message")
+            if(!message.equals("0")) {
+                var n: Int = fuelUserSpinnerOptions.size
+                fuelUserSpinnerOptions.add(n - 2, FuelUserSpinnerOptions(message!!, "(Child)"))
+                for (i in fuelUserSpinnerOptions) {
+                    System.out.println(i)
+                }
+                fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
+                binding.selectMemberSpinner.apply {
+
+                    setSelection(n - 2)
+                }
+            }else{
+                binding.selectMemberSpinner.apply {
+
+                    setSelection(0)
+                }
+            }
+                //
+            Log.i("receiver", "Got message: $message")
+        }
+    }
+    var filter = IntentFilter("custom-event-name")
+ //   var changeNumberFromTeam = ChangePaymentModeDialog(context,this.dialogInterface,this.data,this.fuelUserSpinnerOptionsList,this.userPrefs,this.uiUtils,this.position)
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
             FuelUserSpinnerOptions("Select Diesel Card No.")
@@ -58,6 +99,9 @@ class ChangePaymentModeDialog @Inject constructor(
 
         binding = DialogChangePaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+      LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver,filter)
+
 
         fuelUserSpinnerOptions.addAll(fuelUserSpinnerOptionsList)
         if(data.driverDetails?.driverPhoneNo != null){
@@ -112,7 +156,8 @@ class ChangePaymentModeDialog @Inject constructor(
         binding.selectMemberSpinner.apply {
             adapter = fuelUserSpinnerAdapter
             fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
-            setSelection(fuelNumberIndex)
+
+               setSelection(fuelNumberIndex)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onNothingSelected(parent: AdapterView<*>) = Unit
@@ -125,7 +170,7 @@ class ChangePaymentModeDialog @Inject constructor(
                     val item = parent.getItemAtPosition(position) as FuelUserSpinnerOptions
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
-                            context.startActivity(teamMembersIntentFromChangeDialog(context, true,this@ChangePaymentModeDialog))
+                            context.startActivity(teamMembersIntentFromChangeDialog(context, true,changeNumberFromTeam))
                            // dismiss()
 
                         }

@@ -289,7 +289,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     viewModel.teamMembersLiveData.observe(this , Observer {
       uiUtils.hideProgress()
       if(it!= null){
-        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,viewModel, it1, it, userPrefs, uiUtils, itemPos).show() }
+        tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,viewModel, it1, it, userPrefs, uiUtils, itemPos,viewModel.spinnerOptionSelectionIndex.value).show() }
+        viewModel.spinnerOptionSelectionIndex.postValue(false)
       }
     })
 

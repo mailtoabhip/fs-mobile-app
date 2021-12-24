@@ -74,6 +74,8 @@ class TripsViewModel @Inject constructor(
   /* trips count live data */
   var tripsCountLiveData = MutableLiveData<Int>()
 
+
+
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 

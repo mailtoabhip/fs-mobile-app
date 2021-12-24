@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
@@ -13,8 +14,8 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.ChangeNumFromTeam
-import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.io.Serializable
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -57,7 +58,6 @@ class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembe
     }
 
     val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
-    val _inerface1 = intent?.extras?.get("INTERFACE") as? ChangeNumFromTeam
 
 
     if(userCreate == true){
@@ -83,11 +83,29 @@ class TeamMembersActivity() : BaseActivity<ActivityTeamMembersBinding, TeamMembe
     })
 
     viewModel.createUserLiveData.observe(this, Observer {
-      refreshData()
-      uiUtils.showSnackbar(it)
-      if (userCreate==true){
-        _inerface1!!.getPhone("9876545323")
-        finish()
+
+      if(it!=null) {
+        refreshData()
+        uiUtils.showSnackbar(it.first)
+        if (userCreate == true) {
+          // _inerface1!!.getPhone("9876545323")
+          val intent = Intent("custom-event-name")
+          // You can also include some extra data.
+          var num: String = it.second
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+          finish()
+        }
+      }else{
+        if (userCreate == true) {
+          // _inerface1!!.getPhone("9876545323")
+          val intent = Intent("custom-event-name")
+          // You can also include some extra data.
+          var num: String = "0"
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+          finish()
+        }
       }
     })
 
@@ -229,7 +247,7 @@ fun teamMembersIntentFromChangeDialog(
 
 ): Intent = Intent(context, TeamMembersActivity::class.java).apply {
   putExtra(USER_CREATE,createUserIntent)
-  putExtra("INTERFACE",changeNum)
+  putExtra("INTERFACE",changeNum as Serializable)
 
 }
 
