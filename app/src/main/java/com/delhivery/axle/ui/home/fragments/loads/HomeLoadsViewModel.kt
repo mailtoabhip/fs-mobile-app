@@ -185,7 +185,7 @@ class HomeLoadsViewModel @Inject constructor(
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
                       }[0]
-                    if(load.requestType == "dmt"){
+                    if(load.isDMTIndent()){
                         load.bulkTransactionBids =
                             bids.filter { b ->
                                 b.transactionId.safeEquals(load.transactionId)

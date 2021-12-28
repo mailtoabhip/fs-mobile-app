@@ -308,7 +308,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(data.key(), it,data.requestType)) }
+        context?.let { startActivity(bidDetailsIntent(data.key(), it, if(data.isDMTIndent()) "dmt" else "")) }
       }
 
       HomeLoadsSearchAction_Search -> {
@@ -475,7 +475,7 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
             val data = item.data as HomeBidsRequestItemData
-            if (data.requestType!= null && data.requestType =="dmt") {
+            if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
             }

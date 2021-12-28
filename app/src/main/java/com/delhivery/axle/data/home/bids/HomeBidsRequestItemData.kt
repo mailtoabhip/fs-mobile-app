@@ -61,6 +61,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
   @SerializedName("child_transactions") val childTransactions: List<String> = mutableListOf(),
   @SerializedName("truck_uuid") val truckUUID: Any?,
+  @SerializedName("is_dmt") val isDmt :Boolean? = false,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -88,7 +89,7 @@ data class HomeBidsRequestItemData(
   /**
    * if trip is DMT
    */
-  fun setDMTType() = if (requestType != null && requestType!= "" && requestType == "dmt") {
+  fun setDMTType() = if (isDMTIndent()) {
     View.VISIBLE
   } else {
     View.GONE
@@ -97,14 +98,14 @@ data class HomeBidsRequestItemData(
   /**
    * if trip is DMT
    */
-  fun setDMTTypeForBid(visibility: Boolean) = if (requestType != null && requestType!= "" && requestType == "dmt" && !visibility) {
+  fun setDMTTypeForBid(visibility: Boolean) = if (isDMTIndent() && !visibility) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
 
-  fun bidInfoVisibility() = if (requestType != null && requestType!= "" && requestType == "dmt") {
+  fun bidInfoVisibility() = if (isDMTIndent()) {
     View.GONE
   } else {
     View.VISIBLE
@@ -121,13 +122,13 @@ data class HomeBidsRequestItemData(
     View.INVISIBLE
 
 
-  fun requestedCapacityVisibility() = if(isPMTIndent() && requestType!="dmt")
+  fun requestedCapacityVisibility() = if(isPMTIndent() && !isDMTIndent())
     View.VISIBLE
   else
     View.GONE
 
 
-  fun setMoreBidsVisibility() = if (requestType != null && requestType == "dmt") {
+  fun setMoreBidsVisibility() = if (isDMTIndent()) {
     if(bulkTransactionBids!=null && bulkTransactionBids.isNotEmpty() && bulkTransactionBids.size> 1) {
       View.VISIBLE
     }else{
@@ -144,6 +145,8 @@ data class HomeBidsRequestItemData(
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
   fun setUnAllocatedVol() = if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
+
+
 
   /**
    * @return formatted origin city name
@@ -373,7 +376,7 @@ data class HomeBidsRequestItemData(
    * @return bid text
    */
   fun bidText(): String {
-    return if(requestType!= "dmt")
+    return if(!isDMTIndent())
       "Bid placed for ₹ ${StringUtils.formatAmount(
               transactionBid?.bidAmount ?: 0.0
       )}" + if (isPMTIndent()) " /MT" else ""
@@ -449,7 +452,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if request type(dmt)
    */
-  fun isDMTIndent() = requestType?.toLowerCase() == "dmt"
+  fun isDMTIndent() = isDmt!= null && isDmt == true
 
   /**
    * @return true if speed is express

@@ -188,7 +188,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item.key(), it, _item.requestType)) }
+        context?.let { startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
       }
     }
   }
@@ -204,7 +204,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
             val data = item.data as HomeBidsRequestItemData
-            if (data.requestType!= null && data.requestType =="dmt") {
+            if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
             }

@@ -36,7 +36,7 @@ class BidDetailsViewModel @Inject constructor(
 
   /* transaction id */
   lateinit var transactionId: String
-    lateinit var requestType: String
+    lateinit var dmtStatus: String
     var fromPage: Boolean = false
     var active = false
   /* live data */
@@ -121,7 +121,7 @@ companion object{
                 )
                 bidPriceLiveData.postValue(null)
               }
-              else -> if(requestType == "dmt" && !fromPage || (requestType == "dmt" && active)){
+              else -> if(dmtStatus == "dmt" && !fromPage || (dmtStatus == "dmt" && active)){
                   transactionBidLiveData.postValue(
                           BidDetailsUserBidState_BulkLoad_Edit(
                                   _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()

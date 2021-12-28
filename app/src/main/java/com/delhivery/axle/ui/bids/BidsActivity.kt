@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
@@ -151,15 +150,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-        val requestType = if(_item.requestType != null && _item.requestType == "dmt")
+        val dmtStatus = if(_item.isDMTIndent())
           "dmt"
         else ""
 
-        val active = requestType =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(requestType =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
+        val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
+        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
           _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null) {
-          startActivity(bidDetailsIntent(id, this, requestType, true, active))
+          startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
         }
         else{
           Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
@@ -186,7 +185,6 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     //  binding.transaction?.let {
     /* set transaction id */
     viewModel.transactionId = transaction?.transactionId ?: ""
-    viewModel.requestType = transaction?.requestType ?:""
     viewModel.transaction = transaction!!
      // viewModel.fetchTransactionBids()
     BulkBidDetailsDialog(

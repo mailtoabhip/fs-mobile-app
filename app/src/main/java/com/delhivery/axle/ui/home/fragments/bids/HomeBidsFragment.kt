@@ -177,15 +177,15 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-        val requestType = if(_item.requestType != null && _item.requestType == "dmt")
+        val dmtStatus = if(_item.isDMTIndent())
           "dmt"
         else ""
-        val active = requestType =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(requestType =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
+        val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
+        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
           _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null)
         context?.let {
-          startActivity(bidDetailsIntent(id, it, requestType, true, active))
+          startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
         }
         else{
           Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()

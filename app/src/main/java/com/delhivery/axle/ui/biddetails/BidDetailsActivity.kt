@@ -68,7 +68,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
-    viewModel.requestType = intent.getStringExtra(RequestTypeIntentKey) ?: ""
+    viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
     viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
   }
@@ -383,7 +383,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          if(viewModel.requestType == "dmt") {
+          if(viewModel.dmtStatus == "dmt") {
             uiUtils.showProgress()
             viewModel.fetchTruckType(it);
           }

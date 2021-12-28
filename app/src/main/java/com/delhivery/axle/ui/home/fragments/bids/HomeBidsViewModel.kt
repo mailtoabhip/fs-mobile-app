@@ -180,7 +180,7 @@ class HomeBidsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
-                  if(transaction.requestType == "dmt" && (transaction.bidStatus().status == "Confirmed" ||transaction.bidStatus().status == "Lost"||
+                  if(transaction.isDMTIndent() && (transaction.bidStatus().status == "Confirmed" ||transaction.bidStatus().status == "Lost"||
                             transaction.bidStatus().status =="Cancelled") && transaction.transactionBid!!.childTransactionId ==null){
                     continue
                   }
