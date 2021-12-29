@@ -220,11 +220,11 @@
                           android:layout_height="wrap_content"
                           android:hint="Enter Amt"
                           android:inputType="number"
-                          android:padding="@dimen/size_4dp"
+                          android:focusedByDefault="true"
+                          android:focusable="true"
                           android:gravity="end"
                           android:drawableLeft="@drawable/ic_rupee_indian_small"
                           android:layout_gravity="center"
-                          android:background="@drawable/bg_payment_box"
                           android:textSize="@dimen/text_14sp"/>
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -250,9 +250,9 @@
                             android:id="@+id/select_member_spinner"
                             android:layout_width="@dimen/size_180dp"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_payment_box"
                             android:spinnerMode="dropdown"
-                            android:popupBackground="@color/light_grey"
+                            android:background="@drawable/bg_underline"
+                            android:popupBackground="@color/white"
                             android:layout_gravity="center" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -297,7 +297,6 @@
                                 android:id="@+id/omc_iocl_icon"
                                 android:layout_width="@dimen/size_64dp"
                                 android:layout_height="@dimen/size_48dp"
-                                android:visibility="gone"
                                 android:button="@null"
                                 android:background="@drawable/checkbox_selection_iocl"
                                 android:layout_marginStart="@dimen/text_16sp" />

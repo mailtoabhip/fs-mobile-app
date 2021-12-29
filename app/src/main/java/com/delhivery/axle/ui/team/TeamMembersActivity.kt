@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
@@ -13,7 +14,7 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
+import java.io.Serializable
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -23,9 +24,12 @@ import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
   TeamMembersRVAdapterInterface {
 
+
   init {
     hasInlineProgress = true
   }
+
+
 
   override fun getViewModelClass() = TeamMembersViewModel::class.java
 
@@ -37,7 +41,6 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -54,6 +57,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     }
 
     val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
+
 
     if(userCreate == true){
       createTeamMember()
@@ -78,8 +82,29 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     })
 
     viewModel.createUserLiveData.observe(this, Observer {
-      refreshData()
-      uiUtils.showSnackbar(it)
+
+      if(it!=null) {
+        refreshData()
+        uiUtils.showSnackbar(it.first)
+        if (userCreate == true) {
+          val intent = Intent("custom-event-name")
+          // You can also include some extra data.
+          var num: String = it.second
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+          finish()
+        }
+      }else{
+        if (userCreate == true) {
+          // _inerface1!!.getPhone("9876545323")
+          val intent = Intent("custom-event-name")
+          // You can also include some extra data.
+          var num: String = "0"
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+          finish()
+        }
+      }
     })
 
     viewModel.updateUserLiveData.observe(this, Observer {
@@ -111,6 +136,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     viewModel.fetchTeamMembers()
     binding.executePendingBindings()
   }
+
 
   override fun handleAction(
     actionId: String,
@@ -212,5 +238,6 @@ fun teamMembersIntent(
     putExtra(USER_CREATE,createUserIntent)
 
 }
+
 
 const val USER_CREATE = "user_create"

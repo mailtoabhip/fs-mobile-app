@@ -739,7 +739,6 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
       }
       else -> {
-
         binding.filterIcon.visibility = View.GONE
         binding.llAllTripFilters.visibility = View.VISIBLE
         binding.paymentsFilterView.visibility = View.GONE

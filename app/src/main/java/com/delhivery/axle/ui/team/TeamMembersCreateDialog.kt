@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberCreateBinding
@@ -29,8 +30,6 @@ class TeamMembersCreateDialog @Inject constructor(
   private lateinit var binding: DialogTeamMemberCreateBinding
   private var name = ""
   private var number = ""
-  private var dieselPreference = "no"
-  private var dieselCompany = mutableListOf<String>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class TeamMembersCreateDialog @Inject constructor(
       binding.tilName.hint = "Name"
       binding.tilNumber.hint = "Number"
       dieselReliance.isEnabled = false
-
+      dieselIocl.isEnabled= false
     }
 
     binding.tilName.editText?.addTextChangedListener(object : TextWatcher {
@@ -115,18 +114,17 @@ class TeamMembersCreateDialog @Inject constructor(
         }
       }
     })
-
     binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
       if(isChecked){
-        dieselPreference = "yes"
-        binding.dieselReliance.isChecked = true
-        dieselCompany.clear()
-        dieselCompany.add("reliance")
+        binding.dieselReliance.isEnabled = true
+        binding.dieselIocl.isEnabled= true
       }
       else{
-        dieselPreference = "no"
+        binding.dieselReliance.isEnabled = false
+        binding.dieselIocl.isEnabled= false
         binding.dieselReliance.isChecked = false
-        dieselCompany.clear()
+        binding.dieselIocl.isChecked = false
+
       }
     })
 
@@ -145,16 +143,29 @@ class TeamMembersCreateDialog @Inject constructor(
         require(number.length == 10) {
           "Please enter valid phone number"
         }
-        dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
-        dismiss()
+         var dieselPreference = "no"
+         val dieselCompany = mutableListOf<String>()
+        dieselPreference = if(binding.creteMemberDieselReferenceSwitch.isChecked) "yes" else "no"
+        if(binding.creteMemberDieselReferenceSwitch.isChecked){
+          if(binding.dieselReliance.isChecked) dieselCompany.add("reliance")
+          if(binding.dieselIocl.isChecked) dieselCompany.add("iocl")
+        }
+        if(dieselPreference!="no" && dieselCompany.isNotEmpty() || dieselPreference == "no") {
+          dialogInterface.createMember(name, number, dieselPreference, dieselCompany)
+          dismiss()
+        }
+        else{
+          Toast.makeText(context, "Select Diesel Company", Toast.LENGTH_SHORT).show()
+        }
+
       } else {
         throw IllegalArgumentException("*Invalid text")
       }
     } catch (e: IllegalArgumentException) {
-      binding.tilName.isErrorEnabled = true
-      binding.tilName.error = e.message
+      binding.tilNumber.isErrorEnabled = true
+      binding.tilNumber.error = e.message
       val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-      binding.tilName.startAnimation(shake)
+      binding.tilNumber.startAnimation(shake)
     }
   }
 }
