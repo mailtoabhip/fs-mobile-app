@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.CompoundButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.DialogAdminMemberViewBinding
@@ -46,19 +47,24 @@ class AdminMemberDialog @Inject constructor(
 
         binding.dieselReliance.isEnabled = false
         if(dieselCompanyVal.isNotEmpty()){
-            binding.dieselReliance.isChecked =true
+            binding.dieselReliance.isEnabled = true
+            binding.dieselIocl.isEnabled= true
+            binding.dieselReliance.isChecked = dieselCompanyVal.contains("reliance")
+
+            binding.dieselIocl.isChecked = dieselCompanyVal.contains("iocl")
+
         }
         binding.adminDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
-                dieselPreference = "yes"
-                binding.dieselReliance.isChecked = true
-                dieselCompanyVal.clear()
-                dieselCompanyVal.add("reliance")
+                binding.dieselReliance.isEnabled = true
+                binding.dieselIocl.isEnabled= true
             }
             else{
-                dieselPreference = "no"
+                binding.dieselReliance.isEnabled = false
+                binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
-                dieselCompanyVal.clear()
+                binding.dieselIocl.isChecked = false
+
             }
         })
 
@@ -70,8 +76,22 @@ class AdminMemberDialog @Inject constructor(
     }
 
     private fun submit() {
-        dialogInterface.updateAdminMember(user.userId, dieselPreference , dieselCompanyVal)
-        dismiss()
+
+        var dieselPrefer = "no"
+        val dieselCompany = mutableListOf<String>()
+        dieselPrefer = if(binding.adminDieselReferenceSwitch.isChecked) "yes" else "no"
+        if(binding.adminDieselReferenceSwitch.isChecked){
+            if(binding.dieselReliance.isChecked) dieselCompany.add("reliance")
+            if(binding.dieselIocl.isChecked) dieselCompany.add("iocl")
+        }
+        if(dieselPrefer!="no" && dieselCompany.isNotEmpty() || dieselPrefer == "no") {
+            dialogInterface.updateAdminMember(user.userId, dieselPrefer , dieselCompany)
+            dismiss()
+        }
+        else{
+            Toast.makeText(context, "Select Diesel Company", Toast.LENGTH_SHORT).show()
+        }
+
     }
 }
 

@@ -29,7 +29,7 @@ class TeamMembersViewModel @Inject constructor(
 ) : BaseViewModel(), TeamMembersCreateDialogInterface ,TeamMembersEditDialogInterface, AdminViewDialogInterface {
 
   var membersLiveData = MutableLiveData<List<Pair<BaseTeamMembersRVAdapterItem<*>, DataRVAdapterOperationType>>>()
-  var createUserLiveData = MutableLiveData<String>()
+  var createUserLiveData = MutableLiveData<Pair<String,String>>()
   var updateUserLiveData = MutableLiveData<String>()
   var deleteUserLiveData = MutableLiveData<String>()
   var updateAdminUserLiveData = MutableLiveData<String>()
@@ -100,9 +100,11 @@ class TeamMembersViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            createUserLiveData.postValue(_res.message)
+            createUserLiveData.postValue(Pair(_res.message,number))
           } else {
             error.handle()
+            createUserLiveData.postValue(null)
+
           }
         }
   }

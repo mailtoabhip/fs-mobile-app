@@ -1,7 +1,8 @@
 package com.delhivery.axle.ui.dialogs
 
 import android.app.AlertDialog
-import android.content.Context
+import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,23 +11,20 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.DialogChangePaymentBinding
-import com.delhivery.axle.databinding.DialogConfirmBidBinding
-import com.delhivery.axle.ui.ledger.LedgerSpinnerAdapter
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.FuelUserSpinnerAdapter
 import com.delhivery.axle.utils.UiUtils
-import com.delhivery.axle.utils.extensions.not
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.disposables.ArrayCompositeDisposable
+import java.io.Serializable
 import javax.inject.Inject
+
 
 class ChangePaymentModeDialog @Inject constructor(
         context: Context,
@@ -45,11 +43,44 @@ class ChangePaymentModeDialog @Inject constructor(
     var userOmc = ""
     var fuelNumberIndex=0
 
+
+
+    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Get extra data included in the Intent
+            val message = intent.getStringExtra("message")
+            if(message!=null && !message.equals("0")) {
+                var n: Int = fuelUserSpinnerOptions.size
+                fuelUserSpinnerOptions.add(n - 2, FuelUserSpinnerOptions(message!!, "(Child)"))
+                for (i in fuelUserSpinnerOptions) {
+                    System.out.println(i)
+                }
+                fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
+                binding.selectMemberSpinner.apply {
+
+                    setSelection(n - 2)
+                }
+                userNumber = message
+                binding.layoutDieselCompany.visibility = View.VISIBLE
+            }else{
+                binding.selectMemberSpinner.apply {
+                    setSelection(0)
+                }
+                userNumber =""
+                binding.layoutDieselCompany.visibility= View.GONE
+                Toast.makeText(context, "Member not added, Try again", Toast.LENGTH_SHORT).show()
+            }
+                //
+            Log.i("receiver", "Got message: $message")
+        }
+    }
+    var filter = IntentFilter("custom-event-name")
     private val fuelUserSpinnerAdapter: FuelUserSpinnerAdapter by lazy { FuelUserSpinnerAdapter() }
     private  val fuelUserSpinnerOptions : MutableList<FuelUserSpinnerOptions> = mutableListOf<FuelUserSpinnerOptions>(
             FuelUserSpinnerOptions("Select Diesel Card No.")
     )
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,6 +90,9 @@ class ChangePaymentModeDialog @Inject constructor(
 
         binding = DialogChangePaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+      LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver,filter)
+
 
         fuelUserSpinnerOptions.addAll(fuelUserSpinnerOptionsList)
         if(data.driverDetails?.driverPhoneNo != null){
@@ -71,7 +105,11 @@ class ChangePaymentModeDialog @Inject constructor(
             dialogTextVehicleNo.text = data.vehicleDetails.vehicleNo
             dialogTextDriverNo.text = data.formattedDriverDetails()
             amtAdvancePending.text = String.format(context.getString(R.string.label_with_sign_value),data.payment!!.paymentAmount!!.toInt())
-
+            binding.dieselPayoutIdentifier.visibility = View.GONE
+            binding.layoutDieselAddAmt.visibility = View.VISIBLE
+            binding.advancePendingDieselAmt.setFocusableInTouchMode(true);
+            binding.advancePendingDieselAmt.requestFocus()
+            binding.advancePendingDieselAmt.showSoftInputOnFocus
             advanceAmt = (data.payment?.paymentAmount ?: 0.0).toInt()
             bankAcNumberText.text = "Bank A/c: " +userPrefs.accNumber
             advancePendingBankAmt.text = data.tripPayment()
@@ -99,16 +137,18 @@ class ChangePaymentModeDialog @Inject constructor(
             }
         }
 
+
         binding.dieselPayoutIdentifier.setOnClickListener{
-            binding.dieselPayoutIdentifier.visibility = View.GONE
-            binding.layoutDieselAddAmt.visibility = View.VISIBLE
+//            binding.dieselPayoutIdentifier.visibility = View.GONE
+//            binding.layoutDieselAddAmt.visibility = View.VISIBLE
 
         }
 
         binding.selectMemberSpinner.apply {
             adapter = fuelUserSpinnerAdapter
             fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
-            setSelection(fuelNumberIndex)
+
+               setSelection(fuelNumberIndex)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                 override fun onNothingSelected(parent: AdapterView<*>) = Unit
@@ -122,11 +162,16 @@ class ChangePaymentModeDialog @Inject constructor(
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
                             context.startActivity(teamMembersIntent(context, true))
+                           // dismiss()
+
                         }
                         else{
                             Toast.makeText(context, R.string.msg_ask_admin , Toast.LENGTH_SHORT).show()
+                            setSelection(0)
+                            userNumber =""
+                            binding.layoutDieselCompany.visibility= View.GONE
                         }
-                        dismiss()
+
 
                     }
                     else if (item.userName == "Select Diesel Card No."){
@@ -203,6 +248,10 @@ class ChangePaymentModeDialog @Inject constructor(
 
     }
 
+    override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
+        super.setOnCancelListener(listener)
+    }
     private fun submit() {
         fuelAmt = if(binding.advancePendingDieselAmt.text.toString() != "") {
             binding.advancePendingDieselAmt.text.toString().toInt()
@@ -215,18 +264,22 @@ class ChangePaymentModeDialog @Inject constructor(
             userOmc = "reliance"
         }
 
-        if((fuelAmt > 0 && userNumber != "" && userOmc!= "") || fuelAmt ==0 ){
+        if((fuelAmt > 0 && userNumber != "" && userOmc!= "") ){
             val omcRequest= OMCRequest(userNumber, userOmc, data.transactionId)
             fuelNumberIndex=0
             dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
             uiUtils.showProgress()
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
             dismiss()
+
         }
         else{
-            Toast.makeText(context," Select Diesel Card Number and Omc Value",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Fuel Amount is Zero or Diesel Card Number and Omc Value is not selected",Toast.LENGTH_SHORT).show()
         }
 
     }
+
+
 }
 interface ChangePaymentModeInterface{
     fun done(
@@ -237,4 +290,6 @@ interface ChangePaymentModeInterface{
         fuelAmt: String,
         position: Int
     )
+
 }
+
