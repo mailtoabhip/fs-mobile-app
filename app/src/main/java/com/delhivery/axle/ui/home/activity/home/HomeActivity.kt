@@ -81,7 +81,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Load Requests"
+    title = "Home"
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -149,14 +149,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           if (dplink_tid != "") {
             startActivity(tripDetailsIntent(dplink_tid, this))
           } else {
-            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
             startActivity(bidDetailsIntent(dplink_tid, this))
           } else {
-            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
 
@@ -165,7 +165,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
         else -> {
-          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
       }
     }
@@ -193,7 +193,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         else
         {
-          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
       }
       LANE_PREFERENCE_UPDATE_NOTIFICATION -> {
@@ -203,7 +203,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       else -> {
-        fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
     }
   }

@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
-      android:id="@+id/nav_loads"
+      android:id="@+id/nav_loads_trucks"
       android:icon="@drawable/ic_nav_loads"
-      android:title="@string/label_nav_load"/>
+      android:title="@string/label_home"/>
 
   <item
       android:id="@+id/nav_bids"

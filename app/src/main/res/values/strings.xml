@@ -266,6 +266,8 @@
   <string name="label_bank_transfer">Bank Transfer</string>
   <string name="label_change_payment_mode">Change Payment Mode</string>
   <string name="label_with_sign_value">₹ %1$d</string>
+  <string name="label_home">Home</string>
+  <string name="nav_label_trucks">My Trucks</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

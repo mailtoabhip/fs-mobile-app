@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailAc
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeTruckLoadsFragmentBindingModule
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -75,7 +76,7 @@ abstract class ActivityBindingModule {
   /* Home activity */
   @ActivityScope
   @ContributesAndroidInjector(
-      modules = [AbsHomeActivityModule::class, HomeFragmentsBindingModule::class]
+      modules = [AbsHomeActivityModule::class, HomeFragmentsBindingModule::class, HomeTruckLoadsFragmentBindingModule::class]
   )
   internal abstract fun bindHomeActivity(): HomeActivity
 
