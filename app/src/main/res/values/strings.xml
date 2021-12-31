@@ -73,6 +73,7 @@
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
   <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
   <string name="hint_amount">23900</string>
+  <string name="hint_search_trucks">Search truck by number</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -104,7 +105,8 @@
   <string name="action_call_driver">Call Driver</string>
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
   <string name="action_done">Done !</string>
-
+  <string name="action_activate_truck">Activate Truck</string>
+  <string name="action_deactivate_truck">Deactivate Truck</string>
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
@@ -268,6 +270,8 @@
   <string name="label_with_sign_value">₹ %1$d</string>
   <string name="label_home">Home</string>
   <string name="nav_label_trucks">My Trucks</string>
+  <string name="label_unloading_locations">Unloading destinations</string>
+  <string name="label_current_locations">Current location</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
