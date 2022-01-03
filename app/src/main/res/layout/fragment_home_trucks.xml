@@ -65,7 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom||end"
             android:layout_marginBottom="@dimen/size_18dp"
-            app:srcCompat="u"
+            bind:srcCompat="@drawable/ic_add_white"
+            android:contentDescription="@string/action_add_truck"
             android:layout_marginEnd="@dimen/size_16dp"/>
 
 
