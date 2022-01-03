@@ -60,10 +60,6 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsSelectRouteWelcomeActivityModule::class])
   internal abstract fun bindSelectRouteWelcomeActivity(): SelectRouteWelcomeActivity
 
-//  @ActivityScope
-//  @ContributesAndroidInjector(modules = [AbsDmtBidsActivityModule::class])
-//  internal abstract fun bindDmtBidsActivity(): DmtBidsActivity
-
   /* Route selection fragments activity */
   @ActivityScope
   @ContributesAndroidInjector(
@@ -191,9 +187,6 @@ internal abstract class AbsAuthenticationActivityModule : ActivityModule<Authent
 
 @Module
 internal abstract class AbsSelectRouteWelcomeActivityModule : ActivityModule<SelectRouteWelcomeActivity>()
-//@Module
-//internal abstract class AbsDmtBidsActivityModule : ActivityModule<DmtBidsActivity>()
-
 
 @Module
 internal abstract class AbsSelectRouteActivityModule : ActivityModule<SelectRouteActivity>()
