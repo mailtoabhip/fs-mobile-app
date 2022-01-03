@@ -4,12 +4,13 @@ import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.api.service.BidService
-import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.annotations.Since
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,6 +32,22 @@ class BidsRepository @Inject constructor(
         val userId = userRepository.userId()
         var hasPMT = false
         var hasFTL = false
+
+      val userBids = mutableListOf<TransactionBid>()
+      if (userPrefs.isParent) {
+          for( i in it.bids){
+              if( i.supplierId == userId){
+                  userBids.add(i)
+              }
+          }
+      } else {
+          for( i in it.bids){
+              if( i.secondaryVendorId == userId){
+                  userBids.add(i)
+              }
+          }
+      }
+
         val userBid :TransactionBid?
         it.bids.forEach { it1 ->
           when (it1.biddingType.toLowerCase()) {
@@ -48,7 +65,7 @@ class BidsRepository @Inject constructor(
           it.bids.firstOrNull { _b -> _b.secondaryVendorId.safeEquals(userId) }
         }
         Triple(
-            Pair(userBid, lowestBid), it.bids, it.totalBids
+            Pair(userBid, lowestBid), userBids , it.totalBids
         )
       }!!
 
@@ -69,6 +86,30 @@ class BidsRepository @Inject constructor(
       }!!
 
   /**
+  * Add/Update bid for bulkloads
+  */
+  fun transactionBidForBulk(transactionId: String) = bidService.transactionBids(transactionId)
+    .convertResponse()
+    .map {
+        val userId = userRepository.userId()
+        val userBids = mutableListOf<TransactionBid>()
+        if (userPrefs.isParent) {
+            for( i in it.bids){
+                if( i.supplierId == userId){
+                    userBids.add(i)
+                }
+            }
+        } else {
+            for( i in it.bids){
+                if( i.secondaryVendorId == userId){
+                    userBids.add(i)
+                }
+            }
+        }
+        userBids
+    }!!
+
+  /**
    * Bulk call to fetch bids
    */
   fun bidsForLoads(
@@ -82,7 +123,21 @@ class BidsRepository @Inject constructor(
         Pair(transactions, it.bids)
       }!!
 
-  /**
+    /**
+     * Bulk call to fetch bids
+     */
+    fun bidsForBulkLoads(
+        bids: List<TransactionBid>
+    ) = bidService.bidsForLoads(
+        userRepository.userId(),
+        bids.map { it.transactionId }.joinToString(",") { it.toString() }
+    )
+        .convertResponse()
+        .map {
+            Pair(bids, it.bids)
+        }!!
+
+    /**
    * Create Bid
    */
   fun createBid(
@@ -111,6 +166,26 @@ class BidsRepository @Inject constructor(
       isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType
   )
       .let { bidService.updateTransactionBid(it) }
+
+
+
+    /**
+     * Edit bulk bid
+     */
+  fun editBulkBid(
+    bulkBidModifyRequest: BulkBidUpdateRequest
+  ) = bidService.updateBulkTransactionBids(bulkBidModifyRequest).convertResponse()
+
+    fun removeBulkBids(
+            bulkBidRemoveRequest: BulkBidRemoveRequest
+    )= bidService.removeBulkTransactionBids(bulkBidRemoveRequest).convertResponse()
+
+    /**
+     * Create Bulk Bids
+     */
+  fun createBulkBids(
+      bulkBidCreateRequest: BulkBidCreateRequest
+  ) = bidService.createBulkTransactionBids(bulkBidCreateRequest).convertResponse()
 
   /**
    * User/supplier bids by status as [Pair] of Total bids count and List of [TransactionBid]

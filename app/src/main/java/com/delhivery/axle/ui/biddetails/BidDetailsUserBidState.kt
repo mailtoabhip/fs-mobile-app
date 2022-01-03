@@ -69,3 +69,13 @@ data class BidDetailsUserBidState_CancelledBid(
   val userBid: TransactionBid,
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_cancelled_bid)
+
+/**
+ * Edit Bid State for bulk Loads
+ * */
+data class BidDetailsUserBidState_BulkLoad_Edit(
+    val bidsCount: Int,
+    val bids: List<TransactionBid>,
+    val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+    val isPMTIndent: Boolean
+): BidDetailsUserBidState(R.layout.view_bid_details_bulk_load_edit)

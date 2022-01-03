@@ -70,6 +70,7 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(OnboardingViewModel::class)
   abstract fun bindOnboardingViewMdel(onboardingViewModel: OnboardingViewModel): ViewModel
 
+
   @Binds
   @IntoMap
   @ViewModelScope(SelectRouteWelcomeViewModel::class)

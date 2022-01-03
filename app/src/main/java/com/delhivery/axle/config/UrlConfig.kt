@@ -15,6 +15,11 @@ enum class UrlConfig(
       "https://api-stage-ums.delhivery.com",
       "https://api-stage-ums.delhivery.com"
   ),
+   TruckService(
+     "https://orion-contract-api.delhivery.com/v2/",
+     "https://orion-contract-api-dev.delhivery.com/v2/",
+     "https://orion-contract-api-uat.delhivery.com/v2/"
+   ),
   BidService(
       "https://orion-bid-api.delhivery.com",
       "https://orion-bid-api-dev.delhivery.com",

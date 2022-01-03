@@ -3,30 +3,27 @@ package com.delhivery.axle.ui.bids
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
-import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.bids.HomeBidsTimeOutAction
-import com.delhivery.axle.data.home.bids.HomeBidsWarningAction_NoBids
-import com.delhivery.axle.databinding.ActivityBidsBinding
+import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
+import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_SEARCH_LOCAL
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.VALUE_BID
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Bid listing screen basis [BidType]
@@ -37,6 +34,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   init {
     hasInlineProgress = true
   }
+  @Inject
+  lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BidsViewModel::class.java
 
@@ -111,6 +110,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     })
 
     viewModel.fetchBids(false)
+
+   /* viewModel.transactionBidLiveData.observe(this, Observer {
+      when (it) {
+        is BidDetailsUserBidState_BulkLoad_Edit -> {
+
+        }
+        else -> null
+      }
+    })*/
   }
 
   private fun refreshData() {
@@ -126,6 +134,9 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   ) {
     // handle actions here
     when (actionId) {
+      OPEN_CONFIRMED_BID -> {
+
+      }
       HomeBidsWarningAction_NoBids -> {
         setResult(RESULT_OK)
         finish()
@@ -139,13 +150,47 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
+        val dmtStatus = if(_item.isDMTIndent())
+          "dmt"
+        else ""
 
-        startActivity(bidDetailsIntent(_item.key(), this))
+        val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
+        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
+          _item.transactionBid!!.childTransactionId else _item.key()
+        if(id!=null) {
+          startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
+        }
+        else{
+          Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
+        }
+      }
+      HomeBidsRequestAction_ViewOtherDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.trackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
       }
 
       HomeBidsTimeOutAction ->
         refreshData()
     }
+  }
+
+  private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
+    //  binding.transaction?.let {
+    /* set transaction id */
+    viewModel.transactionId = transaction?.transactionId ?: ""
+    viewModel.transaction = transaction!!
+     // viewModel.fetchTransactionBids()
+    BulkBidDetailsDialog(
+      this@BidsActivity,  viewModel.transaction, transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+    ).show()
+
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
