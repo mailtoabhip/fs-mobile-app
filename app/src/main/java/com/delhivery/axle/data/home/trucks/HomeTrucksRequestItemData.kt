@@ -11,3 +11,7 @@ data class HomeTrucksRequestItemData(
 
 }
 const val HomeTrucksRequestAction_ViewDetails = "truck_details"
+
+const val HomeTrucksRequestAction_EditTruck = "edit_truck"
+
+const val HomeTrucksRequestAction_ActivateTruck = "activate_truck"

@@ -13,3 +13,10 @@ const val HomeTrucksFilterItemDataKeyPrefix = "filter_"
 
 /* actions */
 const val HomeTrucksFilterAction = "filter"
+
+const val HomeTrucksVehicleFilterAction = "filter_vehicle"
+
+const val HomeTrucksAvailabilityFilterAction = "filter_availability"
+
+const val HomeTrucksSizeFilterAction = "filter_size"
+

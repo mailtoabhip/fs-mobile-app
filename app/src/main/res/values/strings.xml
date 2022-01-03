@@ -59,6 +59,10 @@
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
   <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
+  <string name="msg_deactivate">Are you sure you want to deactivate this truck?</string>
+  <string name="msg_reason_deactivate">Select your reason for deactivating the truck</string>
+  <string name="msg_other_source_reason">Load received from different source</string>
+  <string name="msg_others">Other</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -107,6 +111,9 @@
   <string name="action_done">Done !</string>
   <string name="action_activate_truck">Activate Truck</string>
   <string name="action_deactivate_truck">Deactivate Truck</string>
+  <string name="action_edit_truck">Edit Truck</string>
+  <string name="action_add_truck">+ Add Truck</string>
+
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
@@ -272,6 +279,7 @@
   <string name="nav_label_trucks">My Trucks</string>
   <string name="label_unloading_locations">Unloading destinations</string>
   <string name="label_current_locations">Current location</string>
+  <string name="label_more_options">More Options</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

@@ -79,6 +79,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_options"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_drag"
@@ -149,6 +150,7 @@
             android:src="@drawable/seperator_line" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_activate_truck"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_36dp"
             android:layout_margin="@dimen/size_11dp"

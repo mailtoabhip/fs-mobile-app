@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
+import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 
@@ -71,6 +72,8 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         item: HomeTrucksRequestItem,
         _interface: HomeTrucksRVAdapterInterface
     ) {
+        binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
+        binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
 
     }
 }
@@ -130,6 +133,9 @@ internal class HomeTrucksFilterItemVH(binding: ViewHomeTrucksFilterItemBinding) 
         item: HomeTrucksFilterItem,
         _interface: HomeTrucksRVAdapterInterface
     ) {
+        binding.llVehicleFilter.clickToAction(HomeTrucksVehicleFilterAction, item , _interface)
+        binding.llAvailabilityFilter.clickToAction(HomeTrucksAvailabilityFilterAction, item, _interface)
+        binding.llTruckSizeFilter.clickToAction(HomeTrucksSizeFilterAction, item , _interface)
     }
 }
 
