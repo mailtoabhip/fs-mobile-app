@@ -1068,7 +1068,7 @@ data class InvoiceDetails(
   @SerializedName("invoice_amount") var invoiceAmount: Double? = null,
   @SerializedName("weight_in_mt") var actualLoad: Double? = null,
   @SerializedName("volumetric_weight") var volumetricWeight: Double? = null
-)
+) : Serializable
 
 /**
  * Trip status enum
