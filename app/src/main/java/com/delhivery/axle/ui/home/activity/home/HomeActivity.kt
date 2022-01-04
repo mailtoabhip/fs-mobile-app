@@ -162,6 +162,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
+          analyticsUtil.trackEvent(
+            EVENT_VIEW_ADVANCE_PAYMENT_PAGE,
+            mutableListOf(PROPERTY_USER_ID),
+            mutableListOf(userPrefs.userId())
+          )
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
         else -> {
@@ -312,6 +317,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     val metadata: CampaignMetadata? = p0.campaignMetadata
     Log.d("parameters",url+metadata.toString())
     userPrefs.startTime = Date().time
+    analyticsUtil.trackEvent(
+      EVENT_VIEW_ADVANCE_PAYMENT_PAGE,
+      mutableListOf(PROPERTY_USER_ID),
+      mutableListOf(userPrefs.userId())
+    )
     startActivity(userTripsIntent(this, "payment_view", 0))
 
   }

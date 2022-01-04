@@ -118,6 +118,13 @@ const val EVENT_NOTIFICATION_DISMISS = "notification_dismiss"
 const val EVENT_APP_OPEN = "app_open"
 const val EVENT_VIEW_TRIP_RECOVERY_ADJUSTMENT = "view_trip_recovery_adjustment"
 const val EVENT_VIEW_TRIP_FUTURE_ADJUSTMENT = "view_trip_future_adjustment"
+const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIPS = "view_change_payment_mode_trips"
+const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS = "view_change_payment_mode_trip_details"
+const val EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE = "view_change_payment_mode_done"
+const val EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL = "view_change_payment_mode_trip_cancel"
+const val EVENT_VIEW_ADVANCE_PAYMENT_PAGE = "view_advance payment_page"
+
+
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
@@ -177,6 +184,8 @@ const val PROPERTY_AMOUNT_OF_RECOVERY_ADJUSTED = "amt_of_recovery_adjusted"
 const val PROPERTY_TRIP_AGAINST_RECOVERY_ADJUSTED = "trip_against_recovery_adjusted"
 const val PROPERTY_RECD_TRIP_IDS = "recd_trip_ids"
 const val PROPERTY_TIME_SINCE_LAST_LOGIN = "time_since_last_login"
+const val PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT = "change_payment_diesel_payout"
+const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_card_number"
 
 
 
