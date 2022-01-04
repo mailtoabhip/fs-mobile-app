@@ -146,7 +146,12 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     viewModel.teamMembersLiveData.observe(this , Observer {
       uiUtils.hideProgress()
       if(it!= null){
-        ChangePaymentModeDialog(this,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils ).show()
+        ChangePaymentModeDialog(this,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils, analyticsUtil = analyticsUtil).show()
+        analyticsUtil.trackEvent(
+          EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
       }
     })
 
