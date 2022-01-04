@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -16,6 +18,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
+import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -40,8 +43,9 @@ class HomeLoadsViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
   private val bidsRepository: BidsRepository,
+  private val truckRepository: TruckRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface {
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface, BulkBidsCreateEditInterface {
 
   /* user bids live data */
   var userLoadsData =
@@ -53,6 +57,8 @@ class HomeLoadsViewModel @Inject constructor(
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
+  var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
+
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
 
   /* revise bid live data */
@@ -63,6 +69,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
   var loadPricePercent = 0
 
@@ -81,6 +89,11 @@ class HomeLoadsViewModel @Inject constructor(
   var type = userPrefs.demandType
 
   var paginateCount =0
+
+
+  var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
+  var editFlg= mutableListOf<Boolean>(false,false,false)
+
 
   /**
    * Getter/Setter for route update flag to preferences
@@ -153,6 +166,7 @@ class HomeLoadsViewModel @Inject constructor(
 
               val loads = _tRes.first
               val bids = _tRes.second
+              val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
 
               if (total == 0 && !infoSearch) {
                 add(Pair(HomeLoadsWarningItem_NoLoads, Add))
@@ -171,6 +185,12 @@ class HomeLoadsViewModel @Inject constructor(
                       bids.filter { b ->
                         b.transactionId.safeEquals(load.transactionId)
                       }[0]
+                    if(load.isDMTIndent()){
+                        load.bulkTransactionBids =
+                            bids.filter { b ->
+                                b.transactionId.safeEquals(load.transactionId)
+                            }
+                    }
                   } catch (e: Exception) {
                     Log.d("No Bid found for: ", load.transactionId ?: "")
                   }
@@ -211,6 +231,19 @@ class HomeLoadsViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+  fun fetchTruckType(data :HomeBidsRequestItemData) {
+    compositeDisposable += truckRepository.getTruckType()
+      .onBackground()
+      .subscribe { _tRes, error ->
+         if(!error && _tRes != null){
+           truckGetLiveData.postValue(Pair(_tRes,data))
+         }
+        else{
+          error.handle()
+          truckGetLiveData.postValue(null)
+         }
+      }
   }
 
   override fun createBid(
@@ -308,6 +341,143 @@ class HomeLoadsViewModel @Inject constructor(
           }
         }
   }
+
+  override fun createBids(
+      transactionId: String,
+      position: Int,
+      createPayload: List<VehicleBidData>,
+      unAllocatedLoad: Double
+  ) {
+    val bulkBidRequest= BulkBidCreateRequest("PMT","axle-app", userPrefs.userId(),unAllocatedLoad, userPrefs.userName,
+            transactionId, createPayload)
+    compositeDisposable += bidsRepository.createBulkBids(bulkBidRequest)
+        .delay(BidsUpdateDelay, SECONDS)
+        .flatMap {
+            bidsRepository.transactionBidForBulk(transactionId)
+        }
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+        if (!error && _res!=null) {
+          bulkBidActionLiveData.postValue(Pair(position, _res))
+
+        } else {
+          error.handle()
+          bulkBidActionLiveData.postValue(null)
+        }
+      }
+  }
+
+  override fun editBids(
+    transactionId: String,
+    position: Int,
+    createPayload: List<VehicleBidData>,
+    modifyPayload: List<ModifyVehicleData>,
+    removedBids: List<String>,
+    unAllocatedLoad: Double
+  ) {
+    var bulkBidCreateRequest : BulkBidCreateRequest? = null
+    var bulkBidUpdateRequest: BulkBidUpdateRequest? = null
+    var bulkBidRemoveRequest : BulkBidRemoveRequest? = null
+
+    if(createPayload.isNotEmpty()) {
+      bulkBidCreateRequest = BulkBidCreateRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, userPrefs.userName,
+              transactionId, createPayload)
+    }
+    if(modifyPayload.isNotEmpty()){
+      bulkBidUpdateRequest = BulkBidUpdateRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, "bid_update",
+              transactionId, modifyPayload)
+    }
+    if(removedBids.isNotEmpty()){
+      bulkBidRemoveRequest = BulkBidRemoveRequest("PMT", "axle-app", userPrefs.userId(), unAllocatedLoad, "bid_delete",
+              "remove", transactionId, removedBids)
+    }
+
+
+
+
+    if ( bulkBidCreateRequest != null){
+      compositeDisposable += bidsRepository.createBulkBids(bulkBidCreateRequest)
+              .onBackground()
+              .progress()
+              .subscribe { _res, error ->
+                if (!error && _res!=null) {
+                  editFlg[0] = true
+                  editBulkLiveData.postValue(Pair(10, transactionId))
+                } else {
+                  error.handle()
+                  editFlg[0] = true
+                  editBulkLiveData.postValue(Pair(11,transactionId))
+                }
+              }
+
+    }
+    else{
+      editFlg[0] = true
+    }
+    if(bulkBidUpdateRequest != null) {
+      compositeDisposable += bidsRepository.editBulkBid(bulkBidUpdateRequest)
+              .onBackground()
+              .progress()
+              .subscribe { _res, error ->
+                if (!error && _res != null) {
+                  editFlg[1]= true
+                  editBulkLiveData.postValue(Pair(20, transactionId))
+                }
+                else
+                {
+                  error.handle()
+                  editFlg[1]= true
+                  editBulkLiveData.postValue(Pair(21,transactionId))
+
+                }
+              }
+
+    }
+    else{
+      editFlg[1]= true
+    }
+
+    if(bulkBidRemoveRequest != null){
+      compositeDisposable+= bidsRepository.removeBulkBids(bulkBidRemoveRequest)
+              .onBackground()
+              .progress()
+              .subscribe{_res, error ->
+                if (!error && _res != null) {
+                  editFlg[2]= true
+                  editBulkLiveData.postValue(Pair(30, transactionId))
+                }
+                else{
+                  error.handle()
+                  editFlg[2]= true
+                  editBulkLiveData.postValue(Pair(31,transactionId))
+
+                }
+              }
+
+    }
+    else
+    {
+      editFlg[2]= true
+    }
+
+  }
+
+    fun transactionBidForBulk(transactionId: String,position: Int) {
+        compositeDisposable += bidsRepository.transactionBidForBulk(transactionId)
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error && _res != null) {
+                        bulkBidActionLiveData.postValue(Pair(position, _res))
+                    } else {
+                        error.handle()
+                        bulkBidActionLiveData.postValue(null)
+                    }
+                }
+    }
 }
+
+
 
 private const val BidsUpdateDelay = 1L

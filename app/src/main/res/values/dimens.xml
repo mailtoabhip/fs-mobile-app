@@ -39,6 +39,8 @@
   <dimen name="size_11dp">11dp</dimen>
   <dimen name="size_3dp">3dp</dimen>
   <dimen name="size_84dp">84dp</dimen>
+  <dimen name="size_130dp">130dp</dimen>
+  <dimen name="size_210dp">210dp</dimen>
 
   <!-- Text sizes -->
   <dimen name="text_2sp">2sp</dimen>
@@ -69,6 +71,7 @@
   <!-- delhivery view pager indicator -->
   <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
   <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
+
 
 
 </resources>

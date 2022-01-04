@@ -3,183 +3,163 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.delhivery.axle">
 
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
-  <application
-      android:name="com.delhivery.axle.KotlinApp"
-      android:allowBackup="true"
-      android:hardwareAccelerated="true"
-      android:icon="@mipmap/ic_launcher"
-      android:label="@string/app_name"
-      android:roundIcon="@mipmap/ic_launcher_round"
-      android:screenOrientation="portrait"
-      android:supportsRtl="true"
-      android:theme="@style/AppTheme"
-      android:usesCleartextTraffic="true"
-      tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-
-    <service
-        android:name=".fcm.DelhiveryFCMService"
-        android:exported="false"
-        android:stopWithTask="false">
-      <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT" />
-      </intent-filter>
-    </service>
-
-    <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="${applicationId}.provider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/file_paths" />
-    </provider>
-
-    <service
-        android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
-        android:enabled="true" />
-
-    <meta-data
-        android:name="com.google.firebase.messaging.default_notification_color"
-        android:resource="@color/colorAccent" />
-
-    <meta-data
-        android:name="com.google.firebase.messaging.default_notification_icon"
-        android:resource="@drawable/ic_notification" />
-
-    <meta-data
-        android:name="firebase_crashlytics_collection_enabled"
-        android:value="@bool/FIREBASE_ACTIVATED" />
-
-    <meta-data
-        android:name="firebase_analytics_collection_enabled"
-        android:value="@bool/FIREBASE_ACTIVATED" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.home.activity.home.HomeActivity"
-        android:launchMode="singleTask"
+    <application
+        android:name=".KotlinApp"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
-        android:windowSoftInputMode="stateAlwaysHidden" >
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
-    </activity>
+        <service
+            android:name=".fcm.DelhiveryFCMService"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
-    <activity
-        android:name="com.delhivery.axle.ui.splash.SplashActivity"
-        android:screenOrientation="portrait">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:host="axledelhivery.page.link" android:scheme="http"/>
-        <data android:host="axledelhivery.page.link" android:scheme="https"/>
-        <data android:host="dlvry.page.link" android:scheme="https"/>
-        <data android:host="dlvry.page.link" android:scheme="http"/>
-      </intent-filter>
-    </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
-    <activity
-        android:name="com.delhivery.axle.ui.auth.AuthenticationActivity"
-        android:screenOrientation="portrait" />
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
 
-    <activity
-        android:name="com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity"
-        android:screenOrientation="portrait" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="@bool/FIREBASE_ACTIVATED" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="@bool/FIREBASE_ACTIVATED" />
 
-    <activity
-        android:name="com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity"
-        android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.home.HomeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-    <activity
-        android:name="com.delhivery.axle.ui.onboarding.OnboardingActivity"
-        android:screenOrientation="portrait" />
+                <data
+                    android:host="axledelhivery.page.link"
+                    android:scheme="http" />
+                <data
+                    android:host="axledelhivery.page.link"
+                    android:scheme="https" />
+                <data
+                    android:host="dlvry.page.link"
+                    android:scheme="https" />
+                <data
+                    android:host="dlvry.page.link"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
 
-    <activity
-        android:name="com.delhivery.axle.ui.bids.BidsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.biddetails.BidDetailsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.searchload.SearchLoadActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.bids.TripsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.tripdetails.TripDetailsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name="com.delhivery.axle.ui.tripdetails.ImageViewActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.transactionlist.TransactionsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.transactiondetail.TransactionDetailActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.fuel.ActiveTripsActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.bank.BankTransferActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.fuelcard.CreateFuelCardActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.wallet.WalletOnboardingActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.tripdetails.UploadImageActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.home.activity.docket.DocketUpdateActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.searchtrip.SearchActivity"
-        android:screenOrientation="portrait"/>
-
-    <activity
-        android:name=".ui.ledger.ConsolidatedPageActivity"
-        android:screenOrientation="portrait" />
-
-    <activity
-        android:name=".ui.team.TeamMembersActivity"
-        android:screenOrientation="portrait"/>
-
-    <activity
-        android:name=".ui.userroutes.UserRoutesActivity"
-        android:screenOrientation="portrait"/>
-
-    <activity
-        android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
-        android:screenOrientation="portrait"/>
-
-  </application>
+        <activity
+            android:name=".ui.auth.AuthenticationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.selectroute.activity.SelectRouteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.onboarding.OnboardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bids.BidsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.biddetails.BidDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchload.SearchLoadActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bids.TripsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tripdetails.TripDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tripdetails.ImageViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.transactionlist.TransactionsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.transactiondetail.TransactionDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.fuel.ActiveTripsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.bank.BankTransferActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.fuelcard.CreateFuelCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.wallet.WalletOnboardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tripdetails.UploadImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.activity.docket.DocketUpdateActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchtrip.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ledger.ConsolidatedPageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.team.TeamMembersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.userroutes.UserRoutesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
+            android:screenOrientation="portrait" />
+    </application>
 
 </manifest>

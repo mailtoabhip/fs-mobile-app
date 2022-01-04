@@ -31,6 +31,7 @@
   <string name="msg_be_first_to_bid">Be the first to Bid</string>
   <string name="msg_no_bids_received">No bids received yet.</string>
   <string name="msg_bids_received_till_now">%1$d bids received till now</string>
+  <string name="unallocated_bulk_order">Bulk Load:</string>
   <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
   <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
   <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
@@ -58,11 +59,13 @@
   <string name="msg_call_permission">Please provide permission to call</string>
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
+  <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
   <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
   <string name="msg_deactivate">Are you sure you want to deactivate this truck?</string>
   <string name="msg_reason_deactivate">Select your reason for deactivating the truck</string>
   <string name="msg_other_source_reason">Load received from different source</string>
   <string name="msg_others">Other</string>
+  <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -113,6 +116,7 @@
   <string name="action_deactivate_truck">Deactivate Truck</string>
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
+  <string name="action_add_vehicle_type">+ Vehicle Type</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -269,6 +273,12 @@
   <string name="label_yes">Yes</string>
   <string name="label_no">No</string>
   <string name="label_diesel_company">Diesel Company</string>
+  <string name="label_lowest_bid">lowest bid</string>
+  <string name="label_pmt_rate">PMT Rate</string>
+  <string name="label_no_of_trucks">No. of Trucks</string>
+  <string name="label_truck_count">Truck Count</string>
+  <string name="label_status">Status</string>
+  <string name="status_of_other_bid">All bid details</string>
   <string name="label_add_diesel_payout">Add Diesel Payout</string>
   <string name="label_diesel_payment">Diesel Payment</string>
   <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
@@ -280,6 +290,7 @@
   <string name="label_unloading_locations">Unloading destinations</string>
   <string name="label_current_locations">Current location</string>
   <string name="label_more_options">More Options</string>
+
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

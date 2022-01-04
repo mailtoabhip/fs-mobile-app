@@ -6,31 +6,39 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.transition.Fade
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
+import com.delhivery.axle.data.biddetail.EXPAND_CARD
+import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
  * Bid detail screen
  */
-class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>() {
+class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -43,6 +51,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   override fun layoutId() = R.layout.activity_bid_details
 
   override fun requireConnection() = true
+
+  private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -58,6 +68,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
+    viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
+    viewModel.active = intent.getBooleanExtra(ActiveBid, false)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -85,6 +98,43 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     })
 
+    viewModel.userBidsData.observe(this, Observer {
+      if (it != null) {
+       adapter.operation(it)
+      }
+    })
+
+    viewModel.truckGetLiveData.observe(this, Observer{
+      uiUtils.hideProgress()
+      if(it!= null){
+        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if(it.second.truckUUID != null) {
+          BulkBidDetailsCreateEditDialog(this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
+            viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
+          ).show()
+        }
+        else{
+          Toast.makeText(this, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+
+        }
+      }
+    })
+
+    viewModel.editBulkLiveData.observe(this, Observer {
+      if(it.first == 10){
+        Toast.makeText(this,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 20){
+        Toast.makeText(this,"Bids Updated Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 30){
+        Toast.makeText(this,"Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
+        viewModel.fetchTransactionBids()
+        viewModel.editFlg = mutableListOf(false, false, false)
+      }
+    })
 
     binding.containerError.btnAction.setOnClickListener {
       refreshData()
@@ -133,6 +183,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         t.let { _transaction ->
           binding.error = false
           binding.transaction = _transaction
+          if(_transaction.isDMTIndent()){
+              binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
+           }
+
           title = _transaction.tripDisplayName()
         }
       } else {
@@ -282,12 +336,31 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             )
               .apply {
                 val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                  StringUtils.formatAmount(state.userBid.bidAmount ?: 0.0) + "/MT"
                 } else {
                   StringUtils.formatAmount(state.userBid.bidAmount)
                 }
                 textUserHighestBid.text = bidText
               }
+          }
+
+          is BidDetailsUserBidState_BulkLoad_Edit -> {
+            ViewBidDetailsBulkLoadEditBinding.inflate(
+                    layoutInflater, binding.containerActions, false
+            ).apply {
+              val data = viewModel.transaction as HomeBidsRequestItemData
+              data.bulkTransactionBids = state.bids
+              bidsRecieved = state.bidsCount
+              rvBidSummary.apply {
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                adapter = this@BidDetailsActivity.adapter
+                (adapter as BulkBidsRVAdapter).clearItems()
+                viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
+
+              }
+
+              btnReviseBidInsider.setOnClickListener{ bidDialog()}
+            }
           }
           else -> null
         }?.let { _binding ->
@@ -310,9 +383,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          BidDetailsCreateEditDialog(
-              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
-          ).show()
+          if(viewModel.dmtStatus == "dmt") {
+            uiUtils.showProgress()
+            viewModel.fetchTruckType(it);
+          }
+          else{
+            BidDetailsCreateEditDialog(
+                    this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+            ).show()
+          }
         }
       }
       UNAPPROVED -> {
@@ -333,17 +412,43 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     }
   }
+
+  override fun handleAction(actionId: String, position: Int, item: BaseBulkBidSummaryRVAdapterItem<*>) {
+    when(actionId){
+      EXPAND_CARD -> {
+        val bidData = item.data as BulkBidSummaryItemData
+        bidData.expanded = !bidData.expanded
+        BidDetailsViewModel.truckNumTextViewAdded =!BidDetailsViewModel.truckNumTextViewAdded
+        adapter.notifyItemChanged(position)
+      }
+      OPEN_CONFIRMED_BID -> {
+
+      }
+    }
+  }
+
 }
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
 
+/* intent keys */
+private const val RequestTypeIntentKey = "request_type"
+private const val FromPage = "from_page"
+private const val ActiveBid= "active_bid"
 /**
  * Bid details intent
  */
 fun bidDetailsIntent(
   transactionId: String,
-  context: Context
+  context: Context,
+  requestType:String?=null,
+  fromBidsPage:Boolean = false,
+  active:Boolean = false
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  if(requestType!=null)
+  putExtra(RequestTypeIntentKey, requestType)
+  putExtra(FromPage,fromBidsPage)
+  putExtra(ActiveBid,active)
 }

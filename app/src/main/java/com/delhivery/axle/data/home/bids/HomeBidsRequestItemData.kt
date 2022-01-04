@@ -1,20 +1,16 @@
 package com.delhivery.axle.data.home.bids
 
-import android.text.Html
-import android.text.Spanned
 import android.text.TextUtils
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
-import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -45,7 +41,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2") val stop2City: String,
   @SerializedName("intermediary_stop2_state") val stop2State: String,
   @SerializedName("destination_state") val destinationState: String,
-  @SerializedName("truck_display_name") val truckDisplayName: String?,
+  @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
   @SerializedName("is_multi_drop") val isMultidrop: Boolean? = false,
@@ -60,10 +56,17 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("guidance_price") val guidancePrice: Double ?= 0.0,
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
+  @SerializedName("request_type") val requestType: String? = "",
+  @SerializedName("unallocated_volume") val unAllocatedVolume: Double? = 0.0,
+  @SerializedName("allocated_volume") val allocatedVolume: Double? = 0.0,
+  @SerializedName("child_transactions") val childTransactions: List<String> = mutableListOf(),
+  @SerializedName("truck_uuid") val truckUUID: Any?,
+  @SerializedName("is_dmt") val isDmt :Boolean? = false,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
-  var showing: Boolean = false
+  var showing: Boolean = false,
+  var bulkTransactionBids: List<TransactionBid> = mutableListOf()
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
@@ -83,6 +86,67 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+  /**
+   * if trip is DMT
+   */
+  fun setDMTType() = if (isDMTIndent()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  /**
+   * if trip is DMT
+   */
+  fun setDMTTypeForBid(visibility: Boolean) = if (isDMTIndent() && !visibility) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+
+  fun bidInfoVisibility() = if (isDMTIndent()) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun bidInfoLayoutVisibility()= if( transactionBid!=null || (bulkTransactionBids!= null &&bulkTransactionBids.isNotEmpty() ))
+    View.VISIBLE
+  else
+    View.INVISIBLE
+
+  fun bidPlaceLayoutVisibility()= if(  (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null)
+    View.VISIBLE
+  else
+    View.INVISIBLE
+
+
+  fun requestedCapacityVisibility() = if(isPMTIndent() && !isDMTIndent())
+    View.VISIBLE
+  else
+    View.GONE
+
+
+  fun setMoreBidsVisibility() = if (isDMTIndent()) {
+    if(bulkTransactionBids!=null && bulkTransactionBids.isNotEmpty() && bulkTransactionBids.size> 1) {
+      View.VISIBLE
+    }else{
+      View.GONE
+    }
+  } else {
+    View.GONE
+  }
+
+  fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
+
+  fun setTruckTypeText() = truckType!!.capitalize() ?: ""
+
+  fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
+
+  fun setUnAllocatedVol() = if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
+
+
 
   /**
    * @return formatted origin city name
@@ -136,18 +200,18 @@ data class HomeBidsRequestItemData(
    * @return formatted origin district, city, state
    */
   fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
-    originCityName() + ", " + originDistrictName() + ", " + originStateName()
+    originCityName() + "\n" + originDistrictName() + "\n" + originStateName()
   } else {
-    originCityName() + ", " + originStateName()
+    originCityName() + "\n" + originStateName()
   }
 
   /**
    * @return formatted destination city, state
    */
   fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
-    destinationCityName() + ", " + destinationDistrictName() + ", " + destinationStateName()
+    destinationCityName() + "\n" + destinationDistrictName() + "\n" + destinationStateName()
   } else {
-    destinationCityName() + ", " + destinationStateName()
+    destinationCityName() + "\n" + destinationStateName()
   }
 
   /**
@@ -165,6 +229,17 @@ data class HomeBidsRequestItemData(
       stopBuilder.append(StringUtils.capitalize(stop2City))
           .append(" - ")
     }
+    stopBuilder.append(destinationCityName())
+    return stopBuilder.toString()
+  }
+
+  /**
+   * @return intermediary stops
+   */
+  fun tripRouteOriginDes(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+      .append(" > ")
     stopBuilder.append(destinationCityName())
     return stopBuilder.toString()
   }
@@ -254,8 +329,12 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = truckSpecification?.let {
-    it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+  fun truckDetail() = if (isDMTIndent()){
+      truckType!!.capitalize() ?:""
+    }else{
+    truckSpecification?.let {
+      it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+    }
   }
 
   /**
@@ -296,9 +375,15 @@ data class HomeBidsRequestItemData(
   /**
    * @return bid text
    */
-  fun bidText() = "Bid placed for ₹ ${StringUtils.formatAmount(
-      transactionBid?.bidAmount ?: 0.0
-  )}" + if (isPMTIndent()) " /MT" else ""
+  fun bidText(): String {
+    return if(!isDMTIndent())
+      "Bid placed for ₹ ${StringUtils.formatAmount(
+              transactionBid?.bidAmount ?: 0.0
+      )}" + if (isPMTIndent()) " /MT" else ""
+    else{
+      "Bid Placed"
+    }
+  }
 
   /**
    * @return lowest bid difference
@@ -363,6 +448,11 @@ data class HomeBidsRequestItemData(
    * @return true if indent type(pmt/ftl)
    */
   fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+
+  /**
+   * @return true if request type(dmt)
+   */
+  fun isDMTIndent() = isDmt!= null && isDmt == true
 
   /**
    * @return true if speed is express
@@ -641,10 +731,12 @@ data class HomeBidsRequestItemData(
  * Truck specification detail
  */
 data class TruckSpecification(
-  @SerializedName("default_MG") val defaultMG: Double,
-  @SerializedName("truck_display_name") val truckDispName: String
+  @SerializedName("default_MG") val defaultMG: Double?,
+  @SerializedName("truck_display_name") val truckDispName: String?,
+  @SerializedName("truck_type")val truckType:String?
 )
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
+const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"

@@ -148,6 +148,7 @@ abstract class BaseSummaryDataRVAdapter<
         items.add(item)
         notifyItemInserted(items.size)
       }
+
       else -> {
         val _itemIndex = items.indexById(item.key())
         when (operationType) {

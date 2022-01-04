@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+        <variable
+            name="bidsRecieved"
+            type="Integer"
+            />
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/container_bid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_revise_bid_insider"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_30dp"
+        android:padding="@dimen/size_6dp"
+        android:visibility="visible"
+        android:text="@string/action_revise_bid"
+        android:layout_margin="@dimen/size_11dp"
+        android:background="@drawable/bg_revise_button"
+        android:textColor="@color/white"
+        android:layout_gravity="top|end"
+        />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bid_details_bulk"
+           android:padding="@dimen/size_8dp"
+            android:orientation="vertical"
+            bind:shadow="@{ @dimen/size_2dp }"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/bid_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.01"
+                android:lineSpacingExtra="@dimen/text_2sp"
+                android:shadowColor="#3b000000"
+                android:shadowDy="2"
+                android:shadowRadius="16"
+                android:text="@{ @string/msg_bids_received_till_now(bidsRecieved) }"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp"
+                tools:text="23 bids received till now"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_my_bids"
+            android:textSize="@dimen/text_18sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:padding="@dimen/size_8dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_bid_summary"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/view_bid_detail_item"
+            tools:itemCount="3" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/container_bid"
+            android:gravity="bottom"
+            android:maxWidth="@dimen/size_300dp"
+            android:padding="@dimen/size_8dp"
+            android:text="Reducing below the lowest bids will increase your chances of confirmation"
+            android:textColor="@color/black" />
+    </RelativeLayout>
+
+</layout>
