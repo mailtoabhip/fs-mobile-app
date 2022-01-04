@@ -20,7 +20,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.DialogChangePaymentBinding
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.FuelUserSpinnerAdapter
-import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.Serializable
 import javax.inject.Inject
@@ -33,7 +33,8 @@ class ChangePaymentModeDialog @Inject constructor(
         private val fuelUserSpinnerOptionsList: List<FuelUserSpinnerOptions>,
         private val userPrefs: UserPrefs,
         private val uiUtils: UiUtils,
-        private val position: Int =0
+        private val position: Int =0,
+        private val analyticsUtil: AnalyticsUtil
 ) :AlertDialog(context) {
 
     private lateinit var binding: DialogChangePaymentBinding
@@ -43,6 +44,14 @@ class ChangePaymentModeDialog @Inject constructor(
     var userOmc = ""
     var fuelNumberIndex=0
 
+    override fun cancel() {
+        super.cancel()
+        analyticsUtil.trackEvent(
+            EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL,
+            mutableListOf(PROPERTY_USER_ID),
+            mutableListOf(userPrefs.userId())
+        )
+    }
 
 
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -215,6 +224,7 @@ class ChangePaymentModeDialog @Inject constructor(
                 }
             }
 
+
             override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -254,6 +264,11 @@ class ChangePaymentModeDialog @Inject constructor(
         }
 
         if((fuelAmt > 0 && userNumber != "" && userOmc!= "") ){
+            analyticsUtil.trackEvent(
+                EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT, PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER),
+                mutableListOf(userPrefs.userId(),userOmc, userNumber)
+            )
             val omcRequest= OMCRequest(userNumber, userOmc, data.transactionId)
             fuelNumberIndex=0
             dialogInterface.done(data.transactionId, omcRequest, userOmc, userNumber, fuelAmt.toString(),position)
