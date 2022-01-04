@@ -32,6 +32,7 @@ import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import dagger.Component
 import javax.inject.Singleton
@@ -203,6 +204,11 @@ interface ViewModelInjector {
    * Injects [HomeTrucksViewModel]
    */
   fun inject(viewModel: HomeTrucksViewModel)
+
+  /**
+   * Injects [TruckViewModel]
+   */
+  fun inject(viewModel: TruckViewModel)
 
 
   @Component.Builder

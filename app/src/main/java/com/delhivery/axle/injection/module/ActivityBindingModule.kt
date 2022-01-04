@@ -32,6 +32,7 @@ import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
+import com.delhivery.axle.ui.trucks.TruckActivity
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
 import dagger.Module
@@ -171,6 +172,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
   internal abstract fun bindConsolidatedPageActivity(): ConsolidatedPageActivity
+
+  /* Truck activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTruckActivityModule::class])
+  internal abstract fun bindTruckActivity(): TruckActivity
 }
 
 /**
@@ -254,6 +260,9 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 
 @Module
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
+
+@Module
+internal abstract class AbsTruckActivityModule : ActivityModule<TruckActivity>()
 
 /**
  * Activity Binds Module

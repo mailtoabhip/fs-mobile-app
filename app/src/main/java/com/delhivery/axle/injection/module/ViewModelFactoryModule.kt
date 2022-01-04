@@ -42,6 +42,7 @@ import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
 import dagger.Binds
@@ -257,6 +258,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeTrucksViewModel::class)
   abstract fun bindHomeTrucksViewModel(homeTrucksViewModel: HomeTrucksViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TruckViewModel::class)
+  abstract fun bindTruckViewModel(truckViewModel: TruckViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

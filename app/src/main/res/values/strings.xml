@@ -290,6 +290,20 @@
   <string name="label_unloading_locations">Unloading destinations</string>
   <string name="label_current_locations">Current location</string>
   <string name="label_more_options">More Options</string>
+  <string name="label_body_type">Select Body Type</string>
+  <string name="label_truck_number">Truck Number</string>
+  <string name="label_ownership">Ownership</string>
+  <string name="label_own_truck">Own truck</string>
+  <string name="label_market_truck">Market truck</string>
+  <string name="label_truck_size">Truck Size</string>
+  <string name="label_truck_capacity">Truck Capacity</string>
+  <string name="label_current_city">Current City</string>
+  <string name="label_unloading_destination">Unloading Destinations</string>
+  <string name="label_open">Open Body</string>
+  <string name="label_trailer">Trailer</string>
+  <string name="label_closed">Container</string>
+  <string name="label_select_truck_size">Select truck size</string>
+
 
 
   <!--Error (error_-->
