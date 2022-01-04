@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.extensions
 
 import android.app.Activity
+import android.graphics.Paint
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -12,11 +13,8 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
 import com.delhivery.axle.R
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
@@ -167,3 +165,11 @@ fun View.withMutableData(
     else -> visible(it == true)
   }
 })
+
+inline var TextView.underline: Boolean
+  set(visible) {
+    paintFlags = if (visible)
+      paintFlags or Paint.UNDERLINE_TEXT_FLAG
+    else paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+  }
+  get() = paintFlags and Paint.UNDERLINE_TEXT_FLAG == Paint.UNDERLINE_TEXT_FLAG

@@ -150,12 +150,25 @@
             android:text="@{request.requestedCapacityMg()}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_14sp"
-            android:visibility="@{ request.isPMTIndent() ? View.VISIBLE : View.GONE }"
+            android:visibility="@{ request.requestedCapacityVisibility() }"
             app:layout_constraintBottom_toBottomOf="@+id/text_load_details"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_load_details"
-            tools:text="Today"
+            tools:text="Guarantee:19 MT"
             />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_is_bulk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{request.setDmtText()}"
+            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/bid_placed_red"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/text_load_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_load_details"
+            android:visibility="@{request.setDMTType()}"
+            tools:text="Bulk Load: 100 MT"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_truck_type"
@@ -180,8 +193,9 @@
             app:layout_constraintBottom_toBottomOf="@+id/text_date_time"
             app:layout_constraintStart_toEndOf="@id/img_truck_type"
             app:layout_constraintTop_toTopOf="@id/text_date_time"
-            tools:text="Goa Gao goa goa"
+            tools:text="32FTMXL"
             />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_load_details"
@@ -193,9 +207,21 @@
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_date_time"
-            tools:text="Goa goa goa"
+            app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+            tools:text="Agriculture/Grains"
             />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_unAllocatedLoad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{request.setUnAllocatedText()}"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:visibility="@{request.setDMTType()}"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            android:textColor="@color/bid_placed_red"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_detention"
@@ -210,7 +236,7 @@
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -227,7 +253,7 @@
             app:layout_constraintStart_toEndOf="@+id/text_detention"
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -244,7 +270,7 @@
             app:layout_constraintStart_toEndOf="@+id/text_gps"
             android:text="@{request.expressText(false)}"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             tools:text="Express"
             />
 
@@ -283,7 +309,7 @@
             android:paddingTop="@dimen/size_16dp"
             android:paddingRight="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_14dp"
-            android:visibility="@{ request.transactionBid !=null ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{ request.bidInfoLayoutVisibility() }"
             tools:visibility="visible"
             >
 
@@ -324,6 +350,7 @@
               app:layout_constraintBottom_toBottomOf="parent"
               app:layout_constraintEnd_toStartOf="@+id/text_edit"
               android:layout_width="0dp"
+              android:visibility="@{request.bidInfoVisibility()}"
               android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -389,7 +416,7 @@
             android:paddingTop="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_8dp"
-            android:visibility="@{ request.transactionBid !=null ? View.GONE : View.VISIBLE }"
+            android:visibility="@{ request.bidPlaceLayoutVisibility()}"
             tools:visibility="gone"
             >
 

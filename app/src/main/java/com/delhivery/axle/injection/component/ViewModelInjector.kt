@@ -51,6 +51,7 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: AuthenticationViewModel)
 
+
   /**
    * Injects [OnboardingViewModel]
    */

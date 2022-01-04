@@ -58,12 +58,11 @@ class ChangePaymentModeDialog @Inject constructor(
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
             val message = intent.getStringExtra("message")
-            if(message!=null && !message.equals("0")) {
-                var n: Int = fuelUserSpinnerOptions.size
-                fuelUserSpinnerOptions.add(n - 2, FuelUserSpinnerOptions(message!!, "(Child)"))
-                for (i in fuelUserSpinnerOptions) {
-                    System.out.println(i)
-                }
+
+            if(message!=null && message != "0") {
+                val n: Int = fuelUserSpinnerOptions.size
+                fuelUserSpinnerOptions.add(n - 2, FuelUserSpinnerOptions(message, "(Child)"))
+
                 fuelUserSpinnerAdapter.setItems(fuelUserSpinnerOptions)
                 binding.selectMemberSpinner.apply {
 
@@ -71,6 +70,7 @@ class ChangePaymentModeDialog @Inject constructor(
                 }
                 userNumber = message
                 binding.layoutDieselCompany.visibility = View.VISIBLE
+
             }else{
                 binding.selectMemberSpinner.apply {
                     setSelection(0)
@@ -79,8 +79,6 @@ class ChangePaymentModeDialog @Inject constructor(
                 binding.layoutDieselCompany.visibility= View.GONE
                 Toast.makeText(context, "Member not added, Try again", Toast.LENGTH_SHORT).show()
             }
-                //
-            Log.i("receiver", "Got message: $message")
         }
     }
     var filter = IntentFilter("custom-event-name")
@@ -140,18 +138,9 @@ class ChangePaymentModeDialog @Inject constructor(
                    }
 
                }
-                System.out.println("fuel"+data.payment!!.fuelNumber)
-                System.out.println("fuel"+fuelNumberIndex)
-
             }
         }
 
-
-        binding.dieselPayoutIdentifier.setOnClickListener{
-//            binding.dieselPayoutIdentifier.visibility = View.GONE
-//            binding.layoutDieselAddAmt.visibility = View.VISIBLE
-
-        }
 
         binding.selectMemberSpinner.apply {
             adapter = fuelUserSpinnerAdapter

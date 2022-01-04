@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+        <variable
+            name="route"
+            type="String"
+            />
+    </data>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/container_bid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_8dp"
+                    android:orientation="horizontal"
+                    bind:shadow="@{ @dimen/size_2dp }"
+                    >
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/bid_count"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:lineSpacingExtra="@dimen/text_2sp"
+                        android:text="@string/status_of_other_bid"
+                        android:textColor="@color/black"
+                        android:maxWidth="@dimen/size_160dp"
+                        android:layout_weight="1"
+                        android:textSize="@dimen/text_18sp"
+                        />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btn_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/size_30dp"
+                        android:padding="@dimen/size_2dp"
+                        android:visibility="visible"
+                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        android:layout_margin="@dimen/size_4dp"
+                        android:tint="@color/sub_heading_black"
+                        android:layout_gravity="end"
+
+                        />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/size_16dp"
+                    android:textColor="@color/black"
+                    android:text="@{ route }"
+                    tools:text="GA - MH"
+                    android:padding="@dimen/size_8dp"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_bid_summary"
+                    android:layout_marginBottom="@dimen/size_16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/view_bid_detail_item"
+                    tools:itemCount="3" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -15,6 +16,7 @@ import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
+import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
@@ -22,6 +24,7 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -48,6 +51,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   @Inject lateinit var dialogUtils: DialogUtils
 
   @Inject lateinit var userPrefs: UserPrefs
+  var pos = 0
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -83,6 +87,45 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               }
             }
           }
+    })
+
+    viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it != null){
+        val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        data?.bulkTransactionBids = it.second
+        _adapter.notifyItemChanged(it.first)
+      }
+    })
+
+    viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it.first == 10){
+        Toast.makeText(context,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 20){
+        Toast.makeText(context,"Bids Updated Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(it.first == 30){
+        Toast.makeText(context,"Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
+        viewModel.transactionBidForBulk(it.second, pos)
+        viewModel.editFlg = mutableListOf(false, false, false)
+      }
+    })
+
+
+    viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if(it!= null ){
+        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if(it.second.truckUUID != null) {
+          BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
+            pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
+        }
+        else{
+          Toast.makeText(context, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+        }
+      }
     })
 
     Transformations.map(viewModel.searchResults) {
@@ -145,7 +188,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item.key(), it)) }
+        context?.let { startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
       }
     }
   }
@@ -159,10 +202,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       APPROVED -> {
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
-            (item.data as HomeBidsRequestItemData).let {
-              BidDetailsCreateEditDialog(
+            pos =position
+            val data = item.data as HomeBidsRequestItemData
+            if (data.isDMTIndent()) {
+              uiUtils.showProgress()
+              viewModel.fetchTruckType(data)
+            }
+            else{
+              item.data.let {
+                BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
-              ).show()
+                ).show()
+              }
             }
           }
         }
