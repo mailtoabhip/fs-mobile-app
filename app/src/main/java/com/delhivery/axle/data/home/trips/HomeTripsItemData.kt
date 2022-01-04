@@ -1057,7 +1057,7 @@ data class LRDetails(
   @SerializedName("lr") val lr: String,
   @SerializedName("lr_date") val lrDate: String,
   @SerializedName("invoice_details") var invoice: List<InvoiceDetails>
-)
+): Serializable
 
 /**
  * Invoice details
