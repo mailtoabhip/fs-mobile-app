@@ -163,7 +163,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
           analyticsUtil.trackEvent(
-            EVENT_VIEW_ADVANCE_PAYMENT_PAGE,
+            EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
             mutableListOf(PROPERTY_USER_ID),
             mutableListOf(userPrefs.userId())
           )
@@ -205,6 +205,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(userRoutesIntent(this))
       }
       REDIRECT_TO_TRIP -> {
+        analyticsUtil.trackEvent(
+          EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       else -> {
@@ -318,7 +323,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     Log.d("parameters",url+metadata.toString())
     userPrefs.startTime = Date().time
     analyticsUtil.trackEvent(
-      EVENT_VIEW_ADVANCE_PAYMENT_PAGE,
+      EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
       mutableListOf(PROPERTY_USER_ID),
       mutableListOf(userPrefs.userId())
     )

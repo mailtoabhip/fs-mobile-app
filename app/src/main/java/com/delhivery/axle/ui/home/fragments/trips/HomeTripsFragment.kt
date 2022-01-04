@@ -155,11 +155,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.advanceCard.setOnClickListener {
       context?.let {
-        analyticsUtil.trackEvent(
-          EVENT_VIEW_ADVANCE_PAYMENT_PAGE,
-          mutableListOf(PROPERTY_USER_ID),
-          mutableListOf(userPrefs.userId())
-        )
         startActivity(userTripsIntent(context!!, "payment_view", 0))
         userPrefs.startTime = Date().time
       }

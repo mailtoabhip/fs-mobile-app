@@ -122,7 +122,7 @@ const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIPS = "view_change_payment_mode_trips
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS = "view_change_payment_mode_trip_details"
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE = "view_change_payment_mode_done"
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL = "view_change_payment_mode_trip_cancel"
-const val EVENT_VIEW_ADVANCE_PAYMENT_PAGE = "view_advance payment_page"
+const val EVENT_DEEP_LINK_ADD_FUEL_PAYMENT = "deep_link_add_fuel_payment"
 
 
 
