@@ -92,6 +92,7 @@
                         android:textSize="@dimen/text_12sp"
                         android:layout_gravity="center"
                         android:button="@null"
+                        android:checked="true"
                         android:background="@drawable/radio_selection_container"
                         android:textAlignment="center"
                         android:text="@string/label_closed"/>
@@ -123,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_12sp"
-                    android:layout_marginTop="@dimen/size_14dp"
+                    android:layout_marginTop="@dimen/size_6dp"
                     android:layout_height="wrap_content"
                     android:text="@string/label_truck_number"/>
 
@@ -132,8 +133,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_4dp"
+                    android:padding="@dimen/size_8dp"
                     android:hint="Eg: KA-BD2525"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/text_14sp"
                     android:background="@drawable/background_rectangle_border"/>
 
@@ -177,12 +179,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_4dp"
+                    android:padding="@dimen/size_8dp"
                     android:background="@drawable/background_rectangle_border">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_size"
                         android:layout_width="wrap_content"
                         android:hint="32ft SXL"
+                        android:textColor="@color/black"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -199,7 +202,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_4dp"
+                    android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
                     android:background="@drawable/background_rectangle_border">
                     <androidx.appcompat.widget.AppCompatTextView
@@ -207,6 +210,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="4.5MT"
+                        android:textColor="@color/black"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -221,7 +225,7 @@
                     android:id="@+id/edit_current_city"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
-                    android:padding="@dimen/size_4dp"
+                    android:padding="@dimen/size_8dp"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:textSize="@dimen/text_14sp"
                     android:background="@drawable/background_rectangle_border">
@@ -233,6 +237,7 @@
                         android:drawableStart="@drawable/ic_search_black"
                         android:drawablePadding="@dimen/size_4dp"
                         android:gravity="center"
+                        android:textColor="@color/black"
                         android:hint="Search city"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -248,7 +253,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_4dp"
+                    android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
                     android:background="@drawable/background_rectangle_border">
                     <androidx.appcompat.widget.AppCompatTextView
@@ -256,6 +261,7 @@
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
                         android:hint="Eg: Bhopal"
+                        android:textColor="@color/black"
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

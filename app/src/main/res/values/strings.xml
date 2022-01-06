@@ -66,6 +66,7 @@
   <string name="msg_other_source_reason">Load received from different source</string>
   <string name="msg_others">Other</string>
   <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
+  <string name="msg_enter_unloading_details">Enter unloading destination details</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -117,6 +118,8 @@
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
+  <string name="action_add_destination">Add Destination</string>
+  <string name="action_save_changes">Save Changes</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -304,6 +307,11 @@
   <string name="label_closed">Container</string>
   <string name="label_select_truck_size">Select truck size</string>
   <string name="label_select_truck_capacity">Select truck capacity</string>
+  <string name="label_availability">Availability</string>
+  <string name="label_truck_size_filter">Truck Size</string>
+  <string name="label_enter_unloading_destination">Unloading Destination</string>
+  <string name="label_price_mt">Price/MT (optional)</string>
+  <string name="label_search_by_city">Search by city name</string>
 
 
 

@@ -34,8 +34,7 @@
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
                 android:paddingStart="@dimen/size_12dp"
                 android:paddingEnd="@dimen/size_12dp"
-                android:textColor="@color/white"
-                tools:text="Vehicle type "/>
+                android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -50,13 +49,12 @@
                 android:id="@+id/txt_availability"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_vehicle_type"
+                android:text="@string/label_availability"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
                 android:paddingStart="@dimen/size_12dp"
                 android:paddingEnd="@dimen/size_12dp"
-                android:textColor="@color/white"
-                tools:text="Availability"/>
+                android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -71,13 +69,12 @@
                 android:id="@+id/txt_truck_size_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_vehicle_type"
+                android:text="@string/label_truck_size"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
                 android:paddingStart="@dimen/size_12dp"
                 android:paddingEnd="@dimen/size_12dp"
-                android:textColor="@color/white"
-                tools:text="Truck size"/>
+                android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

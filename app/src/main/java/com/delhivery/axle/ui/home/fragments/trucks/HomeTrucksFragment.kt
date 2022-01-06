@@ -9,11 +9,16 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.DialogBottomTruckDeactivateBinding
 import com.delhivery.axle.databinding.DialogBottomTruckOptionsBinding
 import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
+import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapter
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
@@ -39,12 +44,32 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         HomeTrucksRVAdapter(this)
     }
 
+
+    init {
+        toolbarElevationLiveData = MutableLiveData()
+        hasInlineProgress = true
+    }
+
+
     @Inject lateinit var dialogUtils: DialogUtils
     @Inject lateinit var fcmUtils: FCMUtils
     @Inject lateinit var userPrefs: UserPrefs
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshData()
+        }
+
+        /* setup recycler view */
+        binding.rvTrucks.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@HomeTrucksFragment.adapter
+            addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
+        }
+
         binding.addTruck.setOnClickListener {
             context?.let { startActivity(truckIntent(context!!)) }
         }
@@ -244,6 +269,57 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         dialog = builder.create()
         dialog.show()
+    }
+
+    /**
+     * Home trucks rv scroll listener for search bar animation related stuff
+     */
+    inner class HomeTrucksRVScrollListener(
+        private val stickyView: DelhiveryAnimatedSearchBar,
+        private val elevation: Float = 12f
+    ) : RecyclerView.OnScrollListener() {
+        /* Current toolbar elevation */
+        private var toolbarElevation = -1f
+
+        override fun onScrolled(
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
+        ) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager: LinearLayoutManager? = recyclerView.layoutManager as? LinearLayoutManager
+            val pos = layoutManager?.findFirstVisibleItemPosition()
+            val toolbarElevation = if (pos == 0) {
+                val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
+                val viewTopGap = childView.height - stickyView.height * 1f
+                val viewTop = childView.top + viewTopGap
+                if (viewTop > 0) {
+                    val factor = viewTop / viewTopGap
+                    val invFactor = 1f - factor
+                    stickyView.translationY = viewTop
+                    stickyView.alpha = invFactor
+                    ViewCompat.setElevation(stickyView, elevation * invFactor)
+                } else {
+                    stickyView.translationY = stickyView.top * 1f
+                    stickyView.alpha = 1f
+                    ViewCompat.setElevation(stickyView, elevation)
+                }
+                val factor =
+                    (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+                stickyView.setRatio((1 - factor))
+                defToolbarElevation
+            } else {
+                stickyView.translationY = 0f
+                stickyView.alpha = 1f
+                stickyView.setRatio(0f)
+                0f
+            }
+            if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
+                this.toolbarElevation = toolbarElevation
+                toolbarElevationLiveData?.postValue(this.toolbarElevation)
+            }
+        }
     }
 
 
