@@ -83,40 +83,38 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:layout_marginStart="@dimen/size_6dp"
+                    android:padding="@dimen/size_8dp"
                     android:orientation="horizontal">
                     <RadioButton
                         android:id="@+id/btn_radio_container"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableTop="@drawable/ic_closed"
+                        android:layout_width="@dimen/size_56dp"
+                        android:layout_height="@dimen/size_56dp"
                         android:textSize="@dimen/text_12sp"
                         android:layout_gravity="center"
-                        android:button="@android:color/transparent"
-                        android:background="@drawable/radio_truck_selection"
+                        android:button="@null"
+                        android:background="@drawable/radio_selection_container"
                         android:textAlignment="center"
                         android:text="@string/label_closed"/>
                     <RadioButton
                         android:id="@+id/btn_radio_open"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/size_56dp"
+                        android:layout_height="@dimen/size_56dp"
                         android:layout_marginStart="@dimen/size_24dp"
-                        android:drawableTop="@drawable/ic_open"
                         android:textSize="@dimen/text_12sp"
                         android:layout_gravity="center"
-                        android:button="@android:color/transparent"
+                        android:button="@null"
+                        android:background="@drawable/radio_selction_open"
                         android:textAlignment="center"
-                        android:background="@drawable/radio_truck_selection"
                         android:text="@string/label_open"/>
                     <RadioButton
                         android:id="@+id/btn_radio_trailer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/size_56dp"
+                        android:layout_height="@dimen/size_56dp"
                         android:layout_marginStart="@dimen/size_24dp"
-                        android:drawableTop="@drawable/ic_trailer"
                         android:layout_gravity="center"
-                        android:background="@drawable/radio_truck_selection"
+                        android:button="@null"
+                        android:background="@drawable/radio_selection_trailer"
                         android:textSize="@dimen/text_12sp"
-                        android:button="@android:color/transparent"
                         android:textAlignment="center"
                         android:text="@string/label_trailer"/>
                 </RadioGroup>
@@ -132,9 +130,12 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_truck_number"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:background="@drawable/bg_all_round_corner_grey"/>
+                    android:padding="@dimen/size_4dp"
+                    android:hint="Eg: KA-BD2525"
+                    android:textSize="@dimen/text_14sp"
+                    android:background="@drawable/background_rectangle_border"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -154,6 +155,7 @@
                         android:id="@+id/btn_radio_own_truck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         android:text="@string/label_own_truck"/>
                     <RadioButton
                         android:id="@+id/btn_radio_market_truck"
@@ -170,12 +172,20 @@
                     android:textSize="@dimen/text_12sp"
                     android:text="@string/label_truck_size"
                     android:textColor="@color/black"/>
-                <androidx.appcompat.widget.AppCompatEditText
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_truck_size"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:background="@drawable/bg_all_round_corner_grey"/>
+                    android:padding="@dimen/size_4dp"
+                    android:background="@drawable/background_rectangle_border">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_truck_size"
+                        android:layout_width="wrap_content"
+                        android:hint="32ft SXL"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -184,12 +194,21 @@
                     android:textSize="@dimen/text_12sp"
                     android:text="@string/label_truck_capacity"
                     android:textColor="@color/black"/>
-                <androidx.appcompat.widget.AppCompatEditText
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_truck_capacity"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:background="@drawable/bg_all_round_corner_grey"/>
+                    android:padding="@dimen/size_4dp"
+                    android:textSize="@dimen/text_14sp"
+                    android:background="@drawable/background_rectangle_border">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_truck_capacity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="4.5MT"
+                        android:layout_gravity="center"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -198,12 +217,24 @@
                     android:textSize="@dimen/text_12sp"
                     android:text="@string/label_current_city"
                     android:textColor="@color/black"/>
-                <androidx.appcompat.widget.AppCompatEditText
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_current_city"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
+                    android:padding="@dimen/size_4dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:background="@drawable/bg_all_round_corner_grey"/>
+                    android:textSize="@dimen/text_14sp"
+                    android:background="@drawable/background_rectangle_border">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_current_city"
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_search_black"
+                        android:drawablePadding="@dimen/size_4dp"
+                        android:gravity="center"
+                        android:hint="Search city"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -212,17 +243,21 @@
                     android:textSize="@dimen/text_12sp"
                     android:text="@string/label_unloading_destination"
                     android:textColor="@color/black"/>
-                <androidx.appcompat.widget.AppCompatEditText
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_unloading_destinations"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
-                    android:background="@drawable/bg_all_round_corner_grey"/>
-
-
-
-
-
+                    android:padding="@dimen/size_4dp"
+                    android:textSize="@dimen/text_14sp"
+                    android:background="@drawable/background_rectangle_border">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_unloading_destination"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:hint="Eg: Bhopal"
+                        android:layout_height="wrap_content"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>

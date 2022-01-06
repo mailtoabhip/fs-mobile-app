@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapter
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -44,6 +45,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.addTruck.setOnClickListener {
+            context?.let { startActivity(truckIntent(context!!)) }
+        }
+        binding.addTruckFloating.setOnClickListener {
+            context?.let { startActivity(truckIntent(context!!)) }
+
+        }
+
+        refreshData()
     }
 
     private fun refreshData() {

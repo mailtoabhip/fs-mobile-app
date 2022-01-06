@@ -303,6 +303,7 @@
   <string name="label_trailer">Trailer</string>
   <string name="label_closed">Container</string>
   <string name="label_select_truck_size">Select truck size</string>
+  <string name="label_select_truck_capacity">Select truck capacity</string>
 
 
 

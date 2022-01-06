@@ -4,6 +4,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileFragment
@@ -47,7 +48,7 @@ enum class HomeFragmentType(
 enum class HomeLoadsTruckFragmentType(
   val menuId: Int,
   val position: Int,
-  val fragment: BaseFragment<*, *>,
+  val fragment: HomeLoadsTruckBaseFragment<*, *>,
   val title: String
 ){
   LoadsFragment(R.id.nav_loads,0,HomeLoadsFragment._instance, "Loads"),
@@ -60,7 +61,7 @@ enum class HomeLoadsTruckFragmentType(
     fun posById(menuId: Int) = values().firstOrNull { it.menuId == menuId }?.position ?: -1
 
     /**
-     * Get [HomeFragmentType] by position
+     * Get [HomeLoadsTruckFragmentType] by position
      */
     fun pos(position: Int) = values().firstOrNull { it.position == position }
 

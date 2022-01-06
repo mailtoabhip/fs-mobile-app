@@ -18,6 +18,7 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_close_black"/>
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/select_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
@@ -34,7 +35,7 @@
             app:srcCompat="@drawable/seperator_line"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/edit_truck_layout"
+            android:id="@+id/list_truck_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/size_14dp"
