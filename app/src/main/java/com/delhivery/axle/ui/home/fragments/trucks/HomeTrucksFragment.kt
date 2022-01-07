@@ -11,13 +11,12 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trucks.*
-import com.delhivery.axle.databinding.DialogBottomTruckDeactivateBinding
-import com.delhivery.axle.databinding.DialogBottomTruckOptionsBinding
-import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapter
@@ -71,12 +70,21 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         binding.addTruck.setOnClickListener {
-            context?.let { startActivity(truckIntent(context!!)) }
+           //viewModel.getFrequentTrucks()
+            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTSXL",23.0),
+                HomeTrucksRequestItemData("24242w","open","32FTXL",24.0),
+                HomeTrucksRequestItemData("24242","trailer","3SXL",25.0)
+            ))
         }
         binding.addTruckFloating.setOnClickListener {
-            context?.let { startActivity(truckIntent(context!!)) }
-
+            viewModel.getFrequentTrucks()
         }
+
+        viewModel.frequentTrucks.observe(this, Observer {
+            if(it!=null){
+                showAddTruckDialog(it)
+            }
+        })
 
         refreshData()
     }
@@ -124,12 +132,48 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
     }
 
+    private fun showAddTruckDialog(items: List<HomeTrucksRequestItemData>) {
+        val dialog = Dialog(context!!)
+        val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.containerTrucks.removeAllViews()
+        items.forEachIndexed { index, item ->
+            val itemBinding = createTruckFrequentItem(bindingDialog)
+            itemBinding.data = item
+            itemBinding.root.setOnClickListener{
+                context?.let { startActivity(truckIntent(context!!)) }
+                dialog.dismiss()
+            }
+
+            bindingDialog.containerTrucks.addView(itemBinding.root, index)
+        }
+        bindingDialog.closeBtn.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        bindingDialog.addTruckLayout.setOnClickListener{
+            context?.let { startActivity(truckIntent(context!!)) }
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
     private fun showOptionsDialog(homeTrucksRequestItemData: HomeTrucksRequestItemData, position: Int) {
         val dialog = Dialog(context!!)
         val bindingDialog= DialogBottomTruckOptionsBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
+
 
         bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
@@ -139,7 +183,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
-            showDeactivateDialog()
+            showDeactivateDialog(position)
             dialog.dismiss()
         }
 
@@ -151,7 +195,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     }
 
-    private fun showDeactivateDialog() {
+    private fun showDeactivateDialog(position: Int) {
         val dialog = Dialog(context!!)
         val bindingDialogDeactivate= DialogBottomTruckDeactivateBinding.inflate(layoutInflater)
 
@@ -171,13 +215,20 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                  reason = bindingDialogDeactivate.other.text.toString()
             }
 
-            analyticsUtil.trackEvent(
-                EVENT_DEACTIVATE_TRUCK,
-                mutableListOf(PROPERTY_USER_ID),
-                mutableListOf(userPrefs.userId())
-            )
+            if(reason != "") {
+                analyticsUtil.trackEvent(
+                    EVENT_DEACTIVATE_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID),
+                    mutableListOf(userPrefs.userId())
+                )
+                viewModel.deactivateTruck(reason, position)
 
-            dialog.dismiss()
+
+                dialog.dismiss()
+            }
+            else{
+                uiUtils.showSnackbar("Select Reason for deactivating truck")
+            }
         }
 
         dialog.show()
@@ -321,6 +372,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
         }
     }
+
+    /** Create new frequent truck item*/
+    private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
+        ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
 
 
 }

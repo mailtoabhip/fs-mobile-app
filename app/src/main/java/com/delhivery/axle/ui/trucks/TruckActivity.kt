@@ -10,14 +10,12 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogBottomTruckUnloadingDetailsBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.AutoCompleteUtils
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 
@@ -80,13 +78,27 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
     }
 
     private fun validateFieldsAndAddTruck() {
-        viewModel.truckOwnership = if(binding.btnRadioMarketTruck.isChecked) binding.btnRadioMarketTruck.text.toString() else binding.btnRadioOwnTruck.text.toString()
-        viewModel.truckCapacity =  if(binding.textTruckCapacity.text.isNotEmpty()) binding.textTruckCapacity.text.toString() else ""
+        viewModel.truckOwnership = if(binding.btnRadioMarketTruck.isChecked)
+            "market_truck" else "owns_truck"
+
+        viewModel.truckCapacity =  if(binding.textTruckCapacity.text.isNotEmpty())
+            binding.textTruckCapacity.text.toString() else ""
+
         viewModel.truckSize = if(binding.textTruckSize.text.isNotEmpty()) binding.textTruckSize.text.toString() else ""
 
-        viewModel.truckNumber = if(binding.editTruckNumber.text !=null && binding.editTruckNumber.text.toString() != "" ) binding.editTruckNumber.text.toString() else ""
+        viewModel.truckNumber = if(binding.editTruckNumber.text !=null && binding.editTruckNumber.text.toString() != "" )
+            binding.editTruckNumber.text.toString() else ""
 
-        viewModel.addNewTruck()
+        viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
+
+        if(viewModel.truckCapacity!= "" && viewModel.truckNumber!= "" && viewModel.truckSize!= "" && viewModel.truckCity!=null &&
+            viewModel.truckDestination!= null) {
+
+            viewModel.addNewTruck()
+        }
+        else{
+            uiUtils.showSnackbar("Fields are Empty")
+        }
     }
 
     private fun showUnloadingLocationsDialog() {
@@ -100,6 +112,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.textUnloadingDestination.text = it.city
             dialog.dismiss()
         }
+
+        bindingDialog.closeBtn.setOnClickListener{
+            dialog.dismiss()
+        }
+
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

@@ -69,10 +69,12 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -90,7 +92,6 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.auth.AuthenticationActivity"
             android:screenOrientation="portrait" />
@@ -162,6 +163,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.trucks.TruckActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchCity.SearchCity"
             android:screenOrientation="portrait" />
     </application>
 

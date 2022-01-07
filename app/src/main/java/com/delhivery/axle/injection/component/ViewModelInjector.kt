@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -209,6 +210,11 @@ interface ViewModelInjector {
    * Injects [TruckViewModel]
    */
   fun inject(viewModel: TruckViewModel)
+
+  /**
+   * Injects [SearchCityViewModel]
+   */
+  fun inject(viewModel: SearchCityViewModel)
 
 
   @Component.Builder

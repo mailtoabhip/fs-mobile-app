@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeTruckLoadsFragmentBindingModule
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -177,6 +178,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsTruckActivityModule::class])
   internal abstract fun bindTruckActivity(): TruckActivity
+
+  /* Search City Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchCityModule::class])
+  internal abstract fun bindSearchCityActivity() : SearchCity
 }
 
 /**
@@ -263,6 +269,9 @@ internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<Sear
 
 @Module
 internal abstract class AbsTruckActivityModule : ActivityModule<TruckActivity>()
+
+@Module
+internal abstract class AbsSearchCityModule : ActivityModule<SearchCity>()
 
 /**
  * Activity Binds Module
