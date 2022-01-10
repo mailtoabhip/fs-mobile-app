@@ -8,7 +8,8 @@ data class FuelPayoutRequest(
     @SerializedName("fuel_payout") var fuelPayout : String,
     @SerializedName("omc_name") var omcName : String,
     @SerializedName("omc_id") var omcId : String,
-    @SerializedName("update_type") var updateType : String
+    @SerializedName("update_type") var updateType : String,
+    @SerializedName("fuel_originator") var fuelOriginator: String
 )
 
 data class FuelPayoutResponse(
