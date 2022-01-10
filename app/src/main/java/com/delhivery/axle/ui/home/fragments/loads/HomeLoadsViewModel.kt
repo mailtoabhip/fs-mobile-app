@@ -12,6 +12,7 @@ import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -173,6 +174,7 @@ class HomeLoadsViewModel @Inject constructor(
               } else {
                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
                 add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
+                add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
                 for (load in loads.toMutableList()) {
                   try {
                     val lowestBid = _tRes.third.filter { b ->

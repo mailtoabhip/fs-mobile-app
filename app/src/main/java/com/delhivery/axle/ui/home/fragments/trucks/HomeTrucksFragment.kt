@@ -180,6 +180,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
+            showEditTruckDialog()
 
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
@@ -193,6 +194,24 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
 
+    }
+
+    private fun showEditTruckDialog() {
+        val dialog = Dialog(context!!)
+        val bindingDialogDeactivate= DialogBottomEditTruckBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialogDeactivate.root)
+
+        bindingDialogDeactivate.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
     private fun showDeactivateDialog(position: Int) {

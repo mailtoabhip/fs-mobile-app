@@ -84,6 +84,7 @@
     <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
     <string name="hint_amount">23900</string>
     <string name="hint_search_trucks">Search truck by number</string>
+    <string name="hint_search_city">Search Current City</string>
 
     <!--Actions (action_)-->
     <string name="action_hello_world">Action Hello World</string>

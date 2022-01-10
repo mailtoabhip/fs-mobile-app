@@ -3,13 +3,14 @@ package com.delhivery.axle.data
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class CityModel(
   @SerializedName("city") val city: String,
   @SerializedName("orion_db_city_code") val orion_db_city_code: String? = "",
   @SerializedName("district") val district: String? = "",
   @SerializedName("state") val state: String? = ""
-) : BaseKeyTypeModel<String>() {
+) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = orion_db_city_code ?: ""
 
   fun cityName() = StringUtils.capitalize(city) ?: ""
@@ -78,3 +79,5 @@ data class SearchCityModel(
 data class SearchCitiesResponse(
   @SerializedName("records") val cities: List<SearchCityModel>
 )
+
+const val CitySelected = "city_selected"

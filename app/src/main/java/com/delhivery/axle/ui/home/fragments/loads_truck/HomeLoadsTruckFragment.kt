@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -40,8 +42,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             adapter = pagerAdapter
             }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
-
     }
+
 
     fun fragmentAction(action: BaseHomeFragmentAction) {
         when (action.type) {

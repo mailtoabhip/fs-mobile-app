@@ -15,11 +15,10 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="@dimen/size_4dp"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:background="@drawable/background_rectangle_border"
+        android:layout_margin="@dimen/size_14dp"
+        android:foreground="@drawable/background_rectangle_border"
         app:cardCornerRadius="@dimen/size_6dp">
 
         <androidx.appcompat.widget.LinearLayoutCompat

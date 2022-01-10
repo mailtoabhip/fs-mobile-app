@@ -4,12 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
-
     <data>
 
 
     </data>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,11 +16,15 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/ll_vehicle_filter"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:background="@drawable/bg_round_filter"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_vehicle_filter"
+            android:background="@drawable/bg_round_filter"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -32,17 +34,20 @@
                 android:text="@string/label_vehicle_type"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:paddingStart="@dimen/size_12dp"
-                android:paddingEnd="@dimen/size_12dp"
                 android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="1">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_availability_filter"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:background="@drawable/bg_round_filter"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -52,17 +57,19 @@
                 android:text="@string/label_availability"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:paddingStart="@dimen/size_12dp"
-                android:paddingEnd="@dimen/size_12dp"
                 android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="1">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_truck_size_filter"
-            android:layout_marginBottom="@dimen/size_8dp"
             android:background="@drawable/bg_round_filter"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -72,14 +79,10 @@
                 android:text="@string/label_truck_size"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:paddingStart="@dimen/size_12dp"
-                android:paddingEnd="@dimen/size_12dp"
                 android:textColor="@color/white" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

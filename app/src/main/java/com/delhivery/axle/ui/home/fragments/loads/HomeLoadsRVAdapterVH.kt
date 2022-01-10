@@ -12,14 +12,7 @@ import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
-import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.axle.databinding.ViewTimeOutItemBinding
-import com.delhivery.axle.databinding.ViewWarningItemBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 
 /**
@@ -214,5 +207,17 @@ internal class HomeLoadsMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBinding
     )
     binding.textEditRoute.text = editRouteString
     binding.textEditRoute.clickToAction(HomeLoadsInfoAction_EditRoute, item, _interface)
+  }
+
+  internal class HomeLoadsSummaryItemVH(binding:ViewHomeSummaryItemBinding):
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeSummaryItemBinding, HomeLoadsSummaryItem>(
+      binding
+    ) {
+    override fun bind(
+      item: HomeLoadsSummaryItem,
+      _interface: HomeLoadsRVAdapterInterface
+    ) {
+      binding.loadsCount.text = "("+item.data.count.toString()+")"
+    }
   }
 }

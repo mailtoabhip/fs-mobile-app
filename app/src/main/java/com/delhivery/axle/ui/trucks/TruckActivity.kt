@@ -11,11 +11,15 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
 import com.delhivery.axle.R
+import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogBottomTruckUnloadingDetailsBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 
@@ -65,6 +69,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.editCurrentCity.setOnClickListener {
+            startActivityForResult(searchCityIntent(this), REQCODE_SELECT_CITY)
 
         }
         binding.editUnloadingDestinations.setOnClickListener {
@@ -110,7 +115,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         autoCompleteUtils.autoCompleteCity(bindingDialog.editUnloadingCity){
             binding.textUnloadingDestination.text = it.city
-            dialog.dismiss()
         }
 
         bindingDialog.closeBtn.setOnClickListener{
@@ -195,6 +199,19 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            REQCODE_SELECT_CITY ->{
+                if(data != null) {
+                    val city = data.getSerializableExtra("City") as CityModel
+                    viewModel.truckCity = city
+                    binding.textCurrentCity.text = city.cityName().trim()
+                }
+            }
+        }
     }
 
 
