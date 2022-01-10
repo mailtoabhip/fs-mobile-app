@@ -177,6 +177,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processNotification() {
+    Log.d("noti",notificationType+notificationId)
     markNotificationRead()
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
@@ -211,6 +212,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           mutableListOf(userPrefs.userId())
         )
         startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
+
+      REDIRECT_TO_LOAD -> {
+        startActivity(bidDetailsIntent(preferredTransactionId,this))
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
@@ -365,6 +370,7 @@ private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
 private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
 private const val REDIRECT_TO_TRIP = "redirect_to_trip"
+private const val REDIRECT_TO_LOAD ="redirect_to_load"
 
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
