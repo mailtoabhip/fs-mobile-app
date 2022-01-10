@@ -1022,7 +1022,7 @@ class TripDetailsViewModel @Inject constructor(
   fun updateTripWithFuelUser(
     omcType:String
   ){
-    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update","trip_detail")
+    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update","trip_detail_app")
     compositeDisposable += transactionsRepository.updateTripWithFuelCardUser(transactionId, fuelPayoutRequest)
         .onBackground()
         .progress()
