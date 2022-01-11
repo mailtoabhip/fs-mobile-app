@@ -351,6 +351,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               val data = viewModel.transaction as HomeBidsRequestItemData
               if(data.transactionStatus == "cancelled"){
                 btnReviseBidInsider.visibility = View.GONE
+                reduceText.visibility = View.GONE
               }
               data.bulkTransactionBids = state.bids
               bidsRecieved = state.bidsCount
