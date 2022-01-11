@@ -349,6 +349,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     layoutInflater, binding.containerActions, false
             ).apply {
               val data = viewModel.transaction as HomeBidsRequestItemData
+              if(data.transactionStatus == "cancelled"){
+                btnReviseBidInsider.visibility = View.GONE
+              }
               data.bulkTransactionBids = state.bids
               bidsRecieved = state.bidsCount
               rvBidSummary.apply {
@@ -383,7 +386,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          if(viewModel.dmtStatus == "dmt") {
+          if(viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
             uiUtils.showProgress()
             viewModel.fetchTruckType(it);
           }
