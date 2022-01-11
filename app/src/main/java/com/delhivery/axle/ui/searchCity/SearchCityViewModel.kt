@@ -31,6 +31,7 @@ class SearchCityViewModel @Inject constructor(
     var dataLoadingLiveData = MutableLiveData<Boolean>()
 
     var searchText = ""
+    var cityType = ""
 
 
     /**

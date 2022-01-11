@@ -318,6 +318,7 @@
     <string name="label_search_by_city">Search by city name</string>
     <string name="label_choose_options">Choose option</string>
     <string name="label_choose_from_below">Choose one from the below trucks</string>
+    <string name="label_confirm_details">Confirm truck details</string>
 
 
     <!--Error (error_-->

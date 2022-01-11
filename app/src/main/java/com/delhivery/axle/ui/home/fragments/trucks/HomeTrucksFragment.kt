@@ -71,9 +71,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         binding.addTruck.setOnClickListener {
            //viewModel.getFrequentTrucks()
-            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTSXL",23.0),
-                HomeTrucksRequestItemData("24242w","open","32FTXL",24.0),
-                HomeTrucksRequestItemData("24242","trailer","3SXL",25.0)
+            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
+                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
+                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
             ))
         }
         binding.addTruckFloating.setOnClickListener {

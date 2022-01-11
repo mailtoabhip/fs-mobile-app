@@ -265,6 +265,27 @@
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_14dp"
+                    android:textSize="@dimen/text_12sp"
+                    android:text="@string/label_price_mt"
+                    android:textColor="@color/black"/>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_price_add_truck"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_40dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:padding="@dimen/size_8dp"
+                    android:textSize="@dimen/text_14sp"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:hint="Eg: ₹2500"
+                    android:background="@drawable/background_rectangle_border">
+                </androidx.appcompat.widget.AppCompatEditText>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

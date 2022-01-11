@@ -69,11 +69,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.editCurrentCity.setOnClickListener {
-            startActivityForResult(searchCityIntent(this), REQCODE_SELECT_CITY)
+            startActivityForResult(searchCityIntent(this,"origin"), REQCODE_SELECT_CITY)
 
         }
         binding.editUnloadingDestinations.setOnClickListener {
-            showUnloadingLocationsDialog()
+            startActivityForResult(searchCityIntent(this,"destination"), REQCODE_SELECT_CITY)
         }
 
         binding.btnAddTruck.setOnClickListener{
@@ -104,31 +104,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         else{
             uiUtils.showSnackbar("Fields are Empty")
         }
-    }
-
-    private fun showUnloadingLocationsDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogBottomTruckUnloadingDetailsBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-
-        autoCompleteUtils.autoCompleteCity(bindingDialog.editUnloadingCity){
-            binding.textUnloadingDestination.text = it.city
-        }
-
-        bindingDialog.closeBtn.setOnClickListener{
-            dialog.dismiss()
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-
-
-
     }
 
     private fun showTruckSizeDialog() {
@@ -206,9 +181,16 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         when(requestCode) {
             REQCODE_SELECT_CITY ->{
                 if(data != null) {
+                    val type = data.getStringExtra(CityType)
                     val city = data.getSerializableExtra("City") as CityModel
-                    viewModel.truckCity = city
-                    binding.textCurrentCity.text = city.cityName().trim()
+                    if(type =="origin") {
+                        viewModel.truckCity = city
+                        binding.textCurrentCity.text = city.cityName().trim()
+                    }
+                    else if(type == "destination"){
+                        viewModel.truckDestination = city
+                        binding.textUnloadingDestination.text = city.cityName().trim()
+                    }
                 }
             }
         }
@@ -221,6 +203,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 private const val TruckType = "truck_type"
 private const val TruckSize = "truck_size"
 private const val TruckCapacity = "truck_capacity"
+private const val CityType = "city_type"
 
 
 /**

@@ -50,6 +50,12 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
 
     private val adapter by lazy { SearchCityRvAdapter(this) }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.cityType = intent.getStringExtra(CityType) ?: ""
+    }
+
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -132,7 +138,8 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
                     itemBinding.request = item.originCity
                     itemBinding.root.setOnClickListener {
                         val data = item.originCity as CityModel
-                        setResult(REQCODE_SELECT_CITY, Intent().putExtra("City", data))
+                        setResult(REQCODE_SELECT_CITY, Intent().apply { putExtra("City", data)
+                            putExtra(CityType,viewModel.cityType)})
                         finish()
                     }
                     binding.containerHistory.addView(itemBinding.root, index)
@@ -150,7 +157,8 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
             CitySelected -> {
                 val data = item.data as CityModel
                 viewModel.saveToHistory(data)
-                setResult(REQCODE_SELECT_CITY, Intent().putExtra("City", data))
+                setResult(REQCODE_SELECT_CITY, Intent().apply { putExtra("City", data)
+                    putExtra(CityType,viewModel.cityType)})
                 finish()
             }
             SearchWarningAction_NoResult -> {
@@ -178,13 +186,16 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
 
 
 private const val FromPage = "from_page"
+private const val CityType = "city_type"
 
 /**
  * Search City Intent
   */
 fun searchCityIntent(
     context: Context,
+    cityType: String,
     fromPage: Boolean = false
 ) = Intent( context, SearchCity::class.java).apply {
+    putExtra(CityType, cityType)
     putExtra(FromPage, fromPage)
 }
