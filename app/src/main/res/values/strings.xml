@@ -114,7 +114,8 @@
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
   <string name="label_otp">Enter OTP</string>
   <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
-  <string name="label_phone_number">Phone number</string>
+  <string name="label_phone_number">What is your mobile number?</string>
+  <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your mobile number for it’s verification</string>
   <string name="label_isd_code">+91</string>
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
   <string name="label_inr">₹ %1$d</string>
