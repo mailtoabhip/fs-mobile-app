@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil.setContentView
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.CitySelected
@@ -25,6 +26,7 @@ import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripRVAdapter
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>() ,
@@ -54,6 +56,7 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
         super.onCreate(savedInstanceState)
 
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
+        viewModel.fromDialog = intent.getBooleanExtra(FromDialog, false)
     }
 
 
@@ -138,8 +141,20 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
                     itemBinding.request = item.originCity
                     itemBinding.root.setOnClickListener {
                         val data = item.originCity as CityModel
-                        setResult(REQCODE_SELECT_CITY, Intent().apply { putExtra("City", data)
-                            putExtra(CityType,viewModel.cityType)})
+                        if(viewModel.fromDialog){
+                            LocalBroadcastManager.getInstance(this@SearchCity)
+                                .sendBroadcast(Intent("get_selected_city").apply {
+                                    putExtra("City",data)
+                                    putExtra(CityType,viewModel.cityType)
+                                }
+                                )
+                        }
+                        else {
+                            setResult(REQCODE_SELECT_CITY, Intent().apply {
+                                putExtra("City", data)
+                                putExtra(CityType, viewModel.cityType)
+                            })
+                        }
                         finish()
                     }
                     binding.containerHistory.addView(itemBinding.root, index)
@@ -157,8 +172,20 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
             CitySelected -> {
                 val data = item.data as CityModel
                 viewModel.saveToHistory(data)
-                setResult(REQCODE_SELECT_CITY, Intent().apply { putExtra("City", data)
-                    putExtra(CityType,viewModel.cityType)})
+                if(viewModel.fromDialog){
+                    LocalBroadcastManager.getInstance(this@SearchCity)
+                        .sendBroadcast(Intent("get_selected_city").apply {
+                            putExtra("City",data)
+                            putExtra(CityType,viewModel.cityType)
+                        }
+                        )
+                }
+                else {
+                    setResult(REQCODE_SELECT_CITY, Intent().apply {
+                        putExtra("City", data)
+                        putExtra(CityType, viewModel.cityType)
+                    })
+                }
                 finish()
             }
             SearchWarningAction_NoResult -> {
@@ -185,7 +212,7 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
 }
 
 
-private const val FromPage = "from_page"
+private const val FromDialog = "from_dialog"
 private const val CityType = "city_type"
 
 /**
@@ -194,8 +221,8 @@ private const val CityType = "city_type"
 fun searchCityIntent(
     context: Context,
     cityType: String,
-    fromPage: Boolean = false
+    fromDialog: Boolean = false
 ) = Intent( context, SearchCity::class.java).apply {
     putExtra(CityType, cityType)
-    putExtra(FromPage, fromPage)
+    putExtra(FromDialog, fromDialog)
 }

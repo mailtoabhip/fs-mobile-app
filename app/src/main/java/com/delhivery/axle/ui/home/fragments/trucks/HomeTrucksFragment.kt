@@ -131,7 +131,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_USER_ID),
                     mutableListOf(userPrefs.userId())
                 )
-                showActivateTruckDialog(position)
             }
         }
     }
@@ -185,7 +184,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
-            showEditTruckDialog(position)
+            context?.let {  EditTruckDialog(context!!,1).show()}
 
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
@@ -199,52 +198,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
 
-    }
-
-    private fun showActivateTruckDialog(position: Int) {
-        val dialog = Dialog(context!!)
-        val bindingDialog= DialogBottomActivateTruckBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-
-        bindingDialog.closeBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
-
-    private fun showEditTruckDialog(position: Int) {
-        val dialog = Dialog(context!!)
-        val bindingDialog= DialogBottomEditTruckBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-
-        bindingDialog.closeBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialog.editCurrentCityEditDialog.setOnClickListener{
-
-
-        }
-        bindingDialog.editUnloadingDestinationsEditDialog.setOnClickListener{
-
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
     private fun showDeactivateDialog(position: Int) {

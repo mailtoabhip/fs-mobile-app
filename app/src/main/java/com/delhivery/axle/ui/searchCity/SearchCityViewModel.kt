@@ -32,6 +32,7 @@ class SearchCityViewModel @Inject constructor(
 
     var searchText = ""
     var cityType = ""
+    var fromDialog = false
 
 
     /**
