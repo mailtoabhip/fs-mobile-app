@@ -119,6 +119,7 @@
                 android:layout_marginTop="@dimen/size_14dp"
                 android:textAllCaps="false"
                 android:text="@string/action_activate_truck"
+                android:layout_marginBottom="@dimen/size_11dp"
                 android:background="@drawable/bg_all_round_corner_black"
                 android:textColor="@color/white"/>
 

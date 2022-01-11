@@ -196,6 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_14dp"
             android:text="@string/action_save_changes"
+            android:layout_marginBottom="@dimen/size_11dp"
             android:background="@drawable/bg_all_round_corner_black"
             android:textColor="@color/white"/>
 

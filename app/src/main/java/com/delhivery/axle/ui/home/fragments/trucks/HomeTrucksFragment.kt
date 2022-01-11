@@ -22,9 +22,12 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapter
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.trucks.ActivateTruckDialog
+import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.gms.common.Feature
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -70,21 +73,21 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         binding.addTruck.setOnClickListener {
-           //viewModel.getFrequentTrucks()
-            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
-                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
-                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
-            ))
+//            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
+//                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
+//                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
+//            ))
+            context?.let {  EditTruckDialog(context!!,1).show()}
         }
         binding.addTruckFloating.setOnClickListener {
-            viewModel.getFrequentTrucks()
+//            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
+//                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
+//                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
+//            ))
+            context?.let {  ActivateTruckDialog(context!!,1).show()}
         }
 
-        viewModel.frequentTrucks.observe(this, Observer {
-            if(it!=null){
-                showAddTruckDialog(it)
-            }
-        })
+
 
         refreshData()
     }
@@ -128,9 +131,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_USER_ID),
                     mutableListOf(userPrefs.userId())
                 )
+                showActivateTruckDialog(position)
             }
         }
     }
+
 
     private fun showAddTruckDialog(items: List<HomeTrucksRequestItemData>) {
         val dialog = Dialog(context!!)
@@ -180,7 +185,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
-            showEditTruckDialog()
+            showEditTruckDialog(position)
 
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
@@ -196,15 +201,43 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     }
 
-    private fun showEditTruckDialog() {
+    private fun showActivateTruckDialog(position: Int) {
         val dialog = Dialog(context!!)
-        val bindingDialogDeactivate= DialogBottomEditTruckBinding.inflate(layoutInflater)
+        val bindingDialog= DialogBottomActivateTruckBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialogDeactivate.root)
+        dialog.setContentView(bindingDialog.root)
 
-        bindingDialogDeactivate.closeBtn.setOnClickListener {
+        bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
+        }
+
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+    private fun showEditTruckDialog(position: Int) {
+        val dialog = Dialog(context!!)
+        val bindingDialog= DialogBottomEditTruckBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.editCurrentCityEditDialog.setOnClickListener{
+
+
+        }
+        bindingDialog.editUnloadingDestinationsEditDialog.setOnClickListener{
+
         }
 
         dialog.show()
