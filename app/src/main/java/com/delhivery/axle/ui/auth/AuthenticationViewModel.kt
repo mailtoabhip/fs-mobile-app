@@ -6,12 +6,7 @@ import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
-import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
-import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIState.SelectRoute
+import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -113,7 +108,11 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.isDeleted) {
               userPrefs.hasLoggedIn = false
               Disabled
-            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+            }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+              userPrefs.hasLoggedIn = true
+              userPrefs.lastLoginTime = Date().time
+              AddInventoryPathway
+            }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
               LoadRequest

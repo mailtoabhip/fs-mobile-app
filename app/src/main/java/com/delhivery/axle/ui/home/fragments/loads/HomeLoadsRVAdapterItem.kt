@@ -2,21 +2,8 @@ package com.delhivery.axle.ui.home.fragments.loads
 
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsMoreInfoItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsProgressItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Filters
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.MoreInfo
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Timeout
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
+import com.delhivery.axle.data.home.loads.*
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.*
 
 /**
  * RV item type for [HomeLoadsRVAdapter]
@@ -29,7 +16,9 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Timeout(4),
   Info(5),
   MoreInfo(6),
-  Filters(7);
+  Filters(7),
+  Banners(8),
+  Priority(9);
 
   companion object {
     /**
@@ -54,6 +43,19 @@ abstract class BaseHomeLoadsRVAdapterItem<D : BaseKeyTypeModel<String>>(
  */
 class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Inventory banner item
+ */
+class HomeLoadsAddTruckItem(data: HomeLoadsAddTruckItemData = HomeLoadsAddTruckItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsAddTruckItemData>(Banners, data)
+
+
+/**
+ * Priority acccess banner item
+ */
+class HomeLoadsTruckPriorityAccessItem(data: HomeLoadsTruckPriorityAccessItemData = HomeLoadsTruckPriorityAccessItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsTruckPriorityAccessItemData>(Priority, data)
 
 /**
  * Inline progress item

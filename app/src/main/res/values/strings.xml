@@ -117,6 +117,8 @@
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
+  <string name="action_add_new_truck">Add New Truck</string>
+  <string name="action_do_it_later">Do It Later</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -179,6 +181,7 @@
   <string name="label_your_team">Your Team Members</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
   <string name="label_place_bid">PLACE A BID</string>
+  <string name="label_add_truck">ADD TRUCK</string>
   <string name="label_add_team_member">Add Team Member</string>
   <string name="label_bidding_ended">Bidding ended</string>
   <string name="label_destination_states">Destination States</string>
@@ -303,6 +306,7 @@
   <string name="label_trailer">Trailer</string>
   <string name="label_closed">Container</string>
   <string name="label_select_truck_size">Select truck size</string>
+  <string name="label_no_loads_found">Can\'t find any matching loads?</string>
 
 
 
@@ -336,6 +340,12 @@
   <string name="label_pending_recovery">Pending Recovery</string>
   <string name="call_driver">CALL DRIVER</string>
   <string name="cancelled_bid_msg">The load request itself is cancelled</string>
+  <string name="add_your_truck_and_receive_matching_load_offers">Add your truck and receive matching load offers \nwithin one hour of addition</string>
+    <string name="get_load_offers">Get load offers by adding \nyour truck details</string>
+  <string name="we_use_your_truck_details">We use your truck details to find matching loads \nwithin one hour of truck addition.</string>
+    <string name="add_your_trucks">Add your trucks  \u0026 gain exclusive one hour \naccess to loads</string>
+  <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
+
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

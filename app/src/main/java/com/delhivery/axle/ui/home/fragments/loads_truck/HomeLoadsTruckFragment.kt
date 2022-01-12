@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding

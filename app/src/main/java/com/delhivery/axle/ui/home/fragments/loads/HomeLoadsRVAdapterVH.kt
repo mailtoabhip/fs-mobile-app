@@ -12,14 +12,7 @@ import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
-import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.axle.databinding.ViewTimeOutItemBinding
-import com.delhivery.axle.databinding.ViewWarningItemBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 
 /**
@@ -133,6 +126,42 @@ internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+/**
+ *  Load Add Truck item view holder
+ */
+internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckBannerItemBinding, HomeLoadsAddTruckItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsAddTruckItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+   /* binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
+  }
+}
+
+/**
+ *   Add Truck priority item view holder
+ */
+internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckPriorityItemBinding, HomeLoadsTruckPriorityAccessItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsTruckPriorityAccessItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    /* binding.title = item.data.title
+     binding.subTitle = item.data.subtitle
+     binding.actionLabel = item.data.actionLabel
+     binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
   }
 }
 

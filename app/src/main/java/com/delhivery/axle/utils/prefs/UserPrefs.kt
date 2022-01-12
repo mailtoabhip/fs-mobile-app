@@ -267,6 +267,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.IsFirstRoute, false)
 
+    /**
+     * First time login with Vendor Entity as RP/BOTH
+     */
+    var firstLoginRPUser: Boolean
+        set(value) = editor.putBoolean(PrefKeys.IsFirstLoginRPUser, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.IsFirstLoginRPUser, true)
   /**
    * Vendor Entity
    */
@@ -427,6 +434,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
+      const val IsFirstLoginRPUser = "first_login_RP"
   }
 }
 

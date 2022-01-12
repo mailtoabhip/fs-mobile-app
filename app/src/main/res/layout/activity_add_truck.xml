@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:paddingStart="@dimen/size_24dp"
+      android:paddingEnd="@dimen/size_24dp"
+      >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/img"
+        android:layout_width="@dimen/size_140dp"
+        android:layout_height="@dimen/size_140dp"
+        app:srcCompat="@drawable/truck_icon"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_20dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@string/get_load_offers"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_18sp"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_10dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="@dimen/text_6sp"
+        android:text="@string/we_use_your_truck_details"
+        android:textColor="@color/custom_dark_grey"
+        android:textSize="@dimen/text_14sp"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_action"
+        android:background="@drawable/background_all_rounded_black"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/size_30dp"
+        android:text="@string/action_add_new_truck"
+        android:textAllCaps="false"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_do_later"
+        android:background="@drawable/background_rounded_border_black"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/size_20dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/action_do_it_later"
+        android:textAllCaps="false"
+       />
+  </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>
