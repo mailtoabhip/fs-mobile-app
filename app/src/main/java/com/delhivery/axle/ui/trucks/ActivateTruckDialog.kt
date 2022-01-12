@@ -1,10 +1,7 @@
 package com.delhivery.axle.ui.trucks
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -69,6 +66,11 @@ class ActivateTruckDialog @Inject constructor(
 
 
 
+    }
+
+    override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
+        super.setOnCancelListener(listener)
     }
 }
 
