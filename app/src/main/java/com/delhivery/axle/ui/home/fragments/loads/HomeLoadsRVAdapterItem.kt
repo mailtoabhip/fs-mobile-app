@@ -17,7 +17,9 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Info(5),
   MoreInfo(6),
   Filters(7),
-  Count(8);
+  Count(8),
+  Banners(9),
+  Priority(10);
 
   companion object {
     /**
@@ -42,6 +44,19 @@ abstract class BaseHomeLoadsRVAdapterItem<D : BaseKeyTypeModel<String>>(
  */
 class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Inventory banner item
+ */
+class HomeLoadsAddTruckItem(data: HomeLoadsAddTruckItemData = HomeLoadsAddTruckItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsAddTruckItemData>(Banners, data)
+
+
+/**
+ * Priority acccess banner item
+ */
+class HomeLoadsTruckPriorityAccessItem(data: HomeLoadsTruckPriorityAccessItemData = HomeLoadsTruckPriorityAccessItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsTruckPriorityAccessItemData>(Priority, data)
 
 /**
  * Inline progress item

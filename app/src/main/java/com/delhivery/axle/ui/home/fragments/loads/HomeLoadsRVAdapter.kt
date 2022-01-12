@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.home.fragments.loads
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.api.response.Summary
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
@@ -11,6 +10,17 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.*
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Filters
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Info
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.MoreInfo
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Progress
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Request
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Search
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Timeout
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Banners
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Priority
+
 
 
 class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
@@ -33,6 +43,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeLoadsFilterItemBinding.inflate(inflater, parent, false)
     Count -> ViewHomeSummaryItemBinding.inflate(inflater, parent, false)
+    Banners -> ViewHomeLoadsTruckBannerItemBinding.inflate(inflater, parent, false)
+   Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -45,6 +57,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewTimeOutItemBinding -> HomeLoadsTimeOutItemVH(binding)
     is ViewHomeLoadsFilterItemBinding -> HomeLoadsFilterItemVH(binding)
     is ViewHomeSummaryItemBinding -> HomeLoadsMoreInfoItemVH.HomeLoadsSummaryItemVH(binding)
+    is ViewHomeLoadsTruckBannerItemBinding->HomeLoadsAddTruckItemVH(binding)
+    is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -62,6 +76,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsMoreInfoItemVH -> holder.bind(item as HomeLoadsMoreInfoItem, _interface)
       is HomeLoadsFilterItemVH -> holder.bind(item as HomeLoadsFilterItem, _interface)
       is HomeLoadsMoreInfoItemVH.HomeLoadsSummaryItemVH -> holder.bind(item as HomeLoadsSummaryItem, _interface)
+      is HomeLoadsAddTruckItemVH -> holder.bind(item as HomeLoadsAddTruckItem, _interface)
+      is HomeLoadsTruckPriorityItemVH -> holder.bind(item as HomeLoadsTruckPriorityAccessItem, _interface)
     }
   }
 

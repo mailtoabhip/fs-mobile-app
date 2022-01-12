@@ -130,6 +130,42 @@ internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
 }
 
 /**
+ *  Load Add Truck item view holder
+ */
+internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckBannerItemBinding, HomeLoadsAddTruckItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsAddTruckItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+   /* binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
+  }
+}
+
+/**
+ *   Add Truck priority item view holder
+ */
+internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityItemBinding) :
+  BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckPriorityItemBinding, HomeLoadsTruckPriorityAccessItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeLoadsTruckPriorityAccessItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    /* binding.title = item.data.title
+     binding.subTitle = item.data.subtitle
+     binding.actionLabel = item.data.actionLabel
+     binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
+  }
+}
+
+/**
  * Loads filter view holder
  */
 internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :

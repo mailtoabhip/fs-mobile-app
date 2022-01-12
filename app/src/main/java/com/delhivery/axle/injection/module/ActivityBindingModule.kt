@@ -33,6 +33,7 @@ import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
+import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
 import com.delhivery.axle.ui.trucks.TruckActivity
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
@@ -183,6 +184,12 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSearchCityModule::class])
   internal abstract fun bindSearchCityActivity() : SearchCity
+
+  /*Add Truck pathway activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAddTruckPathwayActivityModule::class])
+  internal abstract fun bindAddTruckPathwayActivity(): AddTruckPathwayActivity
+
 }
 
 /**
@@ -272,6 +279,10 @@ internal abstract class AbsTruckActivityModule : ActivityModule<TruckActivity>()
 
 @Module
 internal abstract class AbsSearchCityModule : ActivityModule<SearchCity>()
+
+@Module
+internal abstract class AbsAddTruckPathwayActivityModule : ActivityModule<AddTruckPathwayActivity>()
+
 
 /**
  * Activity Binds Module
