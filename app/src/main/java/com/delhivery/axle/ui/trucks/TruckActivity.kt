@@ -127,10 +127,10 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.textTruckSize.text = adapter.getItem(position)
             dialog.dismiss()
         }
-        listItems.add("Aakash")
-        listItems.add("Aak")
-        listItems.add("Ah")
-        listItems.add("Aash")
+        listItems.add("32FTXL")
+        listItems.add("10 TYRE")
+        listItems.add("12 TYRE")
+        listItems.add("40FT_LOW_BED")
 
         adapter.notifyDataSetChanged();
 

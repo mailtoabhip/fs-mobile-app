@@ -64,7 +64,7 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
         super.onPostCreate(savedInstanceState)
 
         setSupportActionBar(binding.toolbar)
-        title = "Search City"
+        title = if(viewModel.cityType == "origin") "Search Origin City" else "Search Destination City"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.rvCityItems.apply {

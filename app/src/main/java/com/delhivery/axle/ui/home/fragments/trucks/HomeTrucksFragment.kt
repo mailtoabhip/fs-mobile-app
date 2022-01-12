@@ -80,11 +80,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             context?.let {  EditTruckDialog(context!!,1).show()}
         }
         binding.addTruckFloating.setOnClickListener {
-//            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
-//                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
-//                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
-//            ))
-            context?.let {  ActivateTruckDialog(context!!,1).show()}
+            showAddTruckDialog(mutableListOf(HomeTrucksRequestItemData("24242","closed","32FTXL",32.0),
+                HomeTrucksRequestItemData("24242w","open","10_TYRE",6.0),
+                HomeTrucksRequestItemData("24242","open","12_TYRE",14.0)
+            ))
+//            context?.let {  ActivateTruckDialog(context!!,1).show()}
         }
 
 

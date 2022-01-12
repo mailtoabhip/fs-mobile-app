@@ -84,7 +84,7 @@
     <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
     <string name="hint_amount">23900</string>
     <string name="hint_search_trucks">Search truck by number</string>
-    <string name="hint_search_city">Search Current City</string>
+    <string name="hint_search_city">Search City</string>
 
     <!--Actions (action_)-->
     <string name="action_hello_world">Action Hello World</string>
@@ -294,7 +294,7 @@
     <string name="label_with_sign_value">₹ %1$d</string>
     <string name="label_home">Home</string>
     <string name="nav_label_trucks">My Trucks</string>
-    <string name="label_unloading_locations">Unloading destinations</string>
+    <string name="label_unloading_locations">Unloading destination</string>
     <string name="label_current_locations">Current location</string>
     <string name="label_more_options">More Options</string>
     <string name="label_body_type">Select Body Type</string>
@@ -305,7 +305,7 @@
     <string name="label_truck_size">Truck Size</string>
     <string name="label_truck_capacity">Truck Capacity</string>
     <string name="label_current_city">Current City</string>
-    <string name="label_unloading_destination">Unloading Destinations</string>
+    <string name="label_unloading_destination">Unloading Destination</string>
     <string name="label_open">Open Body</string>
     <string name="label_trailer">Trailer</string>
     <string name="label_closed">Container</string>

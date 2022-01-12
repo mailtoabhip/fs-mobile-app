@@ -76,7 +76,9 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_12sp"
                     android:text="@string/label_body_type" />
-
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                 <RadioGroup
                     android:id="@+id/body_group"
                     android:layout_width="wrap_content"
@@ -119,6 +121,31 @@
                         android:textAlignment="center"
                         android:text="@string/label_trailer"/>
                 </RadioGroup>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/body_group">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_closed"
+                        android:layout_below="@id/body_group"
+
+                        android:textSize="@dimen/text_12sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_closed"
+                        android:textSize="@dimen/text_12sp"
+                        android:layout_below="@id/body_group" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_closed"
+                        android:textSize="@dimen/text_12sp"
+                        android:layout_below="@id/body_group" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </RelativeLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -137,7 +164,7 @@
                     android:hint="Eg: KA-BD2525"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_14sp"
-                    android:background="@drawable/background_rectangle_border"/>
+                    android:background="@drawable/background_rectangle_border_curved"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
@@ -180,7 +207,7 @@
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:padding="@dimen/size_8dp"
-                    android:background="@drawable/background_rectangle_border">
+                    android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_size"
                         android:layout_width="wrap_content"
@@ -204,7 +231,7 @@
                     android:layout_marginTop="@dimen/size_6dp"
                     android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
-                    android:background="@drawable/background_rectangle_border">
+                    android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_capacity"
                         android:layout_width="wrap_content"
@@ -228,7 +255,7 @@
                     android:padding="@dimen/size_8dp"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:textSize="@dimen/text_14sp"
-                    android:background="@drawable/background_rectangle_border">
+                    android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_current_city"
                         android:layout_gravity="center"
@@ -255,7 +282,7 @@
                     android:layout_marginTop="@dimen/size_6dp"
                     android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
-                    android:background="@drawable/background_rectangle_border">
+                    android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_unloading_destination"
                         android:layout_width="wrap_content"
@@ -283,7 +310,7 @@
                     android:inputType="number"
                     android:textColor="@color/black"
                     android:hint="Eg: ₹2500"
-                    android:background="@drawable/background_rectangle_border">
+                    android:background="@drawable/background_rectangle_border_curved">
                 </androidx.appcompat.widget.AppCompatEditText>
 
 

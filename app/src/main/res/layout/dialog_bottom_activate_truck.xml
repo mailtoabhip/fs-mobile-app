@@ -55,7 +55,7 @@
                 android:padding="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_6dp"
                 android:textSize="@dimen/text_14sp"
-                android:background="@drawable/background_rectangle_border">
+                android:background="@drawable/background_rectangle_border_curved">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_current_city_activate"
                     android:layout_gravity="center"
@@ -82,7 +82,7 @@
                 android:layout_marginTop="@dimen/size_6dp"
                 android:padding="@dimen/size_8dp"
                 android:textSize="@dimen/text_14sp"
-                android:background="@drawable/background_rectangle_border">
+                android:background="@drawable/background_rectangle_border_curved">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_unloading_destination_activate"
                     android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
                 android:textColor="@color/black"
                 android:inputType="number"
                 android:hint="Eg: ₹2500"
-                android:background="@drawable/background_rectangle_border">
+                android:background="@drawable/background_rectangle_border_curved">
             </androidx.appcompat.widget.AppCompatEditText>
 
             <androidx.appcompat.widget.AppCompatButton
