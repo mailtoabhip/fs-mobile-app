@@ -106,7 +106,7 @@
                 android:drawableStart="@drawable/ic_add_white"
                 android:drawablePadding="@dimen/size_2dp"
                 android:maxLines="1"
-                android:text="@string/label_add_truck"
+                android:text="@string/action_add_truck"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"

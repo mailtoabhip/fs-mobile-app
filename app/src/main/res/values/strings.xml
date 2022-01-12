@@ -124,6 +124,7 @@
     <string name="action_add_destination">Add Destination</string>
     <string name="action_save_changes">Save Changes</string>
     <string name="action_add_new_truck">Add new truck</string>
+    <string name="action_do_it_later">Do it later</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
