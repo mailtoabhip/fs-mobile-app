@@ -121,6 +121,22 @@
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
             />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/login_using_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/text_4sp"
+            android:text="Login by password"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_16sp"
+            />
 
         <View
             android:layout_width="match_parent"
@@ -139,21 +155,6 @@
             android:lineSpacingExtra="@dimen/text_6sp"
             android:text="@string/msg_contact_terms_auth"
             android:textColor="@color/sub_heading_black"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/login_using_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:layout_marginEnd="@dimen/size_8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="center_horizontal"
-            android:letterSpacing="0.01"
-            android:lineSpacingExtra="@dimen/text_4sp"
-            android:text="Login by password"
-            android:textColor="@color/sub_heading_black"
-            android:textSize="@dimen/text_14sp"
             />
       </androidx.appcompat.widget.LinearLayoutCompat>
 
