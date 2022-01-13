@@ -134,6 +134,55 @@ class AuthenticationViewModel @Inject constructor(
         }
   }
 
+//  fun verifyUser(userName: String, userPassword: String){
+//    if (!isConnected) return
+//
+//    state = LoginProgress
+//    compositeDisposable += Single.zip(
+//      authenticationRepository.verifyUser(userName,userPassword),
+//      Single.timer(1000, MILLISECONDS), //add delay for animation
+//      BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
+//      .flatMap { _otpRes ->
+//        userRepository.getUser(false)
+//          .map {
+//            val msg = if (_otpRes.second.isNotNullOrEmpty()) {
+//              _otpRes.second
+//            } else {
+//              "Error validating OTP"
+//            }
+//            Triple(_otpRes.first, msg, it)
+//          }
+//      }
+//      .onBackground()
+//      .subscribe { _res, error ->
+//        state = if (!error && _res.first) {
+//          if (!_res.third.supplierEnabled) {
+//            userPrefs.hasLoggedIn = false
+//            Disabled
+//          } else if (_res.third.isDeleted) {
+//            userPrefs.hasLoggedIn = false
+//            Disabled
+//          } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+//            userPrefs.hasLoggedIn = true
+//            userPrefs.lastLoginTime = Date().time
+//            LoadRequest
+//          } else {
+//            userPrefs.hasLoggedIn = true
+//            userPrefs.hasEditedRoute = true
+//            userPrefs.lastLoginTime = Date().time
+//            SelectRoute
+//          }
+//        } else {
+//          if (error is HttpException) {
+//            userPrefs.hasLoggedIn = false
+//            error.handle()
+//          }
+//          errorLiveData.postValue(Pair(InvalidOTP, ""))
+//          OTP
+//        }
+//      }
+//  }
+
   /**
    * Mark notification as read
    */
