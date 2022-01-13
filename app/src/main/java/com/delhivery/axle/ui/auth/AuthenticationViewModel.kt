@@ -46,8 +46,6 @@ class AuthenticationViewModel @Inject constructor(
   var phoneNo: String = ""
   var otpSendCount: Int = 1
 
-  var userName: String = ""
-  var password: String = ""
   /**
    * Send OTP
    */
