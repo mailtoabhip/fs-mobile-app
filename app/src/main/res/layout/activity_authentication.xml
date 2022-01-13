@@ -171,7 +171,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:fontFamily="sans-serif"
             android:lineSpacingExtra="@dimen/text_6sp"
-            android:text="Login"
+            android:text="@string/action_login"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_24sp"
             android:textStyle="bold"
@@ -193,7 +193,7 @@
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_4dp"
               android:background="@drawable/bg_form_edit"
-              android:hint="Enter user name"
+              android:hint="@string/hint_user_name"
               android:imeOptions="actionDone"
               android:textSize="@dimen/text_14sp"
               />
@@ -206,9 +206,10 @@
             android:layout_height="wrap_content"
             app:errorEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
-            android:hint="Enter Password"
+            android:hint="@string/hint_password"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            bind:passwordToggleEnabled="true"
             >
 
           <androidx.appcompat.widget.AppCompatEditText
