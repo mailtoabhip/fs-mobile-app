@@ -121,12 +121,18 @@
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
             />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/login_using_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
-            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_14dp"
             android:fontFamily="sans-serif"
             android:layout_gravity="center"
             android:letterSpacing="0.01"
@@ -136,12 +142,6 @@
             android:focusable="true"
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_16sp"
-            />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
