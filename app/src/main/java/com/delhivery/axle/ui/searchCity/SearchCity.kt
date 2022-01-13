@@ -157,6 +157,10 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
                         }
                         finish()
                     }
+                    itemBinding.root.setOnLongClickListener {
+                        viewModel.deleteCity(item)
+                        true
+                    }
                     binding.containerHistory.addView(itemBinding.root, index)
                 }
             }

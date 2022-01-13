@@ -117,6 +117,13 @@
                 android:textColor="@color/black"
                 android:hint="Search city"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/origin_error_edit"
+                android:layout_width="wrap_content"
+                android:textColor="@color/bid_placed_red"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -141,6 +148,13 @@
                 android:textColor="@color/black"
                 android:layout_height="wrap_content"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/destination_error_edit"
+                android:layout_width="wrap_content"
+                android:textColor="@color/bid_placed_red"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -161,6 +175,13 @@
             android:hint="Eg: ₹2500"
             android:background="@drawable/background_rectangle_border_curved">
             </androidx.appcompat.widget.AppCompatEditText>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/price_error_edit"
+                android:layout_width="wrap_content"
+                android:textColor="@color/bid_placed_red"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"

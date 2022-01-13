@@ -111,4 +111,19 @@ class SearchCityViewModel @Inject constructor(
             }
     }
 
+    fun deleteCity(cityEntity: SearchCityEntity){
+        compositeDisposable += Single.fromCallable {
+            appDB.searchCityDao()
+                .deleteSearchEntry(cityEntity)
+        }
+            .onBackground()
+            .subscribe { res, error ->
+                if (!error) {
+                    Log.d("Search City History", "search entry deleted $res")
+                } else {
+                    error.handle()
+                }
+            }
+    }
+
 }

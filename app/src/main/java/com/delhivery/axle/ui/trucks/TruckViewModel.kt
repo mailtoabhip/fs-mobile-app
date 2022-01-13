@@ -24,7 +24,7 @@ class TruckViewModel @Inject constructor(
 
 
     fun addNewTruck(){
-        val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize,truckCapacity.toDouble()
+        val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize,truckCapacity
             ,truckCity!!.city, truckCity!!.orion_db_city_code)
 
 //        compositeDisposable += tripsRepository.tripDetails(232)

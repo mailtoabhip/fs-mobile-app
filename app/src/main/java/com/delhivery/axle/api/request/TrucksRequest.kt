@@ -32,7 +32,7 @@ data class AddVehicle(
     @SerializedName("truck_number") var truckNumber: String,
     @SerializedName("ownership") var ownership :String,
     @SerializedName("truck_size") var truckSize: String,
-    @SerializedName("capacity") var capacity: Double,
+    @SerializedName("capacity") var capacity: String,
     @SerializedName("current_city_name") var currentCityName: String? = null,
     @SerializedName("current_city_code") var currentCityCode: String? = null,
     @SerializedName("unloading_destination") var unloadingDestination: String? = null,

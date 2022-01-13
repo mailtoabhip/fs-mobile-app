@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
@@ -82,7 +83,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     }
 
-    private fun validateFieldsAndAddTruck() {
+    private fun validateFieldsAndAddTruck(){
         viewModel.truckOwnership = if(binding.btnRadioMarketTruck.isChecked)
             "market_truck" else "owns_truck"
 
@@ -96,15 +97,54 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
 
-        if(viewModel.truckCapacity!= "" && viewModel.truckNumber!= "" && viewModel.truckSize!= "" && viewModel.truckCity!=null &&
-            viewModel.truckDestination!= null) {
+        var flag = true
 
-            viewModel.addNewTruck()
+        if(viewModel.truckCapacity!= "" ){
+            binding.capacityError.visibility = View.GONE
         }
         else{
-            uiUtils.showSnackbar("Fields are Empty")
+            binding.capacityError.text = "Field can't be empty"
+            binding.capacityError.visibility = View.VISIBLE
+            flag = false
         }
+        if(viewModel.truckNumber!= ""){
+            binding.numberError.visibility = View.GONE
+        }
+        else {
+            binding.numberError.text = "Field can't be empty"
+            binding.numberError.visibility = View.VISIBLE
+            flag= false
+        }
+        if(viewModel.truckSize!= "" ) {
+            binding.sizeError.visibility = View.GONE
+       }
+        else {
+            binding.sizeError.text = "Field can't be empty"
+            binding.sizeError.visibility = View.VISIBLE
+            flag= false
+        }
+        if(viewModel.truckCity!=null ){
+            binding.originError.visibility = View.GONE
+        } else{
+            binding.originError.text = "Field can't be empty"
+            binding.originError.visibility = View.VISIBLE
+            flag= false
+        }
+        if(viewModel.truckDestination!= null){
+            binding.destinationError.visibility= View.GONE
+        }
+        else{
+            binding.destinationError.text = "Field can't be empty"
+            binding.destinationError.visibility = View.VISIBLE
+            flag= false
+        }
+
+        if(flag) {
+            viewModel.addNewTruck()
+        }
+
     }
+
 
     private fun showTruckSizeDialog() {
         val dialog = Dialog(this)
