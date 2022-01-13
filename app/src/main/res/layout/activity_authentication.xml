@@ -121,15 +121,6 @@
             android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
             />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/loginAnotherOption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:layout_marginEnd="@dimen/size_8dp"
-            android:text="Login with userID &amp; Password"
-            android:textSize="@dimen/text_14sp"
-            android:textColor="@color/sub_heading_black"/>
 
         <View
             android:layout_width="match_parent"

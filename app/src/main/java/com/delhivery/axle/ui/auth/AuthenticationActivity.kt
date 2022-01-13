@@ -28,7 +28,9 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.view_active_trips_progress_item.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -91,11 +93,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     }
 
-    binding.loginUsingPassword.setOnClickListener{
-      viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
-    }
-
-
     viewModel.otpStatusLiveData.observe(this, Observer {
       if (it == true) {
         timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
@@ -144,7 +141,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
-    binding.loginAnotherOption.setOnClickListener {
+    binding.loginUsingPassword.setOnClickListener{
       viewModel.state = Password
     }
 
@@ -210,7 +207,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     if(flag){
       val userId=  binding.tilUserId.editText?.text.toString()
       val userPassword = binding.tilUserPassword.editText?.text.toString()
-     // viewModel.verifyUser(userId,userPassword)
+     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+      viewModel.loginUsingPassword(userId,userPassword)
     }
   }
 
@@ -239,6 +237,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   getString(string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
               }
             }
+          }
+          Password ->{
+            uiUtils.hideDelhiveryProgress()
           }
           LoginProgress -> {
             //hide keyboard show progress view
@@ -312,7 +313,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           InvalidOTP -> {   //Invalid OTP clear fields
             binding.otpView.clear()
           }
-          InvalidPassword -> {   //Invalid password clear fields
+          AuthenticationUIError.InvalidPassword -> {   //Invalid password clear fields
          //   binding.otpView.clear()
           }
           None -> {/* nothing */

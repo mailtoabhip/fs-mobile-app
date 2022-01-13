@@ -59,7 +59,7 @@ class AuthenticationRepository @Inject constructor(
       }
 
   /**
-   * Verify OTP
+   * Verify Password Login
    */
   fun loginUsingPassword(
     userName: String,
@@ -71,7 +71,7 @@ class AuthenticationRepository @Inject constructor(
     }
     .onErrorReturn {
       /* handle error if needed */
-      Pair(false, "Invalid OTP")
+      Pair(false, "Invalid Password")
     }
 
   /**
