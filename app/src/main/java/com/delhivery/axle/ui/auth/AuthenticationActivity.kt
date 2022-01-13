@@ -91,6 +91,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     }
 
+    binding.loginUsingPassword.setOnClickListener{
+      viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+    }
+
+
     viewModel.otpStatusLiveData.observe(this, Observer {
       if (it == true) {
         timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
@@ -306,6 +311,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           InvalidOTP -> {   //Invalid OTP clear fields
             binding.otpView.clear()
+          }
+          InvalidPassword -> {   //Invalid password clear fields
+         //   binding.otpView.clear()
           }
           None -> {/* nothing */
           }
