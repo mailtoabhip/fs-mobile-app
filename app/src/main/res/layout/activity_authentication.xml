@@ -135,7 +135,6 @@
             android:layout_marginBottom="@dimen/size_14dp"
             android:fontFamily="sans-serif"
             android:layout_gravity="center"
-            android:letterSpacing="0.01"
             android:lineSpacingExtra="@dimen/text_4sp"
             android:text="Login by password"
             android:clickable="true"
@@ -162,7 +161,7 @@
       <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:padding="@dimen/size_14dp"
+          android:padding="@dimen/size_24dp"
           android:orientation="vertical"
           android:visibility="gone"
           bind:visibility="@{ state == AuthenticationUIState.Password }">
@@ -229,11 +228,11 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_11dp"
+            android:layout_marginTop="@dimen/size_24dp"
             android:textAllCaps="false"
-            android:text="Login"
-            android:background="@drawable/bg_all_round_corner_black"
-            android:textColor="@color/white"/>
+            android:text="@string/action_login"
+            bind:shadow="@{ @dimen/action_btn_elevation }"
+            style="@style/ActionButton"/>
       </androidx.appcompat.widget.LinearLayoutCompat>
 
       <!-- OTP authentication container -->
