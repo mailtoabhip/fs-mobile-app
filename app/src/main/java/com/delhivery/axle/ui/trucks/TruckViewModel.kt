@@ -1,9 +1,14 @@
 package com.delhivery.axle.ui.trucks
 
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.TripsRepository
+import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.request.AddVehicle
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -11,6 +16,7 @@ import javax.inject.Inject
 
 class TruckViewModel @Inject constructor(
     val tripsRepository: TripsRepository,
+    val truckRepository: TruckRepository,
     val userPrefs: UserPrefs
     ) : BaseViewModel(){
 
@@ -21,6 +27,7 @@ class TruckViewModel @Inject constructor(
     var truckCity: CityModel? = null
     var truckDestination : CityModel? = null
     var truckOwnership: String = ""
+     var truckGetLiveData = MutableLiveData<List<TruckResponseArray>>()
 
 
     fun addNewTruck(){
@@ -33,5 +40,19 @@ class TruckViewModel @Inject constructor(
 //
 //            }
 
+    }
+
+    fun fetchTruckType() {
+        compositeDisposable += truckRepository.getTruckType()
+            .onBackground()
+            .subscribe { _tRes, error ->
+                if(!error && _tRes != null){
+                    truckGetLiveData.postValue(_tRes)
+                }
+                else{
+                    error.handle()
+                    truckGetLiveData.postValue(null)
+                }
+            }
     }
 }

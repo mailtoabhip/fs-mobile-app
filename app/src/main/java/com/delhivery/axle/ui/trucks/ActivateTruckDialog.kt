@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -21,15 +22,20 @@ class ActivateTruckDialog @Inject constructor(
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomActivateTruckBinding
 
+    var truckCity : CityModel? =null
+    var truckDestination: CityModel? = null
+
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val city = intent.getStringExtra(CityType)
             val data = intent.getSerializableExtra("City") as CityModel
             if (city != null && data !=null) {
                 if(city =="origin"){
+                    truckCity = data
                     binding.textCurrentCityActivate.text = data.cityName()
                 }
                 else if(city =="destination"){
+                    truckDestination = data
                     binding.textUnloadingDestinationActivate.text = data.cityName()
                 }
             }
@@ -64,8 +70,48 @@ class ActivateTruckDialog @Inject constructor(
             context.startActivity(searchCityIntent(context, "destination",true))
         }
 
+        binding.btnActivateTruckDialog.setOnClickListener{
+            validateFields()
+        }
 
 
+
+    }
+
+    private fun validateFields() {
+         val truckPrice= if(binding.editPriceActivateTruck.text != null && binding.editPriceActivateTruck.text.toString() != "")
+             binding.editPriceActivateTruck.text.toString().toInt()
+        else 0
+
+        var flag = true
+        if ( truckPrice != 0){
+            binding.priceErrorActivate.visibility = View.GONE
+        }
+        else{
+            binding.priceErrorActivate.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.priceErrorActivate.visibility = View.VISIBLE
+            flag = false
+        }
+        if(truckCity != null){
+            binding.originErrorActivate.visibility = View.GONE
+        }
+        else{
+            binding.originErrorActivate.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.originErrorActivate.visibility = View.VISIBLE
+            flag = false
+        }
+        if(truckDestination != null){
+            binding.destinationErrorActivate.visibility = View.GONE
+        }
+        else{
+            binding.destinationErrorActivate.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.destinationErrorActivate.visibility = View.VISIBLE
+            flag = false
+        }
+
+        if (flag){
+
+        }
     }
 
     override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {

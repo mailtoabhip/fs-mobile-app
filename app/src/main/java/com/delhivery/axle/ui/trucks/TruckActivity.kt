@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
@@ -37,6 +38,9 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
     override fun requireConnection() = true
 
     @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+
+    var selectedSize = ""
+    var sizeArr = mutableListOf<String>()
 
 
 
@@ -81,6 +85,14 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             validateFieldsAndAddTruck()
         }
 
+        viewModel.fetchTruckType()
+
+        viewModel.truckGetLiveData.observe(this, Observer {
+            if(it!=null){
+
+            }
+        })
+
     }
 
     private fun validateFieldsAndAddTruck(){
@@ -103,7 +115,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.capacityError.visibility = View.GONE
         }
         else{
-            binding.capacityError.text = "Field can't be empty"
+            binding.capacityError.text = String.format(getString(R.string.msg_empty_field))
             binding.capacityError.visibility = View.VISIBLE
             flag = false
         }
@@ -111,7 +123,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.numberError.visibility = View.GONE
         }
         else {
-            binding.numberError.text = "Field can't be empty"
+            binding.numberError.text = String.format(getString(R.string.msg_empty_field))
             binding.numberError.visibility = View.VISIBLE
             flag= false
         }
@@ -119,14 +131,14 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.sizeError.visibility = View.GONE
        }
         else {
-            binding.sizeError.text = "Field can't be empty"
+            binding.sizeError.text = String.format(getString(R.string.msg_empty_field))
             binding.sizeError.visibility = View.VISIBLE
             flag= false
         }
         if(viewModel.truckCity!=null ){
             binding.originError.visibility = View.GONE
         } else{
-            binding.originError.text = "Field can't be empty"
+            binding.originError.text = String.format(getString(R.string.msg_empty_field))
             binding.originError.visibility = View.VISIBLE
             flag= false
         }
@@ -134,7 +146,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.destinationError.visibility= View.GONE
         }
         else{
-            binding.destinationError.text = "Field can't be empty"
+            binding.destinationError.text = String.format(getString(R.string.msg_empty_field))
             binding.destinationError.visibility = View.VISIBLE
             flag= false
         }

@@ -69,6 +69,7 @@
     <string name="msg_enter_unloading_details">Enter unloading destination details</string>
     <string name="msg_priority_access_to_loads">Need priority access to loads?</string>
     <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
+    <string name="msg_empty_field">Field can\'t be empty</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>

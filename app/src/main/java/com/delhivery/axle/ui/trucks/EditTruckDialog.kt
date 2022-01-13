@@ -25,15 +25,20 @@ class EditTruckDialog @Inject constructor(
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomEditTruckBinding
 
+    var truckCity : CityModel? =null
+    var truckDestination: CityModel? = null
+
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val city = intent.getStringExtra(CityType)
             val data = intent.getSerializableExtra("City") as CityModel
             if (city != null && data !=null) {
                 if(city =="origin"){
+                    truckCity = data
                     binding.textCurrentCityEditDialog.text = data.cityName()
                 }
                 else if(city =="destination"){
+                    truckDestination = data
                     binding.textUnloadingDestinationEditDialog.text = data.cityName()
                 }
             }
@@ -68,6 +73,46 @@ class EditTruckDialog @Inject constructor(
             context.startActivity(searchCityIntent(context, "destination",true))
         }
 
+        binding.btnSaveEditChanges.setOnClickListener{
+            validateFields()
+        }
+
+    }
+
+    private fun validateFields() {
+        val truckPrice= if(binding.editPrice.text != null && binding.editPrice.text.toString() != "")
+            binding.editPrice.text.toString().toInt()
+        else 0
+
+        var flag = true
+        if ( truckPrice != 0){
+            binding.priceErrorEdit.visibility = View.GONE
+        }
+        else{
+            binding.priceErrorEdit.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.priceErrorEdit.visibility = View.VISIBLE
+            flag = false
+        }
+        if(truckCity != null){
+            binding.originErrorEdit.visibility = View.GONE
+        }
+        else{
+            binding.originErrorEdit.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.originErrorEdit.visibility = View.VISIBLE
+            flag = false
+        }
+        if(truckDestination != null){
+            binding.destinationErrorEdit.visibility = View.GONE
+        }
+        else{
+            binding.destinationErrorEdit.text = String.format(context.getString(R.string.msg_empty_field))
+            binding.destinationErrorEdit.visibility = View.VISIBLE
+            flag = false
+        }
+
+        if (flag){
+
+        }
     }
 
     override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
