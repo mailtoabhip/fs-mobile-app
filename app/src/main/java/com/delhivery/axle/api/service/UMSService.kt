@@ -1,11 +1,9 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.OTPLoginRequest
+import com.delhivery.axle.api.request.PasswordLoginRequest
 import com.delhivery.axle.api.request.RequestOTP
-import com.delhivery.axle.api.response.DelegationTokenResponse
-import com.delhivery.axle.api.response.LoginResponse
-import com.delhivery.axle.api.response.OTPSentResponse
-import com.delhivery.axle.api.response.UMSRolePermissionResponse
+import com.delhivery.axle.api.response.*
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -39,4 +37,14 @@ interface UMSService {
     @Path("ums_id") umsId: String,
     @Path("app_id") appId: String
   ): Single<UMSRolePermissionResponse>
+
+  /**
+   * login using password
+   */
+  @POST("/v2/login/")
+  fun requestPasswordVerification(
+   @Body passwordRequest: PasswordLoginRequest
+  ): Single<LoginResponse>
+
+
 }

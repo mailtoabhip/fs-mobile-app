@@ -8,9 +8,7 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityAuthenticationBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.receiver.OTPReceiverInterface
-import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
-import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIError.None
+import com.delhivery.axle.ui.auth.AuthenticationUIError.*
 import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
 import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
@@ -95,6 +93,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         viewModel.sendOTP()
       }
     }
+
+    binding.loginUsingPassword.setOnClickListener{
+      viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+    }
+
 
     viewModel.otpStatusLiveData.observe(this, Observer {
       if (it == true) {
@@ -272,6 +275,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           InvalidOTP -> {   //Invalid OTP clear fields
             binding.otpView.clear()
+          }
+          InvalidPassword -> {   //Invalid password clear fields
+         //   binding.otpView.clear()
           }
           None -> {/* nothing */
           }
