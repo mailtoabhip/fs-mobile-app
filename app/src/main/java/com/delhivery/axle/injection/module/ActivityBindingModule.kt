@@ -5,6 +5,7 @@ import android.content.Context
 import com.delhivery.axle.injection.qualifier.ActivityContext
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
+import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
@@ -170,6 +171,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
   internal abstract fun bindConsolidatedPageActivity(): ConsolidatedPageActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
+  internal abstract fun bindModule(): InvalidActivity
 }
 
 /**
@@ -253,6 +258,9 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 
 @Module
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
+
+@Module
+internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 /**
  * Activity Binds Module

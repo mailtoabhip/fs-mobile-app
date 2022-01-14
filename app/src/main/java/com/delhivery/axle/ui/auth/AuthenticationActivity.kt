@@ -314,7 +314,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             binding.otpView.clear()
           }
           AuthenticationUIError.InvalidPassword -> {   //Invalid password clear fields
-            uiUtils.showSnackbar("Invalid username or password")
+            navigationUtils.navigate(InvalidActivity::class.java, false)
+            //uiUtils.showSnackbar("Invalid username or password")
           }
           None -> {/* nothing */
           }

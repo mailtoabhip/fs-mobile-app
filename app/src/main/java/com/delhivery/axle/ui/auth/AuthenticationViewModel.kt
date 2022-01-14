@@ -169,10 +169,10 @@ class AuthenticationViewModel @Inject constructor(
             SelectRoute
           }
         } else {
-          if (error is HttpException) {
-            userPrefs.hasLoggedIn = false
-            error.handle()
-          }
+//          if (error is HttpException) {
+//            userPrefs.hasLoggedIn = false
+//            error.handle()
+//          }
           errorLiveData.postValue(Pair(InvalidPassword, ""))
           Password
         }
