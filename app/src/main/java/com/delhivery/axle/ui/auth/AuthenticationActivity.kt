@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.auth
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -30,7 +31,12 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_authentication.*
+import kotlinx.android.synthetic.main.truck_spinner_item.view.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import kotlinx.android.synthetic.main.view_trip_history_item.view.*
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -121,7 +127,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             .subscribe {
               val timeLeft = 15L - it
               if (timeLeft > 0) {
-                binding.btnResendOtp.text = "${getString(string.label_resend_otp)}($timeLeft)"
+                val f: NumberFormat = DecimalFormat("00")
+                binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
                 binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
               } else if (timeLeft == 0L) {
                 binding.btnResendOtp.text = getString(string.label_resend_otp_done)
@@ -141,7 +148,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* Initiate state */
     viewModel.state = PhoneNo
 
-    binding.btnVerifyOtp.setOnClickListener {
+    binding.btnResendOtp.setOnClickListener {
       // Capture event
       analyticsUtil.trackEvent(
               EVENT_OTP_RESEND,
@@ -160,6 +167,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               mutableListOf(viewModel.phoneNo)
       )
       viewModel.sendOTP()
+    }
+
+    binding.btnVerifyOtp.setOnClickListener {
+      if(viewModel.otpCurrent.isNotNullOrEmpty() && viewModel.otpCurrent.length==4) {
+        viewModel.verifyOTP(viewModel.otpCurrent.toCharArray())
+      }
+    }
+
+    binding.btnVerifyOtp.setOnClickListener {
     }
 
     if (notificationId.isNotEmpty()) {
@@ -186,6 +202,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   }
 
   override fun otpSubmitted(otp: CharArray) {
+    //viewModel.otpCurrent = otp.toString()
     viewModel.verifyOTP(otp)
   }
 

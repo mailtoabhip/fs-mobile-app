@@ -43,6 +43,9 @@ class AuthenticationViewModel @Inject constructor(
   /* error live data */
   var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
 
+  /* otp data */
+  var otpCurrent:String = ""
+
   /* binding vars */
   var phoneNo: String = ""
   var otpSendCount: Int = 1
@@ -111,14 +114,14 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-             // LoadRequest
-              AccountSetup
+             LoadRequest
+              //AccountSetup
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
               userPrefs.lastLoginTime = Date().time
-              //SelectRoute
-              AccountSetup
+              SelectRoute
+              //AccountSetup
             }
           } else {
             if (error is HttpException) {
