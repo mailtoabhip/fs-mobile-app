@@ -21,7 +21,7 @@
   <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
   <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
   <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-  <string name="msg_otp_sent_to_phone_no">We have send the otp to your phone number ending with %1$s</string>
+  <string name="msg_otp_sent_to_phone_no">to %1$s.</string>
   <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
   <string name="msg_select_route_welcome_user">Welcome\n%s</string>
   <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -81,8 +81,9 @@
   <string name="action_hello_world">Action Hello World</string>
   <string name="action_add_user">Add User</string>
   <string name="action_get_users">Get all users</string>
-  <string name="action_send_otp">Send OTP</string>
+  <string name="action_send_otp">Get OTP</string>
   <string name="action_resend_otp">Resend OTP</string>
+  <string name="action_verify_otp">Verify OTP</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>
@@ -108,11 +109,14 @@
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
   <string name="action_done">Done !</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
+  <string name="action_get_started">Get Started</string>
+  <string name="action_change_number">Change number</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-  <string name="label_otp">Enter OTP</string>
+  <string name="label_otp">Verify OTP</string>
+  <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
   <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
   <string name="label_phone_number">What is your mobile number?</string>
   <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your mobile number for it’s verification</string>
@@ -179,7 +183,8 @@
   <string name="label_trip_meter">Trip Meter</string>
   <string name="label_add_nearby_locations">Add nearby locations?</string>
   <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.</string>
-  <string name="label_resend_otp">Resend OTP</string>
+  <string name="label_resend_otp">Resend in</string>
+  <string name="label_resend_otp_done">Resend OTP</string>
   <string name="Rs">\u20B9</string>
   <string name="label_anywhere">Anywhere</string>
   <string name="label_select_from_drop_down">*Select from drop down*</string>
@@ -277,6 +282,8 @@
   <string name="label_bank_transfer">Bank Transfer</string>
   <string name="label_change_payment_mode">Change Payment Mode</string>
   <string name="label_with_sign_value">₹ %1$d</string>
+  <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
+  <string name="label_resend">Didn’t receive OTP?</string>
 
 
   <!--Error (error_-->

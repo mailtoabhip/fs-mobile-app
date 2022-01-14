@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.auth
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -8,15 +9,11 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityAuthenticationBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.receiver.OTPReceiverInterface
+import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.None
-import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
-import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
-import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIState.SelectRoute
+import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -54,6 +51,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   @Inject lateinit var userPrefs: UserPrefs
 
+  init {
+    StatusBarColor = Color.parseColor("#ededff")
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
@@ -62,8 +63,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
-    /* setup toolbar */
-    setSupportActionBar(binding.toolbar)
     title = ""
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -73,16 +72,35 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* observe errors and update ui */
     viewModel.errorLiveData.observe(this, ErrorObserver())
 
+    /*move to back screen*/
+    binding.btnChangeNumber.setOnClickListener {
+      when (binding.state) {
+      PhoneNo -> {
+        super.onBackPressed()
+      }
+      OTP -> viewModel.state = PhoneNo
+      LoginProgress -> {/* do nothing when loading */
+      }
+      else -> {
+      }
+    }
+    }
+
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
-      raisedFocus()
-      lengthAction(10) {
+      //raisedFocus()
+      lengthAction(9){
+        binding.btnSendOtp.isEnabled = false
+      }
+
+     lengthAction(10) {
         // Capture event
         analyticsUtil.trackEvent(
                 EVENT_OTP_SEND,
                 mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
                 mutableListOf(binding.editPhoneNo.text.toString())
         )
+       binding.btnSendOtp.isEnabled = true
         viewModel.sendOTP()
       }
       actionDone {
@@ -104,10 +122,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               val timeLeft = 15L - it
               if (timeLeft > 0) {
                 binding.btnResendOtp.text = "${getString(string.label_resend_otp)}($timeLeft)"
-                binding.btnResendOtp.isEnabled = false
+                binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
               } else if (timeLeft == 0L) {
-                binding.btnResendOtp.text = getString(string.label_resend_otp)
-                binding.btnResendOtp.isEnabled = true
+                binding.btnResendOtp.text = getString(string.label_resend_otp_done)
+                binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
               } else {
                 viewModel.otpStatusLiveData.postValue(false)
               }
@@ -123,7 +141,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* Initiate state */
     viewModel.state = PhoneNo
 
-    binding.btnResendOtp.setOnClickListener {
+    binding.btnVerifyOtp.setOnClickListener {
       // Capture event
       analyticsUtil.trackEvent(
               EVENT_OTP_RESEND,
@@ -173,6 +191,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun otpFound(otp: String) {
     otpSubmitted(otp.toCharArray())
+    binding.btnVerifyOtp.isEnabled = true
   }
 
   /**
@@ -197,7 +216,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 binding.textOtpSentToPhoneNo.text =
-                  getString(string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
+                  getString(string.msg_otp_sent_to_phone_no, it)
               }
             }
           }
@@ -236,6 +255,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             )
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
+          }
+          /* otp verified, account set up needed */
+          AccountSetup -> {
+            uiUtils.hideDelhiveryProgress()
+            navigationUtils.navigate(AccountSetupActivity::class.java, true)
           }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()

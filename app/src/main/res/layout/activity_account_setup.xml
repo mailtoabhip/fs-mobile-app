@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
   <data>
-    <import type="com.delhivery.axle.ui.auth.AuthenticationUIState" />
+    <import type="com.delhivery.axle.ui.accountsetup.AccountSetupUIState" />
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.auth.AuthenticationViewModel"
+        type="com.delhivery.axle.ui.accountsetup.AccountSetupViewModel"
         />
     <variable
         name="state"
-        type="com.delhivery.axle.ui.auth.AuthenticationUIState"
+        type="com.delhivery.axle.ui.accountsetup.AccountSetupUIState"
         />
   </data>
 
@@ -21,9 +21,28 @@
       android:background="@color/blue_bg"
       android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+      <ProgressBar
+          style="?android:attr/progressBarStyleHorizontal"
+          android:layout_width="match_parent"
+          android:layout_height="6dp"
+          android:id="@+id/progress"
+          android:layout_marginBottom="@dimen/size_24dp"
+          android:layout_marginTop="@dimen/size_24dp"
+          android:layout_marginEnd="@dimen/size_24dp"
+          android:layout_marginStart="@dimen/size_24dp"
+          android:max="100"
+          android:progressDrawable="@drawable/account_progress"
+          android:progress="33"/>
 
       <!-- Phone no container -->
       <RelativeLayout
@@ -35,7 +54,7 @@
           android:paddingEnd="@dimen/size_24dp"
           android:paddingBottom="@dimen/size_48dp"
           android:visibility="gone"
-          bind:visibility="@{ state == AuthenticationUIState.PhoneNo }"
+          bind:visibility="@{ state == AccountSetupUIState.PrimaryAction }"
           >
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -83,8 +102,7 @@
               android:paddingStart="@dimen/size_12dp"
               android:paddingEnd="@dimen/size_12dp"
               android:hint="Mobile number"
-              android:text="@={ viewModel.phoneNo }"
-              android:textColor="@color/heading_black"
+             android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               />
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -110,7 +128,7 @@
           android:paddingTop="@dimen/size_24dp"
           android:paddingEnd="@dimen/size_24dp"
           android:paddingBottom="@dimen/size_48dp"
-          bind:visibility="@{ state == AuthenticationUIState.OTP }"
+          bind:visibility="@{ state == AccountSetupUIState.UserRole }"
           >
 
         <androidx.appcompat.widget.AppCompatTextView

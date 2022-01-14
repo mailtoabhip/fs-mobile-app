@@ -21,7 +21,7 @@
   <color name="heading_black">#3D445C</color>
   <color name="sub_heading_black">#3D445C</color>
   <color name="bid_header_bg_black">#262727</color>
-  <color name="color_hint">#E0E3EB</color>
+  <color name="color_hint">#A3AAC2</color>
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
   <color name="bid_placed_green">#0fb687</color>
@@ -43,6 +43,7 @@
   <color name="bid_placed_red">#DC6A64</color>
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
+  <color name="blue_bg">#ededff</color>
 
 
 </resources>

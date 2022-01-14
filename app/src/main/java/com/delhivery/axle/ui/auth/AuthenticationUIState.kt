@@ -9,5 +9,6 @@ enum class AuthenticationUIState {
   LoginProgress,
   SelectRoute,
   LoadRequest,
-  Disabled
+  Disabled,
+  AccountSetup
 }

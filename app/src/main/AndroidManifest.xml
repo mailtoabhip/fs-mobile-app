@@ -93,6 +93,7 @@
 
         <activity
             android:name=".ui.auth.AuthenticationActivity"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"
@@ -159,6 +160,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.accountsetup.AccountSetupActivity"
             android:screenOrientation="portrait" />
     </application>
 

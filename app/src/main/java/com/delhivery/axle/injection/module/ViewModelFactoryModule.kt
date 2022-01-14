@@ -3,6 +3,7 @@ package com.delhivery.axle.injection.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
+import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
@@ -245,6 +246,12 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchOngoingTripViewModel::class)
   abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountSetupViewModel::class)
+  abstract fun bindAccountSetupViewModel(viewModel:AccountSetupViewModel): ViewModel
+
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

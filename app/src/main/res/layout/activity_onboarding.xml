@@ -8,26 +8,16 @@
         type="com.delhivery.axle.ui.onboarding.OnboardingViewModel"
         />
   </data>
-  <androidx.constraintlayout.widget.ConstraintLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@color/colorAccent"
-      >
+      android:background="@color/white">
 
-    <View
-        android:id="@+id/center_view"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <com.delhivery.axle.ui.custom.DelhiveryOnboardingArcView
-        android:id="@+id/arc_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/center_view"
+        android:layout_height="wrap_content"
+        android:alpha="0"
         />
 
     <RelativeLayout
@@ -35,59 +25,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:alpha="0"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/size_8dp"
-        android:paddingEnd="@dimen/size_20dp"
-        android:paddingStart="@dimen/size_20dp"
-        android:paddingTop="@dimen/size_8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
+        android:paddingBottom="@dimen/size_48dp"
+        android:paddingEnd="@dimen/size_24dp"
+        android:paddingStart="@dimen/size_24dp"
+        android:paddingTop="@dimen/size_32dp">
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/text_skip"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentStart="true"
-          android:layout_centerVertical="true"
-          android:fontFamily="sans-serif"
-          android:padding="@dimen/size_16dp"
-          android:text="@string/action_skip"
-          android:textColor="@color/color_hint"
-          android:textSize="@dimen/text_16sp"
-          />
 
       <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator
           android:id="@+id/pager_indicator"
           android:layout_width="wrap_content"
           android:layout_height="@dimen/size_24dp"
-          android:layout_centerInParent="true"
-          android:layout_toEndOf="@+id/text_skip"
-          android:layout_toStartOf="@+id/fab_next"
-          />
+          android:layout_marginTop="@dimen/size_24dp"
+          android:layout_above="@+id/btn_get_started"
+           />
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-          android:id="@+id/fab_next"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
-          android:layout_centerVertical="true"
-          app:elevation="0dp"
-          app:fabSize="mini"
-          app:srcCompat="@drawable/ic_chevron_right_white"
+      <androidx.appcompat.widget.AppCompatButton
+          android:id="@+id/btn_get_started"
+          style="@style/ActionButton"
+           android:layout_alignParentBottom="true"
+          android:layout_width="match_parent"
+          android:layout_marginTop="@dimen/size_48dp"
+          android:text="@string/action_get_started"
           />
 
     </RelativeLayout>
-
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:alpha="0"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/container_actions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/arc_view"
-        />
-  </androidx.constraintlayout.widget.ConstraintLayout>
+  </RelativeLayout>
 </layout>
