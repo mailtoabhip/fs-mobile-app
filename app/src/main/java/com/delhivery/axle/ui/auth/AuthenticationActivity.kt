@@ -11,12 +11,7 @@ import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.None
-import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoadRequest
-import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
-import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
-import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIState.SelectRoute
+import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -33,7 +28,9 @@ import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.view_active_trips_progress_item.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -144,6 +141,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
+    binding.loginUsingPassword.setOnClickListener{
+      viewModel.state = Password
+    }
+
+    binding.loginButton.setOnClickListener{
+      performLogin()
+    }
+
+
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
     }
@@ -160,6 +166,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         super.onBackPressed()
       }
       OTP -> viewModel.state = PhoneNo
+      Password -> viewModel.state = PhoneNo
       LoginProgress -> {/* do nothing when loading */
       }
       else -> {
@@ -173,6 +180,36 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun otpFound(otp: String) {
     otpSubmitted(otp.toCharArray())
+  }
+
+  private fun performLogin() {
+    var flag= true
+    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
+      binding.tilUserId.isErrorEnabled = true
+      binding.tilUserId.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserId.isErrorEnabled = false
+      binding.tilUserId.error = null
+    }
+
+    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
+      binding.tilUserPassword.isErrorEnabled = true
+      binding.tilUserPassword.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserPassword.isErrorEnabled = false
+      binding.tilUserPassword.error = null
+    }
+
+    if(flag){
+      val userId=  binding.tilUserId.editText?.text.toString()
+      val userPassword = binding.tilUserPassword.editText?.text.toString()
+     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+      viewModel.loginUsingPassword(userId,userPassword)
+    }
   }
 
   /**
@@ -200,6 +237,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   getString(string.msg_otp_sent_to_phone_no, it.substring(it.length - 2))
               }
             }
+          }
+          Password ->{
+            uiUtils.hideDelhiveryProgress()
           }
           LoginProgress -> {
             //hide keyboard show progress view
@@ -272,6 +312,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           InvalidOTP -> {   //Invalid OTP clear fields
             binding.otpView.clear()
+          }
+          AuthenticationUIError.InvalidPassword -> {   //Invalid password clear fields
+            navigationUtils.navigate(InvalidActivity::class.java, false)
+            //uiUtils.showSnackbar("Invalid username or password")
           }
           None -> {/* nothing */
           }
