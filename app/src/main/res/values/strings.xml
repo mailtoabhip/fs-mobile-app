@@ -84,10 +84,10 @@
     <string name="hint_enter_bid_value">Enter bid value (₹)</string>
     <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
     <string name="hint_amount">23900</string>
-    <string name="hint_search_trucks">Search truck by number</string>
-    <string name="hint_search_city">Search City</string>
     <string name="hint_user_name">Enter user name</string>
     <string name="hint_password">Enter Password</string>
+    <string name="hint_search_trucks">Search truck by number</string>
+    <string name="hint_search_city">Search City</string>
 
 
     <!--Actions (action_)-->
@@ -120,6 +120,7 @@
     <string name="action_call_driver">Call Driver</string>
     <string name="action_edit_bid_underline"><u>Edit?</u></string>
     <string name="action_done">Done !</string>
+    <string name="action_login">Login</string>
     <string name="action_activate_truck">Activate Truck</string>
     <string name="action_deactivate_truck">Deactivate Truck</string>
     <string name="action_edit_truck">Edit Truck</string>
@@ -129,7 +130,7 @@
     <string name="action_save_changes">Save Changes</string>
     <string name="action_add_new_truck">Add new truck</string>
     <string name="action_do_it_later">Do it later</string>
-    <string name="action_login">Login</string>
+    <string name="action_delete_truck">Delete Truck</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>

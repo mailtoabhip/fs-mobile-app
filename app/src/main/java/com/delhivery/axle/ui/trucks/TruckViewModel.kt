@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.trucks
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.request.AddVehicle
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class TruckViewModel @Inject constructor(
     val tripsRepository: TripsRepository,
     val truckRepository: TruckRepository,
+    val inventoryRepository: InventoryRepository,
     val userPrefs: UserPrefs
     ) : BaseViewModel(){
 
@@ -30,16 +32,26 @@ class TruckViewModel @Inject constructor(
      var truckGetLiveData = MutableLiveData<List<TruckResponseArray>>()
     var truckPrice: Double = 0.0
 
+    //Live Data variables
+    var addTruckLiveData = MutableLiveData<Boolean>()
+
 
     fun addNewTruck(sourcedAs: String){
         val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize,truckCapacity
-            ,truckCity!!.city, truckCity!!.orion_db_city_code, truckDestination!!.city,truckDestination!!.orion_db_city_code)
+            ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city,truckDestination!!.orion_db_city_code!!,sourcedAs)
 
-//        compositeDisposable += tripsRepository.tripDetails(232)
-//            .onBackground()
-//            .subscribe{
-//
-//            }
+        compositeDisposable += inventoryRepository.addInventory(addVehicleRequest.getRequest())
+            .onBackground()
+            .subscribe{_res,error ->
+                if(!error && _res!= null){
+                    addTruckLiveData.postValue(true)
+                }
+                else{
+                    error.handle()
+                    addTruckLiveData.postValue(null)
+                }
+
+            }
 
     }
 

@@ -96,9 +96,18 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.fetchTruckType()
 
+        //Live Data Observers
+
         viewModel.truckGetLiveData.observe(this, Observer {
             if(it!=null){
                 adapter.setItems(it)
+            }
+        })
+
+        viewModel.addTruckLiveData.observe(this, Observer{
+            uiUtils.hideProgress()
+            if(it!=null && it == true){
+
             }
         })
 
@@ -173,6 +182,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         if(flag) {
+            uiUtils.showProgress("Adding truck")
             viewModel.addNewTruck(sourcedAs.toUpperCase())
         }
 

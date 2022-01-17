@@ -12,13 +12,22 @@ import android.view.WindowManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomActivateTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class ActivateTruckDialog @Inject constructor(
     context: Context,
-    position:Int
+    private val data: HomeTrucksRequestItemData,
+    private val dialogInterface: ActivateTruckInterface,
+    private val userPrefs: UserPrefs,
+    private val analyticsUtil: AnalyticsUtil,
+    private val uiUtils: UiUtils,
+    private val position:Int
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomActivateTruckBinding
 
@@ -110,7 +119,8 @@ class ActivateTruckDialog @Inject constructor(
         }
 
         if (flag){
-
+            uiUtils.showProgress()
+            //dialogInterface.activateTruck(data.inventoryId, position)
         }
     }
 
@@ -119,5 +129,18 @@ class ActivateTruckDialog @Inject constructor(
         super.setOnCancelListener(listener)
     }
 }
+
+interface ActivateTruckInterface{
+
+    fun activateTruck(
+        inventoryId: String,
+        currentCity: CityModel,
+        destinationCity: CityModel,
+        sourcedAs: String,
+        price: Double,
+        position: Int
+    )
+}
+
 
 private const val CityType = "city_type"

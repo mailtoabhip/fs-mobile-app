@@ -14,14 +14,22 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomEditTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class EditTruckDialog @Inject constructor(
     context: Context,
-    position:Int
-
+    private val data: HomeTrucksRequestItemData,
+    private val dialogInterface: EditTruckInterface,
+    private val userPrefs: UserPrefs,
+    private val analyticsUtil: AnalyticsUtil,
+    private val uiUtils: UiUtils,
+    private val position:Int
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomEditTruckBinding
 
@@ -111,7 +119,8 @@ class EditTruckDialog @Inject constructor(
         }
 
         if (flag){
-
+            uiUtils.showProgress()
+            //dialogInterface.editTruck(data.inventoryId ,position)
         }
     }
 
@@ -119,6 +128,17 @@ class EditTruckDialog @Inject constructor(
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
         super.setOnCancelListener(listener)
     }
+}
+
+interface EditTruckInterface{
+    fun editTruck(
+        inventoryId: String,
+        currentCity: CityModel,
+        destinationCity: CityModel,
+        sourcedAs: String,
+        price: Double,
+        position: Int
+    )
 }
 
 

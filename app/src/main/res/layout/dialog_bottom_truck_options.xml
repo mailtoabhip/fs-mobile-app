@@ -79,6 +79,30 @@
             android:text="@string/action_deactivate_truck"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_4dp"
+        app:srcCompat="@drawable/seperator_line"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/delete_truck_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/size_14dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_deactivate"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_gravity="center"
+            android:text="@string/action_delete_truck"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
