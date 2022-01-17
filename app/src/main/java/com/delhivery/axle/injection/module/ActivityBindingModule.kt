@@ -288,6 +288,7 @@ internal abstract class AbsSearchCityModule : ActivityModule<SearchCity>()
 @Module
 internal abstract class AbsAddTruckPathwayActivityModule : ActivityModule<AddTruckPathwayActivity>()
 
+@Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 
