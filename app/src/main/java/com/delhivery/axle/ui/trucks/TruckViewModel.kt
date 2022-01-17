@@ -22,17 +22,18 @@ class TruckViewModel @Inject constructor(
 
     var truckType : String = ""
     var truckSize: String = ""
-    var truckCapacity: String = ""
+    var truckCapacity: Double = 0.0
     var truckNumber: String = ""
     var truckCity: CityModel? = null
     var truckDestination : CityModel? = null
     var truckOwnership: String = ""
      var truckGetLiveData = MutableLiveData<List<TruckResponseArray>>()
+    var truckPrice: Double = 0.0
 
 
-    fun addNewTruck(){
+    fun addNewTruck(sourcedAs: String){
         val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize,truckCapacity
-            ,truckCity!!.city, truckCity!!.orion_db_city_code)
+            ,truckCity!!.city, truckCity!!.orion_db_city_code, truckDestination!!.city,truckDestination!!.orion_db_city_code)
 
 //        compositeDisposable += tripsRepository.tripDetails(232)
 //            .onBackground()

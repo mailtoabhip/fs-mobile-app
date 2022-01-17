@@ -121,29 +121,33 @@
                         android:textAlignment="center"
                         android:text="@string/label_trailer"/>
                 </RadioGroup>
+
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/body_group">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_closed"
-                        android:layout_below="@id/body_group"
 
-                        android:textSize="@dimen/text_12sp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_closed"
-                        android:textSize="@dimen/text_12sp"
-                        android:layout_below="@id/body_group" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_closed"
-                        android:textSize="@dimen/text_12sp"
-                        android:layout_below="@id/body_group" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/body_group"
+                            android:text="@string/label_closed"
+
+                            android:textSize="@dimen/text_12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/body_group"
+                            android:text="@string/label_closed"
+                            android:textSize="@dimen/text_12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/body_group"
+                            android:text="@string/label_closed"
+                            android:textSize="@dimen/text_12sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </RelativeLayout>
 
@@ -340,7 +344,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_8dp"
-                    android:layout_marginBottom="@dimen/size_12dp"
                     android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
                     android:inputType="number"
@@ -353,6 +356,7 @@
                     android:layout_width="wrap_content"
                     android:textColor="@color/bid_placed_red"
                     android:textSize="@dimen/text_12sp"
+                    android:layout_marginBottom="@dimen/size_12dp"
                     android:visibility="gone"
                     android:layout_height="wrap_content" />
 

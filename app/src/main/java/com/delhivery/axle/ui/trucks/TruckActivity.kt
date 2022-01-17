@@ -13,11 +13,13 @@ import android.view.Window
 import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogBottomTruckUnloadingDetailsBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
@@ -39,8 +41,10 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
 
-    var selectedSize = ""
-    var sizeArr = mutableListOf<String>()
+    var capacityArr = mutableListOf<String>()
+    var sourcedAs : String = ""
+
+    val adapter :TruckSizeAdapter by lazy { TruckSizeAdapter() }
 
 
 
@@ -49,7 +53,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         /* get intent keys */
         viewModel.truckType = intent.getStringExtra(TruckType) ?: ""
-        viewModel.truckCapacity = intent.getStringExtra(TruckCapacity) ?: ""
+        viewModel.truckCapacity = intent.getDoubleExtra(TruckCapacity,0.0) ?: 0.0
         viewModel.truckSize = intent.getStringExtra(TruckSize) ?: ""
 
     }
@@ -66,7 +70,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.editTruckCapacity.setOnClickListener{
-            showTruckCapacityDialog()
+            if(binding.textTruckSize.text != "") {
+                showTruckCapacityDialog()
+            }
+            else{
+                uiUtils.showToast("Select Truck Size First")
+            }
         }
 
         binding.editTruckSize.setOnClickListener {
@@ -89,7 +98,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.truckGetLiveData.observe(this, Observer {
             if(it!=null){
-
+                adapter.setItems(it)
             }
         })
 
@@ -100,7 +109,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             "market_truck" else "owns_truck"
 
         viewModel.truckCapacity =  if(binding.textTruckCapacity.text.isNotEmpty())
-            binding.textTruckCapacity.text.toString() else ""
+            binding.textTruckCapacity.text.toString().split("\\s+".toRegex())[0].toInt().toDouble() else 0.0
 
         viewModel.truckSize = if(binding.textTruckSize.text.isNotEmpty()) binding.textTruckSize.text.toString() else ""
 
@@ -109,9 +118,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
 
+        viewModel.truckPrice = if(binding.editPriceAddTruck.text !=null && binding.editPriceAddTruck.text.toString() != "" )
+            binding.editPriceAddTruck.text.toString().toInt().toDouble() else 0.0
+
         var flag = true
 
-        if(viewModel.truckCapacity!= "" ){
+        if(viewModel.truckCapacity!= 0.0 ){
             binding.capacityError.visibility = View.GONE
         }
         else{
@@ -119,7 +131,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.capacityError.visibility = View.VISIBLE
             flag = false
         }
-        if(viewModel.truckNumber!= ""){
+        if(viewModel.truckNumber.isNotEmpty()){
             binding.numberError.visibility = View.GONE
         }
         else {
@@ -127,7 +139,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.numberError.visibility = View.VISIBLE
             flag= false
         }
-        if(viewModel.truckSize!= "" ) {
+        if(viewModel.truckSize.isNotEmpty()) {
             binding.sizeError.visibility = View.GONE
        }
         else {
@@ -150,9 +162,18 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.destinationError.visibility = View.VISIBLE
             flag= false
         }
+        if((sourcedAs.toUpperCase() != "FTL" && sourcedAs.toUpperCase() != "PMT") ||
+            ((sourcedAs.toUpperCase() == "FTL" || sourcedAs.toUpperCase() == "PMT") && viewModel.truckPrice != 0.0)){
+            binding.priceError.visibility =View.GONE
+        }
+        else{
+            binding.priceError.text = String.format(getString(R.string.msg_empty_field))
+            binding.priceError.visibility = View.VISIBLE
+            flag = false
+        }
 
         if(flag) {
-            viewModel.addNewTruck()
+            viewModel.addNewTruck(sourcedAs.toUpperCase())
         }
 
     }
@@ -172,17 +193,22 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             dialog.dismiss()
         }
 
-        val listItems = mutableListOf<String>()
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
-        bindingDialog.truckList.adapter = adapter
+        bindingDialog.truckList.adapter = this@TruckActivity.adapter
         bindingDialog.truckList.setOnItemClickListener { parent, view, position, id ->
-            binding.textTruckSize.text = adapter.getItem(position)
+            binding.textTruckSize.text = adapter.getItem(position).truckUuid
+            sourcedAs = adapter.getItem(position).sourcedAs?: ""
+            val min = adapter.getItem(position).minCapacity
+            val max = adapter.getItem(position).maxCapacity
+            viewModel.truckCapacity = 0.0
+            binding.textTruckCapacity.text = ""
+            capacityArr.clear()
+            if(min !=null &&  max!=null){
+                for ( i in min.toInt()..max.toInt()){
+                    capacityArr.add("$i MT")
+                }
+            }
             dialog.dismiss()
         }
-        listItems.add("32FTXL")
-        listItems.add("10 TYRE")
-        listItems.add("12 TYRE")
-        listItems.add("40FT_LOW_BED")
 
         adapter.notifyDataSetChanged();
 
@@ -206,18 +232,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             dialog.dismiss()
         }
 
-        val listItems = mutableListOf<String>()
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, capacityArr);
         bindingDialog.truckList.adapter = adapter
         bindingDialog.truckList.setOnItemClickListener { parent, view, position, id ->
             binding.textTruckCapacity.text = adapter.getItem(position)
             dialog.dismiss()
         }
-        listItems.add("Aakash")
-        listItems.add("Aak")
-        listItems.add("Ah")
-        listItems.add("Aash")
-
         adapter.notifyDataSetChanged();
 
         dialog.show()
