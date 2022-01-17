@@ -86,6 +86,9 @@
     <string name="hint_amount">23900</string>
     <string name="hint_search_trucks">Search truck by number</string>
     <string name="hint_search_city">Search City</string>
+    <string name="hint_user_name">Enter user name</string>
+    <string name="hint_password">Enter Password</string>
+
 
     <!--Actions (action_)-->
     <string name="action_hello_world">Action Hello World</string>
@@ -126,6 +129,7 @@
     <string name="action_save_changes">Save Changes</string>
     <string name="action_add_new_truck">Add new truck</string>
     <string name="action_do_it_later">Do it later</string>
+    <string name="action_login">Login</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>

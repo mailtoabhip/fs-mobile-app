@@ -5,6 +5,7 @@ import android.content.Context
 import com.delhivery.axle.injection.qualifier.ActivityContext
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
+import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
@@ -190,6 +191,10 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsAddTruckPathwayActivityModule::class])
   internal abstract fun bindAddTruckPathwayActivity(): AddTruckPathwayActivity
 
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
+  internal abstract fun bindModule(): InvalidActivity
+
 }
 
 /**
@@ -282,6 +287,8 @@ internal abstract class AbsSearchCityModule : ActivityModule<SearchCity>()
 
 @Module
 internal abstract class AbsAddTruckPathwayActivityModule : ActivityModule<AddTruckPathwayActivity>()
+
+internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 
 /**

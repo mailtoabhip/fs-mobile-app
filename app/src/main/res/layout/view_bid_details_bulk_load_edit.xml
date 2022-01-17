@@ -86,6 +86,7 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/reduce_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

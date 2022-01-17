@@ -12,6 +12,7 @@ data class OTPSentResponse(@SerializedName("success") val successMsg: String)
  */
 data class LoginResponse(@SerializedName("jwt") val jwtToken: String)
 
+
 /**
  * Delegation token response
  */

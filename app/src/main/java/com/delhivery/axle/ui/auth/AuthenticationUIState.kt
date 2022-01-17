@@ -10,5 +10,6 @@ enum class AuthenticationUIState {
   SelectRoute,
   LoadRequest,
   AddInventoryPathway,
-  Disabled
+  Disabled,
+  Password
 }

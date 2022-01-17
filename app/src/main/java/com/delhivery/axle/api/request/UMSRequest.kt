@@ -37,3 +37,19 @@ data class OTPLoginRequest(
     ) = OTPLoginRequest("+91$phoneNo", otp)
   }
 }
+
+  /**
+   * Payload for [PasswordLoginRequest]
+   */
+  data class PasswordLoginRequest(
+    @SerializedName("username") val userName: String,
+    @SerializedName("password") val password: String
+  ) {
+    companion object {
+      fun getRequest(
+        userName: String,
+        password: String
+      ) = PasswordLoginRequest(userName, password)
+    }
+  }
+
