@@ -266,11 +266,10 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 @Module
-<<<<<<< HEAD
 internal abstract class AbsAccountSetupActivityModule : ActivityModule<AccountSetupActivity>()
-=======
+
+@Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
->>>>>>> master
 
 /**
  * Activity Binds Module
