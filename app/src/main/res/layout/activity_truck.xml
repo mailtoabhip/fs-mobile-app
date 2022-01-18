@@ -96,8 +96,7 @@
                         android:button="@null"
                         android:checked="true"
                         android:background="@drawable/radio_selection_container"
-                        android:textAlignment="center"
-                        android:text="@string/label_closed"/>
+                        android:textAlignment="center" />
                     <RadioButton
                         android:id="@+id/btn_radio_open"
                         android:layout_width="@dimen/size_56dp"
@@ -107,8 +106,7 @@
                         android:layout_gravity="center"
                         android:button="@null"
                         android:background="@drawable/radio_selction_open"
-                        android:textAlignment="center"
-                        android:text="@string/label_open"/>
+                        android:textAlignment="center" />
                     <RadioButton
                         android:id="@+id/btn_radio_trailer"
                         android:layout_width="@dimen/size_56dp"
@@ -118,37 +116,24 @@
                         android:button="@null"
                         android:background="@drawable/radio_selection_trailer"
                         android:textSize="@dimen/text_12sp"
-                        android:textAlignment="center"
-                        android:text="@string/label_trailer"/>
+                        android:textAlignment="center"/>
                 </RadioGroup>
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/body_group">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:text="@string/label_closed"
 
-                            android:textSize="@dimen/text_12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/body_group"
+                    android:text="@string/label_open"
+                    android:textSize="@dimen/text_12sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:text="@string/label_closed"
-                            android:textSize="@dimen/text_12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:text="@string/label_closed"
-                            android:textSize="@dimen/text_12sp" />
-                    </androidx.appcompat.widget.LinearLayoutCompat>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/body_group"
+                    android:text="@string/label_trailer"
+                    android:textSize="@dimen/text_12sp" />
                 </RelativeLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
