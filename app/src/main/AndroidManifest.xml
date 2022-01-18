@@ -164,6 +164,10 @@
         <activity
             android:name=".ui.accountsetup.AccountSetupActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.kyc.pan.PanVerificationActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

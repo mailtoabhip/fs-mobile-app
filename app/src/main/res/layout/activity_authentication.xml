@@ -222,14 +222,13 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_verify_otp"
             style="@style/ActionButton"
-            android:enabled="false"
-            android:textAllCaps="false"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="@dimen/size_24dp"
             android:layout_marginEnd="@dimen/size_8dp"
+            android:enabled="false"
             android:text="@string/action_verify_otp"
-           />
+            android:textAllCaps="false" />
 
       </RelativeLayout>
     </FrameLayout>

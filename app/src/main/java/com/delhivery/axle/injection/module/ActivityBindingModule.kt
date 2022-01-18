@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailAc
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -175,6 +176,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
   internal abstract fun bindConsolidatedPageActivity(): ConsolidatedPageActivity
+
+  /* Pan Verification page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPanVerificationActivityModule::class])
+  internal abstract fun bindPanVerificationActivity(): PanVerificationActivity
 }
 
 /**
@@ -261,6 +267,9 @@ internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<Sear
 
 @Module
 internal abstract class AbsAccountSetupActivityModule : ActivityModule<AccountSetupActivity>()
+
+@Module
+internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVerificationActivity>()
 
 /**
  * Activity Binds Module
