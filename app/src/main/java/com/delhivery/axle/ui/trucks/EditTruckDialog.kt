@@ -17,8 +17,8 @@ import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomEditTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
-import com.delhivery.axle.utils.AnalyticsUtil
-import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -70,6 +70,25 @@ class EditTruckDialog @Inject constructor(
         //set Broadcast receiver
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
 
+        //Set Previous values
+        if(data.currentCityName!= null && data.currentCityCode!=null){
+            truckCity!!.city =  data.currentCityName!!
+            truckCity!!.orion_db_city_code = data.currentCityCode
+        }
+
+        if(data.unloadingDestination != null &&  data.unloadingDestinationCode != null){
+            truckDestination!!.city = data.unloadingDestination!!
+            truckDestination!!.orion_db_city_code = data.unloadingDestinationCode
+        }
+
+        if(data.ownership.isNotNullOrEmpty()){
+            when(data.ownership){
+                "owns_truck" -> binding.btnRadioOwnTruckEditDialog.isChecked = true
+                "market_truck" -> binding.btnRadioMarketTruckEditDialog.isChecked = true
+            }
+        }
+
+
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
@@ -89,11 +108,11 @@ class EditTruckDialog @Inject constructor(
 
     private fun validateFields() {
         val truckPrice= if(binding.editPrice.text != null && binding.editPrice.text.toString() != "")
-            binding.editPrice.text.toString().toInt()
-        else 0
+            binding.editPrice.text.toString().toInt().toDouble()
+        else 0.0
 
         var flag = true
-        if ( truckPrice != 0){
+        if ( truckPrice != 0.0){
             binding.priceErrorEdit.visibility = View.GONE
         }
         else{
@@ -119,8 +138,13 @@ class EditTruckDialog @Inject constructor(
         }
 
         if (flag){
+            analyticsUtil.trackEvent(
+                EVENT_EDIT_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                mutableListOf(userPrefs.userId(), data.inventoryId)
+            )
             uiUtils.showProgress()
-            //dialogInterface.editTruck(data.inventoryId ,position)
+            dialogInterface.editTruck(data.inventoryId, truckCity!!, truckDestination!! ,"FTL", truckPrice, position)
         }
     }
 

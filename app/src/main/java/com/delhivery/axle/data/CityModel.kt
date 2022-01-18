@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class CityModel(
-  @SerializedName("city") val city: String,
-  @SerializedName("orion_db_city_code") val orion_db_city_code: String? = "",
+  @SerializedName("city") var city: String,
+  @SerializedName("orion_db_city_code") var orion_db_city_code: String? = "",
   @SerializedName("district") val district: String? = "",
   @SerializedName("state") val state: String? = ""
 ) : BaseKeyTypeModel<String>(), Serializable {

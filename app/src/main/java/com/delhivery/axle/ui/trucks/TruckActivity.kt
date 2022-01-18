@@ -21,8 +21,8 @@ import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
 import com.delhivery.axle.ui.searchCity.searchCityIntent
-import com.delhivery.axle.utils.AutoCompleteUtils
-import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
@@ -40,6 +40,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
     override fun requireConnection() = true
 
     @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+    @Inject lateinit var userPrefs: UserPrefs
 
     var capacityArr = mutableListOf<String>()
     var sourcedAs : String = ""
@@ -213,6 +214,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         if(flag) {
+            analyticsUtil.trackEvent(
+                EVENT_ADD_TRUCK,
+                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(userPrefs.userId())
+            )
             uiUtils.showProgress("Adding truck")
             viewModel.addNewTruck(sourcedAs.toUpperCase())
         }

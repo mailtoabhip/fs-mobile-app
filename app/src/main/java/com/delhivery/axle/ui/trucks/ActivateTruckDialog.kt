@@ -15,8 +15,7 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomActivateTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
-import com.delhivery.axle.utils.AnalyticsUtil
-import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -68,6 +67,18 @@ class ActivateTruckDialog @Inject constructor(
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
 
+        //Set Previous Values
+        if(data.currentCityName!= null && data.currentCityCode!=null){
+            truckCity!!.city =  data.currentCityName!!
+            truckCity!!.orion_db_city_code = data.currentCityCode
+        }
+
+        if(data.unloadingDestination != null &&  data.unloadingDestinationCode != null){
+            truckDestination!!.city = data.unloadingDestination!!
+            truckDestination!!.orion_db_city_code = data.unloadingDestinationCode
+        }
+
+
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
@@ -89,11 +100,11 @@ class ActivateTruckDialog @Inject constructor(
 
     private fun validateFields() {
          val truckPrice= if(binding.editPriceActivateTruck.text != null && binding.editPriceActivateTruck.text.toString() != "")
-             binding.editPriceActivateTruck.text.toString().toInt()
-        else 0
+             binding.editPriceActivateTruck.text.toString().toInt().toDouble()
+        else 0.0
 
         var flag = true
-        if ( truckPrice != 0){
+        if ( truckPrice != 0.0){
             binding.priceErrorActivate.visibility = View.GONE
         }
         else{
@@ -119,8 +130,13 @@ class ActivateTruckDialog @Inject constructor(
         }
 
         if (flag){
+            analyticsUtil.trackEvent(
+                EVENT_ACTIVATE_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                mutableListOf(userPrefs.userId(), data.inventoryId)
+            )
             uiUtils.showProgress()
-            //dialogInterface.activateTruck(data.inventoryId, position)
+            dialogInterface.activateTruck(data.inventoryId, truckCity!!, truckDestination!! ,"FTL", truckPrice, position)
         }
     }
 

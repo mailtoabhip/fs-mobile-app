@@ -1,8 +1,11 @@
 package com.delhivery.axle.data.home.trucks
 
+import android.view.View
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
 
 data class HomeTrucksRequestItemData(
@@ -37,6 +40,12 @@ data class HomeTrucksRequestItemData(
             R.drawable.ic_trailer
     }
 
+    fun truckNumber() = vehicleNumber
+
+    fun ownership() = ((ownership.split("_")).toTypedArray()).joinToString { " " }
+
+    fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
+
 
     fun truckName(): String {
         return if (truckType == "closed")
@@ -50,6 +59,25 @@ data class HomeTrucksRequestItemData(
     fun truckCapacity():String  = "$capacity MT"
 
     fun truckSize(): String = truckSize
+
+    @ColorRes
+    fun statusColor() = if(status == "available")
+        R.color.bid_placed_green
+    else
+        R.color.bid_placed_red
+
+    fun statusText()= status.capitalize()
+
+    fun statusVisibilty() = if(status == "not_available")
+        View.VISIBLE
+    else
+        View.GONE
+
+    fun locationVisibility() =  if(status == "available")
+        View.VISIBLE
+    else
+        View.GONE
+
 
 }
 

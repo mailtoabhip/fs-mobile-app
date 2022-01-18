@@ -19,6 +19,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.*
@@ -81,7 +82,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                 TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
             ))
-//            context?.let {  ActivateTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
+
         }
 
         /** Observe live Data*/
@@ -153,11 +154,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksRequestAction_ActivateTruck -> {
-                analyticsUtil.trackEvent(
-                    EVENT_ACTIVATE_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID),
-                    mutableListOf(userPrefs.userId())
-                )
+                context?.let {
+                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()
+                }
             }
         }
     }
@@ -221,7 +220,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.deleteTruckLayout.setOnClickListener{
-            uiUtils.showProgress("")
+            uiUtils.showProgress()
+            analyticsUtil.trackEvent(
+                EVENT_DELETE_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                mutableListOf(userPrefs.userId(), data.inventoryId)
+            )
             viewModel.deleteTruck(data.inventoryId, position)
             dialog.dismiss()
         }
@@ -257,8 +261,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             if(reason != "") {
                 analyticsUtil.trackEvent(
                     EVENT_DEACTIVATE_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID),
-                    mutableListOf(userPrefs.userId())
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                    mutableListOf(userPrefs.userId(), data.inventoryId)
                 )
                 viewModel.deactivateTruck(data.inventoryId, reason, position)
 
