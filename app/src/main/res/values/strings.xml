@@ -111,6 +111,10 @@
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
   <string name="action_get_started">Get Started</string>
   <string name="action_change_number">Change number</string>
+  <string name="action_proceed_account">Proceed</string>
+  <string name="action_terms_conditions">Terms &amp; Conditions</string>
+  <string name="action_create_account">Create Account</string>
+
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -284,7 +288,28 @@
   <string name="label_with_sign_value">₹ %1$d</string>
   <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
   <string name="label_resend">Didn’t receive OTP?</string>
-
+  <string name="label_account_setup_primary">What would you like to use this app for?</string>
+  <string name="label_account_setup_primary_select">Select the primary action you want to make</string>
+  <string name="label_account_setup_primary_select_postloads">Post Loads</string>
+  <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
+  <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
+  <string name="label_postloads">To find trucks &amp; ship your loads.</string>
+  <string name="label_posttrucks">To find loads in your operating routes</string>
+  <string name="label_postboth">To find both trucks &amp; loads</string>
+  <string name="label_role">Which role best describes you?</string>
+  <string name="label_role_select">Select a user role from the below list</string>
+  <string name="label_shipper">Shipper</string>
+  <string name="label_shipper_select">I have loads &amp; need to find trucks for them</string>
+  <string name="label_broker">Broker</string>
+  <string name="label_broker_select">I work on commission placing trucks &amp; loads</string>
+  <string name="label_owner">Fleet Owner</string>
+  <string name="label_owner_select">I have trucks &amp; need loads for them</string>
+  <string name="label_transporter">Transporter</string>
+  <string name="label_transporter_select">I have trucks &amp; also loads to ship</string>
+  <string name="label_tellus">Tell us about yourself</string>
+  <string name="label_tellus_detail">Fill in the details below to create your account</string>
+  <string name="label_agree">I agree to Delhivery’s</string>
+  <string name="label_agree_whatsapp">I agree to receive notifications on WhatsApp</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>

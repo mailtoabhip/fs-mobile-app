@@ -5,6 +5,7 @@ import android.content.Context
 import com.delhivery.axle.injection.qualifier.ActivityContext
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
+import com.delhivery.axle.ui.accountsetup.AccountSetupFragmentsBindingModule
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
@@ -168,7 +169,7 @@ abstract class ActivityBindingModule {
   internal abstract fun bindSearchOngoingTripActivity(): SearchOngoingTripActivity
 
   @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsAccountSetupActivityModule::class])
+  @ContributesAndroidInjector(modules = [AbsAccountSetupActivityModule::class, AccountSetupFragmentsBindingModule::class])
   internal abstract fun bindAccountSetupActivity(): AccountSetupActivity
 
   /* Consolidated page activity */

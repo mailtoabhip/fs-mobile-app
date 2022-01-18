@@ -114,14 +114,14 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-             LoadRequest
-              //AccountSetup
+             //LoadRequest
+              AccountSetup
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
               userPrefs.lastLoginTime = Date().time
-              SelectRoute
-              //AccountSetup
+              //SelectRoute
+              AccountSetup
             }
           } else {
             if (error is HttpException) {
