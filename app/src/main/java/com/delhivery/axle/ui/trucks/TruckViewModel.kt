@@ -22,6 +22,14 @@ class TruckViewModel @Inject constructor(
     val userPrefs: UserPrefs
     ) : BaseViewModel(){
 
+    //Intent params
+    var truckTypeIntent : String = ""
+    var truckSizeIntent: String = ""
+    var truckCapacityIntent: Double = 0.0
+    var minCapIntent: Double =0.0
+    var maxCapIntent :Double =0.0
+    var sourcedAsIntent: String = ""
+
     var truckType : String = ""
     var truckSize: String = ""
     var truckCapacity: Double = 0.0

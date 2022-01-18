@@ -70,16 +70,16 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         binding.addTruck.setOnClickListener {
-            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTXL",32.0),
-                TruckFrequentItem("open","10_TYRE",6.0),
-                TruckFrequentItem("open","12_TYRE",14.0)
+            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
             ))
           //  context?.let {  EditTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
         }
         binding.addTruckFloating.setOnClickListener {
-            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTXL",32.0),
-                TruckFrequentItem("open","10_TYRE",6.0),
-                TruckFrequentItem("open","12_TYRE",14.0)
+            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
+                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
             ))
 //            context?.let {  ActivateTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
         }
@@ -175,7 +175,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             val itemBinding = createTruckFrequentItem(bindingDialog)
             itemBinding.data = item
             itemBinding.root.setOnClickListener{
-                context?.let { startActivity(truckIntent(context!!)) }
+                context?.let { startActivity(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)) }
                 dialog.dismiss()
             }
 

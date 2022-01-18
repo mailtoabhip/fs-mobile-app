@@ -43,6 +43,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     var capacityArr = mutableListOf<String>()
     var sourcedAs : String = ""
+    var truckItems = mutableListOf<TruckResponseArray>()
 
     val adapter :TruckSizeAdapter by lazy { TruckSizeAdapter() }
 
@@ -52,9 +53,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         super.onCreate(savedInstanceState)
 
         /* get intent keys */
-        viewModel.truckType = intent.getStringExtra(TruckType) ?: ""
-        viewModel.truckCapacity = intent.getDoubleExtra(TruckCapacity,0.0) ?: 0.0
-        viewModel.truckSize = intent.getStringExtra(TruckSize) ?: ""
+        viewModel.truckTypeIntent = intent.getStringExtra(TruckType) ?: ""
+        viewModel.truckCapacityIntent = intent.getDoubleExtra(TruckCapacity,0.0) ?: 0.0
+        viewModel.truckSizeIntent = intent.getStringExtra(TruckSize) ?: ""
+        viewModel.minCapIntent = intent.getDoubleExtra(MinCap,0.0) ?: 0.0
+        viewModel.maxCapIntent = intent.getDoubleExtra(MaxCap,0.0) ?: 0.0
+        viewModel.sourcedAsIntent = intent.getStringExtra(Sourced)?: ""
+
 
     }
 
@@ -67,6 +72,31 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
+        }
+
+        if(viewModel.truckTypeIntent != ""){
+            when(viewModel.truckTypeIntent){
+                "open" -> binding.btnRadioOpen.isChecked = true
+                "closed" -> binding.btnRadioContainer.isChecked = true
+                "trailer" ->binding.btnRadioTrailer.isChecked = true
+            }
+        }
+
+        if(viewModel.truckSizeIntent != ""){
+            binding.textTruckSize.text = viewModel.truckSizeIntent
+            sourcedAs = viewModel.sourcedAsIntent
+            val min = viewModel.minCapIntent.toInt()
+            val max = viewModel.maxCapIntent.toInt()
+            capacityArr.clear()
+
+            for ( i in min..max){
+                capacityArr.add("$i MT")
+            }
+
+        }
+
+        if(viewModel.truckCapacityIntent != 0.0){
+            binding.textTruckCapacity.text = "${(viewModel.truckCapacityIntent).toInt()} MT"
         }
 
         binding.editTruckCapacity.setOnClickListener{
@@ -100,6 +130,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.truckGetLiveData.observe(this, Observer {
             if(it!=null){
+                truckItems.addAll(it)
                 adapter.setItems(it)
             }
         })
@@ -286,6 +317,11 @@ private const val TruckType = "truck_type"
 private const val TruckSize = "truck_size"
 private const val TruckCapacity = "truck_capacity"
 private const val CityType = "city_type"
+private const val MinCap = "min_cap"
+private const val MaxCap = "max_cap"
+private const val Sourced = "sources_as"
+
+
 
 
 /**
@@ -295,10 +331,16 @@ fun truckIntent(
     context: Context,
     truckType: String = "",
     truckSize: String= "",
-    truckCapacity: String= ""
+    truckCapacity: Double= 0.0,
+    minCap :Double = 0.0,
+    maxCap: Double =0.0,
+    sourcesAS: String= ""
 ) = Intent(context, TruckActivity::class.java).apply {
     putExtra(TruckType, truckType)
     putExtra(TruckSize, truckSize)
     putExtra(TruckCapacity, truckCapacity)
+    putExtra(MinCap, minCap)
+    putExtra(MaxCap, maxCap)
+    putExtra(Sourced, sourcesAS)
 
 }

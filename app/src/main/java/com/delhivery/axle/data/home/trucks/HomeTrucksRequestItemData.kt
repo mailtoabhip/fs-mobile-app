@@ -62,7 +62,10 @@ const val HomeTrucksRequestAction_ActivateTruck = "activate_truck"
 data class TruckFrequentItem(
     val truckType: String,
     val truckSize: String,
-    val capacity: Double
+    val capacity: Double,
+    val minCap: Double,
+    val maxCap: Double,
+    val sourcedAs: String
     ) {
 
 
