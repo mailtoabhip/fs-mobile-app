@@ -108,9 +108,10 @@
           android:orientation="vertical"
           android:paddingStart="@dimen/size_24dp"
           android:paddingTop="@dimen/size_24dp"
+          android:id="@+id/otpLayout"
           android:paddingEnd="@dimen/size_24dp"
           android:paddingBottom="@dimen/size_48dp"
-          bind:visibility="@{ state == AuthenticationUIState.OTP }"
+          bind:visibility="@{ state == AuthenticationUIState.OTP}"
           >
 
         <androidx.appcompat.widget.AppCompatTextView

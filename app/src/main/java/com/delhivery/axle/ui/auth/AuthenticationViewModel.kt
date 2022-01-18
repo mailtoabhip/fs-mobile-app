@@ -85,7 +85,7 @@ class AuthenticationViewModel @Inject constructor(
     if (!isConnected) return
 
     /* set state to login progress and verify otp */
-    state = LoginProgress
+    state = OTP
     val _otp = otp.joinToString("")
     compositeDisposable += Single.zip(
         authenticationRepository.verifyOTP(phoneNo, _otp),

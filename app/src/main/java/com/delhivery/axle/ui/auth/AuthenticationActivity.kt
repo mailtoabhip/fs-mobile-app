@@ -175,9 +175,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     }
 
-    binding.btnVerifyOtp.setOnClickListener {
-    }
-
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
     }
@@ -239,11 +236,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           LoginProgress -> {
             //hide keyboard show progress view
-            uiUtils.showDelhiveryProgress(
-                title = "Logging you in..",
-                message = "This usually takes few seconds to load. please be patient.",
-                proTip = "Some tip regarding how to bid, or whats to be considered while bidding. "
-            )
+            uiUtils.showProgress()
           }
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {

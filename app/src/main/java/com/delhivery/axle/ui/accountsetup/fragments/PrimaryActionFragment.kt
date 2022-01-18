@@ -47,27 +47,31 @@ class PrimaryActionFragment : AccountSetupBaseFragment<FragmentPrimaryActionBind
     super.onViewCreated(view, savedInstanceState)
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
-
+    //Post loads selected
     binding.radioPostloads.setOnClickListener {
       clearRadioState()
       binding.radioPostloads.isChecked = true
     }
 
+    //post truck selected
     binding.radioPostTruck.setOnClickListener {
       clearRadioState()
       binding.radioPostTruck.isChecked = true
     }
 
+    //post both selected
     binding.radioPostBoth.setOnClickListener {
       clearRadioState()
       binding.radioPostBoth.isChecked = true
     }
 
+    //set up the role
     binding.btnProceed.setOnClickListener {
       action(RoleAccountSetupAction(true))
     }
   }
 
+  //clear previous selection
   private fun clearRadioState(){
     binding.btnProceed.isEnabled = true
     binding.radioPostloads.isChecked = false
