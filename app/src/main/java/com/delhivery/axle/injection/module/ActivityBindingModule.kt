@@ -7,6 +7,7 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
 import com.delhivery.axle.ui.accountsetup.AccountSetupFragmentsBindingModule
 import com.delhivery.axle.ui.auth.AuthenticationActivity
+import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
@@ -176,6 +177,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
   internal abstract fun bindConsolidatedPageActivity(): ConsolidatedPageActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
+  internal abstract fun bindModule(): InvalidActivity
 }
 
 /**
@@ -261,7 +266,11 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 @Module
+<<<<<<< HEAD
 internal abstract class AbsAccountSetupActivityModule : ActivityModule<AccountSetupActivity>()
+=======
+internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
+>>>>>>> master
 
 /**
  * Activity Binds Module

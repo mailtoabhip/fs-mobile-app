@@ -62,6 +62,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("child_transactions") val childTransactions: List<String> = mutableListOf(),
   @SerializedName("truck_uuid") val truckUUID: Any?,
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
+  @SerializedName("status") val transactionStatus: String?= "",
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,

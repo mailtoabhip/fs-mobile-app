@@ -55,6 +55,7 @@
 -keepattributes *Annotation*
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
+-keep class com.delhivery.axle.api.response.** { *; }
 -keep class com.google.gson.stream.** { *; }
 
 # Platform calls Class.forName on types which do not exist on Android to determine platform.

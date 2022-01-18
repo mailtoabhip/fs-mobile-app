@@ -37,6 +37,9 @@ import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import kotlinx.android.synthetic.main.view_trip_history_item.view.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import kotlinx.android.synthetic.main.view_active_trips_progress_item.*
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -169,12 +172,24 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
+<<<<<<< HEAD
     binding.btnVerifyOtp.setOnClickListener {
       if(viewModel.otpCurrent.isNotNullOrEmpty() && viewModel.otpCurrent.length==4) {
         viewModel.verifyOTP(viewModel.otpCurrent.toCharArray())
       }
     }
 
+=======
+    binding.loginUsingPassword.setOnClickListener{
+      viewModel.state = Password
+    }
+
+    binding.loginButton.setOnClickListener{
+      performLogin()
+    }
+
+
+>>>>>>> master
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
     }
@@ -191,6 +206,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         super.onBackPressed()
       }
       OTP -> viewModel.state = PhoneNo
+      Password -> viewModel.state = PhoneNo
       LoginProgress -> {/* do nothing when loading */
       }
       else -> {
@@ -206,6 +222,36 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun otpFound(otp: String) {
     otpSubmitted(otp.toCharArray())
     binding.btnVerifyOtp.isEnabled = true
+  }
+
+  private fun performLogin() {
+    var flag= true
+    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
+      binding.tilUserId.isErrorEnabled = true
+      binding.tilUserId.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserId.isErrorEnabled = false
+      binding.tilUserId.error = null
+    }
+
+    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
+      binding.tilUserPassword.isErrorEnabled = true
+      binding.tilUserPassword.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserPassword.isErrorEnabled = false
+      binding.tilUserPassword.error = null
+    }
+
+    if(flag){
+      val userId=  binding.tilUserId.editText?.text.toString()
+      val userPassword = binding.tilUserPassword.editText?.text.toString()
+     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+      viewModel.loginUsingPassword(userId,userPassword)
+    }
   }
 
   /**
@@ -233,6 +279,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   getString(string.msg_otp_sent_to_phone_no, it)
               }
             }
+          }
+          Password ->{
+            uiUtils.hideDelhiveryProgress()
           }
           LoginProgress -> {
             //hide keyboard show progress view
@@ -306,6 +355,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           InvalidOTP -> {   //Invalid OTP clear fields
             binding.otpView.clear()
+          }
+          AuthenticationUIError.InvalidPassword -> {   //Invalid password clear fields
+            navigationUtils.navigate(InvalidActivity::class.java, false)
+            //uiUtils.showSnackbar("Invalid username or password")
           }
           None -> {/* nothing */
           }

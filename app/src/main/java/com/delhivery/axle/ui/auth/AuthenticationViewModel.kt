@@ -6,6 +6,7 @@ import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
+import com.delhivery.axle.ui.auth.AuthenticationUIError.*
 import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -132,6 +133,57 @@ class AuthenticationViewModel @Inject constructor(
             OTP
           }
         }
+  }
+
+  /**
+   * Login password
+   */
+  fun loginUsingPassword(userName:String,password:String) {
+    /* set state to login progress and verify otp */
+    state = LoginProgress
+    compositeDisposable += Single.zip(
+      authenticationRepository.loginUsingPassword(userName, password),
+      Single.timer(1000, MILLISECONDS), //add delay for animation
+      BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
+      .flatMap { _otpRes ->
+        userRepository.getUser(false)
+          .map {
+            val msg = if (_otpRes.second.isNotNullOrEmpty()) {
+              _otpRes.second
+            } else {
+              "Error validating UserName/Password"
+            }
+            Triple(_otpRes.first, msg, it)
+          }
+      }
+      .onBackground()
+      .subscribe { _res, error ->
+        state = if (!error && _res.first) {
+          if (!_res.third.supplierEnabled) {
+            userPrefs.hasLoggedIn = false
+            Disabled
+          } else if (_res.third.isDeleted) {
+            userPrefs.hasLoggedIn = false
+            Disabled
+          } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+            userPrefs.hasLoggedIn = true
+            userPrefs.lastLoginTime = Date().time
+            LoadRequest
+          } else {
+            userPrefs.hasLoggedIn = true
+            userPrefs.hasEditedRoute = true
+            userPrefs.lastLoginTime = Date().time
+            SelectRoute
+          }
+        } else {
+//          if (error is HttpException) {
+//            userPrefs.hasLoggedIn = false
+//            error.handle()
+//          }
+          errorLiveData.postValue(Pair(InvalidPassword, ""))
+          Password
+        }
+      }
   }
 
   /**

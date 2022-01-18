@@ -6,5 +6,6 @@ package com.delhivery.axle.ui.auth
 enum class AuthenticationUIError {
   None,
   InvalidPhoneNo,
-  InvalidOTP
+  InvalidOTP,
+  InvalidPassword
 }

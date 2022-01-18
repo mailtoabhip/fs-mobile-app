@@ -2,6 +2,7 @@ package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.OTPLoginRequest
+import com.delhivery.axle.api.request.PasswordLoginRequest
 import com.delhivery.axle.api.request.RequestOTP
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
@@ -56,6 +57,22 @@ class AuthenticationRepository @Inject constructor(
         /* handle error if needed */
         Pair(false, "Invalid OTP")
       }
+
+  /**
+   * Verify Password Login
+   */
+  fun loginUsingPassword(
+    userName: String,
+    password: String
+  ) = umsService.requestPasswordVerification(PasswordLoginRequest.getRequest(userName, password))
+    .map {
+      handleJWTToken(it.jwtToken)
+      Pair(true, "")
+    }
+    .onErrorReturn {
+      /* handle error if needed */
+      Pair(false, "Invalid Password")
+    }
 
   /**
    * Handle jwt token post success login

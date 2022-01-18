@@ -162,7 +162,10 @@
             android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.accountsetup.AccountSetupActivity"
+            android:screenOrientation="portrait"
+            android:name=".ui.accountsetup.AccountSetupActivity"/>
+        <activity
+            android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
     </application>
 

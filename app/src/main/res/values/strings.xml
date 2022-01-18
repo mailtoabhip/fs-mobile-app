@@ -76,6 +76,8 @@
   <string name="hint_enter_bid_value">Enter bid value (₹)</string>
   <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
   <string name="hint_amount">23900</string>
+  <string name="hint_user_name">Enter user name</string>
+  <string name="hint_password">Enter Password</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -114,7 +116,7 @@
   <string name="action_proceed_account">Proceed</string>
   <string name="action_terms_conditions">Terms &amp; Conditions</string>
   <string name="action_create_account">Create Account</string>
-
+  <string name="action_login">Login</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
