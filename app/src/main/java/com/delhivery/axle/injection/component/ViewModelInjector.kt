@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -197,6 +198,11 @@ interface ViewModelInjector {
    * Injects [AccountSetupViewModel]
    */
   fun inject(viewModel: AccountSetupViewModel)
+
+  /**
+   * Injects [PanVeificationViewModel]
+   */
+  fun inject(viewModel: PanVerificationViewModel)
 
   @Component.Builder
   interface Builder {
