@@ -77,7 +77,7 @@ class TripDetailsViewModel @Inject constructor(
   /* transaction id */
   lateinit var transactionId: String
   lateinit var tripDetail: HomeTripsItemData
-  private lateinit var warehouse: String
+  private var warehouse: String = ""
 
   /* trip details live data */
   var tripLiveData = MutableLiveData<Pair<HomeBidsRequestItemData, HomeTripsItemData>>()
