@@ -77,7 +77,7 @@ class ChangePaymentModeDialog @Inject constructor(
                 }
                 userNumber =""
                 binding.layoutDieselCompany.visibility= View.GONE
-                Toast.makeText(context, "Member not added, Try again", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Member not added", Toast.LENGTH_SHORT).show()
             }
         }
     }
