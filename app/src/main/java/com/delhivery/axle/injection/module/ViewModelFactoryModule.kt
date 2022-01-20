@@ -23,6 +23,7 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
@@ -257,6 +258,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(PanVerificationViewModel::class)
   abstract fun bindPanVerificationViewModel(viewModel:PanVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AadhaarVerificationViewModel::class)
+  abstract fun bindAadhaarVerificationViewModel(viewModel:AadhaarVerificationViewModel): ViewModel
 
 
   @Binds
