@@ -2,6 +2,7 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
+import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.api.service.InventoryService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -9,7 +10,8 @@ import com.google.gson.JsonObject
 import javax.inject.Inject
 
 class InventoryRepository @Inject constructor(
-    private val inventoryService: InventoryService
+    private val inventoryService: InventoryService,
+    private val cityService: CityService
 ): BaseRepository() {
 
     fun getInventories(request: JsonObject) = inventoryService.getInventories(request).convertResponse()

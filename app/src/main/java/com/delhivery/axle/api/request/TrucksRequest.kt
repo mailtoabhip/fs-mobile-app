@@ -73,6 +73,8 @@ class AddVehicle(
     var currentCityCode: String,
     var unloadingDestination: String,
     var unloadingDestinationCode: String,
+    var originClusterId: String,
+    var destinationClusterId: String,
     var sourcedAs: String,
     var unloadingDestinationAmount: Double?= null,
     var unloadingDestinationRate: Double?= null
@@ -81,7 +83,7 @@ class AddVehicle(
         val jsonObject = JsonObject()
         jsonObject.addProperty("supplier_id", supplierId)
         jsonObject.addProperty("supplier_name",supplierName)
-        jsonObject.addProperty("body_type", bodyType)
+        jsonObject.addProperty("truck_type", bodyType)
         jsonObject.addProperty("vehicle_number", vehicleNumber)
         jsonObject.addProperty("ownership",ownership)
         jsonObject.addProperty("truck_uuid", truckSize)
@@ -90,6 +92,8 @@ class AddVehicle(
         jsonObject.addProperty("current_city_code", currentCityCode)
         jsonObject.addProperty("destination_city", unloadingDestination)
         jsonObject.addProperty("destination_city_code", unloadingDestinationCode)
+        jsonObject.addProperty("origin_cluster_id", originClusterId)
+        jsonObject.addProperty("destination_cluster_id", destinationClusterId)
         if(sourcedAs == "FTL") {
             unloadingDestinationAmount?.let {
                 jsonObject.addProperty(
