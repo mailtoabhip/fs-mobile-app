@@ -87,6 +87,7 @@
   <string name="action_verify_otp">Verify OTP</string>
   <string name="action_save_proceed">Save &amp; Proceed</string>
   <string name="action_verify_aadhaar">Verify Aadhaar</string>
+  <string name="action_submit_details">Submit Details</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>
@@ -289,11 +290,13 @@
   <string name="label_resend">Didn’t receive OTP?</string>
   <string name="sub_label_step1_3">Step 1 of 3</string>
   <string name="sub_label_step2_3">Step 2 of 3</string>
+  <string name="sub_label_step3_3">Step 3 of 3</string>
   <string name="label_pan">PAN details </string>
   <string name="label_aadhaar">Aadhaar details </string>
+  <string name="label_communication_address">Communication Address </string>
   <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
   <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
-
+  <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -327,6 +330,8 @@
   <string name="cancelled_bid_msg">The load request itself is cancelled</string>
   <string name="pan_hint">Enter your PAN number</string>
   <string name="aadhaar_hint">Enter your Aadhaar number</string>
+  <string name="address_proof_attachment">Address proof attachment</string>
+  <string name="upload_document">Upload document</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

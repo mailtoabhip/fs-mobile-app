@@ -29,4 +29,11 @@
     <attr format="integer" name="min_length" />
     <attr format="integer" name="max_length" />
   </declare-styleable>
+
+    <declare-styleable name="DelhiveryAadhaarMaskedEditText">
+      <attr name="numberOfGroups" format="integer" />
+      <attr name="groupLength" format="integer" />
+      <attr name="groupSeparator" format="string" />
+    </declare-styleable>
+
 </resources>

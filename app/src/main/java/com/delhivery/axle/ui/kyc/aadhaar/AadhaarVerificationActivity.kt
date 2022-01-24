@@ -2,6 +2,8 @@ package com.delhivery.axle.ui.kyc.aadhaar
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyAadharBinding
@@ -27,18 +29,16 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        val dashString = "-"
+        var keyDel=0
         binding.editAadhaar.apply {
-            lengthAction(9){
-
+            lengthAction(14){
+                  binding.btnVerifyAadhaar.isEnabled = true
             }
-
-            lengthAction(10) {
-
+            lengthAction(13){
+                binding.btnVerifyAadhaar.isEnabled = false
             }
-
         }
-
 
 
         viewModel.errorLiveData.observe(
