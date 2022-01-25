@@ -9,6 +9,7 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -53,7 +54,7 @@ class HomeTrucksViewModel @Inject constructor(
         val jsonObject = JsonObject()
         jsonObject.addProperty("supplier_id", userPrefs.userId())
 
-        bodyTypeFilter?.let { jsonObject.addProperty("body_type", bodyTypeFilter)}
+        bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
         availabilityFilter?.let { jsonObject.addProperty("availability", availabilityFilter) }
         sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
 
@@ -71,6 +72,7 @@ class HomeTrucksViewModel @Inject constructor(
                         if(trucksList.isNotEmpty()) {
                             add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
                             add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
+                            add(Pair(HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.Add))
                             add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(trucksList.size)),
                                 DataRVAdapterOperationType.AddUpdate
                             ))
@@ -84,6 +86,9 @@ class HomeTrucksViewModel @Inject constructor(
                                 )
                             }
                         }else{
+                            bodyTypeFilter = null
+                            availabilityFilter = null
+                            sizeFilter = null
                             add(Pair(HomeTrucksWarningItem_NoTrucks, DataRVAdapterOperationType.AddUpdate))
                         }
                     }.let {

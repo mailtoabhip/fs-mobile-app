@@ -1,7 +1,10 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.home.loads.HomeLoadsTruckPriorityAccessItemData
 import com.delhivery.axle.data.home.trucks.*
+import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType
 
 enum class HomeTrucksRVAdapterItemType(val typeId: Int){
     Request(0),
@@ -11,7 +14,8 @@ enum class HomeTrucksRVAdapterItemType(val typeId: Int){
     Timeout(4),
     Info(5),
     MoreInfo(6),
-    Filters(7);
+    Filters(7),
+    Priority(8);
 
     companion object {
         /**
@@ -88,3 +92,9 @@ class HomeTrucksFilterItem(
         false
     )
 ) : BaseHomeTrucksRVAdapterItem<HomeTrucksFilterItemData>(HomeTrucksRVAdapterItemType.Filters, data)
+
+/**
+ * Priority acccess banner item
+ */
+class HomeTruckPriorityAccessItem(data: HomeTrucksPriorityItemData) :
+    BaseHomeTrucksRVAdapterItem<HomeTrucksPriorityItemData>(HomeTrucksRVAdapterItemType.Priority, data)

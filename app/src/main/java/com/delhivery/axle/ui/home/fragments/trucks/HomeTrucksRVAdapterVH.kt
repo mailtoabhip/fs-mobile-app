@@ -1,16 +1,20 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
+import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterViewHolder
 
 /**
  * Base Home trucks RV adapter view holder
@@ -194,3 +198,21 @@ internal class HomeTrucksMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBindin
         binding.textEditRoute.clickToAction(HomeLoadsInfoAction_EditRoute, item, _interface)
     }
 }
+
+/**
+ *   Add Truck priority item view holder
+ */
+internal class HomeTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityItemBinding) :
+    BaseHomeTrucksRVAdapterViewHolder<ViewHomeLoadsTruckPriorityItemBinding, HomeTruckPriorityAccessItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeTruckPriorityAccessItem,
+        _interface: HomeTrucksRVAdapterInterface
+    ) {
+        binding.addTruckCard.clickToAction(HomeTrucksPriorityAction, item, _interface)
+        binding.truckBanner.clickToAction(HomeTrucksPriorityAction, item, _interface)
+
+    }
+}
+

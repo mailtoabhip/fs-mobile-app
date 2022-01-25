@@ -50,9 +50,9 @@
             android:id="@+id/truck_image_edit_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            bind:background="@drawable/background_rectangle_border"
-            bind:drawableResId="@{request.truckImage()}"
-            android:layout_gravity="center" />
+            android:background="@drawable/background_rectangle_border_curved"
+            app:srcCompat="@{request.truckImage()}"
+            android:layout_gravity="center"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"

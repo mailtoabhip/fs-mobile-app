@@ -125,7 +125,7 @@ class EditTruckDialog @Inject constructor(
             binding.editPrice.text.toString().toInt().toDouble()
         else 0.0
 
-        var truckOwnership = if(binding.btnRadioMarketTruckEditDialog.isChecked)
+        val truckOwnership = if(binding.btnRadioMarketTruckEditDialog.isChecked)
             "market_truck" else "owns_truck"
 
         var flag = true

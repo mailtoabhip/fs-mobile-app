@@ -19,12 +19,12 @@
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_2dp"
       >
-  <androidx.constraintlayout.widget.ConstraintLayout
+  <RelativeLayout
       android:id="@+id/truck_banner"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-
       android:background="@drawable/background_all_rounded_truck_banner"
+      android:orientation="horizontal"
       android:paddingStart="@dimen/size_8dp"
       android:paddingTop="@dimen/size_16dp"
       android:paddingEnd="@dimen/size_16dp"
@@ -35,15 +35,16 @@
         android:id="@+id/img_priority_access"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        bind:layout_constraintStart_toStartOf="parent"
-        bind:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentStart="true"
         bind:srcCompat="@drawable/ic_priority_access" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/label_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/size_16dp"
+        android:layout_toRightOf="@id/img_priority_access"
         android:orientation="vertical"
         bind:layout_constraintBottom_toBottomOf="parent"
         bind:layout_constraintStart_toEndOf="@id/img_priority_access"
@@ -74,9 +75,8 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        bind:layout_constraintEnd_toEndOf="parent"
-        bind:layout_constraintTop_toTopOf="parent"
+        android:layout_alignParentEnd="true"
         bind:srcCompat="@drawable/ic_arrow_forward_black" />
-  </androidx.constraintlayout.widget.ConstraintLayout>
+  </RelativeLayout>
   </androidx.cardview.widget.CardView>
 </layout>

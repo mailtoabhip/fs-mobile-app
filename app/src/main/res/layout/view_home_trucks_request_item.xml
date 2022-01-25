@@ -5,6 +5,7 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="androidx.core.content.ContextCompat"/>
         <variable
             name="request"
             type="com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData" />
@@ -28,15 +29,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size_11dp">
+            android:padding="@dimen/size_14dp">
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/truck_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:padding="@dimen/size_4dp"
-                bind:background="@drawable/background_rectangle_border"
-                bind:drawableResId="@{request.truckImage()}"
+                android:background="@drawable/background_rectangle_border_curved"
+                app:srcCompat="@{request.truckImage()}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -65,13 +66,14 @@
                         android:layout_height="wrap_content"
                         android:text="@{request.statusText()}"
                         tools:text="Available"
-                        bind:textColor="@{request.statusColor()}"
+                        bind:textColor="@{ ContextCompat.getColor(context, request.statusColor()) }"
                         android:textStyle="bold"
                         android:layout_marginStart="@dimen/size_6dp"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
                     android:orientation="horizontal">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/truck_ownership_text"
@@ -79,6 +81,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{request.ownership()}"
                         tools:text="Market Truck"
+                        android:textSize="@dimen/text_12sp"
                         android:textColor="@color/transparent_grey"
                         />
                     <androidx.appcompat.widget.AppCompatTextView
@@ -87,6 +90,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{request.truckSizeAndCap()}"
                         tools:text="32FTMXL (18MT)"
+                        android:textSize="@dimen/text_12sp"
                         android:textColor="@color/transparent_grey"
                         android:layout_marginStart="@dimen/size_6dp"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -98,6 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_options"
+                android:layout_marginEnd="@dimen/size_11dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -113,7 +118,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="@{request.locationVisibility()}"
-            android:padding="@dimen/size_11dp">
+            android:padding="@dimen/size_14dp">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
@@ -146,7 +151,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_14dp"
                 android:orientation="vertical">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_unloading_loc"
@@ -169,7 +174,7 @@
             android:id="@+id/btn_activate_truck"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_36dp"
-            android:layout_margin="@dimen/size_11dp"
+            android:layout_margin="@dimen/size_14dp"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:visibility="@{request.statusVisibilty()}"

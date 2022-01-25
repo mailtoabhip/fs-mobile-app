@@ -59,6 +59,7 @@
             android:textColor="@color/white"
             android:layout_alignParentBottom="true"
             android:gravity="center"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/size_18dp"
             android:background="@drawable/bg_load_action_btn"
             />
@@ -71,6 +72,7 @@
             bind:srcCompat="@drawable/ic_add_white"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
+            android:visibility="gone"
             android:contentDescription="@string/action_add_truck"
             android:layout_marginEnd="@dimen/size_16dp"/>
 

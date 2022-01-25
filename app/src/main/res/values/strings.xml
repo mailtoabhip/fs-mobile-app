@@ -70,6 +70,7 @@
     <string name="msg_priority_access_to_loads">Need priority access to loads?</string>
     <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
     <string name="msg_empty_field">Field can\'t be empty</string>
+    <string name="msg_truck_add_success">Truck added successfully!</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
@@ -363,7 +364,7 @@
     <string name="add_your_truck_and_receive_matching_load_offers">Tell us your truck\'s current location and preferred drop location and get first preference for matching loads</string>
     <string name="get_load_offers">Get first preference for Loads by \nadding your truck details</string>
     <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
-    <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access\n to loads on that lane</string>
+    <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
     <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
 
     <string-array name="array_truck_type">

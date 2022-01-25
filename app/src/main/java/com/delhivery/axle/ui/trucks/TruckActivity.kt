@@ -1,11 +1,13 @@
 package com.delhivery.axle.ui.trucks
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
+import com.delhivery.axle.databinding.DialogAddTruckSuccessBinding
 import com.delhivery.axle.databinding.DialogBottomTruckUnloadingDetailsBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -139,9 +142,27 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.addTruckLiveData.observe(this, Observer{
             uiUtils.hideProgress()
             if(it!=null && it == true){
-                uiUtils.showSnackbar("Added")
+                showTruckAddedDialog()
             }
         })
+
+    }
+
+    private fun showTruckAddedDialog() {
+        val dialog = Dialog(this)
+        val bindingDialog= DialogAddTruckSuccessBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        dialog.show()
+        Handler().postDelayed({
+            dialog.dismiss()
+            finish()
+        }, 2000)
+
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 

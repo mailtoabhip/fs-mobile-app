@@ -6,11 +6,14 @@ import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.axle.ui.base.adapter.BaseFilterableDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterItemType
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksRVAdapterItemType
 
 class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface):
-    BaseDataRVAdapter<BaseHomeTrucksRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
+    BaseFilterableDataRVAdapter<BaseHomeTrucksRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
 ) {
 
@@ -27,6 +30,7 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
         HomeTrucksRVAdapterItemType.Info -> ViewHomeTrucksInfoItemBinding.inflate(inflater, parent, false)
         HomeTrucksRVAdapterItemType.Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
         HomeTrucksRVAdapterItemType.Filters -> ViewHomeTrucksFilterItemBinding.inflate(inflater, parent, false)
+        HomeTrucksRVAdapterItemType.Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
         else -> ViewHomeTrucksRequestItemBinding.inflate(inflater, parent, false)
     }
 
@@ -37,6 +41,7 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
         is ViewHomeTrucksInfoItemBinding -> HomeTrucksInfoItemVH(binding)
         is ViewTimeOutItemBinding -> HomeTrucksTimeOutItemVH(binding)
         is ViewHomeTrucksFilterItemBinding -> HomeTrucksFilterItemVH(binding)
+        is ViewHomeLoadsTruckPriorityItemBinding -> HomeTruckPriorityItemVH(binding)
         else -> HomeTrucksRequestItemVH(binding as ViewHomeTrucksRequestItemBinding)
     }
     
@@ -52,6 +57,7 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
             is HomeTrucksTimeOutItemVH -> holder.bind(item as HomeTrucksTimeoutItem, _interface)
             is HomeTrucksInfoItemVH -> holder.bind(item as HomeTrucksInfoItem, _interface)
             is HomeTrucksFilterItemVH -> holder.bind(item as HomeTrucksFilterItem, _interface)
+            is HomeTruckPriorityItemVH -> holder.bind(item as HomeTruckPriorityAccessItem, _interface)
         }
 
     }
@@ -65,7 +71,7 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
             items.filter {
                 it.type == HomeTrucksRVAdapterItemType.Request || it.type == HomeTrucksRVAdapterItemType.Warning ||
                 it.type == HomeTrucksRVAdapterItemType.Timeout || it.type == HomeTrucksRVAdapterItemType.Info || it.type == HomeTrucksRVAdapterItemType.MoreInfo
-                || it.type == HomeTrucksRVAdapterItemType.Search || it.type == HomeTrucksRVAdapterItemType.Filters
+                || it.type == HomeTrucksRVAdapterItemType.Search || it.type == HomeTrucksRVAdapterItemType.Filters || it.type == HomeTrucksRVAdapterItemType.Priority
             }
                 .map { Pair(it, DataRVAdapterOperationType.Remove) }
                 .let {
@@ -75,5 +81,13 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
             .let {
                 operation(it)
             }
+    }
+
+    override fun filterList(query: String) =
+        items.filter { it.type == HomeTrucksRVAdapterItemType.Search || it.data.filter(query) }
+
+    override fun enableFilter() {
+        super.enableFilter()
+        isFiltering = true
     }
 }

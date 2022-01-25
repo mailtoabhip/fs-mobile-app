@@ -1,10 +1,13 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
@@ -99,9 +103,18 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.activateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                data = it.second
-                binding.executePendingBindings()
+                uiUtils.showSnackbar("Truck Activated Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
+
                 adapter.notifyItemChanged(it.first)
             }
         })
@@ -109,8 +122,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.deactivateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                data = it.second
+                uiUtils.showSnackbar("Truck Deactivated Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
                 adapter.notifyItemChanged(it.first)
             }
         })
@@ -118,23 +140,33 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.editTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                data = it.second
+                uiUtils.showSnackbar("Truck Edited Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
+
                 adapter.notifyItemChanged(it.first)
             }
         })
 
         viewModel.deleteTruckLiveData.observe(this, Observer {
+            uiUtils.showSnackbar("Truck Deleted Successfully")
             uiUtils.hideProgress()
             if(it!=null){
                 adapter.notifyItemRemoved(it.first)
             }
         })
 
-
-
         refreshData()
     }
+
 
     private fun refreshData() {
         adapter.resetStaticData()
@@ -157,6 +189,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksWarningAction_NoTrucks ->{
+                context?.let { startActivity(truckIntent(context!!)) }
+            }
+
+            HomeTrucksPriorityAction -> {
                 context?.let { startActivity(truckIntent(context!!)) }
             }
         }

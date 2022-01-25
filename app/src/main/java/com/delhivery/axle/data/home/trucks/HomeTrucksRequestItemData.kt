@@ -48,7 +48,7 @@ data class HomeTrucksRequestItemData(
 
     fun truckNumber() = vehicleNumber
 
-    fun ownership() = ((ownership.split("_")).toTypedArray()).joinToString { " " }
+    fun ownership() = (((ownership.split("_")).toTypedArray()).joinToString(" ")).capitalize()
 
     fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
 
@@ -76,7 +76,10 @@ data class HomeTrucksRequestItemData(
     else
         R.color.bid_placed_red
 
-    fun statusText()= latestStatus?.capitalize()
+    fun statusText()= if(latestStatus == "Free")
+        "Looking for Load"
+    else
+        ""
 
     fun statusVisibilty() = if(latestStatus == "not_available")
         View.VISIBLE
