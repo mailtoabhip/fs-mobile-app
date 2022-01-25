@@ -5,6 +5,7 @@ import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
@@ -203,6 +204,10 @@ interface ViewModelInjector {
    * Injects [PanVeificationViewModel]
    */
   fun inject(viewModel: PanVerificationViewModel)
+  /**
+   * Injects [BusinessVeificationViewModel]
+   */
+  fun inject(viewModel: BusinessVerificationViewModel)
 
   @Component.Builder
   interface Builder {

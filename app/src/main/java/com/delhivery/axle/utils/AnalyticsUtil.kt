@@ -189,6 +189,8 @@ const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_ca
 
 
 
+
+
 const val VALUE_BID = "bid"
 const val VALUE_TRIP = "trip"
 const val VALUE_LOAD = "load"
