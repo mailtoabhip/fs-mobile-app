@@ -29,7 +29,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     hasInlineProgress = true
   }
 
-
+  private var userCreate: Boolean = false
 
   override fun getViewModelClass() = TeamMembersViewModel::class.java
 
@@ -56,7 +56,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       refreshData()
     }
 
-    val userCreate = intent?.getBooleanExtra(USER_CREATE, false)
+    userCreate = intent?.getBooleanExtra(USER_CREATE, false) ?: false
 
 
     if(userCreate == true){
@@ -86,26 +86,17 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       if(it!=null) {
         refreshData()
         uiUtils.showSnackbar(it.first)
-        if (userCreate == true) {
+        if (userCreate) {
           val intent = Intent("custom-event-name")
-          // You can also include some extra data.
-          var num: String = it.second
-          intent.putExtra("message", num)
-          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-          finish()
-        }
-      }else{
-        if (userCreate == true) {
-          // _inerface1!!.getPhone("9876545323")
-          val intent = Intent("custom-event-name")
-          // You can also include some extra data.
-          var num: String = "0"
+
+          val num: String = it.second
           intent.putExtra("message", num)
           LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
           finish()
         }
       }
     })
+
 
     viewModel.updateUserLiveData.observe(this, Observer {
       refreshData()
@@ -129,6 +120,17 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
     refreshData()
+  }
+
+  override fun onBackPressed() {
+    super.onBackPressed()
+    if(userCreate){
+      val intent = Intent("custom-event-name")
+          val num: String = "0"
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+          finish()
+    }
   }
 
   private fun refreshData() {
