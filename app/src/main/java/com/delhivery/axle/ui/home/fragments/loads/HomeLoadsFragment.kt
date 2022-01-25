@@ -21,13 +21,7 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
-import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
+import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
@@ -39,6 +33,7 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
@@ -403,6 +398,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
         viewModel.filterVehicleType = null
         viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
+      }
+
+      HomeLoadsPriorityAction -> {
+        context?.let { startActivity(truckIntent(context!!)) }
+      }
+
+      HomeLoadsBannerAction -> {
+        context?.let { startActivity(truckIntent(context!!)) }
       }
     }
   }

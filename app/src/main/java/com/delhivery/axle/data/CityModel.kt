@@ -80,4 +80,15 @@ data class SearchCitiesResponse(
   @SerializedName("records") val cities: List<SearchCityModel>
 )
 
+/**
+ * Cluster Response
+ */
+data class ClusterResponse(
+  @SerializedName("results") val clusters: List<Clusters>
+)
+
+data class Clusters(
+  @SerializedName("cluster_id") val clusterId: String
+)
+
 const val CitySelected = "city_selected"

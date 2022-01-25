@@ -61,11 +61,11 @@ class HomeTrucksRVAdapter(private val _interface : HomeTrucksRVAdapterInterface)
      */
     fun resetStaticData() {
         mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
+            add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.AddUpdate))
             items.filter {
                 it.type == HomeTrucksRVAdapterItemType.Request || it.type == HomeTrucksRVAdapterItemType.Warning ||
                 it.type == HomeTrucksRVAdapterItemType.Timeout || it.type == HomeTrucksRVAdapterItemType.Info || it.type == HomeTrucksRVAdapterItemType.MoreInfo
-                || it.type == HomeTrucksRVAdapterItemType.Search
+                || it.type == HomeTrucksRVAdapterItemType.Search || it.type == HomeTrucksRVAdapterItemType.Filters
             }
                 .map { Pair(it, DataRVAdapterOperationType.Remove) }
                 .let {

@@ -45,12 +45,17 @@ class TruckViewModel @Inject constructor(
 
 
     fun addNewTruck(sourcedAs: String){
-        val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize,truckCapacity
-            ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city,truckDestination!!.orion_db_city_code!!,sourcedAs)
+        compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code!!, truckDestination!!.orion_db_city_code!!)
+            .flatMap { t->
+                val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
+                    ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
+                    t.first, t.second, sourcedAs, truckPrice)
 
-        compositeDisposable += inventoryRepository.addInventory(addVehicleRequest.getRequest())
+                inventoryRepository.addInventory(addVehicleRequest.getRequest())
+
+            }
             .onBackground()
-            .subscribe{_res,error ->
+            .subscribe{ _res,error ->
                 if(!error && _res!= null){
                     addTruckLiveData.postValue(true)
                 }

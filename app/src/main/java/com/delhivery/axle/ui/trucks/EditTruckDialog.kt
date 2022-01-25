@@ -35,6 +35,7 @@ class EditTruckDialog @Inject constructor(
 
     var truckCity : CityModel? =null
     var truckDestination: CityModel? = null
+    var sourcedAs: String = ""
 
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -71,14 +72,27 @@ class EditTruckDialog @Inject constructor(
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
 
         //Set Previous values
+        binding.request = data
+
         if(data.currentCityName!= null && data.currentCityCode!=null){
-            truckCity!!.city =  data.currentCityName!!
-            truckCity!!.orion_db_city_code = data.currentCityCode
+            val cityModel = CityModel(data.currentCityName!! , data.currentCityCode)
+            truckCity = cityModel
+            binding.textCurrentCityEditDialog.text = truckCity!!.cityName()
         }
 
         if(data.unloadingDestination != null &&  data.unloadingDestinationCode != null){
-            truckDestination!!.city = data.unloadingDestination!!
-            truckDestination!!.orion_db_city_code = data.unloadingDestinationCode
+            val cityModel = CityModel(data.unloadingDestination!! , data.unloadingDestinationCode)
+            truckDestination = cityModel
+            binding.textUnloadingDestinationEditDialog.text = truckDestination!!.cityName()
+        }
+
+        if(data.unloadingDestinationAmount != null){
+            binding.editPrice.setText( data.unloadingDestinationAmount!!.toInt().toString())
+            sourcedAs = "FTL"
+        }
+        else if(data.unloadingDestinationRate !=null){
+            binding.editPrice.setText( data.unloadingDestinationRate!!.toInt().toString())
+            sourcedAs = "PMT"
         }
 
         if(data.ownership.isNotNullOrEmpty()){
@@ -111,8 +125,11 @@ class EditTruckDialog @Inject constructor(
             binding.editPrice.text.toString().toInt().toDouble()
         else 0.0
 
+        var truckOwnership = if(binding.btnRadioMarketTruckEditDialog.isChecked)
+            "market_truck" else "owns_truck"
+
         var flag = true
-        if ( truckPrice != 0.0){
+        if ( ((sourcedAs == "FTL" || sourcedAs == "PMT") && truckPrice != 0.0) || (sourcedAs!= "FTL" && sourcedAs!= "PMT")){
             binding.priceErrorEdit.visibility = View.GONE
         }
         else{
@@ -120,6 +137,7 @@ class EditTruckDialog @Inject constructor(
             binding.priceErrorEdit.visibility = View.VISIBLE
             flag = false
         }
+
         if(truckCity != null){
             binding.originErrorEdit.visibility = View.GONE
         }
@@ -144,7 +162,8 @@ class EditTruckDialog @Inject constructor(
                 mutableListOf(userPrefs.userId(), data.inventoryId)
             )
             uiUtils.showProgress()
-            dialogInterface.editTruck(data.inventoryId, truckCity!!, truckDestination!! ,"FTL", truckPrice, position)
+            dialogInterface.editTruck(data, truckCity!!, truckDestination!! ,sourcedAs, truckPrice, truckOwnership, position)
+            dismiss()
         }
     }
 
@@ -156,11 +175,12 @@ class EditTruckDialog @Inject constructor(
 
 interface EditTruckInterface{
     fun editTruck(
-        inventoryId: String,
+        data: HomeTrucksRequestItemData,
         currentCity: CityModel,
         destinationCity: CityModel,
         sourcedAs: String,
         price: Double,
+        ownership:String,
         position: Int
     )
 }

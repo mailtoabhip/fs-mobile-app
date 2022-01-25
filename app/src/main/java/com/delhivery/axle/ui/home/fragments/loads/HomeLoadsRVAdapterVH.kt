@@ -8,10 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
+import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 
@@ -140,10 +137,7 @@ internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBind
     item: HomeLoadsAddTruckItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-   /* binding.title = item.data.title
-    binding.subTitle = item.data.subtitle
-    binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
+      binding.addTruckBanner.clickToAction(HomeLoadsBannerAction, item, _interface)
   }
 }
 
@@ -158,10 +152,7 @@ internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityI
     item: HomeLoadsTruckPriorityAccessItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-    /* binding.title = item.data.title
-     binding.subTitle = item.data.subtitle
-     binding.actionLabel = item.data.actionLabel
-     binding.btnAction.clickToAction(item.data.actionId, item, _interface)*/
+      binding.addTruckCard.clickToAction(HomeLoadsPriorityAction, item, _interface)
   }
 }
 

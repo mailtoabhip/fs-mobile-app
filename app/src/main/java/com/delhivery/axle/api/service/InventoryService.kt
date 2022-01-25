@@ -16,7 +16,7 @@ interface InventoryService {
     @POST("list_sp_trucks")
     fun getInventories(
         @Body request: JsonObject
-    ):Single<BaseResponse<HomeTrucksRequestItemData>>
+    ):Single<BaseResponse<List<HomeTrucksRequestItemData>>>
 
     @POST("add_sp_truck")
     fun addInventory(

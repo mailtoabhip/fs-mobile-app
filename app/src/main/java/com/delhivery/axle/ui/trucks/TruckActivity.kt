@@ -139,7 +139,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.addTruckLiveData.observe(this, Observer{
             uiUtils.hideProgress()
             if(it!=null && it == true){
-
+                uiUtils.showSnackbar("Added")
             }
         })
 

@@ -72,6 +72,7 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         item: HomeTrucksRequestItem,
         _interface: HomeTrucksRVAdapterInterface
     ) {
+        binding.request = item.data
         binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
         binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
 
@@ -166,7 +167,7 @@ internal class HomeTrucksInfoItemVH(binding: ViewHomeTrucksInfoItemBinding) :
         item: HomeTrucksInfoItem,
         _interface: HomeTrucksRVAdapterInterface
     ) {
-
+        binding.trucksCount.text = "("+item.data.count.toString()+")"
     }
 }
 

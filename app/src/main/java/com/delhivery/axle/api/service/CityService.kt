@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.data.CitiesResponse
+import com.delhivery.axle.data.ClusterResponse
 import com.delhivery.axle.data.SearchCitiesResponse
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -34,8 +35,8 @@ interface CityService {
   /**
    * Get Cluster id
    */
-  @GET("/cluster")
+  @GET("cluster")
   fun getClusterID(
     @Query("city_id") cityId: String
-  )
+  ):Single<BaseResponse<ClusterResponse>>
 }

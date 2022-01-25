@@ -10,3 +10,6 @@ data class HomeLoadsTruckPriorityAccessItemData(
 
 private const val HomeLoadsTruckPriorityItemDataKey = "priority"
 
+//actions
+const val HomeLoadsPriorityAction = "click_priority"
+

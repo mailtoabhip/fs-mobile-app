@@ -11,3 +11,6 @@ data class HomeLoadsAddTruckItemData(
 private const val HomeLoadsAddTruckItemDataKey = "banner"
 
 public const val HomeLoadsAddTruckItemDataConfig = 3
+
+//actions
+const val HomeLoadsBannerAction =  "click_banner"

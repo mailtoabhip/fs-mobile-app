@@ -6,7 +6,13 @@ import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.home.fragments.loads.*
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
 import com.delhivery.axle.ui.trucks.EditTruckInterface
 import com.delhivery.axle.utils.extensions.not
@@ -30,10 +36,18 @@ class HomeTrucksViewModel @Inject constructor(
     var sizeFilter: String?= null
 
     //Live data variables
-    var activateTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
-    var editTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
-    var deactivateTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
+
+    /* data loading live data */
+    var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+    var activateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
+    var editTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
+    var deactivateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deleteTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
+
+    /* user bids live data */
+    var userTrucksData =
+        MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     fun getAllInventories(){
         val jsonObject = JsonObject()
@@ -43,32 +57,70 @@ class HomeTrucksViewModel @Inject constructor(
         availabilityFilter?.let { jsonObject.addProperty("availability", availabilityFilter) }
         sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
 
+        dataLoadingLiveData.postValue(true)
+
         compositeDisposable += inventoryRepository.getInventories(jsonObject)
             .onBackground()
             .progress()
-            .subscribe{ _res,error ->
-                if(!error && _res != null){
+            .subscribe{ _res, error ->
+                if(!error && _res != null) {
+                    val trucksList :List<HomeTrucksRequestItemData> = _res as List<HomeTrucksRequestItemData>
+                    mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))
 
+                        if(trucksList.isNotEmpty()) {
+                            add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
+                            add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
+                            add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(trucksList.size)),
+                                DataRVAdapterOperationType.AddUpdate
+                            ))
+
+                            for (trucks in trucksList) {
+                                add(
+                                    Pair(
+                                        HomeTrucksRequestItem(trucks),
+                                        DataRVAdapterOperationType.Add
+                                    )
+                                )
+                            }
+                        }else{
+                            add(Pair(HomeTrucksWarningItem_NoTrucks, DataRVAdapterOperationType.AddUpdate))
+                        }
+                    }.let {
+                        userTrucksData.postValue(it)
+                    }
                 }
                 else{
+                    mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        /* remove progress item */
+                        add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))
+                        /* add api time out item */
+                        add(Pair(
+                            HomeTrucksWarningItem_NoTrucks,
+                            DataRVAdapterOperationType.AddUpdate
+                        ))
+                    }
+                        .let { userTrucksData.postValue(it) }
 
                 }
+
+                dataLoadingLiveData.postValue(false)
             }
 
     }
 
     fun deactivateTruck(
-        inventoryId: String,
+        data: HomeTrucksRequestItemData,
         reason: String,
         position: Int
     ){
-        val request = DeactivateTruckRequest(inventoryId, "not_available","deactivate_truck", reason)
+        val request = DeactivateTruckRequest(data.inventoryId, "not_available","deactivate_truck", reason)
         compositeDisposable += inventoryRepository.deActivateTruck(request)
             .onBackground()
             .progress()
             .subscribe{ _res, error ->
                 if(!error && _res!= null){
-
+                    deactivateTruckLiveData.postValue(Pair(position,_res))
                 }
                 else{
                     error.handle()
@@ -79,6 +131,7 @@ class HomeTrucksViewModel @Inject constructor(
     }
 
     override fun activateTruck(
+        data: HomeTrucksRequestItemData,
         inventoryId: String,
         currentCity: CityModel,
         destinationCity: CityModel,
@@ -86,13 +139,13 @@ class HomeTrucksViewModel @Inject constructor(
         price: Double,
         position: Int) {
           val request = UpdateTruck(inventoryId,"activate_truck", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-              destinationCity.orion_db_city_code!!, sourcedAs,"available" )
+              destinationCity.orion_db_city_code!!, sourcedAs, price ,"Free" )
          compositeDisposable += inventoryRepository.activateTruck(request.getRequest())
             .onBackground()
             .progress()
             .subscribe{_res, error ->
                 if(!error && _res != null){
-
+                    activateTruckLiveData.postValue(Pair(position,_res))
                 }
                 else{
                     error.handle()
@@ -103,22 +156,23 @@ class HomeTrucksViewModel @Inject constructor(
     }
 
     override fun editTruck(
-        inventoryId: String,
+        data: HomeTrucksRequestItemData,
         currentCity: CityModel,
         destinationCity: CityModel,
         sourcedAs: String,
         price: Double,
+        ownership:String,
         position: Int) {
 
-        val request = UpdateTruck(inventoryId,"update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-            destinationCity.orion_db_city_code!!, sourcedAs )
+        val request = UpdateTruck(data.inventoryId,"update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
+            destinationCity.orion_db_city_code!!, sourcedAs , price, ownership= ownership )
 
         compositeDisposable += inventoryRepository.editTruck(request.getRequest())
             .onBackground()
             .progress()
             .subscribe{_res, error ->
                 if(!error && _res != null){
-
+                    editTruckLiveData.postValue(Pair(position,_res))
                 }
                 else{
                     error.handle()
@@ -129,15 +183,15 @@ class HomeTrucksViewModel @Inject constructor(
     }
 
     fun deleteTruck(
-        inventoryId: String,
+        data: HomeTrucksRequestItemData,
         position: Int
     ){
-        compositeDisposable += inventoryRepository.deleteTruck(DeleteTruckRequest(inventoryId))
+        compositeDisposable += inventoryRepository.deleteTruck(DeleteTruckRequest(data.inventoryId))
             .onBackground()
             .progress()
             .subscribe{ _res, error ->
                 if(!error && _res!= null){
-
+                    deleteTruckLiveData.postValue(Pair(position,true))
                 }
                 else{
                     error.handle()

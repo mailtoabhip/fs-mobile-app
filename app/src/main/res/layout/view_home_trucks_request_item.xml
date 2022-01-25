@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{request.statusText()}"
                         tools:text="Available"
-                        android:textColor="@{request.statusColor()}"
+                        bind:textColor="@{request.statusColor()}"
                         android:textStyle="bold"
                         android:layout_marginStart="@dimen/size_6dp"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -136,6 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:text="@{request.originCity()}"
                     tools:text="Chennai, TamilNadu" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -158,16 +159,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Delhi, Mumbai, +5 more"
+                    android:text="@{request.destinationCity()}"
                     android:textColor="@color/black"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:src="@drawable/seperator_line" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_activate_truck"

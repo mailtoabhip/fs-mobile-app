@@ -32,6 +32,7 @@ class ActivateTruckDialog @Inject constructor(
 
     var truckCity : CityModel? =null
     var truckDestination: CityModel? = null
+    var sourcedAs: String = ""
 
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -69,15 +70,25 @@ class ActivateTruckDialog @Inject constructor(
 
         //Set Previous Values
         if(data.currentCityName!= null && data.currentCityCode!=null){
-            truckCity!!.city =  data.currentCityName!!
-            truckCity!!.orion_db_city_code = data.currentCityCode
+            val cityModel = CityModel(data.currentCityName!! , data.currentCityCode)
+            truckCity = cityModel
+            binding.textCurrentCityActivate.text = truckCity!!.cityName()
         }
 
         if(data.unloadingDestination != null &&  data.unloadingDestinationCode != null){
-            truckDestination!!.city = data.unloadingDestination!!
-            truckDestination!!.orion_db_city_code = data.unloadingDestinationCode
+            val cityModel = CityModel(data.unloadingDestination!! , data.unloadingDestinationCode)
+            truckDestination = cityModel
+            binding.textUnloadingDestinationActivate.text = truckDestination!!.cityName()
         }
 
+        if(data.unloadingDestinationAmount != null){
+            binding.editPriceActivateTruck.setText( data.unloadingDestinationAmount!!.toInt().toString())
+            sourcedAs = "FTL"
+        }
+        else if(data.unloadingDestinationRate !=null){
+            binding.editPriceActivateTruck.setText( data.unloadingDestinationRate!!.toInt().toString())
+            sourcedAs = "PMT"
+        }
 
         binding.closeBtn.setOnClickListener {
             dismiss()
@@ -104,7 +115,7 @@ class ActivateTruckDialog @Inject constructor(
         else 0.0
 
         var flag = true
-        if ( truckPrice != 0.0){
+        if ( ((sourcedAs == "FTL" || sourcedAs == "PMT") && truckPrice != 0.0) || (sourcedAs!= "FTL" && sourcedAs!= "PMT")){
             binding.priceErrorActivate.visibility = View.GONE
         }
         else{
@@ -136,7 +147,8 @@ class ActivateTruckDialog @Inject constructor(
                 mutableListOf(userPrefs.userId(), data.inventoryId)
             )
             uiUtils.showProgress()
-            dialogInterface.activateTruck(data.inventoryId, truckCity!!, truckDestination!! ,"FTL", truckPrice, position)
+            dialogInterface.activateTruck(data, data.inventoryId, truckCity!!, truckDestination!! ,sourcedAs, truckPrice, position)
+            dismiss()
         }
     }
 
@@ -149,6 +161,7 @@ class ActivateTruckDialog @Inject constructor(
 interface ActivateTruckInterface{
 
     fun activateTruck(
+        data: HomeTrucksRequestItemData,
         inventoryId: String,
         currentCity: CityModel,
         destinationCity: CityModel,

@@ -67,7 +67,7 @@ class HomeTrucksTimeoutItem(data: HomeTrucksTimeoutItemData) :
  * Inline Info item
  */
 class HomeTrucksInfoItem(
-    data: HomeTrucksInfoItemData = HomeTrucksInfoItemData()
+    data: HomeTrucksInfoItemData
 ) : BaseHomeTrucksRVAdapterItem<HomeTrucksInfoItemData>(HomeTrucksRVAdapterItemType.Info, data)
 
 

@@ -7,25 +7,31 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class HomeTrucksRequestItemData(
-    @SerializedName("inventory_uuid") val inventoryId : String,
+    @SerializedName("uuid") val inventoryId : String,
     @SerializedName("supplier_id") var supplierId: String,
     @SerializedName("supplier_name") val supplierName: String,
     @SerializedName("vehicle_number") var vehicleNumber: String,
-    @SerializedName("body_type") val truckType: String,
+    @SerializedName("truck_type") val truckType: String,
     @SerializedName("ownership") var ownership :String,
     @SerializedName("truck_uuid") val truckSize: String,
     @SerializedName("capacity") val capacity: Double,
-    @SerializedName("current_city") var currentCityName: String? = null,
+    @SerializedName("current_city") var currentCityName: String? = "",
     @SerializedName("current_city_code") var currentCityCode: String? = null,
-    @SerializedName("destination_city") var unloadingDestination: String? = null,
+    @SerializedName("destination_city") var unloadingDestination: String? = "",
     @SerializedName("destination_city_code") var unloadingDestinationCode: String? =null,
     @SerializedName("unloading_destination_amount") var unloadingDestinationAmount: Double? = null,
     @SerializedName("unloading_destination_rate") var unloadingDestinationRate: Double? = null,
-    @SerializedName("status") var status : String,
     @SerializedName("last_deactivated_at") var lastDeactivateTime: String,
-    @SerializedName("last_deactivate_reason") var lastDeactivateReason: String
+    @SerializedName("last_deactivate_reason") var lastDeactivateReason: String,
+    @SerializedName("latest_inventory_uuid") var latestUUID: String? = null,
+    @SerializedName("latest_inventory_status") var latestStatus: String? = null,
+    @SerializedName("created_at") var createdAt: String,
+    @SerializedName("created_by") var createdBy: String,
+    @SerializedName("origin_cluster_id") var originClusterId: String,
+    @SerializedName("destination_cluster_id") var destinationClusterId: String
 ) : BaseKeyTypeModel<String>(){
 
     override fun key()= inventoryId
@@ -46,6 +52,10 @@ data class HomeTrucksRequestItemData(
 
     fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
 
+    fun originCity() = currentCityName?.capitalize()
+
+    fun destinationCity() = unloadingDestination?.capitalize()
+
 
     fun truckName(): String {
         return if (truckType == "closed")
@@ -61,19 +71,19 @@ data class HomeTrucksRequestItemData(
     fun truckSize(): String = truckSize
 
     @ColorRes
-    fun statusColor() = if(status == "available")
+    fun statusColor() = if(latestStatus == "Free")
         R.color.bid_placed_green
     else
         R.color.bid_placed_red
 
-    fun statusText()= status.capitalize()
+    fun statusText()= latestStatus?.capitalize()
 
-    fun statusVisibilty() = if(status == "not_available")
+    fun statusVisibilty() = if(latestStatus == "not_available")
         View.VISIBLE
     else
         View.GONE
 
-    fun locationVisibility() =  if(status == "available")
+    fun locationVisibility() =  if(latestStatus == "Free")
         View.VISIBLE
     else
         View.GONE

@@ -21,15 +21,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_trucks"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:itemCount="4"
-                tools:listitem="@layout/view_home_trucks_request_item"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_8dp"
                 />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
             android:id="@+id/edit_sticky_search"
@@ -54,7 +57,8 @@
             android:text="@string/action_add_truck"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:layout_gravity="bottom|center"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
             android:layout_marginBottom="@dimen/size_18dp"
             android:background="@drawable/bg_load_action_btn"
             />
@@ -65,9 +69,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_18dp"
             bind:srcCompat="@drawable/ic_add_white"
-            android:layout_gravity="bottom|end"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
             android:contentDescription="@string/action_add_truck"
             android:layout_marginEnd="@dimen/size_16dp"/>
+
+            </RelativeLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     </FrameLayout>

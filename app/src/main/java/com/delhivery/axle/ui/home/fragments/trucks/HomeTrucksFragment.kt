@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
@@ -86,31 +87,47 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         /** Observe live Data*/
+
+        viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+            isLoadingData = it ?: false
+        })
+
         viewModel.activateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-
+                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data = it.second
+                binding.executePendingBindings()
+                adapter.notifyItemChanged(it.first)
             }
         })
 
         viewModel.deactivateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-
+                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data = it.second
+                adapter.notifyItemChanged(it.first)
             }
         })
 
         viewModel.editTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-
+                var data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data = it.second
+                adapter.notifyItemChanged(it.first)
             }
         })
 
         viewModel.deleteTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-
+                adapter.notifyItemRemoved(it.first)
             }
         })
 
@@ -138,6 +155,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             HomeTrucksSizeFilterAction -> {
                 showSizeFilterDialog()
             }
+
+            HomeTrucksWarningAction_NoTrucks ->{
+                context?.let { startActivity(truckIntent(context!!)) }
+            }
         }
     }
 
@@ -155,7 +176,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()
+                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()
                 }
             }
         }
@@ -204,13 +225,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
 
-
+        if(data.latestStatus == "Free"){
+            bindingDialog.deleteTruckLayout.visibility  = View.GONE}
+        else{
+            bindingDialog.deactivateTruckLayout.visibility = View.GONE
+        }
         bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
-            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
+            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()}
             dialog.dismiss()
 
         }
@@ -226,7 +251,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
                 mutableListOf(userPrefs.userId(), data.inventoryId)
             )
-            viewModel.deleteTruck(data.inventoryId, position)
+            viewModel.deleteTruck(data, position)
             dialog.dismiss()
         }
 
@@ -264,9 +289,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
                     mutableListOf(userPrefs.userId(), data.inventoryId)
                 )
-                viewModel.deactivateTruck(data.inventoryId, reason, position)
-
-
+                uiUtils.showProgress()
+                viewModel.deactivateTruck(data, reason, position)
                 dialog.dismiss()
             }
             else{
