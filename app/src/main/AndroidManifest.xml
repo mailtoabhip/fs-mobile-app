@@ -171,6 +171,10 @@
         <activity
             android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.kyc.gst.GstVerificationActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

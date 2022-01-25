@@ -77,8 +77,8 @@
               android:layout_marginTop="@dimen/size_12dp"
               android:layout_below="@+id/label_appuse"
               android:textSize="@dimen/text_16sp"
+              android:text="@string/label_account_setup_primary_select"
               android:textColor="@color/sub_heading_black"
-              tools:text="Select the primary action you want to make"
               />
 
           <RelativeLayout

@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.*
@@ -172,24 +173,21 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
-<<<<<<< HEAD
     binding.btnVerifyOtp.setOnClickListener {
       if(viewModel.otpCurrent.isNotNullOrEmpty() && viewModel.otpCurrent.length==4) {
         viewModel.verifyOTP(viewModel.otpCurrent.toCharArray())
       }
     }
 
-=======
-    binding.loginUsingPassword.setOnClickListener{
+    /*binding.loginUsingPassword.setOnClickListener{
       viewModel.state = Password
-    }
+    }*/
 
-    binding.loginButton.setOnClickListener{
+    /*binding.loginButton.setOnClickListener{
       performLogin()
-    }
+    }*/
 
 
->>>>>>> master
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
     }
@@ -224,7 +222,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     binding.btnVerifyOtp.isEnabled = true
   }
 
-  private fun performLogin() {
+  /*private fun performLogin() {
     var flag= true
     if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
       binding.tilUserId.isErrorEnabled = true
@@ -252,7 +250,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
      // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
       viewModel.loginUsingPassword(userId,userPassword)
     }
-  }
+  }*/
 
   /**
    * [AuthenticationUIState] observer
@@ -318,7 +316,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           /* otp verified, account set up needed */
           AccountSetup -> {
             uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(AccountSetupActivity::class.java, true)
+            navigationUtils.navigate(GstVerificationActivity::class.java, true)
           }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()

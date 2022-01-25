@@ -75,7 +75,7 @@
               android:fontFamily="sans-serif"
               android:gravity="start"
               android:layout_marginBottom="@dimen/size_16dp"
-              android:text="@string/label_role_select"
+              android:text="@string/label_account_setup_primary_select"
               android:layout_marginTop="@dimen/size_12dp"
               android:layout_below="@+id/label_role"
               android:textSize="@dimen/text_16sp"
@@ -116,6 +116,12 @@
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_12sp"
                 />
+            <View
+                android:id="@+id/centerShim"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:visibility="invisible"
+                android:layout_centerHorizontal="true"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/shipper"

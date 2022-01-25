@@ -62,9 +62,6 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
         animate(binding.viewpager) toBe {
           visible()
         }
-        animate(binding.containerActions) toBe {
-          visible()
-        }
       }.start()
 
     if (notificationId.isNotEmpty()) {
