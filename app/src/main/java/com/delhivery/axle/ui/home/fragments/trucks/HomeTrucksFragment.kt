@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.trucks
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -63,6 +64,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchTruckType()
+
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
             refreshData()
@@ -114,6 +117,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 data.unloadingDestinationCode = it.second.unloadingDestinationCode
                 data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
                 data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
 
                 adapter.notifyItemChanged(it.first)
             }
@@ -133,6 +138,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 data.unloadingDestinationCode = it.second.unloadingDestinationCode
                 data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
                 data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
                 adapter.notifyItemChanged(it.first)
             }
         })
@@ -151,6 +158,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 data.unloadingDestinationCode = it.second.unloadingDestinationCode
                 data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
                 data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
 
                 adapter.notifyItemChanged(it.first)
             }
@@ -189,11 +198,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksWarningAction_NoTrucks ->{
-                context?.let { startActivity(truckIntent(context!!)) }
+                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
             }
 
             HomeTrucksPriorityAction -> {
-                context?.let { startActivity(truckIntent(context!!)) }
+                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
             }
         }
     }
@@ -231,7 +240,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             val itemBinding = createTruckFrequentItem(bindingDialog)
             itemBinding.data = item
             itemBinding.root.setOnClickListener{
-                context?.let { startActivity(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)) }
+                context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)
+                    , REQCODE_ADD_TRUCK) }
                 dialog.dismiss()
             }
 
@@ -242,7 +252,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.addTruckLayout.setOnClickListener{
-            context?.let { startActivity(truckIntent(context!!)) }
+            context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
             dialog.dismiss()
         }
 
@@ -345,7 +355,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arraySize = arrayOf("open","closed","trailer")
+        val arraySize = viewModel.truckSizeData.toTypedArray()
 
         val arrayChecked = booleanArrayOf(false,false,false)
 
@@ -495,6 +505,18 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            REQCODE_ADD_TRUCK -> {
+                if( data != null  && data.getStringExtra("Added") == "Truck Added"){
+                    refreshData()
+                }
+            }
+
+        }
     }
 
     /**

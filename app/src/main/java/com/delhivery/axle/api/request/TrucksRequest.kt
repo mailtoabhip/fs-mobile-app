@@ -24,6 +24,8 @@ class UpdateTruck(
     var unloadingDestination: String,
     var unloadingDestinationCode: String,
     var sourcedAs: String,
+    var originClusterId: String,
+    var destinationClusterId: String,
     var price:Double ?=null,
     var inventoryStatus: String?=null,
     var ownership: String?= null,
@@ -37,6 +39,8 @@ class UpdateTruck(
         jsonObject.addProperty("current_city_code", currentCityCode)
         jsonObject.addProperty("destination_city", unloadingDestination)
         jsonObject.addProperty("destination_city_code", unloadingDestinationCode)
+        jsonObject.addProperty("origin_cluster_id", originClusterId)
+        jsonObject.addProperty("destination_cluster_id", destinationClusterId)
         if(sourcedAs == "FTL") {
             price?.let {
                 jsonObject.addProperty(

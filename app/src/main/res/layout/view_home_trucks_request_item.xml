@@ -141,6 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:layout_marginTop="@dimen/size_4dp"
                     android:text="@{request.originCity()}"
                     tools:text="Chennai, TamilNadu" />
 
@@ -164,6 +165,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Delhi, Mumbai, +5 more"
+                    android:layout_marginTop="@dimen/size_4dp"
                     android:text="@{request.destinationCity()}"
                     android:textColor="@color/black"/>
 

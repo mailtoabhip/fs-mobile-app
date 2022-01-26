@@ -137,7 +137,7 @@ internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBind
     item: HomeLoadsAddTruckItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-      binding.addTruckBanner.clickToAction(HomeLoadsBannerAction, item, _interface)
+      binding.layoutBanner.clickToAction(HomeLoadsBannerAction, item, _interface)
   }
 }
 
@@ -152,7 +152,7 @@ internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityI
     item: HomeLoadsTruckPriorityAccessItem,
     _interface: HomeLoadsRVAdapterInterface
   ) {
-      binding.addTruckCard.clickToAction(HomeLoadsPriorityAction, item, _interface)
+      binding.truckBanner.clickToAction(HomeLoadsPriorityAction, item, _interface)
   }
 }
 

@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.home.fragments.trucks
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InventoryRepository
+import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
@@ -16,6 +17,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.home.fragments.loads.*
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
 import com.delhivery.axle.ui.trucks.EditTruckInterface
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -29,6 +31,7 @@ import javax.inject.Inject
 
 class HomeTrucksViewModel @Inject constructor(
     private val inventoryRepository: InventoryRepository,
+    private val truckRepository: TruckRepository,
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
@@ -41,6 +44,7 @@ class HomeTrucksViewModel @Inject constructor(
     /* data loading live data */
     var dataLoadingLiveData = MutableLiveData<Boolean>()
 
+    var truckSizeData = mutableListOf<String>()
     var activateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var editTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deactivateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
@@ -50,13 +54,34 @@ class HomeTrucksViewModel @Inject constructor(
     var userTrucksData =
         MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+    fun fetchTruckType() {
+        compositeDisposable += truckRepository.getTruckType()
+            .onBackground()
+            .subscribe { _tRes, error ->
+                if(!error && _tRes != null){
+                    for( truck in _tRes){
+                        truckSizeData.add(truck.truckUuid!!)
+                    }
+                }
+                else{
+                    error.handle()
+                }
+            }
+    }
+
     fun getAllInventories(){
         val jsonObject = JsonObject()
         jsonObject.addProperty("supplier_id", userPrefs.userId())
 
-        bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
-        availabilityFilter?.let { jsonObject.addProperty("availability", availabilityFilter) }
-        sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
+        if(bodyTypeFilter.isNotNullOrEmpty()){
+            bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
+        }
+        if(availabilityFilter.isNotNullOrEmpty()) {
+            availabilityFilter?.let { jsonObject.addProperty("availability", availabilityFilter) }
+        }
+        if(sizeFilter.isNotNullOrEmpty()) {
+            sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
+        }
 
         dataLoadingLiveData.postValue(true)
 
@@ -143,9 +168,13 @@ class HomeTrucksViewModel @Inject constructor(
         sourcedAs: String,
         price: Double,
         position: Int) {
-          val request = UpdateTruck(inventoryId,"activate_truck", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-              destinationCity.orion_db_city_code!!, sourcedAs, price ,"Free" )
-         compositeDisposable += inventoryRepository.activateTruck(request.getRequest())
+
+        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code!!, destinationCity.orion_db_city_code!!)
+            .flatMap { t ->
+                val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
+                    destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, "Free")
+                inventoryRepository.activateTruck(request.getRequest())
+            }
             .onBackground()
             .progress()
             .subscribe{_res, error ->
@@ -169,10 +198,13 @@ class HomeTrucksViewModel @Inject constructor(
         ownership:String,
         position: Int) {
 
-        val request = UpdateTruck(data.inventoryId,"update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-            destinationCity.orion_db_city_code!!, sourcedAs , price, ownership= ownership )
+        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code!!, destinationCity.orion_db_city_code!!)
+            .flatMap { t ->
+                val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
+                    destinationCity.orion_db_city_code!!, sourcedAs, t.first,t.second, price, ownership = ownership)
 
-        compositeDisposable += inventoryRepository.editTruck(request.getRequest())
+                inventoryRepository.editTruck(request.getRequest())
+            }
             .onBackground()
             .progress()
             .subscribe{_res, error ->

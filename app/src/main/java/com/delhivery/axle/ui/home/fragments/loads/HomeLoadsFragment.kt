@@ -401,11 +401,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
 
       HomeLoadsPriorityAction -> {
-        context?.let { startActivity(truckIntent(context!!)) }
+        context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
       }
 
       HomeLoadsBannerAction -> {
-        context?.let { startActivity(truckIntent(context!!)) }
+        context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
       }
     }
   }

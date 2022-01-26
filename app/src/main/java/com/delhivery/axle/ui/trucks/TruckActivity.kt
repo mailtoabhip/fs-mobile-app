@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.trucks
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -19,10 +18,8 @@ import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogAddTruckSuccessBinding
-import com.delhivery.axle.databinding.DialogBottomTruckUnloadingDetailsBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -89,18 +86,19 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         if(viewModel.truckSizeIntent != ""){
             binding.textTruckSize.text = viewModel.truckSizeIntent
             sourcedAs = viewModel.sourcedAsIntent
-            val min = viewModel.minCapIntent.toInt()
-            val max = viewModel.maxCapIntent.toInt()
+            var min = viewModel.minCapIntent
+            val max = viewModel.maxCapIntent
             capacityArr.clear()
 
-            for ( i in min..max){
-                capacityArr.add("$i MT")
+            while (min <= max) {
+                capacityArr.add("$min MT")
+                min += (1.0)
             }
 
         }
 
         if(viewModel.truckCapacityIntent != 0.0){
-            binding.textTruckCapacity.text = "${(viewModel.truckCapacityIntent).toInt()} MT"
+            binding.textTruckCapacity.text = "${viewModel.truckCapacityIntent} MT"
         }
 
         binding.editTruckCapacity.setOnClickListener{
@@ -113,7 +111,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.editTruckSize.setOnClickListener {
+            if(truckItems.isNotEmpty()){
             showTruckSizeDialog()
+            }
+            else{
+                uiUtils.showSnackbar("No Truck Types Found")
+            }
         }
 
         binding.editCurrentCity.setOnClickListener {
@@ -135,7 +138,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.truckGetLiveData.observe(this, Observer {
             if(it!=null){
                 truckItems.addAll(it)
-                adapter.setItems(it)
             }
         })
 
@@ -158,11 +160,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         dialog.show()
         Handler().postDelayed({
             dialog.dismiss()
+            setResult(REQCODE_ADD_TRUCK, Intent().apply {
+                putExtra("Added", "Truck Added")
+            })
             finish()
         }, 2000)
 
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 
@@ -171,7 +175,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             "market_truck" else "owns_truck"
 
         viewModel.truckCapacity =  if(binding.textTruckCapacity.text.isNotEmpty())
-            binding.textTruckCapacity.text.toString().split("\\s+".toRegex())[0].toInt().toDouble() else 0.0
+            binding.textTruckCapacity.text.toString().split("\\s+".toRegex())[0].toDouble() else 0.0
 
         viewModel.truckSize = if(binding.textTruckSize.text.isNotEmpty()) binding.textTruckSize.text.toString() else ""
 
@@ -261,18 +265,28 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             dialog.dismiss()
         }
 
+        val type = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
+        val truckSizeList = mutableListOf<TruckResponseArray>()
+
+        for(truck in truckItems){
+            if(truck.truckType == type){
+                truckSizeList.add(truck)
+            }
+        }
+        adapter.setItems(truckSizeList)
         bindingDialog.truckList.adapter = this@TruckActivity.adapter
         bindingDialog.truckList.setOnItemClickListener { parent, view, position, id ->
             binding.textTruckSize.text = adapter.getItem(position).truckUuid
             sourcedAs = adapter.getItem(position).sourcedAs?: ""
-            val min = adapter.getItem(position).minCapacity
+            var min = adapter.getItem(position).minCapacity
             val max = adapter.getItem(position).maxCapacity
             viewModel.truckCapacity = 0.0
             binding.textTruckCapacity.text = ""
             capacityArr.clear()
             if(min !=null &&  max!=null){
-                for ( i in min.toInt()..max.toInt()){
-                    capacityArr.add("$i MT")
+                while (min <= max) {
+                    capacityArr.add("$min MT")
+                    min += (1.0)
                 }
             }
             dialog.dismiss()

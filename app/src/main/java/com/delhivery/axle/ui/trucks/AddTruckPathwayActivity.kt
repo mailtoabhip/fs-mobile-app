@@ -32,6 +32,24 @@ class AddTruckPathwayActivity : BaseActivity<ActivityAddTruckBinding, TruckViewM
         binding.btnDoLater.setOnClickListener {
                 navigationUtils.navigate(HomeActivity::class.java, true)
         }
+
+        binding.btnAction.setOnClickListener {
+            navigationUtils.navigateForActivityResult(
+                intent = truckIntent(this@AddTruckPathwayActivity),
+                requestCode = REQCODE_ADD_TRUCK
+            )
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode){
+            REQCODE_ADD_TRUCK ->{
+                navigationUtils.navigate(
+                    HomeActivity::class.java, true
+                )
+            }
+        }
     }
 
 

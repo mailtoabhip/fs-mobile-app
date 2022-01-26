@@ -302,7 +302,7 @@
     <string name="label_with_sign_value">₹ %1$d</string>
     <string name="label_home">Home</string>
     <string name="nav_label_trucks">My Trucks</string>
-    <string name="label_unloading_locations">Unloading destination</string>
+    <string name="label_unloading_locations">Drop Location</string>
     <string name="label_current_locations">Current location</string>
     <string name="label_more_options">More Options</string>
     <string name="label_body_type">Select Body Type</string>
