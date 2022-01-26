@@ -13,6 +13,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -32,6 +34,7 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -61,6 +64,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     @Inject lateinit var fcmUtils: FCMUtils
     @Inject lateinit var userPrefs: UserPrefs
 
+    private val MINIMUM = 1
+    var scrollDist = 0
+    var visible = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -76,6 +83,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             layoutManager = LinearLayoutManager(context)
             adapter = this@HomeTrucksFragment.adapter
             addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
+            addOnScrollListener(ButtonRVScrollListener())
         }
 
         binding.addTruck.setOnClickListener {
@@ -507,6 +515,19 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         dialog.show()
     }
 
+    @SuppressLint("RestrictedApi")
+    fun hide() {
+        binding.addTruck.visibility = View.GONE
+        binding.addTruckFloating.visibility = View.VISIBLE
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun show() {
+        binding.addTruck.visibility = View.VISIBLE
+        binding.addTruckFloating.visibility = View.GONE
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
@@ -566,6 +587,31 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
                 this.toolbarElevation = toolbarElevation
                 toolbarElevationLiveData?.postValue(this.toolbarElevation)
+            }
+        }
+    }
+
+    inner class ButtonRVScrollListener : RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
+        ) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            if (visible && scrollDist > MINIMUM) {
+                hide()
+                scrollDist = 0
+                visible = false
+            } else if (!visible && scrollDist < -MINIMUM) {
+                show()
+                scrollDist = 0
+                visible = true
+            }
+
+            if ((visible && dy > 0) || (!visible && dy < 0)) {
+                scrollDist += dy
             }
         }
     }
