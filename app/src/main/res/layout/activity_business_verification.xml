@@ -91,6 +91,7 @@
                     android:layout_width="match_parent"
                     android:background="@drawable/bg_login_edit"
                     android:id="@+id/layout_truckrd"
+                    bind:layout_constraintTop_toTopOf="parent"
                     >
                 <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/text_truck"
@@ -123,22 +124,25 @@
                     android:text="@={ viewModel.truckNumber }"
                     />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_login_edit"
+                    bind:layout_constraintTop_toBottomOf="@+id/layout_truckrd"
+                    android:layout_marginTop="@dimen/size_16dp" >
                 <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/text_LR"
                     android:layout_width="match_parent"
-                    android:background="@drawable/bg_login_edit"
-                    android:layout_marginTop="@dimen/size_16dp"
+                    bind:layout_constraintTop_toTopOf="parent"
                     android:layout_height="@dimen/edit_text_height"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/layout_truckrd"
                     android:maxLength="20"
-                    android:paddingStart="@dimen/size_12dp"
-                    android:paddingEnd="@dimen/size_12dp"
                     android:text="@string/lr_hint"
+                    android:paddingStart="@dimen/size_12dp"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatButton

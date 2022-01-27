@@ -55,6 +55,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        title = ""
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 //        rg.addView(binding.textTruck)
 //        rg.addView(binding.textLR)
 

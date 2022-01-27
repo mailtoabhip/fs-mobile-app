@@ -1,10 +1,14 @@
 package com.delhivery.axle.ui.kyc.address
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 
@@ -46,6 +50,11 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             }
         }
 
+        binding.btnSubmitDetails.setOnClickListener {
+            navigationUtils.navigate(businessVerificationIntent(this),false)
+
+        }
+
         //check length and enable/disable submit button
         binding.editCity.lengthAction(3){
             cityFilled = true
@@ -84,5 +93,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     private fun enableSubmitButton(){
         binding.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+    }
+
+    fun businessVerificationIntent(
+        context: Context
+    ) = Intent(context, BusinessVerificationActivity::class.java).apply {
     }
 }
