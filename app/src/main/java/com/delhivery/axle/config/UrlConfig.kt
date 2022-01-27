@@ -108,7 +108,7 @@ enum class UrlConfig(
   InventoryService(
       "https://orion-inventory-api.delhivery.com",
       "https://zxfddco9gg.execute-api.ap-southeast-1.amazonaws.com/dev/",
-      "https://orion-uat-inventory.delhivery.com"
+      "https://mf9vem7911.execute-api.us-east-1.amazonaws.com/uat/"
 
   ),
   AppID(
