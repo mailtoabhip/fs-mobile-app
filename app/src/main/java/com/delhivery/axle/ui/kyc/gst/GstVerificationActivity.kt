@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -24,6 +25,9 @@ import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.databinding.*
 
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
@@ -193,6 +197,11 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             dialog.dismiss()
         }
 
+        bindingDialog.buttonShare.setOnClickListener {
+            dialog.dismiss()
+            navigationUtils.navigate( aadhaarVerificationIntent(this), false)
+
+        }
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -404,4 +413,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+}
+fun aadhaarVerificationIntent(
+    context: Context
+) = Intent(context, AadhaarVerificationActivity::class.java).apply {
 }

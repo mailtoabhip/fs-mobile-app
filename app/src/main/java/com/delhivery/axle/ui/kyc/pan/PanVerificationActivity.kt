@@ -14,7 +14,6 @@ import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.utils.Config
 import com.delhivery.axle.utils.EVENT_OTP_SEND
@@ -114,7 +113,4 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     }
     }
 
-/*fun aadhaarVerificationIntent(
-    context: Context
-) = Intent(context, AadhaarVerificationActivity::class.java).apply {
-}*/
+

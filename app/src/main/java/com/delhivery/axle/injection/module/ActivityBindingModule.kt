@@ -20,7 +20,7 @@ import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailAc
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
-com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity

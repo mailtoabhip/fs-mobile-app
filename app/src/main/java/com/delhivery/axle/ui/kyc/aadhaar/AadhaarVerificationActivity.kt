@@ -11,7 +11,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyAadharBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.pan.aadhaarVerificationIntent
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>() {
     init {
