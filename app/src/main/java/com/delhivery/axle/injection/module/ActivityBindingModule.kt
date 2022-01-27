@@ -11,6 +11,7 @@ import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -187,6 +188,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPanVerificationActivityModule::class])
   internal abstract fun bindPanVerificationActivity(): PanVerificationActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBusinessVerificationActivityModule::class])
+  internal abstract fun bindBusinessVerificationActivity(): BusinessVerificationActivity
 }
 
 /**
@@ -279,6 +284,9 @@ internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 @Module
 internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVerificationActivity>()
+
+@Module
+internal abstract class AbsBusinessVerificationActivityModule : ActivityModule<BusinessVerificationActivity>()
 
 /**
  * Activity Binds Module

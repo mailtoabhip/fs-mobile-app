@@ -17,7 +17,5 @@ abstract class AccountSetupFragmentsBindingModule {
   @ContributesAndroidInjector
   internal abstract fun provideAccountDetailsFragment(): AccountDetailsFragment
 
-  @ContributesAndroidInjector
-  internal abstract fun provideBusinessVerificationFragment(): BusinessVerificationFragment
 
 }
