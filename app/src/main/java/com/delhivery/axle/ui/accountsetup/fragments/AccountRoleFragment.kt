@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.FragmentAccountRoleBinding
 import com.delhivery.axle.databinding.FragmentPrimaryActionBinding
 import com.delhivery.axle.ui.accountsetup.AccountSetupBaseFragment
 import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
+import com.delhivery.axle.ui.accountsetup.DetailsAccountSetupAction
+import com.delhivery.axle.ui.accountsetup.RoleAccountSetupAction
+import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 
 /**
@@ -18,6 +22,7 @@ class AccountRoleFragment : AccountSetupBaseFragment<FragmentAccountRoleBinding,
   companion object {
     /* singleton instance */
     val _instance: AccountRoleFragment by lazy { AccountRoleFragment() }
+    var roleData:String? = null
   }
 
   override fun getViewModelClass() = AccountSetupViewModel::class.java
@@ -30,6 +35,53 @@ class AccountRoleFragment : AccountSetupBaseFragment<FragmentAccountRoleBinding,
   ) {
     super.onViewCreated(view, savedInstanceState)
     viewModel.progressLiveData.observe(this, ProgressObserver())
+
+      if(roleData.equals("load")){
+        binding.ownerLayout.visibility = View.GONE
+        binding.shipperLayout.visibility = View.VISIBLE
+        binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      }else if(roleData.equals("truck")){
+        binding.shipperLayout.visibility = View.GONE
+        binding.ownerLayout.visibility = View.VISIBLE
+        binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_rounded_blue))
+      }else if(roleData.equals("both")){
+        binding.shipperLayout.visibility = View.VISIBLE
+        binding.ownerLayout.visibility = View.VISIBLE
+        binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      }
+
+    binding.ownerLayout.setOnClickListener {
+      binding.ownerLayout.setBackground(resources.getDrawable(R.drawable.bg_rounded_blue))
+      binding.shipperLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.transporterLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+    }
+
+    binding.shipperLayout.setOnClickListener {
+      binding.ownerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.shipperLayout.setBackground(resources.getDrawable(R.drawable.bg_rounded_blue))
+      binding.transporterLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+    }
+
+    binding.transporterLayout.setOnClickListener {
+      binding.ownerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.shipperLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.transporterLayout.setBackground(resources.getDrawable(R.drawable.bg_rounded_blue))
+      binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+    }
+
+    binding.brokerLayout.setOnClickListener {
+      binding.ownerLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.shipperLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.transporterLayout.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_white))
+      binding.brokerLayout.setBackground(resources.getDrawable(R.drawable.bg_rounded_blue))
+    }
+
+    //set up the role
+    binding.btnProceed.setOnClickListener {
+      action(DetailsAccountSetupAction(true))
+    }
   }
 
   override fun onPause() {

@@ -25,11 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-      <ScrollView
-          android:layout_width="match_parent"
-          android:id="@+id/scView"
-         android:layout_marginBottom="@dimen/size_72dp"
-          android:layout_height="wrap_content">
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -172,9 +167,8 @@
 
 
           <androidx.appcompat.widget.AppCompatButton
-              android:id="@+id/btn_send_otp"
+              android:id="@+id/btn_create_account"
               style="@style/ActionButton"
-              android:enabled="false"
               android:textAllCaps="false"
               android:layout_below="@+id/checkWhatsapp"
               android:layout_width="match_parent"
@@ -185,7 +179,6 @@
 
 
       </RelativeLayout>
-      </ScrollView>
     </RelativeLayout>
 
   </androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.kyc.pan
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +11,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.utils.Config
 import com.delhivery.axle.utils.EVENT_OTP_SEND
 import com.delhivery.axle.utils.PROPERTY_MOBILE_NUMBER_ENTERED
@@ -40,6 +43,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        binding.btnVerifyPan.setOnClickListener {
+            startActivity(gstIntent(this))
+        }
+
         binding.editPan.apply {
             lengthAction(9){
                binding.btnVerifyPan.isEnabled = false
@@ -57,7 +64,6 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
 
             }
-
 
            viewModel.validatePanLiveData.observe(
                this, Observer {
@@ -92,4 +98,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
         )
         }
+
+    fun gstIntent(
+            context: Context
+    ): Intent = Intent(context, GstVerificationActivity::class.java).apply {
+
+    }
     }

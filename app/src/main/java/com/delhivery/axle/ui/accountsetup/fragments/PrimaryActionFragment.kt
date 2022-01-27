@@ -24,6 +24,7 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
+import kotlinx.android.synthetic.main.fragment_primary_action.*
 import javax.inject.Inject
 
 /**
@@ -67,7 +68,15 @@ class PrimaryActionFragment : AccountSetupBaseFragment<FragmentPrimaryActionBind
 
     //set up the role
     binding.btnProceed.setOnClickListener {
+      if(radioPostBoth.isChecked){
+        AccountRoleFragment.roleData = "both"
+      }else if (radioPostTruck.isChecked){
+        AccountRoleFragment.roleData = "truck"
+      }else if (radioPostloads.isChecked){
+         AccountRoleFragment.roleData = "load"
+      }
       action(RoleAccountSetupAction(true))
+
     }
   }
 

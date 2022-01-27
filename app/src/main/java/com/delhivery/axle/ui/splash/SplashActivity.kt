@@ -224,7 +224,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> GstVerificationActivity::class
+        Home -> PanVerificationActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {

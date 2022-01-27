@@ -283,7 +283,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           LoginProgress -> {
             //hide keyboard show progress view
-            uiUtils.showProgress()
+            uiUtils.showProgress("Loading...")
           }
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
@@ -315,8 +315,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* otp verified, account set up needed */
           AccountSetup -> {
-            uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(GstVerificationActivity::class.java, true)
+            uiUtils.showProgress("Loading...")
+            navigationUtils.navigate(AccountSetupActivity::class.java, true)
           }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()

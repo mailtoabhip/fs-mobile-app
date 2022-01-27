@@ -1,14 +1,18 @@
 package com.delhivery.axle.ui.accountsetup.fragments
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentAccountDetailsBinding
 import com.delhivery.axle.databinding.FragmentPrimaryActionBinding
+import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
 import com.delhivery.axle.ui.accountsetup.AccountSetupBaseFragment
 import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
-import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 
 /**
  * Account Details set up
@@ -30,6 +34,10 @@ class AccountDetailsFragment : AccountSetupBaseFragment<FragmentAccountDetailsBi
   ) {
     super.onViewCreated(view, savedInstanceState)
     viewModel.progressLiveData.observe(this, ProgressObserver())
+
+    binding.btnCreateAccount.setOnClickListener {
+      startActivity(context?.let { it1 -> panIntent(it1) })
+    }
   }
 
   override fun onPause() {
@@ -53,4 +61,11 @@ class AccountDetailsFragment : AccountSetupBaseFragment<FragmentAccountDetailsBi
       }
     }
   }
+
+  fun panIntent(
+          context: Context
+  ): Intent = Intent(context, PanVerificationActivity::class.java).apply {
+
+  }
+
 }

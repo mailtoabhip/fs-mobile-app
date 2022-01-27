@@ -31,7 +31,7 @@ class ProgressAccountSetupAction(
 )
 
 /**
- * Show/hide inline - progress
+ * Show Role fragment
  */
 class RoleAccountSetupAction(
         val show: Boolean,
@@ -40,4 +40,16 @@ class RoleAccountSetupAction(
         val protip: String = "Some tip regarding how to bid, or whats to be considered while bidding."
 ) : BaseAccountSetupFragmentAction(
         AccountSetupFragmentActionType.Role
+)
+
+/**
+ * Show/hide inline - progress
+ */
+class DetailsAccountSetupAction(
+        val show: Boolean,
+        val title: String = "Saving details",
+        val message: String = "This usually takes few seconds to load. please be patient.",
+        val protip: String = "Some tip regarding how to bid, or whats to be considered while bidding."
+) : BaseAccountSetupFragmentAction(
+        AccountSetupFragmentActionType.Details
 )

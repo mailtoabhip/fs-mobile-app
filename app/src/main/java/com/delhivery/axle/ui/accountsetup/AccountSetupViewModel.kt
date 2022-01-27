@@ -30,15 +30,13 @@ import javax.inject.Inject
  * View model for [AuthenticationActivity]
  */
 class AccountSetupViewModel @Inject constructor(
-  private val authenticationRepository: AuthenticationRepository,
-  private val userRepository: UserRepository,
-  private val notificationRepository: NotificationRepository,
-  private val userPrefs: UserPrefs
 ) :
     BaseViewModel() {
 
     /* states */
     var stateLiveData = MutableLiveData<AccountSetupUIState>()
+    var roleLiveData = MutableLiveData<String>()
+
     var state: AccountSetupUIState = AccountSetupUIState.PrimaryAction
         set(value) {
             stateLiveData.postValue(value)
