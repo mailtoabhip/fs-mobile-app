@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
@@ -187,6 +188,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsAadhaarVerificationActivityModule::class])
   internal abstract fun bindAadhaarVerificationActivity(): AadhaarVerificationActivity
+
+  /* Communication Address page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsCommunicationAddressActivityModule::class])
+  internal abstract fun bindCommunicationAddressActivity(): CommunicationAddressActivity
 }
 
 /**
@@ -279,6 +285,9 @@ internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVer
 
 @Module
 internal abstract class AbsAadhaarVerificationActivityModule : ActivityModule<AadhaarVerificationActivity>()
+
+@Module
+internal abstract class AbsCommunicationAddressActivityModule : ActivityModule<CommunicationAddressActivity>()
 
 /**
  * Activity Binds Module

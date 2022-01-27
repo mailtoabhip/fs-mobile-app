@@ -293,7 +293,7 @@
   <string name="sub_label_step3_3">Step 3 of 3</string>
   <string name="label_pan">PAN details </string>
   <string name="label_aadhaar">Aadhaar details </string>
-  <string name="label_communication_address">Communication Address </string>
+  <string name="label_communication_address">Communication address </string>
   <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
   <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
   <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
@@ -330,6 +330,12 @@
   <string name="cancelled_bid_msg">The load request itself is cancelled</string>
   <string name="pan_hint">Enter your PAN number</string>
   <string name="aadhaar_hint">Enter your Aadhaar number</string>
+  <string name="pincode_hint">Pincode</string>
+  <string name="flat_hint">Flat, House no., Building</string>
+  <string name="area_hint">Area, Street, Sector, Village</string>
+  <string name="city_hint">City</string>
+  <string name="address_proof_hint">Choose Proof Documents</string>
+
   <string name="address_proof_attachment">Address proof attachment</string>
   <string name="upload_document">Upload document</string>
 
@@ -344,5 +350,12 @@
     <!--<item>Size</item>-->
     <item>32ft</item>
     <item>64ft</item>
+  </string-array>
+
+  <string-array name="array_address__proof_type">
+    <item>Choose Proof Document</item>
+    <item>Visiting Card</item>
+    <item>LR Copy</item>
+    <item>Letter Head</item>
   </string-array>
 </resources>

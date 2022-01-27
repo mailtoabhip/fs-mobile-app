@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.kyc.aadhaar
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
@@ -8,6 +10,8 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyAadharBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.pan.aadhaarVerificationIntent
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>() {
     init {
@@ -29,8 +33,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val dashString = "-"
-        var keyDel=0
+
         binding.editAadhaar.apply {
             lengthAction(14){
                   binding.btnVerifyAadhaar.isEnabled = true
@@ -40,7 +43,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             }
         }
 
-
+        binding.btnVerifyAadhaar.setOnClickListener {
+            navigationUtils.navigate(addressVerificationIntent(this), false)
+        }
         viewModel.errorLiveData.observe(
             this, Observer {
                 it?.let { error ->
@@ -49,4 +54,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             }
         )
     }
+}
+
+fun addressVerificationIntent(
+    context: Context
+) = Intent(context, CommunicationAddressActivity::class.java).apply {
 }

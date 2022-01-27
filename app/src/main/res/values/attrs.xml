@@ -36,4 +36,12 @@
       <attr name="groupSeparator" format="string" />
     </declare-styleable>
 
+  <declare-styleable name="DelhiveryCustomEditTextWithError">
+    <attr name="error_input" format="string"/>
+    <attr format="boolean" name="error_condition" />
+    <attr format="integer" name="minimum_lengths" />
+    <attr format="integer" name="maxima_lengths" />
+    <attr format="string" name="hint" />
+    <attr  format="string" name="editValue" />
+  </declare-styleable>
 </resources>
