@@ -7,8 +7,10 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.delhivery.axle.R
-import java.io.File
 
+/**
+ *  LV adapter for [Upload dialog]
+ */
 class DocUploadAdapter : BaseAdapter() {
 
     private val items: MutableList<Pair<String,String>> = mutableListOf()
