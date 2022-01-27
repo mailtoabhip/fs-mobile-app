@@ -88,6 +88,8 @@
   <string name="action_resend_otp">Resend OTP</string>
   <string name="action_verify_otp">Verify OTP</string>
   <string name="action_save_proceed">Save &amp; Proceed</string>
+  <string name="action_verify_aadhaar">Verify Aadhaar</string>
+  <string name="action_submit_details">Submit Details</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>
@@ -319,9 +321,14 @@
   <string name="label_agree">I agree to Delhivery’s</string>
   <string name="label_agree_whatsapp">I agree to receive notifications on WhatsApp</string>
   <string name="sub_label_step1_3">Step 1 of 3</string>
-  <string name="label_pan">PAN details</string>
-  <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
   <string name="sub_label_step2_3">Step 2 of 3</string>
+  <string name="sub_label_step3_3">Step 3 of 3</string>
+  <string name="label_pan">PAN details </string>
+  <string name="label_aadhaar">Aadhaar details </string>
+  <string name="label_communication_address">Communication address </string>
+  <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
+  <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
+  <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
   <string name="label_gst">GST verification</string>
   <string name="sub_label_gst_details">Choose a GST number for verification</string>
   <string name="label_gst_dialog">Choose a verification method</string>
@@ -367,6 +374,15 @@
   <string name="call_driver">CALL DRIVER</string>
   <string name="cancelled_bid_msg">The load request itself is cancelled</string>
   <string name="pan_hint">Enter your PAN number</string>
+  <string name="aadhaar_hint">Enter your Aadhaar number</string>
+  <string name="pincode_hint">Pincode</string>
+  <string name="flat_hint">Flat, House no., Building</string>
+  <string name="area_hint">Area, Street, Sector, Village</string>
+  <string name="city_hint">City</string>
+  <string name="address_proof_hint">Choose Proof Documents</string>
+
+  <string name="address_proof_attachment">Address proof attachment</string>
+  <string name="upload_document">Upload document</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
@@ -379,5 +395,12 @@
     <!--<item>Size</item>-->
     <item>32ft</item>
     <item>64ft</item>
+  </string-array>
+
+  <string-array name="array_address__proof_type">
+    <item>Choose Proof Document</item>
+    <item>Visiting Card</item>
+    <item>LR Copy</item>
+    <item>Letter Head</item>
   </string-array>
 </resources>

@@ -20,6 +20,8 @@ import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailAc
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
@@ -189,6 +191,16 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsPanVerificationActivityModule::class])
   internal abstract fun bindPanVerificationActivity(): PanVerificationActivity
 
+  /* Aadhar Verification page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAadhaarVerificationActivityModule::class])
+  internal abstract fun bindAadhaarVerificationActivity(): AadhaarVerificationActivity
+
+  /* Communication Address page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsCommunicationAddressActivityModule::class])
+  internal abstract fun bindCommunicationAddressActivity(): CommunicationAddressActivity
+
   /* Gst Verification page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbGstVerificationActivityModule::class])
@@ -288,6 +300,12 @@ internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVer
 
 @Module
 internal abstract class AbGstVerificationActivityModule : ActivityModule<GstVerificationActivity>()
+
+@Module
+internal abstract class AbsAadhaarVerificationActivityModule : ActivityModule<AadhaarVerificationActivity>()
+
+@Module
+internal abstract class AbsCommunicationAddressActivityModule : ActivityModule<CommunicationAddressActivity>()
 
 /**
  * Activity Binds Module

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
@@ -11,6 +12,9 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.utils.Config
 import com.delhivery.axle.utils.EVENT_OTP_SEND
@@ -67,12 +71,16 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
            viewModel.validatePanLiveData.observe(
                this, Observer {
-                   binding.editPan.isEnabled=true
-                   binding.btnVerifyPan.isEnabled =true
-                   binding.panVerifyProgress.visibility = View.GONE
-                   binding.imgCorrect.visibility = View.VISIBLE
-                   binding.textPanName.visibility = View.VISIBLE
-                   binding.textPanName.text =  getString(R.string.msg_verified_pan_name, it.panHolderName)
+                   //added handler just for demo the progress will be removed after api
+                   Handler().postDelayed({
+                       binding.editPan.isEnabled=true
+                       binding.btnVerifyPan.isEnabled =true
+                       binding.panVerifyProgress.visibility = View.GONE
+                       binding.imgCorrect.visibility = View.VISIBLE
+                       binding.textPanName.visibility = View.VISIBLE
+                       binding.textPanName.text =  getString(R.string.msg_verified_pan_name, it.panHolderName)
+                   }, 1000)
+
                }
            )
 
@@ -105,3 +113,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     }
     }
+
+/*fun aadhaarVerificationIntent(
+    context: Context
+) = Intent(context, AadhaarVerificationActivity::class.java).apply {
+}*/
