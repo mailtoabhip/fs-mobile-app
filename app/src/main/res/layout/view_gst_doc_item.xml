@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <import type="android.view.View" />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_2dp"
+      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      app:cardCornerRadius="@dimen/size_6dp"
+      app:cardElevation="0dp"
+      >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        >
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/icon_doc"
+          app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+          android:layout_marginBottom="@dimen/size_16dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          android:layout_marginTop="@dimen/size_16dp"
+          android:layout_marginStart="@dimen/size_24dp"
+          app:srcCompat="@drawable/ic_doc_gst"
+          android:layout_width="@dimen/size_48dp"
+          android:layout_height="@dimen/size_48dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/heading_black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/icon_doc"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:id="@+id/doc_name"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:textSize="@dimen/text_14sp"
+            app:textAllCaps="true"
+            app:layout_constraintEnd_toStartOf="@+id/icon_remove"
+            tools:text="GST.JPG"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/doc_name"
+            app:layout_constraintStart_toEndOf="@+id/icon_doc"
+            android:layout_height="wrap_content"
+            android:textColor="@color/info_bg"
+            android:id="@+id/doc_size"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:textSize="@dimen/text_12sp"
+            app:textAllCaps="true"
+            tools:text="234 KB"/>
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/icon_remove"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          android:layout_marginEnd="@dimen/size_20dp"
+          app:srcCompat="@drawable/ic_vector_delete_doc"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.cardview.widget.CardView>
+
+</layout>

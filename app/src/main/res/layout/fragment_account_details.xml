@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <data>
+    <import type="com.delhivery.axle.ui.accountsetup.AccountSetupUIState" />
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.accountsetup.AccountSetupViewModel"
+        />
+    <variable
+        name="state"
+        type="com.delhivery.axle.ui.accountsetup.AccountSetupUIState"
+        />
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/blue_bg"
+      android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+           android:orientation="vertical"
+          android:paddingBottom="@dimen/size_48dp"
+          android:paddingStart="@dimen/size_24dp"
+          android:paddingEnd="@dimen/size_24dp">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:id="@+id/progress"
+            android:layout_marginBottom="@dimen/size_24dp"
+              android:max="100"
+            android:progressDrawable="@drawable/account_progress"
+            android:progress="100"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/account_details_layout">
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_32dp"
+              android:fontFamily="sans-serif"
+              android:lineSpacingExtra="@dimen/text_6sp"
+              android:id="@+id/label_tellus"
+              android:text="@string/label_tellus"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_24sp"
+              android:textStyle="bold"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/label_select_tellus"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif"
+              android:gravity="start"
+              android:layout_marginBottom="@dimen/size_16dp"
+              android:text="@string/label_tellus_detail"
+              android:layout_marginTop="@dimen/size_12dp"
+              android:layout_below="@+id/label_tellus"
+              android:textSize="@dimen/text_16sp"
+              android:textColor="@color/sub_heading_black"
+              />
+
+          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+              android:id="@+id/edit_name"
+              android:layout_below="@+id/label_select_tellus"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/edit_text_height"
+              android:layout_marginTop="@dimen/size_32dp"
+              android:layout_marginBottom="16dp"
+              android:background="@drawable/bg_login_edit"
+              android:imeOptions="actionNext"
+              android:inputType="text"
+              android:paddingStart="@dimen/size_12dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:hint="Your name"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              />
+
+          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+              android:id="@+id/edit_business_name"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/edit_text_height"
+              android:layout_marginTop="@dimen/size_24dp"
+              android:layout_marginBottom="16dp"
+              android:background="@drawable/bg_login_edit"
+              android:imeOptions="actionNext"
+              android:inputType="text"
+              android:layout_below="@+id/edit_name"
+              android:paddingStart="@dimen/size_12dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:hint="Business name"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              />
+
+          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+              android:id="@+id/edit_referral_code"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/edit_text_height"
+              android:layout_marginTop="@dimen/size_24dp"
+              android:layout_marginBottom="16dp"
+              android:background="@drawable/bg_login_edit"
+              android:imeOptions="actionNext"
+              android:inputType="text"
+              android:layout_below="@+id/edit_business_name"
+              android:paddingStart="@dimen/size_12dp"
+              android:paddingEnd="@dimen/size_12dp"
+              android:hint="Referral code (optional)"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_16sp"
+              />
+
+          <CheckBox
+              android:layout_width="wrap_content"
+              android:text="@string/label_agree"
+              android:id="@+id/checkTerms"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              android:layout_marginTop="@dimen/size_16dp"
+              android:layout_below="@+id/edit_referral_code"
+              android:layout_height="wrap_content"/>
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/termsCondtions"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif"
+              android:gravity="start"
+              android:layout_marginTop="22dp"
+              android:layout_below="@+id/edit_referral_code"
+              android:layout_toEndOf="@+id/checkTerms"
+              android:layout_marginBottom="@dimen/size_16dp"
+              android:text="@string/action_terms_conditions"
+              android:textSize="@dimen/text_14sp"
+              android:layout_marginStart="@dimen/size_6dp"
+              android:textColor="@color/colorAccent"
+              android:textStyle="bold"
+              />
+
+
+          <CheckBox
+              android:layout_width="wrap_content"
+              android:text="@string/label_agree_whatsapp"
+              android:id="@+id/checkWhatsapp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              android:layout_marginTop="@dimen/size_16dp"
+              android:layout_below="@+id/checkTerms"
+              android:layout_height="wrap_content"/>
+
+
+          <androidx.appcompat.widget.AppCompatButton
+              android:id="@+id/btn_create_account"
+              style="@style/ActionButton"
+              android:textAllCaps="false"
+              android:layout_below="@+id/checkWhatsapp"
+              android:layout_width="match_parent"
+              android:layout_marginTop="@dimen/size_32dp"
+              android:text="@string/action_create_account"
+              />
+        </RelativeLayout>
+
+
+      </RelativeLayout>
+    </RelativeLayout>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>
+
+
+

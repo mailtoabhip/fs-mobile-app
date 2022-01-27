@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.*
 import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -41,6 +43,9 @@ class AuthenticationViewModel @Inject constructor(
 
   /* error live data */
   var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
+
+  /* otp data */
+  var otpCurrent:String = ""
 
   /* binding vars */
   var phoneNo: String = ""
@@ -110,12 +115,14 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-              LoadRequest
+             //LoadRequest
+              AccountSetup
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
               userPrefs.lastLoginTime = Date().time
-              SelectRoute
+              //SelectRoute
+              AccountSetup
             }
           } else {
             if (error is HttpException) {

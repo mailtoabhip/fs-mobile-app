@@ -1,9 +1,11 @@
 package com.delhivery.axle.injection.component
 
 import com.delhivery.axle.injection.module.NetworkModule
+import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
@@ -16,6 +18,9 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -191,6 +196,31 @@ interface ViewModelInjector {
    * Injects [SearchOngoingTripViewModel]
    */
   fun inject(viewModel: SearchOngoingTripViewModel)
+
+  /**
+   * Injects [AccountSetupViewModel]
+   */
+  fun inject(viewModel: AccountSetupViewModel)
+
+  /**
+   * Injects [PanVerificationViewModel]
+   */
+  fun inject(viewModel: PanVerificationViewModel)
+  /**
+   * Injects [BusinessVeificationViewModel]
+   */
+  fun inject(viewModel: BusinessVerificationViewModel)
+
+  /**
+   * Injects [AadhaarVerificationViewModel]
+   */
+  fun inject(viewModel: AadhaarVerificationViewModel)
+
+  /**
+   * Injects [CommunicationAddressViewModel]
+   */
+  fun inject(viewModel: CommunicationAddressViewModel)
+
 
   @Component.Builder
   interface Builder {

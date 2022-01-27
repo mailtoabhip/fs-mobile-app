@@ -29,4 +29,19 @@
     <attr format="integer" name="min_length" />
     <attr format="integer" name="max_length" />
   </declare-styleable>
+
+    <declare-styleable name="DelhiveryAadhaarMaskedEditText">
+      <attr name="numberOfGroups" format="integer" />
+      <attr name="groupLength" format="integer" />
+      <attr name="groupSeparator" format="string" />
+    </declare-styleable>
+
+  <declare-styleable name="DelhiveryCustomEditTextWithError">
+    <attr name="error_input" format="string"/>
+    <attr format="boolean" name="error_condition" />
+    <attr format="integer" name="minimum_lengths" />
+    <attr format="integer" name="maxima_lengths" />
+    <attr format="string" name="hint" />
+    <attr  format="string" name="editValue" />
+  </declare-styleable>
 </resources>

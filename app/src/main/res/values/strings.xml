@@ -21,7 +21,7 @@
   <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
   <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
   <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-  <string name="msg_otp_sent_to_phone_no">We have send the otp to your phone number ending with %1$s</string>
+  <string name="msg_otp_sent_to_phone_no">to %1$s.</string>
   <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
   <string name="msg_select_route_welcome_user">Welcome\n%s</string>
   <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -62,6 +62,7 @@
   <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
   <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
   <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
+  <string name="msg_verified_pan_name">PAN Holder Name - %1$s.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -83,8 +84,12 @@
   <string name="action_hello_world">Action Hello World</string>
   <string name="action_add_user">Add User</string>
   <string name="action_get_users">Get all users</string>
-  <string name="action_send_otp">Send OTP</string>
+  <string name="action_send_otp">Get OTP</string>
   <string name="action_resend_otp">Resend OTP</string>
+  <string name="action_verify_otp">Verify OTP</string>
+  <string name="action_save_proceed">Save &amp; Proceed</string>
+  <string name="action_verify_aadhaar">Verify Aadhaar</string>
+  <string name="action_submit_details">Submit Details</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>
@@ -110,14 +115,26 @@
   <string name="action_edit_bid_underline"><u>Edit?</u></string>
   <string name="action_done">Done !</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
+  <string name="action_get_started">Get Started</string>
+  <string name="action_change_number">Change number</string>
+  <string name="action_proceed_account">Proceed</string>
+  <string name="action_terms_conditions">Terms &amp; Conditions</string>
+  <string name="action_create_account">Create Account</string>
   <string name="action_login">Login</string>
+  <string name="action_verify_gst">Verify GST number</string>
+  <string name="action_submit">Submit</string>
+  <string name="action_upload_more">Upload More</string>
+  <string name="action_upload_again">Upload Again</string>
+  <string name="action_cancel">Cancel</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-  <string name="label_otp">Enter OTP</string>
+  <string name="label_otp">Verify OTP</string>
+  <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
   <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
-  <string name="label_phone_number">Phone number</string>
+  <string name="label_phone_number">What is your mobile number?</string>
+  <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your mobile number for it’s verification</string>
   <string name="label_isd_code">+91</string>
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
   <string name="label_inr">₹ %1$d</string>
@@ -181,7 +198,8 @@
   <string name="label_trip_meter">Trip Meter</string>
   <string name="label_add_nearby_locations">Add nearby locations?</string>
   <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.</string>
-  <string name="label_resend_otp">Resend OTP</string>
+  <string name="label_resend_otp">Resend in</string>
+  <string name="label_resend_otp_done">Resend OTP</string>
   <string name="Rs">\u20B9</string>
   <string name="label_anywhere">Anywhere</string>
   <string name="label_select_from_drop_down">*Select from drop down*</string>
@@ -279,6 +297,51 @@
   <string name="label_bank_transfer">Bank Transfer</string>
   <string name="label_change_payment_mode">Change Payment Mode</string>
   <string name="label_with_sign_value">₹ %1$d</string>
+  <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
+  <string name="label_resend">Didn’t receive OTP?</string>
+  <string name="label_account_setup_primary">What do you want to do in this app?</string>
+  <string name="label_account_setup_primary_select">You can always change your choice later</string>
+  <string name="label_account_setup_primary_select_postloads">Post Loads</string>
+  <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
+  <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
+  <string name="label_postloads">To find trucks &amp; ship your loads.</string>
+  <string name="label_posttrucks">To find loads in your operating routes</string>
+  <string name="label_postboth">To find both trucks &amp; loads</string>
+  <string name="label_role">What is your occupation?</string>
+  <string name="label_shipper">Shipper</string>
+  <string name="label_shipper_select">I have loads &amp; need to find trucks for them</string>
+  <string name="label_broker">Broker</string>
+  <string name="label_broker_select">I work on commission placing trucks &amp; loads</string>
+  <string name="label_owner">Fleet Owner</string>
+  <string name="label_owner_select">I have trucks &amp; need loads for them</string>
+  <string name="label_transporter">Transporter</string>
+  <string name="label_transporter_select">I have trucks &amp; also loads to ship</string>
+  <string name="label_tellus">Tell us about yourself</string>
+  <string name="label_tellus_detail">Fill in the details below to create your account</string>
+  <string name="label_agree">I agree to Delhivery’s</string>
+  <string name="label_agree_whatsapp">I agree to receive notifications on WhatsApp</string>
+  <string name="sub_label_step1_3">Step 1 of 3</string>
+  <string name="sub_label_step2_3">Step 2 of 3</string>
+  <string name="sub_label_step3_3">Step 3 of 3</string>
+  <string name="label_pan">PAN details </string>
+  <string name="label_aadhaar">Aadhaar details </string>
+  <string name="label_communication_address">Communication address </string>
+  <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
+  <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
+  <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
+  <string name="label_gst">GST verification</string>
+  <string name="sub_label_gst_details">Choose a GST number for verification</string>
+  <string name="label_gst_dialog">Choose a verification method</string>
+  <string name="label_gst_dialog_option1">Verify via OTP</string>
+  <string name="label_gst_dialog_option2">Upload GST document</string>
+  <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
+  <string name="label_attach_image">Attach Image From</string>
+  <string name="label_camera">Camera</string>
+  <string name="label_files">Files</string>
+  <string name="label_attach">Attachments Uploaded</string>
+  <string name="sub_label_step4_4">Step 4 of 4</string>
+  <string name="label_business">Business Verification </string>
+  <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
 
 
   <!--Error (error_-->
@@ -287,6 +350,9 @@
   <string name="error_dob_required">Please enter Date of birth</string>
   <string name="error_location_permission_denied">Location Permission Denied</string>
   <string name="error_search_missing_origin">Please select origin</string>
+  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+  <string name="error_upload">Oops! Something went wrong</string>
+  <string name="error_upload_document">Try uploading the document once again</string>
 
   <string name="not_available">Not available</string>
   <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
@@ -311,6 +377,18 @@
   <string name="label_pending_recovery">Pending Recovery</string>
   <string name="call_driver">CALL DRIVER</string>
   <string name="cancelled_bid_msg">The load request itself is cancelled</string>
+  <string name="pan_hint">Enter your PAN number</string>
+  <string name="aadhaar_hint">Enter your Aadhaar number</string>
+  <string name="pincode_hint">Pincode</string>
+  <string name="flat_hint">Flat, House no., Building</string>
+  <string name="area_hint">Area, Street, Sector, Village</string>
+  <string name="city_hint">City</string>
+  <string name="address_proof_hint">Choose Proof Documents</string>
+
+  <string name="address_proof_attachment">Address proof attachment</string>
+  <string name="upload_document">Upload document</string>
+  <string name="truck_hint">Enter truck number</string>
+  <string name="lr_hint">Upload LR/Loading note</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
@@ -323,5 +401,12 @@
     <!--<item>Size</item>-->
     <item>32ft</item>
     <item>64ft</item>
+  </string-array>
+
+  <string-array name="array_address__proof_type">
+    <item>Choose Proof Document</item>
+    <item>Visiting Card</item>
+    <item>LR Copy</item>
+    <item>Letter Head</item>
   </string-array>
 </resources>

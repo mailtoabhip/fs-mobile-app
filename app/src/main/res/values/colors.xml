@@ -2,7 +2,7 @@
 <resources>
   <color name="colorPrimary">#FFFFFF</color>
   <color name="colorPrimaryDark">#F9F9F9</color>
-  <color name="colorAccent">#181818</color>
+  <color name="colorAccent">#5B80F7</color>
 
   <color name="colorDelhiveryRed">#ED4136</color>
   <color name="colorBackground">#F2F2F2</color>
@@ -18,10 +18,10 @@
 
   <!-- text colors-->
   <color name="black">#000000</color>
-  <color name="heading_black">#DE000000</color>
-  <color name="sub_heading_black">#99000000</color>
+  <color name="heading_black">#3D445C</color>
+  <color name="sub_heading_black">#3D445C</color>
   <color name="bid_header_bg_black">#262727</color>
-  <color name="color_hint">#59000000</color>
+  <color name="color_hint">#A3AAC2</color>
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
   <color name="bid_placed_green">#0fb687</color>
@@ -36,13 +36,17 @@
   <color name="background_grey">#D3D3D3</color>
   <color name="view_selected">#500fb687</color>
   <color name="orange">#FF5722</color>
-<!--  <color name="light_red">#F19690</color>-->
+  <!--  <color name="light_red">#F19690</color>-->
   <color name="price_red">#bf4242</color>
   <color name="trip_red">#d36a1b</color>
   <color name="head_black">#262727</color>
   <color name="bid_placed_red">#DC6A64</color>
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
+  <color name="blue_bg">#ededff</color>
+  <color name="info_bg">#525B7A</color>
+  <color name="error_red">#FA3A2E</color>
+
 
 
 </resources>

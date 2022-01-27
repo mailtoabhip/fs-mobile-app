@@ -3,10 +3,12 @@ package com.delhivery.axle.injection.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
+import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
@@ -22,6 +24,10 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
@@ -245,6 +251,37 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchOngoingTripViewModel::class)
   abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountSetupViewModel::class)
+  abstract fun bindAccountSetupViewModel(viewModel:AccountSetupViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PanVerificationViewModel::class)
+  abstract fun bindPanVerificationViewModel(viewModel:PanVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(GstVerificationViewModel::class)
+  abstract fun bindGstVerificationViewModel(viewModel:GstVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AadhaarVerificationViewModel::class)
+  abstract fun bindAadhaarVerificationViewModel(viewModel:AadhaarVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(CommunicationAddressViewModel::class)
+  abstract fun bindCommunicationAddressViewModel(viewModel:CommunicationAddressViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BusinessVerificationViewModel::class)
+  abstract fun bindBusinessVerificationViewModel(viewModel:BusinessVerificationViewModel): ViewModel
+
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -15,6 +15,11 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.*
@@ -216,12 +221,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
       bundle.putString(ARGS_DEEPLINK_ID , tid)
-      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+     navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+
     } else {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
+        Home -> PanVerificationActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {

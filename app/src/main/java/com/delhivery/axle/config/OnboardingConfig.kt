@@ -1,11 +1,13 @@
 package com.delhivery.axle.config
 
+import com.delhivery.axle.R
+
 /**
  * Onboarding each screen config
  */
 data class OnboardingScreen(
   val title: String,
-  val message: String
+  val image:Int
 )
 
 /**
@@ -13,11 +15,11 @@ data class OnboardingScreen(
  */
 val OnboardingConfig = listOf(
     OnboardingScreen(
-        "Welcome to Axle",
-        "We're changing the way India ships freight across the country. You're now part of our revolutionary journey !"
+        "Find the right truck\nto carry your load",
+        R.drawable.ic_illustration
     ),
-    OnboardingScreen("Best Loads", "View, search and bid for loads in your favorite lanes"),
+    OnboardingScreen("Find the right truck\nto carry your load",  R.drawable.ic_illustration),
     OnboardingScreen(
-        "Payment Transparency", "Track pending advance and balance payment all in one place"
+        "Find the right truck\nto carry your load",  R.drawable.ic_illustration
     )
 )
