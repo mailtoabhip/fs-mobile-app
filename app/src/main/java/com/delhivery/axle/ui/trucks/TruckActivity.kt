@@ -268,7 +268,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         val type = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
         val truckSizeList = mutableListOf<TruckResponseArray>()
 
-        for(truck in truckItems){
+        for(truck in truckItems.sortedBy { it.defaultMG }){
             if(truck.truckType == type){
                 truckSizeList.add(truck)
             }

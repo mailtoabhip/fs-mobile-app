@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.UserTrucksLoadLimit
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
+import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
@@ -42,12 +43,15 @@ class HomeTrucksViewModel @Inject constructor(
     var total = 0
     var paginateCount =0
 
+    var searchPrefix = ""
+    var searchFlag = false
+
     //Live data variables
 
     /* data loading live data */
     var dataLoadingLiveData = MutableLiveData<Boolean>()
 
-    var truckSizeData = mutableListOf<String>()
+    var truckSizeData = mutableListOf<TruckResponseArray>()
     var activateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var editTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deactivateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
@@ -62,9 +66,7 @@ class HomeTrucksViewModel @Inject constructor(
             .onBackground()
             .subscribe { _tRes, error ->
                 if(!error && _tRes != null){
-                    for( truck in _tRes){
-                        truckSizeData.add(truck.truckUuid!!)
-                    }
+                    truckSizeData.addAll(_tRes)
                 }
                 else{
                     error.handle()
@@ -72,7 +74,7 @@ class HomeTrucksViewModel @Inject constructor(
             }
     }
 
-    fun getAllInventories(paginate: Boolean = false){
+    fun getAllInventories(paginate: Boolean = false, search : Boolean = false){
 
         if (!paginate) {
             offset = 0
@@ -90,6 +92,18 @@ class HomeTrucksViewModel @Inject constructor(
 
         jsonObject.addProperty("offset", offset)
         jsonObject.addProperty("limit", UserTrucksLoadLimit)
+
+        if(searchFlag){
+            jsonObject.addProperty("vehicle_prefix",searchPrefix)
+        }
+
+        if(search && searchPrefix.isNotEmpty() ){
+            mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
+                add(Pair(HomeTrucksProgressItem() , DataRVAdapterOperationType.AddUpdate))
+            }.let{userTrucksData.postValue(it)}
+
+        }
 
         if(bodyTypeFilter.isNotNullOrEmpty()){
             bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
@@ -125,22 +139,19 @@ class HomeTrucksViewModel @Inject constructor(
                             add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
                             add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
                             if(!paginate) {
-                                add(Pair( HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.Add))
+                                add(Pair( HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.AddUpdate))
                             }
                             add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(total)), DataRVAdapterOperationType.AddUpdate))
 
                             for (trucks in trucksList) {
-                                add(
-                                    Pair(
-                                        HomeTrucksRequestItem(trucks),
-                                        DataRVAdapterOperationType.Add
-                                    )
-                                )
+                                add(Pair(HomeTrucksRequestItem(trucks), DataRVAdapterOperationType.AddUpdate))
                             }
+
                         }else{
                             bodyTypeFilter = null
                             availabilityFilter = mutableListOf()
                             sizeFilter = null
+                            searchPrefix = ""
                             add(Pair(HomeTrucksWarningItem_NoTrucks, DataRVAdapterOperationType.AddUpdate))
                         }
                     }.let {

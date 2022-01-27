@@ -35,6 +35,7 @@ import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import kotlinx.android.synthetic.main.view_frequent_truck_item.*
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -100,6 +101,35 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             ))
 
         }
+
+        binding.editStickySearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) = Unit
+
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                if(s!=null && s.toString()!=""){
+                    viewModel.searchPrefix = s.trim().toString()
+                    if(viewModel.searchPrefix.length >= 5) {
+                        adapter.clearItems()
+                        viewModel.userTrucksData.postValue(null)
+                        viewModel.searchFlag = true
+                        viewModel.getAllInventories(search = true)
+                    }
+
+                }
+            }
+        })
 
         /** Observe live Data*/
 
@@ -185,9 +215,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     }
 
 
-    private fun refreshData() {
+    private fun refreshData(filter: Boolean = false) {
         viewModel.paginateCount = 0
         adapter.resetStaticData()
+        if(!filter) {
+            binding.editStickySearch.setText("")
+            viewModel.searchPrefix = ""
+            viewModel.searchFlag = false
+            viewModel.bodyTypeFilter = null
+            viewModel.sizeFilter = null
+            viewModel.availabilityFilter = mutableListOf()
+        }
         viewModel.getAllInventories()
 
     }
@@ -203,7 +241,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksSizeFilterAction -> {
-                showSizeFilterDialog()
+                if(viewModel.bodyTypeFilter.isNotNullOrEmpty() && viewModel.truckSizeData.isNotEmpty()) {
+                    showSizeFilterDialog()
+                }
+                else{
+                    uiUtils.showSnackbar("Select Vehicle Type Filter First")
+                }
             }
 
             HomeTrucksWarningAction_NoTrucks ->{
@@ -363,10 +406,23 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     private fun showSizeFilterDialog() {
         lateinit var dialog: AlertDialog
 
-        // Initialize an array of vehicles
-        val arraySize = arrayOf("open","closed","trailer")
+        val currentVehicleFilterList = mutableListOf<String>()
 
-        val arrayChecked = booleanArrayOf(false,false,false)
+        if (viewModel.bodyTypeFilter.isNotNullOrEmpty()) {
+            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter!!.split(","))
+        }
+
+        val finalFilterList = ArrayList<String>()
+        for(truck in viewModel.truckSizeData.sortedBy { it.defaultMG }){
+            if(currentVehicleFilterList.contains(truck.truckType!!.capitalize())){
+                finalFilterList.add(truck.truckUuid!!)
+            }
+        }
+
+        // Initialize an array of vehicles
+        val arraySize = finalFilterList.toArray(arrayOfNulls<CharSequence>(finalFilterList.size));
+
+        val arrayChecked  = BooleanArray(finalFilterList.size){false}
 
         val currentSizeFilterList = mutableListOf<String>()
 
@@ -396,11 +452,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             var filterSizeTypes = listOf<String>()
             for (item in arraySize) {
                 if (arrayChecked[arraySize.indexOf(item)]) {
-                    filterSizeTypes  = filterSizeTypes +item
+                    filterSizeTypes  = filterSizeTypes + item.toString()
                 }
             }
             viewModel.sizeFilter = filterSizeTypes.joinToString( separator = ",") {it}
-            refreshData()
+            refreshData(true)
 
         }
 
@@ -457,7 +513,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 }
             }
             viewModel.availabilityFilter = filterAvailabilityTypes
-            refreshData()
+            refreshData(true)
 
         }
 
@@ -473,7 +529,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arrayBody = arrayOf("open","closed","trailer")
+        val arrayBody = arrayOf("Open","Closed","Trailer")
 
         val arrayChecked = booleanArrayOf(false,false,false)
 
@@ -494,7 +550,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         val builder = AlertDialog.Builder(context)
 
-        builder.setTitle("-- Select Size --")
+        builder.setTitle("-- Select Vehicle Type --")
 
         builder.setMultiChoiceItems(arrayBody, arrayChecked) { _, which, isChecked ->
             arrayChecked[which] = isChecked
@@ -509,7 +565,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 }
             }
             viewModel.bodyTypeFilter = filterBodyTypes.joinToString( separator = ",") {it}
-            refreshData()
+            viewModel.sizeFilter =  null
+
+            refreshData(true)
 
         }
 
