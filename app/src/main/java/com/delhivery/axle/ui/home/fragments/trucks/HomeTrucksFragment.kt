@@ -64,7 +64,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     @Inject lateinit var fcmUtils: FCMUtils
     @Inject lateinit var userPrefs: UserPrefs
 
-    private val MINIMUM = 1
     var scrollDist = 0
     var visible = false
 
@@ -84,6 +83,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             adapter = this@HomeTrucksFragment.adapter
             addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
             addOnScrollListener(ButtonRVScrollListener())
+            addOnScrollListener(PaginationInterface())
         }
 
         binding.addTruck.setOnClickListener {
@@ -186,6 +186,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
 
     private fun refreshData() {
+        viewModel.paginateCount = 0
         adapter.resetStaticData()
         viewModel.getAllInventories()
 
@@ -363,7 +364,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arraySize = viewModel.truckSizeData.toTypedArray()
+        val arraySize = arrayOf("open","closed","trailer")
 
         val arrayChecked = booleanArrayOf(false,false,false)
 
@@ -419,17 +420,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         val arrayChecked = booleanArrayOf(false,false,false)
 
-        val availableFilterList = mutableListOf<String>()
+        val availableFilterList = mutableListOf<Pair<String,String>>()
 
-        if (viewModel.availabilityFilter.isNotNullOrEmpty()) {
-            availableFilterList.addAll(viewModel.availabilityFilter!!.split(","))
+        if (viewModel.availabilityFilter.isNotEmpty()) {
+            availableFilterList.addAll(viewModel.availabilityFilter)
         }
 
         if (availableFilterList.isNotEmpty()) {
             for (item in availableFilterList) {
-                if (arrayAvailable.contains(item))
+                if (arrayAvailable.contains(item.first))
                 {
-                    arrayChecked[arrayAvailable.indexOf(item)] = true
+                    arrayChecked[arrayAvailable.indexOf(item.first)] = true
                 }
             }
         }
@@ -444,13 +445,18 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         builder.setPositiveButton("Filter") { _, _ ->
 
-            var filterAvailabilityTypes = listOf<String>()
+            val filterAvailabilityTypes = mutableListOf<Pair<String,String>>()
             for (item in arrayAvailable) {
                 if (arrayChecked[arrayAvailable.indexOf(item)]) {
-                    filterAvailabilityTypes  = filterAvailabilityTypes + item
+                    when (item){
+                        "Available" -> { filterAvailabilityTypes.add(Pair(item, "Free")) }
+                        "Not Available" -> { filterAvailabilityTypes.add(Pair(item, "not_available")) }
+                        "Active" -> {filterAvailabilityTypes.add(Pair(item, "active"))}
+                    }
+
                 }
             }
-            viewModel.availabilityFilter = filterAvailabilityTypes.joinToString( separator = ",") {it}
+            viewModel.availabilityFilter = filterAvailabilityTypes
             refreshData()
 
         }
@@ -600,11 +606,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         ) {
             super.onScrolled(recyclerView, dx, dy)
 
-            if (visible && scrollDist > MINIMUM) {
+            if (visible && scrollDist > 0) {
                 hide()
                 scrollDist = 0
                 visible = false
-            } else if (!visible && scrollDist < -MINIMUM) {
+            } else if (!visible && scrollDist < 0) {
                 show()
                 scrollDist = 0
                 visible = true
@@ -614,6 +620,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 scrollDist += dy
             }
         }
+    }
+
+    /**
+     * Pagination interface
+     */
+    inner class PaginationInterface : PaginationScrollListener(10) {
+        override fun loadMore() = viewModel.getAllInventories(true)
+
+        override fun hasMore() = viewModel.hasMoreData
+
+        override fun isLoading() = isLoadingData
     }
 
     /** Create new frequent truck item*/

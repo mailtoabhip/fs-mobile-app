@@ -45,3 +45,6 @@ class InventoryRepository @Inject constructor(
 
 
 }
+
+/* User trips pagination load limit */
+const val UserTrucksLoadLimit = 10

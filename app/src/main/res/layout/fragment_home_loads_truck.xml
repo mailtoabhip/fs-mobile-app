@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         app:tabTextAppearance="@style/CustomTextAppearanceTab"
+        app:tabInlineLabel="true"
+        app:tabIconTint="@drawable/selector_bottom_nav_colors"
         android:id="@+id/tabLayout"/>
     <com.delhivery.axle.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"

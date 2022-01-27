@@ -42,6 +42,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             adapter = pagerAdapter
             }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
+
+        binding.tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_loads_home)
+        binding.tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_my_truck)
     }
 
 

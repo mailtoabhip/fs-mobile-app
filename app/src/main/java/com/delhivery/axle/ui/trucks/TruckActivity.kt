@@ -295,7 +295,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         adapter.notifyDataSetChanged();
 
         dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 800)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
@@ -323,7 +323,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         adapter.notifyDataSetChanged();
 
         dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 800)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)

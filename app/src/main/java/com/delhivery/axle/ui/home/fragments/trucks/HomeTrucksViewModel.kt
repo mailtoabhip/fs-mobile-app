@@ -3,18 +3,16 @@ package com.delhivery.axle.ui.home.fragments.trucks
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.repository.UserTrucksLoadLimit
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
 import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.home.fragments.loads.*
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
 import com.delhivery.axle.ui.trucks.EditTruckInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -36,8 +34,13 @@ class HomeTrucksViewModel @Inject constructor(
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
     var bodyTypeFilter: String? =null
-    var availabilityFilter: String?= null
+    var availabilityFilter = mutableListOf<Pair<String, String>>()
     var sizeFilter: String?= null
+
+    var hasMoreData = true
+    var offset = 0
+    var total = 0
+    var paginateCount =0
 
     //Live data variables
 
@@ -69,15 +72,34 @@ class HomeTrucksViewModel @Inject constructor(
             }
     }
 
-    fun getAllInventories(){
+    fun getAllInventories(paginate: Boolean = false){
+
+        if (!paginate) {
+            offset = 0
+        } else if (paginate && !hasMoreData) {
+            return
+        }
+
+        if (paginate) {
+            paginateCount += 1
+            Pair(HomeTrucksProgressItem() , DataRVAdapterOperationType.AddUpdate).let { userTrucksData.postValue( listOf(it)) }
+        }
+
         val jsonObject = JsonObject()
         jsonObject.addProperty("supplier_id", userPrefs.userId())
+
+        jsonObject.addProperty("offset", offset)
+        jsonObject.addProperty("limit", UserTrucksLoadLimit)
 
         if(bodyTypeFilter.isNotNullOrEmpty()){
             bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
         }
-        if(availabilityFilter.isNotNullOrEmpty()) {
-            availabilityFilter?.let { jsonObject.addProperty("availability", availabilityFilter) }
+        if(availabilityFilter.isNotEmpty()) {
+            var filter = ""
+            for ( item in availabilityFilter){
+                filter += item.second
+            }
+            jsonObject.addProperty("availability", filter)
         }
         if(sizeFilter.isNotNullOrEmpty()) {
             sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
@@ -90,17 +112,22 @@ class HomeTrucksViewModel @Inject constructor(
             .progress()
             .subscribe{ _res, error ->
                 if(!error && _res != null) {
-                    val trucksList :List<HomeTrucksRequestItemData> = _res as List<HomeTrucksRequestItemData>
+                    offset = _res.trucks.size
+                    total = _res.total
+                    hasMoreData = _res.hasNext
+
+                    val trucksList :List<HomeTrucksRequestItemData> = _res.trucks
+
                     mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))
 
-                        if(trucksList.isNotEmpty()) {
+                        if(trucksList != null && trucksList.isNotEmpty()) {
                             add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
                             add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
-                            add(Pair(HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.Add))
-                            add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(trucksList.size)),
-                                DataRVAdapterOperationType.AddUpdate
-                            ))
+                            if(!paginate) {
+                                add(Pair( HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.Add))
+                            }
+                            add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(total)), DataRVAdapterOperationType.AddUpdate))
 
                             for (trucks in trucksList) {
                                 add(
@@ -112,7 +139,7 @@ class HomeTrucksViewModel @Inject constructor(
                             }
                         }else{
                             bodyTypeFilter = null
-                            availabilityFilter = null
+                            availabilityFilter = mutableListOf()
                             sizeFilter = null
                             add(Pair(HomeTrucksWarningItem_NoTrucks, DataRVAdapterOperationType.AddUpdate))
                         }

@@ -4,19 +4,21 @@ import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.InventoryResponse
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface InventoryService {
 
     @POST("list_sp_trucks")
     fun getInventories(
         @Body request: JsonObject
-    ):Single<BaseResponse<List<HomeTrucksRequestItemData>>>
+    ):Single<BaseResponse<InventoryResponse>>
 
     @POST("add_sp_truck")
     fun addInventory(
