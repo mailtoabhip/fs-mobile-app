@@ -339,6 +339,10 @@
   <string name="label_camera">Camera</string>
   <string name="label_files">Files</string>
   <string name="label_attach">Attachments Uploaded</string>
+  <string name="sub_label_step4_4">Step 4 of 4</string>
+  <string name="label_business">Business Verification </string>
+  <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
+
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -383,6 +387,8 @@
 
   <string name="address_proof_attachment">Address proof attachment</string>
   <string name="upload_document">Upload document</string>
+  <string name="truck_hint">Enter truck number</string>
+  <string name="lr_hint">Upload LR/Loading note</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

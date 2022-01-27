@@ -222,35 +222,35 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     binding.btnVerifyOtp.isEnabled = true
   }
 
-  /*private fun performLogin() {
-    var flag= true
-    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
-      binding.tilUserId.isErrorEnabled = true
-      binding.tilUserId.error ="Field can't be empty"
-      flag= false
-    }
-    else{
-      binding.tilUserId.isErrorEnabled = false
-      binding.tilUserId.error = null
-    }
-
-    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
-      binding.tilUserPassword.isErrorEnabled = true
-      binding.tilUserPassword.error ="Field can't be empty"
-      flag= false
-    }
-    else{
-      binding.tilUserPassword.isErrorEnabled = false
-      binding.tilUserPassword.error = null
-    }
-
-    if(flag){
-      val userId=  binding.tilUserId.editText?.text.toString()
-      val userPassword = binding.tilUserPassword.editText?.text.toString()
-     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
-      viewModel.loginUsingPassword(userId,userPassword)
-    }
-  }*/
+//  private fun performLogin() {
+//    var flag= true
+//    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
+//      binding.tilUserId.isErrorEnabled = true
+//      binding.tilUserId.error ="Field can't be empty"
+//      flag= false
+//    }
+//    else{
+//      binding.tilUserId.isErrorEnabled = false
+//      binding.tilUserId.error = null
+//    }
+//
+//    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
+//      binding.tilUserPassword.isErrorEnabled = true
+//      binding.tilUserPassword.error ="Field can't be empty"
+//      flag= false
+//    }
+//    else{
+//      binding.tilUserPassword.isErrorEnabled = false
+//      binding.tilUserPassword.error = null
+//    }
+//
+//    if(flag){
+//      val userId=  binding.tilUserId.editText?.text.toString()
+//      val userPassword = binding.tilUserPassword.editText?.text.toString()
+//     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+//      viewModel.loginUsingPassword(userId,userPassword)
+//    }
+//  }
 
   /**
    * [AuthenticationUIState] observer

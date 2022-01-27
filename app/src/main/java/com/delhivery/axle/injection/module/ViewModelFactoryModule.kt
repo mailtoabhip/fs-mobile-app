@@ -8,6 +8,7 @@ import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
@@ -275,6 +276,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(CommunicationAddressViewModel::class)
   abstract fun bindCommunicationAddressViewModel(viewModel:CommunicationAddressViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BusinessVerificationViewModel::class)
+  abstract fun bindBusinessVerificationViewModel(viewModel:BusinessVerificationViewModel): ViewModel
 
 
   @Binds
