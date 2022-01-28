@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments
 
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
@@ -14,4 +15,15 @@ class HomeFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdap
   override fun getCount() = HomeFragmentType.count()
 
   override fun getPageTitle(position: Int) = HomeFragmentType.pos(position)!!.title
+}
+
+class HomeLoadsTruckFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
+    fragmentManager
+){
+    override fun getCount() = HomeLoadsTruckFragmentType.count()
+
+    override fun getItem(position: Int) =HomeLoadsTruckFragmentType.pos(position)!!.fragment
+
+    override fun getPageTitle(position: Int) = HomeLoadsTruckFragmentType.pos(position)!!.title
+
 }

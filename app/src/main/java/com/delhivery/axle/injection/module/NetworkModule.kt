@@ -286,4 +286,17 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.OMCService).create(
           OMCService::class.java
   )
+
+
+  /**
+   * Provide [InventoryService]
+   */
+  @Provides
+  @Singleton
+  fun provideInventoryService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.InventoryService).create(
+    InventoryService::class.java
+  )
 }

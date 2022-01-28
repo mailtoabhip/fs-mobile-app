@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
+import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.Config.AxleOnboardingEmail
 import com.delhivery.axle.utils.extensions.actionDone
@@ -265,6 +266,18 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 intent = selectRouteIntent(this@AuthenticationActivity),
                 requestCode = REQCODE_ADD_ROUTES, extras = bundle
             )
+          }
+          /* Login success, user first time login with entity as RP/Both */
+          AddInventoryPathway -> {
+            userPrefs.firstLoginRPUser = false
+            // Capture event
+            analyticsUtil.trackEvent(
+              EVENT_OTP_VERIFIED,
+              mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
+              mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
+            )
+            uiUtils.hideDelhiveryProgress()
+            navigationUtils.navigate(AddTruckPathwayActivity::class.java, true)
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {

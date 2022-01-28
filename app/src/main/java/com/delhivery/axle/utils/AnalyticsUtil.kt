@@ -3,6 +3,7 @@ package com.delhivery.axle.utils
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.util.Property
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -123,8 +124,11 @@ const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS = "view_change_payment_mod
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE = "view_change_payment_mode_done"
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL = "view_change_payment_mode_trip_cancel"
 const val EVENT_DEEP_LINK_ADD_FUEL_PAYMENT = "deep_link_add_fuel_payment"
-
-
+const val EVENT_ACTIVATE_TRUCK = "activate_truck"
+const val EVENT_DEACTIVATE_TRUCK = "deactivate_truck"
+const val EVENT_EDIT_TRUCK = "edit_truck"
+const val EVENT_DELETE_TRUCK = "delete_truck"
+const val EVENT_ADD_TRUCK = "add_truck"
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
@@ -186,6 +190,7 @@ const val PROPERTY_RECD_TRIP_IDS = "recd_trip_ids"
 const val PROPERTY_TIME_SINCE_LAST_LOGIN = "time_since_last_login"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT = "change_payment_diesel_payout"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_card_number"
+const val PROPERTY_INVENTORY_ID = "inventory_id"
 
 
 

@@ -19,7 +19,7 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.home.activity.wallet.walletOnbaordingIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.wallet.viewpager.WalletIntroConfig
 import com.delhivery.axle.utils.DialogUtils
@@ -167,7 +167,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
       }
     } else if (resultCode == RESULT_FIRST_USER) {
       if (requestCode == REQCODE_CREATE_ACTIVE_TRIPS) {
-        action(NavigateHomeFragmentAction(LoadsFragment))
+        action(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
     }
   }

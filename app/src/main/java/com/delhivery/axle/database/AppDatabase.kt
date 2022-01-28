@@ -2,8 +2,10 @@ package com.delhivery.axle.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.delhivery.axle.database.dao.SearchCityDao
 import com.delhivery.axle.database.dao.SearchHistoryDao
 import com.delhivery.axle.database.dao.UserDao
+import com.delhivery.axle.database.entity.SearchCityEntity
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.database.entity.User
 
@@ -13,10 +15,12 @@ import com.delhivery.axle.database.entity.User
  *
  */
 @Database(
-    entities = [User::class, SearchLoadHistoryEntity::class], version = 4, exportSchema = false
+    entities = [User::class, SearchLoadHistoryEntity::class, SearchCityEntity::class], version = 5, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
   abstract fun userDao(): UserDao
 
   abstract fun searchHistoryDao(): SearchHistoryDao
+
+  abstract fun searchCityDao(): SearchCityDao
 }

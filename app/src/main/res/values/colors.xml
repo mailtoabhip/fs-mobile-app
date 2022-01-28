@@ -43,6 +43,11 @@
   <color name="bid_placed_red">#DC6A64</color>
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
+  <color name="truck_banner_background">#4DFFF1CF</color>
+  <color name="truck_load_banner_background">#FFFAF0</color>
+
+  <color name="custom_grey">#E5E5E5</color>
+    <color name="custom_dark_grey">#991C1C1C</color>
 
 
 </resources>

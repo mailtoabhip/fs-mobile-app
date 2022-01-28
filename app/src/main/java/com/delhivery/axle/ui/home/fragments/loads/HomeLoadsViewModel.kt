@@ -11,7 +11,10 @@ import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -166,44 +169,51 @@ class HomeLoadsViewModel @Inject constructor(
 
               val loads = _tRes.first
               val bids = _tRes.second
-              val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
 
               if (total == 0 && !infoSearch) {
-                add(Pair(HomeLoadsWarningItem_NoLoads, Add))
+                  add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
-                add(Pair(HomeLoadsSearchItem(), AddUpdate))
-                add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
-                for (load in loads.toMutableList()) {
-                  try {
-                    val lowestBid = _tRes.third.filter { b ->
-                      b.transactionId.safeEquals(load.transactionId)
-                    }[0]
-                    load.lowestBid = lowestBid.minBid
-                    load.numBids = lowestBid.numBids
-                    load.loadPricePercent = loadPricePercent
-                    load.transactionBid =
-                      bids.filter { b ->
-                        b.transactionId.safeEquals(load.transactionId)
-                      }[0]
-                    if(load.isDMTIndent()){
-                        load.bulkTransactionBids =
-                            bids.filter { b ->
-                                b.transactionId.safeEquals(load.transactionId)
-                            }
-                    }
-                  } catch (e: Exception) {
-                    Log.d("No Bid found for: ", load.transactionId ?: "")
+                  add(Pair(HomeLoadsSearchItem(), AddUpdate))
+                  add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
+                  if(!paginate) {
+                      add(Pair(HomeLoadsTruckPriorityAccessItem(), Add))
                   }
-                  add(Pair(HomeLoadsRequestItem(load), Add))
-                }
+                  add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
+                  for ((index, load) in loads.toMutableList().withIndex()) {
+                      try {
+                          val lowestBid = _tRes.third.filter { b ->
+                              b.transactionId.safeEquals(load.transactionId)
+                          }[0]
+                          load.lowestBid = lowestBid.minBid
+                          load.numBids = lowestBid.numBids
+                          load.loadPricePercent = loadPricePercent
+                          load.transactionBid =
+                              bids.filter { b ->
+                                  b.transactionId.safeEquals(load.transactionId)
+                              }[0]
+                          if (load.isDMTIndent()) {
+                              load.bulkTransactionBids =
+                                  bids.filter { b ->
+                                      b.transactionId.safeEquals(load.transactionId)
+                                  }
+                          }
+                      } catch (e: Exception) {
+                          Log.d("No Bid found for: ", load.transactionId ?: "")
+                      }
+                      if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
+                          add(Pair(HomeLoadsAddTruckItem(), Add))
+                      }
+                      add(Pair(HomeLoadsRequestItem(load), Add))
+                  }
 
-                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
-                  add(Pair(HomeLoadsInfoItem(), AddUpdate))
-                }
-                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+                  if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                      add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                  }
+                  add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
               }
             }
                 .let { userLoadsData.postValue(it) }
+
           } else {
             mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */

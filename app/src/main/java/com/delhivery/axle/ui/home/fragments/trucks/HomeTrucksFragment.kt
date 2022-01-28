@@ -1,0 +1,699 @@
+package com.delhivery.axle.ui.home.fragments.trucks
+
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.delhivery.axle.R
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
+import com.delhivery.axle.data.home.trucks.*
+import com.delhivery.axle.databinding.*
+import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.delhivery.axle.ui.trucks.ActivateTruckDialog
+import com.delhivery.axle.ui.trucks.EditTruckDialog
+import com.delhivery.axle.ui.trucks.truckIntent
+import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.UserPrefs
+import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import kotlinx.android.synthetic.main.view_frequent_truck_item.*
+import javax.inject.Inject
+
+class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
+        HomeTrucksRVAdapterInterface
+{
+    override fun getViewModelClass() = HomeTrucksViewModel::class.java
+    override fun layoutId() = R.layout.fragment_home_trucks
+
+    companion object {
+        /* singleton instance */
+        val _instance: HomeTrucksFragment by lazy { HomeTrucksFragment() }
+    }
+
+    /* RV adapter */
+    private val adapter: HomeTrucksRVAdapter by lazy {
+        HomeTrucksRVAdapter(this)
+    }
+
+
+    init {
+        toolbarElevationLiveData = MutableLiveData()
+        hasInlineProgress = true
+    }
+
+
+    @Inject lateinit var dialogUtils: DialogUtils
+    @Inject lateinit var fcmUtils: FCMUtils
+    @Inject lateinit var userPrefs: UserPrefs
+
+    var scrollDist = 0
+    var visible = false
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.fetchTruckType()
+
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshData()
+        }
+
+        /* setup recycler view */
+        binding.rvTrucks.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@HomeTrucksFragment.adapter
+            addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
+            addOnScrollListener(ButtonRVScrollListener())
+            addOnScrollListener(PaginationInterface())
+        }
+
+        binding.addTruck.setOnClickListener {
+            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+            ))
+          //  context?.let {  EditTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
+        }
+        binding.addTruckFloating.setOnClickListener {
+            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
+                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+            ))
+
+        }
+
+        binding.editStickySearch.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) = Unit
+
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                if(s!=null && s.toString()!=""){
+                    viewModel.searchPrefix = s.trim().toString()
+                    if(viewModel.searchPrefix.length >= 5) {
+                        adapter.clearItems()
+                        viewModel.userTrucksData.postValue(null)
+                        viewModel.searchFlag = true
+                        viewModel.getAllInventories(search = true)
+                    }
+
+                }
+            }
+        })
+
+        /** Observe live Data*/
+
+        viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+            isLoadingData = it ?: false
+        })
+
+        viewModel.activateTruckLiveData.observe(this, Observer {
+            uiUtils.hideProgress()
+            if(it!=null){
+                uiUtils.showSnackbar("Truck Activated Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
+
+                adapter.notifyItemChanged(it.first)
+            }
+        })
+
+        viewModel.deactivateTruckLiveData.observe(this, Observer {
+            uiUtils.hideProgress()
+            if(it!=null){
+                uiUtils.showSnackbar("Truck Deactivated Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
+                adapter.notifyItemChanged(it.first)
+            }
+        })
+
+        viewModel.editTruckLiveData.observe(this, Observer {
+            uiUtils.hideProgress()
+            if(it!=null){
+                uiUtils.showSnackbar("Truck Edited Successfully")
+                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                data.ownership = it.second.ownership
+                data.latestStatus = it.second.latestStatus
+                data.latestUUID = it.second.latestUUID
+                data.currentCityName = it.second.currentCityName
+                data.currentCityCode = it.second.currentCityCode
+                data.unloadingDestination = it.second.unloadingDestination
+                data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                data.originClusterId = it.second.originClusterId
+                data.destinationClusterId = it.second.destinationClusterId
+
+                adapter.notifyItemChanged(it.first)
+            }
+        })
+
+        viewModel.deleteTruckLiveData.observe(this, Observer {
+            uiUtils.showSnackbar("Truck Deleted Successfully")
+            uiUtils.hideProgress()
+            if(it!=null){
+                adapter.notifyItemRemoved(it.first)
+            }
+        })
+
+        refreshData()
+    }
+
+
+    private fun refreshData(filter: Boolean = false) {
+        viewModel.paginateCount = 0
+        adapter.resetStaticData()
+        if(!filter) {
+            binding.editStickySearch.setText("")
+            viewModel.searchPrefix = ""
+            viewModel.searchFlag = false
+            viewModel.bodyTypeFilter = null
+            viewModel.sizeFilter = null
+            viewModel.availabilityFilter = mutableListOf()
+        }
+        viewModel.getAllInventories()
+
+    }
+
+    override fun handleAction(actionId: String, item: BaseHomeTrucksRVAdapterItem<*>) {
+        when(actionId){
+            HomeTrucksVehicleFilterAction -> {
+                showVehicleFilterDialog()
+            }
+
+            HomeTrucksAvailabilityFilterAction->{
+                showAvailabilityFilterDialog()
+            }
+
+            HomeTrucksSizeFilterAction -> {
+                if(viewModel.bodyTypeFilter.isNotNullOrEmpty() && viewModel.truckSizeData.isNotEmpty()) {
+                    showSizeFilterDialog()
+                }
+                else{
+                    uiUtils.showSnackbar("Select Vehicle Type Filter First")
+                }
+            }
+
+            HomeTrucksWarningAction_NoTrucks ->{
+                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+            }
+
+            HomeTrucksPriorityAction -> {
+                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+            }
+        }
+    }
+
+
+    override fun handleAction(
+        actionId: String,
+        item: BaseHomeTrucksRVAdapterItem<*>,
+        position: Int
+    ) {
+        //handle action here
+        when(actionId){
+            HomeTrucksRequestAction_EditTruck ->{
+                showOptionsDialog(item.data as HomeTrucksRequestItemData , position)
+            }
+
+            HomeTrucksRequestAction_ActivateTruck -> {
+                context?.let {
+                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()
+                }
+            }
+        }
+    }
+
+
+    private fun showAddTruckDialog(items: List<TruckFrequentItem>) {
+        val dialog = Dialog(context!!)
+        val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.containerTrucks.removeAllViews()
+        items.forEachIndexed { index, item ->
+            val itemBinding = createTruckFrequentItem(bindingDialog)
+            itemBinding.data = item
+            itemBinding.root.setOnClickListener{
+                context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)
+                    , REQCODE_ADD_TRUCK) }
+                dialog.dismiss()
+            }
+
+            bindingDialog.containerTrucks.addView(itemBinding.root, index)
+        }
+        bindingDialog.closeBtn.setOnClickListener{
+            dialog.dismiss()
+        }
+
+        bindingDialog.addTruckLayout.setOnClickListener{
+            context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+    private fun showOptionsDialog(data: HomeTrucksRequestItemData, position: Int) {
+        val dialog = Dialog(context!!)
+        val bindingDialog= DialogBottomTruckOptionsBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        if(data.latestStatus == "Free"){
+            bindingDialog.deleteTruckLayout.visibility  = View.GONE}
+        else{
+            bindingDialog.deactivateTruckLayout.visibility = View.GONE
+        }
+        bindingDialog.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.editTruckLayout.setOnClickListener {
+            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()}
+            dialog.dismiss()
+
+        }
+        bindingDialog.deactivateTruckLayout.setOnClickListener {
+            showDeactivateDialog(position, data)
+            dialog.dismiss()
+        }
+
+        bindingDialog.deleteTruckLayout.setOnClickListener{
+            uiUtils.showProgress()
+            analyticsUtil.trackEvent(
+                EVENT_DELETE_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                mutableListOf(userPrefs.userId(), data.inventoryId)
+            )
+            viewModel.deleteTruck(data, position)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+
+    }
+
+    private fun showDeactivateDialog(position: Int, data: HomeTrucksRequestItemData) {
+        val dialog = Dialog(context!!)
+        val bindingDialogDeactivate= DialogBottomTruckDeactivateBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialogDeactivate.root)
+
+        bindingDialogDeactivate.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialogDeactivate.btnDeactivate.setOnClickListener {
+            var reason: String = ""
+            if (bindingDialogDeactivate.otherSource.isChecked){
+                reason = bindingDialogDeactivate.otherSource.text.toString()
+            }
+             else if( bindingDialogDeactivate.other.isChecked) {
+                 reason = bindingDialogDeactivate.other.text.toString()
+            }
+
+            if(reason != "") {
+                analyticsUtil.trackEvent(
+                    EVENT_DEACTIVATE_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                    mutableListOf(userPrefs.userId(), data.inventoryId)
+                )
+                uiUtils.showProgress()
+                viewModel.deactivateTruck(data, reason, position)
+                dialog.dismiss()
+            }
+            else{
+                uiUtils.showSnackbar("Select Reason for deactivating truck")
+            }
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun showSizeFilterDialog() {
+        lateinit var dialog: AlertDialog
+
+        val currentVehicleFilterList = mutableListOf<String>()
+
+        if (viewModel.bodyTypeFilter.isNotNullOrEmpty()) {
+            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter!!.split(","))
+        }
+
+        val finalFilterList = ArrayList<String>()
+        for(truck in viewModel.truckSizeData.sortedBy { it.defaultMG }){
+            if(currentVehicleFilterList.contains(truck.truckType!!.capitalize())){
+                finalFilterList.add(truck.truckUuid!!)
+            }
+        }
+
+        // Initialize an array of vehicles
+        val arraySize = finalFilterList.toArray(arrayOfNulls<CharSequence>(finalFilterList.size));
+
+        val arrayChecked  = BooleanArray(finalFilterList.size){false}
+
+        val currentSizeFilterList = mutableListOf<String>()
+
+        if (viewModel.sizeFilter.isNotNullOrEmpty()) {
+            currentSizeFilterList.addAll(viewModel.sizeFilter!!.split(","))
+        }
+
+        if (currentSizeFilterList.isNotEmpty()) {
+            for (item in currentSizeFilterList) {
+                if (arraySize.contains(item))
+                {
+                    arrayChecked[arraySize.indexOf(item)] = true
+                }
+            }
+        }
+
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("-- Select Size --")
+
+        builder.setMultiChoiceItems(arraySize, arrayChecked) { _, which, isChecked ->
+            arrayChecked[which] = isChecked
+        }
+
+        builder.setPositiveButton("Filter") { _, _ ->
+
+            var filterSizeTypes = listOf<String>()
+            for (item in arraySize) {
+                if (arrayChecked[arraySize.indexOf(item)]) {
+                    filterSizeTypes  = filterSizeTypes + item.toString()
+                }
+            }
+            viewModel.sizeFilter = filterSizeTypes.joinToString( separator = ",") {it}
+            refreshData(true)
+
+        }
+
+        builder.setNegativeButton("Cancel") {_, _ ->
+            dialog.dismiss()
+        }
+
+        dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showAvailabilityFilterDialog() {
+        lateinit var dialog: AlertDialog
+
+        // Initialize an array of vehicles
+        val arrayAvailable = arrayOf("Available","Not Available", "Active")
+
+        val arrayChecked = booleanArrayOf(false,false,false)
+
+        val availableFilterList = mutableListOf<Pair<String,String>>()
+
+        if (viewModel.availabilityFilter.isNotEmpty()) {
+            availableFilterList.addAll(viewModel.availabilityFilter)
+        }
+
+        if (availableFilterList.isNotEmpty()) {
+            for (item in availableFilterList) {
+                if (arrayAvailable.contains(item.first))
+                {
+                    arrayChecked[arrayAvailable.indexOf(item.first)] = true
+                }
+            }
+        }
+
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("-- Select Availability --")
+
+        builder.setMultiChoiceItems(arrayAvailable, arrayChecked) { _, which, isChecked ->
+            arrayChecked[which] = isChecked
+        }
+
+        builder.setPositiveButton("Filter") { _, _ ->
+
+            val filterAvailabilityTypes = mutableListOf<Pair<String,String>>()
+            for (item in arrayAvailable) {
+                if (arrayChecked[arrayAvailable.indexOf(item)]) {
+                    when (item){
+                        "Available" -> { filterAvailabilityTypes.add(Pair(item, "Free")) }
+                        "Not Available" -> { filterAvailabilityTypes.add(Pair(item, "not_available")) }
+                        "Active" -> {filterAvailabilityTypes.add(Pair(item, "active"))}
+                    }
+
+                }
+            }
+            viewModel.availabilityFilter = filterAvailabilityTypes
+            refreshData(true)
+
+        }
+
+        builder.setNegativeButton("Cancel") {_, _ ->
+            dialog.dismiss()
+        }
+
+        dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showVehicleFilterDialog() {
+        lateinit var dialog: AlertDialog
+
+        // Initialize an array of vehicles
+        val arrayBody = arrayOf("Open","Closed","Trailer")
+
+        val arrayChecked = booleanArrayOf(false,false,false)
+
+        val currentVehicleFilterList = mutableListOf<String>()
+
+        if (viewModel.bodyTypeFilter.isNotNullOrEmpty()) {
+            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter!!.split(","))
+        }
+
+        if (currentVehicleFilterList.isNotEmpty()) {
+            for (vehicle in currentVehicleFilterList) {
+                if (arrayBody.contains(vehicle))
+                {
+                    arrayChecked[arrayBody.indexOf(vehicle)] = true
+                }
+            }
+        }
+
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("-- Select Vehicle Type --")
+
+        builder.setMultiChoiceItems(arrayBody, arrayChecked) { _, which, isChecked ->
+            arrayChecked[which] = isChecked
+        }
+
+        builder.setPositiveButton("Filter") { _, _ ->
+
+            var filterBodyTypes = listOf<String>()
+            for (vehicle in arrayBody) {
+                if (arrayChecked[arrayBody.indexOf(vehicle)]) {
+                    filterBodyTypes  = filterBodyTypes + vehicle
+                }
+            }
+            viewModel.bodyTypeFilter = filterBodyTypes.joinToString( separator = ",") {it}
+            viewModel.sizeFilter =  null
+
+            refreshData(true)
+
+        }
+
+        builder.setNegativeButton("Cancel") {_, _ ->
+            dialog.dismiss()
+        }
+
+        dialog = builder.create()
+        dialog.show()
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun hide() {
+        binding.addTruck.visibility = View.GONE
+        binding.addTruckFloating.visibility = View.VISIBLE
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun show() {
+        binding.addTruck.visibility = View.VISIBLE
+        binding.addTruckFloating.visibility = View.GONE
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            REQCODE_ADD_TRUCK -> {
+                if( data != null  && data.getStringExtra("Added") == "Truck Added"){
+                    refreshData()
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Home trucks rv scroll listener for search bar animation related stuff
+     */
+    inner class HomeTrucksRVScrollListener(
+        private val stickyView: DelhiveryAnimatedSearchBar,
+        private val elevation: Float = 12f
+    ) : RecyclerView.OnScrollListener() {
+        /* Current toolbar elevation */
+        private var toolbarElevation = -1f
+
+        override fun onScrolled(
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
+        ) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager: LinearLayoutManager? = recyclerView.layoutManager as? LinearLayoutManager
+            val pos = layoutManager?.findFirstVisibleItemPosition()
+            val toolbarElevation = if (pos == 0) {
+                val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
+                val viewTopGap = childView.height - stickyView.height * 1f
+                val viewTop = childView.top + viewTopGap
+                if (viewTop > 0) {
+                    val factor = viewTop / viewTopGap
+                    val invFactor = 1f - factor
+                    stickyView.translationY = viewTop
+                    stickyView.alpha = invFactor
+                    ViewCompat.setElevation(stickyView, elevation * invFactor)
+                } else {
+                    stickyView.translationY = stickyView.top * 1f
+                    stickyView.alpha = 1f
+                    ViewCompat.setElevation(stickyView, elevation)
+                }
+                val factor =
+                    (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+                stickyView.setRatio((1 - factor))
+                defToolbarElevation
+            } else {
+                stickyView.translationY = 0f
+                stickyView.alpha = 1f
+                stickyView.setRatio(0f)
+                0f
+            }
+            if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
+                this.toolbarElevation = toolbarElevation
+                toolbarElevationLiveData?.postValue(this.toolbarElevation)
+            }
+        }
+    }
+
+    inner class ButtonRVScrollListener : RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
+        ) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            if (visible && scrollDist > 0) {
+                hide()
+                scrollDist = 0
+                visible = false
+            } else if (!visible && scrollDist < 0) {
+                show()
+                scrollDist = 0
+                visible = true
+            }
+
+            if ((visible && dy > 0) || (!visible && dy < 0)) {
+                scrollDist += dy
+            }
+        }
+    }
+
+    /**
+     * Pagination interface
+     */
+    inner class PaginationInterface : PaginationScrollListener(10) {
+        override fun loadMore() = viewModel.getAllInventories(true)
+
+        override fun hasMore() = viewModel.hasMoreData
+
+        override fun isLoading() = isLoadingData
+    }
+
+    /** Create new frequent truck item*/
+    private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
+        ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
+
+
+}
