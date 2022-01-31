@@ -24,8 +24,8 @@
   <color name="color_hint">#A3AAC2</color>
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
-  <color name="bid_placed_green">#0fb687</color>
-  <color name="light_green">#bdffe4</color>
+  <color name="bid_placed_green">#059669</color>
+  <color name="light_green">#ECFDF5</color>
   <color name="light_red">#ffdad8</color>
   <color name="transparent_white">#19999999</color>
   <color name="transparent_grey">#8a000000</color>
@@ -46,7 +46,6 @@
   <color name="blue_bg">#ededff</color>
   <color name="info_bg">#525B7A</color>
   <color name="error_red">#FA3A2E</color>
-
-
-
+  <color name="grey_bg">#E0E3EB</color>
+  <color name="yellow">#FBBF24</color>
 </resources>

@@ -126,6 +126,8 @@
   <string name="action_upload_more">Upload More</string>
   <string name="action_upload_again">Upload Again</string>
   <string name="action_cancel">Cancel</string>
+  <string name="action_start_kyc">Start KYC</string>
+  <string name="action_restart_kyc">Try Again</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -342,7 +344,19 @@
   <string name="sub_label_step4_4">Step 4 of 4</string>
   <string name="label_business">Business Verification </string>
   <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
-
+  <string name="label_verified">Verified</string>
+  <string name="label_account">Account</string>
+  <string name="label_kyc">KYC Details</string>
+  <string name="label_profile">Profile Details</string>
+  <string name="label_routes">My Routes</string>
+  <string name="label_earnings">My Earnings</string>
+  <string name="label_team">My Team Members</string>
+  <string name="label_pod">POD Address</string>
+  <string name="label_help">Help &amp; Support</string>
+  <string name="label_logout">Log Out</string>
+  <string name="label_ratings">Business Ratings</string>
+  <string name="label_kyc_pending">KYC verification pending!</string>
+  <string name="label_kyc_failed">KYC verification failed!</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
