@@ -358,7 +358,7 @@
                     android:padding="@dimen/size_8dp"
                     android:textSize="@dimen/text_14sp"
                     android:inputType="number"
-                    android:maxLength="10"
+                    android:maxLength="9"
                     android:textColor="@color/black"
                     android:hint="Eg: ₹2500"
                     android:background="@drawable/background_rectangle_border_curved">

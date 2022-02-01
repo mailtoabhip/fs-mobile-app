@@ -186,7 +186,7 @@
             android:textColor="@color/black"
             android:inputType="number"
             android:hint="Eg: ₹2500"
-            android:maxLength="10"
+            android:maxLength="9"
             android:background="@drawable/background_rectangle_border_curved">
             </androidx.appcompat.widget.AppCompatEditText>
             <androidx.appcompat.widget.AppCompatTextView
