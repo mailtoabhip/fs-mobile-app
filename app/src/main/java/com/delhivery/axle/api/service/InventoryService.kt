@@ -44,4 +44,9 @@ interface InventoryService {
     fun deleteTruck(
         @Body request: DeleteTruckRequest
     ): Single<BaseMessageResponse>
+
+    @POST("list_sp_trucks")
+    fun getInventory(
+        @Body request: JsonObject
+    ): Single<BaseResponse<InventoryResponse>>
 }

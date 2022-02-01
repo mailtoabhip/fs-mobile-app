@@ -401,10 +401,21 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
 
       HomeLoadsPriorityAction -> {
+        analyticsUtil.trackEvent(
+          EVENT_BANNER_CLICK,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId(), "loads_screen")
+        )
         context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
       }
 
       HomeLoadsBannerAction -> {
+        analyticsUtil.trackEvent(
+          EVENT_BANNER_CLICK,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId(), "loads_screen")
+        )
+
         context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
       }
     }

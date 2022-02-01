@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
 import com.delhivery.axle.ui.trucks.EditTruckInterface
+import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -56,6 +57,8 @@ class HomeTrucksViewModel @Inject constructor(
     var editTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deactivateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deleteTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
+
+    var inventoryLiveData = MutableLiveData<HomeTrucksRequestItemData>()
 
     /* user bids live data */
     var userTrucksData =
@@ -274,5 +277,28 @@ class HomeTrucksViewModel @Inject constructor(
                 }
             }
 
+    }
+
+    fun getInventory(
+        id: String
+    ){
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("supplier_id", userPrefs.userId())
+        compositeDisposable += inventoryRepository.getSingleInventory(jsonObject)
+            .onBackground()
+            .subscribe { _res, error ->
+                if(!error && _res != null){
+                    if(_res.trucks.isNotEmpty()){
+                        inventoryLiveData.postValue(_res.trucks[0])
+                    }
+                    else{
+                        inventoryLiveData.postValue(null)
+                    }
+                }
+                else{
+                    error.handle()
+                    inventoryLiveData.postValue(null)
+                }
+            }
     }
 }

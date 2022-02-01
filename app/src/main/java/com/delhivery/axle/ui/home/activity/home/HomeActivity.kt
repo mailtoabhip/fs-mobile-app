@@ -54,6 +54,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var dplink_tid : String = ""
   var dplink_type : String = ""
 
+  var fromLink = false
+  var id = ""
+
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -170,6 +173,22 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           )
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
+
+        ACTIVATE_TRUCK_REDIRECT ->{
+          if(dplink_tid != "") {
+            fromLink = true
+            id = dplink_tid
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+          else{
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+        }
+
+        MY_TRUCKS_REDIRECT -> {
+          fromLink = true
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
@@ -219,9 +238,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(bidDetailsIntent(preferredTransactionId,this))
       }
 
-      ADD_TRUCK ->{
-
+      ACTIVATE_TRUCK_NOTIFICATION ->{
+        fromLink = true
+        id = preferredTransactionId
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
+
+      REDIRECT_TO_TRUCKS -> {
+        fromLink = true
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
+
+      TRUCK_REACHED_NOTIFICATION -> {
+        fromLink = true
+        id = preferredTransactionId
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
+
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
@@ -353,7 +386,7 @@ enum class FragmentName(
         val position: Int,
         val frgName: String
 ) {
-  LoadsFragment(0, "loads_screen"),
+  HomeFragment(0, "home_screen"),
   BidsFragment(1, "bids_screen"),
   TripsFragment(3, "trips_screen" ),
   ProfileFragment(4, "profile_screen"),
@@ -376,7 +409,9 @@ private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
 private const val REDIRECT_TO_TRIP = "redirect_to_trip"
 private const val REDIRECT_TO_LOAD ="redirect_to_load"
-private const val ADD_TRUCK = "add_truck"
+private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
+private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
+private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
 
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
@@ -388,6 +423,8 @@ private const val DOWNLOAD_LEDGER_POPUP_REDIRECT = "dnldldgr"
 private const val TRIP_DETAIL_REDIRECT = "trpdtl"
 private const val LOAD_DETAIL_REDIRECT = "biddtl"
 private const val ADVANCE_PENDING_REDIRECT = "advpend"
+private const val MY_TRUCKS_REDIRECT = "mytrucks"
+private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"

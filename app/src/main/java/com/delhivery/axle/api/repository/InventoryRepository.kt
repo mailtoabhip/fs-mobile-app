@@ -43,6 +43,8 @@ class InventoryRepository @Inject constructor(
             }
         )
 
+    fun getSingleInventory(request: JsonObject) = inventoryService.getInventory(request).convertResponse()
+
 
 }
 

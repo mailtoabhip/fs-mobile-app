@@ -26,6 +26,7 @@ import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
@@ -71,6 +72,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val activity: HomeActivity = activity as HomeActivity
+
         viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
@@ -85,6 +88,16 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
             addOnScrollListener(ButtonRVScrollListener())
             addOnScrollListener(PaginationInterface())
+        }
+
+        //From Notifications or Deep link
+        if(activity.fromLink && activity.id != ""){
+            viewModel.getInventory(activity.id)
+            activity.fromLink = false
+            activity.id = ""
+        }
+        else if (activity.fromLink){
+            activity.fromLink = false
         }
 
         binding.addTruck.setOnClickListener {
@@ -133,6 +146,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         /** Observe live Data*/
 
+        viewModel.inventoryLiveData.observe(this, Observer {
+            if(it!= null){
+                ActivateTruckDialog(context!!, it as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, -1).show()
+            }
+            else{
+                uiUtils.showSnackbar("No Inventory Found")
+            }
+        })
+
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items -> adapter.operation(_items) }
         })
@@ -145,20 +167,25 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             uiUtils.hideProgress()
             if(it!=null){
                 uiUtils.showSnackbar("Truck Activated Successfully")
-                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                data.ownership = it.second.ownership
-                data.latestStatus = it.second.latestStatus
-                data.latestUUID = it.second.latestUUID
-                data.currentCityName = it.second.currentCityName
-                data.currentCityCode = it.second.currentCityCode
-                data.unloadingDestination = it.second.unloadingDestination
-                data.unloadingDestinationCode = it.second.unloadingDestinationCode
-                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
-                data.unloadingDestinationRate = it.second.unloadingDestinationRate
-                data.originClusterId = it.second.originClusterId
-                data.destinationClusterId = it.second.destinationClusterId
+                if(it.first != -1) {
+                    val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    data.ownership = it.second.ownership
+                    data.latestStatus = it.second.latestStatus
+                    data.latestUUID = it.second.latestUUID
+                    data.currentCityName = it.second.currentCityName
+                    data.currentCityCode = it.second.currentCityCode
+                    data.unloadingDestination = it.second.unloadingDestination
+                    data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                    data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                    data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                    data.originClusterId = it.second.originClusterId
+                    data.destinationClusterId = it.second.destinationClusterId
 
-                adapter.notifyItemChanged(it.first)
+                    adapter.notifyItemChanged(it.first)
+                }
+                else{
+                    refreshData()
+                }
             }
         })
 
@@ -254,6 +281,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksPriorityAction -> {
+                analyticsUtil.trackEvent(
+                    EVENT_BANNER_CLICK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), "trucks_screen")
+                )
                 context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
             }
         }

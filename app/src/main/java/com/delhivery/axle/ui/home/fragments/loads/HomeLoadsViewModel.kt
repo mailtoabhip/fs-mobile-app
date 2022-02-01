@@ -176,7 +176,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsSearchItem(), AddUpdate))
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
                   if(!paginate) {
-                      add(Pair(HomeLoadsTruckPriorityAccessItem(), Add))
+                      add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
                   add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
                   for ((index, load) in loads.toMutableList().withIndex()) {

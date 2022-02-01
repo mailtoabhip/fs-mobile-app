@@ -129,6 +129,7 @@ const val EVENT_DEACTIVATE_TRUCK = "deactivate_truck"
 const val EVENT_EDIT_TRUCK = "edit_truck"
 const val EVENT_DELETE_TRUCK = "delete_truck"
 const val EVENT_ADD_TRUCK = "add_truck"
+const val EVENT_BANNER_CLICK = "click_add_truck_banner"
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
