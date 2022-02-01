@@ -119,7 +119,7 @@ class HomeTrucksViewModel @Inject constructor(
             jsonObject.addProperty("availability", filter)
         }
         if(sizeFilter.isNotNullOrEmpty()) {
-            sizeFilter?.let { jsonObject.addProperty("truck_size", sizeFilter) }
+            sizeFilter?.let { jsonObject.addProperty("truck_uuid", sizeFilter) }
         }
 
         dataLoadingLiveData.postValue(true)
@@ -283,7 +283,7 @@ class HomeTrucksViewModel @Inject constructor(
         id: String
     ){
         val jsonObject = JsonObject()
-        jsonObject.addProperty("supplier_id", userPrefs.userId())
+        jsonObject.addProperty("uuid", id)
         compositeDisposable += inventoryRepository.getSingleInventory(jsonObject)
             .onBackground()
             .subscribe { _res, error ->

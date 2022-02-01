@@ -322,7 +322,7 @@
     <string name="label_availability">Availability</string>
     <string name="label_truck_size_filter">Truck Size</string>
     <string name="label_enter_unloading_destination">Drop Location</string>
-    <string name="label_price_mt">Price/MT (optional)</string>
+    <string name="label_price_mt">Price/MT</string>
     <string name="label_search_by_city">Search by city name</string>
     <string name="label_choose_options">Choose option</string>
     <string name="label_choose_from_below">Choose one from the below trucks</string>

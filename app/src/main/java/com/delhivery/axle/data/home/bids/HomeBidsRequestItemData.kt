@@ -63,6 +63,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_uuid") val truckUUID: Any?,
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
   @SerializedName("status") val transactionStatus: String?= "",
+  @SerializedName("entity") val entity:String,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -71,7 +72,7 @@ data class HomeBidsRequestItemData(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
-  fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
+  fun loadDetails() = StringUtils.capitalize(entity) ?: "Not available"
 
   fun target() = if (targetPrice > 0 && loadPricePercent > 0) {
     targetPrice * loadPricePercent / 100

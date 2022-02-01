@@ -92,7 +92,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         //From Notifications or Deep link
         if(activity.fromLink && activity.id != ""){
-            viewModel.getInventory(activity.id)
+            viewModel.getInventory(userPrefs.userId() + "::" + activity.id)
             activity.fromLink = false
             activity.id = ""
         }

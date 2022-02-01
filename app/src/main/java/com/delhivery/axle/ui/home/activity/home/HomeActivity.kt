@@ -73,11 +73,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
 
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
 
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+
+    fromLink = false
+    id = ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -127,6 +131,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processDeepLink() {
+    Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
@@ -197,7 +202,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processNotification() {
-    Log.d("noti",notificationType+notificationId)
+    Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
@@ -240,7 +245,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
       ACTIVATE_TRUCK_NOTIFICATION ->{
         fromLink = true
-        id = preferredTransactionId
+        id = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
@@ -251,7 +256,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
       TRUCK_REACHED_NOTIFICATION -> {
         fromLink = true
-        id = preferredTransactionId
+        id = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
@@ -290,11 +295,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
 
     /**
      * Get Deep Link Parameters*/
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+
+    fromLink = false
+    id = ""
     processDeepLink()
 
     if (transactions.isNotEmpty())
