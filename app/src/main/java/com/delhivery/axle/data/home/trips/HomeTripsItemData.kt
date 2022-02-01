@@ -78,6 +78,7 @@ data class HomeTripsItemData(
   @SerializedName("destination_district") val destinationDistrict: String?,
   @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
+  @SerializedName("entity") val entity: String?,
   var payment: TripPaymentResponse? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,

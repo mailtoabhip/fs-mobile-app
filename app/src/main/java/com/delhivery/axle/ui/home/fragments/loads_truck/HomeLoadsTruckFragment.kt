@@ -36,7 +36,6 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     /* home fragments pager adapter */
     private lateinit var pagerAdapter : HomeLoadsTruckFragmentsAdapter
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         pagerAdapter= HomeLoadsTruckFragmentsAdapter(childFragmentManager)
