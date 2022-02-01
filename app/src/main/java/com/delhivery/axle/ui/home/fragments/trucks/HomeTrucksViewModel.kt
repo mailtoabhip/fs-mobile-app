@@ -35,7 +35,7 @@ class HomeTrucksViewModel @Inject constructor(
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
-    var bodyTypeFilter: String? =null
+    var bodyTypeFilter = mutableListOf<Pair<String, String>>()
     var availabilityFilter = mutableListOf<Pair<String, String>>()
     var sizeFilter: String?= null
 
@@ -108,15 +108,19 @@ class HomeTrucksViewModel @Inject constructor(
 
         }
 
-        if(bodyTypeFilter.isNotNullOrEmpty()){
-            bodyTypeFilter?.let { jsonObject.addProperty("truck_type", bodyTypeFilter)}
+        if(bodyTypeFilter.isNotEmpty()){
+            val filter = mutableListOf<String>()
+            for ( item in bodyTypeFilter){
+                filter.add(item.second)
+            }
+             jsonObject.addProperty("truck_type", filter.joinToString(","))
         }
         if(availabilityFilter.isNotEmpty()) {
-            var filter = ""
+            val filter = mutableListOf<String>()
             for ( item in availabilityFilter){
-                filter += item.second
+                filter.add(item.second)
             }
-            jsonObject.addProperty("availability", filter)
+            jsonObject.addProperty("availability", filter.joinToString(","))
         }
         if(sizeFilter.isNotNullOrEmpty()) {
             sizeFilter?.let { jsonObject.addProperty("truck_uuid", sizeFilter) }
@@ -151,7 +155,7 @@ class HomeTrucksViewModel @Inject constructor(
                             }
 
                         }else{
-                            bodyTypeFilter = null
+                            bodyTypeFilter = mutableListOf()
                             availabilityFilter = mutableListOf()
                             sizeFilter = null
                             searchPrefix = ""

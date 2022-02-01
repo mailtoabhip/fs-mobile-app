@@ -249,7 +249,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             binding.editStickySearch.setText("")
             viewModel.searchPrefix = ""
             viewModel.searchFlag = false
-            viewModel.bodyTypeFilter = null
+            viewModel.bodyTypeFilter = mutableListOf()
             viewModel.sizeFilter = null
             viewModel.availabilityFilter = mutableListOf()
         }
@@ -268,7 +268,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksSizeFilterAction -> {
-                if(viewModel.bodyTypeFilter.isNotNullOrEmpty() && viewModel.truckSizeData.isNotEmpty()) {
+                if(viewModel.bodyTypeFilter.isNotEmpty() && viewModel.truckSizeData.isNotEmpty()) {
                     showSizeFilterDialog()
                 }
                 else{
@@ -440,13 +440,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         val currentVehicleFilterList = mutableListOf<String>()
 
-        if (viewModel.bodyTypeFilter.isNotNullOrEmpty()) {
-            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter!!.split(","))
+        if (viewModel.bodyTypeFilter.isNotEmpty()) {
+            for(item in viewModel.bodyTypeFilter){
+                currentVehicleFilterList.add(item.second)
+            }
         }
 
         val finalFilterList = ArrayList<String>()
         for(truck in viewModel.truckSizeData.sortedBy { it.defaultMG }){
-            if(currentVehicleFilterList.contains(truck.truckType!!.capitalize())){
+            if(currentVehicleFilterList.contains(truck.truckType!!)){
                 finalFilterList.add(truck.truckUuid!!)
             }
         }
@@ -539,7 +541,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     when (item){
                         "Available" -> { filterAvailabilityTypes.add(Pair(item, "Free")) }
                         "Not Available" -> { filterAvailabilityTypes.add(Pair(item, "not_available")) }
-                        "Active" -> {filterAvailabilityTypes.add(Pair(item, "active"))}
+                        "Active" -> {filterAvailabilityTypes.add(Pair(item, "Active"))}
                     }
 
                 }
@@ -565,17 +567,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         val arrayChecked = booleanArrayOf(false,false,false)
 
-        val currentVehicleFilterList = mutableListOf<String>()
+        val currentVehicleFilterList = mutableListOf<Pair<String,String>>()
 
-        if (viewModel.bodyTypeFilter.isNotNullOrEmpty()) {
-            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter!!.split(","))
+        if (viewModel.bodyTypeFilter.isNotEmpty()) {
+            currentVehicleFilterList.addAll(viewModel.bodyTypeFilter)
         }
 
         if (currentVehicleFilterList.isNotEmpty()) {
             for (vehicle in currentVehicleFilterList) {
-                if (arrayBody.contains(vehicle))
+                if (arrayBody.contains(vehicle.first))
                 {
-                    arrayChecked[arrayBody.indexOf(vehicle)] = true
+                    arrayChecked[arrayBody.indexOf(vehicle.first)] = true
                 }
             }
         }
@@ -590,13 +592,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         builder.setPositiveButton("Filter") { _, _ ->
 
-            var filterBodyTypes = listOf<String>()
+            val filterBodyTypes =  mutableListOf<Pair<String,String>>()
             for (vehicle in arrayBody) {
                 if (arrayChecked[arrayBody.indexOf(vehicle)]) {
-                    filterBodyTypes  = filterBodyTypes + vehicle
+                    when (vehicle){
+                        "Open" -> { filterBodyTypes.add(Pair(vehicle, "open")) }
+                        "Closed" -> { filterBodyTypes.add(Pair(vehicle, "closed")) }
+                        "Trailer" -> {filterBodyTypes.add(Pair(vehicle, "trailer"))}
+                    }
                 }
             }
-            viewModel.bodyTypeFilter = filterBodyTypes.joinToString( separator = ",") {it}
+            viewModel.bodyTypeFilter = filterBodyTypes
             viewModel.sizeFilter =  null
 
             refreshData(true)
