@@ -7,17 +7,14 @@ import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.api.response.TransactionBidsResponseBody
 import com.delhivery.axle.data.gst.GstDetailData
 import io.reactivex.Single
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface LoadBoardService {
     /**
      * verify Pan Card Number
      */
-    @GET("/validate_pan_card")
-    fun validatePanNumber(@Body panVerificationRequest: PanVerificationRequest)
+    @POST("/validate_pan_card")
+    fun validatePanNumber(@Body request: PanVerificationRequest)
             : Single<BaseResponse<PanVerificationResponse>>
 
     /**
@@ -59,4 +56,12 @@ interface LoadBoardService {
     fun verifyByDocUpload(
             @Body request: GstDocRequest
     ): Single<BaseResponse<Any>>
+
+    /**
+     * patch user details
+     */
+    @PATCH("/update_user")
+    fun updateUser(@Body request: UpdateUserRequest)
+            : Single<BaseResponse<Any>>
+
 }
