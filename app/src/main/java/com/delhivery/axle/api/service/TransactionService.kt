@@ -26,8 +26,8 @@ interface TransactionService {
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_type") truckType: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String = "yes",
-    @Query("apply_100km_logic") nearby100kmcities: Boolean = true,
-    @Query("entity_name") entityName: String = "Orion"
+    @Query("apply_100km_logic") nearby100kmcities: Boolean = true
+  //  @Query("entity_name") entityName: String = "Orion"
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -43,8 +43,8 @@ interface TransactionService {
     @Query("valid_loads_only") validLoads: String = "yes",
     @Query("speed") speed: String?= null,
     @Query("exclude_truck_types") excludeTruckTypes: String? = null,
-    @Query("filter_vehicle_type") filterVehicleType: Boolean?= null,
-    @Query("entity_name") entityName: String = "Orion"
+    @Query("filter_vehicle_type") filterVehicleType: Boolean?= null
+  //  @Query("entity_name") entityName: String = "Orion"
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

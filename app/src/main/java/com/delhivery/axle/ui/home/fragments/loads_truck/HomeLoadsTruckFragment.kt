@@ -3,7 +3,10 @@ package com.delhivery.axle.ui.home.fragments.loads_truck
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -29,17 +32,16 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val _instance: HomeLoadsTruckFragment by lazy { HomeLoadsTruckFragment() }
     }
 
-    /* home fragments pager adapter */
+ /*   *//* home fragments pager adapter *//*
     private val pagerAdapter: HomeLoadsTruckFragmentsAdapter by lazy {
         HomeLoadsTruckFragmentsAdapter(childFragmentManager)
-    }
-
+    }*/
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.viewpager.apply {
             offscreenPageLimit = HomeLoadsTruckFragmentType.count()
-            adapter = pagerAdapter
+            adapter =  HomeLoadsTruckFragmentsAdapter(childFragmentManager)
             }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
 
@@ -52,7 +54,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         when (action.type) {
             /* navigate to fragment action */
             HomeFragmentActionType.Navigate -> {
-                val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
+                val fragmentType = (action as NavigateHomeLoadsFragmentAction).fragmentType
                 binding.viewpager.setCurrentItem(fragmentType.position, true)
             }
         }
