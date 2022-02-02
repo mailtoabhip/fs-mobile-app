@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.kyc.pan
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -35,7 +36,6 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     override fun requireConnection() = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -47,7 +47,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.btnVerifyPan.setOnClickListener {
-            startActivity(gstIntent(this))
+            viewModel.updateUserDetails()
         }
 
         binding.editPan.apply {
@@ -56,7 +56,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 binding.panVerifyProgress.visibility = View.GONE
                 binding.textPanName.visibility = View.GONE
                 binding.imgCorrect.visibility = View.GONE
-
+                binding.editPan.error= false
             }
 
             lengthAction(10) {
@@ -70,23 +70,30 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
            viewModel.validatePanLiveData.observe(
                this, Observer {
-                   //added handler just for demo the progress will be removed after api
-                   Handler().postDelayed({
                        binding.editPan.isEnabled=true
                        binding.btnVerifyPan.isEnabled =true
                        binding.panVerifyProgress.visibility = View.GONE
                        binding.imgCorrect.visibility = View.VISIBLE
                        binding.textPanName.visibility = View.VISIBLE
                        binding.textPanName.text =  getString(R.string.msg_verified_pan_name, it.panHolderName)
-                   }, 1000)
-
                }
            )
 
+        viewModel.userUpdateLiveData.observe(this, Observer {
+            if (it) {
+                startActivity(gstIntent(this))
+                finish()
+            } else {
+                uiUtils.showSnackbar("Update Failed, Please try again")
+            }
+        })
         viewModel.errorLiveData.observe(
             this, Observer {
                 it?.let { error ->
                     binding.panVerifyProgress.visibility = View.GONE
+                    binding.editPan.isEnabled=true
+                    binding.btnVerifyPan.isEnabled =false
+                    binding.editPan.error= true
                     /* show error message in toast if not null || empty */
                     if (error.second.isNotNullOrEmpty()) {
                         uiUtils.showToast(error.second!!)

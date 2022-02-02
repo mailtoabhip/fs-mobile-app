@@ -13,8 +13,8 @@ interface LoadBoardService {
     /**
      * verify Pan Card Number
      */
-    @GET("/validate_pan_card")
-    fun validatePanNumber(@Body panVerificationRequest: PanVerificationRequest)
+    @POST("/validate_pan_card")
+    fun validatePanNumber(@Body request: PanVerificationRequest)
             : Single<BaseResponse<PanVerificationResponse>>
 
     /**
@@ -74,4 +74,12 @@ interface LoadBoardService {
     fun updateNewAddress(
         @Body request: UpdateAddressVerificationRequest
     ): Single<BaseResponse<Any>>
+
+    /**
+     * patch user details
+     */
+    @PATCH("/update_user")
+    fun updateUser(@Body request: UpdateUserRequest)
+            : Single<BaseResponse<Any>>
+
 }
