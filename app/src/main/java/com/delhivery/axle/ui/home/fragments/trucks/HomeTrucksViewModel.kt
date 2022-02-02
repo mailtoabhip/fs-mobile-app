@@ -133,7 +133,7 @@ class HomeTrucksViewModel @Inject constructor(
             .progress()
             .subscribe{ _res, error ->
                 if(!error && _res != null) {
-                    offset = _res.trucks.size
+                    offset += _res.trucks.size
                     total = _res.total
                     hasMoreData = _res.hasNext
 
