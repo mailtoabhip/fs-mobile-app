@@ -166,8 +166,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.activateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-                uiUtils.showSnackbar("Truck Activated Successfully")
-                if(it.first != -1) {
+                if(it.first != -1 && it.first !=-2) {
+                    uiUtils.showSnackbar("Truck Activated Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
@@ -183,7 +183,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
                     adapter.notifyItemChanged(it.first)
                 }
+                else if(it.first == -2){
+                    dialogUtils.showErrorDialog(
+                        "City is not mapped to cluster",
+                        3L
+                    )
+                }
                 else{
+                    uiUtils.showSnackbar("Truck Activated Successfully")
                     refreshData()
                 }
             }
@@ -212,21 +219,29 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.editTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){
-                uiUtils.showSnackbar("Truck Edited Successfully")
-                val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                data.ownership = it.second.ownership
-                data.latestStatus = it.second.latestStatus
-                data.latestUUID = it.second.latestUUID
-                data.currentCityName = it.second.currentCityName
-                data.currentCityCode = it.second.currentCityCode
-                data.unloadingDestination = it.second.unloadingDestination
-                data.unloadingDestinationCode = it.second.unloadingDestinationCode
-                data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
-                data.unloadingDestinationRate = it.second.unloadingDestinationRate
-                data.originClusterId = it.second.originClusterId
-                data.destinationClusterId = it.second.destinationClusterId
+                if(it.first == -2){
+                    dialogUtils.showErrorDialog(
+                        "City is not mapped to cluster",
+                        3L
+                    )
+                }
+                else {
+                    uiUtils.showSnackbar("Truck Edited Successfully")
+                    val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    data.ownership = it.second.ownership
+                    data.latestStatus = it.second.latestStatus
+                    data.latestUUID = it.second.latestUUID
+                    data.currentCityName = it.second.currentCityName
+                    data.currentCityCode = it.second.currentCityCode
+                    data.unloadingDestination = it.second.unloadingDestination
+                    data.unloadingDestinationCode = it.second.unloadingDestinationCode
+                    data.unloadingDestinationAmount = it.second.unloadingDestinationAmount
+                    data.unloadingDestinationRate = it.second.unloadingDestinationRate
+                    data.originClusterId = it.second.originClusterId
+                    data.destinationClusterId = it.second.destinationClusterId
 
-                adapter.notifyItemChanged(it.first)
+                    adapter.notifyItemChanged(it.first)
+                }
             }
         })
 

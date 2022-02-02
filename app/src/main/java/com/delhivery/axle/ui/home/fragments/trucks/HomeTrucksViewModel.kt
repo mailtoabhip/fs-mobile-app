@@ -23,6 +23,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
+import retrofit2.HttpException
 import javax.inject.Inject
 
 /**
@@ -227,8 +228,13 @@ class HomeTrucksViewModel @Inject constructor(
                     activateTruckLiveData.postValue(Pair(position,_res))
                 }
                 else{
-                    error.handle()
-                    activateTruckLiveData.postValue(null)
+                    if(error is HttpException){
+                        error.handle()
+                        activateTruckLiveData.postValue(null)
+                    }
+                    else{
+                        activateTruckLiveData.postValue(Pair(-2,_res))
+                    }
                 }
             }
 
@@ -257,8 +263,14 @@ class HomeTrucksViewModel @Inject constructor(
                     editTruckLiveData.postValue(Pair(position,_res))
                 }
                 else{
-                    error.handle()
-                    editTruckLiveData.postValue(null)
+                    if(error is HttpException){
+                        error.handle()
+                        editTruckLiveData.postValue(null)
+                    }
+                    else{
+                        editTruckLiveData.postValue(Pair(-2,_res))
+                    }
+
                 }
             }
 

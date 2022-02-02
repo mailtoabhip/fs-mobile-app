@@ -146,6 +146,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             if(it!=null && it == true){
                 showTruckAddedDialog()
             }
+            else if(it!=null && it== false){
+                dialogUtils.showErrorDialog(
+                    "City is not mapped to cluster",
+                    3L
+                )
+            }
         })
 
     }

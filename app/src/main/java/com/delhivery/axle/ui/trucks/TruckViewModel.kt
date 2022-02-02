@@ -13,6 +13,7 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class TruckViewModel @Inject constructor(
@@ -60,8 +61,13 @@ class TruckViewModel @Inject constructor(
                     addTruckLiveData.postValue(true)
                 }
                 else{
-                    error.handle()
-                    addTruckLiveData.postValue(null)
+                    if(error is HttpException){
+                        error.handle()
+                        addTruckLiveData.postValue(null)
+                    }
+                    else{
+                        addTruckLiveData.postValue(false)
+                    }
                 }
 
             }
