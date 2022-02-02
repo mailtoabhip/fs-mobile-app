@@ -106,9 +106,9 @@ enum class UrlConfig(
       "https://orion-omc-uat.delhivery.com"
   ),
   LoadboardService(
-          "https://orion-omc-channel.delhivery.com",
-          "https://orion-omc-dev.delhivery.com",
-          "https://orion-omc-uat.delhivery.com"
+      "https://orion-user-loadboard.delhivery.com",
+      "https://orion-user-onboarding-api-dev.delhivery.com",
+      "https://orion-user-onboarding-api-uat.delhivery.com"
   ),
   AppID(
   "83", "371", "371"

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -51,7 +52,12 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         binding.btnSubmitDetails.setOnClickListener {
-            navigationUtils.navigate(businessVerificationIntent(this),false)
+
+            if(pincodeFilled){
+              viewModel.documentProofType =  binding.spinnerProof.selectedItem.toString()
+            }
+            viewModel.addNewAddress()
+          //  navigationUtils.navigate(businessVerificationIntent(this),false)
 
         }
 
@@ -88,7 +94,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             pincodeFilled = false
             enableSubmitButton()
         }
-
+        viewModel.addAddressLiveData.observe(this, Observer {
+            if (it) {
+              //  startActivity(gstIntent(this))
+                navigationUtils.navigate(businessVerificationIntent(this),false)
+                finish()
+            } else {
+                uiUtils.showSnackbar("Error encountered, Please try again.")
+            }
+        })
  }
 
     private fun enableSubmitButton(){

@@ -7,10 +7,7 @@ import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.api.response.TransactionBidsResponseBody
 import com.delhivery.axle.data.gst.GstDetailData
 import io.reactivex.Single
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface LoadBoardService {
     /**
@@ -58,5 +55,23 @@ interface LoadBoardService {
     @POST("/validate_ocr")
     fun verifyByDocUpload(
             @Body request: GstDocRequest
+    ): Single<BaseResponse<Any>>
+
+    /**
+     * add alternate address
+     */
+
+    @PATCH("/add_new_address")
+    fun addNewAddress(
+        @Body request: AddAddressVerificationRequest
+    ): Single<BaseResponse<Any>>
+
+    /*
+     * update your communication address
+     */
+
+    @PATCH("/submit_address")
+    fun updateNewAddress(
+        @Body request: UpdateAddressVerificationRequest
     ): Single<BaseResponse<Any>>
 }
