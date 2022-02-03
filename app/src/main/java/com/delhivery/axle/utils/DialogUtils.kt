@@ -1,17 +1,32 @@
 package com.delhivery.axle.utils
 
+import android.Manifest
 import android.R.string
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.Html
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
+import com.delhivery.axle.databinding.DialogGstAttachmentsBinding
+import com.delhivery.axle.databinding.DialogGstUploadErrorBinding
+import com.delhivery.axle.databinding.DialogVerifyGstBinding
+import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
 import com.delhivery.axle.injection.scope.ActivityScope
+import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.dialogs.ErrorDialog
+import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.Calendar
 import javax.inject.Inject
@@ -136,4 +151,109 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     if (!activity.isFinishing)
       dialog.show()
   }
+
+    /*show upload fail dialog*/
+     fun showUploadFailDialog(uploadText: String,dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogGstUploadErrorBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonUploadAgain.setOnClickListener {
+            showVerifcationOptionsDialog(uploadText,dialogUtilsInterface)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    /*show attachment dialog*/
+     fun showAttachmentDialog(adapter:DocUploadAdapter,uploadArray:ArrayList<Pair<String, String>>,dialogUtilsInterface: DialogUtilsInterface,uploadText: String,awsUtils: AWSUtils) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogGstAttachmentsBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        adapter.setItems(uploadArray)
+        bindingDialog.attachmentList.adapter = adapter
+        if(uploadText==  activity.getString(R.string.upload_aadhaar_text))
+        bindingDialog.labelGst.text = activity.getString(R.string.label_aadhaar_verification)
+        bindingDialog.closeBtn.setOnClickListener {
+           showVerifcationOptionsDialog(uploadText,dialogUtilsInterface)
+            dialog.dismiss()
+        }
+        val imageUrls= mutableListOf<String>()
+        val s3url= awsUtils.awsBasePath()
+        bindingDialog.buttonSubmit.setOnClickListener {
+            for(i in uploadArray){
+                imageUrls.add(s3url+i.first)
+            }
+
+            dialogUtilsInterface.sendDocForVerification(imageUrls)
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonUploadMore.setOnClickListener {
+            val imageName = "Aadhaar_doc_" + System.currentTimeMillis()+".jpg"
+            dialogUtilsInterface.captureImage(imageName, imageName)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    /*show verification options dialog*/
+     fun showVerifcationOptionsDialog(uploadText: String, dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogVerifyGstBinding.inflate(activity.layoutInflater)
+        bindingDialog.uploadDocText.text = uploadText
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+
+        bindingDialog.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.gstDocLayout.setOnClickListener {
+            val imageName = "Aadhaar_doc_" + System.currentTimeMillis()+".jpg"
+            dialogUtilsInterface.captureImage(imageName, imageName)
+            dialog.dismiss()
+        }
+
+        bindingDialog.verifyOtpLayout.setOnClickListener {
+            dialogUtilsInterface.getRequestAadhaarOtp()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
 }
+
+interface DialogUtilsInterface {
+
+    fun getRequestAadhaarOtp()
+
+    fun captureImage(uploadImageName:String,localImageName:String)
+
+    fun sendDocForVerification(docList:List<String>)
+}
+

@@ -14,6 +14,7 @@ import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
@@ -196,6 +197,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             } catch (e: NumberFormatException) {
               //Do Nothing
             }
+              try{
+              viewModel.saveLoadPostKycConfig(
+                  remoteConfig.getString("post_load")
+              )
+          } catch (e: Exception) {
+            //Do Nothing
+        }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
             currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
@@ -227,7 +235,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> PanVerificationActivity::class
+        Home -> HomeActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {

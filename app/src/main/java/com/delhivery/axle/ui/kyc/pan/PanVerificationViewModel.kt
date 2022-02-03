@@ -65,13 +65,14 @@ class PanVerificationViewModel@Inject constructor(
         if (!isConnected) return
 
         if (panCardNumber.length == 10 || isValidPan) {
-            compositeDisposable += loadboardRepository.updateUser(userPrefs.phoneNumber!!,panCardNumber)
+            compositeDisposable += loadboardRepository.updateUser("+91"+userPrefs.phoneNumber,panCardNumber,null)
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
                         userUpdateLiveData.postValue(true)
                     } else{
+                        error.handle()
                         userUpdateLiveData.postValue(false)
                     }
                 }

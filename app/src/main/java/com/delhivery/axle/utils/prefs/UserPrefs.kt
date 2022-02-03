@@ -281,6 +281,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
 
+    /**
+     *  Kyc for load post
+     */
+    var loadPostKyc: String
+        set(value) = editor.putString(PrefKeys.LoadPostKyc, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.LoadPostKyc , " ") ?: ""
   /**
    * Clear all preferences
    */
@@ -344,6 +351,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.DeepLinkArg)
         .apply()
+      editor.remove(PrefKeys.LoadPostKyc)
+          .apply()
     editor.commit()
   }
 
@@ -427,6 +436,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
+      const val LoadPostKyc = "load_post"
   }
 }
 

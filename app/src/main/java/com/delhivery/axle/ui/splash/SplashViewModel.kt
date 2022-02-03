@@ -38,4 +38,8 @@ class SplashViewModel @Inject constructor(
     userPrefs.maxPMTRate = maxRate
     userPrefs.maxCostPerKM = maxCostPerKM
   }
+
+  fun saveLoadPostKycConfig(loadPostKyc:String){
+    userPrefs.loadPostKyc = loadPostKyc
+  }
 }

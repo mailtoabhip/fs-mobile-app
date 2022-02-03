@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.delhivery.axle.api.repository.AuthenticationRepository
@@ -7,6 +8,7 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -21,6 +23,7 @@ class NavigationUtils @Inject constructor(
   private val uiUtils: UiUtils
 ) {
 
+  @Inject lateinit var userPrefs: UserPrefs
   /**
    * Navigate to another activity
    *
@@ -142,5 +145,49 @@ class NavigationUtils @Inject constructor(
           activity.startActivity(it)
         }
     activity.finish()
+  }
+
+  /**
+   * Navigate to another activity
+   *
+   * @param intent Target intent
+   * @param finishAfter Should current activity be finished after navigation, default if false
+   */
+  fun navigateKyc(
+    context:Context,
+    finishAfter: Boolean = false,
+    extras: Bundle? = null
+  ) {
+    var intent= Intent()
+    intent.let {
+      if (extras != null) {
+        it.putExtras(extras)
+      }
+      val kycSteps = userPrefs.loadPostKyc.split(",").toTypedArray()
+      for((i,key) in kycSteps.withIndex()){
+          if(key=="pan"){
+            
+          }
+        if(key=="gst"){
+
+        }
+        if(key=="aadhaar"){
+
+        }
+        if(key=="address"){
+
+        }
+        if(extras?.get("step")==1){
+          intent= Intent(context, TransactionsActivity::class.java)
+        }
+      }
+
+      activity.startActivity(it)
+    }
+
+    //finish activity, if required
+    if (finishAfter) {
+      activity.finish()
+    }
   }
 }

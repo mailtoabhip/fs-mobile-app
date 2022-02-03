@@ -1,10 +1,10 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.GstNumberData
 import com.delhivery.axle.api.response.PanVerificationResponse
-import com.delhivery.axle.api.response.TransactionBidsResponseBody
 import com.delhivery.axle.data.gst.GstDetailData
 import io.reactivex.Single
 import retrofit2.http.*
@@ -37,24 +37,24 @@ interface LoadBoardService {
      * get GST OTP
      */
     @POST("/generate_otp")
-    fun getGstOtp(
-            @Body request: GstOtpGetRequest
-    ): Single<BaseResponse<Any>>
+    fun getGstOrAadhaarOtp(
+            @Body request: GstOrAadhaarOtpGetRequest
+    ): Single<BaseMessageResponse>
 
     /**
      * verify GST OTP
      */
     @POST("/validate_otp")
-    fun verifyGstOtp(
-            @Body request: GstOtpVerifyRequest
-    ): Single<BaseResponse<Any>>
+    fun verifyGstOrAadhaarOtp(
+            @Body request: GstOrAadhaarOtpVerifyRequest
+    ): Single<BaseMessageResponse>
 
     /**
      * verify GST via doc upload
      */
     @POST("/validate_ocr")
     fun verifyByDocUpload(
-            @Body request: GstDocRequest
+            @Body request: GstOrAadhaarDocRequest
     ): Single<BaseResponse<Any>>
 
     /**
@@ -62,6 +62,6 @@ interface LoadBoardService {
      */
     @PATCH("/update_user")
     fun updateUser(@Body request: UpdateUserRequest)
-            : Single<BaseResponse<Any>>
+            : Single<BaseMessageResponse>
 
 }
