@@ -162,7 +162,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         path: String
     ) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path, (mPhotoFile?.length()?.div(1024)).toString()))
+        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
         resetUploadData()
     }
@@ -251,9 +251,14 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         builder.show()
     }
 
-    override fun sendDocForVerification(docList: List<String>) {
-        if(docList.isNotEmpty()){
-            viewModel.verifyByDoc(docList)
+    override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+        if(uploadArray.isNotEmpty()){
+                val imageUrls= mutableListOf<String>()
+                val s3url= awsUtils.awsBasePath()
+               for(i in uploadArray){
+               imageUrls.add(s3url+awsPath+i.first)
+           }
+            viewModel.verifyByDoc(imageUrls)
         }else{
             uiUtils.showToast("No file selected")
         }

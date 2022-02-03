@@ -192,14 +192,10 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
            showVerifcationOptionsDialog(uploadText,dialogUtilsInterface)
             dialog.dismiss()
         }
-        val imageUrls= mutableListOf<String>()
-        val s3url= awsUtils.awsBasePath()
-        bindingDialog.buttonSubmit.setOnClickListener {
-            for(i in uploadArray){
-                imageUrls.add(s3url+i.first)
-            }
 
-            dialogUtilsInterface.sendDocForVerification(imageUrls)
+        bindingDialog.buttonSubmit.setOnClickListener {
+
+            dialogUtilsInterface.sendDocForVerification(uploadArray)
             dialog.dismiss()
         }
 
@@ -254,6 +250,6 @@ interface DialogUtilsInterface {
 
     fun captureImage(uploadImageName:String,localImageName:String)
 
-    fun sendDocForVerification(docList:List<String>)
+    fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>)
 }
 

@@ -8,7 +8,12 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -148,7 +153,9 @@ class NavigationUtils @Inject constructor(
   }
 
   /**
-   * Navigate to another activity
+   * In progress for KYC config
+   *
+   * Navigate to another activity based on config
    *
    * @param intent Target intent
    * @param finishAfter Should current activity be finished after navigation, default if false
@@ -156,34 +163,26 @@ class NavigationUtils @Inject constructor(
   fun navigateKyc(
     context:Context,
     finishAfter: Boolean = false,
-    extras: Bundle? = null
+    extras: Bundle
   ) {
     var intent= Intent()
-    intent.let {
-      if (extras != null) {
-        it.putExtras(extras)
-      }
-      val kycSteps = userPrefs.loadPostKyc.split(",").toTypedArray()
-      for((i,key) in kycSteps.withIndex()){
-          if(key=="pan"){
-            
-          }
-        if(key=="gst"){
 
-        }
-        if(key=="aadhaar"){
+        intent.putExtras(extras)
 
+        val kycSteps = userPrefs.loadPostKyc.split(",").toTypedArray()
+        if(kycSteps.get(extras.getInt("step"))=="pan") {
+          intent = Intent(context, PanVerificationActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt("step"))=="gst"){
+          intent= Intent(context, GstVerificationActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt("step"))=="aadhaar"){
+          intent= Intent(context, AadhaarVerificationActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt("step"))=="address"){
+          intent= Intent(context, CommunicationAddressActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt("step"))=="bv"){
+          intent= Intent(context, BusinessVerificationActivity::class.java)
         }
-        if(key=="address"){
 
-        }
-        if(extras?.get("step")==1){
-          intent= Intent(context, TransactionsActivity::class.java)
-        }
-      }
-
-      activity.startActivity(it)
-    }
+      activity.startActivity(intent)
 
     //finish activity, if required
     if (finishAfter) {

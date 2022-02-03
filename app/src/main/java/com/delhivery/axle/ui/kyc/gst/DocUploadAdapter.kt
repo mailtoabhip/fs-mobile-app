@@ -14,7 +14,6 @@ import com.delhivery.axle.R
 class DocUploadAdapter : BaseAdapter() {
 
     private val items: MutableList<Pair<String,String>> = mutableListOf()
-    private var awsPath = "loadboard/aadhaar/"
     override fun getItem(position: Int) = items[position]
 
     override fun getItemId(position: Int) = position.toLong()
@@ -34,12 +33,7 @@ class DocUploadAdapter : BaseAdapter() {
         }
 
         val item = getItem(position)
-        if(item.first.contains("AADHAAR")){
-           awsPath= "loaaboard/aadhaar/"
-        }else  if(item.first.contains("GST")){
-            awsPath= "loaaboard/gst/"
-        }
-        vh.label.text = item.first.replace(awsPath,"")
+        vh.label.text = item.first
         vh.size.text = item.second+" KB"
 
         vh.remove.setOnClickListener {

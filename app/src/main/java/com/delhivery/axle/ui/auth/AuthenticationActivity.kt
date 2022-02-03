@@ -137,8 +137,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               } else if (timeLeft == 0L) {
                 binding.btnResendOtp.text = getString(string.label_resend_otp_done)
                 binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
-                binding.btnResendOtp.setOnClickListener {
-                }
               } else {
                 viewModel.otpStatusLiveData.postValue(false)
               }
