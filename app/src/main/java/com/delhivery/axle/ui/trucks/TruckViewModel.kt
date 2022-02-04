@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.trucks
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.TripsRepository
@@ -44,33 +45,40 @@ class TruckViewModel @Inject constructor(
     //Live Data variables
     var addTruckLiveData = MutableLiveData<Boolean>()
 
+    var noCityCodeError =  MutableLiveData<Boolean>()
 
     fun addNewTruck(sourcedAs: String){
-        compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code!!, truckDestination!!.orion_db_city_code!!)
-            .flatMap { t->
-                val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
-                    ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
-                    t.first, t.second, sourcedAs, truckPrice)
 
-                inventoryRepository.addInventory(addVehicleRequest.getRequest())
+        if(truckCity!!.orion_db_city_code!=null &&truckDestination!!.orion_db_city_code!=null ){
+            compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code!!, truckDestination!!.orion_db_city_code!!)
+                .flatMap { t->
+                    val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
+                        ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
+                        t.first, t.second, sourcedAs, truckPrice)
 
-            }
-            .onBackground()
-            .subscribe{ _res,error ->
-                if(!error && _res!= null){
-                    addTruckLiveData.postValue(true)
+                    inventoryRepository.addInventory(addVehicleRequest.getRequest())
+
                 }
-                else{
-                    if(error is HttpException){
-                        error.handle()
-                        addTruckLiveData.postValue(null)
+                .onBackground()
+                .subscribe{ _res,error ->
+                    if(!error && _res!= null){
+                        addTruckLiveData.postValue(true)
                     }
                     else{
-                        addTruckLiveData.postValue(false)
+                        if(error is HttpException){
+                            error.handle()
+                            addTruckLiveData.postValue(null)
+                        }
+                        else{
+                            addTruckLiveData.postValue(false)
+                        }
                     }
-                }
 
-            }
+                }
+        }else{
+            noCityCodeError.postValue(true)
+        }
+
 
     }
 
