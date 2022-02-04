@@ -20,6 +20,7 @@ class BusinessVerificationViewModel@Inject constructor(
 
     var selected = MutableLiveData<Boolean>().postValue(false)
 
+    var currentStep = ""
 //    fun visibility()= if(selected.value!!)
 //        View.VISIBLE
 //    else

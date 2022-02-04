@@ -201,6 +201,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               viewModel.saveLoadPostKycConfig(
                   remoteConfig.getString("post_load")
               )
+                  viewModel.saveTruckPostKycConfig(
+                      remoteConfig.getString("post_truck")
+                  )
           } catch (e: Exception) {
             //Do Nothing
         }
@@ -244,9 +247,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_TRANSACTION_IDS, transactions)
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         }
-          bundle.putInt("step",0)
-          navigationUtils.navigateKyc(this,true,bundle)
-        //  navigationUtils.navigate(it.java, true, bundle)
+        /* call for starting kyc flow with step 0 as per remote config
+          bundle.putInt(StepKey,0)
+          navigationUtils.navigateKyc(this,true,bundle)*/
+          navigationUtils.navigate(it.java, true, bundle)
       }
     }
   }

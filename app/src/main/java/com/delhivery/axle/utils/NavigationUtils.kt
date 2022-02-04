@@ -3,6 +3,7 @@ package com.delhivery.axle.utils
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.service.controls.templates.StatelessTemplate
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
 import com.delhivery.axle.injection.scope.ActivityScope
@@ -10,11 +11,13 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -167,24 +170,29 @@ class NavigationUtils @Inject constructor(
     extras: Bundle
   ) {
     var intent= Intent()
-
-
-
-        val kycSteps = userPrefs.loadPostKyc.split(",").toTypedArray()
-        if(kycSteps.get(extras.getInt("step"))=="pan") {
+       //should be changed based on user_mode
+        val userMode = "truck_post"
+        val kycSteps = if(userMode=="truck_post"){
+      userPrefs.truckPostKyc.split(",").toTypedArray()
+      }else{
+      userPrefs.loadPostKyc.split(",").toTypedArray()
+       }
+        if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
-        }else  if(kycSteps.get(extras.getInt("step"))=="gst"){
-          intent= Intent(context, GstVerificationActivity::class.java)
-        }else  if(kycSteps.get(extras.getInt("step"))=="aadhaar"){
-          intent= Intent(context, AadhaarVerificationActivity::class.java)
-        }else  if(kycSteps.get(extras.getInt("step"))=="address"){
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
+            if(extras.getString("pan")!=null && extras.getString("pan")=="personal"){
+              intent= Intent(context, AadhaarVerificationActivity::class.java)
+            }else{
+              intent= Intent(context, GstVerificationActivity::class.java)
+            }
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
           intent= Intent(context, CommunicationAddressActivity::class.java)
-        }else  if(kycSteps.get(extras.getInt("step"))=="bv"){
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="business"){
           intent= Intent(context, BusinessVerificationActivity::class.java)
         }
         val bundle = Bundle()
-        bundle.putInt("total_steps" , kycSteps.size)
-        bundle.putInt("current_step",extras.getInt("step"))
+        bundle.putInt(TotalStepsKey , kycSteps.size)
+        bundle.putInt(CurrentStepKey,extras.getInt(StepKey))
         intent.putExtras(bundle)
         activity.startActivity(intent)
 
@@ -193,4 +201,30 @@ class NavigationUtils @Inject constructor(
       activity.finish()
     }
   }
+
+  fun checkNavigationKycStep(context:Context,currentStep:Int,totalStep:Int,extras: Bundle?){
+    if(currentStep<totalStep){
+      val bundle = Bundle()
+      bundle.putInt(StepKey, (currentStep))
+      if(extras?.getString(panKey) != null){
+        bundle.putString(panKey,extras.getString(panKey))
+      }
+      this.navigateKyc(context,true,bundle)
+    }else{
+      val intent = Intent(context, HomeActivity::class.java)
+      this.navigate(intent,true)
+    }
+  }
+
+  fun getNavigationPercentage(currentStep: Int,totalStep: Int):Int{
+    return (currentStep*100)/totalStep
+   }
+
+   fun getNavigationStepFormat(currentStep: Int,totalStep: Int):String{
+     return "Step $currentStep of $totalStep"
+   }
+
 }
+const val StepKey = "step"
+const val CurrentStepKey = "current_step"
+const val TotalStepsKey = "total_steps"

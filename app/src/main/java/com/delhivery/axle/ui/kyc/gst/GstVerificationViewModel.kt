@@ -28,6 +28,8 @@ class GstVerificationViewModel@Inject constructor(
 
     var gstLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
     var dataLoadingLiveData = MutableLiveData<Boolean>()
+    /* steps */
+    var currentStep = ""
 
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     /**

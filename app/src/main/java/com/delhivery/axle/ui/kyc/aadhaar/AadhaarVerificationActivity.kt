@@ -48,8 +48,8 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import androidx.core.app.ActivityCompat.startActivityForResult
-
-
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
@@ -87,6 +87,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -136,7 +143,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-                navigationUtils.navigate(addressVerificationIntent(this),true)
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                    TotalStepsKey)!!,null)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }

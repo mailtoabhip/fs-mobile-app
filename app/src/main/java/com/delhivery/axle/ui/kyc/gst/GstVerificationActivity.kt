@@ -25,12 +25,14 @@ import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.databinding.*
 
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import java.io.FileInputStream
@@ -72,6 +74,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
+
     }
 
     /*show verification options dialog*/
@@ -199,8 +209,9 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         bindingDialog.buttonShare.setOnClickListener {
             dialog.dismiss()
-            navigationUtils.navigate( aadhaarVerificationIntent(this), false)
-
+           // navigationUtils.navigate( aadhaarVerificationIntent(this), false)
+            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!,null)
         }
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -234,7 +245,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         pan_number?.let { refreshData(it) }
 
         binding.btnVerifyGst.setOnClickListener {
-           showVerifcationOptionsDialog()
+          showVerifcationOptionsDialog()
         }
 
         viewModel.delegationLiveData.observe(this, Observer {

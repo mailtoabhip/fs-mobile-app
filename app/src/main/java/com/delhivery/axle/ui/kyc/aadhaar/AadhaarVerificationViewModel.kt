@@ -31,6 +31,9 @@ BaseViewModel() {
     var otpVerified = MutableLiveData<Boolean>()
     var docVerified = MutableLiveData<Boolean>()
 
+    /* steps */
+    var currentStep = ""
+
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
 

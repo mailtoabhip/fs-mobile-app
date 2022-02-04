@@ -42,4 +42,7 @@ class SplashViewModel @Inject constructor(
   fun saveLoadPostKycConfig(loadPostKyc:String){
     userPrefs.loadPostKyc = loadPostKyc
   }
+  fun saveTruckPostKycConfig(truckPostKyc:String){
+    userPrefs.truckPostKyc = truckPostKyc
+  }
 }
