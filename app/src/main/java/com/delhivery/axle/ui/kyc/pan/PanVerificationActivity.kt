@@ -11,6 +11,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
+import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
@@ -23,6 +24,7 @@ import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.raisedFocus
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 
 
@@ -38,6 +40,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+            if(intent?.extras!=null){
+                viewModel.currentStep = "Step "+(intent?.extras?.getInt("current_step")?.plus(1)) +"of "+ intent?.extras?.getInt("total_steps")
+               val progressPercentage =(intent?.extras?.getInt("current_step")?.plus(1)!!*100)/ intent?.extras?.getInt("total_steps")!!
+                progress.progress = progressPercentage
+            }
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

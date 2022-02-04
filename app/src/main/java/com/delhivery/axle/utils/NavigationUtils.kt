@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
@@ -167,7 +168,7 @@ class NavigationUtils @Inject constructor(
   ) {
     var intent= Intent()
 
-        intent.putExtras(extras)
+
 
         val kycSteps = userPrefs.loadPostKyc.split(",").toTypedArray()
         if(kycSteps.get(extras.getInt("step"))=="pan") {
@@ -181,8 +182,11 @@ class NavigationUtils @Inject constructor(
         }else  if(kycSteps.get(extras.getInt("step"))=="bv"){
           intent= Intent(context, BusinessVerificationActivity::class.java)
         }
-
-      activity.startActivity(intent)
+        val bundle = Bundle()
+        bundle.putInt("total_steps" , kycSteps.size)
+        bundle.putInt("current_step",extras.getInt("step"))
+        intent.putExtras(bundle)
+        activity.startActivity(intent)
 
     //finish activity, if required
     if (finishAfter) {

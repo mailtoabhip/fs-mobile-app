@@ -29,6 +29,10 @@ class PanVerificationViewModel@Inject constructor(
     var panCardNumber=""
     var isValidPan = false
 
+    /*progress and steps */
+    var progress = ""
+    var currentStep = ""
+
     /**
      * Validate PAN regex
      */
