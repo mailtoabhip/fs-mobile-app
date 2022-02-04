@@ -62,7 +62,7 @@
   <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
   <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
   <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
-  <string name="msg_verified_pan_name">PAN Holder Name - %1$s.</string>
+  <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>

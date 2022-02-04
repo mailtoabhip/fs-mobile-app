@@ -1,6 +1,10 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.*
+import com.delhivery.axle.api.request.GstDetailRequest
+import com.delhivery.axle.api.request.GstNumberRequest
+import com.delhivery.axle.api.request.PanVerificationRequest
+import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -40,5 +44,17 @@ class LoadboardRepository @Inject constructor(
                 /* handle error if needed */
                 Pair(false, "Account not created")
             }
+
+     * validate pan number
+     */
+    fun validatePanNumber(panNumber:String)= loadboardService.validatePanNumber(PanVerificationRequest(panNumber)).convertResponse()
+
+
+
+    /**
+     * update user pan number
+     */
+    fun updateUser(phoneNumber:String,panNumber:String?)= loadboardService.updateUser(UpdateUserRequest(phoneNumber,panNumber)).convertResponse()
+
 
 }
