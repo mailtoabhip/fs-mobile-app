@@ -145,7 +145,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
                         navigationUtils.navigateForActivityResult(
                                 intent = selectRouteIntent(this@AccountDetailsActivity),
-                                requestCode = REQCODE_ADD_ROUTES, extras = bundle
+                                requestCode = REQCODE_ADD_ROUTES, extras = bundle, finishAfter = true
                         )
                     }
                     /* Login success, user routes found - navigate to load requests */
