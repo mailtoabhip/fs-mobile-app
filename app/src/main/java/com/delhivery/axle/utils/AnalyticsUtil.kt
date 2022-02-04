@@ -192,6 +192,7 @@ const val PROPERTY_TIME_SINCE_LAST_LOGIN = "time_since_last_login"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT = "change_payment_diesel_payout"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_card_number"
 const val PROPERTY_INVENTORY_ID = "inventory_id"
+const val PROPERTY_REASON = "reason_for_deactivating"
 
 
 

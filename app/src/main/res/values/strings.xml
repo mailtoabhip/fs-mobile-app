@@ -71,6 +71,7 @@
     <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
     <string name="msg_empty_field">Field can\'t be empty</string>
     <string name="msg_truck_add_success">Truck added successfully!</string>
+    <string name="incorrect_vehicle_number">Vehicle Number should be in format AB12CD3456</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
@@ -89,6 +90,9 @@
     <string name="hint_password">Enter Password</string>
     <string name="hint_search_trucks">Search truck by number</string>
     <string name="hint_search_city">Search City</string>
+    <string name="hint_pmt_price">Enter PMT rate</string>
+    <string name="hint_ftl_price">Enter Full Vehicle Rate</string>
+    <string name="hint_price">Enter rate</string>
 
 
     <!--Actions (action_)-->
@@ -322,7 +326,9 @@
     <string name="label_availability">Availability</string>
     <string name="label_truck_size_filter">Truck Size</string>
     <string name="label_enter_unloading_destination">Drop Location</string>
-    <string name="label_price_mt">Price/MT</string>
+    <string name="label_price_mt">Price/MT (optional)</string>
+    <string name="label_price_ftl">Full Truck Price (optional)</string>
+    <string name="label_price">Price (optional)</string>
     <string name="label_search_by_city">Search by city name</string>
     <string name="label_choose_options">Choose option</string>
     <string name="label_choose_from_below">Choose one from the below trucks</string>

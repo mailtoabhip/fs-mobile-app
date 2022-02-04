@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -86,6 +87,20 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         if(viewModel.truckSizeIntent != ""){
             binding.textTruckSize.text = viewModel.truckSizeIntent
             sourcedAs = viewModel.sourcedAsIntent
+
+            if(sourcedAs == "PMT"){
+                binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
+                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
+            }
+            else if(sourcedAs == "FTL"){
+                binding.labelPriceText.text = String.format(getString(R.string.label_price_ftl))
+                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
+            }
+            else{
+                binding.labelPriceText.text = String.format(getString(R.string.label_price))
+                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_price))
+            }
+
             var min = viewModel.minCapIntent
             val max = viewModel.maxCapIntent
             capacityArr.clear()
@@ -101,6 +116,12 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.textTruckCapacity.text = "${viewModel.truckCapacityIntent} MT"
         }
 
+        binding.bodyGroup.setOnCheckedChangeListener { radioGroup, i ->
+            binding.textTruckSize.text=""
+            binding.textTruckCapacity.text = ""
+            sourcedAs = ""
+        }
+
         binding.editTruckCapacity.setOnClickListener{
             if(binding.textTruckSize.text != "") {
                 showTruckCapacityDialog()
@@ -112,7 +133,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         binding.editTruckSize.setOnClickListener {
             if(truckItems.isNotEmpty()){
-            showTruckSizeDialog()
+                val type = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else if(binding.btnRadioTrailer.isChecked) "trailer" else ""
+                if(type != "") {
+                    showTruckSizeDialog(type)
+                }
+                else{
+                    uiUtils.showSnackbar("Select body type first")
+                }
             }
             else{
                 uiUtils.showSnackbar("No Truck Types Found")
@@ -156,6 +183,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     }
 
+    private fun validateTruckNumber(number: String): Boolean{
+        val pattern = Pattern.compile(
+            "[a-zA-Z]{2}((([0-9]{1,2}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}\$|^[a-zA-Z]{3}[0-9]{4}"
+        )
+        return pattern.matcher(number).matches()
+    }
+
     private fun showTruckAddedDialog() {
         val dialog = Dialog(this)
         val bindingDialog= DialogAddTruckSuccessBinding.inflate(layoutInflater)
@@ -188,12 +222,17 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.truckNumber = if(binding.editTruckNumber.text !=null && binding.editTruckNumber.text.toString() != "" )
             binding.editTruckNumber.text.toString() else ""
 
-        viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
+        viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked) "open" else if(binding.btnRadioTrailer.isChecked) "trailer" else ""
 
         viewModel.truckPrice = if(binding.editPriceAddTruck.text !=null && binding.editPriceAddTruck.text.toString() != "" )
             binding.editPriceAddTruck.text.toString().toInt().toDouble() else 0.0
 
         var flag = true
+
+        if(viewModel.truckType == ""){
+            flag = false
+            uiUtils.showSnackbar("Select body type")
+        }
 
         if(viewModel.truckCapacity!= 0.0 ){
             binding.capacityError.visibility = View.GONE
@@ -203,8 +242,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.capacityError.visibility = View.VISIBLE
             flag = false
         }
-        if(viewModel.truckNumber.isNotEmpty()){
+        if(viewModel.truckNumber.isNotEmpty() && validateTruckNumber(viewModel.truckNumber)){
             binding.numberError.visibility = View.GONE
+        }
+        else if(viewModel.truckNumber.isNotEmpty() && !validateTruckNumber(viewModel.truckNumber)){
+            binding.numberError.text = String.format(getString(R.string.incorrect_vehicle_number))
+            binding.numberError.visibility = View.VISIBLE
+            flag= false
         }
         else {
             binding.numberError.text = String.format(getString(R.string.msg_empty_field))
@@ -234,15 +278,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.destinationError.visibility = View.VISIBLE
             flag= false
         }
-        if((sourcedAs.toUpperCase() != "FTL" && sourcedAs.toUpperCase() != "PMT") ||
-            ((sourcedAs.toUpperCase() == "FTL" || sourcedAs.toUpperCase() == "PMT") && viewModel.truckPrice != 0.0)){
-            binding.priceError.visibility =View.GONE
-        }
-        else{
-            binding.priceError.text = String.format(getString(R.string.msg_empty_field))
-            binding.priceError.visibility = View.VISIBLE
-            flag = false
-        }
 
         if(flag) {
             analyticsUtil.trackEvent(
@@ -257,7 +292,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
     }
 
 
-    private fun showTruckSizeDialog() {
+    private fun showTruckSizeDialog(type: String) {
         val dialog = Dialog(this)
         val bindingDialog= DialogBottomTruckValueBinding.inflate(layoutInflater)
 
@@ -271,7 +306,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             dialog.dismiss()
         }
 
-        val type = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else "trailer"
         val truckSizeList = mutableListOf<TruckResponseArray>()
 
         for(truck in truckItems.sortedBy { it.defaultMG }){
@@ -286,6 +320,14 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             sourcedAs = adapter.getItem(position).sourcedAs?: ""
             var min = adapter.getItem(position).minCapacity
             val max = adapter.getItem(position).maxCapacity
+            if(sourcedAs == "PMT"){
+                binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
+                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
+            }
+            else if(sourcedAs == "FTL"){
+                binding.labelPriceText.text = String.format(getString(R.string.label_price_ftl))
+                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
+            }
             viewModel.truckCapacity = 0.0
             binding.textTruckCapacity.text = ""
             capacityArr.clear()

@@ -69,25 +69,28 @@ class ActivateTruckDialog @Inject constructor(
         window!!.setGravity(Gravity.BOTTOM)
 
         //Set Previous Values
-        if(data.currentCityName!= null && data.currentCityCode!=null){
-            val cityModel = CityModel(data.currentCityName!! , data.currentCityCode)
-            truckCity = cityModel
-            binding.textCurrentCityActivate.text = truckCity!!.cityName()
-        }
-
-        if(data.unloadingDestination != null &&  data.unloadingDestinationCode != null){
-            val cityModel = CityModel(data.unloadingDestination!! , data.unloadingDestinationCode)
-            truckDestination = cityModel
-            binding.textUnloadingDestinationActivate.text = truckDestination!!.cityName()
-        }
-
         if(data.unloadingDestinationAmount != null){
-            binding.editPriceActivateTruck.setText( data.unloadingDestinationAmount!!.toInt().toString())
             sourcedAs = "FTL"
         }
         else if(data.unloadingDestinationRate !=null){
-            binding.editPriceActivateTruck.setText( data.unloadingDestinationRate!!.toInt().toString())
             sourcedAs = "PMT"
+        }
+
+        if(data.sourcedAs != null) {
+            sourcedAs = data.sourcedAs!!
+        }
+
+        if(sourcedAs == "PMT"){
+            binding.editPriceActivateTruck.hint = String.format(context.getString(R.string.hint_pmt_price))
+            binding.labelTextPriceActivateDialog.text = String.format(context.getString(R.string.label_price_mt))
+        }
+        else if(sourcedAs == "FTL"){
+            binding.editPriceActivateTruck.hint = String.format(context.getString(R.string.hint_ftl_price))
+            binding.labelTextPriceActivateDialog.text = String.format(context.getString(R.string.label_price_ftl))
+        }
+        else{
+            binding.editPriceActivateTruck.hint = String.format(context.getString(R.string.hint_price))
+            binding.labelTextPriceActivateDialog.text = String.format(context.getString(R.string.label_price))
         }
 
         binding.closeBtn.setOnClickListener {
@@ -115,14 +118,7 @@ class ActivateTruckDialog @Inject constructor(
         else 0.0
 
         var flag = true
-        if ( ((sourcedAs == "FTL" || sourcedAs == "PMT") && truckPrice != 0.0) || (sourcedAs!= "FTL" && sourcedAs!= "PMT")){
-            binding.priceErrorActivate.visibility = View.GONE
-        }
-        else{
-            binding.priceErrorActivate.text = String.format(context.getString(R.string.msg_empty_field))
-            binding.priceErrorActivate.visibility = View.VISIBLE
-            flag = false
-        }
+
         if(truckCity != null){
             binding.originErrorActivate.visibility = View.GONE
         }

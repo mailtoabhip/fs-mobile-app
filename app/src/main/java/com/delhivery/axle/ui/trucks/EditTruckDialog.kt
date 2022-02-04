@@ -86,14 +86,33 @@ class EditTruckDialog @Inject constructor(
             binding.textUnloadingDestinationEditDialog.text = truckDestination!!.cityName()
         }
 
-        if(data.unloadingDestinationAmount != null){
+        if(data.unloadingDestinationAmount != null && data.unloadingDestinationAmount != 0.0){
             binding.editPrice.setText( data.unloadingDestinationAmount!!.toInt().toString())
             sourcedAs = "FTL"
         }
-        else if(data.unloadingDestinationRate !=null){
+        else if(data.unloadingDestinationRate !=null && data.unloadingDestinationRate != 0.0){
             binding.editPrice.setText( data.unloadingDestinationRate!!.toInt().toString())
             sourcedAs = "PMT"
         }
+
+        if(data.sourcedAs != null) {
+            sourcedAs = data.sourcedAs!!
+        }
+
+        if(sourcedAs == "PMT"){
+            binding.editPrice.hint = String.format(context.getString(R.string.hint_pmt_price))
+            binding.labelTextPriceEditDialog.text = String.format(context.getString(R.string.label_price_mt))
+        }
+        else if(sourcedAs == "FTL"){
+            binding.editPrice.hint = String.format(context.getString(R.string.hint_ftl_price))
+            binding.labelTextPriceEditDialog.text = String.format(context.getString(R.string.label_price_ftl))
+        }
+        else{
+            binding.editPrice.hint = String.format(context.getString(R.string.hint_price))
+            binding.labelTextPriceEditDialog.text = String.format(context.getString(R.string.label_price))
+        }
+
+
 
         if(data.ownership.isNotNullOrEmpty()){
             when(data.ownership){
@@ -129,14 +148,6 @@ class EditTruckDialog @Inject constructor(
             "market_truck" else "owns_truck"
 
         var flag = true
-        if ( ((sourcedAs == "FTL" || sourcedAs == "PMT") && truckPrice != 0.0) || (sourcedAs!= "FTL" && sourcedAs!= "PMT")){
-            binding.priceErrorEdit.visibility = View.GONE
-        }
-        else{
-            binding.priceErrorEdit.text = String.format(context.getString(R.string.msg_empty_field))
-            binding.priceErrorEdit.visibility = View.VISIBLE
-            flag = false
-        }
 
         if(truckCity != null){
             binding.originErrorEdit.visibility = View.GONE

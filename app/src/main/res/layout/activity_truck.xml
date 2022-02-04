@@ -79,48 +79,51 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <RadioGroup
-                    android:id="@+id/body_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:layout_marginStart="@dimen/size_6dp"
-                    android:paddingStart="@dimen/size_8dp"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_8dp"
-                    android:paddingBottom="@dimen/size_2dp"
-                    android:orientation="horizontal">
-                    <RadioButton
-                        android:id="@+id/btn_radio_container"
-                        android:layout_width="@dimen/size_56dp"
-                        android:layout_height="@dimen/size_56dp"
-                        android:textSize="@dimen/text_12sp"
-                        android:layout_gravity="center"
-                        android:button="@null"
-                        android:checked="true"
-                        android:background="@drawable/radio_selection_container"
-                        android:textAlignment="center" />
-                    <RadioButton
-                        android:id="@+id/btn_radio_open"
-                        android:layout_width="@dimen/size_56dp"
-                        android:layout_height="@dimen/size_56dp"
-                        android:layout_marginStart="@dimen/size_24dp"
-                        android:textSize="@dimen/text_12sp"
-                        android:layout_gravity="center"
-                        android:button="@null"
-                        android:background="@drawable/radio_selction_open"
-                        android:textAlignment="center" />
-                    <RadioButton
-                        android:id="@+id/btn_radio_trailer"
-                        android:layout_width="@dimen/size_56dp"
-                        android:layout_height="@dimen/size_56dp"
-                        android:layout_marginStart="@dimen/size_24dp"
-                        android:layout_gravity="center"
-                        android:button="@null"
-                        android:background="@drawable/radio_selection_trailer"
-                        android:textSize="@dimen/text_12sp"
-                        android:textAlignment="center"/>
-                </RadioGroup>
+
+                    <RadioGroup
+                        android:id="@+id/body_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_6dp"
+                        android:layout_marginTop="@dimen/size_6dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/size_8dp"
+                        android:paddingTop="@dimen/size_8dp"
+                        android:paddingEnd="@dimen/size_8dp"
+                        android:paddingBottom="@dimen/size_2dp">
+
+                        <RadioButton
+                            android:id="@+id/btn_radio_container"
+                            android:layout_width="@dimen/size_56dp"
+                            android:layout_height="@dimen/size_56dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/radio_selection_container"
+                            android:button="@null"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_12sp" />
+
+                        <RadioButton
+                            android:id="@+id/btn_radio_open"
+                            android:layout_width="@dimen/size_56dp"
+                            android:layout_height="@dimen/size_56dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="@dimen/size_24dp"
+                            android:background="@drawable/radio_selction_open"
+                            android:button="@null"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_12sp" />
+
+                        <RadioButton
+                            android:id="@+id/btn_radio_trailer"
+                            android:layout_width="@dimen/size_56dp"
+                            android:layout_height="@dimen/size_56dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="@dimen/size_24dp"
+                            android:background="@drawable/radio_selection_trailer"
+                            android:button="@null"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_12sp" />
+                    </RadioGroup>
 
 
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -175,7 +178,7 @@
                     android:layout_height="@dimen/size_40dp"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:padding="@dimen/size_8dp"
-                    android:hint="Eg: KA-BD2525"
+                    android:hint="Eg: KA12BD2525"
                     android:inputType="textCapCharacters"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_14sp"
@@ -233,7 +236,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_size"
                         android:layout_width="wrap_content"
-                        android:hint="32ft SXL"
+                        android:hint="Eg: 32ft SXL"
                         android:textColor="@color/black"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"/>
@@ -265,7 +268,7 @@
                         android:id="@+id/text_truck_capacity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="4.5MT"
+                        android:hint="Eg: 4.5MT"
                         android:textColor="@color/black"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -344,11 +347,12 @@
                     android:layout_height="wrap_content" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_price_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_14dp"
                     android:textSize="@dimen/text_12sp"
-                    android:text="@string/label_price_mt"
+                    android:text="@string/label_price"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_price_add_truck"
@@ -359,19 +363,11 @@
                     android:textSize="@dimen/text_14sp"
                     android:inputType="number"
                     android:maxLength="9"
+                    android:layout_marginBottom="@dimen/size_12dp"
                     android:textColor="@color/black"
                     android:hint="Eg: ₹2500"
                     android:background="@drawable/background_rectangle_border_curved">
                 </androidx.appcompat.widget.AppCompatEditText>
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/price_error"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/bid_placed_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:layout_marginBottom="@dimen/size_12dp"
-                    android:visibility="gone"
-                    android:layout_height="wrap_content" />
-
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

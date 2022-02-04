@@ -170,11 +170,12 @@
                 android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_text_price_edit_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_14dp"
             android:textSize="@dimen/text_12sp"
-            android:text="@string/label_price_mt"
+            android:text="@string/label_price"
             android:textColor="@color/black"/>
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edit_price"
@@ -189,13 +190,6 @@
             android:maxLength="9"
             android:background="@drawable/background_rectangle_border_curved">
             </androidx.appcompat.widget.AppCompatEditText>
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/price_error_edit"
-                android:layout_width="wrap_content"
-                android:textColor="@color/bid_placed_red"
-                android:textSize="@dimen/text_12sp"
-                android:visibility="gone"
-                android:layout_height="wrap_content" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"

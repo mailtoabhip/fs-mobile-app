@@ -26,7 +26,7 @@ class UpdateTruck(
     var sourcedAs: String,
     var originClusterId: String,
     var destinationClusterId: String,
-    var price:Double ?=null,
+    var price:Double = 0.0,
     var inventoryStatus: String?=null,
     var ownership: String?= null,
     var originator: String = "axle-app"
@@ -41,21 +41,17 @@ class UpdateTruck(
         jsonObject.addProperty("destination_city_code", unloadingDestinationCode)
         jsonObject.addProperty("origin_cluster_id", originClusterId)
         jsonObject.addProperty("destination_cluster_id", destinationClusterId)
-        if(sourcedAs == "FTL") {
-            price?.let {
-                jsonObject.addProperty(
-                    "unloading_destination_amount",
-                    price
-                )
-            }
+        if(sourcedAs == "FTL" ) {
+            jsonObject.addProperty(
+                "unloading_destination_amount",
+                price
+            )
         }
         else if(sourcedAs == "PMT") {
-            price?.let {
                 jsonObject.addProperty(
                     "unloading_destination_rate",
                     price
                 )
-            }
         }
         inventoryStatus?.let { jsonObject.addProperty("inventory_status", inventoryStatus) }
         ownership?.let{ jsonObject.addProperty("ownership", it)}
@@ -81,7 +77,7 @@ class AddVehicle(
     var originClusterId: String,
     var destinationClusterId: String,
     var sourcedAs: String,
-    var price: Double?= null
+    var price: Double= 0.0
 ){
     fun getRequest():JsonObject{
         val jsonObject = JsonObject()
@@ -98,21 +94,18 @@ class AddVehicle(
         jsonObject.addProperty("destination_city_code", unloadingDestinationCode)
         jsonObject.addProperty("origin_cluster_id", originClusterId)
         jsonObject.addProperty("destination_cluster_id", destinationClusterId)
-        if(sourcedAs == "FTL") {
-            price?.let {
-                jsonObject.addProperty(
-                    "unloading_destination_amount",
-                    price
-                )
-            }
+        if(sourcedAs == "FTL" && price != 0.0) {
+            jsonObject.addProperty(
+                "unloading_destination_amount",
+                price
+            )
+
         }
-        else if(sourcedAs == "PMT") {
-            price?.let {
+        else if(sourcedAs == "PMT" && price != 0.0) {
                 jsonObject.addProperty(
                     "unloading_destination_rate",
                     price
                 )
-            }
         }
         return jsonObject
     }

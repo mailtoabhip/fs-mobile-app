@@ -2,11 +2,12 @@ package com.delhivery.axle.ui.home.fragments.loads
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
@@ -23,7 +24,10 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.data.home.trucks.TruckFrequentItem
+import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
+import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
@@ -406,7 +410,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
           mutableListOf(userPrefs.userId(), "loads_screen")
         )
-        context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+        showAddTruckDialog(mutableListOf(
+          TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+        ))
       }
 
       HomeLoadsBannerAction -> {
@@ -416,9 +424,47 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           mutableListOf(userPrefs.userId(), "loads_screen")
         )
 
-        context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+        ))
       }
     }
+  }
+
+  private fun showAddTruckDialog(items: List<TruckFrequentItem>) {
+    val dialog = Dialog(context!!)
+    val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+    bindingDialog.containerTrucks.removeAllViews()
+    items.forEachIndexed { index, item ->
+      val itemBinding = createTruckFrequentItem(bindingDialog)
+      itemBinding.data = item
+      itemBinding.root.setOnClickListener{
+        context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)
+          , REQCODE_ADD_TRUCK) }
+        dialog.dismiss()
+      }
+
+      bindingDialog.containerTrucks.addView(itemBinding.root, index)
+    }
+    bindingDialog.closeBtn.setOnClickListener{
+      dialog.dismiss()
+    }
+
+    bindingDialog.addTruckLayout.setOnClickListener{
+      context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+      dialog.dismiss()
+    }
+
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
   private fun showVehicleFilterDialog(){
@@ -663,4 +709,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     override fun isLoading() = isLoadingData
   }
+
+  /** Create new frequent truck item*/
+  private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
+    ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
 }

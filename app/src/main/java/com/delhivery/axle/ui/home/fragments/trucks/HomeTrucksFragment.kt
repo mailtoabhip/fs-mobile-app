@@ -301,7 +301,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                     mutableListOf(userPrefs.userId(), "trucks_screen")
                 )
-                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+                showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+                    TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                    TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                ))
             }
         }
     }
@@ -431,8 +434,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             if(reason != "") {
                 analyticsUtil.trackEvent(
                     EVENT_DEACTIVATE_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                    mutableListOf(userPrefs.userId(), data.inventoryId)
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
+                    mutableListOf(userPrefs.userId(), data.inventoryId, reason)
                 )
                 uiUtils.showProgress()
                 viewModel.deactivateTruck(data, reason, position)
