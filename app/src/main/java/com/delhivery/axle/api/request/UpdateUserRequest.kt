@@ -10,6 +10,6 @@ data class UpdateUserRequest (
     @SerializedName("business_name") var business_name: String? = null,
     @SerializedName("referral_code") var referral_code: String? = null,
     @SerializedName("receive_whatsapp_notifications") var receive_whatsapp_notifications: Boolean? = null,
-    @SerializedName("is_location_enabled") var is_location_enabled: Boolean? = null
-
+    @SerializedName("is_location_enabled") var is_location_enabled: Boolean? = null,
+    @SerializedName("pan_number") var pan_number: String? = null
 )
