@@ -93,14 +93,14 @@ class AutoCompleteUtils @Inject constructor(
   ) {
     val parentJsonObject = JsonObject()
     val jsonObject = JsonObject()
-    jsonObject.addProperty("name", "city_sugg")
+    jsonObject.addProperty("name", "city_suggestion_data")
     jsonObject.addProperty("prefix", query)
     jsonObject.addProperty("field", "city_display")
-    jsonObject.addProperty("size", "100")
+    jsonObject.addProperty("size", 25)
     val jsonArray = JsonArray()
     jsonArray.add(jsonObject)
     parentJsonObject.add("suggesters", jsonArray)
-    parentJsonObject.add("include_old_cities", JsonPrimitive(true))
+   // parentJsonObject.add("include_old_cities", JsonPrimitive(true))
 
     disposable?.dispose()
     if(userPrefs.jwtToken != null) {

@@ -38,7 +38,7 @@ data class CityModel(
 }
 
 data class CitiesResponse(
-  @SerializedName("city_sugg") val cities: List<CityModel>
+  @SerializedName("city_suggestion_data") val cities: List<CityModel>
 )
 
 /**

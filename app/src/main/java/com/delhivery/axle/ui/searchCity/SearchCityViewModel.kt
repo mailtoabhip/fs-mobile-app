@@ -43,14 +43,14 @@ class SearchCityViewModel @Inject constructor(
     fun searchCity(query: String) {
         val parentJsonObject = JsonObject()
         val jsonObject = JsonObject()
-        jsonObject.addProperty("name", "city_sugg")
+        jsonObject.addProperty("name", "city_suggestion_data")
         jsonObject.addProperty("prefix", query)
         jsonObject.addProperty("field", "city_display")
-        jsonObject.addProperty("size", "100")
+        jsonObject.addProperty("size", 25)
         val jsonArray = JsonArray()
         jsonArray.add(jsonObject)
         parentJsonObject.add("suggesters", jsonArray)
-        parentJsonObject.add("include_old_cities", JsonPrimitive(true))
+        //parentJsonObject.add("include_old_cities", JsonPrimitive(true))
 
         showProgress()
         Pair(SearchProgressItem(), DataRVAdapterOperationType.AddUpdate
@@ -66,12 +66,14 @@ class SearchCityViewModel @Inject constructor(
                         /* remove progress item */
                         add(Pair(SearchProgressItem(), DataRVAdapterOperationType.Remove))
 
-                        if (_res.responseData == null || _res.responseData.cities.isEmpty()) {
+                        if (_res.responseData == null || _res.responseData.cities.isNullOrEmpty()) {
                             add(Pair(SearchCityWarningItem_NoResult, DataRVAdapterOperationType.AddUpdate))
                         }
 
-                        for (city in _res.responseData!!.cities){
-                            add(Pair(SearchDataItem(city),DataRVAdapterOperationType.Add))
+                        else {
+                            for (city in _res.responseData.cities) {
+                                add(Pair(SearchDataItem(city), DataRVAdapterOperationType.Add))
+                            }
                         }
                     }.let {
                         searchLiveData.postValue(it)

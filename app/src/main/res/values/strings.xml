@@ -71,7 +71,7 @@
     <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
     <string name="msg_empty_field">Field can\'t be empty</string>
     <string name="msg_truck_add_success">Truck added successfully!</string>
-    <string name="incorrect_vehicle_number">Vehicle Number should be in format AB12CD3456</string>
+    <string name="incorrect_vehicle_number">Truck Number should be in format AB12CD3456</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
