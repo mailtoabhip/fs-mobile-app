@@ -73,11 +73,4 @@ interface LoadBoardService {
             @Query("uuid") userId: String
     ): Single<BaseResponse<UserRespone>>
 
-    /**
-     * patch user details
-     */
-    @PATCH("/update_user")
-    fun updateUser(@Body request: UpdateUserRequest)
-            : Single<BaseResponse<Any>>
-
 }

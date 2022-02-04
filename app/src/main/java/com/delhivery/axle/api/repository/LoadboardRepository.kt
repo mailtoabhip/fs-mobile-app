@@ -45,16 +45,6 @@ class LoadboardRepository @Inject constructor(
                 Pair(false, "Account not created")
             }
 
-     * validate pan number
-     */
     fun validatePanNumber(panNumber:String)= loadboardService.validatePanNumber(PanVerificationRequest(panNumber)).convertResponse()
-
-
-
-    /**
-     * update user pan number
-     */
-    fun updateUser(phoneNumber:String,panNumber:String?)= loadboardService.updateUser(UpdateUserRequest(phoneNumber,panNumber)).convertResponse()
-
 
 }
