@@ -22,9 +22,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-        <activity android:name=".ui.businessverification.BusinessVerificationActivity">
-
-        </activity>
+        <activity android:name=".ui.kyc.address.AddressActivity"></activity>
+        <activity android:name=".ui.businessverification.BusinessVerificationActivity"></activity>
 
         <service
             android:name=".fcm.DelhiveryFCMService"
@@ -174,15 +173,12 @@
         <activity
             android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.kyc.gst.GstVerificationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.kyc.aadhaar.AadhaarVerificationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.kyc.address.CommunicationAddressActivity"
             android:screenOrientation="portrait" />

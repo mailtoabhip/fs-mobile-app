@@ -4,7 +4,6 @@ import com.delhivery.axle.api.request.*
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.GstNumberData
 import com.delhivery.axle.api.response.PanVerificationResponse
-import com.delhivery.axle.api.response.TransactionBidsResponseBody
 import com.delhivery.axle.data.gst.GstDetailData
 import io.reactivex.Single
 import retrofit2.http.*

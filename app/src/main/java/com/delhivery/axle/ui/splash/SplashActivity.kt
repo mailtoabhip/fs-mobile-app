@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
@@ -227,7 +228,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> PanVerificationActivity::class
+        Home -> AddressActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {
