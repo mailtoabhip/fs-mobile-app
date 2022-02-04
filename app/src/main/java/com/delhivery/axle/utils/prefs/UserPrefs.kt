@@ -378,33 +378,33 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   }
 
   fun saveUser(user: UserModel) {
-    userName = user.user_name?:""
-    onboardingStatus = user.supplier_details?.onboardingStatus ?: "na"
-    supplierEnabled = user.is_sp_enabled
-    isTestUser = user.supplier_details?.testUser == true
+    userName = user.userName?:""
+    onboardingStatus = user.supplierDetails?.onboardingStatus ?: "na"
+    supplierEnabled = user.isSpEnabled
+    isTestUser = user.supplierDetails?.testUser == true
     tdsRate = user.getTDSSubtractor()
     updatedTdsRate =
       if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
-    bankName = user.supplier_details?.bank ?: ""
-    companyName = user.business_name ?: ""
-    phoneNumber = user.phone_number
-    ifscCode = user.supplier_details?.ifscCode ?: ""
-    pancard = user.pan_number ?: ""
+    bankName = user.supplierDetails?.bank ?: ""
+    companyName = user.businessName ?: ""
+    phoneNumber = user.phoneNumber
+    ifscCode = user.supplierDetails?.ifscCode ?: ""
+    pancard = user.panNumber ?: ""
     accNumber = user.accNumber()
-    cityCode = user.supplier_details?.baseCityCode
+    cityCode = user.supplierDetails?.baseCityCode
     isParent = user.isParent()
-    userType = user.user_type ?: ""
+    userType = user.userType ?: ""
     truckTypes = if (user.isParent()) {
-      user.supplier_details?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     } else {
-      user.supplier_details?.parentDetails?.supplier_details?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.parentDetails?.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
-    demandType = user.supplier_details?.demandType?.joinToString(separator = ",") {it}.toString()
-    userPerformance = user.supplier_details?.overallPerformance ?: ""
-    vendorEntity = user.supplier_details?.vendorEntity ?: ""
+    demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
+    userPerformance = user.supplierDetails?.overallPerformance ?: ""
+    vendorEntity = user.supplierDetails?.vendorEntity ?: ""
 
-    userMode = user.user_mode?: ""
-    userRole = user.user_role?: ""
+    userMode = user.userMode?: ""
+    userRole = user.userRole?: ""
   }
 
   fun canBid() = if (supplierEnabled) {

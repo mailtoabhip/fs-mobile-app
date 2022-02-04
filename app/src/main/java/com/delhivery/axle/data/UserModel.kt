@@ -15,23 +15,23 @@ data class UserRespone(
         @SerializedName("data") var userModel: List<UserModel>
 )
 data class UserModel(
-        @SerializedName("supplier_details") var supplier_details: SupplierModel?,
-        @SerializedName("client_details") var client_details: ClientModel?,
+        @SerializedName("supplier_details") var supplierDetails: SupplierModel?,
+        @SerializedName("client_details") var clientDetails: ClientModel?,
         @SerializedName("uuid") var userId: String,
-        @SerializedName("is_sp_enabled") var is_sp_enabled: Boolean = false,
-        @SerializedName("is_location_enabled") var is_location_enabled: Boolean = false,
-        @SerializedName("is_client_enabled") var is_client_enabled: Boolean = false,
-        @SerializedName("is_user_verified") var is_user_verified: Boolean = false,
-        @SerializedName("pan_number") var pan_number: String?,
-        @SerializedName("phone_number") var phone_number: String?,
-        @SerializedName("selection_change_count") var selection_change_count: Int?,
-        @SerializedName("user_mode") var user_mode: String?,
-        @SerializedName("user_role") var user_role: String?,
-        @SerializedName("user_type") var user_type: String?,
-        @SerializedName("user_name") var user_name: String?,
-        @SerializedName("business_name") var business_name: String?,
-        @SerializedName("referral_code") var referral_code: String?,
-        @SerializedName("receive_whatsapp_notifications") var receive_whatsapp_notifications: Boolean?
+        @SerializedName("is_sp_enabled") var isSpEnabled: Boolean = false,
+        @SerializedName("is_location_enabled") var isLocationEnabled: Boolean = false,
+        @SerializedName("is_client_enabled") var isClientEnabled: Boolean = false,
+        @SerializedName("is_user_verified") var isUserVerified: Boolean = false,
+        @SerializedName("pan_number") var panNumber: String?,
+        @SerializedName("phone_number") var phoneNumber: String?,
+        @SerializedName("selection_change_count") var selectionChangeCount: Int?,
+        @SerializedName("user_mode") var userMode: String?,
+        @SerializedName("user_role") var userRole: String?,
+        @SerializedName("user_type") var userType: String?,
+        @SerializedName("user_name") var userName: String?,
+        @SerializedName("business_name") var businessName: String?,
+        @SerializedName("referral_code") var referralCode: String?,
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?
  ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
@@ -39,13 +39,13 @@ data class UserModel(
   /**
    * User has selected routes or not
    */
-  fun hasRoutes() = supplier_details?.routes != null && supplier_details?.routes?.isNotEmpty() ?: false
+  fun hasRoutes() = supplierDetails?.routes != null && supplierDetails?.routes?.isNotEmpty() ?: false
 
   /**
    * user routes as {routeModel}
    */
   fun userRoutes(): List<RouteModel> {
-    val _routes = supplier_details?.routes?.toRoutes() ?: mutableListOf()
+    val _routes = supplierDetails?.routes?.toRoutes() ?: mutableListOf()
     _routes.sortWith(Comparator { o1, o2 -> o1.origin.city.compareTo(o2.origin.city) })
     return _routes
   }
@@ -53,7 +53,7 @@ data class UserModel(
   /**
    * Returns tds value for user
    */
-  fun getTDSSubtractor() = when (supplier_details?.userType) {
+  fun getTDSSubtractor() = when (supplierDetails?.userType) {
     "individual" -> 99
     else -> 98
   }
@@ -62,11 +62,11 @@ data class UserModel(
    * @return encrypted [accountNo]]
    */
   fun accNumber() =
-    if (supplier_details?.accountNo.isNotNullOrEmpty()) {
+    if (supplierDetails?.accountNo.isNotNullOrEmpty()) {
       val encrypted = StringBuilder()
-      val maskLength = (supplier_details?.accountNo?.length ?: 4) - 4
+      val maskLength = (supplierDetails?.accountNo?.length ?: 4) - 4
       repeat((maskLength downTo 1).count()) { encrypted.append("*") }
-      encrypted.append(supplier_details?.accountNo?.substring(maskLength))
+      encrypted.append(supplierDetails?.accountNo?.substring(maskLength))
       encrypted.toString()
     } else {
       "Not Available"
@@ -75,13 +75,13 @@ data class UserModel(
   /**
    * @return if user is parent/admin user or not
    */
-  fun isParent() = if (supplier_details?.designation.isNotNullOrEmpty()) {
-    supplier_details?.designation.equals("ftl_sp_primary")
+  fun isParent() = if (supplierDetails?.designation.isNotNullOrEmpty()) {
+    supplierDetails?.designation.equals("ftl_sp_primary")
   } else {
     false
   }
 
-  fun getDieselPreferences() :Boolean = supplier_details?.dieselCardPreferences == "yes"
+  fun getDieselPreferences() :Boolean = supplierDetails?.dieselCardPreferences == "yes"
 
 }
 

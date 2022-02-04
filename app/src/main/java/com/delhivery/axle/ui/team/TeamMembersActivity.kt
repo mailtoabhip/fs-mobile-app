@@ -148,10 +148,10 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       EditTeamMemberAction_Edit -> {
         val data = item.data as UserModel
         val uuid = data.userId
-        val name = data.user_name
-        val number = data.phone_number
+        val name = data.userName
+        val number = data.phoneNumber
         val dieselPreference = data.getDieselPreferences()
-        val dieselCompany = data.supplier_details?.dieselCompany?: mutableListOf()
+        val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
         if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
           editTeamMember(uuid, name!!, number!!, dieselPreference, dieselCompany )
         }

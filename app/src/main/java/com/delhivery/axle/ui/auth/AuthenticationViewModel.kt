@@ -107,16 +107,16 @@ class AuthenticationViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            if (!_res.third.is_sp_enabled && !_res.third.is_client_enabled) {
+            if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
               userPrefs.hasLoggedIn = false
               AccountAction
-            } else if (_res.third.user_role.isNullOrEmpty()) {
+            } else if (_res.third.userRole.isNullOrEmpty()) {
               userPrefs.hasLoggedIn = false
               AccountRole
-            }else if (_res.third.user_name.isNullOrEmpty() || _res.third.business_name.isNullOrEmpty()) {
+            }else if (_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty()) {
               userPrefs.hasLoggedIn = false
               AccountDetails
-            } else if (_res.third.supplier_details?.isDeleted == true) {
+            } else if (_res.third.supplierDetails?.isDeleted == true) {
               userPrefs.hasLoggedIn = false
               Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
@@ -163,10 +163,10 @@ class AuthenticationViewModel @Inject constructor(
       .onBackground()
       .subscribe { _res, error ->
         state = if (!error && _res.first) {
-          if (!_res.third.is_sp_enabled && !_res.third.is_client_enabled) {
+          if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
             userPrefs.hasLoggedIn = false
             Disabled
-          } else if (_res.third.supplier_details?.isDeleted == true) {
+          } else if (_res.third.supplierDetails?.isDeleted == true) {
             userPrefs.hasLoggedIn = false
             Disabled
           } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
