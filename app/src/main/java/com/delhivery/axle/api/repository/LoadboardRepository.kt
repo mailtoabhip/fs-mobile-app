@@ -1,9 +1,10 @@
 package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.request.GstDetailRequest
-import com.delhivery.axle.api.request.GstNumberRequest
+import com.delhivery.axle.api.request.*
 import com.delhivery.axle.api.service.LoadBoardService
+import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,5 +21,24 @@ class LoadboardRepository @Inject constructor(
      * gst details
      */
     fun gstDetails(gst_number: String)= loadboardService.getGstDetails(GstDetailRequest(gst_number)).convertResponse()
+
+    /**
+     * update user
+     */
+    fun updateUser(updateUserRequest: UpdateUserRequest) =
+           loadboardService.updateUser(updateUserRequest).convertMessageResponse()
+
+    /**
+     * create user
+     */
+    fun createUser(updateUserRequest: UpdateUserRequest)
+     =  loadboardService.updateUser(updateUserRequest)
+            .map {
+                Pair(true, "Account created")
+            }
+            .onErrorReturn {
+                /* handle error if needed */
+                Pair(false, "Account not created")
+            }
 
 }

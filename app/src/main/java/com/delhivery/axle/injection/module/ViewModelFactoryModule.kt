@@ -3,7 +3,9 @@ package com.delhivery.axle.injection.module
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
-import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
+import com.delhivery.axle.ui.accountaction.AccountActionViewModel
+import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
+import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
@@ -254,11 +256,6 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(AccountSetupViewModel::class)
-  abstract fun bindAccountSetupViewModel(viewModel:AccountSetupViewModel): ViewModel
-
-  @Binds
-  @IntoMap
   @ViewModelScope(PanVerificationViewModel::class)
   abstract fun bindPanVerificationViewModel(viewModel:PanVerificationViewModel): ViewModel
 
@@ -281,6 +278,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BusinessVerificationViewModel::class)
   abstract fun bindBusinessVerificationViewModel(viewModel:BusinessVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountActionViewModel::class)
+  abstract fun bindAccountActionViewModel(viewModel:AccountActionViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountRoleViewModel::class)
+  abstract fun bindAccountRoleViewModel(viewModel:AccountRoleViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountDetailsViewModel::class)
+  abstract fun bindAccountDetailsViewModel(viewModel:AccountDetailsViewModel): ViewModel
 
 
   @Binds

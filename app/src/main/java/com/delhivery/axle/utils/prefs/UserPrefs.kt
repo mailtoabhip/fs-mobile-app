@@ -280,6 +280,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
+  /**
+   *  Account set up
+   */
+  var accountSetup: Boolean
+    set(value) = editor.putBoolean(PrefKeys.AccountSetup, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.AccountSetup, false)
+
+  /**
+   *  User role
+   */
+  var userRole: String
+    set(value) = editor.putString(PrefKeys.UserRole, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.UserRole, "") ?: ""
+
+  /**
+   *  User mode
+   */
+  var userMode: String
+    set(value) = editor.putString(PrefKeys.UserMode, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.UserMode, "") ?: ""
+
 
   /**
    * Clear all preferences
@@ -344,34 +368,43 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.DeepLinkArg)
         .apply()
+    editor.remove(PrefKeys.AccountSetup)
+            .apply()
+    editor.remove(PrefKeys.UserMode)
+            .apply()
+    editor.remove(PrefKeys.UserRole)
+            .apply()
     editor.commit()
   }
 
   fun saveUser(user: UserModel) {
-    userName = user.name
-    onboardingStatus = user.onboardingStatus ?: "na"
-    supplierEnabled = user.supplierEnabled
-    isTestUser = user.testUser
+    userName = user.user_name?:""
+    onboardingStatus = user.supplier_details?.onboardingStatus ?: "na"
+    supplierEnabled = user.is_sp_enabled
+    isTestUser = user.supplier_details?.testUser == true
     tdsRate = user.getTDSSubtractor()
     updatedTdsRate =
       if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
-    bankName = user.bank ?: ""
-    companyName = user.companyName ?: ""
-    phoneNumber = user.phoneNo
-    ifscCode = user.ifscCode ?: ""
-    pancard = user.panCardNo ?: ""
+    bankName = user.supplier_details?.bank ?: ""
+    companyName = user.business_name ?: ""
+    phoneNumber = user.phone_number
+    ifscCode = user.supplier_details?.ifscCode ?: ""
+    pancard = user.pan_number ?: ""
     accNumber = user.accNumber()
-    cityCode = user.baseCityCode
+    cityCode = user.supplier_details?.baseCityCode
     isParent = user.isParent()
-    userType = user.userType ?: ""
+    userType = user.user_type ?: ""
     truckTypes = if (user.isParent()) {
-      user.truckTypes?.joinToString(separator = ",") {it}
+      user.supplier_details?.truckTypes?.joinToString(separator = ",") {it}
     } else {
-      user.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplier_details?.parentDetails?.supplier_details?.truckTypes?.joinToString(separator = ",") {it}
     }
-    demandType = user.demandType.joinToString(separator = ",") {it}
-    userPerformance = user.overallPerformance ?: ""
-    vendorEntity = user.vendorEntity ?: ""
+    demandType = user.supplier_details?.demandType?.joinToString(separator = ",") {it}.toString()
+    userPerformance = user.supplier_details?.overallPerformance ?: ""
+    vendorEntity = user.supplier_details?.vendorEntity ?: ""
+
+    userMode = user.user_mode?: ""
+    userRole = user.user_role?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -405,7 +438,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val Pancard = "pan_card"
     const val BankName = "bank_name"
     const val IfscCode = "ifsc"
-    const val CompanyName = "company_name"
+    const val CompanyName = "business_name"
     const val AccountNumber = "acc_num"
     const val HadEditedRoutes = "has_edited_routes"
     const val OnboardingStatus = "onboarding_status"
@@ -427,6 +460,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
+    const val AccountSetup = "account_set_up"
+
+    const val UserRole = "user_role"
+    const val UserMode = "user_mode"
   }
 }
 

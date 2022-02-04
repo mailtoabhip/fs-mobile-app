@@ -42,10 +42,10 @@ class SelectRouteViewModel @Inject constructor(
           if (!error) {
             routes.addAll(_user.userRoutes())
             routesLiveData.postValue(
-                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+                    Pair(Pair(_user.supplier_details?.baseCity, _user.supplier_details?.baseCityCode), routes) as Pair<Pair<String, String>, MutableList<RouteModel>>?
             )
             allRoutesLiveData.postValue(
-                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+                    Pair(Pair(_user.supplier_details?.baseCity, _user.supplier_details?.baseCityCode), routes) as Pair<Pair<String, String>, MutableList<RouteModel>>?
             )
           } else {
             error.handle()

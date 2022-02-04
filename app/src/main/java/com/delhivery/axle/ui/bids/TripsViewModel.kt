@@ -481,16 +481,16 @@ class TripsViewModel @Inject constructor(
             fuelUserSpinnerOptions.clear()
             if (_res.total > 0) {
               for (user in _res.users) {
-                if (user.phoneNo != null) {
-                  if (user.phoneNo == userPrefs.phoneNumber)
+                if (user.phone_number != null) {
+                  if (user.phone_number == userPrefs.phoneNumber)
                   {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Your No.)"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phone_number!!, "(Your No.)"))
                   }
                   else if (user.isParent()) {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Admin)"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phone_number!!, "(Admin)"))
                   }
                   else {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Child)"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phone_number!!, "(Child)"))
                   }
                 }
               }

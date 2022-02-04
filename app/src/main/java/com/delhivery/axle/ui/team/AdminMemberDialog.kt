@@ -36,13 +36,13 @@ class AdminMemberDialog @Inject constructor(
         binding = DialogAdminMemberViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.adminName.text = user.name
+        binding.adminName.text = user.user_name
         binding.adminDieselReferenceSwitch.isChecked = user.getDieselPreferences()
 
-        dieselPreference = user.dieselCardPreferences?: "no"
+        dieselPreference = user.supplier_details?.dieselCardPreferences?: "no"
 
-        if(user.dieselCompany != null){
-            dieselCompanyVal = user.dieselCompany as MutableList<String>
+        if(user.supplier_details?.dieselCompany != null){
+            dieselCompanyVal = user.supplier_details?.dieselCompany as MutableList<String>
         }
 
         binding.dieselReliance.isEnabled = false

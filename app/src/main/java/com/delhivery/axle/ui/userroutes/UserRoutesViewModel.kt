@@ -59,7 +59,7 @@ class UserRoutesViewModel @Inject constructor(
             }
             routes = _user.userRoutes() as MutableList<RouteModel>
             routesLiveData.postValue(
-                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+                    Pair(Pair(_user.supplier_details?.baseCity, _user.supplier_details?.baseCityCode), routes) as Pair<Pair<String, String>, MutableList<RouteModel>>?
             )
           } else {
             mutableListOf<Pair<BaseUserRouteRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

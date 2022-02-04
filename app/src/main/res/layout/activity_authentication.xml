@@ -185,9 +185,22 @@
             android:layout_marginTop="@dimen/size_32dp"
             />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/otpError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/otp_view"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:fontFamily="sans-serif"
+           android:layout_centerHorizontal="true"
+            android:text="@string/error_invalid_otp"
+            android:textColor="@color/error_red"
+            android:textSize="@dimen/text_14sp" />
+
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_below="@+id/otp_view"
+            android:layout_below="@+id/otpError"
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_centerHorizontal="true"
