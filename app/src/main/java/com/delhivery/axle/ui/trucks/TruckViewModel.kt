@@ -48,9 +48,8 @@ class TruckViewModel @Inject constructor(
     var noCityCodeError =  MutableLiveData<Boolean>()
 
     fun addNewTruck(sourcedAs: String){
-
-        if(truckCity!!.orion_db_city_code!=null &&truckDestination!!.orion_db_city_code!=null ){
-            compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code!!, truckDestination!!.orion_db_city_code!!)
+        if(truckCity!!.orion_db_city_code!=null && truckDestination!!.orion_db_city_code!=null ){
+            compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code?:"", truckDestination!!.orion_db_city_code?:"")
                 .flatMap { t->
                     val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
                         ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
@@ -76,9 +75,9 @@ class TruckViewModel @Inject constructor(
 
                 }
         }else{
+
             noCityCodeError.postValue(true)
         }
-
 
     }
 

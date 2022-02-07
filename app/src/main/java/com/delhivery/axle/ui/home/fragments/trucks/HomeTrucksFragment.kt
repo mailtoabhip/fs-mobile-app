@@ -163,6 +163,16 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             isLoadingData = it ?: false
         })
 
+        viewModel.noCityCodeError.observe(this, Observer {
+            if(it){
+                uiUtils.hideProgress()
+                dialogUtils.showErrorDialog(
+                    "City Code is missing",
+                    3L
+                )
+            }
+        })
+
         viewModel.activateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it!=null){

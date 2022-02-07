@@ -184,7 +184,10 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.noCityCodeError.observe(this, Observer {
             if(it){
                 uiUtils.hideProgress()
-               uiUtils.showToast("missing city code")
+                dialogUtils.showErrorDialog(
+                    "City Code is missing",
+                    3L
+                )
             }
         })
 

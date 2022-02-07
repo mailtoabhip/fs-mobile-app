@@ -65,6 +65,8 @@ class HomeTrucksViewModel @Inject constructor(
     var userTrucksData =
         MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
+    var noCityCodeError =  MutableLiveData<Boolean>()
+
     fun fetchTruckType() {
         compositeDisposable += truckRepository.getTruckType()
             .onBackground()
@@ -215,28 +217,34 @@ class HomeTrucksViewModel @Inject constructor(
         price: Double,
         position: Int) {
 
-        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code?:"", destinationCity.orion_db_city_code?:"")
-            .flatMap { t ->
-                val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-                    destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, "Free")
-                inventoryRepository.activateTruck(request.getRequest())
-            }
-            .onBackground()
-            .progress()
-            .subscribe{_res, error ->
-                if(!error && _res != null){
-                    activateTruckLiveData.postValue(Pair(position,_res))
+        if( currentCity.orion_db_city_code != null && destinationCity.orion_db_city_code != null) {
+            compositeDisposable += inventoryRepository.getOriginDestinationCluster(
+                currentCity.orion_db_city_code ?: "", destinationCity.orion_db_city_code ?: ""
+            )
+                .flatMap { t ->
+                    val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!,
+                        destinationCity.city, destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, "Free"
+                    )
+                    inventoryRepository.activateTruck(request.getRequest())
                 }
-                else{
-                    if(error is HttpException){
-                        error.handle()
-                        activateTruckLiveData.postValue(null)
-                    }
-                    else{
-                        activateTruckLiveData.postValue(Pair(-2,_res))
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error && _res != null) {
+                        activateTruckLiveData.postValue(Pair(position, _res))
+                    } else {
+                        if (error is HttpException) {
+                            error.handle()
+                            activateTruckLiveData.postValue(null)
+                        } else {
+                            activateTruckLiveData.postValue(Pair(-2, _res))
+                        }
                     }
                 }
-            }
+        }
+        else{
+            noCityCodeError.postValue(true)
+        }
 
     }
 
@@ -249,30 +257,35 @@ class HomeTrucksViewModel @Inject constructor(
         ownership:String,
         position: Int) {
 
-        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code?:"", destinationCity.orion_db_city_code?:"")
-            .flatMap { t ->
-                val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-                    destinationCity.orion_db_city_code!!, sourcedAs, t.first,t.second, price, ownership = ownership)
+        if( currentCity.orion_db_city_code != null && destinationCity.orion_db_city_code != null) {
+            compositeDisposable += inventoryRepository.getOriginDestinationCluster(
+                currentCity.orion_db_city_code ?: "", destinationCity.orion_db_city_code ?: ""
+            )
+                .flatMap { t ->
+                    val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
+                        destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, ownership = ownership)
 
-                inventoryRepository.editTruck(request.getRequest())
-            }
-            .onBackground()
-            .progress()
-            .subscribe{_res, error ->
-                if(!error && _res != null){
-                    editTruckLiveData.postValue(Pair(position,_res))
+                    inventoryRepository.editTruck(request.getRequest())
                 }
-                else{
-                    if(error is HttpException){
-                        error.handle()
-                        editTruckLiveData.postValue(null)
-                    }
-                    else{
-                        editTruckLiveData.postValue(Pair(-2,_res))
-                    }
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error && _res != null) {
+                        editTruckLiveData.postValue(Pair(position, _res))
+                    } else {
+                        if (error is HttpException) {
+                            error.handle()
+                            editTruckLiveData.postValue(null)
+                        } else {
+                            editTruckLiveData.postValue(Pair(-2, _res))
+                        }
 
+                    }
                 }
-            }
+        }
+        else{
+            noCityCodeError.postValue(true)
+        }
 
     }
 
