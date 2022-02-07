@@ -280,6 +280,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
+  /**
+   *  Account set up
+   */
+  var accountSetup: Boolean
+    set(value) = editor.putBoolean(PrefKeys.AccountSetup, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.AccountSetup, false)
+
+  /**
+   *  User role
+   */
+  var userRole: String
+    set(value) = editor.putString(PrefKeys.UserRole, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.UserRole, "") ?: ""
+
+  /**
+   *  User mode
+   */
+  var userMode: String
+    set(value) = editor.putString(PrefKeys.UserMode, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.UserMode, "") ?: ""
+
 
     /**
      *  Kyc for load post
@@ -361,34 +385,43 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
       editor.remove(PrefKeys.LoadPostKyc)
           .apply()
+    editor.remove(PrefKeys.AccountSetup)
+            .apply()
+    editor.remove(PrefKeys.UserMode)
+            .apply()
+    editor.remove(PrefKeys.UserRole)
+            .apply()
     editor.commit()
   }
 
   fun saveUser(user: UserModel) {
-    userName = user.name
-    onboardingStatus = user.onboardingStatus ?: "na"
-    supplierEnabled = user.supplierEnabled
-    isTestUser = user.testUser
+    userName = user.userName?:""
+    onboardingStatus = user.supplierDetails?.onboardingStatus ?: "na"
+    supplierEnabled = user.isSpEnabled
+    isTestUser = user.supplierDetails?.testUser == true
     tdsRate = user.getTDSSubtractor()
     updatedTdsRate =
       if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
-    bankName = user.bank ?: ""
-    companyName = user.companyName ?: ""
-    phoneNumber = user.phoneNo
-    ifscCode = user.ifscCode ?: ""
-    pancard = user.panCardNo ?: ""
+    bankName = user.supplierDetails?.bank ?: ""
+    companyName = user.businessName ?: ""
+    phoneNumber = user.phoneNumber
+    ifscCode = user.supplierDetails?.ifscCode ?: ""
+    pancard = user.panNumber ?: ""
     accNumber = user.accNumber()
-    cityCode = user.baseCityCode
+    cityCode = user.supplierDetails?.baseCityCode
     isParent = user.isParent()
     userType = user.userType ?: ""
     truckTypes = if (user.isParent()) {
-      user.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     } else {
-      user.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.parentDetails?.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
-    demandType = user.demandType.joinToString(separator = ",") {it}
-    userPerformance = user.overallPerformance ?: ""
-    vendorEntity = user.vendorEntity ?: ""
+    demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
+    userPerformance = user.supplierDetails?.overallPerformance ?: ""
+    vendorEntity = user.supplierDetails?.vendorEntity ?: ""
+
+    userMode = user.userMode?: ""
+    userRole = user.userRole?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -422,7 +455,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val Pancard = "pan_card"
     const val BankName = "bank_name"
     const val IfscCode = "ifsc"
-    const val CompanyName = "company_name"
+    const val CompanyName = "business_name"
     const val AccountNumber = "acc_num"
     const val HadEditedRoutes = "has_edited_routes"
     const val OnboardingStatus = "onboarding_status"
@@ -446,6 +479,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val DeepLinkArg = "deep_link_argument"
     const val LoadPostKyc = "load_post"
     const val TruckPostKyc = "truck_post"
+    const val AccountSetup = "account_set_up"
+    const val UserRole = "user_role"
+    const val UserMode = "user_mode"
   }
 }
 

@@ -12,6 +12,9 @@ import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.*
+import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
@@ -239,6 +242,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
         Home -> HomeActivity::class
+        AccountAction -> AccountActionActivity::class
+        AccountRole-> AccountRoleActivity::class
+        AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {

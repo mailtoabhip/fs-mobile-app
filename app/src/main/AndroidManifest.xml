@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".KotlinApp"
@@ -166,9 +168,6 @@
             android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.accountsetup.AccountSetupActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -185,6 +184,18 @@
 
         <activity
             android:name=".ui.kyc.address.CommunicationAddressActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountrole.AccountRoleActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountaction.AccountActionActivity"
             android:screenOrientation="portrait" />
     </application>
 

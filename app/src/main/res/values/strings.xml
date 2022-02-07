@@ -391,7 +391,9 @@
   <string name="lr_hint">Upload LR/Loading note</string>
   <string name="upload_aadhaar_text">Upload Aadhaar document</string>
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
-
+  <string name="name_hint">Your name</string>
+  <string name="referral_hint">Referral code (optional)</string>
+  <string name="business_hint">Business name</string>
     <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>

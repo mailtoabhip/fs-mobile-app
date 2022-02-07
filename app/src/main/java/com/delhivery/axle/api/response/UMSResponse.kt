@@ -10,7 +10,7 @@ data class OTPSentResponse(@SerializedName("success") val successMsg: String)
 /**
  * Response for login with OTP
  */
-data class LoginResponse(@SerializedName("jwt") val jwtToken: String)
+data class LoginResponse(@SerializedName("jwt_token") val jwtToken: String)
 
 
 /**
