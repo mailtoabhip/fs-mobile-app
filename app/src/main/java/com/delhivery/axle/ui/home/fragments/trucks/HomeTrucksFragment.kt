@@ -269,6 +269,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
 
     private fun refreshData(filter: Boolean = false) {
+        binding.addTruck.visibility = View.VISIBLE
         viewModel.paginateCount = 0
         adapter.resetStaticData()
         if(!filter) {
@@ -304,6 +305,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksWarningAction_NoTrucks ->{
                 context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+            }
+
+            HomeTrucksTimeOutAction ->{
+                binding.addTruck.visibility = View.GONE
+                refreshData()
             }
 
             HomeTrucksPriorityAction -> {

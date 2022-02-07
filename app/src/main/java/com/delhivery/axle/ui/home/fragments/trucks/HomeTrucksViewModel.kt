@@ -174,7 +174,7 @@ class HomeTrucksViewModel @Inject constructor(
                         add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))
                         /* add api time out item */
                         add(Pair(
-                            HomeTrucksWarningItem_NoTrucks,
+                            HomeTrucksWarningItem_TimeOut,
                             DataRVAdapterOperationType.AddUpdate
                         ))
                     }

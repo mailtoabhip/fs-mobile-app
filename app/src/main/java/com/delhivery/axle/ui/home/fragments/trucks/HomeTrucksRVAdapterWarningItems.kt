@@ -12,7 +12,7 @@ val HomeTrucksWarningItem_NoTrucks = HomeTrucksWarningItem(
     )
 )
 
-val HomeLoadsWarningItem_TimeOut = HomeTrucksWarningItem(
+val HomeTrucksWarningItem_TimeOut = HomeTrucksWarningItem(
     HomeTrucksWarningItemData(
         "Session timed out!",
         "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",
