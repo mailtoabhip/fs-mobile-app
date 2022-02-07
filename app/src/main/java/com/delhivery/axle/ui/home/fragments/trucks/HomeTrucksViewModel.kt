@@ -215,7 +215,7 @@ class HomeTrucksViewModel @Inject constructor(
         price: Double,
         position: Int) {
 
-        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code!!, destinationCity.orion_db_city_code!!)
+        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code?:"", destinationCity.orion_db_city_code?:"")
             .flatMap { t ->
                 val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
                     destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, "Free")
@@ -249,7 +249,7 @@ class HomeTrucksViewModel @Inject constructor(
         ownership:String,
         position: Int) {
 
-        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code!!, destinationCity.orion_db_city_code!!)
+        compositeDisposable += inventoryRepository.getOriginDestinationCluster(currentCity.orion_db_city_code?:"", destinationCity.orion_db_city_code?:"")
             .flatMap { t ->
                 val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
                     destinationCity.orion_db_city_code!!, sourcedAs, t.first,t.second, price, ownership = ownership)
