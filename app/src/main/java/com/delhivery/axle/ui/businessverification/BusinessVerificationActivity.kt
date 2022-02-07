@@ -23,10 +23,12 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
 import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -58,6 +60,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
 //        rg.addView(binding.textTruck)
 //        rg.addView(binding.textLR)
 
@@ -106,8 +114,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
 
         binding.btnVerifyBusiness.setOnClickListener {
-
-
+            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!,null)
         }
 
     }

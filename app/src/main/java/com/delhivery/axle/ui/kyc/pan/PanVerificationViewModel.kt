@@ -30,6 +30,12 @@ class PanVerificationViewModel@Inject constructor(
     var panCardNumber=""
     var isValidPan = false
 
+    /* steps */
+    var currentStep = ""
+
+    /* pay type */
+    var panType = "personal"
+
     /**
      * Validate PAN regex
      */
@@ -73,6 +79,7 @@ class PanVerificationViewModel@Inject constructor(
                     if (!error) {
                         userUpdateLiveData.postValue(true)
                     } else{
+                        error.handle()
                         userUpdateLiveData.postValue(false)
                     }
                 }

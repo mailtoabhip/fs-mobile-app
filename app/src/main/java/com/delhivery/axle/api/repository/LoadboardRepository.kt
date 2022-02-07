@@ -35,6 +35,30 @@ class LoadboardRepository @Inject constructor(
     /**
      * create user
      */
+    fun updateUser(phoneNumber:String,panNumber:String?,aadhaarNumber:String?)= loadboardService.updateUser(UpdateUserRequest(phoneNumber,panNumber,aadhaarNumber)).convertMessageResponse()
+
+    /**
+     * get Aadhaar or GST
+     */
+    fun getGstOrAadhaarOtp(verificationType:String,verificationId:String)= loadboardService.getGstOrAadhaarOtp(
+        GstOrAadhaarOtpGetRequest(verificationType,verificationId)
+    ).convertMessageResponse()
+
+    /**
+     * verify aadhaar otp
+     */
+    fun verifyGstOrAadhaarOtp(verificationType:String,verificationId:String,otp:String)= loadboardService.verifyGstOrAadhaarOtp(
+        GstOrAadhaarOtpVerifyRequest(verificationType,verificationId,otp)
+    ).convertMessageResponse()
+
+
+    /**
+     * verify by ocr
+     */
+    fun verifyByDocUpload(verificationType:String,verificationId:String,docList:List<String>)= loadboardService.verifyByDocUpload(
+        GstOrAadhaarDocRequest(verificationType,verificationId,docList)
+    ).convertResponse()
+
     fun createUser(updateUserRequest: UpdateUserRequest)
      =  loadboardService.updateUser(updateUserRequest)
             .map {

@@ -305,6 +305,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.UserMode, "") ?: ""
 
 
+    /**
+     *  Kyc for load post
+     */
+    var loadPostKyc: String
+        set(value) = editor.putString(PrefKeys.LoadPostKyc, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.LoadPostKyc , " ") ?: ""
+
+    /**
+     *  Kyc for load post
+     */
+    var truckPostKyc: String
+        set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
   /**
    * Clear all preferences
    */
@@ -368,6 +383,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.DeepLinkArg)
         .apply()
+      editor.remove(PrefKeys.LoadPostKyc)
+          .apply()
     editor.remove(PrefKeys.AccountSetup)
             .apply()
     editor.remove(PrefKeys.UserMode)
@@ -460,8 +477,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
+    const val LoadPostKyc = "load_post"
+    const val TruckPostKyc = "truck_post"
     const val AccountSetup = "account_set_up"
-
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
   }

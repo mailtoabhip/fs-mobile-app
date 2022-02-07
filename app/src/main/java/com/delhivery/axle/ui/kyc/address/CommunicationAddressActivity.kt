@@ -8,9 +8,14 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.utils.CurrentStepKey
+import com.delhivery.axle.utils.StepKey
+import com.delhivery.axle.utils.TotalStepsKey
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressBinding, CommunicationAddressViewModel>() {
     init {
@@ -31,6 +36,12 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -51,8 +62,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         binding.btnSubmitDetails.setOnClickListener {
-            navigationUtils.navigate(businessVerificationIntent(this),false)
-
+            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!,null)
         }
 
         //check length and enable/disable submit button

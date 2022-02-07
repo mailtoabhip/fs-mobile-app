@@ -14,4 +14,6 @@ BaseViewModel() {
     var cityAddress=""
     var documentProof = ""
 
+    var currentStep = ""
+
 }

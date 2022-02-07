@@ -70,6 +70,10 @@ class AWSUtils @Inject constructor(
         })
   }
 
+  fun awsBasePath(): String {
+    val s3Url =  "https://orion-service.s3."+AWSConfig.ServerRegion.value()+".amazonaws.com/"
+    return s3Url
+  }
   /**
    * Initiate AWS download
    */
@@ -119,6 +123,8 @@ class AWSUtils @Inject constructor(
       }
 
     })
+
+
   }
 
   /**
