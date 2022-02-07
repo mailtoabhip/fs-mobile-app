@@ -314,7 +314,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksPriorityAction -> {
                 analyticsUtil.trackEvent(
-                    EVENT_BANNER_CLICK,
+                    EVENT_BANNER_CLICK_TOP,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                     mutableListOf(userPrefs.userId(), "trucks_screen")
                 )

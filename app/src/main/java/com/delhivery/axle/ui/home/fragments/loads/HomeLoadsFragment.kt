@@ -406,7 +406,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsPriorityAction -> {
         analyticsUtil.trackEvent(
-          EVENT_BANNER_CLICK,
+          EVENT_BANNER_CLICK_TOP,
           mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
           mutableListOf(userPrefs.userId(), "loads_screen")
         )
@@ -419,7 +419,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsBannerAction -> {
         analyticsUtil.trackEvent(
-          EVENT_BANNER_CLICK,
+          EVENT_BANNER_CLICK_SCROLL,
           mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
           mutableListOf(userPrefs.userId(), "loads_screen")
         )
