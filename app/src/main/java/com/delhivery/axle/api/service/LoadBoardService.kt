@@ -1,10 +1,9 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.GstNumberData
-import com.delhivery.axle.api.response.PanVerificationResponse
-import com.delhivery.axle.api.response.TransactionBidsResponseBody
+import com.delhivery.axle.api.response.*
+import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailData
 import io.reactivex.Single
 import retrofit2.http.*
@@ -57,11 +56,21 @@ interface LoadBoardService {
             @Body request: GstDocRequest
     ): Single<BaseResponse<Any>>
 
-    /**
-     * patch user details
-     */
+    @POST("/get_otp")
+    fun requestOTP(@Body request: RequestOTP): Single<OTPSentResponse>
+
+    @POST("/verify_otp")
+    fun otpLogin(@Body request: OTPLoginRequest): Single<BaseResponse<LoginResponse>>
+
     @PATCH("/update_user")
-    fun updateUser(@Body request: UpdateUserRequest)
-            : Single<BaseResponse<Any>>
+    fun updateUser(@Body request: UpdateUserRequest): Single<BaseMessageResponse>
+
+    /**
+     * Get user details
+     */
+    @GET("/get_user")
+    fun userDetails(
+            @Query("uuid") userId: String
+    ): Single<BaseResponse<UserRespone>>
 
 }

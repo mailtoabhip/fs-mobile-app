@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Context
 import com.delhivery.axle.injection.qualifier.ActivityContext
 import com.delhivery.axle.injection.scope.ActivityScope
-import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
-import com.delhivery.axle.ui.accountsetup.AccountSetupFragmentsBindingModule
+import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
@@ -174,10 +175,6 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsSearchOngoingTripActivityModule::class])
   internal abstract fun bindSearchOngoingTripActivity(): SearchOngoingTripActivity
 
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsAccountSetupActivityModule::class, AccountSetupFragmentsBindingModule::class])
-  internal abstract fun bindAccountSetupActivity(): AccountSetupActivity
-
   /* Consolidated page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
@@ -210,6 +207,21 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbGstVerificationActivityModule::class])
   internal abstract fun bindGstVerificationActivity(): GstVerificationActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountActionActivityModule::class])
+  internal abstract fun bindAccountActionActivity(): AccountActionActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountRoleActivityModule::class])
+  internal abstract fun bindAccountRoleActivity(): AccountRoleActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountDetailsActivityModule::class])
+  internal abstract fun binAccountDetailsActivity(): AccountDetailsActivity
 }
 
 /**
@@ -295,9 +307,6 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 @Module
-internal abstract class AbsAccountSetupActivityModule : ActivityModule<AccountSetupActivity>()
-
-@Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 @Module
@@ -314,6 +323,15 @@ internal abstract class AbsCommunicationAddressActivityModule : ActivityModule<C
 
 @Module
 internal abstract class AbsBusinessVerificationActivityModule : ActivityModule<BusinessVerificationActivity>()
+
+@Module
+internal abstract class AbsAccountRoleActivityModule : ActivityModule<AccountRoleActivity>()
+
+@Module
+internal abstract class AbsAccountActionActivityModule : ActivityModule<AccountActionActivity>()
+
+@Module
+internal abstract class AbsAccountDetailsActivityModule : ActivityModule<AccountDetailsActivity>()
 
 /**
  * Activity Binds Module

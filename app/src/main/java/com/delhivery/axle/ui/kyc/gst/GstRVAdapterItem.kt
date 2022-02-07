@@ -5,7 +5,6 @@ import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstProgressItemData
 import com.delhivery.axle.data.gst.GstTimeOutItemData
 import com.delhivery.axle.data.gst.GstWarningItemData
-import com.delhivery.axle.ui.accountsetup.AccountSetupFragmentActionType
 
 /**
  * RV item type for [GstRVAdapter]

@@ -1,7 +1,6 @@
 package com.delhivery.axle.injection.component
 
 import com.delhivery.axle.injection.module.NetworkModule
-import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
@@ -196,11 +195,6 @@ interface ViewModelInjector {
    * Injects [SearchOngoingTripViewModel]
    */
   fun inject(viewModel: SearchOngoingTripViewModel)
-
-  /**
-   * Injects [AccountSetupViewModel]
-   */
-  fun inject(viewModel: AccountSetupViewModel)
 
   /**
    * Injects [PanVerificationViewModel]

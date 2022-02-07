@@ -3,5 +3,8 @@ package com.delhivery.axle.ui.splash
 enum class SplashPostState {
   Onboarding,
   Auth,
-  Home
+  Home,
+  AccountAction,
+  AccountRole,
+  AccountDetails
 }

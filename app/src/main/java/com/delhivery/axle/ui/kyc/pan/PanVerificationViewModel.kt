@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.kyc.pan
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
@@ -65,7 +66,7 @@ class PanVerificationViewModel@Inject constructor(
         if (!isConnected) return
 
         if (panCardNumber.length == 10 || isValidPan) {
-            compositeDisposable += loadboardRepository.updateUser(userPrefs.phoneNumber!!,panCardNumber)
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phone_number = userPrefs.phoneNumber!!,pan_number = panCardNumber))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
