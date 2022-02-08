@@ -233,7 +233,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             if(it!=null){
                 adapter.itemsList().removeAt(it.first)
                 adapter.notifyItemRemoved(it.first)
-               // refreshData()
+                adapter.notifyDataSetChanged()
             }
         })
 
