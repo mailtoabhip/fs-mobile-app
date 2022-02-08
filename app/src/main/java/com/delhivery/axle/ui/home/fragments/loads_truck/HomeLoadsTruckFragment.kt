@@ -52,6 +52,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
 
         if(activity!!.fromLink){
             binding.tabLayout.getTabAt(1)?.select()
+            activity.fromLink = false
         }
     }
 

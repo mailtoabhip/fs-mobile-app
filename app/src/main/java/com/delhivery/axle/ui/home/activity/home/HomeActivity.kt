@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
+import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -55,7 +56,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var dplink_type : String = ""
 
   var fromLink = false
-  var id = ""
 
   @Inject lateinit var userPrefs : UserPrefs
 
@@ -73,6 +73,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+
+    //For inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
 
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
@@ -81,7 +83,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
     fromLink = false
-    id = ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -181,9 +182,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         ACTIVATE_TRUCK_REDIRECT ->{
           if(dplink_tid != "") {
-            fromLink = true
-            id = dplink_tid
-            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+            startActivity(truckIntent(this, fromLinks = true ,vehicleNumber = dplink_tid))
           }
           else{
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -244,9 +243,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       ACTIVATE_TRUCK_NOTIFICATION ->{
-        fromLink = true
-        id = vehicleNumber
-        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
       }
 
       REDIRECT_TO_TRUCKS -> {
@@ -255,9 +252,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       TRUCK_REACHED_NOTIFICATION -> {
-        fromLink = true
-        id = vehicleNumber
-        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
       }
 
       else -> {
@@ -295,6 +290,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+
+    //For Inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
 
     /**
@@ -303,7 +300,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
     fromLink = false
-    id = ""
     processDeepLink()
 
     if (transactions.isNotEmpty())

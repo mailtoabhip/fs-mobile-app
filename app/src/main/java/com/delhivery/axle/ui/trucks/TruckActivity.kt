@@ -62,6 +62,8 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.minCapIntent = intent.getDoubleExtra(MinCap,0.0) ?: 0.0
         viewModel.maxCapIntent = intent.getDoubleExtra(MaxCap,0.0) ?: 0.0
         viewModel.sourcedAsIntent = intent.getStringExtra(Sourced)?: ""
+        viewModel.fromLinks = intent.getBooleanExtra(FromLinks, false)
+        viewModel.vehicleNumberIntent = intent.getStringExtra(VehicleNumber) ?: ""
 
 
     }
@@ -75,6 +77,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
+        }
+
+        if(viewModel.fromLinks && viewModel.vehicleNumberIntent != ""){
+            uiUtils.showProgress()
+            viewModel.getInventory(userPrefs.userId() + "::" + viewModel.vehicleNumberIntent)
         }
 
         if(viewModel.truckTypeIntent != ""){
@@ -161,7 +168,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         viewModel.fetchTruckType()
 
-        //Live Data Observers
+        /** Observe live data*/
+        viewModel.inventoryLiveData.observe(this, Observer {
+            uiUtils.hideProgress()
+            if(it != null){
+
+            }
+        })
 
         viewModel.truckGetLiveData.observe(this, Observer {
             if(it!=null){
@@ -419,6 +432,8 @@ private const val CityType = "city_type"
 private const val MinCap = "min_cap"
 private const val MaxCap = "max_cap"
 private const val Sourced = "sources_as"
+private const val FromLinks = "notification_deeplink"
+private const val VehicleNumber = "vehicle_number"
 
 
 
@@ -433,7 +448,9 @@ fun truckIntent(
     truckCapacity: Double= 0.0,
     minCap :Double = 0.0,
     maxCap: Double =0.0,
-    sourcesAS: String= ""
+    sourcesAS: String= "",
+    fromLinks:Boolean = false,
+    vehicleNumber: String= ""
 ) = Intent(context, TruckActivity::class.java).apply {
     putExtra(TruckType, truckType)
     putExtra(TruckSize, truckSize)
@@ -441,5 +458,7 @@ fun truckIntent(
     putExtra(MinCap, minCap)
     putExtra(MaxCap, maxCap)
     putExtra(Sourced, sourcesAS)
+    putExtra(FromLinks, fromLinks)
+    putExtra(VehicleNumber , vehicleNumber)
 
 }

@@ -59,8 +59,6 @@ class HomeTrucksViewModel @Inject constructor(
     var deactivateTruckLiveData = MutableLiveData<Pair<Int,HomeTrucksRequestItemData>>()
     var deleteTruckLiveData = MutableLiveData<Pair<Int,Boolean>>()
 
-    var inventoryLiveData = MutableLiveData<HomeTrucksRequestItemData>()
-
     /* user bids live data */
     var userTrucksData =
         MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -308,26 +306,4 @@ class HomeTrucksViewModel @Inject constructor(
 
     }
 
-    fun getInventory(
-        id: String
-    ){
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("uuid", id)
-        compositeDisposable += inventoryRepository.getSingleInventory(jsonObject)
-            .onBackground()
-            .subscribe { _res, error ->
-                if(!error && _res != null){
-                    if(_res.trucks.isNotEmpty()){
-                        inventoryLiveData.postValue(_res.trucks[0])
-                    }
-                    else{
-                        inventoryLiveData.postValue(null)
-                    }
-                }
-                else{
-                    error.handle()
-                    inventoryLiveData.postValue(null)
-                }
-            }
-    }
 }

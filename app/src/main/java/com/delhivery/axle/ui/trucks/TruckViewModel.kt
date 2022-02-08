@@ -9,11 +9,13 @@ import com.delhivery.axle.api.request.AddVehicle
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -31,6 +33,8 @@ class TruckViewModel @Inject constructor(
     var minCapIntent: Double =0.0
     var maxCapIntent :Double =0.0
     var sourcedAsIntent: String = ""
+    var fromLinks:Boolean = false
+    var vehicleNumberIntent: String = ""
 
     var truckType : String = ""
     var truckSize: String = ""
@@ -46,6 +50,8 @@ class TruckViewModel @Inject constructor(
     var addTruckLiveData = MutableLiveData<Boolean>()
 
     var noCityCodeError =  MutableLiveData<Boolean>()
+
+    var inventoryLiveData = MutableLiveData<HomeTrucksRequestItemData>()
 
     fun addNewTruck(sourcedAs: String){
         if(truckCity!!.orion_db_city_code!=null && truckDestination!!.orion_db_city_code!=null ){
@@ -91,6 +97,29 @@ class TruckViewModel @Inject constructor(
                 else{
                     error.handle()
                     truckGetLiveData.postValue(null)
+                }
+            }
+    }
+
+    fun getInventory(
+        id: String
+    ){
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("uuid", id)
+        compositeDisposable += inventoryRepository.getSingleInventory(jsonObject)
+            .onBackground()
+            .subscribe { _res, error ->
+                if(!error && _res != null){
+                    if(_res.trucks.isNotEmpty()){
+                        inventoryLiveData.postValue(_res.trucks[0])
+                    }
+                    else{
+                        inventoryLiveData.postValue(null)
+                    }
+                }
+                else{
+                    error.handle()
+                    inventoryLiveData.postValue(null)
                 }
             }
     }

@@ -13,20 +13,15 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
@@ -35,8 +30,6 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
-import kotlinx.android.synthetic.main.view_frequent_truck_item.*
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -72,8 +65,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val activity: HomeActivity = activity as HomeActivity
-
         viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
@@ -88,16 +79,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
             addOnScrollListener(ButtonRVScrollListener())
             addOnScrollListener(PaginationInterface())
-        }
-
-        //From Notifications or Deep link
-        if(activity.fromLink && activity.id != ""){
-            viewModel.getInventory(userPrefs.userId() + "::" + activity.id)
-            activity.fromLink = false
-            activity.id = ""
-        }
-        else if (activity.fromLink){
-            activity.fromLink = false
         }
 
         binding.addTruck.setOnClickListener {
@@ -145,15 +126,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         })
 
         /** Observe live Data*/
-
-        viewModel.inventoryLiveData.observe(this, Observer {
-            if(it!= null){
-                ActivateTruckDialog(context!!, it as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, -1).show()
-            }
-            else{
-                uiUtils.showSnackbar("No Inventory Found")
-            }
-        })
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items -> adapter.operation(_items) }

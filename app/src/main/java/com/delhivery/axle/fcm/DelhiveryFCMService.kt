@@ -80,6 +80,8 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     val notificationType = remoteMessage.data["notification_type"] ?: ""
     val transactions = remoteMessage.data["transaction_ids"] ?: ""
     val preferredTransactionId = remoteMessage.data["transaction_id"] ?: ""
+
+    //For inventory use
     val vehicleNumber = remoteMessage.data["vehicle_number"] ?: ""
 
 //    analyticsUtil.trackEvent(
