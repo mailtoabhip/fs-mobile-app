@@ -231,7 +231,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             uiUtils.showSnackbar("Truck Deleted Successfully")
             uiUtils.hideProgress()
             if(it!=null){
-                refreshData()
+                adapter.itemsList().removeAt(it.first)
+                adapter.notifyItemRemoved(it.first)
+               // refreshData()
             }
         })
 

@@ -102,10 +102,13 @@ class TruckViewModel @Inject constructor(
     }
 
     fun getInventory(
-        id: String
+        userId: String,
+        vehicleNumber: String
     ){
         val jsonObject = JsonObject()
-        jsonObject.addProperty("uuid", id)
+        jsonObject.addProperty("supplier_id", userId)
+        jsonObject.addProperty("vehicle_prefix", vehicleNumber)
+        truckNumber = vehicleNumber
         compositeDisposable += inventoryRepository.getSingleInventory(jsonObject)
             .onBackground()
             .subscribe { _res, error ->

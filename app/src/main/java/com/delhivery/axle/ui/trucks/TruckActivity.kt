@@ -81,7 +81,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         if(viewModel.fromLinks && viewModel.vehicleNumberIntent != ""){
             uiUtils.showProgress()
-            viewModel.getInventory(userPrefs.userId() + "::" + viewModel.vehicleNumberIntent)
+            viewModel.getInventory(userPrefs.userId() , viewModel.vehicleNumberIntent)
         }
 
         if(viewModel.truckTypeIntent != ""){
@@ -172,7 +172,56 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.inventoryLiveData.observe(this, Observer {
             uiUtils.hideProgress()
             if(it != null){
+                binding.editTruckNumber.setText(it.vehicleNumber)
+                when(it.truckType){
+                    "open" -> binding.btnRadioOpen.isChecked = true
+                    "closed" -> binding.btnRadioContainer.isChecked = true
+                    "trailer" ->binding.btnRadioTrailer.isChecked = true
+                }
 
+                when(it.ownership){
+                    "owns_trucks"-> binding.btnRadioOwnTruck.isChecked = true
+                    "market_truck" -> binding.btnRadioMarketTruck.isChecked = true
+                }
+
+                capacityArr.clear()
+                capacityArr.add("${it.capacity} MT")
+
+
+                binding.textTruckSize.text = it.truckSize
+                binding.textTruckCapacity.text = it.truckCapacity()
+
+                if(it.currentCityName!= null && it.currentCityCode!=null){
+                    val cityModel = CityModel(it.currentCityName!! , it.currentCityCode)
+                    viewModel.truckCity = cityModel
+                    binding.textCurrentCity.text = viewModel.truckCity!!.cityName()
+                }
+
+                if(it.unloadingDestination != null &&  it.unloadingDestinationCode != null){
+                    val cityModel = CityModel(it.unloadingDestination!! , it.unloadingDestinationCode)
+                    viewModel.truckDestination = cityModel
+                    binding.textUnloadingDestination.text = viewModel.truckDestination!!.cityName()
+                }
+
+                sourcedAs = it.sourcedAs ?:""
+
+                if(it.sourcedAs != null && it.sourcedAs == "PMT"){
+                    binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
+                    binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
+                }
+                else if(it.sourcedAs != null && it.sourcedAs == "FTL"){
+                    binding.labelPriceText.text = String.format(getString(R.string.label_price_ftl))
+                    binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
+                }
+                else{
+                    binding.labelPriceText.text = String.format(getString(R.string.label_price))
+                    binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_price))
+                }
+
+            }
+            else{
+                binding.editTruckNumber.setText(viewModel.truckNumber)
+                uiUtils.showSnackbar("No Inventory Found")
             }
         })
 
