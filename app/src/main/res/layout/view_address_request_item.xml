@@ -95,17 +95,18 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/size_16dp"
                 android:id="@+id/imgAddress"
+                android:layout_alignParentEnd="true"
                 android:layout_below="@+id/gst_call_num"
-                app:srcCompat="@drawable/ic_vector_location"
+                app:srcCompat="@drawable/ic_edit_pencil"
                 android:layout_marginBottom="@dimen/size_18dp"
                 android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginEnd="@dimen/size_16dp"
                 android:layout_marginTop="@dimen/size_18dp"
                 android:layout_height="@dimen/size_16dp"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gst_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/imgAddress"
                 android:layout_below="@id/gst_call_num"
                 app:layout_constraintTop_toBottomOf="@+id/gst_call_num"
                 android:fontFamily="sans-serif"

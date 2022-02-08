@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.kyc.address
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -83,17 +84,3 @@ internal class AddressTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     }
 }
 
-/**
- * Progress inline viewholder
-// */
-//internal class AddressProgressItemVH(binding: ViewAddressProgressItemBinding) :
-//    BaseAddressRVAdapterViewHolder<ViewGstProgressItemBinding, GstProgressItem>(
-//        binding
-//    ) {
-//    override fun bind(
-//        item: GstProgressItem,
-//        _interface: GstRVAdapterInterface
-//    ) {
-//
-//    }
-//}

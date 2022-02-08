@@ -269,7 +269,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         path: String
     ) {
         uiUtils.hideProgress()
-        viewModel.documentProofUrl=path
+        viewModel.documentProofUrl.add(path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()

@@ -27,8 +27,10 @@ BaseViewModel() {
     var areaAddress=""
     var pincodeAddress=""
     var cityAddress=""
-    var documentProofType = ""
-    var documentProofUrl = "s3.amazon.sjdha"
+    var phoneNum ="+91"+userPrefs.phoneNumber
+    var documentProofType =""
+    var documentProofUrl=mutableListOf("")
+    var addressType ="alternate"
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
@@ -44,21 +46,25 @@ BaseViewModel() {
     fun addNewAddress() {
         if (!isConnected) return
 
-       var businessAddress = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
+       var address = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
 
+        documentProofType=documentProofType.replace("\\s".toRegex(),"_")
+        documentProofType=documentProofType.toLowerCase()
+        addressType= addressType.toLowerCase()
         mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(AddressDataItem(AddressDetailData(userPrefs.phoneNumber,businessAddress)),
+            add(Pair(AddressDataItem(AddressDetailData(userPrefs.phoneNumber,address)),
                 DataRVAdapterOperationType.Add
             ))
         }.let {
             AddressLiveData.postValue(it)
         }
-            compositeDisposable += loadboardRepository.addAlternateAddress(
-                userPrefs.phoneNumber!!,
-                businessAddress,
-                documentProofType,
-                documentProofUrl
 
+            compositeDisposable += loadboardRepository.addAddress(
+                phoneNum,
+                address,
+                documentProofType,
+                documentProofUrl,
+                addressType
             )
                 .onBackground()
                 .progress()
@@ -73,11 +79,12 @@ BaseViewModel() {
 
     }
 
-    fun updateCommunicationAddress(){
+    fun updateCommunicationAddress( selectedAddress : String){
         compositeDisposable += loadboardRepository.updateCommunicationAddress(
-            userPrefs.phoneNumber!!,
-            selectedComminicationAddress,
-            isSameAsGst
+            selectedAddress,
+            isSameAsGst,
+            userPrefs.phoneNumber!!
+
         )
             .onBackground()
             .progress()

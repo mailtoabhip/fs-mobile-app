@@ -60,16 +60,16 @@ interface LoadBoardService {
      * add alternate address
      */
 
-    @PATCH("/add_new_address")
-    fun addNewAddress(
-        @Body request: AddAddressVerificationRequest
+    @POST("/add_address")
+    fun addAddress(
+        @Body request: AddAddressRequest
     ): Single<BaseResponse<Any>>
 
     /*
      * update your communication address
      */
 
-    @PATCH("/submit_address")
+    @POST("/submit_address")
     fun updateNewAddress(
         @Body request: UpdateAddressVerificationRequest
     ): Single<BaseResponse<Any>>

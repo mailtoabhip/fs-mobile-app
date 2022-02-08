@@ -23,6 +23,7 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.address.AddressDetailData
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.databinding.ActivityAddressBinding
 import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
 import com.delhivery.axle.databinding.DialogGstAttachmentsBinding
@@ -76,6 +77,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var pincodeFilled = false
     var proofTypeFilled = false
     var docUploadProof = true
+    var selectedAddress =""
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
     override fun layoutId() = R.layout.activity_address
@@ -88,7 +90,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
           showAddAlternateAddressDialog()
       }
         binding.btnSubmitDetails.setOnClickListener {
-            viewModel.updateCommunicationAddress()
+            viewModel.updateCommunicationAddress(selectedAddress)
         }
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
@@ -106,7 +108,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         viewModel.AddressLiveData.observe(this, Observer {
             it?.let { _items ->
-                AddressRVAdapter.operation(_items)
+          //      if(viewModel.addAddressLiveData.value!!) {
+                    AddressRVAdapter.operation(_items)
+          //      }
             }
         })
         viewModel.updateAddressLiveData.observe(this, Observer {
@@ -230,7 +234,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         path: String
     ) {
         uiUtils.hideProgress()
-        viewModel.documentProofUrl=path
+        viewModel.documentProofUrl.add(path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
@@ -350,6 +354,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             var businessAddress = viewModel.flatAddress +","+viewModel.areaAddress+","+viewModel.cityAddress+"-"+viewModel.pincodeAddress
 
             viewModel.addNewAddress()
+            viewModel.documentProofUrl.clear()
             //  navigationUtils.navigate(businessVerificationIntent(this),false)
 
         }
@@ -417,8 +422,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
     override fun handleAction(actionId: String, item: BaseAddressRVAdapterItem<*>) {
-             viewModel.selectedComminicationAddress=item.type.name
+
     }
 
+    override fun onItemClicked(item: BaseAddressRVAdapterItem<*>) {
+        super.onItemClicked(item)
+        selectedAddress=item.data.key()
+    }
 
 }
