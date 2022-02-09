@@ -72,7 +72,7 @@ class PanVerificationViewModel@Inject constructor(
         if (!isConnected) return
 
         if (panCardNumber.length == 10 || isValidPan) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phone_number = userPrefs.phoneNumber!!,pan_number = panCardNumber))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->

@@ -27,12 +27,12 @@ class AccountActionViewModel @Inject constructor(
      */
     fun updateUser(updateUserRequest: UpdateUserRequest) {
         if (!isConnected) return
-        updateUserRequest.phone_number = userPrefs.phoneNumber.toString()
+        updateUserRequest.phoneNumber = userPrefs.phoneNumber.toString()
         compositeDisposable += loadboardRepository.updateUser(updateUserRequest)
                 .onBackground()
                 .subscribe { _res, error ->
                     if (!error && _res != null) {
-                        userPrefs.userMode = updateUserRequest.user_mode?:""
+                        userPrefs.userMode = updateUserRequest.userMode?:""
                         updateUserStatusLiveData.postValue(_res)
                     } else {
                         error.handle()
