@@ -3,14 +3,14 @@ package com.delhivery.axle.api.request
 import com.google.gson.annotations.SerializedName
 
 data class UpdateUserRequest (
-    @SerializedName("phone_number") var phone_number: String = "",
-    @SerializedName("user_mode") var user_mode: String? = null,
-    @SerializedName("user_role") var user_role: String? = null,
-    @SerializedName("user_name") var user_name: String? = null,
-    @SerializedName("business_name") var business_name: String? = null,
-    @SerializedName("referral_code") var referral_code: String? = null,
-    @SerializedName("receive_whatsapp_notifications") var receive_whatsapp_notifications: Boolean? = null,
-    @SerializedName("is_location_enabled") var is_location_enabled: Boolean? = null,
-    @SerializedName("pan_number") var pan_number: String? = null,
+    @SerializedName("phone_number") var phoneNumber: String = "",
+    @SerializedName("user_mode") var userMode: String? = null,
+    @SerializedName("user_role") var userRole: String? = null,
+    @SerializedName("user_name") var userName: String? = null,
+    @SerializedName("business_name") var businessName: String? = null,
+    @SerializedName("referral_code") var referralCode: String? = null,
+    @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean? = null,
+    @SerializedName("is_location_enabled") var isLocationEnabled: Boolean? = null,
+    @SerializedName("pan_number") var panNumber: String? = null,
     @SerializedName("aadhaar_number") val aadhaarNumber:String? =null
 )

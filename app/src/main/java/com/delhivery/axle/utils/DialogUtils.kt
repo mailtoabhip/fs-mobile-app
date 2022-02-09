@@ -246,7 +246,6 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
 
 interface DialogUtilsInterface {
 
-
     fun getRequestAadhaarOtp()
 
     fun captureImage(uploadImageName:String,localImageName:String)
