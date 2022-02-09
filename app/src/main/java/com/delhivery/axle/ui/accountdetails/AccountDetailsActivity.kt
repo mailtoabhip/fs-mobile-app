@@ -140,7 +140,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                     /* Login success, No user routes found - select route activity */
                     AuthenticationUIState.SelectRoute -> {
                         userPrefs.firstRoute = true
-                        uiUtils.hideDelhiveryProgress()
+                        uiUtils.showProgress()
                         val bundle = Bundle()
                         bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
                         navigationUtils.navigateForActivityResult(
@@ -150,7 +150,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                     }
                     /* Login success, user routes found - navigate to load requests */
                     AuthenticationUIState.LoadRequest -> {
-                        uiUtils.hideProgress()
+                        uiUtils.showProgress()
                         navigationUtils.navigate(HomeActivity::class.java, true)
                     }
                     /* otp verified, account set up needed */

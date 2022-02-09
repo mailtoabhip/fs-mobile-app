@@ -34,7 +34,7 @@ class PanVerificationViewModel@Inject constructor(
     var currentStep = ""
 
     /* pay type */
-    var panType = "personal"
+    var panType = "person"
 
     /**
      * Validate PAN regex
@@ -72,12 +72,13 @@ class PanVerificationViewModel@Inject constructor(
         if (!isConnected) return
 
         if (panCardNumber.length == 10 || isValidPan) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phone_number = userPrefs.phoneNumber!!,pan_number = panCardNumber))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
                         userUpdateLiveData.postValue(true)
+                        userPrefs.pancard= panCardNumber
                     } else{
                         error.handle()
                         userUpdateLiveData.postValue(false)

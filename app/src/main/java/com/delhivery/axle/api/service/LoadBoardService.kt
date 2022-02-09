@@ -72,9 +72,7 @@ interface LoadBoardService {
     /**
      * Get user details
      */
-    @PATCH("/update_user")
-    fun updateUser(@Body request: UpdateUserRequest)
-            : Single<BaseMessageResponse>
+
 
     @GET("/get_user")
     fun userDetails(

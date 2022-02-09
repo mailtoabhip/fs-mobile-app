@@ -36,14 +36,14 @@ class AuthenticationRepository @Inject constructor(
    * Send otp to phone number and return if success and error message
    */
   fun sendOTP(phoneNo: String) =
-   loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
-        .map {
-          Pair(true, it.successMsg)
-        }
-        .onErrorReturn {
-          /* handle error if needed */
-          Pair(false, "Invalid phone number")
-        }
+    loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
+      .map {
+        Triple(true, it.successMsg,it.isNewUser)
+      }
+      .onErrorReturn {
+        /* handle error if needed */
+        Triple(false, "Invalid phone number", false)
+      }
 
   /**
    * Verify OTP

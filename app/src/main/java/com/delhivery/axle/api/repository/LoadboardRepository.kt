@@ -33,11 +33,6 @@ class LoadboardRepository @Inject constructor(
            loadboardService.updateUser(updateUserRequest).convertMessageResponse()
 
     /**
-     * create user
-     */
-    fun updateUser(phoneNumber:String,panNumber:String?,aadhaarNumber:String?)= loadboardService.updateUser(UpdateUserRequest(phoneNumber,panNumber,aadhaarNumber)).convertMessageResponse()
-
-    /**
      * get Aadhaar or GST
      */
     fun getGstOrAadhaarOtp(verificationType:String,verificationId:String)= loadboardService.getGstOrAadhaarOtp(

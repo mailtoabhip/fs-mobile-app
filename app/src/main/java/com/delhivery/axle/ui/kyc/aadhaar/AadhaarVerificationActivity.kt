@@ -53,7 +53,7 @@ import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
-    DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface {
+    DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -80,7 +80,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
 
     val awsPath = "loadboard/aadhaar/"
-    val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
+    val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
 
@@ -143,8 +143,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,null)
+                navigationUtils.navigate(HomeActivity::class.java, true)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }
@@ -270,7 +271,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         }else{
             uiUtils.showToast("No file selected")
         }
-
+       uploadArray.clear()
     }
 
     private fun createImageFile(): File {
@@ -363,6 +364,10 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 }
             }
         }
+    }
+
+    override fun handleDeleteAction(item: Pair<String, String>) {
+        uploadArray.remove(item)
     }
 
 

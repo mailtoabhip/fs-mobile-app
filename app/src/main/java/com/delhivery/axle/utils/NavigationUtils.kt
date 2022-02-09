@@ -180,10 +180,12 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(extras.getString("pan")!=null && extras.getString("pan")=="personal"){
+            if(extras.getString("pan")!=null && extras.getString("pan")=="person"){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
             }else{
-              intent= Intent(context, GstVerificationActivity::class.java)
+//              intent= Intent(context, GstVerificationActivity::class.java)
+              intent= Intent(context, AadhaarVerificationActivity::class.java)
+
             }
         }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
           intent= Intent(context, CommunicationAddressActivity::class.java)

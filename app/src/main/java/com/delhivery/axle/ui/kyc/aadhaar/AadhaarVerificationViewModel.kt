@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.kyc.aadhaar
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.config.AWSConfig
@@ -125,7 +126,9 @@ BaseViewModel() {
         if (!isConnected) return
 
         if (aadhaarCardNumber.length == 14) {
-            compositeDisposable += loadboardRepository.updateUser("+91"+userPrefs.phoneNumber,null,aadhaarCardNumber.replace("-",""))
+            compositeDisposable += loadboardRepository.updateUser(
+                UpdateUserRequest(
+                   phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
