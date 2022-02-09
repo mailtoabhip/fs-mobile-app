@@ -17,6 +17,9 @@ import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
+import com.delhivery.axle.ui.profile.HelpSupportViewModel
+import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -191,6 +194,21 @@ interface ViewModelInjector {
    * Injects [SearchOngoingTripViewModel]
    */
   fun inject(viewModel: SearchOngoingTripViewModel)
+
+  /**
+   * Injects [HelpSupportViewModel]
+   */
+  fun inject(viewModel: HelpSupportViewModel)
+
+  /**
+   * Injects [ProfileDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileDetailsViewModel)
+
+  /**
+   * Injects [BankDetailsViewModel]
+   */
+  fun inject(viewModel: BankDetailsViewModel)
 
   @Component.Builder
   interface Builder {

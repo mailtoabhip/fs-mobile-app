@@ -62,6 +62,7 @@
   <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
   <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
   <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
+  <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -111,6 +112,7 @@
   <string name="action_done">Done !</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
   <string name="action_login">Login</string>
+  <string name="action_update_business_logo">Update business logo</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -279,6 +281,19 @@
   <string name="label_bank_transfer">Bank Transfer</string>
   <string name="label_change_payment_mode">Change Payment Mode</string>
   <string name="label_with_sign_value">₹ %1$d</string>
+  <string name="label_bank_name">Bank Name</string>
+  <string name="label_ifsc">IFSC</string>
+  <string name="label_payment_terms">Payment Terms</string>
+  <string name="label_tc">Terms &amp; Conditions</string>
+  <string name="label_privacy_policy">Privacy Policy</string>
+  <string name="label_business_name">Business Name</string>
+  <string name="label_my_name">My Name</string>
+  <string name="label_my_occupation">My Occupation</string>
+  <string name="label_i_want">I want to</string>
+  <string name="label_post_load">Post Load</string>
+  <string name="label_post_truck">Post Trucks</string>
+  <string name="label_both">Both</string>
+  <string name="label_third_party">View third party loads</string>
 
 
   <!--Error (error_-->

@@ -20,6 +20,9 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.profile.BankDetailsActivity
+import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.ui.profile.ProfileDetailsActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -175,6 +178,21 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
   internal abstract fun bindModule(): InvalidActivity
+
+  /* HelpSupport activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsHelpSupportModule::class])
+  internal abstract fun bindHelpSupportActivity(): HelpSupportActivity
+
+  /*Profile Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileDetailsActivityModule::class])
+  internal abstract fun bindProfileDetailsActivity() : ProfileDetailsActivity
+
+  /*Bank Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBankDetailsActivityModule::class])
+  internal abstract fun bindBankDetailsActivity() : BankDetailsActivity
 }
 
 /**
@@ -261,6 +279,15 @@ internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<Sear
 
 @Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
+
+@Module
+internal abstract class AbsHelpSupportModule : ActivityModule<HelpSupportActivity>()
+
+@Module
+internal abstract class  AbsProfileDetailsActivityModule: ActivityModule<ProfileDetailsActivity>()
+
+@Module
+internal abstract class AbsBankDetailsActivityModule : ActivityModule<BankDetailsActivity>()
 
 /**
  * Activity Binds Module

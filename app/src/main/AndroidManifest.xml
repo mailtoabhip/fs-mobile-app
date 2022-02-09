@@ -163,6 +163,15 @@
         <activity
             android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.HelpSupportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.ProfileDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.BankDetailsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

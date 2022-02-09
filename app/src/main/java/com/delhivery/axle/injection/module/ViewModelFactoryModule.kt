@@ -24,6 +24,9 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
+import com.delhivery.axle.ui.profile.HelpSupportViewModel
+import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -42,6 +45,7 @@ import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
+import com.google.rpc.Help
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -245,6 +249,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchOngoingTripViewModel::class)
   abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HelpSupportViewModel::class)
+  abstract fun bindHelpSupportViewModel(helpSupportViewModel: HelpSupportViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileDetailsViewModel::class)
+  abstract fun bindProfileDetailsViewModel(profileDetailsViewModel: ProfileDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BankDetailsViewModel::class)
+  abstract fun bindBankDetailsViewModel(bankDetailsViewModel: BankDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

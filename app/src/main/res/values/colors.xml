@@ -43,6 +43,9 @@
   <color name="bid_placed_red">#DC6A64</color>
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
+  <color name="faded_black">#525B7A</color>
+  <color name="switch_blue">#5B80F7</color>
+  <color name="bg_grey">#E0E3EB</color>
 
 
 </resources>
