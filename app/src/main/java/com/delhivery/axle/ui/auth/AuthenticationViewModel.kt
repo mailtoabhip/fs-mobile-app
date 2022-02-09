@@ -70,11 +70,10 @@ class AuthenticationViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            userPrefs.accountSetup = true
+            userPrefs.accountSetup = _res.third
             OTP
           } else {
             errorLiveData.postValue(Pair(InvalidOTP, _res.second))
-            userPrefs.accountSetup = false
             PhoneNo
           }
         }
@@ -107,16 +106,16 @@ class AuthenticationViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
+            if (!_res.third.isSpEnabled && !_res.third.isClientEnabled && userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
               AccountAction
-            } else if (_res.third.userRole.isNullOrEmpty()) {
+            } else if (_res.third.userRole.isNullOrEmpty() && userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
               AccountRole
-            }else if (_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty()) {
+            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )&& userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
               AccountDetails
-            } else if (_res.third.supplierDetails?.isDeleted == true) {
+            } else if (_res.third.supplierDetails?.isDeleted == true ) {
               userPrefs.hasLoggedIn = false
               Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {

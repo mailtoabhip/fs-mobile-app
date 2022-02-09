@@ -64,13 +64,6 @@ data class UpdateUserFCMTokenRequest(
   }
 }
 
-//pancard,aadhaar optional for update user patch request
-data class UpdateUserRequest(
-  @SerializedName("phone_number") val phoneNumber:String,
-  @SerializedName("pan_number") val panNumber:String?,
-  @SerializedName("aadhaar_number") val aadhaarNumber:String?
-
-)
 
 /* actions */
 const val EditTeamMemberAction_Edit = "edit_member"

@@ -28,6 +28,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
@@ -41,7 +42,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(), GstRVAdapterInterface, AWSUtils.AWSProgressInterface {
+class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(), GstRVAdapterInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -69,7 +70,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     lateinit var bitmapUtils: BitmapUtils
 
     val awsPath = "loadboard/gst/"
-    val docUploadAdapter :DocUploadAdapter by lazy { DocUploadAdapter() }
+    val docUploadAdapter :DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -422,6 +423,10 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    override fun handleDeleteAction(item: Pair<String, String>) {
+        uploadArray.remove(item)
     }
 
 }

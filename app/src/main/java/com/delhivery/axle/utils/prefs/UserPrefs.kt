@@ -320,6 +320,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
             .apply()
         get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
+
+    /**
+     * Is user verified
+     */
+    var isUserVerfied: Boolean
+        set(value) = editor.putBoolean(PrefKeys.IsUserVerfied, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
+
   /**
    * Clear all preferences
    */
@@ -391,6 +400,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.UserRole)
             .apply()
+      editor.remove(PrefKeys.IsUserVerfied)
+          .apply()
     editor.commit()
   }
 
@@ -422,6 +433,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
+      isUserVerfied = user.isUserVerified
+
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -482,6 +495,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val AccountSetup = "account_set_up"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
+      const val IsUserVerfied = "is_user_verified"
+
   }
 }
 

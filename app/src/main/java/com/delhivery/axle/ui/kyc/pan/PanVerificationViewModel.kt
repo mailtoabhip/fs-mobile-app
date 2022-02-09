@@ -34,7 +34,7 @@ class PanVerificationViewModel@Inject constructor(
     var currentStep = ""
 
     /* pay type */
-    var panType = "personal"
+    var panType = "person"
 
     /**
      * Validate PAN regex
@@ -78,6 +78,7 @@ class PanVerificationViewModel@Inject constructor(
                 .subscribe { _res, error ->
                     if (!error) {
                         userUpdateLiveData.postValue(true)
+                        userPrefs.pancard= panCardNumber
                     } else{
                         error.handle()
                         userUpdateLiveData.postValue(false)

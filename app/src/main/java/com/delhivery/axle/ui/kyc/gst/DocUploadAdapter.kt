@@ -7,11 +7,13 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.delhivery.axle.R
+import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
+import com.delhivery.axle.utils.DialogUtilsInterface
 
 /**
  *  LV adapter for [Upload dialog]
  */
-class DocUploadAdapter : BaseAdapter() {
+class DocUploadAdapter(private val _interface :UploadedItemRVAdapterInterface) : BaseAdapter() {
 
     private val items: MutableList<Pair<String,String>> = mutableListOf()
     override fun getItem(position: Int) = items[position]
@@ -19,6 +21,8 @@ class DocUploadAdapter : BaseAdapter() {
     override fun getItemId(position: Int) = position.toLong()
 
     override fun getCount() = items.size
+
+
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view: View
@@ -39,6 +43,7 @@ class DocUploadAdapter : BaseAdapter() {
         vh.remove.setOnClickListener {
             items.removeAt(position)
             notifyDataSetChanged()
+            _interface.handleDeleteAction(item)
         }
         return view
     }

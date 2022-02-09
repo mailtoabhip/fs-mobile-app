@@ -394,7 +394,9 @@
   <string name="name_hint">Your name</string>
   <string name="referral_hint">Referral code (optional)</string>
   <string name="business_hint">Business name</string>
-    <string-array name="array_truck_type">
+    <string name="action_start_kyc">Start</string>
+  <string name="label_kyc">Please start KYC verification</string>
+  <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>
     <item>Open</item>
