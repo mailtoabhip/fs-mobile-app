@@ -21,6 +21,8 @@ import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.HelpSupportViewModel
 import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -215,6 +217,17 @@ interface ViewModelInjector {
    * Injects [ProfileKYCDetailsViewModel]
    */
   fun inject(viewModel: ProfileKYCDetailsViewModel)
+
+  /**
+   * Injects [KYCDocumentsViewModel]
+   */
+  fun inject(viewModel: KYCDocumentsViewModel)
+
+  /**
+   * Injects [YourKYCDetailsViewModel]
+   */
+  fun inject(viewModel: YourKYCDetailsViewModel)
+
 
   @Component.Builder
   interface Builder {

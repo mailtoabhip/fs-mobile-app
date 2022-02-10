@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityProfileKycDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentType
+import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentsAdapter
 
 class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding, ProfileKYCDetailsViewModel>(){
 
@@ -15,11 +17,23 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
 
     override fun requireConnection() = true
 
+    /*  fragments pager adapter */
+    private lateinit var pagerAdapter: ProfileKYCFragmentsAdapter
+
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "KYC Details"
+        pagerAdapter = ProfileKYCFragmentsAdapter(supportFragmentManager)
+
+        binding.viewpager.apply {
+            offscreenPageLimit = ProfileKYCFragmentType.count()
+            adapter = pagerAdapter
+            }
+
+        binding.kycTabLayout.setupWithViewPager(binding.viewpager)
     }
 
 

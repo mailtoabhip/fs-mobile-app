@@ -92,7 +92,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     binding.containerYourRoutes.setOnClickListener {
       context?.let {
-        startActivity(profileKYCDetailsIntent(it))
+        startActivity(userRoutesIntent(it))
       }
     }
 

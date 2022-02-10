@@ -299,6 +299,10 @@
     <string name="label_more_options_team">More options</string>
     <string name="label_edit_route">Edit Route</string>
     <string name="label_delete_route_option">Delete Route</string>
+    <string name="label_pan">PAN</string>
+    <string name="label_gst">GST Number</string>
+    <string name="label_cin">CIN</string>
+    <string name="label_address">Address</string>
 
     <!--Error (error_-->
     <string name="error_no_internet">No Internet connection</string>

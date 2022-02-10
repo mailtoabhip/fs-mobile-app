@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.ProfileKYCDetailsActivity
+import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentBindingModule
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -197,7 +198,7 @@ abstract class ActivityBindingModule {
 
   /*Profile KYC Details Activity*/
   @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsProfileKYCDetailsActivityModule::class])
+  @ContributesAndroidInjector(modules = [AbsProfileKYCDetailsActivityModule::class, ProfileKYCFragmentBindingModule::class])
   internal abstract fun  bindProfileKYCDetailsActivity() : ProfileKYCDetailsActivity
 }
 

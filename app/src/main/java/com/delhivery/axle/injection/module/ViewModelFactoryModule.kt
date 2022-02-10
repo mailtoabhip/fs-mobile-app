@@ -29,6 +29,8 @@ import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.HelpSupportViewModel
 import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -271,6 +273,16 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ProfileKYCDetailsViewModel::class)
   abstract fun bindProfileKYCDetailsViewModel(profileKYCDetailsViewModel: ProfileKYCDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(KYCDocumentsViewModel::class)
+  abstract fun bindKYCDocumentsViewModel(kycDocumentsViewModel: KYCDocumentsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourKYCDetailsViewModel::class)
+  abstract fun bindYourKYCDetailsViewModel(yourKYCDetailsViewModel: YourKYCDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
