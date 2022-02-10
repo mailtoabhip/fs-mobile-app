@@ -75,7 +75,7 @@ interface LoadBoardService {
      */
     @POST("/add_address")
     fun addAddress(
-        @Body request: AddAddressRequest
+        @Body request: AddAddressModel
     ): Single<BaseResponse<Any>>
 
     /*

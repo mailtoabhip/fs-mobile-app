@@ -61,46 +61,6 @@ class GstVerificationViewModel@Inject constructor(
                 }
     }
 
-    /**
-     * Get GST numbers and details
-     */
-    /* fun getGstDetails(){
-         compositeDisposable += loadboardRepository.gstNumbers(userPrefs.pancard).flatMap{ t->
-            loadboardRepository.gstDetails(t.gstin_numbers)
-         }
-                 .onBackground()
-                 .subscribe { _res, error ->
-                     if (!error) {
-                         mutableListOf<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                             /* remove progress item */
-                             add(Pair(GstProgressItem(), DataRVAdapterOperationType.Remove))
-
-                             if (_res.gst_number.isNullOrEmpty()) {
-                                 add(Pair(GstWarningItem_Transaction, DataRVAdapterOperationType.Add))
-                             } else {
-                                 for (gstDetail in _res.gst_number) {
-                                     add(Pair(GstDataItem(_res), DataRVAdapterOperationType.Add))
-                                 }
-                             }
-                         }.let {
-                             gstLiveData.postValue(it)
-                         }
-                     } else {
-                         mutableListOf<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-
-                             /* remove progress item */
-                             add(Pair(GstProgressItem(), DataRVAdapterOperationType.Remove))
-                             /* remove search item */
-                             add(Pair(GstDataItem(), DataRVAdapterOperationType.Remove))
-
-                             add(Pair(GstItem_TimeOut, DataRVAdapterOperationType.Add))
-                         }.let {
-                             gstLiveData.postValue(it)
-                         }
-                     }
-                 }
-     }*/
-
     fun verifyRequestOtp(otp: CharArray) {
         if (!isConnected) return
         val _otp = otp.joinToString("")
@@ -206,10 +166,7 @@ class GstVerificationViewModel@Inject constructor(
                             if (_res.getGstList(_res.gstin_numbers).isNullOrEmpty()) {
                                 add(Pair(GstItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                             } else {
-                                Log.d("dmsdlfslf", _res.getGstList(_res.gstin_numbers).size.toString())
-
                                 for (warehouse in _res.getGstList(_res.gstin_numbers)) {
-                                    Log.d("csdmksdk","mkop")
                                     add(Pair(GstDataItem(warehouse), DataRVAdapterOperationType.Add))
                                 }
                             }
@@ -231,7 +188,6 @@ class GstVerificationViewModel@Inject constructor(
                 .subscribe { _res, error ->
                     if (!error) {
                         data.gstDetailItemData = _res
-                        Log.d("dsenssdkksd", data.toString())
                     } else {
                         data.gstDetailItemData = null
                     }

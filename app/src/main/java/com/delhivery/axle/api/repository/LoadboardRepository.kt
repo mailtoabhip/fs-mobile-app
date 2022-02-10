@@ -27,7 +27,7 @@ class LoadboardRepository @Inject constructor(
     fun gstDetails(gst_number: String)= loadboardService.getGstDetails(GstDetailRequest(gst_number)).convertResponse()
 
     fun addAddress(phone_number: String,address:String,proof_document_type:String,document_url:List<String>,address_type:String) = loadboardService.addAddress(
-        AddAddressRequest(phone_number,address,proof_document_type,document_url,address_type)
+        AddAddressModel(phone_number,address,proof_document_type,document_url,address_type)
     ).convertResponse()
 
     fun updateCommunicationAddress(business_address:String,is_same_as_gst:Boolean,phone_number: String) = loadboardService.updateNewAddress(

@@ -172,6 +172,14 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     override fun fetchDetails(data: GstDetailData) {
     }
 
+    override fun fetchPreviousSelected(): String? {
+        return null
+    }
+
+    override fun fetchCurrSelected(): String? {
+        return null
+    }
+
     override fun onAWSSuccess(
         path: String
     ) {

@@ -79,7 +79,7 @@ BaseViewModel() {
 
     }
 
-    fun updateCommunicationAddress( selectedAddress : String){
+    fun updateCommunicationAddress(selectedAddress : String){
         compositeDisposable += loadboardRepository.updateCommunicationAddress(
             selectedAddress,
             isSameAsGst,

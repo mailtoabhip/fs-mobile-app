@@ -2,6 +2,7 @@ package com.delhivery.axle.utils.prefs
 
 import android.content.Context
 import com.auth0.android.jwt.JWT
+import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import java.util.*
@@ -346,12 +347,69 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.aadhaarNumber, "") ?: ""
 
   /**
+   * business address
+   */
+  var businessAddress: String
+    set(value) = editor.putString(PrefKeys.businessAddress ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.businessAddress, "") ?: ""
+
+  /**
    * gst address
    */
   var gstAddress: String
     set(value) = editor.putString(PrefKeys.gstAddress ,value)
             .apply()
     get() = prefs.getString(PrefKeys.gstAddress, "") ?: ""
+
+  /**
+   * alternate address
+   */
+  var alternateAddress: String
+    set(value) = editor.putString(PrefKeys.alternateAddress ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.alternateAddress, "") ?: ""
+
+  /**
+   *  pan verified
+   */
+  var isPanVerfied: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isPanVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isPanVerified, false)
+
+  /**
+   *  gst verified
+   */
+  var isGstVerfied: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isGstVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isGstVerified, false)
+
+  /**
+   *  aadhaar verified
+   */
+  var isAadhaartVerfied: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isAadhaarVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isAadhaarVerified, false)
+
+  /**
+   *  rc verified
+   */
+  var isRcVerfied: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isRcVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isRcVerified, false)
+
+  /**
+   * rc number
+   */
+  var rcNumber: String
+    set(value) = editor.putString(PrefKeys.rcNumber,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.rcNumber, "") ?: ""
+
 
   /**
    * Clear all preferences
@@ -426,11 +484,25 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
       editor.remove(PrefKeys.IsUserVerfied)
           .apply()
-    editor.remove(PrefKeys.gstAddress)
+    editor.remove(PrefKeys.businessAddress)
             .apply()
     editor.remove(PrefKeys.gstNumber)
             .apply()
     editor.remove(PrefKeys.aadhaarNumber)
+            .apply()
+    editor.remove(PrefKeys.isAadhaarVerified)
+            .apply()
+    editor.remove(PrefKeys.isPanVerified)
+            .apply()
+    editor.remove(PrefKeys.isGstVerified)
+            .apply()
+    editor.remove(PrefKeys.isRcVerified)
+            .apply()
+    editor.remove(PrefKeys.alternateAddress)
+            .apply()
+    editor.remove(PrefKeys.gstAddress)
+            .apply()
+    editor.remove(PrefKeys.rcNumber)
             .apply()
     editor.commit()
   }
@@ -466,8 +538,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isUserVerfied = user.isUserVerified
     aadhaarNumber = user.aadhaarNumber?: ""
     gstNumber = user.gstNumber?: ""
-    gstAddress = user.gstAddress?: ""
+    rcNumber = user.rcNumber?: ""
+    businessAddress = user.businessAddress?: ""
+    gstAddress = getGstAddress(user.otherAddress,"gst")?:""
+    alternateAddress = getGstAddress(user.otherAddress, "alternate")?:""
+    isPanVerfied = user.isPanVerified?: false
+    isGstVerfied= user.isGstVerified?: false
+     isRcVerfied = user.isRcVerified?: false
+    isAadhaartVerfied = user.isAadhaarVerified?: false
   }
+
+  fun getGstAddress(addlist:List<AddAddressModel>?, type:String):String?{
+    var address:String? = null
+    if (addlist != null) {
+      for(x in addlist){
+        if(x.addressType.equals(type)){
+          address = x.address
+          return address
+        }
+      }
+    }
+    return address
+  }
+
+
 
   fun canBid() = if (supplierEnabled) {
     when (onboardingStatus) {
@@ -530,7 +624,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val IsUserVerfied = "is_user_verified"
     const val gstNumber = "gst_number"
     const val aadhaarNumber = "aadhaar_number"
+    const val businessAddress = "business_address"
     const val gstAddress = "gst_address"
+    const val alternateAddress = "alternate_address"
+    const val isPanVerified = "is_pan_verified"
+    const val isAadhaarVerified = "is_aadhaar_verified"
+    const val isRcVerified = "is_rc_verified"
+    const val isGstVerified = "is_gst_verified"
+    const val rcNumber = "rc_number"
   }
 }
 
