@@ -64,7 +64,8 @@ BaseViewModel() {
                 address,
                 documentProofType,
                 documentProofUrl,
-                addressType
+                addressType,
+                    false
             )
                 .onBackground()
                 .progress()
@@ -79,7 +80,7 @@ BaseViewModel() {
 
     }
 
-    fun updateCommunicationAddress(selectedAddress : String){
+    fun updateCommunicationAddress( selectedAddress : String){
         compositeDisposable += loadboardRepository.updateCommunicationAddress(
             selectedAddress,
             isSameAsGst,

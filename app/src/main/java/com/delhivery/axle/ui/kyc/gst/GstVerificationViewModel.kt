@@ -7,14 +7,18 @@ import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.kyc.address.AddressDataItem
+import com.delhivery.axle.ui.kyc.address.BaseAddressRVAdapterItem
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.Single
 import java.io.File
 import javax.inject.Inject
 
@@ -45,6 +49,11 @@ class GstVerificationViewModel@Inject constructor(
             MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var gstDetailsLiveData = MutableLiveData<GstDetailData>()
+
+    var phoneNum = userPrefs.phoneNumber
+    var addressType ="gst"
+
+    var gstFetchList = HashSet<String>()
 
     /**
      * Get delegation token for AWS
@@ -114,7 +123,11 @@ class GstVerificationViewModel@Inject constructor(
                     .progress()
                     .subscribe { _res, error ->
                         if (!error) {
-                            docVerified.postValue(true)
+                            if(_res.isVerified == true){
+                                docVerified.postValue(true)
+                            }else{
+                                docVerified.postValue(false)
+                            }
                         } else {
                             error.handle()
                             docVerified.postValue(false)
@@ -134,14 +147,15 @@ class GstVerificationViewModel@Inject constructor(
     fun updateUserDetails() {
         if (!isConnected) return
 
-        if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = "+91"+userPrefs.phoneNumber,gst_number = gstDetailData.value?.gstNumber!!.replace("-", "")))
+        if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && userPrefs.phoneNumber!=null) {
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,gst_number = gstDetailData.value?.gstNumber!!.replace("-", "")))
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->
                         if (!error) {
                             userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-","")
                             userPrefs.gstAddress = gstDetailData.value?.address.toString()
+                            userPrefs.isGstVerfied = true
                             userUpdateLiveData.postValue(true)
                         } else{
                             error.handle()
@@ -166,7 +180,7 @@ class GstVerificationViewModel@Inject constructor(
                             if (_res.getGstList(_res.gstin_numbers).isNullOrEmpty()) {
                                 add(Pair(GstItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                             } else {
-                                for (warehouse in _res.getGstList(_res.gstin_numbers)) {
+                              for (warehouse in _res.getGstList(_res.gstin_numbers)) {
                                     add(Pair(GstDataItem(warehouse), DataRVAdapterOperationType.Add))
                                 }
                             }
@@ -183,16 +197,40 @@ class GstVerificationViewModel@Inject constructor(
      * Fetch gst details
      */
     fun fetchDetails(data: GstDetailData) {
-        compositeDisposable += loadboardRepository.gstDetails(data.gstNumber)
-                .onBackground()
+        if (!gstFetchList.contains(data.gstNumber)) {
+            gstFetchList.add(data.gstNumber)
+            compositeDisposable += loadboardRepository.gstDetails(data.gstNumber)
+                    .onBackground()
+                    .subscribe { _res, error ->
+                        if (!error) {
+                            data.gstDetailItemData = _res
+                        } else {
+                            data.gstDetailItemData = GstDetailItemData(data.gstNumber, "NA", "NA", false)
+                        }
+                        gstDetailsLiveData.postValue(data)
+                    }
+        }
+    }
+
+    fun addGstAddress() {
+        if (!isConnected) return
+        compositeDisposable +=
+                loadboardRepository.addAddress(
+                phoneNum,
+                gstDetailData.value?.address,
+                null,
+                null,
+                addressType,
+                false).onBackground()
+                .progress()
                 .subscribe { _res, error ->
                     if (!error) {
-                        data.gstDetailItemData = _res
+                        //do nothing
                     } else {
-                        data.gstDetailItemData = null
+                        error.handle()
                     }
-                    gstDetailsLiveData.postValue(data)
                 }
+
     }
 }
 

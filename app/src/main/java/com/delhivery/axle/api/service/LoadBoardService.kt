@@ -59,7 +59,7 @@ interface LoadBoardService {
     @POST("/validate_ocr")
     fun verifyByDocUpload(
             @Body request: GstOrAadhaarDocRequest
-    ): Single<BaseResponse<Any>>
+    ): Single<BaseResponse<DocUploadResponse>>
 
     @POST("/get_otp")
     fun requestOTP(@Body request: RequestOTP): Single<OTPSentResponse>
@@ -76,7 +76,7 @@ interface LoadBoardService {
     @POST("/add_address")
     fun addAddress(
         @Body request: AddAddressModel
-    ): Single<BaseResponse<Any>>
+    ): Single<BaseMessageResponse>
 
     /*
      * update your communication address

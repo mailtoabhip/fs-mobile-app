@@ -59,10 +59,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     lateinit var bitmapUtils: BitmapUtils
     /* RV adapter */
     private val gstRVAdapter: GstRVAdapter by lazy { GstRVAdapter(this) }
-
     var currSelectedGst:String? = null
-    var prevSelectedGst:String? = null
-
     val awsPath = "loadboard/gst/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
@@ -126,7 +123,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 uiUtils.hideProgress()
                 resetUploadData()
                 uploadArray =  ArrayList()
-                dialogUtils.showUploadFailDialog(getString(R.string.upload_aadhaar_text),this)
+                dialogUtils.showUploadFailDialog(getString(R.string.label_gst_dialog_option2),this)
             }
         }
         )
@@ -169,10 +166,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         viewModel.fetchDetails(data)
     }
 
-    override fun fetchPreviousSelected(): String? {
-        return prevSelectedGst
-    }
-
     override fun fetchCurrSelected(): String? {
       return currSelectedGst
     }
@@ -182,14 +175,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     ) {
         uiUtils.hideProgress()
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
         resetUploadData()
     }
 
     override fun onAWSFailure() {
         uiUtils.hideProgress()
         uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
         resetUploadData()
     }
 
@@ -286,6 +279,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
 
     private fun refreshData() {
+        viewModel.gstFetchList.clear()
         gstRVAdapter.resetStaticData()
         viewModel.fetchGstNumbers()
     }
@@ -383,16 +377,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     }
 
     override fun onItemClicked(item: BaseGstRVAdapterItem<*>) {
-       // super.onItemClicked(item)
         val data = item.data as? GstDetailData
-        if(prevSelectedGst == null){
-            prevSelectedGst = data?.gstDetailItemData?.gstNumber
-        }else{
-            prevSelectedGst = currSelectedGst
-        }
         currSelectedGst = data?.gstDetailItemData?.gstNumber
         viewModel.gstDetailData.value =  data?.gstDetailItemData
         gstRVAdapter.notifyDataSetChanged()
+        if(data?.gstDetailItemData!=null && data.gstDetailItemData?.address!=null) {
+            viewModel.addGstAddress()
+        }
     }
 
     override fun getViewModelClass(): Class<GstVerificationViewModel> = GstVerificationViewModel::class.java
