@@ -77,6 +77,7 @@ class AddVehicle(
     var originClusterId: String,
     var destinationClusterId: String,
     var sourcedAs: String,
+    var demandType: String,
     var price: Double= 0.0
 ){
     fun getRequest():JsonObject{
@@ -94,6 +95,7 @@ class AddVehicle(
         jsonObject.addProperty("destination_city_code", unloadingDestinationCode)
         jsonObject.addProperty("origin_cluster_id", originClusterId)
         jsonObject.addProperty("destination_cluster_id", destinationClusterId)
+        jsonObject.addProperty("demand_type", demandType)
         if(sourcedAs == "FTL" && price != 0.0) {
             jsonObject.addProperty(
                 "unloading_destination_amount",

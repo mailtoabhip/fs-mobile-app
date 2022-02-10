@@ -59,7 +59,7 @@ class TruckViewModel @Inject constructor(
                 .flatMap { t->
                     val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
                         ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
-                        t.first, t.second, sourcedAs, truckPrice)
+                        t.first, t.second, sourcedAs, userPrefs.demandType, truckPrice)
 
                     inventoryRepository.addInventory(addVehicleRequest.getRequest())
 
