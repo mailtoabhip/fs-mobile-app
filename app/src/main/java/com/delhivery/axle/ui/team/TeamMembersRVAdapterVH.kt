@@ -2,14 +2,12 @@ package com.delhivery.axle.ui.team
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
+import com.delhivery.axle.api.request.TeamMemberAction_options
 import com.delhivery.axle.api.request.ViewAdminMember
-import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewTeamMemberAdminItemBinding
-import com.delhivery.axle.databinding.ViewTeamMemberSubuserItemBinding
-import com.delhivery.axle.databinding.ViewTeamMembersProgressItemBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 
 /**
@@ -94,8 +92,9 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
-    binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
-    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
+    binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, adapterPosition, _interface)
+//    binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
+//    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
   }
 }
 
@@ -110,5 +109,24 @@ internal class TeamMembersProgressItemVH(binding: ViewTeamMembersProgressItemBin
     item: TeamMembersProgressItem,
     _interface: TeamMembersRVAdapterInterface
   ) {
+  }
+}
+
+/**
+ * Team warning item view holder
+ */
+internal class TeamWarningItemVH(binding: ViewNoTeamMemberBinding) :
+  BaseTeamMembersRVAdapterViewHolder<ViewNoTeamMemberBinding,TeamWarningItem>(
+    binding
+  ) {
+  override fun bind(
+    item: TeamWarningItem,
+    _interface: TeamMembersRVAdapterInterface
+  ) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+    binding.iconImage = R.drawable.ic_no_member_warning
   }
 }

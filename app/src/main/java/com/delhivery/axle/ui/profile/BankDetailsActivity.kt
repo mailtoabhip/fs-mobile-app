@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.profile
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.delhivery.axle.R
@@ -14,11 +16,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
     override fun requireConnection() = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bank_details)
-    }
-
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -28,3 +25,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 
 }
+
+fun bankDetailsIntent(
+    context: Context
+) = Intent(context, BankDetailsActivity::class.java)

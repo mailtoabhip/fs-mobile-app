@@ -101,4 +101,9 @@
     <item name="android:layout_marginBottom">@dimen/size_8dp</item>
   </style>
 
+  <style name="DialogAnimation">
+    <item name="android:windowEnterAnimation">@anim/slide_in</item>
+    <item name="android:windowExitAnimation">@anim/slide_out</item>
+  </style>
+
 </resources>

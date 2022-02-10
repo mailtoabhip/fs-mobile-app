@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <data>
+        <variable
+            name="title"
+            type="String"
+            />
+
+        <variable
+            name="subTitle"
+            type="String"
+            />
+
+        <variable
+            name="actionLabel"
+            type="String"
+            />
+        <variable
+            name="iconImage"
+            type="Integer" />
+
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/size_24dp"
+        android:paddingEnd="@dimen/size_24dp"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img"
+            android:layout_width="@dimen/size_90dp"
+            android:layout_height="@dimen/size_90dp"
+            android:background="@drawable/bg_circle_faded_black"
+            android:padding="@dimen/size_16dp"
+            app:srcCompat="@{iconImage}"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_28dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/text_2sp"
+            android:text="@{ title }"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            tools:text="heading"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.01"
+            android:lineSpacingExtra="@dimen/text_6sp"
+            android:text="@{ subTitle }"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_12sp"
+            tools:text="sub heading"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_action"
+            android:layout_height="wrap_content"
+            android:layout_width="@dimen/size_250dp"
+            android:layout_marginTop="@dimen/size_28dp"
+            android:layout_marginBottom="30dp"
+            android:text="@{ actionLabel }"
+            android:textColor="@color/white"
+            tools:text="Action"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_allround_corner_blue"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

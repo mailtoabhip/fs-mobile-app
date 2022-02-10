@@ -17,43 +17,41 @@
       android:id="@+id/route_card"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginStart="@dimen/size_2dp"
-      android:layout_marginEnd="@dimen/size_2dp"
-      android:layout_marginBottom="@dimen/size_12dp"
+      android:layout_marginStart="@dimen/size_6dp"
+      android:layout_marginEnd="@dimen/size_6dp"
+      android:layout_marginBottom="@dimen/size_6dp"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_2dp"
+      android:layout_marginTop="@dimen/size_6dp"
       >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/lay_routes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/size_11dp">
 
       <androidx.appcompat.widget.LinearLayoutCompat
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toStartOf="@id/icon_delete_route"
-          android:layout_width="0dp"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="vertical">
+          android:orientation="horizontal">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_origin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_weight="1">
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_origin_title"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:textColor="@color/black"
-              android:text="From: "
-              android:textSize="@dimen/size_16dp"
-              tools:text="From: "/>
+              android:textColor="@color/faded_black"
+              android:text="@string/label_origin_city"
+              android:textSize="@dimen/text_16sp" />
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_origin_name"
@@ -61,28 +59,43 @@
               android:layout_height="wrap_content"
               android:textColor="@color/black"
               android:text="@{route.key()}"
-              android:textSize="@dimen/size_16dp"
+              android:textSize="@dimen/text_16sp"
               android:textStyle="bold"
+              android:layout_marginTop="@dimen/size_4dp"
               tools:text="New Delhi, Delhi"/>
+          </androidx.appcompat.widget.LinearLayoutCompat>
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/icon_options_route"
+              android:layout_marginEnd="@dimen/size_16dp"
+              android:padding="@dimen/size_6dp"
+              app:srcCompat="@drawable/ic_options_team"
+              android:layout_width="wrap_content"
+              android:layout_gravity="center"
+              android:layout_height="wrap_content"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <View
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/size_4dp"
+          android:layout_marginTop="@dimen/size_10dp"
+          android:background="@drawable/seprator_dotted"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/size_10dp"
+            android:orientation="vertical">
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_destination_title"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:textColor="@color/black"
-              android:text="To: "
-              android:textSize="@dimen/size_16dp"
-              tools:text="To: "/>
+              android:textColor="@color/faded_black"
+              android:text="@string/label_destination_states"
+              android:textSize="@dimen/text_16sp" />
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_destination_name"
@@ -92,33 +105,13 @@
               android:ellipsize="end"
               android:maxLines="1"
               android:text="@{route.stateNames()}"
-              android:textSize="@dimen/size_16dp"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:textSize="@dimen/text_16sp"
               tools:text="Assam, Andhra Pradesh, Arunanchal Pradesh, Bihar, Uttar Pradesh"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-      </androidx.appcompat.widget.LinearLayoutCompat>
-      <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/icon_delete_route"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintBottom_toBottomOf="parent"
-          android:layout_marginEnd="@dimen/size_16dp"
-          app:srcCompat="@drawable/ic_close_black"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"/>
-
-      <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/img_route_detail"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toStartOf="@id/icon_delete_route"
-          android:layout_marginEnd="@dimen/size_16dp"
-          app:srcCompat="@drawable/ic_chevron_right_dark"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
   </androidx.cardview.widget.CardView>
 

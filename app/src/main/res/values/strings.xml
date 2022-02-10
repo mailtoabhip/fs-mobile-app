@@ -294,7 +294,11 @@
   <string name="label_post_truck">Post Trucks</string>
   <string name="label_both">Both</string>
   <string name="label_third_party">View third party loads</string>
-
+  <string name="label_edit_member">Edit Member</string>
+  <string name="label_delete_member">Delete Member</string>
+  <string name="label_more_options_team">More options</string>
+  <string name="label_edit_route">Edit Route</string>
+  <string name="label_delete_route_option">Delete Route</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
