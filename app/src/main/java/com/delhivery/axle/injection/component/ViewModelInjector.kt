@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.HelpSupportViewModel
 import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -209,6 +210,11 @@ interface ViewModelInjector {
    * Injects [BankDetailsViewModel]
    */
   fun inject(viewModel: BankDetailsViewModel)
+
+  /**
+   * Injects [ProfileKYCDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileKYCDetailsViewModel)
 
   @Component.Builder
   interface Builder {

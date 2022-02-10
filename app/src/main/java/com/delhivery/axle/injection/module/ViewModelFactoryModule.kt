@@ -1,5 +1,6 @@
 package com.delhivery.axle.injection.module
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
@@ -27,6 +28,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.HelpSupportViewModel
 import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -264,6 +266,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BankDetailsViewModel::class)
   abstract fun bindBankDetailsViewModel(bankDetailsViewModel: BankDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileKYCDetailsViewModel::class)
+  abstract fun bindProfileKYCDetailsViewModel(profileKYCDetailsViewModel: ProfileKYCDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -23,6 +23,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -193,6 +194,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBankDetailsActivityModule::class])
   internal abstract fun bindBankDetailsActivity() : BankDetailsActivity
+
+  /*Profile KYC Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileKYCDetailsActivityModule::class])
+  internal abstract fun  bindProfileKYCDetailsActivity() : ProfileKYCDetailsActivity
 }
 
 /**
@@ -288,6 +294,9 @@ internal abstract class  AbsProfileDetailsActivityModule: ActivityModule<Profile
 
 @Module
 internal abstract class AbsBankDetailsActivityModule : ActivityModule<BankDetailsActivity>()
+
+@Module
+internal abstract class AbsProfileKYCDetailsActivityModule : ActivityModule<ProfileKYCDetailsActivity>()
 
 /**
  * Activity Binds Module
