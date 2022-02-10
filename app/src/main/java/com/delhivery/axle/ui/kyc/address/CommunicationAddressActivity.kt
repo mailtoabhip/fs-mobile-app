@@ -358,24 +358,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     fun businessVerificationIntent(
         context: Context
     ) = Intent(context, BusinessVerificationActivity::class.java).apply {
