@@ -12,5 +12,6 @@ data class UpdateUserRequest (
     @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean? = null,
     @SerializedName("is_location_enabled") var isLocationEnabled: Boolean? = null,
     @SerializedName("pan_number") var panNumber: String? = null,
-    @SerializedName("aadhaar_number") val aadhaarNumber:String? =null
+    @SerializedName("aadhaar_number") val aadhaarNumber:String? =null,
+    @SerializedName("gst_number") val gst_number:String? =null
 )

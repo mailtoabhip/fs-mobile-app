@@ -48,6 +48,7 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import androidx.core.app.ActivityCompat.startActivityForResult
+import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 
@@ -167,6 +168,10 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             }
         }
     }
+
+    override fun fetchDetails(data: GstDetailData) {
+    }
+
     override fun onAWSSuccess(
         path: String
     ) {

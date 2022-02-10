@@ -9,6 +9,7 @@ import com.delhivery.axle.api.response.*
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -34,7 +35,7 @@ interface LoadBoardService {
     @POST("/gst_by_number")
     fun getGstDetails(
             @Body request: GstDetailRequest
-    ): Single<BaseResponse<GstDetailData>>
+    ): Single<BaseResponse<GstDetailItemData>>
 
     /**
      * get GST OTP
@@ -72,8 +73,6 @@ interface LoadBoardService {
     /**
      * Get user details
      */
-
-
     @GET("/get_user")
     fun userDetails(
             @Query("uuid") userId: String

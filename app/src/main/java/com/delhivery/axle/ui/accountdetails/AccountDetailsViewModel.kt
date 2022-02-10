@@ -59,7 +59,7 @@ class AccountDetailsViewModel @Inject constructor(
     fun createAccount(updateUserRequest: UpdateUserRequest) {
         if (!isConnected) return
         state = LoginProgress
-        updateUserRequest.phone_number = userPrefs.phoneNumber.toString()
+        updateUserRequest.phoneNumber = userPrefs.phoneNumber.toString()
         compositeDisposable += Single.zip(
                 loadboardRepository.createUser(updateUserRequest),
                 Single.timer(1000, TimeUnit.MILLISECONDS), //add delay for animation

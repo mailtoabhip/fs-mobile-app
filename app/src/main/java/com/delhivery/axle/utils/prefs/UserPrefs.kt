@@ -330,6 +330,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
 
   /**
+   * gst number
+   */
+  var gstNumber: String
+    set(value) = editor.putString(PrefKeys.gstNumber ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.gstNumber, "") ?: ""
+
+  /**
+   * aadhaar number
+   */
+  var aadhaarNumber: String
+    set(value) = editor.putString(PrefKeys.aadhaarNumber ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.aadhaarNumber, "") ?: ""
+
+  /**
+   * gst address
+   */
+  var gstAddress: String
+    set(value) = editor.putString(PrefKeys.gstAddress ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.gstAddress, "") ?: ""
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -402,6 +426,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
       editor.remove(PrefKeys.IsUserVerfied)
           .apply()
+    editor.remove(PrefKeys.gstAddress)
+            .apply()
+    editor.remove(PrefKeys.gstNumber)
+            .apply()
+    editor.remove(PrefKeys.aadhaarNumber)
+            .apply()
     editor.commit()
   }
 
@@ -433,8 +463,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
-      isUserVerfied = user.isUserVerified
-
+    isUserVerfied = user.isUserVerified
+    aadhaarNumber = user.aadhaarNumber?: ""
+    gstNumber = user.gstNumber?: ""
+    gstAddress = user.gstAddress?: ""
   }
 
   fun canBid() = if (supplierEnabled) {
@@ -490,13 +522,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
-    const val LoadPostKyc = "load_post"
-    const val TruckPostKyc = "truck_post"
+    const val LoadPostKyc = "post_load"
+    const val TruckPostKyc = "post_truck"
     const val AccountSetup = "account_set_up"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
-      const val IsUserVerfied = "is_user_verified"
-
+    const val IsUserVerfied = "is_user_verified"
+    const val gstNumber = "gst_number"
+    const val aadhaarNumber = "aadhaar_number"
+    const val gstAddress = "gst_address"
   }
 }
 

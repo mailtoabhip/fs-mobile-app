@@ -126,13 +126,12 @@ BaseViewModel() {
         if (!isConnected) return
 
         if (aadhaarCardNumber.length == 14) {
-            compositeDisposable += loadboardRepository.updateUser(
-                UpdateUserRequest(
-                   phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
+                        userPrefs.aadhaarNumber = aadhaarCardNumber.replace("-","")
                         userUpdateLiveData.postValue(true)
                     } else{
                         error.handle()

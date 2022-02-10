@@ -31,8 +31,11 @@ data class UserModel(
         @SerializedName("user_name") var userName: String?,
         @SerializedName("business_name") var businessName: String?,
         @SerializedName("referral_code") var referralCode: String?,
-        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?
- ) : BaseKeyTypeModel<String>(), Serializable {
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?,
+        @SerializedName("aadhaar_number") var aadhaarNumber: String?,
+        @SerializedName("gst_address") var gstAddress: String?,
+         @SerializedName("gst_number") var gstNumber: String?
+        ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
 

@@ -8,6 +8,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="@dimen/size_16dp"
+      android:id="@+id/cardView"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="8dp"
       app:cardElevation="0dp">
@@ -22,12 +23,13 @@
           android:layout_marginTop="@dimen/size_16dp"
           android:layout_marginStart="@dimen/size_16dp"
           app:srcCompat="@drawable/ic_vector_gst"
-         android:layout_alignParentStart="true"
+          android:layout_alignParentStart="true"
           android:layout_height="wrap_content"/>
       <RadioButton
           android:layout_width="wrap_content"
           android:id="@+id/radioGst"
           android:layout_marginEnd="@dimen/size_16dp"
+          android:clickable="false"
           android:layout_marginTop="@dimen/size_12dp"
           android:layout_marginBottom="@dimen/size_12dp"
           android:layout_alignParentEnd="true"
@@ -68,15 +70,15 @@
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/gst_call_num"
           android:layout_width="wrap_content"
-         android:layout_below="@id/gst_sep"
+          android:layout_below="@id/gst_sep"
           android:layout_toEndOf="@+id/imgGst"
           android:layout_height="wrap_content"
           app:layout_constraintTop_toBottomOf="@+id/gst_sep"
-           android:fontFamily="sans-serif"
+          android:fontFamily="sans-serif"
           android:layout_marginTop="@dimen/size_12dp"
           android:layout_marginStart="@dimen/size_8dp"
           android:layout_marginEnd="@dimen/size_16dp"
-         app:layout_constraintStart_toEndOf="@id/imgGst"
+          app:layout_constraintStart_toEndOf="@id/imgGst"
           android:textColor="@color/info_bg"
           android:textSize="@dimen/text_12sp"
           />
@@ -88,20 +90,22 @@
           app:srcCompat="@drawable/ic_vector_location"
           android:layout_marginTop="@dimen/size_18dp"
           android:layout_marginStart="@dimen/size_16dp"
-           android:layout_height="@dimen/size_16dp"/>
+          android:layout_marginBottom="@dimen/size_16dp"
+          android:layout_height="@dimen/size_16dp"/>
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/gst_address"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_toEndOf="@+id/imgAddress"
           android:layout_below="@id/gst_call_num"
-         app:layout_constraintTop_toBottomOf="@+id/gst_call_num"
+          app:layout_constraintTop_toBottomOf="@+id/gst_call_num"
           android:fontFamily="sans-serif"
-          android:layout_marginTop="@dimen/size_18dp"
+          android:layout_marginTop="@dimen/size_12dp"
           android:layout_marginStart="@dimen/size_8dp"
           android:layout_marginEnd="@dimen/size_16dp"
           app:layout_constraintStart_toEndOf="@id/imgGst"
           android:textColor="@color/info_bg"
+          android:layout_marginBottom="@dimen/size_16dp"
           android:textSize="@dimen/text_12sp"
           />
 

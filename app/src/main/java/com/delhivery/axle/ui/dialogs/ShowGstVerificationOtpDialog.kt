@@ -14,9 +14,8 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
-import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
 import com.delhivery.axle.utils.UiUtils
@@ -30,14 +29,14 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ShowGstVerificationOtpDialog @Inject constructor(
-    context: Context,
-    private val dialogUtilsInterface: DialogUtilsInterface,
-    private val uiUtils: UiUtils,
-    private val phoneNumber: String,
-    private val dialogUtils: DialogUtils,
-    private val uploadText: String,
-    private val viewModel: AadhaarVerificationViewModel,
-    private val aadhaarVerificationActivity: AadhaarVerificationActivity
+        context: Context,
+        private val dialogUtilsInterface: DialogUtilsInterface,
+        private val uiUtils: UiUtils,
+        private val phoneNumber: String,
+        private val dialogUtils: DialogUtils,
+        private val uploadText: String,
+        private val viewModel: GstVerificationViewModel,
+        private val gstVerificationActivity: GstVerificationActivity
 
 ) : Dialog(context),DelhiveryOTPViewInterface {
 
@@ -70,53 +69,52 @@ class ShowGstVerificationOtpDialog @Inject constructor(
         window!!.setGravity(Gravity.BOTTOM)
 
         viewModel.otpVerified.observe(
-            aadhaarVerificationActivity, Observer {
-                if(it){
-                    uiUtils.hideProgress()
-                    timeoutDisposable.safeDispose()
-                    this.dismiss()
-                   viewModel.updateUserDetails()
-
-                }else{
-                    uiUtils.hideProgress()
-                    binding.gstotpError.visibility =  View.VISIBLE
-                }
+                gstVerificationActivity, Observer {
+            if(it){
+                uiUtils.hideProgress()
+                timeoutDisposable.safeDispose()
+                this.dismiss()
+                viewModel.updateUserDetails()
+            }else{
+                uiUtils.hideProgress()
+                binding.gstotpError.visibility =  View.VISIBLE
             }
+        }
         )
     }
 
     override fun otpSubmitted(otp: CharArray) {
-           binding.buttonShare.isEnabled = true
-          binding.buttonShare.setOnClickListener {
-        if(otp.joinToString("").length==4){
-            binding.gstotpError.visibility =  View.GONE
-            binding.buttonShare.isEnabled = false
-            viewModel.verifyRequestAadhaarOtp(otp)
-        }else{
-            binding.buttonShare.isEnabled = false
-             binding.gstotpError.visibility =  View.VISIBLE
+        binding.buttonShare.isEnabled = true
+        binding.buttonShare.setOnClickListener {
+            if(otp.joinToString("").length==4){
+                binding.gstotpError.visibility =  View.GONE
+                binding.buttonShare.isEnabled = false
+                viewModel.verifyRequestOtp(otp)
+            }else{
+                binding.buttonShare.isEnabled = false
+                binding.gstotpError.visibility =  View.VISIBLE
+            }
         }
     }
-}
 
-     fun timerToResend() {
+    fun timerToResend() {
         timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
-            .onBackground()
-            .subscribe {
-                val timeLeft = 15L - it
-                if (timeLeft > 0) {
-                    val f: NumberFormat = DecimalFormat("00")
-                    binding.btnResendOtp.text = "${context.getString(R.string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                    binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.color_hint))
-                } else if (timeLeft == 0L) {
-                    binding.btnResendOtp.text = context.getString(R.string.label_resend_otp_done)
-                    binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.colorAccent))
-                    binding.btnResendOtp.setOnClickListener {
-                        viewModel.getRequestAadhaarOtp(false)
-                        timerToResend()
+                .onBackground()
+                .subscribe {
+                    val timeLeft = 15L - it
+                    if (timeLeft > 0) {
+                        val f: NumberFormat = DecimalFormat("00")
+                        binding.btnResendOtp.text = "${context.getString(R.string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
+                        binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.color_hint))
+                    } else if (timeLeft == 0L) {
+                        binding.btnResendOtp.text = context.getString(R.string.label_resend_otp_done)
+                        binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.colorAccent))
+                        binding.btnResendOtp.setOnClickListener {
+                            viewModel.getRequestOtp(false)
+                            timerToResend()
+                        }
                     }
                 }
-            }
     }
 
 }
