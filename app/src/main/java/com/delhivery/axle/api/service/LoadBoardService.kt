@@ -71,7 +71,24 @@ interface LoadBoardService {
     fun updateUser(@Body request: UpdateUserRequest): Single<BaseMessageResponse>
 
     /**
-     * Get user details
+     * add alternate address
+     */
+    @POST("/add_address")
+    fun addAddress(
+        @Body request: AddAddressRequest
+    ): Single<BaseResponse<Any>>
+
+    /*
+     * update your communication address
+     */
+
+    @POST("/submit_address")
+    fun updateNewAddress(
+        @Body request: UpdateAddressVerificationRequest
+    ): Single<BaseResponse<Any>>
+
+    /**
+     * patch user details
      */
     @GET("/get_user")
     fun userDetails(
