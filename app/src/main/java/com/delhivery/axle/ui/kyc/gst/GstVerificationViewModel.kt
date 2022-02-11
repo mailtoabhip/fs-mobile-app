@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.DelegationToken
@@ -167,7 +168,9 @@ class GstVerificationViewModel@Inject constructor(
                     .subscribe { _res, error ->
                         if (!error && !_res.second.equals("Error updating user")) {
                                 userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-", "")
-                                userPrefs.gstAddress = gstDetailData.value?.address.toString()
+                                val addressList = ArrayList<AddAddressModel>()
+                                addressList.add(AddAddressModel(phoneNumber = phoneNum,addressType= "gst", address = gstDetailData.value?.address, isDeleted = false, proofDocumentType = null, documentUrls = null))
+                                userPrefs.setAddressList(addressList)
                                 userPrefs.isGstVerfied = true
                                 userUpdateLiveData.postValue(true)
                         }else {
