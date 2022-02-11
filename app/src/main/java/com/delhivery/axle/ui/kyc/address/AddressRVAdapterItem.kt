@@ -49,9 +49,3 @@ class AddressWarningItem(data: AddressWarningItemData) :
  */
 class AddressTimeoutItem(data: AddressTimeOutItemData) :
     BaseAddressRVAdapterItem<AddressTimeOutItemData>(AddressRVAdapterItemType.Timeout, data)
-
-/**
- * Inline progress item
- */
-//class AddressProgressItem(data: AddressProgressItemData = AddressProgressItemData()) :
-//    BaseAddressRVAdapterItem<AddressProgressItemData>(AddressRVAdapterItemType.Progress, data)

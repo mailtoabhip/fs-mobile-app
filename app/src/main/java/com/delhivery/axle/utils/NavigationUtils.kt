@@ -180,7 +180,7 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(extras.getString("pan")!=null && extras.getString("pan")=="person"){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
             }else{
              intent= Intent(context, GstVerificationActivity::class.java)
@@ -209,7 +209,7 @@ class NavigationUtils @Inject constructor(
       if(extras?.getString(panKey) != null){
         bundle.putString(panKey,extras.getString(panKey))
       }
-      this.navigateKyc(context,true,bundle)
+      this.navigateKyc(context,false,bundle)
     }else{
       val intent = Intent(context, HomeActivity::class.java)
       this.navigate(intent,true)

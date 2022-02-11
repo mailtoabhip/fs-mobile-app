@@ -78,11 +78,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
-    /*if(userPrefs.accountSetup && !userPrefs.isUserVerfied) {
-      showKycDialog()
-    }*/
-
-    if(!userPrefs.accountSetup && !userPrefs.isUserVerfied) {
+    if(userPrefs.accountSetup && !userPrefs.isUserVerfied) {
       showKycDialog()
     }
   }
@@ -359,6 +355,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       val bundle = Bundle()
       if(userPrefs.pancard.isEmpty()){
         bundle.putInt(StepKey, 0)
+      }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+        bundle.putInt(StepKey, 1)
+      }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+        bundle.putInt(StepKey, 1)
+       }else if(userPrefs.businessAddress.isEmpty()){
+        bundle.putInt(StepKey, 2)
       }
       navigationUtils.navigateKyc(this,false,bundle)
       dialog.dismiss()

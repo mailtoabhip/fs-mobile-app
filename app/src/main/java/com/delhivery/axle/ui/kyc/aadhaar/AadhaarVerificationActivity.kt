@@ -54,7 +54,7 @@ import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
-    DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
+    DialogUtilsInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -155,29 +155,6 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
     override fun getRequestAadhaarOtp() {
        viewModel.getRequestAadhaarOtp(true)
-    }
-
-    override fun handleAction(
-        actionId: String,
-        item: BaseGstRVAdapterItem<*>
-    ) {
-        when (actionId) {
-            GstAction_ViewDetails -> {
-            }
-            TransactionTimeOutAction -> {
-            }
-        }
-    }
-
-    override fun fetchDetails(data: GstDetailData) {
-    }
-
-    override fun fetchPreviousSelected(): String? {
-        return null
-    }
-
-    override fun fetchCurrSelected(): String? {
-        return null
     }
 
     override fun onAWSSuccess(

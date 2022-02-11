@@ -93,7 +93,11 @@ BaseViewModel() {
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
-                    docVerified.postValue(true)
+                    if(_res.isVerified == true){
+                        docVerified.postValue(true)
+                    }else{
+                        docVerified.postValue(false)
+                    }
                 } else{
                     error.handle()
                     docVerified.postValue(false)

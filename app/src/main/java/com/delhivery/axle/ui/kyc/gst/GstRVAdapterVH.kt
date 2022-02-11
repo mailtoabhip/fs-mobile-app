@@ -49,22 +49,14 @@ class GstDataItemVH(binding: ViewGstRequestItemBinding) :
           item: GstDataItem,
           _interface: GstRVAdapterInterface
   ) {
-
-    if (item.data.gstDetailItemData == null) {
+    if (item.data.gstDetailItemData?.address == null) {
       _interface.fetchDetails(item.data)
     }
 
-    binding.cardView.clickToAction(GstAction_ViewDetails, item, _interface)
     binding.gstAddress.text = item.data.gstDetailItemData?.address
     binding.gstCallNum.text = item.data.gstDetailItemData?.phoneNumber
     binding.gstNum.text = item.data?.gstNumber
-
-    if(_interface.fetchCurrSelected().equals(item.data.gstDetailItemData?.gstNumber)) {
-      binding.radioGst.isChecked = true
-    }else{
-      binding.radioGst.isChecked = false
-    }
-
+    binding.radioGst.isChecked = _interface.fetchCurrSelected()!=null && _interface.fetchCurrSelected().equals(item.data.gstDetailItemData?.gstNumber)
   }
 }
 

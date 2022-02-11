@@ -19,7 +19,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class UserPrefs @Inject constructor(@ApplicationContext private val context: Context) : BasePrefs(
-    context
+        context
 ) {
   override fun prefsName() = PrefNames.UserPrefs
 
@@ -28,7 +28,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var jwtToken: String?
     set(value) = editor.putString(PrefKeys.JWTToken, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.JWTToken, null)
 
   /**
@@ -36,7 +36,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var cityCode: String?
     set(value) = editor.putString(PrefKeys.CityCode, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
 
   /**
@@ -44,7 +44,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var gnCityCode: String?
     set(value) = editor.putString(PrefKeys.GNCityCode, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.GNCityCode, null)
 
   /**
@@ -52,7 +52,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var phoneNumber: String?
     set(value) = editor.putString(PrefKeys.PhoneNumber, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.PhoneNumber, "")
 
   /**
@@ -60,7 +60,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var routeUpdate: Boolean
     set(value) = editor.putBoolean(PrefKeys.RouteUpdate, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.RouteUpdate, false)
 
   /**
@@ -68,7 +68,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var hasLoggedIn: Boolean
     set(value) = editor.putBoolean(PrefKeys.HasLoggedIn, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.HasLoggedIn, false)
 
   /**
@@ -76,7 +76,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var tdsRate: Int
     set(value) = editor.putInt(PrefKeys.TdsRate, value)
-        .apply()
+            .apply()
     get() = prefs.getInt(PrefKeys.TdsRate, 99)
 
   /**
@@ -84,16 +84,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var updatedTdsRate: Double
     set(value) = editor.putFloat(PrefKeys.UpdateTdsRate, value.toFloat())
-        .apply()
+            .apply()
     get() = prefs.getFloat(PrefKeys.UpdateTdsRate, 99.25F)
-        .toDouble()
+            .toDouble()
 
   /**
    *  Username
    */
   var userName: String
     set(value) = editor.putString(PrefKeys.UserName, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.UserName, "") ?: ""
 
   /**
@@ -101,7 +101,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var bankName: String
     set(value) = editor.putString(PrefKeys.BankName, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.BankName, "") ?: ""
 
   /**
@@ -109,7 +109,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var pancard: String
     set(value) = editor.putString(PrefKeys.Pancard, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.Pancard, "") ?: ""
 
   /**
@@ -117,7 +117,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var ifscCode: String
     set(value) = editor.putString(PrefKeys.IfscCode, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.IfscCode, "") ?: ""
 
   /**
@@ -125,7 +125,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var companyName: String
     set(value) = editor.putString(PrefKeys.CompanyName, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.CompanyName, "") ?: ""
 
   /**
@@ -133,7 +133,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var accNumber: String
     set(value) = editor.putString(PrefKeys.AccountNumber, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.AccountNumber, "") ?: ""
 
   /**
@@ -156,7 +156,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var hasEditedRoute: Boolean
     set(value) = editor.putBoolean(PrefKeys.HadEditedRoutes, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.HadEditedRoutes, false)
 
   /**
@@ -164,7 +164,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var onboardingStatus: String
     set(value) = editor.putString(PrefKeys.OnboardingStatus, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.OnboardingStatus, "na") ?: "na"
 
   /**
@@ -172,7 +172,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var supplierEnabled: Boolean
     set(value) = editor.putBoolean(PrefKeys.SupplierEnabled, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.SupplierEnabled, false)
 
   /**
@@ -180,7 +180,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var isTestUser: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsTestUser, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.IsTestUser, false)
 
   /**
@@ -188,7 +188,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var fcmTokenGenerated: Boolean
     set(value) = editor.putBoolean(PrefKeys.FCMTokenGenerated, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
   /**
@@ -196,7 +196,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var walletActivated: Boolean
     set(value) = editor.putBoolean(PrefKeys.WalletActive, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.WalletActive, false)
 
   /**
@@ -204,7 +204,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var fromNotification: Boolean
     set(value) = editor.putBoolean(PrefKeys.FromNotification, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.FromNotification, false)
 
   /**
@@ -212,7 +212,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var maxPMTRate: Int
     set(value) = editor.putInt(PrefKeys.MaxPMTRate, value)
-        .apply()
+            .apply()
     get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MAX_VALUE)
 
   /**
@@ -220,7 +220,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var maxCostPerKM: Int
     set(value) = editor.putInt(PrefKeys.MaxCostPerKM, value)
-        .apply()
+            .apply()
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
   /**
@@ -228,7 +228,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var isParent: Boolean
     set(value) = editor.putBoolean(PrefKeys.IsParent, value)
-        .apply()
+            .apply()
     get() = prefs.getBoolean(PrefKeys.IsParent, false)
 
   /**
@@ -236,7 +236,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var truckTypes: String?
     set(value) = editor.putString(PrefKeys.TruckTypes, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.TruckTypes, "")
 
   /**
@@ -244,7 +244,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   var demandType: String
     set(value) = editor.putString(PrefKeys.DemandType, value)
-        .apply()
+            .apply()
     get() = prefs.getString(PrefKeys.DemandType, "")!!
 
   var logoutStatus: String
@@ -311,29 +311,29 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.UserMode, "") ?: ""
 
 
-    /**
-     *  Kyc for load post
-     */
-    var loadPostKyc: String
-        set(value) = editor.putString(PrefKeys.LoadPostKyc, value)
+  /**
+   *  Kyc for load post
+   */
+  var loadPostKyc: String
+    set(value) = editor.putString(PrefKeys.LoadPostKyc, value)
             .apply()
-        get() = prefs.getString(PrefKeys.LoadPostKyc , " ") ?: ""
+    get() = prefs.getString(PrefKeys.LoadPostKyc , " ") ?: ""
 
-    /**
-     *  Kyc for load post
-     */
-    var truckPostKyc: String
-        set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
+  /**
+   *  Kyc for load post
+   */
+  var truckPostKyc: String
+    set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
             .apply()
-        get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
+    get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
 
-    /**
-     * Is user verified
-     */
-    var isUserVerfied: Boolean
-        set(value) = editor.putBoolean(PrefKeys.IsUserVerfied, value)
+  /**
+   * Is user verified
+   */
+  var isUserVerfied: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsUserVerfied, value)
             .apply()
-        get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
+    get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
 
   /**
    * gst number
@@ -363,25 +363,24 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    * gst address
    */
 
-
-fun setAddressList(addlist: List<AddAddressModel>?){
+  fun setAddressList(addlist: List<AddAddressModel>?){
     val gson = Gson()
     val json = gson.toJson(addlist)
     editor.putString(PrefKeys.gstAddress,json)
-        .apply()
-}
+            .apply()
+  }
 
 
-    fun getAddressList(): List<AddAddressModel?>? {
-        var arrayItems: List<AddAddressModel?>? = null
-        val serializedObject: String? = prefs.getString(PrefKeys.gstAddress, null)
-        if (serializedObject != null) {
-            val gson = Gson()
-            val type: Type = object : TypeToken<List<AddAddressModel?>?>() {}.getType()
-            arrayItems = gson.fromJson<List<AddAddressModel>>(serializedObject, type)
-        }
-        return arrayItems
+  fun getAddressList(): List<AddAddressModel?>? {
+    var arrayItems: List<AddAddressModel?>? = null
+    val serializedObject: String? = prefs.getString(PrefKeys.gstAddress, null)
+    if (serializedObject != null) {
+      val gson = Gson()
+      val type: Type = object : TypeToken<List<AddAddressModel?>?>() {}.getType()
+      arrayItems = gson.fromJson<List<AddAddressModel>>(serializedObject, type)
     }
+    return arrayItems
+  }
 
 
   /**
@@ -430,74 +429,74 @@ fun setAddressList(addlist: List<AddAddressModel>?){
    */
   fun clearPrefs() {
     editor.remove(PrefKeys.JWTToken)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.OnboardingStatus)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.SupplierEnabled)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsTestUser)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.RouteUpdate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.PhoneNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.HasLoggedIn)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.TdsRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UpdateTdsRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UserName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.BankName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.AccountNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.CompanyName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.PhoneNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IfscCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.Pancard)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.CityCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.GNCityCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.MaxPMTRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsParent)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.TruckTypes)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.DemandType)
     editor.remove(PrefKeys.LogoutStatus)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.StartTime)
-        .apply()
+            .apply()
     editor.remove((PrefKeys.LastLoginTime))
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsFirstRoute)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UserOverallPerformance)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.VendorEntity)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.DeepLinkArg)
-        .apply()
-      editor.remove(PrefKeys.LoadPostKyc)
-          .apply()
+            .apply()
+    editor.remove(PrefKeys.LoadPostKyc)
+            .apply()
     editor.remove(PrefKeys.AccountSetup)
             .apply()
     editor.remove(PrefKeys.UserMode)
             .apply()
     editor.remove(PrefKeys.UserRole)
             .apply()
-      editor.remove(PrefKeys.IsUserVerfied)
-          .apply()
+    editor.remove(PrefKeys.IsUserVerfied)
+            .apply()
     editor.remove(PrefKeys.businessAddress)
             .apply()
     editor.remove(PrefKeys.gstNumber)
@@ -528,7 +527,7 @@ fun setAddressList(addlist: List<AddAddressModel>?){
     isTestUser = user.supplierDetails?.testUser == true
     tdsRate = user.getTDSSubtractor()
     updatedTdsRate =
-      if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
+            if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
     bankName = user.supplierDetails?.bank ?: ""
     companyName = user.businessName ?: ""
     phoneNumber = user.phoneNumber
@@ -557,7 +556,7 @@ fun setAddressList(addlist: List<AddAddressModel>?){
     setAddressList(user.otherAddress)
     isPanVerfied = user.isPanVerified?: false
     isGstVerfied= user.isGstVerified?: false
-     isRcVerfied = user.isRcVerified?: false
+    isRcVerfied = user.isRcVerified?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
   }
 
