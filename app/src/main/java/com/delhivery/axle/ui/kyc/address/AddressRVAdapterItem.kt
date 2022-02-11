@@ -35,7 +35,8 @@ abstract class BaseAddressRVAdapterItem<D : BaseKeyTypeModel<String>>(
  * Gst item
  */
 class AddressDataItem(data: AddressDetailData) :
-    BaseAddressRVAdapterItem<AddressDetailData>(AddressRVAdapterItemType.AddressItem, data)
+    BaseAddressRVAdapterItem<AddressDetailData>(AddressRVAdapterItemType.AddressItem, data) {
+}
 
 /**
  * Warning/action item

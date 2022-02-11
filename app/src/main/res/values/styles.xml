@@ -27,6 +27,15 @@
     <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
   </style>
 
+  <!-- Outline Action delete button -->
+  <style name="OutlineDeleteActionButton">
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:background">@drawable/bg_outline_delete_action_btn</item>
+    <item name="android:textColor">@color/destructive_red</item>
+    <item name="android:textSize">@dimen/text_14sp</item>
+    <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+  </style>
+
   <!-- Form input field -->
   <style name="FormInputField" parent="SearchEditText">
     <item name="android:background">@drawable/bg_form_edit</item>

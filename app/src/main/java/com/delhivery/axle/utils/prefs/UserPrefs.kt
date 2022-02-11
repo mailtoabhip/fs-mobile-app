@@ -359,9 +359,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.businessAddress, "") ?: ""
 
-  /**
+    /**
    * gst address
    */
+
   fun setAddressList(addlist: List<AddAddressModel>?){
     val gson = Gson()
     val json = gson.toJson(addlist)

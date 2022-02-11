@@ -98,7 +98,8 @@
   <string name="action_place_bid">Place Bid</string>
   <string name="action_start_bidding">Start Bidding</string>
   <string name="action_delete">Delete</string>
-  <string name="action_no_dont_delete">No, Don’t Delete</string>
+    <string name="action_delete_address">Delete Address</string>
+    <string name="action_no_dont_delete">No, Don’t Delete</string>
   <string name="action_edit_bid">Edit Bid</string>
   <string name="action_confirm_route">Confirm Route</string>
   <string name="action_deselect_all_states">Deselect all states</string>
@@ -107,6 +108,7 @@
   <string name="action_add_more_route">Add more routes</string>
   <string name="action_confirm">Confirm</string>
   <string name="action_save">Save</string>
+    <string name="action_save_changes">Save Changes</string>
   <string name="action_logout_from_app">Logout from the app</string>
   <string name="action_dismiss">DISMISS</string>
   <string name="action_continue">Continue</string>

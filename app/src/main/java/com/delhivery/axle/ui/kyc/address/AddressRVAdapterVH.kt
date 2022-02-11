@@ -43,13 +43,31 @@ abstract class BaseAddressRVAdapterViewHolder<out B : ViewDataBinding, IT : Base
  */
 class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
     BaseAddressRVAdapterViewHolder<ViewAddressRequestItemBinding, AddressDataItem>(binding) {
+    var lastSelectedPos =0
     override fun bind(
         item: AddressDataItem,
         _interface: AddressRVAdapterInterface
     ) {
         binding.title= item.data.address
+        if(item.data.addressType?.startsWith("al",true)!!){
+            binding.addresst="Alternate address"
+        }else{
+            binding.addresst= "GST address"
+        }
+
+        binding.imgAddress.setOnClickListener{
+            _interface.editItem(item)
+        }
+        binding.relLay.setOnClickListener {
+            binding.relLay.isSelected=true
+            _interface.selectItem(item,adapterPosition)
+
+        }
+
+
         binding.root.clickToAction(HomeTripsRequestAction_ViewDetails, item, _interface)
     }
+
 }
 
 /**

@@ -6,10 +6,15 @@ import java.io.Serializable
 
 
 data class AddressDetailData(
-    @SerializedName("phone_number") var phone_number : String?,
-    @SerializedName("address") var address : String
+    @SerializedName("phone_number") var phone_number : String? ,
+    @SerializedName("address") var address : String,
+    @SerializedName("proof_document_type") var proofDocumentType: String? = null,
+    @SerializedName("document_urls") var documentUrls: List<String>? = null,
+    @SerializedName("address_type") var addressType: String? = null,
+    @SerializedName("is_deleted") var isDeleted: Boolean? = null
 ): BaseKeyTypeModel<String>(), Serializable {
     override fun key() =  address
+     fun get() = addressType
 }
 
 /* actions */

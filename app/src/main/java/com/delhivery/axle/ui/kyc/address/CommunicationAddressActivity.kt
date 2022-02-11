@@ -106,14 +106,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         binding.btnSubmitDetails.setOnClickListener {
-            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!,null)
+
 
             if(pincodeFilled){
               viewModel.documentProofType =  binding.spinnerProof.selectedItem.toString()
             }
-            viewModel.addNewAddress()
-          //  navigationUtils.navigate(businessVerificationIntent(this),false)
+            viewModel.addNewAddress(false)
+
+            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!,null)
         }
 
         //check length and enable/disable submit button
@@ -357,6 +358,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             }
         }
     }
+
 
     fun businessVerificationIntent(
         context: Context

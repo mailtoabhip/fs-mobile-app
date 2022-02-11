@@ -3,20 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools"
     >
-    <data>
-        <variable
-            name="viewModel"
-            type="com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel"
-            />
-        <import type="android.view.View" />
-    </data>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_all_round_corner_white"
-
         >
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:id="@+id/top_lay"
@@ -101,7 +95,6 @@
             android:hint="@string/flat_hint"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@={ viewModel.flatAddress }"
             />
         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
             android:id="@+id/edit_area"
@@ -118,7 +111,6 @@
             android:hint="@string/area_hint"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@={ viewModel.areaAddress }"
             />
         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
             android:id="@+id/edit_city"
@@ -135,7 +127,6 @@
             android:hint="@string/city_hint"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
-            android:text="@={ viewModel.cityAddress }"
             />
         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
             android:id="@+id/edit_pincode"
@@ -154,7 +145,6 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             bind:state_error="false"
-            android:text="@={ viewModel.pincodeAddress }"
             />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
