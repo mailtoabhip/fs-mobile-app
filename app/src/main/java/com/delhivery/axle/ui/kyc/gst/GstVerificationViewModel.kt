@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.address.AddressDetailData
@@ -14,11 +15,13 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.address.AddressDataItem
 import com.delhivery.axle.ui.kyc.address.BaseAddressRVAdapterItem
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import java.io.File
 import javax.inject.Inject
 
@@ -118,7 +121,7 @@ class GstVerificationViewModel@Inject constructor(
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
         if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null) {
-            compositeDisposable += loadboardRepository.verifyByDocUpload("gst", gstDetailData.value?.gstNumber!!.replace("-", ""), docList)
+            compositeDisposable += loadboardRepository.verifyByDocUpload("gst", "06AAPCS957SE1Z4", docList)
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->
@@ -140,25 +143,34 @@ class GstVerificationViewModel@Inject constructor(
     }
 
     /**
-     * update user pan number
+     * update user gst number and address
      */
     var userUpdateLiveData = MutableLiveData<Boolean>()
 
     fun updateUserDetails() {
         if (!isConnected) return
 
-        if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && userPrefs.phoneNumber!=null) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,gst_number = gstDetailData.value?.gstNumber!!.replace("-", "")))
+        if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && phoneNum!=null) {
+            compositeDisposable +=  loadboardRepository.addAddress(phoneNum, gstDetailData.value?.address, null, null, addressType, false)
+                    .flatMap { _Res-> loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = phoneNum!!,gst_number = gstDetailData.value?.gstNumber!!.replace("-", "")))
+                                .map {
+                                    val msg = if (_Res.isNotNullOrEmpty()) {
+                                       _Res
+                                    } else {
+                                        "Error updating user"
+                                    }
+                                    Triple(_Res, msg, it)
+                                }
+                    }
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->
-                        if (!error) {
-                            userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-","")
-                            userPrefs.gstAddress = gstDetailData.value?.address.toString()
-                            userPrefs.isGstVerfied = true
-                            userUpdateLiveData.postValue(true)
-                        } else{
-                            error.handle()
+                        if (!error && !_res.second.equals("Error updating user")) {
+                                userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-", "")
+                                userPrefs.gstAddress = gstDetailData.value?.address.toString()
+                                userPrefs.isGstVerfied = true
+                                userUpdateLiveData.postValue(true)
+                        }else {
                             userUpdateLiveData.postValue(false)
                         }
                     }

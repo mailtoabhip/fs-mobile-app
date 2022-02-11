@@ -136,7 +136,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                         TotalStepsKey)!!,null)
             } else {
-                uiUtils.showSnackbar("Update Failed, Please try again")
+                uiUtils.showSnackbar("GST verification failed, please try again")
             }
         })
 
@@ -381,9 +381,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         currSelectedGst = data?.gstDetailItemData?.gstNumber
         viewModel.gstDetailData.value =  data?.gstDetailItemData
         gstRVAdapter.notifyDataSetChanged()
-        if(data?.gstDetailItemData!=null && data.gstDetailItemData?.address!=null) {
-            viewModel.addGstAddress()
-        }
     }
 
     override fun getViewModelClass(): Class<GstVerificationViewModel> = GstVerificationViewModel::class.java
