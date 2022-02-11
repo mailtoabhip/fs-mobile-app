@@ -9,6 +9,7 @@ import com.delhivery.axle.api.response.*
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -34,7 +35,7 @@ interface LoadBoardService {
     @POST("/gst_by_number")
     fun getGstDetails(
             @Body request: GstDetailRequest
-    ): Single<BaseResponse<GstDetailData>>
+    ): Single<BaseResponse<GstDetailItemData>>
 
     /**
      * get GST OTP
@@ -58,7 +59,7 @@ interface LoadBoardService {
     @POST("/validate_ocr")
     fun verifyByDocUpload(
             @Body request: GstOrAadhaarDocRequest
-    ): Single<BaseResponse<Any>>
+    ): Single<BaseResponse<DocUploadResponse>>
 
     @POST("/get_otp")
     fun requestOTP(@Body request: RequestOTP): Single<OTPSentResponse>
@@ -70,10 +71,25 @@ interface LoadBoardService {
     fun updateUser(@Body request: UpdateUserRequest): Single<BaseMessageResponse>
 
     /**
-     * Get user details
+     * add alternate address
+     */
+    @POST("/add_address")
+    fun addAddress(
+        @Body request: AddAddressModel
+    ): Single<BaseMessageResponse>
+
+    /*
+     * update your communication address
      */
 
+    @POST("/submit_address")
+    fun updateNewAddress(
+        @Body request: UpdateAddressVerificationRequest
+    ): Single<BaseResponse<Any>>
 
+    /**
+     * patch user details
+     */
     @GET("/get_user")
     fun userDetails(
             @Query("uuid") userId: String

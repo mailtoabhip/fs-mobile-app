@@ -48,12 +48,13 @@ import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import androidx.core.app.ActivityCompat.startActivityForResult
+import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
-    DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
+    DialogUtilsInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -156,17 +157,6 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
        viewModel.getRequestAadhaarOtp(true)
     }
 
-    override fun handleAction(
-        actionId: String,
-        item: BaseGstRVAdapterItem<*>
-    ) {
-        when (actionId) {
-            GstAction_ViewDetails -> {
-            }
-            TransactionTimeOutAction -> {
-            }
-        }
-    }
     override fun onAWSSuccess(
         path: String
     ) {

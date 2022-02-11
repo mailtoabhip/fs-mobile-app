@@ -93,7 +93,11 @@ BaseViewModel() {
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
-                    docVerified.postValue(true)
+                    if(_res.isVerified == true){
+                        docVerified.postValue(true)
+                    }else{
+                        docVerified.postValue(false)
+                    }
                 } else{
                     error.handle()
                     docVerified.postValue(false)
@@ -126,13 +130,12 @@ BaseViewModel() {
         if (!isConnected) return
 
         if (aadhaarCardNumber.length == 14) {
-            compositeDisposable += loadboardRepository.updateUser(
-                UpdateUserRequest(
-                   phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
+                        userPrefs.aadhaarNumber = aadhaarCardNumber.replace("-","")
                         userUpdateLiveData.postValue(true)
                     } else{
                         error.handle()

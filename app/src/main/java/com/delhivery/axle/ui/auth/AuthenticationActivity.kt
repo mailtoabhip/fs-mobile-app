@@ -49,7 +49,7 @@ import javax.inject.Inject
  * Authentication screen
  */
 class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
-    DelhiveryOTPViewInterface, OTPReceiverInterface {
+        DelhiveryOTPViewInterface, OTPReceiverInterface {
 
   override fun getViewModelClass() = AuthenticationViewModel::class.java
 
@@ -86,15 +86,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /*move to back screen*/
     binding.btnChangeNumber.setOnClickListener {
       when (binding.state) {
-      PhoneNo -> {
-        super.onBackPressed()
+        PhoneNo -> {
+          super.onBackPressed()
+        }
+        OTP -> viewModel.state = PhoneNo
+        LoginProgress -> {/* do nothing when loading */
+        }
+        else -> {
+        }
       }
-      OTP -> viewModel.state = PhoneNo
-      LoginProgress -> {/* do nothing when loading */
-      }
-      else -> {
-      }
-    }
     }
 
     /* phone no edit button setup */
@@ -104,8 +104,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         binding.btnSendOtp.isEnabled = false
       }
 
-     lengthAction(10) {
-       binding.btnSendOtp.isEnabled = true
+      lengthAction(10) {
+        binding.btnSendOtp.isEnabled = true
       }
     }
 
@@ -122,20 +122,20 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     viewModel.otpStatusLiveData.observe(this, Observer {
       if (it == true) {
         timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
-            .onBackground()
-            .subscribe {
-              val timeLeft = 15L - it
-              if (timeLeft > 0) {
-                val f: NumberFormat = DecimalFormat("00")
-                binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
-              } else if (timeLeft == 0L) {
-                binding.btnResendOtp.text = getString(string.label_resend_otp_done)
-                binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
-              } else {
-                viewModel.otpStatusLiveData.postValue(false)
-              }
-            }
+                .onBackground()
+                .subscribe {
+                  val timeLeft = 15L - it
+                  if (timeLeft > 0) {
+                    val f: NumberFormat = DecimalFormat("00")
+                    binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
+                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
+                  } else if (timeLeft == 0L) {
+                    binding.btnResendOtp.text = getString(string.label_resend_otp_done)
+                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
+                  } else {
+                    viewModel.otpStatusLiveData.postValue(false)
+                  }
+                }
       } else {
         timeoutDisposable.safeDispose()
       }
@@ -204,7 +204,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   }
 
   override fun otpSubmitted(otp: CharArray) {
-   binding.btnVerifyOtp.isEnabled = true
+    binding.btnVerifyOtp.isEnabled = true
     viewModel.verifyOTP(otp)
   }
 
@@ -259,13 +259,13 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.hideDelhiveryProgress()
             //show keyboard and clear otp
             uiUtils.toggleKeyboard(false)
-           binding.otpView.clear(focusedIndex = 0, animate = false)
+            binding.otpView.clear(focusedIndex = 0, animate = false)
 
             /* show masked phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 binding.textOtpSentToPhoneNo.text =
-                  getString(string.msg_otp_sent_to_phone_no, it)
+                        getString(string.msg_otp_sent_to_phone_no, it)
               }
             }
           }
@@ -289,8 +289,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             val bundle = Bundle()
             bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
             navigationUtils.navigateForActivityResult(
-                intent = selectRouteIntent(this@AuthenticationActivity),
-                requestCode = REQCODE_ADD_ROUTES, extras = bundle
+                    intent = selectRouteIntent(this@AuthenticationActivity),
+                    requestCode = REQCODE_ADD_ROUTES, extras = bundle
             )
           }
           /* Login success, user routes found - navigate to load requests */
@@ -310,19 +310,19 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(AccountRoleActivity::class.java, false)
           }
           AccountAction -> {
-          uiUtils.showProgress("Loading...")
-          navigationUtils.navigate(AccountActionActivity::class.java, false)
+            uiUtils.showProgress("Loading...")
+            navigationUtils.navigate(AccountActionActivity::class.java, false)
           }
           AccountDetails -> {
-          uiUtils.showProgress("Loading...")
-          navigationUtils.navigate(AccountDetailsActivity::class.java, false)
-        }
+            uiUtils.showProgress("Loading...")
+            navigationUtils.navigate(AccountDetailsActivity::class.java, false)
+          }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()
             dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,
-                string.msg_dialog_supplier_disabled,
-                getString(string.label_call_us), getString(string.label_mail_us),
-                { callHelpline() }, { sendMail() }
+                    string.msg_dialog_supplier_disabled,
+                    getString(string.label_call_us), getString(string.label_mail_us),
+                    { callHelpline() }, { sendMail() }
             )
           }
         }
@@ -369,14 +369,14 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   }
 
   override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
+          requestCode: Int,
+          resultCode: Int,
+          data: Intent?
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
       REQCODE_ADD_ROUTES -> navigationUtils.navigate(
-          HomeActivity::class.java, true
+              HomeActivity::class.java, true
       )
     }
   }

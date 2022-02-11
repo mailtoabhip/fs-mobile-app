@@ -171,8 +171,8 @@ class NavigationUtils @Inject constructor(
   ) {
     var intent= Intent()
        //should be changed based on user_mode
-        val userMode = "truck_post"
-        val kycSteps = if(userMode=="truck_post"){
+        val userMode = userPrefs.userMode
+        val kycSteps = if(userMode=="post_truck"){
       userPrefs.truckPostKyc.split(",").toTypedArray()
       }else{
       userPrefs.loadPostKyc.split(",").toTypedArray()
@@ -180,12 +180,10 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(extras.getString("pan")!=null && extras.getString("pan")=="person"){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
             }else{
-//              intent= Intent(context, GstVerificationActivity::class.java)
-              intent= Intent(context, AadhaarVerificationActivity::class.java)
-
+             intent= Intent(context, GstVerificationActivity::class.java)
             }
         }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
           intent= Intent(context, CommunicationAddressActivity::class.java)
@@ -211,7 +209,7 @@ class NavigationUtils @Inject constructor(
       if(extras?.getString(panKey) != null){
         bundle.putString(panKey,extras.getString(panKey))
       }
-      this.navigateKyc(context,true,bundle)
+      this.navigateKyc(context,false,bundle)
     }else{
       val intent = Intent(context, HomeActivity::class.java)
       this.navigate(intent,true)

@@ -10,7 +10,7 @@
     <import type="android.view.View" />
 
 </data>
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/blue_bg"
@@ -22,11 +22,18 @@
             android:layout_height="@dimen/height_toolbar"
             />
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:id="@+id/refresh_layout"
+            android:layout_height="wrap_content">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingStart="@dimen/size_24dp"
+                android:layout_below="@+id/toolbar"
                 android:paddingEnd="@dimen/size_24dp"
                 android:paddingBottom="@dimen/size_48dp">
                 <ProgressBar
@@ -81,26 +88,29 @@
                      <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:id="@+id/gstList"
+                        android:paddingBottom="@dimen/size_72dp"
                          android:layout_marginTop="@dimen/size_32dp"
                          bind:layout_constraintTop_toBottomOf="@+id/gst_hint"
                         bind:layout_constraintStart_toStartOf="parent"
                         bind:layout_constraintEnd_toEndOf="parent"
                         android:layout_height="wrap_content"/>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_verify_gst"
-                    style="@style/ActionButton"
-                    android:textAllCaps="false"
-                    bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/gstList"
-                    android:layout_alignParentBottom="true"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="@dimen/size_24dp"
-                    android:text="@string/action_verify_gst"
-                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_verify_gst"
+            style="@style/ActionButton"
+            android:layout_marginBottom="@dimen/size_48dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:textAllCaps="false"
+            android:enabled="false"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:text="@string/action_verify_gst"
+            />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </RelativeLayout>
 </layout>
 
 
