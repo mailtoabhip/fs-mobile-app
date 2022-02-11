@@ -7,7 +7,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -17,25 +16,21 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.data.address.AddressDetailData
-import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.databinding.ActivityAddressBinding
 import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
-import com.delhivery.axle.databinding.DialogGstAttachmentsBinding
+import com.delhivery.axle.databinding.DialogEditAlternateAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
-import com.delhivery.axle.ui.kyc.gst.GstRVAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.setup
+import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -78,6 +73,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var proofTypeFilled = false
     var docUploadProof = true
     var selectedAddress =""
+    var isSameAsGST =false
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
     override fun layoutId() = R.layout.activity_address
@@ -90,7 +86,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
           showAddAlternateAddressDialog()
       }
         binding.btnSubmitDetails.setOnClickListener {
-            viewModel.updateCommunicationAddress(selectedAddress)
+            viewModel.updateCommunicationAddress(selectedAddress,isSameAsGST)
         }
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
@@ -317,11 +313,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
 
 
-
-
-
-
-
     private fun showAddAlternateAddressDialog() {
         val dialog = Dialog(this)
         val bindingDialog =DialogAddAlternateAddressBinding.inflate(layoutInflater)
@@ -353,7 +344,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             var businessAddress = viewModel.flatAddress +","+viewModel.areaAddress+","+viewModel.cityAddress+"-"+viewModel.pincodeAddress
 
-            viewModel.addNewAddress()
+            viewModel.addNewAddress(false)
             viewModel.documentProofUrl.clear()
             //  navigationUtils.navigate(businessVerificationIntent(this),false)
 
@@ -421,13 +412,156 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+
+
+    private fun showEditAlternateAddressDialog(addressDataItem: AddressDataItem) {
+        val dialog = Dialog(this)
+        val bindingDialog = DialogEditAlternateAddressBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+
+        var addressRec= addressDataItem.key()
+        var flatRec = addressRec.split(",").get(0)
+        bindingDialog.editFlat.setText(flatRec)
+        var areaRec = addressRec.split(",").get(1)
+        bindingDialog.editArea.setText(areaRec)
+        var citynPinRec = addressRec.split(",").get(2)
+        var cityRec =citynPinRec.split("-").get(0)
+        bindingDialog.editCity.setText(cityRec)
+        var pincodeRec = citynPinRec.split("-").get(1)
+        bindingDialog.editPincode.setText(pincodeRec)
+        var spinnerIndex=0
+        if(addressDataItem.data.proofDocumentType!!.startsWith("v",true)){
+            spinnerIndex=1
+        }else  if(addressDataItem.data.proofDocumentType!!.startsWith("lr",true)){
+            spinnerIndex=2
+        }else  if(addressDataItem.data.proofDocumentType!!.startsWith("le",true)){
+            spinnerIndex=3
+        }
+        bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex) })
+
+        bindingDialog.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+
+
+        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+            if(p>0){
+                proofTypeFilled = true
+                bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+            }else{
+                proofTypeFilled =false
+                bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+            }
+        }
+
+        bindingDialog.btnSubmitDetails.setOnClickListener {
+
+            viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
+            viewModel.flatAddress = bindingDialog.editFlat.text.toString()
+            viewModel.areaAddress = bindingDialog.editArea.text.toString()
+            viewModel.cityAddress = bindingDialog.editCity.text.toString()
+            viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
+            viewModel.addNewAddress(false)
+            viewModel.documentProofUrl.clear()
+
+        }
+        bindingDialog.btnConfirmDelete.setOnClickListener {
+
+            viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
+            viewModel.flatAddress = bindingDialog.editFlat.text.toString()
+            viewModel.areaAddress = bindingDialog.editArea.text.toString()
+            viewModel.cityAddress = bindingDialog.editCity.text.toString()
+            viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
+            viewModel.addNewAddress(true)
+            viewModel.documentProofUrl.clear()
+        }
+
+
+        //check length and enable/disable submit button
+        bindingDialog.editCity.lengthAction(3){
+            cityFilled = true
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editCity.lengthAction(2){
+            cityFilled = false
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editArea.lengthAction(3){
+            areaFilled = true
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editArea.lengthAction(2){
+            areaFilled = false
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editFlat.lengthAction(3){
+            flatFilled = true
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editFlat.lengthAction(2){
+            flatFilled = false
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editPincode.lengthAction(6){
+            pincodeFilled = true
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        bindingDialog.editPincode.lengthAction(5){
+            pincodeFilled = false
+            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        }
+        viewModel.addAddressLiveData.observe(this, Observer {
+            if (it) {
+                dialog.dismiss()
+            } else {
+                uiUtils.showSnackbar("Error encountered, Please try again.")
+                dialog.dismiss()
+            }
+        })
+
+        bindingDialog.uploadDocLay.setOnClickListener {
+            viewModel.captureAddressProof.postValue(true)
+        }
+        viewModel.showSubmitedDialog.observe(this, Observer {
+            if(it){
+                bindingDialog.uploadDocLay.visibility= View.GONE
+                bindingDialog.uploadDocLay.visibility= View.VISIBLE
+                bindingDialog.docTitle.setText(uploadArray.get(0).first)
+                bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
+            }
+        })
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+
+    }
+
+
+
+
+
+
+
     override fun handleAction(actionId: String, item: BaseAddressRVAdapterItem<*>) {
 
     }
 
-    override fun onItemClicked(item: BaseAddressRVAdapterItem<*>) {
-        super.onItemClicked(item)
+    override fun editItem(item: AddressDataItem) {
+        showEditAlternateAddressDialog(item)
+    }
+
+    override fun selectItem(item: AddressDataItem) {
         selectedAddress=item.data.key()
+        if(item.data.addressType.equals("gst",true)) {
+            isSameAsGST=true
+        }
     }
 
 }

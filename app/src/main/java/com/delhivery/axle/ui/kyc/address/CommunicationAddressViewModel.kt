@@ -27,7 +27,7 @@ BaseViewModel() {
     var areaAddress=""
     var pincodeAddress=""
     var cityAddress=""
-    var phoneNum ="+91"+userPrefs.phoneNumber
+    var phoneNum =userPrefs.phoneNumber!!
     var documentProofType =""
     var documentProofUrl=mutableListOf("")
     var addressType ="alternate"
@@ -43,7 +43,7 @@ BaseViewModel() {
 
 
 
-    fun addNewAddress() {
+    fun addNewAddress(isDeleted:Boolean) {
         if (!isConnected) return
 
        var address = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
@@ -51,12 +51,29 @@ BaseViewModel() {
         documentProofType=documentProofType.replace("\\s".toRegex(),"_")
         documentProofType=documentProofType.toLowerCase()
         addressType= addressType.toLowerCase()
-        mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(AddressDataItem(AddressDetailData(userPrefs.phoneNumber,address)),
-                DataRVAdapterOperationType.Add
-            ))
-        }.let {
-            AddressLiveData.postValue(it)
+        if(!isDeleted) {
+            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                add(
+                    Pair(
+                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
+                        DataRVAdapterOperationType.Add
+                    )
+                )
+            }.let {
+                AddressLiveData.postValue(it)
+            }
+        }else{
+            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                add(
+                    Pair(
+                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
+                        DataRVAdapterOperationType.Remove
+                    )
+                )
+            }.let {
+                AddressLiveData.postValue(it)
+            }
+
         }
 
             compositeDisposable += loadboardRepository.addAddress(
@@ -64,7 +81,8 @@ BaseViewModel() {
                 address,
                 documentProofType,
                 documentProofUrl,
-                addressType
+                addressType,
+                isDeleted
             )
                 .onBackground()
                 .progress()
@@ -79,7 +97,7 @@ BaseViewModel() {
 
     }
 
-    fun updateCommunicationAddress(selectedAddress : String){
+    fun updateCommunicationAddress(selectedAddress : String,isSameAsGst:Boolean){
         compositeDisposable += loadboardRepository.updateCommunicationAddress(
             selectedAddress,
             isSameAsGst,

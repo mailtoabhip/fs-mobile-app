@@ -16,4 +16,9 @@ interface AddressRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<BaseAd
         actionId: String,
         item: BaseAddressRVAdapterItem<*>
     )
+
+    fun editItem(item: AddressDataItem)
+
+    fun selectItem(item: AddressDataItem)
+
 }
