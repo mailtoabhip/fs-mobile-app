@@ -10,5 +10,9 @@ enum class AuthenticationUIState {
   SelectRoute,
   LoadRequest,
   Disabled,
-  Password
+  AccountSetup,
+  Password,
+  AccountAction,
+  AccountRole,
+  AccountDetails
 }

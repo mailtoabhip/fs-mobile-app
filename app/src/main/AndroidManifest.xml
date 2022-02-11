@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".KotlinApp"
@@ -22,6 +24,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        <activity android:name=".ui.businessverification.BusinessVerificationActivity">
+
+        </activity>
 
         <service
             android:name=".fcm.DelhiveryFCMService"
@@ -69,10 +74,12 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -90,10 +97,10 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.auth.AuthenticationActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"
             android:screenOrientation="portrait" />
@@ -174,6 +181,33 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.profile.ProfileKYCDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.kyc.pan.PanVerificationActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.kyc.gst.GstVerificationActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.kyc.aadhaar.AadhaarVerificationActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.kyc.address.CommunicationAddressActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountrole.AccountRoleActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountaction.AccountActionActivity"
             android:screenOrientation="portrait" />
     </application>
 

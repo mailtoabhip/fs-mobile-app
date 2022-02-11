@@ -12,9 +12,18 @@ import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.*
+import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.*
@@ -191,6 +200,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             } catch (e: NumberFormatException) {
               //Do Nothing
             }
+              try{
+              viewModel.saveLoadPostKycConfig(
+                  remoteConfig.getString("post_load")
+              )
+                  viewModel.saveTruckPostKycConfig(
+                      remoteConfig.getString("post_truck")
+                  )
+          } catch (e: Exception) {
+            //Do Nothing
+        }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
             currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
@@ -216,12 +235,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
       bundle.putString(ARGS_DEEPLINK_ID , tid)
-      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+     navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+
     } else {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
         Home -> HomeActivity::class
+        AccountAction -> AccountActionActivity::class
+        AccountRole-> AccountRoleActivity::class
+        AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {
@@ -230,7 +253,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_TRANSACTION_IDS, transactions)
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         }
-        navigationUtils.navigate(it.java, true, bundle)
+        /* call for starting kyc flow with step 0 as per remote config
+          bundle.putInt(StepKey,0)
+          navigationUtils.navigateKyc(this,true,bundle)*/
+          navigationUtils.navigate(it.java, true, bundle)
       }
     }
   }

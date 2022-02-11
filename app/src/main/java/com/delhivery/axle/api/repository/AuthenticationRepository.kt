@@ -1,9 +1,11 @@
 package com.delhivery.axle.api.repository
 
+import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.PasswordLoginRequest
 import com.delhivery.axle.api.request.RequestOTP
+import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.AnalyticsUtil
@@ -21,6 +23,7 @@ import javax.inject.Singleton
 @Singleton
 class AuthenticationRepository @Inject constructor(
   private val umsService: UMSService,
+  private val loadBoardService: LoadBoardService,
   private val userPrefs: UserPrefs
 ) : BaseRepository() {
 
@@ -33,14 +36,14 @@ class AuthenticationRepository @Inject constructor(
    * Send otp to phone number and return if success and error message
    */
   fun sendOTP(phoneNo: String) =
-    umsService.requestOTP(RequestOTP.getRequest(phoneNo))
-        .map {
-          Pair(true, it.successMsg)
-        }
-        .onErrorReturn {
-          /* handle error if needed */
-          Pair(false, "Invalid phone number")
-        }
+    loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
+      .map {
+        Triple(true, it.successMsg,it.isNewUser)
+      }
+      .onErrorReturn {
+        /* handle error if needed */
+        Triple(false, "Invalid phone number", false)
+      }
 
   /**
    * Verify OTP
@@ -48,9 +51,9 @@ class AuthenticationRepository @Inject constructor(
   fun verifyOTP(
     phoneNo: String,
     otp: String
-  ) = umsService.otpLogin(OTPLoginRequest.getRequest(phoneNo, otp))
+  ) = loadBoardService.otpLogin(OTPLoginRequest.getRequest(phoneNo, otp))
       .map {
-        handleJWTToken(it.jwtToken)
+        it.responseData?.jwtToken?.let { it1 -> handleJWTToken(it1) }
         Pair(true, "")
       }
       .onErrorReturn {

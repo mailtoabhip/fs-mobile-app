@@ -13,7 +13,16 @@
   <style name="ActionButton">
     <item name="android:layout_height">wrap_content</item>
     <item name="android:background">@drawable/bg_action_btn</item>
-    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textColor">@color/button_text</item>
+    <item name="android:textSize">@dimen/text_16sp</item>
+    <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+  </style>
+
+  <!-- Outline Action button -->
+  <style name="OutlineActionButton">
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:background">@drawable/bg_outline_action_btn</item>
+    <item name="android:textColor">@color/sub_heading_black</item>
     <item name="android:textSize">@dimen/text_14sp</item>
     <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
   </style>

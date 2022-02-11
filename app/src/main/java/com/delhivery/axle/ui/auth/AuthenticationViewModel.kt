@@ -1,9 +1,13 @@
 package com.delhivery.axle.ui.auth
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.ui.accountaction.AccountType
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
 import com.delhivery.axle.ui.auth.AuthenticationUIError.*
 import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -66,9 +70,10 @@ class AuthenticationViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
+            userPrefs.accountSetup = _res.third
             OTP
           } else {
-            errorLiveData.postValue(Pair(InvalidPhoneNo, _res.second))
+            errorLiveData.postValue(Pair(InvalidOTP, _res.second))
             PhoneNo
           }
         }
@@ -87,30 +92,36 @@ class AuthenticationViewModel @Inject constructor(
         authenticationRepository.verifyOTP(phoneNo, _otp),
         Single.timer(1000, MILLISECONDS), //add delay for animation
         BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
-        .flatMap { _otpRes ->
+        .flatMap { _Res ->
           userRepository.getUser(false)
               .map {
-                val msg = if (_otpRes.second.isNotNullOrEmpty()) {
-                  _otpRes.second
+                val msg = if (_Res.second.isNotNullOrEmpty()) {
+                  _Res.second
                 } else {
-                  "Error validating OTP"
+                  "Error creating account"
                 }
-                Triple(_otpRes.first, msg, it)
+                Triple(_Res.first, msg, it)
               }
         }
         .onBackground()
         .subscribe { _res, error ->
           state = if (!error && _res.first) {
-            if (!_res.third.supplierEnabled) {
+            if (!_res.third.isSpEnabled && !_res.third.isClientEnabled && userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
-              Disabled
-            } else if (_res.third.isDeleted) {
+              AccountAction
+            } else if (_res.third.userRole.isNullOrEmpty() && userPrefs.accountSetup) {
+              userPrefs.hasLoggedIn = false
+              AccountRole
+            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )&& userPrefs.accountSetup) {
+              userPrefs.hasLoggedIn = false
+              AccountDetails
+            } else if (_res.third.supplierDetails?.isDeleted == true ) {
               userPrefs.hasLoggedIn = false
               Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-              LoadRequest
+             LoadRequest
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
@@ -120,9 +131,8 @@ class AuthenticationViewModel @Inject constructor(
           } else {
             if (error is HttpException) {
               userPrefs.hasLoggedIn = false
-              error.handle()
-            }
-            errorLiveData.postValue(Pair(InvalidOTP, ""))
+           }
+           errorLiveData.postValue(Pair(InvalidOTP, ""))
             OTP
           }
         }
@@ -152,10 +162,10 @@ class AuthenticationViewModel @Inject constructor(
       .onBackground()
       .subscribe { _res, error ->
         state = if (!error && _res.first) {
-          if (!_res.third.supplierEnabled) {
+          if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
             userPrefs.hasLoggedIn = false
             Disabled
-          } else if (_res.third.isDeleted) {
+          } else if (_res.third.supplierDetails?.isDeleted == true) {
             userPrefs.hasLoggedIn = false
             Disabled
           } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {

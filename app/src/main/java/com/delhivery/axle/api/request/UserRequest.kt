@@ -64,6 +64,7 @@ data class UpdateUserFCMTokenRequest(
   }
 }
 
+
 /* actions */
 const val EditTeamMemberAction_Edit = "edit_member"
 const val DeleteTeamMemberAction_Delete = "delete_member"

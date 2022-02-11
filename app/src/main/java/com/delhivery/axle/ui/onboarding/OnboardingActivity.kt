@@ -54,23 +54,15 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
 
 
     /* skip */
-    binding.textSkip.setOnClickListener { skip(true) }
-
-    /* next page fab */
-    binding.fabNext.setOnClickListener { moveNext() }
+    binding.btnGetStarted.setOnClickListener { skip(true) }
 
     /* arc view animate reveal */
-    binding.arcView.animate(RevealOpen) {
-      /* make views visible */
+  /* make views visible */
       please {
         animate(binding.viewpager) toBe {
           visible()
         }
-        animate(binding.containerActions) toBe {
-          visible()
-        }
       }.start()
-    }
 
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
@@ -124,7 +116,8 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
       /* setup binding */
       val item = OnboardingConfig[position]
       title = item.title
-      message = item.message
+      pageimage = item.image
+      pageImage.setImageResource(item.image);
     }.root
 
     override fun destroyItem(
