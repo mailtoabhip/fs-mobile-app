@@ -222,7 +222,6 @@ class GstVerificationViewModel@Inject constructor(
                 null,
                 addressType,
                 false).onBackground()
-                .progress()
                 .subscribe { _res, error ->
                     if (!error) {
                         //do nothing
