@@ -64,6 +64,7 @@ class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
 
         }
 
+
         binding.root.clickToAction(HomeTripsRequestAction_ViewDetails, item, _interface)
     }
 

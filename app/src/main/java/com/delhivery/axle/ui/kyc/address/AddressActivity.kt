@@ -30,6 +30,7 @@ import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.setup
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
 import java.io.File
 import java.io.FileInputStream
@@ -82,6 +83,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+     viewModel.fetchAndAddUserAddress()
       binding.btnAddAlternateAddress.setOnClickListener {
           showAddAlternateAddressDialog()
       }
@@ -107,6 +109,14 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
           //      if(viewModel.addAddressLiveData.value!!) {
                     AddressRVAdapter.operation(_items)
           //      }
+            }
+        })
+        viewModel.alternateAddressAdded.observe(this, Observer {
+            if(it){
+            binding.btnAddAlternateAddress.visibility=View.GONE
+            }
+            else{
+                binding.btnAddAlternateAddress.visibility=View.VISIBLE
             }
         })
         viewModel.updateAddressLiveData.observe(this, Observer {
@@ -342,8 +352,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.areaAddress = bindingDialog.editArea.text.toString()
             viewModel.cityAddress = bindingDialog.editCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
-            var businessAddress = viewModel.flatAddress +","+viewModel.areaAddress+","+viewModel.cityAddress+"-"+viewModel.pincodeAddress
-
             viewModel.addNewAddress(false)
             viewModel.documentProofUrl.clear()
             //  navigationUtils.navigate(businessVerificationIntent(this),false)

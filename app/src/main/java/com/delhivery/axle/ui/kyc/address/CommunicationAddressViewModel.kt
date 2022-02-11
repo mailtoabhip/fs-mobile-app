@@ -9,6 +9,7 @@ import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -31,6 +32,7 @@ BaseViewModel() {
     var documentProofType =""
     var documentProofUrl=mutableListOf("")
     var addressType ="alternate"
+    var alternateAddressAdded = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
@@ -40,6 +42,28 @@ BaseViewModel() {
     var isSameAsGst =false
 
     //  var addAddressErrorMsgLiveData = MutableLiveData<String>()
+
+
+   fun fetchAndAddUserAddress(){
+
+       for(i in userPrefs.getAddressList()!!){
+           mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+               add(
+                   Pair(
+                       AddressDataItem(
+                           AddressDetailData(userPrefs.phoneNumber,
+                               i?.address!!,i.proofDocumentType,i.documentUrls,i.addressType,i.isDeleted)
+                       ),
+                       DataRVAdapterOperationType.Add
+                   )
+               )
+           }.let {
+               AddressLiveData.postValue(it)
+
+           }
+           if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}
+       }
+   }
 
 
 
@@ -61,6 +85,7 @@ BaseViewModel() {
                 )
             }.let {
                 AddressLiveData.postValue(it)
+                alternateAddressAdded.postValue(true)
             }
         }else{
             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -72,6 +97,7 @@ BaseViewModel() {
                 )
             }.let {
                 AddressLiveData.postValue(it)
+                alternateAddressAdded.postValue(false)
             }
 
         }

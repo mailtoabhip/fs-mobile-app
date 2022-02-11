@@ -5,9 +5,14 @@ import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 /**
  * User preferences
@@ -354,21 +359,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.businessAddress, "") ?: ""
 
-  /**
+    /**
    * gst address
    */
-  var gstAddress: String
-    set(value) = editor.putString(PrefKeys.gstAddress ,value)
-            .apply()
-    get() = prefs.getString(PrefKeys.gstAddress, "") ?: ""
 
-  /**
-   * alternate address
-   */
-  var alternateAddress: String
-    set(value) = editor.putString(PrefKeys.alternateAddress ,value)
-            .apply()
-    get() = prefs.getString(PrefKeys.alternateAddress, "") ?: ""
+
+fun setAddressList(addlist: List<AddAddressModel>?){
+    val gson = Gson()
+    val json = gson.toJson(addlist)
+    editor.putString(PrefKeys.gstAddress,json)
+        .apply()
+}
+
+
+    fun getAddressList(): List<AddAddressModel?>? {
+        var arrayItems: List<AddAddressModel?>? = null
+        val serializedObject: String? = prefs.getString(PrefKeys.gstAddress, null)
+        if (serializedObject != null) {
+            val gson = Gson()
+            val type: Type = object : TypeToken<List<AddAddressModel?>?>() {}.getType()
+            arrayItems = gson.fromJson<List<AddAddressModel>>(serializedObject, type)
+        }
+        return arrayItems
+    }
+
 
   /**
    *  pan verified
@@ -540,27 +554,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     gstNumber = user.gstNumber?: ""
     rcNumber = user.rcNumber?: ""
     businessAddress = user.businessAddress?: ""
-    gstAddress = getGstAddress(user.otherAddress,"gst")?:""
-    alternateAddress = getGstAddress(user.otherAddress, "alternate")?:""
+    setAddressList(user.otherAddress)
     isPanVerfied = user.isPanVerified?: false
     isGstVerfied= user.isGstVerified?: false
      isRcVerfied = user.isRcVerified?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
   }
-
-  fun getGstAddress(addlist:List<AddAddressModel>?, type:String):String?{
-    var address:String? = null
-    if (addlist != null) {
-      for(x in addlist){
-        if(x.addressType.equals(type)){
-          address = x.address
-          return address
-        }
-      }
-    }
-    return address
-  }
-
 
 
   fun canBid() = if (supplierEnabled) {

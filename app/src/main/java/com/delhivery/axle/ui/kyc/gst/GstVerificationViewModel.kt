@@ -141,7 +141,7 @@ class GstVerificationViewModel@Inject constructor(
                     .subscribe { _res, error ->
                         if (!error) {
                             userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-","")
-                            userPrefs.gstAddress = gstDetailData.value?.address.toString()
+//                            userPrefs.gstAddress = gstDetailData.value?.address.toString()
                             userUpdateLiveData.postValue(true)
                         } else{
                             error.handle()
