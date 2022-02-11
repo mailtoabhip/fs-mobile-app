@@ -221,7 +221,7 @@ class HomeTrucksViewModel @Inject constructor(
             )
                 .flatMap { t ->
                     val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!,
-                        destinationCity.city, destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, "Free"
+                        destinationCity.city, destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, "Free"
                     )
                     inventoryRepository.activateTruck(request.getRequest())
                 }
@@ -261,7 +261,7 @@ class HomeTrucksViewModel @Inject constructor(
             )
                 .flatMap { t ->
                     val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-                        destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, price, ownership = ownership)
+                        destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, ownership = ownership)
 
                     inventoryRepository.editTruck(request.getRequest())
                 }

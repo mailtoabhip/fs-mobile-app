@@ -26,6 +26,7 @@ class UpdateTruck(
     var sourcedAs: String,
     var originClusterId: String,
     var destinationClusterId: String,
+    var demandType: String?= null,
     var price:Double = 0.0,
     var inventoryStatus: String?=null,
     var ownership: String?= null,
@@ -55,6 +56,7 @@ class UpdateTruck(
         }
         inventoryStatus?.let { jsonObject.addProperty("inventory_status", inventoryStatus) }
         ownership?.let{ jsonObject.addProperty("ownership", it)}
+        demandType?.let { jsonObject.addProperty("demand_type",it) }
         jsonObject.addProperty("originator", originator)
 
         return jsonObject
