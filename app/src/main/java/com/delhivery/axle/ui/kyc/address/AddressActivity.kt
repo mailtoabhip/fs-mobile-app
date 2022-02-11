@@ -83,7 +83,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-     viewModel.fetchAndAddUserAddress()
+       viewModel.fetchAndAddUserAddress()
       binding.btnAddAlternateAddress.setOnClickListener {
           showAddAlternateAddressDialog()
       }
@@ -565,7 +565,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         showEditAlternateAddressDialog(item)
     }
 
-    override fun selectItem(item: AddressDataItem) {
+    override fun selectItem(item: AddressDataItem, position: Int) {
         selectedAddress=item.data.key()
         if(item.data.addressType.equals("gst",true)) {
             isSameAsGST=true

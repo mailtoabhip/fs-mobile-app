@@ -60,7 +60,7 @@ class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
         }
         binding.relLay.setOnClickListener {
             binding.relLay.isSelected=true
-            _interface.selectItem(item)
+            _interface.selectItem(item,adapterPosition)
 
         }
 

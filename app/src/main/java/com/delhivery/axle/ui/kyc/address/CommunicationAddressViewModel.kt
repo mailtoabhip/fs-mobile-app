@@ -41,11 +41,10 @@ BaseViewModel() {
     var selectedComminicationAddress =""
     var isSameAsGst =false
 
-    //  var addAddressErrorMsgLiveData = MutableLiveData<String>()
 
 
    fun fetchAndAddUserAddress(){
-
+   if(!userPrefs.getAddressList().isNullOrEmpty()){
        for(i in userPrefs.getAddressList()!!){
            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                add(
@@ -64,6 +63,7 @@ BaseViewModel() {
            if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}
        }
    }
+   }
 
 
 
@@ -75,32 +75,6 @@ BaseViewModel() {
         documentProofType=documentProofType.replace("\\s".toRegex(),"_")
         documentProofType=documentProofType.toLowerCase()
         addressType= addressType.toLowerCase()
-        if(!isDeleted) {
-            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                add(
-                    Pair(
-                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
-                        DataRVAdapterOperationType.Add
-                    )
-                )
-            }.let {
-                AddressLiveData.postValue(it)
-                alternateAddressAdded.postValue(true)
-            }
-        }else{
-            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                add(
-                    Pair(
-                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
-                        DataRVAdapterOperationType.Remove
-                    )
-                )
-            }.let {
-                AddressLiveData.postValue(it)
-                alternateAddressAdded.postValue(false)
-            }
-
-        }
 
             compositeDisposable += loadboardRepository.addAddress(
                 phoneNum,
@@ -115,9 +89,35 @@ BaseViewModel() {
                 .subscribe { _res, error ->
                     if (!error) {
                         addAddressLiveData.postValue(true)
+                        if(!isDeleted) {
+                            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                                add(
+                                    Pair(
+                                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
+                                        DataRVAdapterOperationType.Add
+                                    )
+                                )
+                            }.let {
+                                AddressLiveData.postValue(it)
+                                alternateAddressAdded.postValue(true)
+                            }
+                        }else{
+                            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                                add(
+                                    Pair(
+                                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
+                                        DataRVAdapterOperationType.Remove
+                                    )
+                                )
+                            }.let {
+                                AddressLiveData.postValue(it)
+                                alternateAddressAdded.postValue(false)
+                            }
+
+                        }
+
                     } else {
                         addAddressLiveData.postValue(false)
-                       // addAddressErrorMsgLiveData.postValue(_res.toString())
                     }
                 }
 
@@ -138,7 +138,6 @@ BaseViewModel() {
                     updateAddressLiveData.postValue(true)
                 } else {
                     updateAddressLiveData.postValue(false)
-                    // addAddressErrorMsgLiveData.postValue(_res.toString())
                 }
             }
 
