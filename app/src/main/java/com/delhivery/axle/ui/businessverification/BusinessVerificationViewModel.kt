@@ -10,6 +10,7 @@ import com.delhivery.axle.api.response.ErrorResponseBody
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.exception.HttpErrorCode
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -60,13 +61,28 @@ class BusinessVerificationViewModel@Inject constructor(
             .subscribe { _res, error ->
                 if (!error) {
                     manualVerificationRequired.postValue(_res.manualVerificationRequired)
-                } else
-                    error.handle()
-                if(!error.message.isNullOrEmpty()) {
+                } else{
+                  //  error.handle()
+                val errorBody = error.errorResponseBody()
+                    ?.errorBody
+                if (errorBody != null) {
+                    when (errorBody.errorCode()) {
+                      400-> {
+                            rcVerificationErrorMsg.postValue(errorBody.errorMessage)
+                        }
+                        else -> {
+                            Throwable(errorBody.errorMessage).handle()
+                        }
+                    }
+                } else {
+                    error?.handle()
+                }
+               /* if(!error.message.isNullOrEmpty()) {
                     rcVerificationErrorMsg.postValue(error.message)
                    // manualVerificationRequired.postValue(true)
 
-                }
+                }*/
+              }
             }
     }
 

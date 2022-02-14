@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
@@ -17,12 +18,14 @@ import android.view.Window
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 //import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -107,7 +110,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         })
         viewModel.rcVerificationErrorMsg.observe(this, Observer {
             binding.editTruck.error=true
+            ViewCompat.setElevation(binding.imgWrong, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.error_red))
             binding.rcErrorMsg.visibility=View.VISIBLE
+            binding.imgWrong.visibility = View.VISIBLE
             binding.rcErrorMsg.setText(it)
         })
         viewModel.manualVerificationRequired.observe(this, Observer {
@@ -121,6 +127,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             //show successfully submitted page
         })
+
+        binding.editTruck.lengthAction(8){
+            binding.rcErrorMsg.visibility =  View.GONE
+            binding.imgWrong.visibility =  View.GONE
+            binding.editTruck.error= false
+            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
+        }
 
 
         binding.textLR.setOnClickListener{
@@ -256,6 +269,19 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         uploadArray.clear()
     }
 
+    private fun showKycSubmittedDialog() {
+        val dialog = Dialog(this)
+        val bindingDialog= DialogKycSubmittedBinding.inflate(layoutInflater)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        dialog.show()
+        Handler().postDelayed({
+            dialog.dismiss()
+          /*  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+          TotalStepsKey)!!,null)*/
+        }, 2000)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
     private fun createImageFile(): File {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(localImageName, ".jpg", storageDir)

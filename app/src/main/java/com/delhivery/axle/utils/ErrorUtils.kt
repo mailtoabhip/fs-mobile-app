@@ -80,6 +80,25 @@ class ErrorUtils @Inject constructor(
       else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
     }
   }
+
+  /**
+   * Handle error repsonse body
+   */
+  fun getErrorResponseBody(
+    httpException: HttpException,
+    errorResponseBody: ErrorResponseBody?
+  ):String {
+    val errorCode = HttpErrorCode.exceptionFromCode(httpException.code())
+    val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+    when (errorCode) {
+      Unauthorized, Forbidden ->{ navigationUtils.logout(errorMessage)
+                                  return ""
+      }
+      else -> return errorMessage
+    }
+
+  }
+
 }
 
 /* dialog dismiss timeout in sec */

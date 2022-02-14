@@ -116,13 +116,19 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/edit_truck_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/text_truck">
                 <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                     android:id="@+id/edit_truck"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"
                     android:imeOptions="actionDone"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/text_truck"
+                    bind:layout_constraintTop_toTopOf="parent"
                     android:inputType="textCapCharacters"
                     android:maxLength="10"
                     android:paddingStart="@dimen/size_12dp"
@@ -132,12 +138,24 @@
                     android:textSize="@dimen/text_16sp"
                     android:text="@={ viewModel.truckNumber }"
                     />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_wrong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/edit_text_height"
+                    bind:srcCompat="@drawable/ic_wrong"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintEnd_toEndOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent"
+                    android:visibility="gone"
+                    android:paddingStart="@dimen/size_12dp"
+                    android:paddingEnd="@dimen/size_12dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    bind:layout_constraintTop_toBottomOf="@+id/edit_truck"
+                    bind:layout_constraintTop_toBottomOf="@+id/edit_truck_layout"
                     android:textColor="@color/destructive_red"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:id="@+id/rc_error_msg"
                     />
                     </androidx.constraintlayout.widget.ConstraintLayout>
