@@ -87,7 +87,7 @@ class AccountActionActivity  : BaseActivity<ActivityAccountActionBinding, Accoun
 
     //redirect to account role page
     private fun redirectRole(mode:AccountType){
-        viewModel.updateUser(UpdateUserRequest(user_mode = mode.title))
+        viewModel.updateUser(UpdateUserRequest(userMode = mode.title))
         startActivity(accountRoleIntent(this, mode))
     }
 

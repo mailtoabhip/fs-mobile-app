@@ -63,7 +63,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
 
         //set up the mode
         binding.btnProceed.setOnClickListener {
-            viewModel.updateUser(UpdateUserRequest(user_role = viewModel.roleLiveData.value?.title))
+            viewModel.updateUser(UpdateUserRequest(userRole = viewModel.roleLiveData.value?.title))
             startActivity(accountDetailIntent(this, viewModel.modeLiveData.value, viewModel.roleLiveData.value))
         }
 

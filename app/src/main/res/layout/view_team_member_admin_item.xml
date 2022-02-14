@@ -73,8 +73,7 @@
             android:layout_marginTop="@dimen/size_6dp"
             android:text="@{user.phoneNumber}"
             android:layout_marginStart="@dimen/size_20dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:textSize="@dimen/size_16dp"
+              android:textSize="@dimen/size_16dp"
             tools:text="9876543210"/>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
