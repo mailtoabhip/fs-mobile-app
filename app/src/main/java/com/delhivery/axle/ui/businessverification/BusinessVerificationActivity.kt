@@ -114,7 +114,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             if(it) {
                 viewModel.selected.value = "rc"
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
+            }else{
+                //show successfully submitted page
             }
+        })
+        viewModel.verificationDocUploadMsg.observe(this, Observer {
+            //show successfully submitted page
         })
 
 
