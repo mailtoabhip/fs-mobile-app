@@ -1,5 +1,6 @@
 package com.delhivery.axle.data
 
+import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.annotations.SerializedName
@@ -31,8 +32,17 @@ data class UserModel(
         @SerializedName("user_name") var userName: String?,
         @SerializedName("business_name") var businessName: String?,
         @SerializedName("referral_code") var referralCode: String?,
-        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?
- ) : BaseKeyTypeModel<String>(), Serializable {
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?,
+        @SerializedName("aadhaar_number") var aadhaarNumber: String?,
+        @SerializedName("other_address") var otherAddress: List<AddAddressModel>?,
+         @SerializedName("gst_number") var gstNumber: String?,
+        @SerializedName("rc_number") var rcNumber: String?,
+        @SerializedName("business_address") var businessAddress: String?,
+        @SerializedName("is_pan_verified") var isPanVerified: Boolean?,
+        @SerializedName("is_aadhaar_verified") var isAadhaarVerified: Boolean?,
+        @SerializedName("is_gst_verified") var isGstVerified: Boolean?,
+        @SerializedName("is_rc_verified") var isRcVerified: Boolean?
+        ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
 

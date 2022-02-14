@@ -2,18 +2,13 @@ package com.delhivery.axle.ui.kyc.gst
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.Window
+import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -22,39 +17,33 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.gst.GstAction_ViewDetails
 import com.delhivery.axle.data.transactions.TransactionTimeOutAction
-import com.delhivery.axle.databinding.*
-
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
-import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.*
-import kotlinx.android.synthetic.main.activity_verify_pan.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.databinding.ActivityVerifyGstBinding
+import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
+import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
+import com.delhivery.axle.ui.kyc.gst.*
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
-class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(), GstRVAdapterInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
+class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(),
+        DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface, UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
-    override fun getViewModelClass() = GstVerificationViewModel::class.java
-
-    override fun layoutId() = R.layout.activity_verify_gst
-
-    private val gstRVAdapter by lazy { GstRVAdapter(this) }
-
-    override fun requireConnection() = false
-
-    private val pan_number:String? = null
+    @Inject lateinit var userPrefs: UserPrefs
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -68,9 +57,11 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
-
+    /* RV adapter */
+    private val gstRVAdapter: GstRVAdapter by lazy { GstRVAdapter(this) }
+    var currSelectedGst:String? = null
     val awsPath = "loadboard/gst/"
-    val docUploadAdapter :DocUploadAdapter by lazy { DocUploadAdapter(this) }
+    val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,61 +69,140 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-                TotalStepsKey)!!)
+                    TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!)
+                    TotalStepsKey)!!)
         }
-
     }
 
-    /*show verification options dialog*/
-    private fun showVerifcationOptionsDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogVerifyGstBinding.inflate(layoutInflater)
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        title = ""
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-
-
-        bindingDialog.closeBtn.setOnClickListener {
-            dialog.dismiss()
+        binding.gstList.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = this@GstVerificationActivity.gstRVAdapter
         }
 
-        bindingDialog.gstDocLayout.setOnClickListener {
-            val imageName = "GST_doc_" + System.currentTimeMillis()+".jpg"
-            captureImage(imageName, imageName)
-            dialog.dismiss()
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshData()
         }
 
-        bindingDialog.verifyOtpLayout.setOnClickListener {
-            showVerifcationOtpDialog()
-            dialog.dismiss()
+        viewModel.gstNumbersLiveData.observe(this, Observer {
+            it?.let { _items ->
+                gstRVAdapter.operation(_items)
+            }
+        })
+
+        viewModel.gstDetailsLiveData.observe(this, Observer {
+            gstRVAdapter.notifyDataSetChanged()
+        })
+
+        refreshData()
+
+        binding.btnVerifyGst.setOnClickListener {
+            dialogUtils.showVerifcationOptionsDialog(getString(R.string.label_gst_dialog_option2),this)
         }
 
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
-    private fun captureImage(
-            uploadImageName: String,
-            localImageName: String
-    ) {
-        this.uploadImageName = uploadImageName
-        this.localImageName = localImageName
-
-        val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
-        val builder = AlertDialog.Builder(this)
-        builder.setItems(items) { dialog, item ->
-            when {
-                items[item] == "Take Photo" -> requestImageCapturePermissions(true)
-                items[item] == "Choose from Library" -> requestImageCapturePermissions(false)
-                items[item] == "Cancel" -> dialog.dismiss()
+        viewModel.otpRecieved.observe(
+                this, Observer {
+            if(it){
+                ShowGstVerificationOtpDialog(this,this,uiUtils,userPrefs.phoneNumber!!,dialogUtils,getString(R.string.label_gst_dialog_option2),viewModel,this@GstVerificationActivity).show()
             }
         }
-        builder.show()
+        )
+        viewModel.docVerified.observe(
+                this, Observer {
+            if(it){
+                uiUtils.hideProgress()
+                viewModel.updateUserDetails()
+            }else{
+                uiUtils.hideProgress()
+                resetUploadData()
+                uploadArray =  ArrayList()
+                dialogUtils.showUploadFailDialog(getString(R.string.label_gst_dialog_option2),this)
+            }
+        }
+        )
+        viewModel.delegationLiveData.observe(this, Observer {
+            uploadImage(it.first, it.second)
+        })
+
+        viewModel.userUpdateLiveData.observe(this, Observer {
+            if (it) {
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                        TotalStepsKey)!!,null)
+            } else {
+                uiUtils.showSnackbar("GST verification failed, please try again")
+            }
+        })
+
+        viewModel.gstDetailData.observe(this, Observer {
+            binding.btnVerifyGst.isEnabled = it!=null && it.gstNumber.isNotNullOrEmpty()
+        })
+    }
+
+    override fun getRequestAadhaarOtp() {
+        viewModel.getRequestOtp(true)
+    }
+
+    override fun handleAction(
+            actionId: String,
+            item: BaseGstRVAdapterItem<*>
+    ) {
+        when (actionId) {
+            GstAction_ViewDetails -> {
+            }
+            TransactionTimeOutAction -> {
+                refreshData()
+            }
+        }
+    }
+
+    override fun fetchDetails(data: GstDetailData) {
+        viewModel.fetchDetails(data)
+    }
+
+    override fun fetchCurrSelected(): String? {
+      return currSelectedGst
+    }
+
+    override fun onAWSSuccess(
+            path: String
+    ) {
+        uiUtils.hideProgress()
+        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
+        resetUploadData()
+    }
+
+    override fun onAWSFailure() {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to upload")
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
+        resetUploadData()
+    }
+
+    private fun resetUploadData() {
+        mPhotoFile = null
+        uploadImageName = ""
+        localImageName = ""
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQCODE_CAMERA -> {
+                requestImageCapturePermissions(isCamera)
+            }
+        }
     }
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
@@ -149,7 +219,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                         if (isCamera) {
                             dispatchTakePictureIntent()
                         } else {
-                            dispatchGalleryIntent()
+                            dispatchFileIntent()
                         }
                     } else {
                         uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
@@ -174,15 +244,62 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         }
     }
 
+    override  fun captureImage(
+            uploadImageName: String,
+            localImageName: String
+    ) {
+        this.uploadImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.localImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+
+        val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setItems(items) { dialog, item ->
+            when {
+                items[item] == "Take Photo" -> requestImageCapturePermissions(true)
+                items[item] == "Choose a file" -> requestImageCapturePermissions(false)
+                items[item] == "Cancel" -> dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+    override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+        if(uploadArray.isNotEmpty()){
+            val imageUrls= mutableListOf<String>()
+            val s3url= awsUtils.awsBasePath()
+            for(i in uploadArray){
+                imageUrls.add(s3url+awsPath+i.first)
+            }
+            viewModel.verifyByDoc(imageUrls)
+        }else{
+            uiUtils.showToast("No file selected")
+        }
+
+    }
+
+
+    private fun refreshData() {
+        viewModel.gstFetchList.clear()
+        gstRVAdapter.resetStaticData()
+        viewModel.fetchGstNumbers()
+    }
+
     private fun createImageFile(): File {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(localImageName, ".jpg", storageDir)
     }
 
-    private fun dispatchGalleryIntent() {
-        val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivityForResult(pickPhoto, REQCODE_GALLERY_PHOTO)
+    private fun dispatchFileIntent() {
+        val intent = Intent()
+        intent.type = "*/*"
+        val mimetypes = arrayOf("image/*", "application/pdf")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(
+                intent,
+                REQCODE_FILE_ATTACHMENTS
+        )
     }
 
     private fun uploadImage(
@@ -192,121 +309,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         uiUtils.showProgress()
         val path = "$awsPath$uploadImageName"
         awsUtils.startUpload(delegationToken, path,file, this)
-    }
-
-    /*show gst verification otp dialog*/
-    private fun showVerifcationOtpDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogVerifyGstOtpBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-
-
-        bindingDialog.closeBtn.setOnClickListener {
-            showVerifcationOptionsDialog()
-            dialog.dismiss()
-        }
-
-        bindingDialog.buttonShare.setOnClickListener {
-            dialog.dismiss()
-           // navigationUtils.navigate( aadhaarVerificationIntent(this), false)
-            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!,null)
-        }
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        navigationUtils.navigate(PanVerificationActivity::class.java, true)
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        title = ""
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        binding.gstList.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            adapter = this@GstVerificationActivity.gstRVAdapter
-        }
-
-        viewModel.gstLiveData.observe(this, Observer {
-            it?.let { _items ->
-                gstRVAdapter.operation(_items)
-            }
-        })
-
-        pan_number?.let { refreshData(it) }
-
-        binding.btnVerifyGst.setOnClickListener {
-          showVerifcationOptionsDialog()
-        }
-
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
-    }
-
-    private fun refreshData(pan_number:String) {
-        viewModel.getGstDetails(pan_number)
-    }
-
-    override fun handleAction(
-            actionId: String,
-            item: BaseGstRVAdapterItem<*>
-    ) {
-        when (actionId) {
-            GstAction_ViewDetails -> {
-                //val dataItem = item.data as? GstDetailData
-                //dataItem?.let { showVerifcationOptionsDialog(it) }
-                showVerifcationOptionsDialog()
-            }
-
-            TransactionTimeOutAction -> {
-                pan_number?.let { refreshData(it) }
-            }
-        }
-    }
-
-    override fun onAWSSuccess(
-            path: String
-    ) {
-        uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-       showAttachmentDialog()
-        resetUploadData()
-    }
-
-    override fun onAWSFailure() {
-        uiUtils.hideProgress()
-        showUploadFailDialog()
-        resetUploadData()
-    }
-
-    private fun resetUploadData() {
-        mPhotoFile = null
-        uploadImageName = ""
-        localImageName = ""
-    }
-
-    override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQCODE_CAMERA -> {
-                requestImageCapturePermissions(isCamera)
-            }
-        }
     }
 
     override fun onActivityResult(
@@ -334,25 +336,30 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                 }
             }
-
-            REQCODE_GALLERY_PHOTO -> {
+            REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
-                        val selectedImage = data?.data
-                        require(selectedImage != null)
+                        val selectedFile = data?.data
+                        require(selectedFile != null)
                         val parcelFileDescriptor =
-                                contentResolver?.openFileDescriptor(selectedImage, "r", null)
+                                contentResolver?.openFileDescriptor(selectedFile, "r", null)
                         require(parcelFileDescriptor != null)
                         val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                         require(
-                                contentResolver != null && contentResolver?.getFileName(selectedImage) != null
+                                contentResolver != null && contentResolver?.getFileName(selectedFile) != null
                         )
                         val imageScopedFile =
-                                File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
+                                File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
+                        this.uploadImageName = "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.localImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
+                            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+                        }else{
+                            mPhotoFile = imageScopedFile
+                        }
 
-                        mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         if (mPhotoFile == null) {
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
@@ -369,68 +376,25 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         }
     }
 
-    /*show attachment dialog*/
-    private fun showAttachmentDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogGstAttachmentsBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-        docUploadAdapter.setItems(uploadArray)
-        bindingDialog.attachmentList.adapter = this@GstVerificationActivity.docUploadAdapter
-
-        bindingDialog.closeBtn.setOnClickListener {
-            showVerifcationOptionsDialog()
-            dialog.dismiss()
-        }
-
-        bindingDialog.buttonSubmit.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialog.buttonUploadMore.setOnClickListener {
-            val imageName = "GST_doc_" + System.currentTimeMillis()+".jpg"
-            captureImage(imageName, imageName)
-            dialog.dismiss()
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
+    override fun onItemClicked(item: BaseGstRVAdapterItem<*>) {
+        val data = item.data as? GstDetailData
+        currSelectedGst = data?.gstDetailItemData?.gstNumber
+        viewModel.gstDetailData.value =  data?.gstDetailItemData
+        gstRVAdapter.notifyDataSetChanged()
     }
 
-    /*show upload fail dialog*/
-    private fun showUploadFailDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogGstUploadErrorBinding.inflate(layoutInflater)
+    override fun getViewModelClass(): Class<GstVerificationViewModel> = GstVerificationViewModel::class.java
 
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
+    override fun layoutId() = R.layout.activity_verify_gst
 
-
-        bindingDialog.buttonCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialog.buttonUploadAgain.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
+    override fun requireConnection() = false
     override fun handleDeleteAction(item: Pair<String, String>) {
         uploadArray.remove(item)
     }
 
 }
-fun aadhaarVerificationIntent(
-    context: Context
-) = Intent(context, AadhaarVerificationActivity::class.java).apply {
+
+fun gstAddressVerificationIntent(
+        context: Context
+) = Intent(context, CommunicationAddressActivity::class.java).apply {
 }

@@ -49,6 +49,8 @@
   <color name="blue_bg">#ededff</color>
   <color name="info_bg">#525B7A</color>
   <color name="error_red">#FA3A2E</color>
+  <color name="destructive_red">#DC2626</color>
+
 
 
 </resources>
