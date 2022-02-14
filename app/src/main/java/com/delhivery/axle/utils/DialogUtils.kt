@@ -17,10 +17,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
-import com.delhivery.axle.databinding.DialogGstAttachmentsBinding
-import com.delhivery.axle.databinding.DialogGstUploadErrorBinding
-import com.delhivery.axle.databinding.DialogVerifyGstBinding
-import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.dialogs.ErrorDialog
@@ -156,6 +153,31 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
      fun showUploadFailDialog(uploadText: String,dialogUtilsInterface: DialogUtilsInterface) {
         val dialog = Dialog(activity)
         val bindingDialog= DialogGstUploadErrorBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonUploadAgain.setOnClickListener {
+            showVerifcationOptionsDialog(uploadText,dialogUtilsInterface)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+    /*show upload fail dialog*/
+    fun showUploadRcDialog(uploadText: String,dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogUploadRcBinding.inflate(activity.layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)

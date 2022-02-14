@@ -128,7 +128,8 @@
   <string name="action_submit">Submit</string>
   <string name="action_upload_more">Upload More</string>
   <string name="action_upload_again">Upload Again</string>
-  <string name="action_cancel">Cancel</string>
+    <string name="action_upload_rc_doc">Upload RC document</string>
+    <string name="action_cancel">Cancel</string>
   <string name="action_start_kyc">Start</string>
 
     <!--Label (label_)-->
@@ -357,6 +358,8 @@
     <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
     <string name="error_upload">Oops! Something went wrong</string>
     <string name="error_upload_document">Try uploading the document once again</string>
+    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+
 
     <string name="not_available">Not available</string>
     <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>

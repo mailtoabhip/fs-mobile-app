@@ -60,7 +60,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     lateinit var userPrefs: UserPrefs
 
 
-    val awsPath = "loadboard/aadhaar/"
+    val awsPath = "loadboard/lr/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
@@ -96,8 +96,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         }
         viewModel.truckNumber.observe(this, Observer {
-            if(it.length==9){
+            if(it.length>=9){
                 binding.btnVerifyBusiness.isEnabled=true
+            }else{
+                binding.btnVerifyBusiness.isEnabled=false
             }
         })
         viewModel.delegationLiveData.observe(this, Observer {
@@ -105,17 +107,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         })
         viewModel.rcVerificationErrorMsg.observe(this, Observer {
             binding.editTruck.error=true
-//            binding.editTruck.setCompoundDrawables(null,null,ContextCompat.getDrawable(this, R.drawable.ic_vector_upload_error)
-//                ,null)
-          //  binding.editTruck.textColors=R.color.error_red
             binding.rcErrorMsg.visibility=View.VISIBLE
             binding.rcErrorMsg.setText(it)
         })
         viewModel.manualVerificationRequired.observe(this, Observer {
             if(it) {
                 viewModel.selected.value = "rc"
-                val imageName = "RC_doc_" + System.currentTimeMillis() + ".jpg"
-                captureImage(imageName, imageName)
+                dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }
         })
 
