@@ -1,17 +1,20 @@
 package com.delhivery.axle.ui.home.activity.home
 
 import android.R.attr.action
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
+import com.delhivery.axle.databinding.DialogKycStartBinding
 import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
@@ -74,6 +77,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+
+    if(userPrefs.accountSetup && !userPrefs.isUserVerfied) {
+      showKycDialog()
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -335,6 +342,44 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     startActivity(userTripsIntent(this, "payment_view", 0))
 
   }
+
+  /*show KYC dialog*/
+  private fun showKycDialog() {
+    val dialog = Dialog(this)
+    val bindingDialog= DialogKycStartBinding.inflate(layoutInflater)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+
+    bindingDialog.buttonStart.setOnClickListener {
+      val bundle = Bundle()
+      if(userPrefs.pancard.isEmpty()){
+        bundle.putInt(StepKey, 0)
+      }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+        bundle.putInt(StepKey, 1)
+      }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+        bundle.putInt(StepKey, 1)
+       }else if(userPrefs.businessAddress.isEmpty()){
+        bundle.putInt(StepKey, 2)
+      }
+      navigationUtils.navigateKyc(this,false,bundle)
+      dialog.dismiss()
+    }
+
+    bindingDialog.buttonCancel.setOnClickListener {
+      dialog.dismiss()
+    }
+
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
+  }
+
+
+
+
 }
 
 /**

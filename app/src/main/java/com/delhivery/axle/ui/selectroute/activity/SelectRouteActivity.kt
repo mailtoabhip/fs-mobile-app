@@ -283,6 +283,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
       navigate(currentFragmentType!!.prevFragment(flowType)!!)
     } else {
       super.onBackPressed()
+      navigationUtils.navigate(HomeActivity::class.java, true)
     }
   }
 }

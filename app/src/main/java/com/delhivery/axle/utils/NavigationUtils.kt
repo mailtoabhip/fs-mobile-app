@@ -1,12 +1,23 @@
 package com.delhivery.axle.utils
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.service.controls.templates.StatelessTemplate
 import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseFragment
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -21,6 +32,7 @@ class NavigationUtils @Inject constructor(
   private val uiUtils: UiUtils
 ) {
 
+  @Inject lateinit var userPrefs: UserPrefs
   /**
    * Navigate to another activity
    *
@@ -143,4 +155,76 @@ class NavigationUtils @Inject constructor(
         }
     activity.finish()
   }
+
+  /**
+   * In progress for KYC config
+   *
+   * Navigate to another activity based on config
+   *
+   * @param intent Target intent
+   * @param finishAfter Should current activity be finished after navigation, default if false
+   */
+  fun navigateKyc(
+    context:Context,
+    finishAfter: Boolean = false,
+    extras: Bundle
+  ) {
+    var intent= Intent()
+       //should be changed based on user_mode
+        val userMode = userPrefs.userMode
+        val kycSteps = if(userMode=="post_truck"){
+      userPrefs.truckPostKyc.split(",").toTypedArray()
+      }else{
+      userPrefs.loadPostKyc.split(",").toTypedArray()
+       }
+        if(kycSteps.get(extras.getInt(StepKey))=="pan") {
+          intent = Intent(context, PanVerificationActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+              intent= Intent(context, AadhaarVerificationActivity::class.java)
+            }else{
+             intent= Intent(context, GstVerificationActivity::class.java)
+            }
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
+          intent= Intent(context, CommunicationAddressActivity::class.java)
+        }else  if(kycSteps.get(extras.getInt(StepKey))=="business"){
+          intent= Intent(context, BusinessVerificationActivity::class.java)
+        }
+        val bundle = Bundle()
+        bundle.putInt(TotalStepsKey , kycSteps.size)
+        bundle.putInt(CurrentStepKey,extras.getInt(StepKey))
+        intent.putExtras(bundle)
+        activity.startActivity(intent)
+
+    //finish activity, if required
+    if (finishAfter) {
+      activity.finish()
+    }
+  }
+
+  fun checkNavigationKycStep(context:Context,currentStep:Int,totalStep:Int,extras: Bundle?){
+    if(currentStep<totalStep){
+      val bundle = Bundle()
+      bundle.putInt(StepKey, (currentStep))
+      if(extras?.getString(panKey) != null){
+        bundle.putString(panKey,extras.getString(panKey))
+      }
+      this.navigateKyc(context,false,bundle)
+    }else{
+      val intent = Intent(context, HomeActivity::class.java)
+      this.navigate(intent,true)
+    }
+  }
+
+  fun getNavigationPercentage(currentStep: Int,totalStep: Int):Int{
+    return (currentStep*100)/totalStep
+   }
+
+   fun getNavigationStepFormat(currentStep: Int,totalStep: Int):String{
+     return "Step $currentStep of $totalStep"
+   }
+
 }
+const val StepKey = "step"
+const val CurrentStepKey = "current_step"
+const val TotalStepsKey = "total_steps"

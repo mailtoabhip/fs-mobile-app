@@ -1,7 +1,6 @@
 package com.delhivery.axle.injection.component
 
 import com.delhivery.axle.injection.module.NetworkModule
-import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
@@ -22,6 +21,12 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
+import com.delhivery.axle.ui.profile.HelpSupportViewModel
+import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -198,14 +203,40 @@ interface ViewModelInjector {
   fun inject(viewModel: SearchOngoingTripViewModel)
 
   /**
-   * Injects [AccountSetupViewModel]
+   * Injects [HelpSupportViewModel]
    */
-  fun inject(viewModel: AccountSetupViewModel)
+  fun inject(viewModel: HelpSupportViewModel)
 
+  /**
+   * Injects [ProfileDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileDetailsViewModel)
+
+  /**
+   * Injects [BankDetailsViewModel]
+   */
+  fun inject(viewModel: BankDetailsViewModel)
+
+  /**
+   * Injects [ProfileKYCDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileKYCDetailsViewModel)
+
+  /**
+   * Injects [KYCDocumentsViewModel]
+   */
+  fun inject(viewModel: KYCDocumentsViewModel)
+
+  /**
+   * Injects [YourKYCDetailsViewModel]
+   */
+  fun inject(viewModel: YourKYCDetailsViewModel)
+  
   /**
    * Injects [PanVerificationViewModel]
    */
   fun inject(viewModel: PanVerificationViewModel)
+  
   /**
    * Injects [BusinessVeificationViewModel]
    */

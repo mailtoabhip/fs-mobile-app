@@ -28,7 +28,7 @@ data class RouteModel(
     if (stateString.endsWith(", ")) {
       stateString = stateString.substring(0, destinationString.length - 2)
     }
-    stateString
+    stateString + " +${destinations.size}"
   } else {
     ""
   }
@@ -76,3 +76,4 @@ data class RouteModel(
 /* actions */
 const val RoutesAction_ViewDetails = "routes_detail"
 const val RoutesAction_DeleteRoute = "delete_route"
+const val RoutesAction_ViewOptions = "view_route_options"

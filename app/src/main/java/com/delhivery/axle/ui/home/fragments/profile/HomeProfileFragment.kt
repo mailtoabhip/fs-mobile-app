@@ -11,6 +11,7 @@ import com.delhivery.axle.databinding.FragmentHomeProfileBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.profile.profileKYCDetailsIntent
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.team.teamMembersIntent

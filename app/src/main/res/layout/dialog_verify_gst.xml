@@ -91,6 +91,7 @@
                android:id="@+id/imgUpload"
                  app:srcCompat="@drawable/ic_vector_upload"/>
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/upload_doc_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/size_16dp"

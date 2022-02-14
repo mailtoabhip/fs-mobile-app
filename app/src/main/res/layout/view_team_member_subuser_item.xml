@@ -24,6 +24,7 @@
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_2dp"
+      android:layout_margin="@dimen/size_4dp"
       >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,24 +32,36 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
+        android:padding="@dimen/size_11dp"
         >
+
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/logo_team_member"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_privacy_policy"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"/>
 
       <androidx.appcompat.widget.LinearLayoutCompat
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintStart_toEndOf="@id/logo_team_member"
+          app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/admin_text"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_28dp"
           android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@{user.name}"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{user.userName}"
             android:layout_marginStart="@dimen/size_20dp"
             android:layout_marginTop="@dimen/size_16dp"
-            android:textSize="@dimen/size_16dp"
             android:textStyle="bold"
             tools:text="Subuser 1"/>
 
@@ -56,31 +69,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@{user.phoneNo}"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{user.phoneNumber}"
             android:layout_marginStart="@dimen/size_20dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:textSize="@dimen/size_16dp"
             tools:text="9876543210"/>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
 
       <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/icon_edit_user"
-          app:layout_constraintEnd_toStartOf="@+id/icon_remove_user"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintBottom_toBottomOf="parent"
-          android:layout_marginEnd="@dimen/size_20dp"
-          app:srcCompat="@drawable/ic_edit_pencil"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"/>
-
-      <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/icon_remove_user"
+          android:id="@+id/icon_options_team_member"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           android:layout_marginEnd="@dimen/size_20dp"
-          app:srcCompat="@drawable/ic_close_black"
+          android:padding="@dimen/size_4dp"
+          app:srcCompat="@drawable/ic_options_team"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"/>
 

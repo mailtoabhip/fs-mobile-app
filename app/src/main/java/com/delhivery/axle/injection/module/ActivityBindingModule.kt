@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Context
 import com.delhivery.axle.injection.qualifier.ActivityContext
 import com.delhivery.axle.injection.scope.ActivityScope
-import com.delhivery.axle.ui.accountsetup.AccountSetupActivity
-import com.delhivery.axle.ui.accountsetup.AccountSetupFragmentsBindingModule
+import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
@@ -22,11 +23,17 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.profile.BankDetailsActivity
+import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.ui.profile.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsActivity
+import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentBindingModule
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -174,10 +181,6 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsSearchOngoingTripActivityModule::class])
   internal abstract fun bindSearchOngoingTripActivity(): SearchOngoingTripActivity
 
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsAccountSetupActivityModule::class, AccountSetupFragmentsBindingModule::class])
-  internal abstract fun bindAccountSetupActivity(): AccountSetupActivity
-
   /* Consolidated page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
@@ -186,6 +189,26 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
   internal abstract fun bindModule(): InvalidActivity
+
+  /* HelpSupport activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsHelpSupportModule::class])
+  internal abstract fun bindHelpSupportActivity(): HelpSupportActivity
+
+  /*Profile Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileDetailsActivityModule::class])
+  internal abstract fun bindProfileDetailsActivity() : ProfileDetailsActivity
+
+  /*Bank Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBankDetailsActivityModule::class])
+  internal abstract fun bindBankDetailsActivity() : BankDetailsActivity
+
+  /*Profile KYC Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileKYCDetailsActivityModule::class, ProfileKYCFragmentBindingModule::class])
+  internal abstract fun  bindProfileKYCDetailsActivity() : ProfileKYCDetailsActivity
 
   /* Pan Verification page activity */
   @ActivityScope
@@ -206,10 +229,30 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsCommunicationAddressActivityModule::class])
   internal abstract fun bindCommunicationAddressActivity(): CommunicationAddressActivity
 
+  /* alternate Address page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAddressActivityModule::class])
+  internal abstract fun bindAddressActivity(): AddressActivity
+
   /* Gst Verification page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbGstVerificationActivityModule::class])
   internal abstract fun bindGstVerificationActivity(): GstVerificationActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountActionActivityModule::class])
+  internal abstract fun bindAccountActionActivity(): AccountActionActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountRoleActivityModule::class])
+  internal abstract fun bindAccountRoleActivity(): AccountRoleActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountDetailsActivityModule::class])
+  internal abstract fun binAccountDetailsActivity(): AccountDetailsActivity
 }
 
 /**
@@ -295,10 +338,19 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 @Module
-internal abstract class AbsAccountSetupActivityModule : ActivityModule<AccountSetupActivity>()
+internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 @Module
-internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
+internal abstract class AbsHelpSupportModule : ActivityModule<HelpSupportActivity>()
+
+@Module
+internal abstract class  AbsProfileDetailsActivityModule: ActivityModule<ProfileDetailsActivity>()
+
+@Module
+internal abstract class AbsBankDetailsActivityModule : ActivityModule<BankDetailsActivity>()
+
+@Module
+internal abstract class AbsProfileKYCDetailsActivityModule : ActivityModule<ProfileKYCDetailsActivity>()
 
 @Module
 internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVerificationActivity>()
@@ -313,7 +365,19 @@ internal abstract class AbsAadhaarVerificationActivityModule : ActivityModule<Aa
 internal abstract class AbsCommunicationAddressActivityModule : ActivityModule<CommunicationAddressActivity>()
 
 @Module
+internal abstract class AbsAddressActivityModule : ActivityModule<AddressActivity>()
+
+@Module
 internal abstract class AbsBusinessVerificationActivityModule : ActivityModule<BusinessVerificationActivity>()
+
+@Module
+internal abstract class AbsAccountRoleActivityModule : ActivityModule<AccountRoleActivity>()
+
+@Module
+internal abstract class AbsAccountActionActivityModule : ActivityModule<AccountActionActivity>()
+
+@Module
+internal abstract class AbsAccountDetailsActivityModule : ActivityModule<AccountDetailsActivity>()
 
 /**
  * Activity Binds Module

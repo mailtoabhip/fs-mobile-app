@@ -43,9 +43,17 @@
   <color name="bid_placed_red">#DC6A64</color>
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
+  <color name="faded_black">#525B7A</color>
+  <color name="switch_blue">#5B80F7</color>
+  <color name="bg_grey">#E0E3EB</color>
   <color name="blue_bg">#ededff</color>
   <color name="info_bg">#525B7A</color>
   <color name="error_red">#FA3A2E</color>
   <color name="grey_bg">#E0E3EB</color>
   <color name="yellow">#FBBF24</color>
+  <color name="destructive_red">#DC2626</color>
+
+
+
+>>>>>>> AB#148779-onboarding-profile-page-updation
 </resources>

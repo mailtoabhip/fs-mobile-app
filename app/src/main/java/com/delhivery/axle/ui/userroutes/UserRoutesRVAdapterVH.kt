@@ -1,9 +1,13 @@
 package com.delhivery.axle.ui.userroutes
 
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.routes.RoutesAction_DeleteRoute
 import com.delhivery.axle.data.home.routes.RoutesAction_ViewDetails
+import com.delhivery.axle.data.home.routes.RoutesAction_ViewOptions
+import com.delhivery.axle.databinding.ViewNoTeamMemberBinding
 import com.delhivery.axle.databinding.ViewUserRoutesItemBinding
 import com.delhivery.axle.databinding.ViewUserRoutesProgressItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -75,7 +79,8 @@ class UserRoutesItemVH(binding: ViewUserRoutesItemBinding) :
   ) {
     binding.route = item.data
     binding.layRoutes.clickToAction(RoutesAction_ViewDetails, item, _interface)
-    binding.iconDeleteRoute.clickToAction(RoutesAction_DeleteRoute, item, _interface)
+    //binding.iconDeleteRoute.clickToAction(RoutesAction_DeleteRoute, item, _interface)
+    binding.iconOptionsRoute.clickToAction(RoutesAction_ViewOptions, item, adapterPosition, _interface)
   }
 }
 
@@ -91,4 +96,23 @@ internal class UserRoutesProgressItemVH(binding: ViewUserRoutesProgressItemBindi
     _interface: UserRoutesRVAdapterInterface
   ) {
   }
+}
+
+/**
+ * User route warning item VH
+ */
+internal class UserRoutesWarningItemVH(binding: ViewNoTeamMemberBinding) :
+    BaseUserRoutesRVAdapterViewHolder<ViewNoTeamMemberBinding, UserRouteWarningItem>(
+      binding
+    ){
+  override fun bind(
+    item: UserRouteWarningItem,
+    _interface: UserRoutesRVAdapterInterface) {
+    binding.title = item.data.title
+    binding.subTitle = item.data.subtitle
+    binding.actionLabel = item.data.actionLabel
+    binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+    binding.iconImage =  R.drawable.ic_no_route_warning
+  }
+
 }

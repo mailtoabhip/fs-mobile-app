@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.data.teammembers.TeamWarningItem_NoMember
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -60,6 +61,9 @@ class TeamMembersViewModel @Inject constructor(
                     add(Pair(TeamMemberSubUserItem(user), Add))
                   }
                 }
+              }
+              else{
+                add(Pair(TeamWarningItem_NoMember, Add))
               }
             }.let {
               membersLiveData.postValue(it)

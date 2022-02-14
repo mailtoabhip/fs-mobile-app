@@ -24,6 +24,7 @@
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_2dp"
+      android:layout_margin="@dimen/size_4dp"
       >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,19 +35,31 @@
         android:focusable="false"
         >
 
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/logo_team_member"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_privacy_policy"
+          app:layout_constraintTop_toTopOf="parent"
+          android:layout_marginStart="@dimen/size_11dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"/>
+
       <androidx.appcompat.widget.LinearLayoutCompat
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintStart_toEndOf="@id/logo_team_member"
+          app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/admin_text"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_36dp"
           android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@{user.name}"
+            android:text="@{user.userName}"
             android:layout_marginStart="@dimen/size_20dp"
             android:layout_marginTop="@dimen/size_16dp"
             android:textSize="@dimen/size_16dp"
@@ -57,10 +70,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@{user.phoneNo}"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:text="@{user.phoneNumber}"
             android:layout_marginStart="@dimen/size_20dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:textSize="@dimen/size_16dp"
+              android:textSize="@dimen/size_16dp"
             tools:text="9876543210"/>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
@@ -72,7 +85,7 @@
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@id/admin_text"
           android:gravity="center"
-          android:layout_marginEnd="@dimen/size_40dp"
+          android:layout_marginEnd="@dimen/size_24dp"
         android:orientation="vertical">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -98,7 +111,7 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          android:layout_marginEnd="@dimen/size_20dp"
+          android:layout_marginEnd="@dimen/size_14dp"
           android:layout_marginTop="@dimen/size_20dp"
           android:layout_marginBottom="@dimen/size_20dp"
           android:layout_marginStart="@dimen/size_20dp"

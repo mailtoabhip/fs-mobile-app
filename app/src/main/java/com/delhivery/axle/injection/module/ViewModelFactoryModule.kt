@@ -1,9 +1,12 @@
 package com.delhivery.axle.injection.module
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
-import com.delhivery.axle.ui.accountsetup.AccountSetupViewModel
+import com.delhivery.axle.ui.accountaction.AccountActionViewModel
+import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
+import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
@@ -30,6 +33,12 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
+import com.delhivery.axle.ui.profile.HelpSupportViewModel
+import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -48,6 +57,7 @@ import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
+import com.google.rpc.Help
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -254,8 +264,33 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(AccountSetupViewModel::class)
-  abstract fun bindAccountSetupViewModel(viewModel:AccountSetupViewModel): ViewModel
+  @ViewModelScope(HelpSupportViewModel::class)
+  abstract fun bindHelpSupportViewModel(helpSupportViewModel: HelpSupportViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileDetailsViewModel::class)
+  abstract fun bindProfileDetailsViewModel(profileDetailsViewModel: ProfileDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BankDetailsViewModel::class)
+  abstract fun bindBankDetailsViewModel(bankDetailsViewModel: BankDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileKYCDetailsViewModel::class)
+  abstract fun bindProfileKYCDetailsViewModel(profileKYCDetailsViewModel: ProfileKYCDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(KYCDocumentsViewModel::class)
+  abstract fun bindKYCDocumentsViewModel(kycDocumentsViewModel: KYCDocumentsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourKYCDetailsViewModel::class)
+  abstract fun bindYourKYCDetailsViewModel(yourKYCDetailsViewModel: YourKYCDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -281,6 +316,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BusinessVerificationViewModel::class)
   abstract fun bindBusinessVerificationViewModel(viewModel:BusinessVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountActionViewModel::class)
+  abstract fun bindAccountActionViewModel(viewModel:AccountActionViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountRoleViewModel::class)
+  abstract fun bindAccountRoleViewModel(viewModel:AccountRoleViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountDetailsViewModel::class)
+  abstract fun bindAccountDetailsViewModel(viewModel:AccountDetailsViewModel): ViewModel
 
 
   @Binds

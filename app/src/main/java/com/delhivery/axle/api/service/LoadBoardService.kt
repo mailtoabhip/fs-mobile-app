@@ -1,23 +1,24 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
+import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.GstNumberData
 import com.delhivery.axle.api.response.PanVerificationResponse
-import com.delhivery.axle.api.response.TransactionBidsResponseBody
+import com.delhivery.axle.api.response.*
+import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import io.reactivex.Single
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface LoadBoardService {
     /**
      * verify Pan Card Number
      */
-    @GET("/validate_pan_card")
-    fun validatePanNumber(@Body panVerificationRequest: PanVerificationRequest)
+    @POST("/validate_pan_card")
+    fun validatePanNumber(@Body request: PanVerificationRequest)
             : Single<BaseResponse<PanVerificationResponse>>
 
     /**
@@ -34,29 +35,64 @@ interface LoadBoardService {
     @POST("/gst_by_number")
     fun getGstDetails(
             @Body request: GstDetailRequest
-    ): Single<BaseResponse<GstDetailData>>
+    ): Single<BaseResponse<GstDetailItemData>>
 
     /**
      * get GST OTP
      */
     @POST("/generate_otp")
-    fun getGstOtp(
-            @Body request: GstOtpGetRequest
-    ): Single<BaseResponse<Any>>
+    fun getGstOrAadhaarOtp(
+            @Body request: GstOrAadhaarOtpGetRequest
+    ): Single<BaseMessageResponse>
 
     /**
      * verify GST OTP
      */
     @POST("/validate_otp")
-    fun verifyGstOtp(
-            @Body request: GstOtpVerifyRequest
-    ): Single<BaseResponse<Any>>
+    fun verifyGstOrAadhaarOtp(
+            @Body request: GstOrAadhaarOtpVerifyRequest
+    ): Single<BaseMessageResponse>
 
     /**
      * verify GST via doc upload
      */
     @POST("/validate_ocr")
     fun verifyByDocUpload(
-            @Body request: GstDocRequest
+            @Body request: GstOrAadhaarDocRequest
+    ): Single<BaseResponse<DocUploadResponse>>
+
+    @POST("/get_otp")
+    fun requestOTP(@Body request: RequestOTP): Single<OTPSentResponse>
+
+    @POST("/verify_otp")
+    fun otpLogin(@Body request: OTPLoginRequest): Single<BaseResponse<LoginResponse>>
+
+    @PATCH("/update_user")
+    fun updateUser(@Body request: UpdateUserRequest): Single<BaseMessageResponse>
+
+    /**
+     * add alternate address
+     */
+    @POST("/add_address")
+    fun addAddress(
+        @Body request: AddAddressModel
+    ): Single<BaseMessageResponse>
+
+    /*
+     * update your communication address
+     */
+
+    @POST("/submit_address")
+    fun updateNewAddress(
+        @Body request: UpdateAddressVerificationRequest
     ): Single<BaseResponse<Any>>
+
+    /**
+     * patch user details
+     */
+    @GET("/get_user")
+    fun userDetails(
+            @Query("uuid") userId: String
+    ): Single<BaseResponse<UserRespone>>
+
 }
