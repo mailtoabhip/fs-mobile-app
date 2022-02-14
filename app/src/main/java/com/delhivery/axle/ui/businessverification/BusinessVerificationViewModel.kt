@@ -6,11 +6,14 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.ErrorResponseBody
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.exception.HttpErrorCode
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import retrofit2.adapter.rxjava2.Result.response
 import java.io.File
 import javax.inject.Inject
 
@@ -22,7 +25,7 @@ class BusinessVerificationViewModel@Inject constructor(
 
     var truckNumber=MutableLiveData<String>()
 
-    var selected = MutableLiveData<Boolean>().postValue(false)
+    var selected = MutableLiveData<String>()
 
     var currentStep = ""
 
@@ -59,7 +62,11 @@ class BusinessVerificationViewModel@Inject constructor(
                     manualVerificationRequired.postValue(_res.manualVerificationRequired)
                 } else
                     error.handle()
+                if(!error.message.isNullOrEmpty()) {
                     rcVerificationErrorMsg.postValue(error.message)
+                   // manualVerificationRequired.postValue(true)
+
+                }
             }
     }
 
@@ -73,7 +80,9 @@ class BusinessVerificationViewModel@Inject constructor(
                     verificationDocUploadMsg.postValue(_res)
                 } else
                     error.handle()
-                rcVerificationErrorMsg.postValue(error.message)
+                if(error.message!=null) {
+                    rcVerificationErrorMsg.postValue(error.message)
+                }
             }
     }
 
@@ -81,7 +90,7 @@ class BusinessVerificationViewModel@Inject constructor(
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
 
-
+      uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected.value,documentUrls = docList))
 
     }
 

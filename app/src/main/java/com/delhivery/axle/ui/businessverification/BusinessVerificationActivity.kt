@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.RadioGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -65,6 +66,11 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.editTruck.visibility=View.VISIBLE
+        binding.layoutTruckrd.isSelected=true
+        binding.layoutUploadLR.isSelected=false
+        binding.textLR.isChecked=false
+        binding.textTruck.isChecked=true
 //        if(intent?.extras!=null){
 //            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
 //                TotalStepsKey)!!)
@@ -97,6 +103,22 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
+        viewModel.rcVerificationErrorMsg.observe(this, Observer {
+            binding.editTruck.error=true
+//            binding.editTruck.setCompoundDrawables(null,null,ContextCompat.getDrawable(this, R.drawable.ic_vector_upload_error)
+//                ,null)
+          //  binding.editTruck.textColors=R.color.error_red
+            binding.rcErrorMsg.visibility=View.VISIBLE
+            binding.rcErrorMsg.setText(it)
+        })
+        viewModel.manualVerificationRequired.observe(this, Observer {
+            if(it) {
+                viewModel.selected.value = "rc"
+                val imageName = "RC_doc_" + System.currentTimeMillis() + ".jpg"
+                captureImage(imageName, imageName)
+            }
+        })
+
 
         binding.textLR.setOnClickListener{
             binding.editTruck.visibility=View.GONE
@@ -104,13 +126,18 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.textTruck.isChecked=false
             binding.layoutUploadLR.isSelected=true
             binding.layoutTruckrd.isSelected=false
+            viewModel.selected.value="lr"
             val imageName = "LR_doc_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
 
         binding.btnVerifyBusiness.setOnClickListener {
-            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!,null)
+//            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                TotalStepsKey)!!,null)
+            if(binding.textTruck.isChecked){
+               viewModel.validateRC(viewModel.truckNumber.value!!)
+            }
+
         }
 
     }
@@ -121,7 +148,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     ) {
         uiUtils.hideProgress()
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
         resetUploadData()
     }
 
