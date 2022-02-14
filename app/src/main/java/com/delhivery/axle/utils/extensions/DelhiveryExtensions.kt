@@ -3,6 +3,7 @@ package com.delhivery.axle.utils.extensions
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ErrorResponseBody
+import com.delhivery.axle.api.response.RcVerificationResponse
 import com.google.gson.Gson
 import io.reactivex.Single
 import retrofit2.HttpException
