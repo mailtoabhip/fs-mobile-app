@@ -406,6 +406,8 @@
     <string name="label_kyc">Please start KYC verification</string>
     <string name="upload_aadhaar_text">Upload Aadhaar document</string>
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
+    <string name="details_submitted_successfully">Details submitted successfully!</string>
+    <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
