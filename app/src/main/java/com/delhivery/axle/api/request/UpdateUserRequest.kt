@@ -14,5 +14,7 @@ data class UpdateUserRequest (
     @SerializedName("pan_number") var panNumber: String? = null,
     @SerializedName("aadhaar_number") val aadhaarNumber:String? =null,
     @SerializedName("gst_number") val gst_number:String? =null,
-    @SerializedName("is_trucking_document_uploaded") val isTruckingDocumentUploaded:Boolean? =null
+    @SerializedName("is_trucking_document_uploaded") val isTruckingDocumentUploaded:Boolean? =null,
+    @SerializedName("rc_number") val rcNumber:String? =null
+
 )

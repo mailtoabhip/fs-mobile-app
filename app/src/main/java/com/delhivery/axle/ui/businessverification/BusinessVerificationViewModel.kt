@@ -124,6 +124,22 @@ class BusinessVerificationViewModel@Inject constructor(
 
     }
 
+    fun updateUserRCDetails(rc: String) {
+        if (!isConnected) return
+
+        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,rcNumber = rc))
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                if (!error) {
+                    userUpdateLiveData.postValue(true)
+                } else{
+                    error.handle()
+                    userUpdateLiveData.postValue(false)
+                }
+            }
+
+    }
 
 
     fun verifyByDoc(docList:List<String>) {
