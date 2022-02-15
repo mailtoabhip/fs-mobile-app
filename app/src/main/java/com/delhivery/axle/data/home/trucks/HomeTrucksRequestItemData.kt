@@ -15,7 +15,7 @@ data class HomeTrucksRequestItemData(
     @SerializedName("supplier_name") val supplierName: String,
     @SerializedName("vehicle_number") var vehicleNumber: String,
     @SerializedName("truck_type") val truckType: String,
-    @SerializedName("ownership") var ownership :String,
+    @SerializedName("ownership") var ownership :String?,
     @SerializedName("truck_uuid") val truckSize: String,
     @SerializedName("capacity") val capacity: Double,
     @SerializedName("current_city") var currentCityName: String? = "",
@@ -49,7 +49,7 @@ data class HomeTrucksRequestItemData(
 
     fun truckNumber() = vehicleNumber
 
-    fun ownership() = (((ownership.split("_")).toTypedArray()).joinToString(" ")).capitalize()
+    fun ownership() = (((ownership?.split("_"))?.toTypedArray())?.joinToString(" "))?.capitalize()
 
     fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
 
