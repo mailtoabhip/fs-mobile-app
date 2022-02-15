@@ -574,29 +574,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         if(item.data.addressType.equals("gst",true)) {
             isSameAsGST=true
         }
-//        for(i in viewModel.AddressLiveData.value!!){
-//            pos=pos+1
-//            if (pos==position){
-//                isSelected=true
-//            }
-//            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-//                add(
-//                    Pair(
-//                        AddressDataItem(
-//                            AddressDetailData(i.first.data,
-//                                i?.address!!,i.proofDocumentType,i.documentUrls,i.addressType,i.isDeleted,isSelected)
-//                        ),
-//                        DataRVAdapterOperationType.Add
-//                    )
-//                )
-//            }.let {
-//                viewModel.AddressLiveData.postValue(it)
-//
-//            }
-//        }
-
-
-
     }
 
 }
