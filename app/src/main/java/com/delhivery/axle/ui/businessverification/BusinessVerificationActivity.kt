@@ -117,6 +117,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.imgWrong.visibility = View.VISIBLE
             binding.rcErrorMsg.setText(it)
         })
+        viewModel.userUpdateLiveData.observe(this, Observer {
+            if(it){
+                showKycSubmittedDialog()
+            }
+        })
+
         viewModel.manualVerificationRequired.observe(this, Observer {
             if(it) {
                 viewModel.selected.value = "rc"
@@ -124,15 +130,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             }else{
                 //show successfully submitted page
                 viewModel.updateUserDetails()
-                showKycSubmittedDialog()
 
             }
         })
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             //show successfully submitted page
             viewModel.updateUserDetails()
-            showKycSubmittedDialog()
-
         })
 
         binding.editTruck.lengthAction(8){
