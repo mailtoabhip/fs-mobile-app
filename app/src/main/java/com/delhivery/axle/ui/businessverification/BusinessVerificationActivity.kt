@@ -19,6 +19,7 @@ import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
@@ -122,11 +123,14 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }else{
                 //show successfully submitted page
+                viewModel.updateUserDetails()
                 showKycSubmittedDialog()
+
             }
         })
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             //show successfully submitted page
+            viewModel.updateUserDetails()
             showKycSubmittedDialog()
 
         })
