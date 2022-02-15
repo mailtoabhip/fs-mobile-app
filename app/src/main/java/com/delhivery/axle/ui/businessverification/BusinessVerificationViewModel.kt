@@ -110,7 +110,7 @@ class BusinessVerificationViewModel@Inject constructor(
     fun updateUserDetails() {
         if (!isConnected) return
 
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,isTruckingDocumentUploaded = true))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
