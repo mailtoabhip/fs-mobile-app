@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.ErrorResponseBody
@@ -14,13 +15,16 @@ import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import retrofit2.adapter.rxjava2.Result.response
 import java.io.File
 import javax.inject.Inject
 
 class BusinessVerificationViewModel@Inject constructor(
     private  val userRepository: UserRepository,
-    private  val loadboardRepository: LoadboardRepository
+    private  val loadboardRepository: LoadboardRepository,
+    private val userPrefs: UserPrefs
+
 
 ) :BaseViewModel(){
 
@@ -31,7 +35,7 @@ class BusinessVerificationViewModel@Inject constructor(
     var currentStep = ""
 
 
-
+    var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var manualVerificationRequired = MutableLiveData<Boolean>()
     var rcVerificationErrorMsg = MutableLiveData<String>()
@@ -101,6 +105,25 @@ class BusinessVerificationViewModel@Inject constructor(
                 }
             }
     }
+
+
+    fun updateUserDetails() {
+        if (!isConnected) return
+
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error) {
+                        userUpdateLiveData.postValue(true)
+                    } else{
+                        error.handle()
+                        userUpdateLiveData.postValue(false)
+                    }
+                }
+
+    }
+
 
 
     fun verifyByDoc(docList:List<String>) {

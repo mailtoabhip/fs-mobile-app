@@ -122,10 +122,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }else{
                 //show successfully submitted page
+                showKycSubmittedDialog()
             }
         })
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             //show successfully submitted page
+            showKycSubmittedDialog()
+
         })
 
         binding.editTruck.lengthAction(8){
