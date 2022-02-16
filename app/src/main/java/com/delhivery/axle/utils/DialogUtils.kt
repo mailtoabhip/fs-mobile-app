@@ -200,6 +200,59 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+
+    fun showConfirmRoleChangeDialog(desc: String,dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogConfirmPermissionSwitchBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        bindingDialog.labelErrorDoc.setText(desc)
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonConfirm.setOnClickListener {
+            //action after confirm button
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+//go to business verification process
+    fun showCompleteBusinessverificationDialog(desc: String,dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogConfirmPermissionSwitchBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        bindingDialog.labelErrorDoc.setText(desc)
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonConfirm.setOnClickListener {
+            //action after confirm button
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+
+
     /*show attachment dialog*/
      fun showAttachmentDialog(adapter:DocUploadAdapter,uploadArray:ArrayList<Pair<String, String>>,dialogUtilsInterface: DialogUtilsInterface,uploadText: String,awsUtils: AWSUtils) {
         val dialog = Dialog(activity)

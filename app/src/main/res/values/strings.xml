@@ -131,6 +131,7 @@
     <string name="action_upload_rc_doc">Upload RC document</string>
     <string name="action_cancel">Cancel</string>
   <string name="action_start_kyc">Start</string>
+    <string name="action_complete_verification">Complete Verification</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
@@ -347,6 +348,8 @@
     <string name="sub_label_step4_4">Step 4 of 4</string>
     <string name="label_business">Business Verification </string>
     <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
+    <string name="label_changes">Confirm Changes?</string>
+    <string name="label_complete_business_verification">Complete Business Verification</string>
 
 
     <!--Error (error_-->
@@ -408,6 +411,7 @@
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
     <string name="details_submitted_successfully">Details submitted successfully!</string>
     <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
+    <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
