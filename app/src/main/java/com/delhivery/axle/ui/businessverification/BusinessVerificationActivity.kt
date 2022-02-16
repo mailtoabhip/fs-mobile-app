@@ -30,6 +30,7 @@ import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 //import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
@@ -181,7 +182,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun onAWSFailure() {
         uiUtils.hideProgress()
         uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
         resetUploadData()
     }
 
@@ -287,8 +288,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         dialog.show()
         Handler().postDelayed({
             dialog.dismiss()
-          /*  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-          TotalStepsKey)!!,null)*/
+            navigationUtils.navigate(HomeActivity::class.java, true)
+            /*  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+            TotalStepsKey)!!,null)*/
         }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }

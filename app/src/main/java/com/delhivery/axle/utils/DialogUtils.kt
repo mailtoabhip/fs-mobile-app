@@ -188,7 +188,8 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonUploadAgain.setOnClickListener {
-            showVerifcationOptionsDialog(uploadText,dialogUtilsInterface)
+            val imageName = "Lr_doc_" + System.currentTimeMillis()+".jpg"
+            dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }
 
@@ -216,7 +217,6 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonSubmit.setOnClickListener {
-
             dialogUtilsInterface.sendDocForVerification(uploadArray)
             dialog.dismiss()
         }

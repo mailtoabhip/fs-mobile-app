@@ -100,9 +100,6 @@ class BusinessVerificationViewModel@Inject constructor(
                     verificationDocUploadMsg.postValue(_res)
                 } else
                     error.handle()
-                if(error.message!=null) {
-                    rcVerificationErrorMsg.postValue(error.message)
-                }
             }
     }
 
