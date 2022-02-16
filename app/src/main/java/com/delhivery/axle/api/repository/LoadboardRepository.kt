@@ -5,10 +5,13 @@ import com.delhivery.axle.api.request.GstDetailRequest
 import com.delhivery.axle.api.request.GstNumberRequest
 import com.delhivery.axle.api.request.PanVerificationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
+import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.RcVerificationResponse
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,6 +44,19 @@ class LoadboardRepository @Inject constructor(
      */
     fun updateUser(updateUserRequest: UpdateUserRequest) =
            loadboardService.updateUser(updateUserRequest).convertMessageResponse()
+
+    /**
+     * validate RC
+     */
+    fun validateRC(rcNumber :String)  =
+        loadboardService.validateRC(RcVerificationRequest(rcNumber)).convertResponse()
+
+    /**
+     * upload Business Verification Document
+     */
+    fun uploadVerificationDoc(verificationDocUploadRequest: VerificationDocUploadRequest)  =
+        loadboardService.uploadDocument(verificationDocUploadRequest).convertMessageResponse()
+
 
     /**
      * get Aadhaar or GST

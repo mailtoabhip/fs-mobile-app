@@ -72,7 +72,7 @@
   <!-- delhivery view pager indicator -->
   <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
   <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
-
+    <dimen name="size_5dp">5dp</dimen>
 
 
 </resources>
