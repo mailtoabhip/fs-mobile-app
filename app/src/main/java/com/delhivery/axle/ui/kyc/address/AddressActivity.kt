@@ -21,9 +21,7 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.address.AddressDetailData
-import com.delhivery.axle.databinding.ActivityAddressBinding
-import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
-import com.delhivery.axle.databinding.DialogEditAlternateAddressBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
@@ -423,6 +421,39 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
+    fun confirmDelete(proofType :String,flatAddress:String,areaAddress:String,cityAddress:String,pinCode:String) {
+        val dialog = Dialog(this)
+        val bindingDialog = DialogConfirmDeleteBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonConfirm.setOnClickListener {
+            //action after confirm button
+            viewModel.documentProofType =  proofType
+            viewModel.flatAddress = flatAddress
+            viewModel.areaAddress = areaAddress
+            viewModel.cityAddress = cityAddress
+            viewModel.pincodeAddress = pinCode
+            viewModel.addNewAddress(true)
+            viewModel.documentProofUrl.clear()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+
+
 
     private fun showEditAlternateAddressDialog(addressDataItem: AddressDataItem) {
         val dialog = Dialog(this)
@@ -481,13 +512,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         bindingDialog.btnConfirmDelete.setOnClickListener {
 
-            viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
-            viewModel.flatAddress = bindingDialog.editFlat.text.toString()
-            viewModel.areaAddress = bindingDialog.editArea.text.toString()
-            viewModel.cityAddress = bindingDialog.editCity.text.toString()
-            viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
-            viewModel.addNewAddress(true)
-            viewModel.documentProofUrl.clear()
+
+
+            confirmDelete(bindingDialog.spinnerProof.selectedItem.toString(),bindingDialog.editFlat.text.toString(),bindingDialog.editArea.text.toString()
+                ,bindingDialog.editCity.text.toString(),bindingDialog.editPincode.text.toString())
+
         }
 
 
@@ -574,6 +603,29 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         if(item.data.addressType.equals("gst",true)) {
             isSameAsGST=true
         }
+//        for(i in viewModel.AddressLiveData.value!!){
+//            pos=pos+1
+//            if (pos==position){
+//                isSelected=true
+//            }
+//            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+//                add(
+//                    Pair(
+//                        AddressDataItem(
+//                            AddressDetailData(i.first.data,
+//                                i?.address!!,i.proofDocumentType,i.documentUrls,i.addressType,i.isDeleted,isSelected)
+//                        ),
+//                        DataRVAdapterOperationType.Add
+//                    )
+//                )
+//            }.let {
+//                viewModel.AddressLiveData.postValue(it)
+//
+//            }
+//        }
+
+
+
     }
 
 }
