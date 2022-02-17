@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.profile.fragments
+package com.delhivery.axle.ui.profile.kycdetails.fragments
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

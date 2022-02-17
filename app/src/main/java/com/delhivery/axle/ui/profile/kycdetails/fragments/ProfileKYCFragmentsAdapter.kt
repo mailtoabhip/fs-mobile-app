@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.profile.fragments
+package com.delhivery.axle.ui.profile.kycdetails.fragments
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 class ProfileKYCFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
     fragmentManager
 ) {
-    override fun getItem(position: Int) =ProfileKYCFragmentType.pos(position)!!.fragment
+    override fun getItem(position: Int) = ProfileKYCFragmentType.pos(position)!!.fragment
 
     override fun getCount() = ProfileKYCFragmentType.count()
 

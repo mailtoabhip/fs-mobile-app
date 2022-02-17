@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
@@ -90,6 +91,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
+
 
     binding.rvPod.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)

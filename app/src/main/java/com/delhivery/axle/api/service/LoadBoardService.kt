@@ -95,4 +95,12 @@ interface LoadBoardService {
             @Query("uuid") userId: String
     ): Single<BaseResponse<UserRespone>>
 
+    /**
+     * kyc docs
+     */
+    @GET("/user_documents/{uuid}")
+    fun kycDocs(
+            @Path("uuid") userId: String
+    ): Single<BaseResponse<KycDocsResponse>>
+
 }

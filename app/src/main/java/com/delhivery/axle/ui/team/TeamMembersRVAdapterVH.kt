@@ -76,6 +76,7 @@ class TeamMembersAdminUserItemVH(binding: ViewTeamMemberAdminItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
+    binding.logoTeamMember.text = item.data.name?.get(0)?.toUpperCase().toString()
     binding.adminCardContainer.clickToAction(ViewAdminMember, item, _interface)
   }
 }
@@ -92,8 +93,9 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
+    binding.logoTeamMember.text = item.data.name?.get(0)?.toUpperCase().toString()
     binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, adapterPosition, _interface)
-//    binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
+    //binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
 //    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
   }
 }

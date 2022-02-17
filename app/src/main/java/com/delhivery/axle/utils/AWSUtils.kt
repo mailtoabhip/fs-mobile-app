@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils
 
+import android.util.Log
 import com.amazonaws.auth.BasicSessionCredentials
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
@@ -123,7 +124,6 @@ class AWSUtils @Inject constructor(
       }
 
     })
-
 
   }
 

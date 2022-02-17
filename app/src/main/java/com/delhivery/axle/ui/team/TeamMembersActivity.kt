@@ -22,6 +22,7 @@ import com.delhivery.axle.data.teammembers.WarningAction_NoMembers
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.databinding.DialogTeamMemberBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.TeamMemberInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.Serializable
 
@@ -31,7 +32,7 @@ import java.io.Serializable
  */
 
 class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
-  TeamMembersRVAdapterInterface {
+  TeamMembersRVAdapterInterface, TeamMemberInterface {
 
 
   init {
@@ -129,6 +130,14 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
     refreshData()
+
+    viewModel.emptyUserLiveData.observe(this, Observer {
+      if(it){
+        binding.addTeamMemberButton.visibility = View.GONE
+      }else{
+        binding.addTeamMemberButton.visibility = View.VISIBLE
+      }
+    })
   }
 
   override fun onBackPressed() {
@@ -208,10 +217,10 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     }
     bindingDialog.editMemberLayout.setOnClickListener {
       val uuid = data.userId
-      val name = data.userName
-      val number = data.phoneNumber
+      val name = data.name
+      val number = data.phoneNo
       val dieselPreference = data.getDieselPreferences()
-      val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
+      val dieselCompany = data.dieselCompany?: mutableListOf()
       if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
         if (name != null) {
           editTeamMember(uuid, name, number!!, dieselPreference, dieselCompany )
@@ -238,36 +247,27 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
    * Confirm and delete team member
    */
   fun confirmAndDelete(uuid: String) {
-    dialogUtils.showBasicConfirmDialog(
-        R.string.title_dialog_delete,
-        R.string.msg_dialog_delete,
-        positiveAction = "Confirm",
-        negativeAction = "Cancel",
-        positiveClickListener = {
-          it.dismiss()
-          deleteTeamMember(uuid)
-        }
-    )
+    dialogUtils.showTeamDeleteDialog(uuid,this)
   }
 
   /**
    * Create team member
    */
   fun createTeamMember() {
-    TeamMembersCreateDialog(this, viewModel).show()
+    TeamMembersCreateDialog(this, viewModel, viewModel.userPrefs).show()
   }
 
   /**
    * Edit team member
    */
   fun editTeamMember(uuid: String, name: String, number: String, dieselPreference: Boolean, dieselCompany :List<String>) {
-    TeamMembersEditDialog(this, uuid, name, number, dieselPreference, dieselCompany, viewModel).show()
+    TeamMembersEditDialog(this, uuid, name, number, dieselPreference, dieselCompany, viewModel, viewModel.userPrefs).show()
   }
 
   /**
    * Delete team member
    */
-  fun deleteTeamMember(uuid: String) {
+  override fun deleteTeamMember(uuid: String) {
     viewModel.deleteMember(uuid)
   }
 

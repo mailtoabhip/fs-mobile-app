@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.profile
+package com.delhivery.axle.ui.profile.kycdetails
 
 import android.content.Context
 import android.content.Intent
@@ -6,8 +6,8 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityProfileKycDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentType
-import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentsAdapter
+import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentType
+import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentsAdapter
 
 class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding, ProfileKYCDetailsViewModel>(){
 

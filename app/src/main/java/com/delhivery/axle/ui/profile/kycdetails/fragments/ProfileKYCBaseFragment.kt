@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.profile.fragments
+package com.delhivery.axle.ui.profile.kycdetails.fragments
 
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.MutableLiveData

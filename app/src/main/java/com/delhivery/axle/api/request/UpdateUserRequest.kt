@@ -13,5 +13,7 @@ data class UpdateUserRequest (
     @SerializedName("is_location_enabled") var isLocationEnabled: Boolean? = null,
     @SerializedName("pan_number") var panNumber: String? = null,
     @SerializedName("aadhaar_number") val aadhaarNumber:String? =null,
-    @SerializedName("gst_number") val gst_number:String? =null
+    @SerializedName("gst_number") val gstNumber:String? = null,
+    @SerializedName("profile_image_url") val profileImageUrl:String? = null,
+    @SerializedName("can_view_third_party_loads") val can_view_third_party_loads:Boolean? = null
 )

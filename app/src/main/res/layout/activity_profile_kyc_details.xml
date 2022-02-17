@@ -13,11 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
         android:background="@android:color/white"
-        bind:shadow="@{ @dimen/size_4dp }"
+        bind:shadow="@{ @dimen/size_1dp }"
         />
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/kycTabLayout"
             android:layout_width="match_parent"
+            bind:tabTextAppearance="@style/CustomTextAppearanceTab"
             bind:tabIndicatorColor="@color/switch_blue"
             android:background="@color/white"
             android:layout_height="wrap_content"/>

@@ -6,6 +6,7 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -17,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_pan"
-            android:textColor="@color/black"
+            android:textColor="@color/heading_black"
             android:layout_marginTop="@dimen/size_10dp"
             android:textStyle="normal"
             android:textSize="@dimen/text_14sp"/>
@@ -25,10 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
             android:layout_marginTop="@dimen/size_6dp"
-            bind:shadow="@{ @dimen/size_4dp }"
             android:layout_gravity="center"
             android:padding="@dimen/size_4dp"
-            android:background="@drawable/bg_rectangle_round_corner_grey">
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_kyc_pan_number_profile"
                 android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
                 android:id="@+id/image_kyc_detail_pan_verified"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_green_tick"
+                app:srcCompat="@drawable/ic_vector_circle_check"
                 android:layout_marginEnd="@dimen/size_6dp"
                 android:layout_gravity="center"/>
 
@@ -53,8 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_gst"
+            android:id="@+id/label_gst"
             android:layout_marginTop="@dimen/size_24dp"
-            android:textColor="@color/black"
+            android:textColor="@color/heading_black"
             android:textStyle="normal"
             android:textSize="@dimen/text_14sp"/>
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -63,8 +64,8 @@
             android:layout_marginTop="@dimen/size_6dp"
             android:layout_gravity="center"
             android:padding="@dimen/size_4dp"
-            bind:shadow="@{ @dimen/size_4dp }"
-            android:background="@drawable/bg_rectangle_round_corner_grey">
+            android:id="@+id/gstLay"
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_kyc_gst_number_profile"
                 android:layout_width="wrap_content"
@@ -79,7 +80,7 @@
                 android:id="@+id/image_kyc_detail_gst_verified"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_green_tick"
+                app:srcCompat="@drawable/ic_vector_circle_check"
                 android:layout_marginEnd="@dimen/size_6dp"
                 android:layout_gravity="center"/>
 
@@ -89,18 +90,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_cin"
+            android:visibility="gone"
+            android:id="@+id/label_cin"
             android:layout_marginTop="@dimen/size_24dp"
-            android:textColor="@color/black"
+            android:textColor="@color/heading_black"
             android:textStyle="normal"
             android:textSize="@dimen/text_14sp"/>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
+            android:id="@+id/cinLay"
+            android:visibility="gone"
             android:layout_marginTop="@dimen/size_6dp"
-            bind:shadow="@{ @dimen/size_4dp }"
             android:layout_gravity="center"
             android:padding="@dimen/size_4dp"
-            android:background="@drawable/bg_rectangle_round_corner_grey">
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_kyc_cin_number_profile"
                 android:layout_width="wrap_content"
@@ -115,7 +119,7 @@
                 android:id="@+id/image_kyc_detail_cin_verified"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_green_tick"
+                app:srcCompat="@drawable/ic_vector_circle_check"
                 android:layout_marginEnd="@dimen/size_6dp"
                 android:layout_gravity="center"/>
 
@@ -127,17 +131,18 @@
             android:layout_height="wrap_content"
             android:text="@string/label_address"
             android:layout_marginTop="@dimen/size_24dp"
-            android:textColor="@color/black"
+            android:id="@+id/label_address"
+            android:textColor="@color/heading_black"
             android:textStyle="normal"
             android:textSize="@dimen/text_14sp"/>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
             android:layout_marginTop="@dimen/size_6dp"
-            bind:shadow="@{ @dimen/size_4dp }"
             android:layout_gravity="center"
+            android:id="@+id/address_lay"
             android:padding="@dimen/size_4dp"
-            android:background="@drawable/bg_rectangle_round_corner_grey">
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_kyc_address_profile"
                 android:layout_width="wrap_content"
@@ -152,7 +157,45 @@
                 android:id="@+id/image_kyc_detail_address_verified"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_green_tick"
+                app:srcCompat="@drawable/ic_vector_circle_check"
+                android:layout_marginEnd="@dimen/size_6dp"
+                android:layout_gravity="center"/>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_rc"
+            android:text="@string/label_truck_rc"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:textColor="@color/heading_black"
+            android:textStyle="normal"
+            android:textSize="@dimen/text_14sp"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:layout_gravity="center"
+            android:id="@+id/truck_rc_lay"
+            android:padding="@dimen/size_4dp"
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_rc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/size_6dp"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/faded_black"
+                android:layout_weight="1"
+                tools:text="Delhivery Ltd., Sector 44, Gurgaon"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_rc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_vector_circle_check"
                 android:layout_marginEnd="@dimen/size_6dp"
                 android:layout_gravity="center"/>
 

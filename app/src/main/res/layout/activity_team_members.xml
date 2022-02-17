@@ -19,9 +19,8 @@
         android:layout_above="@+id/lay_add_member"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        android:orientation="vertical"
-        >
+        android:background="@color/white"
+        android:orientation="vertical">
 
       <androidx.appcompat.widget.Toolbar
           android:id="@+id/toolbar"
@@ -29,7 +28,7 @@
           android:layout_height="@dimen/height_toolbar"
           android:background="@android:color/white"
           app:layout_constraintTop_toTopOf="parent"
-          bind:shadow="@{ @dimen/size_4dp }"
+          bind:shadow="@{ @dimen/size_1dp }"
           />
 
       <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,11 +37,11 @@
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+             android:layout_width="match_parent"
+            android:layout_height="match_parent">
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/rv_members"
+              android:paddingTop="@dimen/size_24dp"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:scrollbars="none"
@@ -69,6 +68,7 @@
           android:background="@drawable/bg_allround_corner_blue"
           android:text="Add Team Member"
           android:textAllCaps="false"
+          android:visibility="gone"
           android:textColor="@color/white" />
 
 

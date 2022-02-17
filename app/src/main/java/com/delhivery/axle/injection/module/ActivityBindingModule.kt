@@ -28,12 +28,13 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
-import com.delhivery.axle.ui.profile.ProfileDetailsActivity
-import com.delhivery.axle.ui.profile.ProfileKYCDetailsActivity
-import com.delhivery.axle.ui.profile.fragments.ProfileKYCFragmentBindingModule
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
+import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -253,6 +254,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsAccountDetailsActivityModule::class])
   internal abstract fun binAccountDetailsActivity(): AccountDetailsActivity
+
+  /* MyProfileActivity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsMyProfileActivityModule::class])
+  internal abstract fun binMyProfileActivity(): MyProfileActivity
 }
 
 /**
@@ -378,6 +384,9 @@ internal abstract class AbsAccountActionActivityModule : ActivityModule<AccountA
 
 @Module
 internal abstract class AbsAccountDetailsActivityModule : ActivityModule<AccountDetailsActivity>()
+
+@Module
+internal abstract class AbsMyProfileActivityModule : ActivityModule<MyProfileActivity>()
 
 /**
  * Activity Binds Module

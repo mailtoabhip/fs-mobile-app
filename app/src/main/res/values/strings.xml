@@ -13,6 +13,7 @@
     <string name="title_dialog_supplier_not_approved">User Not Approved</string>
     <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
     <string name="title_dialog_apply_filter">Apply filter</string>
+    <string name="title_dialog_delete_member">Delete Member</string>
 
     <!--Messages (msg_)-->
     <string name="msg_hello_world">Message Hello World</string>
@@ -38,7 +39,7 @@
     <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
     <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
     <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
-    <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
+    <string name="msg_dialog_delete">Are you sure you want to delete this member? All information will be deleted permanently.</string>
     <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
     <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
     <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
@@ -80,7 +81,9 @@
     <string name="hint_amount">23900</string>
     <string name="hint_user_name">Enter user name</string>
     <string name="hint_password">Enter Password</string>
-
+    <string name="hint_enter_name">Enter name</string>
+    <string name="hint_number">Enter number</string>
+    <string name="hint_diesel">Enable to register them for diesel card</string>
 
     <!--Actions (action_)-->
     <string name="action_hello_world">Action Hello World</string>
@@ -132,6 +135,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_start_kyc">Start</string>
     <string name="action_update_business_logo">Update business logo</string>
+    <string name="action_restart_kyc">Try Again</string>
+    <string name="action_add_member">Add Member</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
@@ -287,10 +292,10 @@
     <string name="label_diesel_card">Diesel Card</string>
     <string name="label_register_for_diesel_card">Register Team Member for Diesel Card?</string>
     <string name="label_select_diesel_company">Select Diesel\nCompany</string>
-    <string name="label_edit_team_member">Edit Team Member</string>
+    <string name="label_edit_team_member">Edit member details</string>
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
-    <string name="label_diesel_company">Diesel Company</string>
+    <string name="label_diesel_company">Choose Diesel Company</string>
     <string name="label_lowest_bid">lowest bid</string>
     <string name="label_pmt_rate">PMT Rate</string>
     <string name="label_no_of_trucks">No. of Trucks</string>
@@ -358,7 +363,7 @@
     <string name="label_my_occupation">My Occupation</string>
     <string name="label_i_want">I want to</string>
     <string name="label_post_load">Post Load</string>
-    <string name="label_post_truck">Post Trucks</string>
+    <string name="label_post_truck">Post Truck</string>
     <string name="label_both">Both</string>
     <string name="label_third_party">View third party loads</string>
     <string name="label_edit_member">Edit Member</string>
@@ -370,7 +375,22 @@
     <string name="label_gst">GST Number</string>
     <string name="label_cin">CIN</string>
     <string name="label_address">Address</string>
-
+    <string name="label_verified">Verified</string>
+    <string name="label_account">Account</string>
+    <string name="label_kyc_details">KYC Details</string>
+    <string name="label_profile">Profile Details</string>
+    <string name="label_routes">My Routes</string>
+    <string name="label_earnings">My Earnings</string>
+    <string name="label_team">My Team Members</string>
+    <string name="label_pod">POD Address</string>
+    <string name="label_help">Help &amp; Support</string>
+    <string name="label_logout">Log Out</string>
+    <string name="label_ratings">Business Ratings</string>
+    <string name="label_kyc_pending">KYC verification pending!</string>
+    <string name="label_kyc_failed">KYC verification failed!</string>
+    <string name="label_member_name">Member Name</string>
+    <string name="label_create_member">Enter member details</string>
+    <string name="label_truck_rc">Truck RC</string>
 
     <!--Error (error_-->
     <string name="error_no_internet">No Internet connection</string>
@@ -447,4 +467,24 @@
         <item>LR Copy</item>
         <item>Letter Head</item>
     </string-array>
+
+    <string-array name="array_occupation_post_truck">
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_post_load">
+        <item>Shipper</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_both">
+        <item>Shipper</item>
+        <item>Broker</item>
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+    </string-array>
+     q
 </resources>

@@ -6,12 +6,12 @@
 <androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/size_8dp"
-    android:padding="@dimen/size_8dp">
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/size_8dp">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/size_11dp"
+        android:padding="@dimen/size_16dp"
         android:background="@color/white"
         android:orientation="horizontal">
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -20,22 +20,24 @@
             android:orientation="horizontal"
             android:layout_weight="1">
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_no_route_warning"/>
+                android:id="@+id/docImage"
+                app:srcCompat="@drawable/ic_doc_business"/>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:orientation="vertical">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_18sp"
-                    android:textColor="@color/black"
-                    android:text="Aadhar Doc"
+                    android:textSize="@dimen/text_14sp"
+                    android:id="@+id/name"
+                    android:textColor="@color/heading_black"
                     tools:text="Aadhar"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_document_size_profile"
@@ -43,7 +45,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/faded_black"
                     android:layout_marginTop="@dimen/size_2dp"
-                    android:text="234 KB"
                     tools:text="34KB"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -55,6 +56,11 @@
             app:srcCompat="@drawable/ic_download_doc_blue"
             android:layout_gravity="center"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/browser_actions_divider_color"
+        android:layout_height="@dimen/size_1dp"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

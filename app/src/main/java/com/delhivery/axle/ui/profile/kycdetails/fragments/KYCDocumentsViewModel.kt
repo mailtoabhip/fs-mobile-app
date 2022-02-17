@@ -1,0 +1,71 @@
+package com.delhivery.axle.ui.profile.kycdetails.fragments
+
+import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.doc.DocDetailData
+import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
+import com.delhivery.axle.ui.kyc.gst.GstDataItem
+import com.delhivery.axle.utils.extensions.not
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import io.reactivex.Single
+import java.io.File
+import javax.inject.Inject
+
+class KYCDocumentsViewModel @Inject constructor(
+        private val userRepository: UserRepository
+) : BaseViewModel(){
+
+    val kycList = MutableLiveData<List<String>>()
+    var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+   var imagePath = ""
+    var imageUrl = ""
+
+    var docLiveData = MutableLiveData<List<Pair<BaseDocRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+    var docDetailsLiveData = MutableLiveData<DocDetailData>()
+
+    fun setDataDoc(){
+        compositeDisposable += userRepository.getKycDocs()
+                .onBackground()
+                .subscribe { _res, error ->
+                    mutableListOf<Pair<BaseDocRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        /* remove progress item */
+                        add(Pair(DocProgressItem(), DataRVAdapterOperationType.Remove))
+
+                        if (!error) {
+                            if (_res.responseData?.kyc_documents!=null && _res.responseData?.kyc_documents?.isEmpty() == true) {
+                                add(Pair(DocItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
+                            } else {
+                                for (url in _res.responseData?.kyc_documents!!) {
+
+                                    add(Pair(DocDataItem(DocDetailData(url, null)), DataRVAdapterOperationType.Add))
+                                }
+                            }
+                        } else {
+                            /* add api time out item */
+                            add(Pair(DocItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
+                        }
+                    }
+                            .let { docLiveData.postValue(it) }
+                }
+    }
+
+
+    fun getDownloadDelegationToken(awsPath: String, file: File) {
+        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
+                .onBackground()
+                .subscribe { _res, error ->
+                    if (!error) {
+                        delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+                    } else
+                        error.handle()
+                }
+    }
+
+}

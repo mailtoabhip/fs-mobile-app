@@ -18,10 +18,8 @@
         android:layout_above="@+id/lay_add_route"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-
-        android:orientation="vertical"
-        >
+        android:background="@color/white"
+        android:orientation="vertical">
 
       <androidx.appcompat.widget.Toolbar
           android:id="@+id/toolbar"
@@ -29,7 +27,7 @@
           android:layout_height="@dimen/height_toolbar"
           android:background="@android:color/white"
           app:layout_constraintTop_toTopOf="parent"
-          bind:shadow="@{ @dimen/size_4dp }"
+          bind:shadow="@{ @dimen/size_1dp }"
           />
 
       <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,10 +38,10 @@
             android:id="@+id/refresh_layout"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/rv_routes"
+              android:layout_margin="@dimen/size_16dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               />
@@ -67,6 +65,7 @@
           android:background="@drawable/bg_allround_corner_blue"
           android:text="Add New Route"
           android:textAllCaps="false"
+          android:textSize="@dimen/text_16sp"
           android:textColor="@color/white" />
 
     </RelativeLayout>

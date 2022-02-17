@@ -6,7 +6,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
@@ -17,11 +19,13 @@ import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.data.home.routes.RoutesAction_DeleteRoute
 import com.delhivery.axle.data.home.routes.RoutesAction_ViewDetails
 import com.delhivery.axle.data.home.routes.RoutesAction_ViewOptions
+import com.delhivery.axle.data.userroutes.UserRoutesWarningItem_NoMember
 import com.delhivery.axle.data.userroutes.WarningAction_NoRoutes
 import com.delhivery.axle.databinding.ActivityUserRoutesBinding
 import com.delhivery.axle.databinding.DialogTeamMemberBottomOptionsBinding
 import com.delhivery.axle.databinding.DialogUserRouteBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.RouteDeleteDialog
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteOriginCityExtra
@@ -60,7 +64,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "My Route Preferences"
+    title = "My Routes"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     binding.refreshLayout.setOnRefreshListener {
@@ -77,6 +81,14 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
     viewModel.allRoutesLiveData.observe(this, Observer {
       it?.let {
         _items -> adapter.operation(_items)
+      }
+    })
+
+    viewModel.emptyState.observe(this, Observer {
+      if(it){
+        binding.addRouteNewButton.visibility = View.GONE
+      }else{
+        binding.addRouteNewButton.visibility = View.VISIBLE
       }
     })
 

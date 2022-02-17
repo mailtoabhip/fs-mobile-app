@@ -1,15 +1,18 @@
-package com.delhivery.axle.ui.home.fragments.profile
+package com.delhivery.axle.ui.profile
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.MonthlyEarning
+import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.io.File
 import javax.inject.Inject
 
 class HomeProfileViewModel @Inject constructor(
@@ -22,7 +25,23 @@ class HomeProfileViewModel @Inject constructor(
 
   var userRoleLiveData = MutableLiveData<Boolean>()
 
-  var userLiveData = MutableLiveData<UserModel>()
+  /* states */
+  var stateLiveData = MutableLiveData<ProfileUIState>()
+  var state: ProfileUIState = ProfileUIState.Axle
+    set(value) {
+      stateLiveData.postValue(value)
+    }
+
+  var userName = userPrefs.userName
+  var businessName = userPrefs.companyName
+  var mobile = "\u2022 ${userPrefs.phoneNumber}"
+  var bName = userPrefs.bankName
+  var aNum = userPrefs.accNumber
+  var ifsc = userPrefs.ifscCode
+
+  var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+  var imagePath = ""
+  var imageUrl = ""
 
   fun fetchTripMeter() {
     compositeDisposable += transactionsRepository.transactionTripMeter()
@@ -84,6 +103,32 @@ class HomeProfileViewModel @Inject constructor(
 
   fun logout() {
     userPrefs.clearPrefs()
+  }
+
+  fun setUserState(){
+    if(userPrefs.accountSetup){
+      if(userPrefs.userMode.equals("post_load")){
+        state = ProfileUIState.Axle
+      }else{
+        state = ProfileUIState.Axle
+      }
+    }else{
+      state = ProfileUIState.Axle
+    }
+  }
+
+  fun getDownloadDelegationToken(
+          awsPath: String,
+          file: File
+  ) {
+    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
+            .onBackground()
+            .subscribe { _res, error ->
+              if (!error) {
+                delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+              } else
+                error.handle()
+            }
   }
 
 }

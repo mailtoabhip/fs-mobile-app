@@ -36,6 +36,7 @@ class UserRoutesViewModel @Inject constructor(
   var routes = mutableListOf<RouteModel>()
   var existingRoutes = mutableListOf<RouteModel>()
   var updatedLanes = MutableLiveData<Boolean>()
+    var emptyState = MutableLiveData<Boolean>()
 
   /**
    * Fetch user routes
@@ -56,9 +57,11 @@ class UserRoutesViewModel @Inject constructor(
                 for (route in _user.userRoutes()) {
                     add(Pair(UserRouteItem(route), Add))
                 }
+                emptyState.value = false
             }
             else{
                 add(Pair(UserRoutesWarningItem_NoMember, Add))
+                emptyState.value = true
             }
             }.let {
               allRoutesLiveData.postValue(it)

@@ -14,19 +14,17 @@ import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
-import com.delhivery.axle.ui.profile.BankDetailsViewModel
-import com.delhivery.axle.ui.profile.HelpSupportViewModel
-import com.delhivery.axle.ui.profile.ProfileDetailsViewModel
-import com.delhivery.axle.ui.profile.ProfileKYCDetailsViewModel
-import com.delhivery.axle.ui.profile.fragments.KYCDocumentsViewModel
-import com.delhivery.axle.ui.profile.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -203,19 +201,9 @@ interface ViewModelInjector {
   fun inject(viewModel: SearchOngoingTripViewModel)
 
   /**
-   * Injects [HelpSupportViewModel]
-   */
-  fun inject(viewModel: HelpSupportViewModel)
-
-  /**
    * Injects [ProfileDetailsViewModel]
    */
   fun inject(viewModel: ProfileDetailsViewModel)
-
-  /**
-   * Injects [BankDetailsViewModel]
-   */
-  fun inject(viewModel: BankDetailsViewModel)
 
   /**
    * Injects [ProfileKYCDetailsViewModel]
