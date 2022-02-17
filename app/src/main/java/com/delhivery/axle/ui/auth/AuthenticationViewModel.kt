@@ -117,8 +117,7 @@ class AuthenticationViewModel @Inject constructor(
               AccountDetails
             } else if (_res.third.supplierDetails?.isDeleted == true ) {
               userPrefs.hasLoggedIn = false
-              //Disabled
-              LoadRequest
+              Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
