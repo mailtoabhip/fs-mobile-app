@@ -137,6 +137,7 @@
     <string name="action_update_business_logo">Update business logo</string>
     <string name="action_restart_kyc">Try Again</string>
     <string name="action_add_member">Add Member</string>
+    <string name="action_upload_rc_doc">Upload RC document</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
@@ -401,6 +402,8 @@
     <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
     <string name="error_upload">Oops! Something went wrong</string>
     <string name="error_upload_document">Try uploading the document once again</string>
+    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+
 
     <string name="not_available">Not available</string>
     <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
@@ -447,6 +450,8 @@
     <string name="label_kyc">Please start KYC verification</string>
     <string name="upload_aadhaar_text">Upload Aadhaar document</string>
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
+    <string name="details_submitted_successfully">Details submitted successfully!</string>
+    <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>

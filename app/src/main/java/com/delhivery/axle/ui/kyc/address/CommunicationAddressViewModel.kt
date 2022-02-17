@@ -38,6 +38,7 @@ BaseViewModel() {
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
     var AddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var addressDetailDataList = MutableLiveData<List<AddressDetailData>>()
     var selectedComminicationAddress =""
     var isSameAsGst =false
 
@@ -46,6 +47,7 @@ BaseViewModel() {
    fun fetchAndAddUserAddress(){
    if(!userPrefs.getAddressList().isNullOrEmpty()){
        for(i in userPrefs.getAddressList()!!){
+
            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                add(
                    Pair(

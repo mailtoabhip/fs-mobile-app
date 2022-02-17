@@ -20,10 +20,12 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.databinding.ActivityAddressBinding
 import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
 import com.delhivery.axle.databinding.DialogEditAlternateAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
@@ -55,7 +57,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
-    private val AddressRVAdapter by lazy { AddressRVAdapter(this) }
+    private val addressRVAdapter by lazy { AddressRVAdapter(this) }
 
     @Inject
     lateinit var imageUtils: ImageUtils
@@ -102,12 +104,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         })
         binding.addressList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            adapter = this@AddressActivity.AddressRVAdapter
+            adapter = this@AddressActivity.addressRVAdapter
         }
         viewModel.AddressLiveData.observe(this, Observer {
             it?.let { _items ->
           //      if(viewModel.addAddressLiveData.value!!) {
-                    AddressRVAdapter.operation(_items)
+                    addressRVAdapter.operation(_items)
           //      }
             }
         })
@@ -567,6 +569,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun selectItem(item: AddressDataItem, position: Int) {
         selectedAddress=item.data.key()
+        var isSelected =false
+        var pos=-1;
         if(item.data.addressType.equals("gst",true)) {
             isSameAsGST=true
         }

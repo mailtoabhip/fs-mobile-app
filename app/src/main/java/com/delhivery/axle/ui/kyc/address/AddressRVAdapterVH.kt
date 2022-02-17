@@ -53,6 +53,7 @@ class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
             binding.addresst="Alternate address"
         }else{
             binding.addresst= "GST address"
+            binding.imgAddress.visibility=View.GONE
         }
 
         binding.imgAddress.setOnClickListener{

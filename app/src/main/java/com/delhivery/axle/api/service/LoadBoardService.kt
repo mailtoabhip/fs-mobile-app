@@ -103,4 +103,20 @@ interface LoadBoardService {
             @Path("uuid") userId: String
     ): Single<BaseResponse<KycDocsResponse>>
 
+   /**
+     * verify business with RC
+     */
+    @POST("/validate_rc")
+    fun validateRC(
+        @Body request: RcVerificationRequest
+    ): Single<BaseResponse<RcVerificationResponse>>
+
+    /**
+     * upload document for business verification
+     */
+    @POST("/upload_document")
+    fun uploadDocument(
+        @Body request: VerificationDocUploadRequest
+    ): Single<BaseMessageResponse>
+
 }
