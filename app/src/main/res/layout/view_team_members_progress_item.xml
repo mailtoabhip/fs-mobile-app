@@ -5,26 +5,25 @@
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_4dp"
-      android:layout_marginEnd="@dimen/size_8dp"
-      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:layout_marginEnd="@dimen/size_16dp"
+      android:layout_marginStart="@dimen/size_16dp"
       android:layout_marginTop="@dimen/size_4dp"
       android:clickable="true"
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
-      app:cardElevation="2dp"
-      >
+      app:cardElevation="0dp">
 
     <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
       <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:clickable="false"
+          android:background="@drawable/bg_all_round_corner_grey_boundary"
           android:focusable="false"
           android:paddingBottom="16dp"
           android:paddingEnd="16dp"

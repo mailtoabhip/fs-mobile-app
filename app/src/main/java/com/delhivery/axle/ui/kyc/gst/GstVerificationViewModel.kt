@@ -153,7 +153,7 @@ class GstVerificationViewModel@Inject constructor(
 
         if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && phoneNum!=null) {
             compositeDisposable +=  loadboardRepository.addAddress(phoneNum, gstDetailData.value?.address, null, null, addressType, false)
-                    .flatMap { _Res-> loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = phoneNum!!,gst_number = gstDetailData.value?.gstNumber!!.replace("-", "")))
+                    .flatMap { _Res-> loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = phoneNum!!,gstNumber = gstDetailData.value?.gstNumber!!.replace("-", "")))
                                 .map {
                                     val msg = if (_Res.isNotNullOrEmpty()) {
                                        _Res
@@ -225,26 +225,6 @@ class GstVerificationViewModel@Inject constructor(
                         gstDetailsLiveData.postValue(data)
                     }
         }
-    }
-
-    fun addGstAddress() {
-        if (!isConnected) return
-        compositeDisposable +=
-                loadboardRepository.addAddress(
-                phoneNum,
-                gstDetailData.value?.address,
-                null,
-                null,
-                addressType,
-                false).onBackground()
-                .subscribe { _res, error ->
-                    if (!error) {
-                        //do nothing
-                    } else {
-                        error.handle()
-                    }
-                }
-
     }
 }
 

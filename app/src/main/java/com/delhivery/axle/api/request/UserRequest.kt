@@ -69,3 +69,4 @@ data class UpdateUserFCMTokenRequest(
 const val EditTeamMemberAction_Edit = "edit_member"
 const val DeleteTeamMemberAction_Delete = "delete_member"
 const val ViewAdminMember ="view_admin"
+const val TeamMemberAction_options = "view_options"

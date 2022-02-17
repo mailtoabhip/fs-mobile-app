@@ -28,7 +28,13 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.profile.BankDetailsActivity
+import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
+import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -185,6 +191,26 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
   internal abstract fun bindModule(): InvalidActivity
 
+  /* HelpSupport activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsHelpSupportModule::class])
+  internal abstract fun bindHelpSupportActivity(): HelpSupportActivity
+
+  /*Profile Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileDetailsActivityModule::class])
+  internal abstract fun bindProfileDetailsActivity() : ProfileDetailsActivity
+
+  /*Bank Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBankDetailsActivityModule::class])
+  internal abstract fun bindBankDetailsActivity() : BankDetailsActivity
+
+  /*Profile KYC Details Activity*/
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsProfileKYCDetailsActivityModule::class, ProfileKYCFragmentBindingModule::class])
+  internal abstract fun  bindProfileKYCDetailsActivity() : ProfileKYCDetailsActivity
+
   /* Pan Verification page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPanVerificationActivityModule::class])
@@ -228,6 +254,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsAccountDetailsActivityModule::class])
   internal abstract fun binAccountDetailsActivity(): AccountDetailsActivity
+
+  /* MyProfileActivity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsMyProfileActivityModule::class])
+  internal abstract fun binMyProfileActivity(): MyProfileActivity
 }
 
 /**
@@ -316,6 +347,18 @@ internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<Sear
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
 @Module
+internal abstract class AbsHelpSupportModule : ActivityModule<HelpSupportActivity>()
+
+@Module
+internal abstract class  AbsProfileDetailsActivityModule: ActivityModule<ProfileDetailsActivity>()
+
+@Module
+internal abstract class AbsBankDetailsActivityModule : ActivityModule<BankDetailsActivity>()
+
+@Module
+internal abstract class AbsProfileKYCDetailsActivityModule : ActivityModule<ProfileKYCDetailsActivity>()
+
+@Module
 internal abstract class AbsPanVerificationActivityModule : ActivityModule<PanVerificationActivity>()
 
 @Module
@@ -341,6 +384,9 @@ internal abstract class AbsAccountActionActivityModule : ActivityModule<AccountA
 
 @Module
 internal abstract class AbsAccountDetailsActivityModule : ActivityModule<AccountDetailsActivity>()
+
+@Module
+internal abstract class AbsMyProfileActivityModule : ActivityModule<MyProfileActivity>()
 
 /**
  * Activity Binds Module

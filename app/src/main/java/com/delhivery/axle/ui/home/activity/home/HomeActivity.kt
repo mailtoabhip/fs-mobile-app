@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.home.activity.home
 
-import android.R.attr.action
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -22,6 +21,7 @@ import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -89,6 +89,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Load Requests"
+    binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+    supportActionBar?.setDisplayShowTitleEnabled(false);
+    binding.toolbarTitle.text = title
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -105,6 +108,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
               observeFragmentLiveData(p)
             }
       }
+      binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
     }
 
@@ -122,6 +126,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
+    }
+
+    binding.profile.setOnClickListener {
+      navigationUtils.navigate(MyProfileActivity::class.java)
     }
 
     /**
@@ -293,8 +301,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     if (elevationLiveData == null) {
       /* default toolbar elevation */
       ViewCompat.setElevation(binding.toolbar, resources.getDimension(R.dimen.toolbar_elevation))
+      binding.toolbarTitle.text = title
     } else {
       elevationLiveData.observe(this, Observer {
+        binding.toolbarTitle.text = title
         ViewCompat.setElevation(
             binding.toolbar,
             it ?: resources.getDimension(R.dimen.toolbar_elevation)
@@ -312,6 +322,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       HomeFragmentActionType.Navigate -> {
         val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
         binding.viewpager.setCurrentItem(fragmentType.position, true)
+        binding.toolbarTitle.text = title
       }
     }
   }
@@ -325,6 +336,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                 ?.fragment?.title
             setCurrentItem(pos, true)
           }
+          binding.toolbarTitle.text = title
         }
         pos != -1
       }
@@ -387,6 +399,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
  */
 interface TitleProvider {
   val title: CharSequence
+
 }
 
 enum class FragmentName(
