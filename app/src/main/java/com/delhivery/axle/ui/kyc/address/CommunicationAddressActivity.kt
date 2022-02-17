@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_verify_pan.*
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -49,7 +51,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
-    val awsPath = "loadboard/business/"
+    val awsPath = "loadboard/address/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
@@ -61,6 +63,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
 
 
     var flatFilled = false
@@ -97,7 +101,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         /* Address Proof */
         binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             if(p>0){
+                Log.i("position",p.toString())
                 proofTypeFilled = true
+                if(p==4 ||p==5){
+                    if(userPrefs.udyogNumber.isNotEmpty() || userPrefs.shopNumber.isNotEmpty()){
+                        binding.textProof.visibility = View.GONE
+                        binding.docLayout.visibility = View.GONE
+                    }
+                }else{
+                    binding.textProof.visibility = View.VISIBLE
+                    binding.docLayout.visibility = View.VISIBLE
+                }
                 enableSubmitButton()
             }else{
                 proofTypeFilled =false

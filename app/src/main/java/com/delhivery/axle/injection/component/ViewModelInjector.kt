@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
@@ -215,6 +216,10 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: CommunicationAddressViewModel)
 
+  /**
+   * Injects [IdentityVerificationViewModel]
+   */
+  fun inject(viewModel: IdentityVerificationViewModel)
 
   @Component.Builder
   interface Builder {

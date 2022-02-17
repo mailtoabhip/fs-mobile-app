@@ -5,7 +5,6 @@ import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
-import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -423,8 +422,30 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.rcNumber, "") ?: ""
 
+    /**
+     * cin number
+     */
+    var cinNumber: String
+        set(value) = editor.putString(PrefKeys.cinNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.cinNumber, "") ?: ""
+    /**
+     * udyog number
+     */
+    var udyogNumber: String
+        set(value) = editor.putString(PrefKeys.udyogNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.udyogNumber, "") ?: ""
+    /**
+     * shop number
+     */
+    var shopNumber: String
+        set(value) = editor.putString(PrefKeys.shopNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.shopNumber, "") ?: ""
 
-  /**
+
+    /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -517,6 +538,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.rcNumber)
             .apply()
+      editor.remove(PrefKeys.cinNumber)
+          .apply()
+      editor.remove(PrefKeys.udyogNumber)
+          .apply()
+      editor.remove(PrefKeys.shopNumber)
+          .apply()
     editor.commit()
   }
 
@@ -630,6 +657,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isRcVerified = "is_rc_verified"
     const val isGstVerified = "is_gst_verified"
     const val rcNumber = "rc_number"
+    const val cinNumber = "cin_number"
+    const val udyogNumber = "udyog_number"
+    const val shopNumber = "shop_number"
   }
 }
 

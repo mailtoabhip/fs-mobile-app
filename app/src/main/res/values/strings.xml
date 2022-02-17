@@ -328,6 +328,7 @@
     <string name="sub_label_step1_3">Step 1 of 3</string>
     <string name="sub_label_step2_3">Step 2 of 3</string>
     <string name="sub_label_step3_3">Step 3 of 3</string>
+    <string name="label_identity_verification">Identity Verification</string>
     <string name="label_pan">PAN details </string>
     <string name="label_aadhaar">Aadhaar details </string>
     <string name="label_communication_address">Communication address </string>
@@ -347,7 +348,7 @@
     <string name="sub_label_step4_4">Step 4 of 4</string>
     <string name="label_business">Business Verification </string>
     <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
-
+    <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
 
     <!--Error (error_-->
     <string name="error_no_internet">No Internet connection</string>
@@ -408,6 +409,12 @@
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
     <string name="details_submitted_successfully">Details submitted successfully!</string>
     <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
+    <string name="cin_number">CIN Number</string>
+    <string name="udyog_aadhaar_number">Udyog Aadhaar Number </string>
+    <string name="shop_establishment">Shop &amp; Establishment Number</string>
+    <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
+    <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
+    <string name="proof_attachment">Proof Attachment</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
@@ -427,5 +434,7 @@
         <item>Visiting Card</item>
         <item>LR Copy</item>
         <item>Letter Head</item>
+        <item>Udyog Aadhaar Certificate</item>
+        <item>Shop &amp; Establishment Certificate</item>
     </string-array>
 </resources>

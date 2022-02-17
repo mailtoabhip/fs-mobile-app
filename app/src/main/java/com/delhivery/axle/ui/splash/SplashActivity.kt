@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
@@ -242,7 +243,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
+        Home -> IdentityVerificationActivity::class
         AccountAction -> AccountActionActivity::class
         AccountRole-> AccountRoleActivity::class
         AccountDetails -> AccountDetailsActivity::class
