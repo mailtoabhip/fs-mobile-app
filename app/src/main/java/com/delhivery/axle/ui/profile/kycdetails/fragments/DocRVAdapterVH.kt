@@ -1,12 +1,24 @@
 package com.delhivery.axle.ui.profile.kycdetails.fragments
 
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.gst.GstAction_ViewDetails
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.delhivery.axle.data.doc.DocAction_ShowImage
+import com.delhivery.axle.data.doc.DocAction_ViewDetails
 import com.delhivery.axle.databinding.*
+import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import java.text.FieldPosition
+import com.delhivery.axle.utils.BitmapUtils
 
 /**
  * Base Doc items RV adapter view holder
@@ -49,11 +61,13 @@ class DocDataItemVH(binding: ViewProfileKycDocumentItemBinding) :
           item: DocDataItem,
           _interface: DocRVAdapterInterface
   ) {
-    if (item.data.docPath == null) {
+    if (item.data.docPath.isNullOrEmpty()) {
       _interface.fetchDetails(item.data)
     }
-    val arrString =item.data.docUrl?.split("/")
-    binding.name.text = arrString?.get(arrString.size-1) ?: ""
+      _interface.showImage(item.data, binding.textDocumentSizeProfile, binding.docImage)
+    val arrString =item.data.docUrl.split("/")
+    binding.name.text = arrString.get(arrString.size-1) ?: ""
+    binding.imageButtonDownloadDocumentProfile.setOnClickListener { _interface.handleAction(DocAction_ViewDetails, item) }
  }
 }
 

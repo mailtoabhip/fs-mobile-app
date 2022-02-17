@@ -18,7 +18,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.doc.DocAction_ViewDetails
 import com.delhivery.axle.data.doc.DocDetailData
+import com.delhivery.axle.data.gst.GstAction_ViewDetails
+import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.databinding.FragmentKycDocumentsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.kyc.aadhaar.DownloadtemRVAdapterInterface
@@ -31,7 +34,7 @@ import java.io.File
 import javax.inject.Inject
 
 
-class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding, KYCDocumentsViewModel>(), DownloadtemRVAdapterInterface, AWSUtils.AWSProgressInterface, DocRVAdapterInterface {
+class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding, KYCDocumentsViewModel>(),  AWSUtils.AWSProgressInterface, DocRVAdapterInterface {
 
     init {
         hasInlineProgress = true
@@ -43,9 +46,9 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     lateinit var path:String
-    var docArray = ArrayList<Pair<String, String?>>()
     var showProg:Boolean = false
-    var dList:HashSet<String> = HashSet()
+    var dList:HashMap<String, DocDetailData?> = HashMap()
+    var docItem:DocDetailData = DocDetailData("", null)
 
     @Inject lateinit var awsUtils:AWSUtils
 
@@ -67,17 +70,26 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             adapter = this@KycDocumentsFragment.docRVAdapter
         }
 
-        viewModel.setDataDoc()
+        dList.clear()
+        dList = HashMap()
+        docItem = DocDetailData("", null)
+        showProg = false
+        refreshData()
 
-        viewModel.docLiveData.observe(this, Observer {
+        viewModel.docLiveData.reobserve(this, Observer {
             it?.let { _items ->
                 docRVAdapter.operation(_items)
             }
         })
 
-        viewModel.delegationDownloadLiveData.observe(this, Observer {
+        viewModel.docDetailsLiveData.reobserve(this, Observer {
+            docRVAdapter.notifyDataSetChanged()
+        })
+
+        viewModel.delegationDownloadLiveData.reobserve(this, Observer {
             if (it != null) {
                 awsUtils.startDownload(it.first, it.second, it.third, this)
+                viewModel.delegationDownloadLiveData.postValue(null)
                 viewModel.imagePath = it.third.path
             } else {
                 uiUtils.showSnackbar("Please try again")
@@ -103,14 +115,17 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                 }
     }
 
-    private fun downloadLogo(item: Pair<String?, String?>, prt:String) {
+    private fun downloadImage(data:DocDetailData,item: String) {
         compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onBackground()
                 .subscribe { granted, error ->
                     if (error == null && granted) {
-                        val file = getFile(prt)
+                        val file = getImageFile(item)
                         if (file != null) {
-                            viewModel.getDownloadDelegationToken(prt, file)
+                            docItem.docPath = file.path
+                            docItem.docUrl = data.docUrl
+                            dList.get(data.docUrl)?.docPath = file.path
+                            viewModel.getDownloadDelegationToken(item, file)
                         } else {
                             uiUtils.showSnackbar("Can't process image")
                         }
@@ -122,7 +137,14 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
 
     private fun getFile(item: String): File? {
         val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        val basePath = "$storageDir/" + System.currentTimeMillis()
+        val basePath = "$storageDir/"+System.currentTimeMillis()
+        val arrString = item.split("/")
+        return File(basePath + arrString[arrString.size-1])
+    }
+
+    private fun getImageFile(item: String): File? {
+        val storageDir = activity?.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+        val basePath = "$storageDir/"+System.currentTimeMillis()
         val arrString = item.split("/")
         return File(basePath + arrString[arrString.size-1])
     }
@@ -132,10 +154,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if(showProg) {
             uiUtils.showSnackbar("Document downloaded successfully")
         }else {
-            if (docArray.contains(Pair(awsURl+ path, null))) {
-                docArray.remove(Pair(awsURl + path, null))
-            }
-            docArray.add(Pair(awsURl + path, viewModel.imagePath))
+            val fullPath = awsURl+path
+            dList.get(fullPath)?.let { viewModel.fetchDetails(it,viewModel.imagePath) }
         }
         showProg = false
     }
@@ -143,29 +163,42 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     override fun onAWSFailure() {
         if(showProg) {
             uiUtils.showSnackbar("Document download failed!")
+        }else {
+            val fullPath = awsURl+path
+            dList.get(fullPath)?.let { viewModel.fetchDetails(it,viewModel.imagePath) }
         }
         showProg = false
         uiUtils.hideProgress()
     }
 
-    override fun handleAction(item: String) {
-        uiUtils.showProgress()
-        showProg= true
-        downloadLogo(item.replace(awsURl, ""))
+    override fun handleAction(actionId: String, item: BaseDocRVAdapterItem<*>) {
+        when (actionId) {
+            DocAction_ViewDetails -> {
+                uiUtils.showProgress()
+                showProg= true
+                downloadLogo(item.data.key().replace(awsURl, ""))
+            }
+            TransactionTimeOutAction -> {
+                refreshData()
+            }
+        }
     }
 
-    override fun handleImageAction(item: Pair<String, String?>) {
-        if(!dList.contains(item.first)){
-            dList.add(item.first)
-            downloadLogo(item,item.first.replace(awsURl, ""))
-        }
-     }
-
-    override fun handleAction(actionId: String, item: BaseDocRVAdapterItem<*>) {
-        downloadLogo(Pair(actionId, null),actionId.replace(awsURl, ""))
+    private fun refreshData() {
+        docRVAdapter.resetStaticData()
+        viewModel.setDataDoc()
     }
 
     override fun fetchDetails(data: DocDetailData) {
+        if(!dList.contains(data.docUrl)){
+            dList.put(data.docUrl, data)
+            showProg = false
+            downloadImage(data,data.docUrl.replace(awsURl, ""))
+        }
+    }
+
+    override fun showImage(data: DocDetailData, textView: TextView, imageView: ImageView) {
+        loadImage(data.docPath, imageView, textView)
     }
 
     private fun loadImage(

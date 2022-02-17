@@ -10,6 +10,7 @@ import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.utils.BitmapUtils
 
 /**
  * RV adapter for [DocActivity]

@@ -36,9 +36,10 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
         binding.kycTabLayout.setupWithViewPager(binding.viewpager)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
 
 }
-
-fun profileKYCDetailsIntent(
-    context: Context
-) = Intent( context, ProfileKYCDetailsActivity::class.java)

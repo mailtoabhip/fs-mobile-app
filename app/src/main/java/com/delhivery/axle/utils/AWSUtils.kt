@@ -94,6 +94,8 @@ class AWSUtils @Inject constructor(
         .s3Client(s3)
         .build()
 
+    Log.d("dmksdslala", "mppppaaaaa")
+
     val observer = transferUtility.download(AWSConfig.Bucket.value(), awsPath, file)
     observer.setTransferListener(object : TransferListener {
 

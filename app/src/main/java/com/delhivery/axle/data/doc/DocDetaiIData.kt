@@ -32,3 +32,5 @@ data class DocDetailData(
 
 /* actions */
 const val DocAction_ViewDetails = "doc_download"
+
+const val DocAction_ShowImage = "show_image"

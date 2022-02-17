@@ -52,7 +52,7 @@ class ProfileDetailsViewModel @Inject constructor(
 
     fun updateUserDetails() {
         if (!isConnected) return
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), userName = userName.value, businessName = businessName.value, userMode = userMode, userRole = userRole, profileImageUrl = imageUrl, can_view_third_party_loads = loadSwitch))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), userName = userName.value, businessName = businessName.value, userMode = userMode, userRole = userRole, profileImageUrl = imageUrl, canViewThirdPartyLoads = loadSwitch))
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->

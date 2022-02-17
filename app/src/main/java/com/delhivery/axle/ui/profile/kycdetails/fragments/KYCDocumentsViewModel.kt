@@ -1,11 +1,13 @@
 package com.delhivery.axle.ui.profile.kycdetails.fragments
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.doc.DocDetailData
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
@@ -21,11 +23,8 @@ class KYCDocumentsViewModel @Inject constructor(
         private val userRepository: UserRepository
 ) : BaseViewModel(){
 
-    val kycList = MutableLiveData<List<String>>()
-    var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
-   var imagePath = ""
-    var imageUrl = ""
-
+   var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+    var imagePath = ""
     var docLiveData = MutableLiveData<List<Pair<BaseDocRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var docDetailsLiveData = MutableLiveData<DocDetailData>()
@@ -43,7 +42,6 @@ class KYCDocumentsViewModel @Inject constructor(
                                 add(Pair(DocItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                             } else {
                                 for (url in _res.responseData?.kyc_documents!!) {
-
                                     add(Pair(DocDataItem(DocDetailData(url, null)), DataRVAdapterOperationType.Add))
                                 }
                             }
@@ -62,10 +60,14 @@ class KYCDocumentsViewModel @Inject constructor(
                 .onBackground()
                 .subscribe { _res, error ->
                     if (!error) {
-                        delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+                       delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
                     } else
                         error.handle()
                 }
+    }
+
+    fun fetchDetails(data: DocDetailData, path:String) {
+       docDetailsLiveData.postValue(data)
     }
 
 }
