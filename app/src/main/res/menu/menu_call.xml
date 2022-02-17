@@ -7,5 +7,5 @@
       android:icon="@drawable/ic_call"
       android:title="@string/label_nav_helpline"
       app:showAsAction="always" />
-
+  
 </menu>

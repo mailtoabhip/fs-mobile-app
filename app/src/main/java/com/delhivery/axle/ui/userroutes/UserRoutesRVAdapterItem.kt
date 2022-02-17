@@ -3,8 +3,8 @@ package com.delhivery.axle.ui.userroutes
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsProgressItemData
 import com.delhivery.axle.data.home.routes.RouteModel
-import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Progress
-import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Route
+import com.delhivery.axle.data.userroutes.UserRoutesWarningItemData
+import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.*
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -16,7 +16,8 @@ import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Route
  */
 enum class UserRoutesRVAdapterItemType(val typeId: Int) {
   Route(0),
-  Progress(1);
+  Progress(1),
+  Warning(2);
 
   companion object {
     /**
@@ -47,3 +48,9 @@ class UserRouteItem(data: RouteModel) :
  */
 class UserRouteProgressItem(data: HomeBidsProgressItemData = HomeBidsProgressItemData()) :
     BaseUserRouteRVAdapterItem<HomeBidsProgressItemData>(Progress, data)
+
+/**
+ * User route warning item
+ */
+class UserRouteWarningItem(data: UserRoutesWarningItemData) :
+      BaseUserRouteRVAdapterItem<UserRoutesWarningItemData>(Warning, data)

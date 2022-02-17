@@ -3,9 +3,11 @@ package com.delhivery.axle.ui.team
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.home.bids.HomeBidsProgressItemData
+import com.delhivery.axle.data.teammembers.TeamMembersWarningItemData
 import com.delhivery.axle.ui.team.TeamMembersRVAdapterItemType.SubUser
 import com.delhivery.axle.ui.team.TeamMembersRVAdapterItemType.AdminUser
 import com.delhivery.axle.ui.team.TeamMembersRVAdapterItemType.Progress
+import com.google.firebase.dynamiclinks.ShortDynamicLink
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -18,7 +20,9 @@ import com.delhivery.axle.ui.team.TeamMembersRVAdapterItemType.Progress
 enum class TeamMembersRVAdapterItemType(val typeId: Int) {
   AdminUser(0),
   SubUser(1),
-  Progress(2);
+  Progress(2),
+  Warning(3);
+
 
   companion object {
     /**
@@ -55,3 +59,9 @@ class TeamMemberSubUserItem(data: UserModel) :
  */
 class TeamMembersProgressItem(data: HomeBidsProgressItemData = HomeBidsProgressItemData()) :
     BaseTeamMembersRVAdapterItem<HomeBidsProgressItemData>(Progress, data)
+
+/**
+ * Team members warning item
+ */
+class TeamWarningItem(data: TeamMembersWarningItemData):
+    BaseTeamMembersRVAdapterItem<TeamMembersWarningItemData>(TeamMembersRVAdapterItemType.Warning, data)

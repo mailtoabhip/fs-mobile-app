@@ -1,9 +1,14 @@
 package com.delhivery.axle.ui.team
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
@@ -11,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberCreateBinding
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
@@ -23,7 +29,8 @@ import javax.inject.Inject
  */
 class TeamMembersCreateDialog @Inject constructor(
         context: Context,
-        private val dialogInterface: TeamMembersCreateDialogInterface
+        private val dialogInterface: TeamMembersCreateDialogInterface,
+        private val userPrefs: UserPrefs
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -44,15 +51,18 @@ class TeamMembersCreateDialog @Inject constructor(
     binding = DialogTeamMemberCreateBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
+    window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    window!!.attributes.windowAnimations = R.style.DialogAnimation
+    window!!.setGravity(Gravity.BOTTOM)
+
     /* set binding params */
     binding.apply {
-      binding.tilName.hint = "Name"
-      binding.tilNumber.hint = "Number"
       dieselReliance.isEnabled = false
       dieselIocl.isEnabled= false
     }
 
-    binding.tilName.editText?.addTextChangedListener(object : TextWatcher {
+    binding.editName.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
         s: CharSequence?,
@@ -68,21 +78,20 @@ class TeamMembersCreateDialog @Inject constructor(
         count: Int
       ) {
         if (s != null) {
-          binding.tilName.error = null
-          binding.tilName.isErrorEnabled = false
           try {
             val input = s.trim().toString()
             name = input
           } catch (e: Exception) {
-            binding.tilName.isErrorEnabled = true
-            binding.tilName.error = e.message
-            name = ""
+           name = ""
           }
+          binding.btnConfirm.isEnabled = s.length>0 && binding.editNumber.text?.length==10
+        }else{
+          binding.btnConfirm.isEnabled = false
         }
       }
     })
 
-    binding.tilNumber.editText?.addTextChangedListener(object : TextWatcher {
+    binding.editNumber.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
         s: CharSequence?,
@@ -98,35 +107,47 @@ class TeamMembersCreateDialog @Inject constructor(
         count: Int
       ) {
         if (s != null) {
-          binding.tilNumber.error = null
-          binding.tilNumber.isErrorEnabled = false
+         // binding.tilNumber.error = null
+         // binding.tilNumber.isErrorEnabled = false
           try {
             val input = s.trim().toString()
-            if (input.length != 10) {
-              binding.tilNumber.isErrorEnabled = true
-            }
+            binding.btnConfirm.isEnabled = input.length == 10 && !(binding.editName.text?.length==0)
             number = input
           } catch (e: Exception) {
-            binding.tilNumber.isErrorEnabled = true
-            binding.tilNumber.error = e.message
+           // binding.tilNumber.isErrorEnabled = true
+           // binding.tilNumber.error = e.message
             number = ""
           }
+        }else{
+          binding.btnConfirm.isEnabled = false
         }
       }
     })
+
     binding.creteMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
       if(isChecked){
         binding.dieselReliance.isEnabled = true
         binding.dieselIocl.isEnabled= true
+        binding.cardLayout.visibility = View.VISIBLE
       }
       else{
         binding.dieselReliance.isEnabled = false
         binding.dieselIocl.isEnabled= false
         binding.dieselReliance.isChecked = false
         binding.dieselIocl.isChecked = false
-
+        binding.cardLayout.visibility = View.GONE
       }
     })
+
+    if (userPrefs.accountSetup){
+      if(userPrefs.userMode.equals("post_load")){
+        binding.switchLay.visibility = View.GONE
+      }else{
+        binding.switchLay.visibility = View.VISIBLE
+      }
+    }else{
+      binding.switchLay.visibility = View.VISIBLE
+    }
 
     binding.btnConfirm.setOnClickListener {
       binding.editName.clearFocus()
@@ -162,10 +183,6 @@ class TeamMembersCreateDialog @Inject constructor(
         throw IllegalArgumentException("*Invalid text")
       }
     } catch (e: IllegalArgumentException) {
-      binding.tilNumber.isErrorEnabled = true
-      binding.tilNumber.error = e.message
-      val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-      binding.tilNumber.startAnimation(shake)
     }
   }
 }

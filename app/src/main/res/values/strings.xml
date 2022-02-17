@@ -13,6 +13,7 @@
     <string name="title_dialog_supplier_not_approved">User Not Approved</string>
     <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
     <string name="title_dialog_apply_filter">Apply filter</string>
+    <string name="title_dialog_delete_member">Delete Member</string>
 
     <!--Messages (msg_)-->
     <string name="msg_hello_world">Message Hello World</string>
@@ -38,7 +39,7 @@
     <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
     <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
     <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
-    <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
+    <string name="msg_dialog_delete">Are you sure you want to delete this member? All information will be deleted permanently.</string>
     <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
     <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
     <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
@@ -63,6 +64,7 @@
     <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
     <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
     <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
+    <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
@@ -79,58 +81,63 @@
     <string name="hint_amount">23900</string>
     <string name="hint_user_name">Enter user name</string>
     <string name="hint_password">Enter Password</string>
+    <string name="hint_enter_name">Enter name</string>
+    <string name="hint_number">Enter number</string>
+    <string name="hint_diesel">Enable to register them for diesel card</string>
 
-
-  <!--Actions (action_)-->
-  <string name="action_hello_world">Action Hello World</string>
-  <string name="action_add_user">Add User</string>
-  <string name="action_get_users">Get all users</string>
-  <string name="action_send_otp">Get OTP</string>
-  <string name="action_resend_otp">Resend OTP</string>
-  <string name="action_verify_otp">Verify OTP</string>
-  <string name="action_save_proceed">Save &amp; Proceed</string>
-  <string name="action_verify_aadhaar">Verify Aadhaar</string>
-  <string name="action_submit_details">Submit Details</string>
-  <string name="action_select_routes">Select Routes</string>
-  <string name="action_skip_select_routes">Skip, I’ll select later</string>
-  <string name="action_skip">SKIP</string>
-  <string name="action_search">Search</string>
-  <string name="action_place_bid">Place Bid</string>
-  <string name="action_start_bidding">Start Bidding</string>
-  <string name="action_delete">Delete</string>
+    <!--Actions (action_)-->
+    <string name="action_hello_world">Action Hello World</string>
+    <string name="action_add_user">Add User</string>
+    <string name="action_get_users">Get all users</string>
+    <string name="action_send_otp">Get OTP</string>
+    <string name="action_resend_otp">Resend OTP</string>
+    <string name="action_verify_otp">Verify OTP</string>
+    <string name="action_save_proceed">Save &amp; Proceed</string>
+    <string name="action_verify_aadhaar">Verify Aadhaar</string>
+    <string name="action_submit_details">Submit Details</string>
+    <string name="action_select_routes">Select Routes</string>
+    <string name="action_skip_select_routes">Skip, I’ll select later</string>
+    <string name="action_skip">SKIP</string>
+    <string name="action_search">Search</string>
+    <string name="action_place_bid">Place Bid</string>
+    <string name="action_start_bidding">Start Bidding</string>
+    <string name="action_delete">Delete</string>
     <string name="action_delete_address">Delete Address</string>
     <string name="action_no_dont_delete">No, Don’t Delete</string>
-  <string name="action_edit_bid">Edit Bid</string>
-  <string name="action_confirm_route">Confirm Route</string>
-  <string name="action_deselect_all_states">Deselect all states</string>
-  <string name="action_select_all_states">Select all states</string>
-  <string name="action_go_to_load_requests">GO to load requests</string>
-  <string name="action_add_more_route">Add more routes</string>
-  <string name="action_confirm">Confirm</string>
-  <string name="action_save">Save</string>
+    <string name="action_edit_bid">Edit Bid</string>
+    <string name="action_confirm_route">Confirm Route</string>
+    <string name="action_deselect_all_states">Deselect all states</string>
+    <string name="action_select_all_states">Select all states</string>
+    <string name="action_go_to_load_requests">GO to load requests</string>
+    <string name="action_add_more_route">Add more routes</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_save">Save</string>
     <string name="action_save_changes">Save Changes</string>
-  <string name="action_logout_from_app">Logout from the app</string>
-  <string name="action_dismiss">DISMISS</string>
-  <string name="action_continue">Continue</string>
-  <string name="action_revise_bid">Revise bid</string>
-  <string name="action_update_route">Update Route</string>
-  <string name="action_call_driver">Call Driver</string>
-  <string name="action_edit_bid_underline"><u>Edit?</u></string>
-  <string name="action_done">Done !</string>
-  <string name="action_add_vehicle_type">+ Vehicle Type</string>
-  <string name="action_get_started">Get Started</string>
-  <string name="action_change_number">Change number</string>
-  <string name="action_proceed_account">Proceed</string>
-  <string name="action_terms_conditions">Terms &amp; Conditions</string>
-  <string name="action_create_account">Create Account</string>
-  <string name="action_login">Login</string>
-  <string name="action_verify_gst">Verify GST number</string>
-  <string name="action_submit">Submit</string>
-  <string name="action_upload_more">Upload More</string>
-  <string name="action_upload_again">Upload Again</string>
-    <string name="action_upload_rc_doc">Upload RC document</string>
+    <string name="action_logout_from_app">Logout from the app</string>
+    <string name="action_dismiss">DISMISS</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_revise_bid">Revise bid</string>
+    <string name="action_update_route">Update Route</string>
+    <string name="action_call_driver">Call Driver</string>
+    <string name="action_edit_bid_underline"><u>Edit?</u></string>
+    <string name="action_done">Done !</string>
+    <string name="action_add_vehicle_type">+ Vehicle Type</string>
+    <string name="action_get_started">Get Started</string>
+    <string name="action_change_number">Change number</string>
+    <string name="action_proceed_account">Proceed</string>
+    <string name="action_terms_conditions">Terms &amp; Conditions</string>
+    <string name="action_create_account">Create Account</string>
+    <string name="action_login">Login</string>
+    <string name="action_verify_gst">Verify GST number</string>
+    <string name="action_submit">Submit</string>
+    <string name="action_upload_more">Upload More</string>
+    <string name="action_upload_again">Upload Again</string>
     <string name="action_cancel">Cancel</string>
-  <string name="action_start_kyc">Start</string>
+    <string name="action_start_kyc">Start</string>
+    <string name="action_update_business_logo">Update business logo</string>
+    <string name="action_restart_kyc">Try Again</string>
+    <string name="action_add_member">Add Member</string>
+    <string name="action_upload_rc_doc">Upload RC document</string>
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
@@ -286,10 +293,10 @@
     <string name="label_diesel_card">Diesel Card</string>
     <string name="label_register_for_diesel_card">Register Team Member for Diesel Card?</string>
     <string name="label_select_diesel_company">Select Diesel\nCompany</string>
-    <string name="label_edit_team_member">Edit Team Member</string>
+    <string name="label_edit_team_member">Edit member details</string>
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
-    <string name="label_diesel_company">Diesel Company</string>
+    <string name="label_diesel_company">Choose Diesel Company</string>
     <string name="label_lowest_bid">lowest bid</string>
     <string name="label_pmt_rate">PMT Rate</string>
     <string name="label_no_of_trucks">No. of Trucks</string>
@@ -330,12 +337,13 @@
     <string name="sub_label_step3_3">Step 3 of 3</string>
     <string name="label_identity_verification">Identity Verification</string>
     <string name="label_pan">PAN details </string>
+    <string name="label_pan_details">PAN details </string>
     <string name="label_aadhaar">Aadhaar details </string>
     <string name="label_communication_address">Communication address </string>
     <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
     <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
     <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
-    <string name="label_gst">GST verification</string>
+    <string name="label_gst_verify">GST verification</string>
     <string name="sub_label_gst_details">Choose a GST number for verification</string>
     <string name="label_gst_dialog">Choose a verification method</string>
     <string name="label_gst_dialog_option1">Verify via OTP</string>
@@ -348,6 +356,44 @@
     <string name="sub_label_step4_4">Step 4 of 4</string>
     <string name="label_business">Business Verification </string>
     <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
+    <string name="label_bank_name">Bank Name</string>
+    <string name="label_ifsc">IFSC</string>
+    <string name="label_payment_terms">Payment Terms</string>
+    <string name="label_tc">Terms &amp; Conditions</string>
+    <string name="label_privacy_policy">Privacy Policy</string>
+    <string name="label_business_name">Business Name</string>
+    <string name="label_my_name">My Name</string>
+    <string name="label_my_occupation">My Occupation</string>
+    <string name="label_i_want">I want to</string>
+    <string name="label_post_load">Post Load</string>
+    <string name="label_post_truck">Post Truck</string>
+    <string name="label_both">Both</string>
+    <string name="label_third_party">View third party loads</string>
+    <string name="label_edit_member">Edit Member</string>
+    <string name="label_delete_member">Delete Member</string>
+    <string name="label_more_options_team">More options</string>
+    <string name="label_edit_route">Edit Route</string>
+    <string name="label_delete_route_option">Delete Route</string>
+    <string name="label_pan">PAN</string>
+    <string name="label_gst">GST Number</string>
+    <string name="label_cin">CIN</string>
+    <string name="label_address">Address</string>
+    <string name="label_verified">Verified</string>
+    <string name="label_account">Account</string>
+    <string name="label_kyc_details">KYC Details</string>
+    <string name="label_profile">Profile Details</string>
+    <string name="label_routes">My Routes</string>
+    <string name="label_earnings">My Earnings</string>
+    <string name="label_team">My Team Members</string>
+    <string name="label_pod">POD Address</string>
+    <string name="label_help">Help &amp; Support</string>
+    <string name="label_logout">Log Out</string>
+    <string name="label_ratings">Business Ratings</string>
+    <string name="label_kyc_pending">KYC verification pending!</string>
+    <string name="label_kyc_failed">KYC verification failed!</string>
+    <string name="label_member_name">Member Name</string>
+    <string name="label_create_member">Enter member details</string>
+    <string name="label_truck_rc">Truck RC</string>
     <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
 
     <!--Error (error_-->
@@ -437,4 +483,24 @@
         <item>Udyog Aadhaar Certificate</item>
         <item>Shop &amp; Establishment Certificate</item>
     </string-array>
+
+    <string-array name="array_occupation_post_truck">
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_post_load">
+        <item>Shipper</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_both">
+        <item>Shipper</item>
+        <item>Broker</item>
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+    </string-array>
+     q
 </resources>

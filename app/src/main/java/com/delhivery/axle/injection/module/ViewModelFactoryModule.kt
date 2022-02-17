@@ -23,7 +23,7 @@ import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
@@ -33,6 +33,10 @@ import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewMo
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -254,6 +258,26 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchOngoingTripViewModel::class)
   abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileDetailsViewModel::class)
+  abstract fun bindProfileDetailsViewModel(profileDetailsViewModel: ProfileDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileKYCDetailsViewModel::class)
+  abstract fun bindProfileKYCDetailsViewModel(profileKYCDetailsViewModel: ProfileKYCDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(KYCDocumentsViewModel::class)
+  abstract fun bindKYCDocumentsViewModel(kycDocumentsViewModel: KYCDocumentsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourKYCDetailsViewModel::class)
+  abstract fun bindYourKYCDetailsViewModel(yourKYCDetailsViewModel: YourKYCDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap

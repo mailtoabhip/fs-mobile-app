@@ -222,7 +222,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonUploadMore.setOnClickListener {
-            val imageName = "Aadhaar_doc_" + System.currentTimeMillis()+".jpg"
+            val imageName = "Aadhaar_" + System.currentTimeMillis()+".jpg"
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }
@@ -248,7 +248,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.gstDocLayout.setOnClickListener {
-            val imageName = "Aadhaar_doc_" + System.currentTimeMillis()+".jpg"
+            val imageName = "Aadhaar_" + System.currentTimeMillis()+".jpg"
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }
@@ -264,6 +264,36 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
+
+    /*show team delete dialog*/
+    fun showTeamDeleteDialog(uuid:String,teamMemberInterface: TeamMemberInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogConfirmDeleteBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonUploadAgain.setOnClickListener {
+            teamMemberInterface.deleteTeamMember(uuid)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+}
+
+interface TeamMemberInterface{
+    fun deleteTeamMember(uuid: String)
 }
 
 interface DialogUtilsInterface {

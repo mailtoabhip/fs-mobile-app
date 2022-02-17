@@ -96,6 +96,14 @@ interface LoadBoardService {
     ): Single<BaseResponse<UserRespone>>
 
     /**
+     * kyc docs
+     */
+    @GET("/user_documents/{uuid}")
+    fun kycDocs(
+            @Path("uuid") userId: String
+    ): Single<BaseResponse<KycDocsResponse>>
+
+   /**
      * verify business with RC
      */
     @POST("/validate_rc")

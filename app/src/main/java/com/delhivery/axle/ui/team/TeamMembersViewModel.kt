@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.data.teammembers.TeamWarningItem_NoMember
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -34,6 +35,7 @@ class TeamMembersViewModel @Inject constructor(
   var deleteUserLiveData = MutableLiveData<String>()
   var updateAdminUserLiveData = MutableLiveData<String>()
   var total = 0
+  var emptyUserLiveData = MutableLiveData<Boolean>()
 
   /**
    * Fetch team members of logged in user
@@ -52,7 +54,6 @@ class TeamMembersViewModel @Inject constructor(
               add(Pair(TeamMembersProgressItem(), Remove))
 
               if (_res.total > 0) {
-
                 for (user in _res.users) {
                   if (user.isParent()) {
                     add(Pair(TeamMemberAdminUserItem(user), Add))
@@ -60,6 +61,11 @@ class TeamMembersViewModel @Inject constructor(
                     add(Pair(TeamMemberSubUserItem(user), Add))
                   }
                 }
+                emptyUserLiveData.postValue(false)
+              }
+              else{
+                emptyUserLiveData.postValue(true)
+                add(Pair(TeamWarningItem_NoMember, Add))
               }
             }.let {
               membersLiveData.postValue(it)

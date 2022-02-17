@@ -168,6 +168,18 @@
             android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.profile.HelpSupportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.profiledetails.ProfileDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.kycdetails.ProfileKYCDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.BankDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -178,6 +190,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.kyc.address.CommunicationAddressActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.profile.MyProfileActivity"
             android:screenOrientation="portrait" />
 
         <activity

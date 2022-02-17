@@ -120,8 +120,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         binding.btnSubmitDetails.setOnClickListener {
-
-
             if(pincodeFilled){
               viewModel.documentProofType =  binding.spinnerProof.selectedItem.toString()
             }

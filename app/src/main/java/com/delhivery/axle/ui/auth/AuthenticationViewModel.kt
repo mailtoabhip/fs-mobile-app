@@ -112,7 +112,7 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.userRole.isNullOrEmpty() && userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
               AccountRole
-            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )&& userPrefs.accountSetup) {
+            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() ) && userPrefs.accountSetup) {
               userPrefs.hasLoggedIn = false
               AccountDetails
             } else if (_res.third.supplierDetails?.isDeleted == true ) {
