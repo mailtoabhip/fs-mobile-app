@@ -15,7 +15,7 @@ data class UpdateUserRequest (
     @SerializedName("aadhaar_number") val aadhaarNumber:String? =null,
     @SerializedName("gst_number") val gstNumber:String? = null,
     @SerializedName("profile_image_url") val profileImageUrl:String? = null,
-    @SerializedName("can_view_third_party_loads") val can_view_third_party_loads:Boolean? = null
+    @SerializedName("can_view_third_party_loads") val can_view_third_party_loads:Boolean? = null,
     @SerializedName("is_trucking_document_uploaded") val isTruckingDocumentUploaded:Boolean? =null,
     @SerializedName("rc_number") val rcNumber:String? =null
 )
