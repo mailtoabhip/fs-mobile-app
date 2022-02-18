@@ -108,7 +108,7 @@ class AuthenticationViewModel @Inject constructor(
             if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                Disabled
+                LoadRequest
               } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
@@ -122,7 +122,7 @@ class AuthenticationViewModel @Inject constructor(
             }else{
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                Disabled
+                LoadRequest
               }else if (_res.third.userMode.isNullOrEmpty() ) {
                 userPrefs.hasLoggedIn = false
                 AccountAction

@@ -431,7 +431,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun enableSubmitButton() {
-        binding.btnSave.isEnabled = viewModel.businessName.value.isNotNullOrEmpty() && viewModel.userName.value.isNotNullOrEmpty()
+        binding.btnSave.isEnabled = viewModel.businessName.value?.trim().isNotNullOrEmpty() && viewModel.userName.value?.trim().isNotNullOrEmpty()
     }
 
     private fun getFile(): File? {
