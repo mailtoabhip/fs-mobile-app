@@ -34,14 +34,14 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             }
         }
 
-        if((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)){
+        if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+            binding.paymentTerms.visibility = View.VISIBLE
+        }else{
             if(viewModel.userPrefs.userMode.equals("post_load")){
                 binding.paymentTerms.visibility = View.GONE
             }else{
                 binding.paymentTerms.visibility = View.VISIBLE
             }
-        }else{
-            binding.paymentTerms.visibility = View.VISIBLE
         }
     }
 }

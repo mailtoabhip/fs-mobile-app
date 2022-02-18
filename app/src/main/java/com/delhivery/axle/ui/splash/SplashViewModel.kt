@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.splash
 
+import android.view.View
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.splash.SplashPostState.*
@@ -23,9 +24,9 @@ class SplashViewModel @Inject constructor(
   fun postState() = when {
     !globalPrefs.isOnboardingCompleted -> Onboarding
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
-    authenticationRepository.authStatus() && userPrefs.userMode.isEmpty() && (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)-> AccountAction
-    authenticationRepository.authStatus() && userPrefs.userRole.isEmpty()&& (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)-> AccountRole
-    authenticationRepository.authStatus() && (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier) && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
+    authenticationRepository.authStatus() && userPrefs.userMode.isEmpty() && getOldUser()-> AccountAction
+    authenticationRepository.authStatus() && userPrefs.userRole.isEmpty()&& getOldUser()-> AccountRole
+    authenticationRepository.authStatus() && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
     else -> Auth
   }
 
@@ -45,5 +46,13 @@ class SplashViewModel @Inject constructor(
   }
   fun saveTruckPostKycConfig(truckPostKyc:String){
     userPrefs.truckPostKyc = truckPostKyc
+  }
+
+  fun getOldUser():Boolean{
+    if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+      return false
+    }else{
+      return true
+    }
   }
 }

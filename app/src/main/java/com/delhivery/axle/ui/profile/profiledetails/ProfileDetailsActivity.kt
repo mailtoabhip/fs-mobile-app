@@ -83,16 +83,17 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             binding.profile.visibility = View.VISIBLE
         }
 
-        if((viewModel.userPrefs.isLoadBoardClient || viewModel.userPrefs.isLoadBoardSupplier)){
+        if((viewModel.userPrefs.isLoadBoardClient == false || viewModel.userPrefs.isLoadBoardSupplier == false)){
+            binding.switchLay.visibility = View.VISIBLE
+            binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+        }else{
             if(viewModel.userPrefs.userMode.equals("post_load")) {
                 binding.switchLay.visibility = View.GONE
             }else{
                 binding.switchLay.visibility = View.VISIBLE
                 binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
             }
-        }else{
-            binding.switchLay.visibility = View.VISIBLE
-            binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+
         }
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
