@@ -117,7 +117,7 @@ class AuthenticationViewModel @Inject constructor(
               AccountDetails
             } else if (_res.third.supplierDetails?.isDeleted == true ) {
               userPrefs.hasLoggedIn = false
-              Disabled
+             Disabled
             } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
@@ -132,7 +132,7 @@ class AuthenticationViewModel @Inject constructor(
             if (error is HttpException) {
               userPrefs.hasLoggedIn = false
            }
-           errorLiveData.postValue(Pair(InvalidOTP, ""))
+          errorLiveData.postValue(Pair(InvalidOTP, ""))
             OTP
           }
         }
