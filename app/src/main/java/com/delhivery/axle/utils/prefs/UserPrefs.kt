@@ -487,7 +487,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getBoolean(PrefKeys.isLoadBoardClient, false)
 
 
-  /**
+
     /**
    * Clear all preferences
    */
