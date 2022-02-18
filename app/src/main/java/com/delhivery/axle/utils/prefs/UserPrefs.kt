@@ -423,6 +423,38 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.rcNumber, "") ?: ""
 
+  /**
+   * verificationStatus
+   */
+  var verificationStatus: String
+    set(value) = editor.putString(PrefKeys.verificationStatus,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.verificationStatus, "") ?: ""
+
+  /**
+   *  profile url
+   */
+  var profileImageUrl: String
+    set(value) = editor.putString(PrefKeys.profileImageUrl, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.profileImageUrl, "") ?: ""
+
+
+  /**
+   *  can View third Party Loads
+   */
+  var canViewThirdPartyLoads: Boolean
+    set(value) = editor.putBoolean(PrefKeys.canViewThirdPartyLoads, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.canViewThirdPartyLoads, false)
+
+  /**
+   *  own trucks
+   */
+  var ownTrucks: Boolean
+    set(value) = editor.putBoolean(PrefKeys.ownsTrucks, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.ownsTrucks, false)
 
   /**
    * Clear all preferences
@@ -517,6 +549,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.rcNumber)
             .apply()
+    editor.remove(PrefKeys.verificationStatus)
+            .apply()
+    editor.remove(PrefKeys.profileImageUrl)
+            .apply()
+    editor.remove(PrefKeys.canViewThirdPartyLoads)
+            .apply()
+    editor.remove(PrefKeys.ownsTrucks)
+            .apply()
     editor.commit()
   }
 
@@ -545,7 +585,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
     vendorEntity = user.supplierDetails?.vendorEntity ?: ""
-
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
     isUserVerfied = user.isUserVerified
@@ -558,6 +597,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isGstVerfied= user.isGstVerified?: false
     isRcVerfied = user.isRcVerified?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
+    verificationStatus = user.verificationStatus?: ""
+    profileImageUrl = user.profileImageUrl?:""
+    canViewThirdPartyLoads = user.canViewThirdPartyLoads?: false
+    ownTrucks = user.supplierDetails?.ownsTrucks?: false
   }
 
 
@@ -630,6 +673,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isRcVerified = "is_rc_verified"
     const val isGstVerified = "is_gst_verified"
     const val rcNumber = "rc_number"
+    const val verificationStatus = "verification_status"
+    const val profileImageUrl = "profile_image_url"
+    const val  canViewThirdPartyLoads = "can_view_third_party_loads"
+    const val  ownsTrucks = "owns_trucks"
+
   }
 }
 

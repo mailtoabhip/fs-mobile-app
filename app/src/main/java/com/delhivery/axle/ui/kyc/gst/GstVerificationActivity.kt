@@ -149,6 +149,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         viewModel.getRequestOtp(true)
     }
 
+    override fun setAccountRoleSelection(selected: String) {
+
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
     override fun handleAction(
             actionId: String,
             item: BaseGstRVAdapterItem<*>
@@ -248,8 +255,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             uploadImageName: String,
             localImageName: String
     ) {
-        this.uploadImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.uploadImageName =  "GST_" + System.currentTimeMillis()+".jpg"
+        this.localImageName =  "GST_" + System.currentTimeMillis()+".jpg"
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -352,8 +359,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                                 File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "GST_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.uploadImageName = "GST_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  "GST_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

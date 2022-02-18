@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.userroutes
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.databinding.ViewNoTeamMemberBinding
 import com.delhivery.axle.databinding.ViewUserRoutesItemBinding
 import com.delhivery.axle.databinding.ViewUserRoutesProgressItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -11,6 +12,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Route
+import com.delhivery.axle.ui.userroutes.UserRoutesRVAdapterItemType.Warning
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -30,11 +32,13 @@ class UserRoutesRVAdapter(private val _interface: UserRoutesRVAdapterInterface) 
     viewType: Int
   ) = when (UserRoutesRVAdapterItemType.byTypeId(viewType)) {
     Route -> ViewUserRoutesItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewNoTeamMemberBinding.inflate(inflater, parent, false)
     else -> ViewUserRoutesProgressItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewUserRoutesItemBinding -> UserRoutesItemVH(binding)
+    is ViewNoTeamMemberBinding -> UserRoutesWarningItemVH(binding)
     else -> UserRoutesProgressItemVH(binding as ViewUserRoutesProgressItemBinding)
   }
 
@@ -45,6 +49,7 @@ class UserRoutesRVAdapter(private val _interface: UserRoutesRVAdapterInterface) 
     when (holder) {
       is UserRoutesItemVH -> holder.bind(item as UserRouteItem, _interface)
       is UserRoutesProgressItemVH -> holder.bind(item as UserRouteProgressItem, _interface)
+      is UserRoutesWarningItemVH -> holder.bind(item as UserRouteWarningItem, _interface)
     }
   }
 
@@ -56,7 +61,7 @@ class UserRoutesRVAdapter(private val _interface: UserRoutesRVAdapterInterface) 
   fun resetStaticData() {
     mutableListOf<Pair<BaseUserRouteRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(UserRouteProgressItem(), AddUpdate))
-      items.filter { it.type == Route }
+      items.filter { it.type == Route  || it.type == Warning}
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

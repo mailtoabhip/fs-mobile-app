@@ -4,7 +4,7 @@ import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileFragment
+import com.delhivery.axle.ui.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletFragment
 import dagger.Module
@@ -32,4 +32,5 @@ abstract class HomeFragmentsBindingModule {
 
   @ContributesAndroidInjector
   internal abstract fun providePodFragment(): HomePodsFragment
+
 }

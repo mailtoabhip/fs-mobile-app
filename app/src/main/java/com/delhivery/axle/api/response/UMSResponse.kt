@@ -54,3 +54,11 @@ data class Role(
   @SerializedName("app_id") val appId: String,
   @SerializedName("name") val name: String
 )
+
+/**
+ * KYC docs
+ */
+data class KycDocsResponse(
+        @SerializedName("kyc_documents") val kyc_documents: List<String>?
+)
+

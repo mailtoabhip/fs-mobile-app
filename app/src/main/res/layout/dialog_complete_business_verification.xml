@@ -38,7 +38,7 @@
             android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_18dp"
             android:fontFamily="sans-serif"
-            android:text="@string/sub_label_confirm_delete"
+            android:text="@string/sub_label_complete_business_verificatin"
             android:textAlignment="center"
             android:textColor="@color/info_bg"
             android:textSize="@dimen/text_14sp"

@@ -133,4 +133,9 @@ class UserRepository @Inject constructor(
    * get omc details
    */
   fun getOMCs(offset: Int, limit: Int, payee: String) = userService.getOMCs(offset, limit, payee)
+
+  /**
+   * get kyc docs
+   */
+  fun getKycDocs() = loadBoardService.kycDocs(userId())
 }

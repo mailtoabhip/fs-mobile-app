@@ -423,7 +423,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     fun confirmDelete(proofType :String,flatAddress:String,areaAddress:String,cityAddress:String,pinCode:String) {
         val dialog = Dialog(this)
-        val bindingDialog = DialogConfirmDeleteBinding.inflate(layoutInflater)
+        val bindingDialog = DialogConfirmAddressDialogBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
@@ -598,34 +598,64 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun selectItem(item: AddressDataItem, position: Int) {
         selectedAddress=item.data.key()
-        var isSelected =false
-        var pos=-1;
         if(item.data.addressType.equals("gst",true)) {
             isSameAsGST=true
         }
-//        for(i in viewModel.AddressLiveData.value!!){
-//            pos=pos+1
-//            if (pos==position){
-//                isSelected=true
-//            }
-//            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-//                add(
-//                    Pair(
-//                        AddressDataItem(
-//                            AddressDetailData(i.first.data,
-//                                i?.address!!,i.proofDocumentType,i.documentUrls,i.addressType,i.isDeleted,isSelected)
-//                        ),
-//                        DataRVAdapterOperationType.Add
-//                    )
-//                )
-//            }.let {
-//                viewModel.AddressLiveData.postValue(it)
-//
-//            }
-//        }
 
+        if(viewModel.selectedAdapterPos==-1) {
+           var addressDataItem= AddressDataItem(
+                AddressDetailData(
+                    item.data.phone_number,
+                    item.data?.address!!,
+                    item.data.proofDocumentType,
+                    item.data.documentUrls,
+                    item.data.addressType,
+                    item.data.isDeleted,
+                    true
+                )
+            )
+            viewModel.selectedAdapterPos=position
+            viewModel.lastSelectedAddressLiveData.postValue(addressDataItem)
+            addressRVAdapter.updateItem(addressDataItem)
+            addressRVAdapter.notifyDataSetChanged()
 
+        }else{
 
+        if(viewModel.selectedAdapterPos==position){
+           addressRVAdapter.updateItem(item)
+            addressRVAdapter.notifyDataSetChanged()
+        }else{
+          var addressDataItem=AddressDataItem(
+              AddressDetailData(
+                  item.data.phone_number,
+                  item.data?.address!!,
+                  item.data.proofDocumentType,
+                  item.data.documentUrls,
+                  item.data.addressType,
+                  item.data.isDeleted,
+                  true
+              )
+          )
+            var lastAddressDataItem=AddressDataItem(
+                AddressDetailData(
+                    viewModel.lastSelectedAddressLiveData.value?.data?.phone_number,
+                    viewModel.lastSelectedAddressLiveData.value?.data?.address!!,
+                    viewModel.lastSelectedAddressLiveData.value?.data?.proofDocumentType,
+                    viewModel.lastSelectedAddressLiveData.value?.data?.documentUrls,
+                    viewModel.lastSelectedAddressLiveData.value?.data?.addressType,
+                    viewModel.lastSelectedAddressLiveData.value?.data?.isDeleted,
+                    false
+                )
+            )
+            viewModel.selectedAdapterPos=position
+            viewModel.lastSelectedAddressLiveData.postValue(addressDataItem)
+            addressRVAdapter.updateItem(addressDataItem)
+            addressRVAdapter.updateItem(lastAddressDataItem)
+            addressRVAdapter.notifyDataSetChanged()
+
+        }
+
+    }
     }
 
 }

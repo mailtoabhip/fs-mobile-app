@@ -14,7 +14,7 @@
             android:layout_marginTop="@dimen/size_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_info"/>
+            app:srcCompat="@drawable/ic_vector_confirm_changes"/>
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -37,6 +37,8 @@
             android:fontFamily="sans-serif"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginStart="@dimen/size_18dp"
+            android:layout_marginEnd="@dimen/size_18dp"
             android:textSize="@dimen/text_14sp"
             android:text="@string/error_upload_rc_document"
             android:textColor="@color/info_bg"

@@ -157,6 +157,12 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
        viewModel.getRequestAadhaarOtp(true)
     }
 
+    override fun setAccountRoleSelection(selected: String) {
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
     override fun onAWSSuccess(
         path: String
     ) {
@@ -235,8 +241,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "Aadhaar_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "Aadhaar_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.uploadImageName =  "Aadhaar_" + System.currentTimeMillis()+".jpg"
+        this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+".jpg"
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -332,8 +338,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                            this.uploadImageName = "Aadhaar_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                            this.localImageName =  "Aadhaar_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                            this.uploadImageName = "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                            this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

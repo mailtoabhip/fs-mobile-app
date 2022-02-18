@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.team
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
@@ -37,7 +38,7 @@ class AdminMemberDialog @Inject constructor(
         setContentView(binding.root)
 
         binding.adminName.text = user.userName
-        binding.adminDieselReferenceSwitch.isChecked = user.getDieselPreferences()
+        binding.adminDieselReferenceSwitch?.isChecked = user.getDieselPreferences()
 
         dieselPreference = user.supplierDetails?.dieselCardPreferences?: "no"
 
@@ -54,21 +55,22 @@ class AdminMemberDialog @Inject constructor(
             binding.dieselIocl.isChecked = dieselCompanyVal.contains("iocl")
 
         }
-        binding.adminDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+        binding.adminDieselReferenceSwitch?.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
                 binding.dieselReliance.isEnabled = true
                 binding.dieselIocl.isEnabled= true
+                binding.cardLayout?.visibility = View.VISIBLE
             }
             else{
                 binding.dieselReliance.isEnabled = false
                 binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
                 binding.dieselIocl.isChecked = false
-
+                binding.cardLayout?.visibility = View.GONE
             }
         })
 
-        binding.btnConfirmAdmin.setOnClickListener {
+        binding.btnConfirmAdmin?.setOnClickListener {
             submit()
         }
 
@@ -79,8 +81,8 @@ class AdminMemberDialog @Inject constructor(
 
         var dieselPrefer = "no"
         val dieselCompany = mutableListOf<String>()
-        dieselPrefer = if(binding.adminDieselReferenceSwitch.isChecked) "yes" else "no"
-        if(binding.adminDieselReferenceSwitch.isChecked){
+        dieselPrefer = if(binding.adminDieselReferenceSwitch?.isChecked == true) "yes" else "no"
+        if(binding.adminDieselReferenceSwitch?.isChecked == true){
             if(binding.dieselReliance.isChecked) dieselCompany.add("reliance")
             if(binding.dieselIocl.isChecked) dieselCompany.add("iocl")
         }

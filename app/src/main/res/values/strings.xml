@@ -13,6 +13,7 @@
     <string name="title_dialog_supplier_not_approved">User Not Approved</string>
     <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
     <string name="title_dialog_apply_filter">Apply filter</string>
+    <string name="title_dialog_delete_member">Delete Member</string>
 
     <!--Messages (msg_)-->
     <string name="msg_hello_world">Message Hello World</string>
@@ -63,6 +64,7 @@
     <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
     <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
     <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
+    <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
 
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
@@ -79,7 +81,9 @@
     <string name="hint_amount">23900</string>
     <string name="hint_user_name">Enter user name</string>
     <string name="hint_password">Enter Password</string>
-
+    <string name="hint_enter_name">Enter name</string>
+    <string name="hint_number">Enter number</string>
+    <string name="hint_diesel">Enable to register them for diesel card</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -130,7 +134,10 @@
   <string name="action_upload_again">Upload Again</string>
     <string name="action_upload_rc_doc">Upload RC document</string>
     <string name="action_cancel">Cancel</string>
-  <string name="action_start_kyc">Start</string>
+    <string name="action_start_kyc">Start</string>
+    <string name="action_update_business_logo">Update business logo</string>
+    <string name="action_restart_kyc">Try Again</string>
+    <string name="action_add_member">Add Member</string>
     <string name="action_complete_verification">Complete Verification</string>
 
     <!--Label (label_)-->
@@ -329,13 +336,11 @@
     <string name="sub_label_step1_3">Step 1 of 3</string>
     <string name="sub_label_step2_3">Step 2 of 3</string>
     <string name="sub_label_step3_3">Step 3 of 3</string>
-    <string name="label_pan">PAN details </string>
     <string name="label_aadhaar">Aadhaar details </string>
     <string name="label_communication_address">Communication address </string>
     <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
     <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
     <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
-    <string name="label_gst">GST verification</string>
     <string name="sub_label_gst_details">Choose a GST number for verification</string>
     <string name="label_gst_dialog">Choose a verification method</string>
     <string name="label_gst_dialog_option1">Verify via OTP</string>
@@ -348,6 +353,44 @@
     <string name="sub_label_step4_4">Step 4 of 4</string>
     <string name="label_business">Business Verification </string>
     <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
+    <string name="label_bank_name">Bank Name</string>
+    <string name="label_ifsc">IFSC</string>
+    <string name="label_payment_terms">Payment Terms</string>
+    <string name="label_tc">Terms &amp; Conditions</string>
+    <string name="label_privacy_policy">Privacy Policy</string>
+    <string name="label_business_name">Business Name</string>
+    <string name="label_my_name">My Name</string>
+    <string name="label_my_occupation">My Occupation</string>
+    <string name="label_i_want">I want to</string>
+    <string name="label_post_load">Post Load</string>
+    <string name="label_post_truck">Post Truck</string>
+    <string name="label_both">Both</string>
+    <string name="label_third_party">View third party loads</string>
+    <string name="label_edit_member">Edit Member</string>
+    <string name="label_delete_member">Delete Member</string>
+    <string name="label_more_options_team">More options</string>
+    <string name="label_edit_route">Edit Route</string>
+    <string name="label_delete_route_option">Delete Route</string>
+    <string name="label_pan">PAN</string>
+    <string name="label_gst">GST Number</string>
+    <string name="label_cin">CIN</string>
+    <string name="label_address">Address</string>
+    <string name="label_verified">Verified</string>
+    <string name="label_account">Account</string>
+    <string name="label_kyc_details">KYC Details</string>
+    <string name="label_profile">Profile Details</string>
+    <string name="label_routes">My Routes</string>
+    <string name="label_earnings">My Earnings</string>
+    <string name="label_team">My Team Members</string>
+    <string name="label_pod">POD Address</string>
+    <string name="label_help">Help &amp; Support</string>
+    <string name="label_logout">Log Out</string>
+    <string name="label_ratings">Business Ratings</string>
+    <string name="label_kyc_pending">KYC verification pending!</string>
+    <string name="label_kyc_failed">KYC verification failed!</string>
+    <string name="label_member_name">Member Name</string>
+    <string name="label_create_member">Enter member details</string>
+    <string name="label_truck_rc">Truck RC</string>
     <string name="label_changes">Confirm Changes?</string>
     <string name="label_complete_business_verification">Complete Business Verification</string>
     <string name="label_complete_delete">Delete Address</string>
@@ -414,7 +457,10 @@
     <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
     <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
     <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>
-
+    <string name="sub_label_changing_from_post_truck">With this change, you will not be allowed to Post Trucks. Your trip history will still be accessible</string>
+    <string name="sub_label_changing_from_post_load">With this change, you will not be allowed to Post Loads. Your load history will still be accessible</string>
+    <string name="sub_label_changing_to_both">With this change, you can now Post Trucks &amp; Loads. Your trip &amp; load history will still be accessible</string>
+    <string name="label_edit_occupation">"Edit My Occupation "</string>
 
 
     <string-array name="array_truck_type">
@@ -436,4 +482,24 @@
         <item>LR Copy</item>
         <item>Letter Head</item>
     </string-array>
+
+    <string-array name="array_occupation_post_truck">
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_post_load">
+        <item>Shipper</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
+
+    <string-array name="array_occupation_both">
+        <item>Shipper</item>
+        <item>Broker</item>
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+    </string-array>
+     q
 </resources>

@@ -18,11 +18,32 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
         android:background="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent">
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:id="@+id/toolbar_title" />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/profile"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:gravity="center"
+          android:textSize="@dimen/text_12sp"
+          android:textStyle="bold"
+          android:fontFamily="sans-serif"
+          android:layout_marginEnd="@dimen/size_48dp"
+          android:layout_marginStart="@dimen/size_16dp"
+          android:textColor="@color/white"
+          android:background="@drawable/dark_blue_circle" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <com.delhivery.axle.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"

@@ -41,7 +41,14 @@ data class UserModel(
         @SerializedName("is_pan_verified") var isPanVerified: Boolean?,
         @SerializedName("is_aadhaar_verified") var isAadhaarVerified: Boolean?,
         @SerializedName("is_gst_verified") var isGstVerified: Boolean?,
-        @SerializedName("is_rc_verified") var isRcVerified: Boolean?
+        @SerializedName("is_rc_verified") var isRcVerified: Boolean?,
+        @SerializedName("verification_status") var verificationStatus: String?,
+        @SerializedName("profile_image_url") var profileImageUrl: String?,
+        @SerializedName("phone_no") var phoneNo: String?,
+        @SerializedName("name") var name: String?,
+        @SerializedName("diesel_card_preference") var dieselCardPreferences: String? = "no",
+        @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf(),
+        @SerializedName("can_view_third_party_loads") var canViewThirdPartyLoads: Boolean?
         ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
@@ -91,7 +98,7 @@ data class UserModel(
     false
   }
 
-  fun getDieselPreferences() :Boolean = supplierDetails?.dieselCardPreferences == "yes"
+  fun getDieselPreferences() :Boolean = dieselCardPreferences == "yes"
 
 }
 
