@@ -8,6 +8,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.databinding.ActivityHelpSupportBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfileViewModel>() {
 
@@ -16,6 +18,8 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
     override fun layoutId() = R.layout.activity_help_support
 
     override fun requireConnection() = true
+
+    @Inject lateinit var userPrefs:UserPrefs
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -30,7 +34,7 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             }
         }
 
-        if(viewModel.userPrefs.accountSetup){
+        if((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)){
             if(viewModel.userPrefs.userMode.equals("post_load")){
                 binding.paymentTerms.visibility = View.GONE
             }else{

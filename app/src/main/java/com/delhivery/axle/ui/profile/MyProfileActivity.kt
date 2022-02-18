@@ -167,7 +167,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun setVerficationStatus() {
-        if(userPrefs.accountSetup) {
+        if((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)) {
             if (userPrefs.verificationStatus.equals("pending")) {
                 binding.verifyBadge.visibility = View.GONE
                 binding.kycpendingLayout.visibility = View.VISIBLE

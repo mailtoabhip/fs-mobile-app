@@ -78,7 +78,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
-    if(userPrefs.accountSetup && !userPrefs.isUserVerfied) {
+    if((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier) && !userPrefs.isUserVerfied) {
       showKycDialog()
     }
   }

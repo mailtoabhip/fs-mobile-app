@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Response for send OTP
  */
-data class OTPSentResponse(@SerializedName("success") val successMsg: String,
-                           @SerializedName("is_new_user") val isNewUser: Boolean)
+data class OTPSentResponse(@SerializedName("success") val successMsg: String)
 
 /**
  * Response for login with OTP

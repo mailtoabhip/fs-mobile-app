@@ -106,7 +106,7 @@ class HomeProfileViewModel @Inject constructor(
   }
 
   fun setUserState(){
-    if(userPrefs.accountSetup){
+    if(userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier){
       if(userPrefs.userMode.equals("post_load")){
         state = ProfileUIState.PostLoad
       }else{

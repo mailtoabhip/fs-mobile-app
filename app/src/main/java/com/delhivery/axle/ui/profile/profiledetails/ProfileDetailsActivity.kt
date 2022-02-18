@@ -83,8 +83,13 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             binding.profile.visibility = View.VISIBLE
         }
 
-        if(viewModel.userPrefs.accountSetup){
-            binding.switchLay.visibility = View.GONE
+        if((viewModel.userPrefs.isLoadBoardClient || viewModel.userPrefs.isLoadBoardSupplier)){
+            if(viewModel.userPrefs.userMode.equals("post_load")) {
+                binding.switchLay.visibility = View.GONE
+            }else{
+                binding.switchLay.visibility = View.VISIBLE
+                binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+            }
         }else{
             binding.switchLay.visibility = View.VISIBLE
             binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
@@ -136,9 +141,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.btnSave.setOnClickListener {
-            if(!viewModel.userPrefs.accountSetup){
-                viewModel.loadSwitch = loadSwitch.isChecked
-            }
+            viewModel.loadSwitch = loadSwitch.isChecked
             viewModel.userRole = binding.spinnerProof.selectedItem.toString().replace(" ", "_").toLowerCase()
             viewModel.updateUserDetails()
         }

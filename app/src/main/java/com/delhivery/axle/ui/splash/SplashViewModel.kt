@@ -23,9 +23,9 @@ class SplashViewModel @Inject constructor(
   fun postState() = when {
     !globalPrefs.isOnboardingCompleted -> Onboarding
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
-    authenticationRepository.authStatus() && userPrefs.userMode.isEmpty() && userPrefs.accountSetup-> AccountAction
-    authenticationRepository.authStatus() && userPrefs.userRole.isEmpty()&& userPrefs.accountSetup-> AccountRole
-    authenticationRepository.authStatus() && userPrefs.accountSetup && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
+    authenticationRepository.authStatus() && userPrefs.userMode.isEmpty() && (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)-> AccountAction
+    authenticationRepository.authStatus() && userPrefs.userRole.isEmpty()&& (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)-> AccountRole
+    authenticationRepository.authStatus() && (userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier) && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
     else -> Auth
   }
 

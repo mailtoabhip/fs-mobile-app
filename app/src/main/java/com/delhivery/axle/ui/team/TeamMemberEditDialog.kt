@@ -64,7 +64,7 @@ class TeamMembersEditDialog @Inject constructor(
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
 
-        if (userPrefs.accountSetup){
+        if ((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)){
             if(userPrefs.userMode.equals("post_load")){
                 binding.switchLay.visibility = View.GONE
             }else{

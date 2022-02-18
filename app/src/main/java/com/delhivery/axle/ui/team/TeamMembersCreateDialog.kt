@@ -139,7 +139,7 @@ class TeamMembersCreateDialog @Inject constructor(
       }
     })
 
-    if (userPrefs.accountSetup){
+    if ((userPrefs.isLoadBoardClient || userPrefs.isLoadBoardSupplier)){
       if(userPrefs.userMode.equals("post_load")){
         binding.switchLay.visibility = View.GONE
       }else{
