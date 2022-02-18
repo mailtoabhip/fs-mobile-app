@@ -247,6 +247,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun getRequestAadhaarOtp() {
     }
 
+    override fun setAccountRoleSelection(selected: String) {
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
     override  fun captureImage(
         uploadImageName: String,
         localImageName: String

@@ -215,11 +215,12 @@
                         android:textColor="@color/heading_black"/>
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
+                        android:id="@+id/spinner_lay"
                         android:layout_marginTop="@dimen/size_6dp"
                        android:layout_height="@dimen/edit_text_height"
                         android:background="@drawable/bg_login_edit">
-                        <androidx.appcompat.widget.AppCompatSpinner
-                            android:id="@+id/spinner_proof"
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/occupation_text"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/edit_text_height"
                             android:background="@drawable/bg_spinner"

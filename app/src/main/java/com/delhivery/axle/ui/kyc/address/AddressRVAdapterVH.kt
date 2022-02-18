@@ -65,6 +65,11 @@ class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
 
         }
 
+        if(item.data.isSelected==true){
+            binding.relLay.isSelected=true
+        }else{
+            binding.relLay.isSelected=false
+        }
 
         binding.root.clickToAction(HomeTripsRequestAction_ViewDetails, item, _interface)
     }

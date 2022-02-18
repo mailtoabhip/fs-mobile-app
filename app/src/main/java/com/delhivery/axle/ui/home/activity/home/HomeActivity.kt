@@ -93,10 +93,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Load Requests"
-    if(userPrefs.userName.isNotEmpty()) {
+
+    if(!userPrefs.userName.isEmpty()) {
       binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
     }
-    supportActionBar?.setDisplayShowTitleEnabled(false);
+    supportActionBar?.setDisplayShowTitleEnabled(false)
+
     binding.toolbarTitle.text = title
 
     /* setup view pager */

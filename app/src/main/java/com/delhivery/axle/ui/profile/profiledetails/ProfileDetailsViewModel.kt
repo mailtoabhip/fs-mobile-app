@@ -26,6 +26,7 @@ class ProfileDetailsViewModel @Inject constructor(
     var userMode = userPrefs.userMode
     var userRole = userPrefs.userRole
     var loadSwitch = userPrefs.canViewThirdPartyLoads
+    var changeRoleDialogVisibility =0
 
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()

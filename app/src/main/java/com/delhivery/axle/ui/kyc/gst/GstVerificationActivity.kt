@@ -149,6 +149,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         viewModel.getRequestOtp(true)
     }
 
+    override fun setAccountRoleSelection(selected: String) {
+
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
     override fun handleAction(
             actionId: String,
             item: BaseGstRVAdapterItem<*>
