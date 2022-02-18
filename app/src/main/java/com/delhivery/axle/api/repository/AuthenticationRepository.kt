@@ -39,11 +39,11 @@ class AuthenticationRepository @Inject constructor(
   fun sendOTP(phoneNo: String) =
     loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
       .map {
-        Triple(true, it.successMsg,it.isNewUser)
+        Pair(true, it.successMsg)
       }
       .onErrorReturn {
         /* handle error if needed */
-        Triple(false, "Invalid phone number", false)
+        Pair(false, "Invalid phone number")
       }
 
   /**

@@ -167,7 +167,13 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun setVerficationStatus() {
-        if(userPrefs.accountSetup) {
+        if((userPrefs.isLoadBoardClient == false || userPrefs.isLoadBoardSupplier == false)) {
+            binding.verifyBadge.visibility = View.VISIBLE
+            binding.kycpendingLayout.visibility = View.GONE
+            binding.ratingsLayout.visibility = View.GONE
+            binding.kycfailedLayout.visibility = View.GONE
+            binding.kycLayout.visibility = View.VISIBLE
+        }else{
             if (userPrefs.verificationStatus.equals("pending")) {
                 binding.verifyBadge.visibility = View.GONE
                 binding.kycpendingLayout.visibility = View.VISIBLE
@@ -187,12 +193,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 binding.kycfailedLayout.visibility = View.VISIBLE
                 binding.kycLayout.visibility = View.VISIBLE
             }
-        }else{
-            binding.verifyBadge.visibility = View.VISIBLE
-            binding.kycpendingLayout.visibility = View.GONE
-            binding.ratingsLayout.visibility = View.GONE
-            binding.kycfailedLayout.visibility = View.GONE
-            binding.kycLayout.visibility = View.VISIBLE
         }
     }
 

@@ -29,7 +29,6 @@ import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityProfileDetailsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_profile_details.*
@@ -84,11 +83,17 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             binding.profile.visibility = View.VISIBLE
         }
 
-        if(viewModel.userPrefs.accountSetup){
-            binding.switchLay.visibility = View.GONE
-        }else{
+        if((viewModel.userPrefs.isLoadBoardClient == false || viewModel.userPrefs.isLoadBoardSupplier == false)){
             binding.switchLay.visibility = View.VISIBLE
             binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+        }else{
+            if(viewModel.userPrefs.userMode.equals("post_load")) {
+                binding.switchLay.visibility = View.GONE
+            }else{
+                binding.switchLay.visibility = View.VISIBLE
+                binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+            }
+
         }
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
@@ -143,6 +148,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.btnSave.setOnClickListener {
+            viewModel.loadSwitch = loadSwitch.isChecked
+            viewModel.userRole = binding.spinnerProof.selectedItem.toString().replace(" ", "_").toLowerCase()
             if(!viewModel.userPrefs.accountSetup){
                 viewModel.loadSwitch = loadSwitch.isChecked
             }
@@ -447,7 +454,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun enableSubmitButton() {
-        binding.btnSave.isEnabled = viewModel.businessName.value.isNotNullOrEmpty() && viewModel.userName.value.isNotNullOrEmpty()
+        binding.btnSave.isEnabled = viewModel.businessName.value?.trim().isNotNullOrEmpty() && viewModel.userName.value?.trim().isNotNullOrEmpty()
     }
 
     private fun getFile(): File? {
