@@ -103,7 +103,11 @@ data class UserModel(
 }
 
 data class ClientModel(
-        @SerializedName("client_uuid") var client_uuid: String
+        @SerializedName("client_uuid") var client_uuid: String,
+        @SerializedName("is_load_board_client") var isLoadBoardClient: Boolean = false,
+        @SerializedName("enabled_for_marketplace") var enabledForMarketplace: Boolean = false,
+        @SerializedName("enabled_for_orion") var enabledForOrion: Boolean = false,
+        @SerializedName("is_deleted") var isDeleted: Boolean = false
 )
 
 data class SupplierModel(
@@ -140,5 +144,8 @@ data class SupplierModel(
         @SerializedName("demand_type") var demandType : List<String>,
         @SerializedName("entity") var vendorEntity: String? = "",
         @SerializedName("diesel_card_preference") var dieselCardPreferences: String? = "no",
-        @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf()
+        @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf(),
+        @SerializedName("is_load_board_supplier") var isLoadBoardSupplier: Boolean = false,
+        @SerializedName("enabled_for_marketplace") var enabledForMarketplace: Boolean = false,
+        @SerializedName("enabled_for_orion") var enabledForOrion: Boolean = false
 )

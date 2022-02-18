@@ -78,8 +78,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
-    if(userPrefs.accountSetup && !userPrefs.isUserVerfied) {
-      showKycDialog()
+    if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+      //do nothing
+    }else{
+      if(!userPrefs.isUserVerfied){
+        showKycDialog()
+      }
     }
   }
 
@@ -89,9 +93,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Load Requests"
-    if(userPrefs.userName.isNotEmpty())
-    binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
-    supportActionBar?.setDisplayShowTitleEnabled(false);
+
+    if(!userPrefs.userName.isEmpty()) {
+      binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+    }
+    supportActionBar?.setDisplayShowTitleEnabled(false)
+
     binding.toolbarTitle.text = title
 
     /* setup view pager */

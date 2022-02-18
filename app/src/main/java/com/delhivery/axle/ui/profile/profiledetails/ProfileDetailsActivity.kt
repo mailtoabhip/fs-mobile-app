@@ -29,6 +29,7 @@ import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityProfileDetailsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_profile_details.*
@@ -40,7 +41,7 @@ import java.lang.StringBuilder
 import javax.inject.Inject
 
 
-class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, ProfileDetailsViewModel>(), AWSUtils.AWSProgressInterface {
+class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, ProfileDetailsViewModel>(), AWSUtils.AWSProgressInterface,DialogUtilsInterface {
 
     override fun getViewModelClass() = ProfileDetailsViewModel::class.java
 
@@ -83,11 +84,17 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             binding.profile.visibility = View.VISIBLE
         }
 
-        if(viewModel.userPrefs.accountSetup){
-            binding.switchLay.visibility = View.GONE
-        }else{
+        if((viewModel.userPrefs.isLoadBoardClient == false || viewModel.userPrefs.isLoadBoardSupplier == false)){
             binding.switchLay.visibility = View.VISIBLE
             binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+        }else{
+            if(viewModel.userPrefs.userMode.equals("post_load")) {
+                binding.switchLay.visibility = View.GONE
+            }else{
+                binding.switchLay.visibility = View.VISIBLE
+                binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
+            }
+
         }
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
@@ -103,12 +110,18 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         binding.radioType.setOnCheckedChangeListener { group, checkedId ->
             if(checkedId==binding.radioType.getChildAt(0).id){
                 viewModel.userMode = "post_load"
+                viewModel.changeRoleDialogVisibility=1
             }else if(checkedId==binding.radioType.getChildAt(1).id){
                 viewModel.userMode = "post_truck"
+                viewModel.changeRoleDialogVisibility=2
             }else if(checkedId==binding.radioType.getChildAt(2).id){
                 viewModel.userMode = "both"
+                viewModel.changeRoleDialogVisibility=3
             }
             setUserRoleOption()
+        }
+        binding.occupationText.setOnClickListener {
+                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,this)
         }
 
         viewModel.userUpdateLiveData.observe(this, androidx.lifecycle.Observer {
@@ -136,10 +149,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.btnSave.setOnClickListener {
-            if(!viewModel.userPrefs.accountSetup){
-                viewModel.loadSwitch = loadSwitch.isChecked
-            }
-            viewModel.userRole = binding.spinnerProof.selectedItem.toString().replace(" ", "_").toLowerCase()
+            viewModel.loadSwitch = loadSwitch.isChecked
+            viewModel.userRole = binding.occupationText.text.toString().replace(" ", "_").toLowerCase()
             viewModel.updateUserDetails()
         }
 
@@ -171,7 +182,18 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                 }
     }
 
-    private fun captureImage(
+    override fun getRequestAadhaarOtp() {
+    }
+
+    override fun setAccountRoleSelection(selected: String) {
+        binding.occupationText.setText(selected)
+    }
+
+    override fun navigateToBusinessVerification() {
+        navigationUtils.navigate(BusinessVerificationActivity::class.java)
+    }
+
+    override fun captureImage(
             uploadImageName: String,
             localImageName: String
     ) {
@@ -188,6 +210,9 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             }
         }
         builder.show()
+    }
+
+    override fun sendDocForVerification(uploadArray: ArrayList<Pair<String, String>>) {
     }
 
     private fun loadImage(
@@ -277,18 +302,17 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     private fun setUserRoleOption(){
         if(viewModel.userMode.equals("post_truck")) {
             (binding.radioType.getChildAt(1) as RadioButton).isChecked = true
-            binding.spinnerProof.setup(R.array.array_occupation_post_truck) { p, v ->
-            }
+
+            viewModel.changeRoleDialogVisibility=2
             setRoleSelect()
         }else  if(viewModel.userMode.equals("post_load")) {
             (binding.radioType.getChildAt(0) as RadioButton).isChecked = true
-            binding.spinnerProof.setup(R.array.array_occupation_post_load) { p, v ->
-            }
+
+            viewModel.changeRoleDialogVisibility=1
             setRoleSelect()
         }else  if(viewModel.userMode.equals("both")) {
             (binding.radioType.getChildAt(2) as RadioButton).isChecked = true
-            binding.spinnerProof.setup(R.array.array_occupation_both) { p, v ->
-            }
+            viewModel.changeRoleDialogVisibility=3
             setRoleSelect()
         }
     }
@@ -306,7 +330,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                 y.append(m.substring(0, 1).toUpperCase() + m.substring(1).toLowerCase())
 
             }
-            binding.spinnerProof.setSelection((binding.spinnerProof.getAdapter() as ArrayAdapter<String?>).getPosition(y.toString()))
+            binding.occupationText.setText(y.toString())
         }
     }
 
@@ -427,7 +451,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun enableSubmitButton() {
-        binding.btnSave.isEnabled = viewModel.businessName.value.isNotNullOrEmpty() && viewModel.userName.value.isNotNullOrEmpty()
+        binding.btnSave.isEnabled = viewModel.businessName.value?.trim().isNotNullOrEmpty() && viewModel.userName.value?.trim().isNotNullOrEmpty()
     }
 
     private fun getFile(): File? {

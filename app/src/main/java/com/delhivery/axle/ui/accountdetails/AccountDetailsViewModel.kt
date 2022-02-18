@@ -79,27 +79,43 @@ class AccountDetailsViewModel @Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     state = if (!error && _res.first) {
-                        if (!_res.third.isSpEnabled && !_res.third.isClientEnabled && userPrefs.accountSetup) {
-                            userPrefs.hasLoggedIn = false
-                            AccountAction
-                        } else if (_res.third.userRole.isNullOrEmpty() && userPrefs.accountSetup) {
-                            userPrefs.hasLoggedIn = false
-                            AuthenticationUIState.AccountRole
-                        }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty()) && userPrefs.accountSetup) {
-                            userPrefs.hasLoggedIn = false
-                            AccountDetails
-                        } else if (_res.third.supplierDetails?.isDeleted == true) {
-                            userPrefs.hasLoggedIn = false
-                            Disabled
-                        } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
-                            userPrefs.hasLoggedIn = true
-                            userPrefs.lastLoginTime = Date().time
-                            LoadRequest
-                        } else {
-                            userPrefs.hasLoggedIn = true
-                            userPrefs.hasEditedRoute = true
-                            userPrefs.lastLoginTime = Date().time
-                            SelectRoute
+                        if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.clientDetails?.isLoadBoardClient == true){
+                            if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
+                                userPrefs.hasLoggedIn = false
+                                Disabled
+                            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+                                userPrefs.hasLoggedIn = true
+                                userPrefs.lastLoginTime = Date().time
+                                LoadRequest
+                            } else {
+                                userPrefs.hasLoggedIn = true
+                                userPrefs.hasEditedRoute = true
+                                userPrefs.lastLoginTime = Date().time
+                                SelectRoute
+                            }
+                        }else{
+                            if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
+                                userPrefs.hasLoggedIn = false
+                                Disabled
+                            }else if (_res.third.userMode.isNullOrEmpty() ) {
+                                userPrefs.hasLoggedIn = false
+                                AccountAction
+                            } else if (_res.third.userRole.isNullOrEmpty()) {
+                                userPrefs.hasLoggedIn = false
+                                AuthenticationUIState.AccountRole
+                            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
+                                userPrefs.hasLoggedIn = false
+                                AccountDetails
+                            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+                                userPrefs.hasLoggedIn = true
+                                userPrefs.lastLoginTime = Date().time
+                                LoadRequest
+                            } else {
+                                userPrefs.hasLoggedIn = true
+                                userPrefs.hasEditedRoute = true
+                                userPrefs.lastLoginTime = Date().time
+                                SelectRoute
+                            }
                         }
                     } else {
                         if (error is HttpException) {

@@ -99,16 +99,16 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
             binding.btnCreateAccount.setOnClickListener {
                 viewModel.progressLiveData.postValue(true)
-                viewModel.createAccount(UpdateUserRequest(businessName = viewModel.business_name.value,
-                        userName = viewModel.username.value,
-                        referralCode = viewModel.referral_code.value,
+                viewModel.createAccount(UpdateUserRequest(businessName = viewModel.business_name.value?.trim(),
+                        userName = viewModel.username.value?.trim(),
+                        referralCode = viewModel.referral_code.value?.trim(),
                         receiveWhatsappNotifications = viewModel.whatsapp.value,
                 isLocationEnabled = viewModel.locationOption.value))
             }
     }
 
     fun checkEnable() {
-        binding.btnCreateAccount.isEnabled = (viewModel.business_name.value.isNotNullOrEmpty() && viewModel.username.value.isNotNullOrEmpty()
+        binding.btnCreateAccount.isEnabled = (viewModel.business_name.value?.trim().isNotNullOrEmpty() && viewModel.username.value?.trim().isNotNullOrEmpty()
                 && viewModel.termsCheck.value == true)
     }
 

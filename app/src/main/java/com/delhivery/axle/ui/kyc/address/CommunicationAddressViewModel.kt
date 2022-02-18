@@ -30,6 +30,7 @@ BaseViewModel() {
     var cityAddress=""
     var phoneNum =userPrefs.phoneNumber!!
     var documentProofType =""
+    var selectedAdapterPos=-1
     var documentProofUrl=mutableListOf("")
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
@@ -38,6 +39,7 @@ BaseViewModel() {
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
     var AddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var lastSelectedAddressLiveData = MutableLiveData<AddressDataItem>()
     var addressDetailDataList = MutableLiveData<List<AddressDetailData>>()
     var selectedComminicationAddress =""
     var isSameAsGst =false
