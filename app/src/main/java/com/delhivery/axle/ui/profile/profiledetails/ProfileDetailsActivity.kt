@@ -114,7 +114,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             }
             setUserRoleOption()
         }
-        binding.spinnerProof.setOnClickListener {
+        binding.occupationText.setOnClickListener {
                 dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,this)
         }
 
@@ -146,7 +146,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             if(!viewModel.userPrefs.accountSetup){
                 viewModel.loadSwitch = loadSwitch.isChecked
             }
-            viewModel.userRole = binding.spinnerProof.text.toString().replace(" ", "_").toLowerCase()
+            viewModel.userRole = binding.occupationText.text.toString().replace(" ", "_").toLowerCase()
             viewModel.updateUserDetails()
         }
 
@@ -182,7 +182,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun setAccountRoleSelection(selected: String) {
-        binding.spinnerProof.setText(selected)
+        binding.occupationText.setText(selected)
     }
 
     override fun navigateToBusinessVerification() {
@@ -331,7 +331,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
             }
           //  binding.spinnerProof.setSelection((binding.spinnerProof.getAdapter() as ArrayAdapter<String?>).getPosition(y.toString()))
-            binding.spinnerProof.setText(y.toString())
+            binding.occupationText.setText(y.toString())
         }
     }
 

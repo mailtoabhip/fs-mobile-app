@@ -220,7 +220,7 @@
                        android:layout_height="@dimen/edit_text_height"
                         android:background="@drawable/bg_login_edit">
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/spinner_proof"
+                            android:id="@+id/occupation_text"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/edit_text_height"
                             android:background="@drawable/bg_spinner"
