@@ -24,7 +24,8 @@
                 android:layout_height="@dimen/size_48dp"
                 android:layout_gravity="center"
                 android:id="@+id/docImage"
-                app:srcCompat="@drawable/ic_doc_business"/>
+                android:background="@drawable/ic_doc_business"
+                />
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
