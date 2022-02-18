@@ -29,6 +29,7 @@ import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityProfileDetailsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_profile_details.*
@@ -149,10 +150,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
         binding.btnSave.setOnClickListener {
             viewModel.loadSwitch = loadSwitch.isChecked
-            viewModel.userRole = binding.spinnerProof.selectedItem.toString().replace(" ", "_").toLowerCase()
-            if(!viewModel.userPrefs.accountSetup){
-                viewModel.loadSwitch = loadSwitch.isChecked
-            }
             viewModel.userRole = binding.occupationText.text.toString().replace(" ", "_").toLowerCase()
             viewModel.updateUserDetails()
         }
