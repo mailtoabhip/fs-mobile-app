@@ -11,6 +11,7 @@ import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_AUTO_LOGOUT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Date
