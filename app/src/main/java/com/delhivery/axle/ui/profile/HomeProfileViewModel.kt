@@ -34,7 +34,7 @@ class HomeProfileViewModel @Inject constructor(
 
   var userName = userPrefs.userName
   var businessName = userPrefs.companyName
-  var mobile = "\u2022 ${userPrefs.phoneNumber}"
+  var mobile = "\u2022 "+ userPrefs.phoneNumber?.replace("+91","")
   var bName = userPrefs.bankName
   var aNum = userPrefs.accNumber
   var ifsc = userPrefs.ifscCode
@@ -108,9 +108,9 @@ class HomeProfileViewModel @Inject constructor(
   fun setUserState(){
     if(userPrefs.accountSetup){
       if(userPrefs.userMode.equals("post_load")){
-        state = ProfileUIState.Axle
+        state = ProfileUIState.PostLoad
       }else{
-        state = ProfileUIState.Axle
+        state = ProfileUIState.PostTruck
       }
     }else{
       state = ProfileUIState.Axle

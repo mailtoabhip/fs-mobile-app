@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentYourKycDetailsBinding
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -27,8 +28,23 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textKycPanNumberProfile.text = userPrefs.pancard
-        binding.textKycAddressProfile.text = userPrefs.businessAddress
+        if(userPrefs.pancard.isNotNullOrEmpty()){
+            binding.textKycPanNumberProfile.text = userPrefs.pancard
+            binding.labelPan.visibility = View.VISIBLE
+            binding.panLay.visibility = View.VISIBLE
+        }else{
+            binding.labelPan.visibility = View.GONE
+            binding.panLay.visibility = View.GONE
+        }
+
+        if(userPrefs.businessAddress.isNotNullOrEmpty()){
+            binding.textKycAddressProfile.text = userPrefs.businessAddress
+            binding.labelAddress.visibility = View.VISIBLE
+            binding.addressLay.visibility = View.VISIBLE
+        }else{
+            binding.labelAddress.visibility = View.GONE
+            binding.addressLay.visibility = View.GONE
+        }
 
         if(userPrefs.userMode.equals("post_load")){
             if(userPrefs.gstNumber.isEmpty()){
