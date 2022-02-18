@@ -101,16 +101,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         /* Address Proof */
         binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             if(p>0){
-                Log.i("position",p.toString())
                 proofTypeFilled = true
-                if(p==4 ||p==5){
-                    if(userPrefs.udyogNumber.isNotEmpty() || userPrefs.shopNumber.isNotEmpty()){
+                    if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
                         binding.textProof.visibility = View.GONE
                         binding.docLayout.visibility = View.GONE
-                    }
+                        docUploadProof= true
                 }else{
                     binding.textProof.visibility = View.VISIBLE
                     binding.docLayout.visibility = View.VISIBLE
+                    docUploadProof= false
                 }
                 enableSubmitButton()
             }else{
@@ -167,7 +166,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             captureImage(imageName, imageName)
         }
        binding.docRemove.setOnClickListener {
-
+           showUploadImage()
        }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
@@ -183,7 +182,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             uploadImage(it.first, it.second)
         })
  }
-
+    private fun showUploadImage() {
+        binding.uploadDocLay.visibility=View.VISIBLE
+        binding.docUploadedLay.visibility=View.GONE
+        if(uploadArray.size>0){
+            uploadArray.removeAt(0)
+        }
+        docUploadProof= false
+        enableSubmitButton()
+    }
     private fun enableSubmitButton(){
         binding.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
     }

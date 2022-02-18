@@ -132,13 +132,13 @@
                                 bind:layout_constraintStart_toStartOf="parent"
                                 bind:layout_constraintTop_toTopOf="parent"
                                 android:inputType="textCapCharacters"
-                                android:maxLength="10"
+                                android:singleLine="true"
                                 android:paddingStart="@dimen/size_12dp"
                                 android:paddingEnd="@dimen/size_12dp"
                                 android:hint="Enter CIN"
                                 android:textColor="@color/heading_black"
                                 android:textSize="@dimen/text_16sp"
-                                android:text="@={ viewModel.truckNumber }"
+                                android:text="@={ viewModel.cinNumber }"
                                 />
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/img_wrong"
@@ -214,13 +214,13 @@
                                 bind:layout_constraintStart_toStartOf="parent"
                                 bind:layout_constraintTop_toTopOf="parent"
                                 android:inputType="textCapCharacters"
-                                android:maxLength="10"
+                                android:singleLine="true"
                                 android:paddingStart="@dimen/size_12dp"
                                 android:paddingEnd="@dimen/size_12dp"
                                 android:hint="@string/udyog_hint"
                                 android:textColor="@color/heading_black"
                                 android:textSize="@dimen/text_16sp"
-                                android:text="@={ viewModel.truckNumber }"
+                                android:text="@={ viewModel.udyogNumber }"
                                 />
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/img_wrong1"
@@ -295,13 +295,13 @@
                                 bind:layout_constraintStart_toStartOf="parent"
                                 bind:layout_constraintTop_toTopOf="parent"
                                 android:inputType="textCapCharacters"
-                                android:maxLength="10"
+                                android:singleLine="true"
                                 android:paddingStart="@dimen/size_12dp"
                                 android:paddingEnd="@dimen/size_12dp"
                                 android:hint="@string/shop_hint"
                                 android:textColor="@color/heading_black"
                                 android:textSize="@dimen/text_16sp"
-                                android:text="@={ viewModel.truckNumber }"
+                                android:text="@={ viewModel.shopNumber }"
                                 />
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/img_wrong2"

@@ -336,7 +336,6 @@
     <string name="sub_label_step2_3">Step 2 of 3</string>
     <string name="sub_label_step3_3">Step 3 of 3</string>
     <string name="label_identity_verification">Identity Verification</string>
-    <string name="label_pan">PAN details </string>
     <string name="label_pan_details">PAN details </string>
     <string name="label_aadhaar">Aadhaar details </string>
     <string name="label_communication_address">Communication address </string>

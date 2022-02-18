@@ -21,21 +21,15 @@ class IdentityVerificationViewModel@Inject constructor(
     private  val loadboardRepository: LoadboardRepository,
     private val userPrefs: UserPrefs): BaseViewModel()
 {
-
-    var truckNumber= MutableLiveData<String>()
-
     var selected = MutableLiveData<String>()
 
     var currentStep = ""
 
-
+    var cinNumber = ""
+    var shopNumber=""
+    var udyogNumber=""
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-    var manualVerificationRequired = MutableLiveData<Boolean>()
-    var rcVerificationErrorMsg = MutableLiveData<String>()
-    var verificationDocUploadMsg = MutableLiveData<String>()
-
-
 
     /**
      * Get delegation token for AWS
@@ -51,95 +45,6 @@ class IdentityVerificationViewModel@Inject constructor(
                     error.handle()
             }
     }
-
-    fun validateRC (rc :String){
-        compositeDisposable += loadboardRepository.validateRC(rc)
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    manualVerificationRequired.postValue(_res.manualVerificationRequired)
-                } else{
-                    //  error.handle()
-                    val errorBody = error.errorResponseBody()
-                        ?.errorBody
-                    if (errorBody != null) {
-                        when (errorBody.errorCode()) {
-                            400-> {
-                                rcVerificationErrorMsg.postValue(errorBody.errorMessage)
-                            }
-                            else -> {
-                                Throwable(errorBody.errorMessage).handle()
-                            }
-                        }
-                    } else {
-                        error?.handle()
-                    }
-                    /* if(!error.message.isNullOrEmpty()) {
-                         rcVerificationErrorMsg.postValue(error.message)
-                        // manualVerificationRequired.postValue(true)
-
-                     }*/
-                }
-            }
-    }
-
-
-    fun uploadDocForVerification(verificationDocUploadRequest: VerificationDocUploadRequest){
-        compositeDisposable += loadboardRepository.uploadVerificationDoc(verificationDocUploadRequest)
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error && _res!=null) {
-                    verificationDocUploadMsg.postValue(_res)
-                } else
-                    error.handle()
-            }
-    }
-
-
-    fun updateUserDetails() {
-        if (!isConnected) return
-
-        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,isTruckingDocumentUploaded = true))
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    userUpdateLiveData.postValue(true)
-                } else{
-                    error.handle()
-                    userUpdateLiveData.postValue(false)
-                }
-            }
-
-    }
-
-    fun updateUserRCDetails(rc: String) {
-        if (!isConnected) return
-
-        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,rcNumber = rc))
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    userUpdateLiveData.postValue(true)
-                } else{
-                    error.handle()
-                    userUpdateLiveData.postValue(false)
-                }
-            }
-
-    }
-
-
-    fun verifyByDoc(docList:List<String>) {
-        if (!isConnected) return
-
-        uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected.value,documentUrls = docList))
-
-    }
-
 
 }
 

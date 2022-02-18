@@ -60,6 +60,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
+        if(userPrefs.userName.isNotEmpty())
         binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 

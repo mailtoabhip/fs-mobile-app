@@ -41,7 +41,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBinding, IdentityVerificationViewModel>(),
-    AWSUtils.AWSProgressInterface, View.OnClickListener {
+    AWSUtils.AWSProgressInterface{
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -137,12 +137,13 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-              //  showKycSubmittedDialog()
+              // api integration to be added
             }
         })
 
-        binding.docRemove.setOnClickListener(this)
-
+        binding.docRemove.setOnClickListener {
+            showUploadImage()
+        }
         binding.uploadDoc.setOnClickListener{
             if((binding.textCin.isChecked && binding.editCin.length()>0)||(binding.textUdyog.isChecked&& binding.editUdyog.length()>0)||(binding.textShop.isChecked&& binding.editShop.length()>0)){
                 val imageName = "doc_" + System.currentTimeMillis()+".jpg"
@@ -153,13 +154,17 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
 
         binding.btnVerifyIdentity.setOnClickListener {
-           // userPrefs.cinNumber =
+           if( binding.editCin.length()>0){
+               userPrefs.cinNumber = viewModel.cinNumber
+           }else if ( binding.editUdyog.length()>0){
+               userPrefs.udyogNumber = viewModel.udyogNumber
+           }else if ( binding.editShop.length()>0){
+               userPrefs.shopNumber = viewModel.shopNumber
+           }
+            //change flow as per config
             navigationUtils.navigate(identityVerificationIntent(this),true,null)
 //            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
 //                TotalStepsKey)!!,null)
-         /*   if(binding.textTruck.isChecked){
-                viewModel.validateRC(viewModel.truckNumber.value!!)
-            }*/
 
         }
 
@@ -381,9 +386,6 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     override fun layoutId()= R.layout.activity_identity_verification
 
     override fun requireConnection()= false
-    override fun onClick(p0: View?) {
-       showUploadImage()
-    }
 
     private fun identityVerificationIntent(
         context: Context
