@@ -192,17 +192,22 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     override fun showImage(data: DocDetailData, textView: TextView, imageView: ImageView) {
-        if(data.docPath?.endsWith(".pdf") == true &&  !renderToBitmap(context, data.docPath).isNullOrEmpty()){
-            val bitmap = renderToBitmap(context, data.docPath)?.get(0)
-            imageView.setImageBitmap(bitmap)
-            val stream = ByteArrayOutputStream()
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val imageInByte: ByteArray = stream.toByteArray()
-            val lengthbmp = imageInByte.size.toLong()/ 1024
-            textView.text = lengthbmp.toString() +" KB"
-        }else{
-            loadImage(data.docPath, imageView, textView)
+        try {
+            if(data.docPath?.endsWith(".pdf") == true &&  !renderToBitmap(context, data.docPath).isNullOrEmpty()){
+                val bitmap = renderToBitmap(context, data.docPath)?.get(0)
+                imageView.setImageBitmap(bitmap)
+                val stream = ByteArrayOutputStream()
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val imageInByte: ByteArray = stream.toByteArray()
+                val lengthbmp = imageInByte.size.toLong()/ 1024
+                textView.text = lengthbmp.toString() +" KB"
+            }else{
+                loadImage(data.docPath, imageView, textView)
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
         }
+
     }
 
     fun renderToBitmap(context: Context?, filePath: String?): List<Bitmap>? {
