@@ -76,12 +76,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.layoutUploadLR.isSelected=false
         binding.textLR.isChecked=false
         binding.textTruck.isChecked=true
-//        if(intent?.extras!=null){
-//            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-//                TotalStepsKey)!!)
-//            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                TotalStepsKey)!!)
-//        }
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
 
     }
 
@@ -159,8 +159,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
 
         binding.btnVerifyBusiness.setOnClickListener {
-//            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                TotalStepsKey)!!,null)
             if(binding.textTruck.isChecked){
                viewModel.validateRC(viewModel.truckNumber.value!!)
             }
@@ -288,8 +286,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         dialog.show()
         Handler().postDelayed({
             dialog.dismiss()
+            //change flow as per config
             navigationUtils.navigate(HomeActivity::class.java, true)
-            /*  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+         /*     navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
             TotalStepsKey)!!,null)*/
         }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)

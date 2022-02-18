@@ -21,7 +21,7 @@ class IdentityVerificationViewModel@Inject constructor(
     private  val loadboardRepository: LoadboardRepository,
     private val userPrefs: UserPrefs): BaseViewModel()
 {
-    var selected = MutableLiveData<String>()
+    var selected =""
 
     var currentStep = ""
 
@@ -30,6 +30,7 @@ class IdentityVerificationViewModel@Inject constructor(
     var udyogNumber=""
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
+    var verificationDocUploadLiveData = MutableLiveData<Boolean>()
 
     /**
      * Get delegation token for AWS
@@ -45,6 +46,43 @@ class IdentityVerificationViewModel@Inject constructor(
                     error.handle()
             }
     }
+
+    /**
+     * User Update api
+     */
+    fun updateUserDetails() {
+        if (!isConnected) return
+        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,cinNumber = if(cinNumber.isNotEmpty())cinNumber else null,udyogAadhaarNumber = if(udyogNumber.isNotEmpty())udyogNumber else null,shopEstablishmentNumber = if(shopNumber.isNotEmpty())shopNumber else null))
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                if (!error) {
+                    userUpdateLiveData.postValue(true)
+                } else{
+                    error.handle()
+                    userUpdateLiveData.postValue(false)
+                }
+            }
+
+    }
+
+    fun uploadDocForVerification(verificationDocUploadRequest: VerificationDocUploadRequest){
+        compositeDisposable += loadboardRepository.uploadVerificationDoc(verificationDocUploadRequest)
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                if (!error && _res!=null) {
+                    verificationDocUploadLiveData.postValue(true)
+                } else
+                    error.handle()
+            }
+    }
+
+    fun verifyByDoc(docList:List<String>) {
+        if (!isConnected) return
+        uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected,documentUrls = docList,cinNumber = if(cinNumber.isNotEmpty())cinNumber else null,udyogAadhaarNumber = if(udyogNumber.isNotEmpty())udyogNumber else null,shopEstablishmentNumber = if(shopNumber.isNotEmpty())shopNumber else null))
+    }
+
 
 }
 

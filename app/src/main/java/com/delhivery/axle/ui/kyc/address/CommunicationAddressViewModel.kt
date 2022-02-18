@@ -74,8 +74,15 @@ BaseViewModel() {
 
        var address = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
 
-        documentProofType=documentProofType.replace("\\s".toRegex(),"_")
-        documentProofType=documentProofType.toLowerCase()
+        documentProofType= when{
+                    documentProofType.equals("Visiting Card")->"visiting_card"
+                    documentProofType.equals("LR Copy")->"lr_copy"
+                    documentProofType.equals("Letter Head")->"letterhead"
+                    documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
+                    documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
+            else -> ""
+        }
+       // documentProofType= documentProofType.toLowerCase().replace("\\s".toRegex(),"_")
         addressType= addressType.toLowerCase()
 
             compositeDisposable += loadboardRepository.addAddress(
