@@ -79,7 +79,7 @@ class AccountDetailsViewModel @Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     state = if (!error && _res.first) {
-                        if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.supplierDetails?.isLoadBoardSupplier == true){
+                        if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.clientDetails?.isLoadBoardClient == true){
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                                 userPrefs.hasLoggedIn = false
                                 Disabled
