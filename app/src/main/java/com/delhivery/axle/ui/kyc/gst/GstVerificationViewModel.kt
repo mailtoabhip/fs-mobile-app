@@ -58,9 +58,7 @@ class GstVerificationViewModel@Inject constructor(
 
     var gstFetchList = HashSet<String>()
 
-    var docTry = 0
-
-    /**
+   /**
      * Get delegation token for AWS
      */
     fun getDelegationToken(file: File) {
@@ -128,15 +126,10 @@ class GstVerificationViewModel@Inject constructor(
                     .progress()
                     .subscribe { _res, error ->
                         if (!error) {
-                            docTry = docTry+1;
                             if(_res.isVerified == true){
                                 docVerified.postValue(true)
                             }else{
-                                if(docTry>=2){
-                                  docVerified.postValue(true)
-                                }else{
-                                    docVerified.postValue(false)
-                                }
+                                docVerified.postValue(false)
                             }
                         } else {
                             error.handle()
