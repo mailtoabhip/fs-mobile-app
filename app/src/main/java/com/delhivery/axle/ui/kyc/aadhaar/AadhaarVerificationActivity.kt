@@ -144,9 +144,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                    TotalStepsKey)!!,null)
-                navigationUtils.navigate(HomeActivity::class.java, true)
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                    TotalStepsKey)!!,null)
+             //   navigationUtils.navigate(HomeActivity::class.java, true)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }

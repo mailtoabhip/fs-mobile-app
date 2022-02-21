@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
@@ -32,6 +33,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
 import java.io.File
 import java.io.FileInputStream
@@ -41,10 +43,7 @@ import javax.inject.Inject
 
 
 class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface,AddressRVAdapterInterface {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-    }
 
     init {
         StatusBarColor = Color.parseColor("#ededff")
@@ -84,7 +83,15 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun layoutId() = R.layout.activity_address
 
-    override fun requireConnection() = false
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
+    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -128,6 +135,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             if (it) {
                 //  startActivity(gstIntent(this))
                 uiUtils.showSnackbar("Address updated")
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                    TotalStepsKey)!!,null)
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
@@ -686,5 +695,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     }
     }
+
+    override fun requireConnection(): Boolean =true
 
 }

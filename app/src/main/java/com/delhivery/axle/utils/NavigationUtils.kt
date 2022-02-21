@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
 import com.delhivery.axle.api.repository.AuthenticationRepository
@@ -25,9 +26,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import android.view.LayoutInflater
-
-
-
+import com.delhivery.axle.ui.kyc.address.AddressActivity
 
 
 /**
@@ -187,17 +186,24 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
-            }else{
-              if(userPrefs.isGstsByPanNotRegistered) {
-                intent = Intent(context, IdentityVerificationActivity::class.java)
-              }else{
+            }else if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
                 intent = Intent(context, GstVerificationActivity::class.java)
-              }
+            }else{
+                if(userPrefs.isGstsByPanNotRegistered) {
+                    intent = Intent(context, IdentityVerificationActivity::class.java)
+                }else{
+                    intent = Intent(context, GstVerificationActivity::class.java)
+                }
             }
         }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
-          intent= Intent(context, CommunicationAddressActivity::class.java)
+           if(userPrefs.isGstsByPanNotRegistered){
+               intent= Intent(context, CommunicationAddressActivity::class.java)
+           }else{
+               intent= Intent(context, AddressActivity::class.java)
+           }
+
         }else  if(kycSteps.get(extras.getInt(StepKey))=="business"){
           intent= Intent(context, BusinessVerificationActivity::class.java)
         }
