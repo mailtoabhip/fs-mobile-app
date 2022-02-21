@@ -81,7 +81,7 @@ class PanVerificationViewModel@Inject constructor(
 
         if (panCardNumber.length == 10 || isValidPan) {
             compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
-                    .flatMap { _Res-> loadboardRepository.gstNumbers(userPrefs.pancard)
+                    .flatMap { _Res-> loadboardRepository.gstNumbers(panCardNumber)
                             .map {
                                 val msg = if (_Res.isNotNullOrEmpty()) {
                                     _Res
@@ -103,26 +103,6 @@ class PanVerificationViewModel@Inject constructor(
                         userUpdateLiveData.postValue(false)
                     }
                 }
-        }
-
-    }
-
-    fun updatePanUserDetails() {
-        if (!isConnected) return
-
-        if (panCardNumber.length == 10 || isValidPan) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
-                    .onBackground()
-                    .progress()
-                    .subscribe { _res, error ->
-                        if (!error) {
-                            userUpdateLiveData.postValue(true)
-                            userPrefs.pancard= panCardNumber
-                        } else{
-                            error.handle()
-                            userUpdateLiveData.postValue(false)
-                        }
-                    }
         }
 
     }
