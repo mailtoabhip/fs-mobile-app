@@ -209,6 +209,11 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.setContentView(bindingDialog.root)
         adapter.setItems(uploadArray)
         bindingDialog.attachmentList.adapter = adapter
+        if(uploadText==  activity.getString(R.string.label_business)){
+            bindingDialog.labelGst.setText(uploadText)
+        }
+
+
         if(uploadText==  activity.getString(R.string.upload_aadhaar_text))
         bindingDialog.labelGst.text = activity.getString(R.string.label_aadhaar_verification)
         bindingDialog.closeBtn.setOnClickListener {

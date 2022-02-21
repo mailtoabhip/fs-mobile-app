@@ -53,7 +53,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
-    val awsPath = "loadboard/business/"
+    val awsPath = "loadboard/address/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
@@ -67,6 +67,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
+
 
 
     var flatFilled = false
@@ -182,9 +185,16 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
     private fun dispatchGalleryIntent() {
-        val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivityForResult(pickPhoto, REQCODE_GALLERY_PHOTO)
+        val intent = Intent()
+        intent.type = "*/*"
+        val mimetypes = arrayOf("image/*", "application/pdf")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(
+            intent,
+            REQCODE_FILE_ATTACHMENTS
+        )
     }
 
 
@@ -204,12 +214,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         this.uploadImageName = uploadImageName
         this.localImageName = localImageName
 
-        val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
+        val items = arrayOf<CharSequence>("Take Photo", "Choose from file", "Cancel")
         val builder = AlertDialog.Builder(this)
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)
-                items[item] == "Choose from Library" -> requestImageCapturePermissions(false)
+                items[item] == "Choose from file" -> requestImageCapturePermissions(false)
                 items[item] == "Cancel" -> dialog.dismiss()
             }
         }
@@ -284,24 +294,30 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 }
             }
 
-            REQCODE_GALLERY_PHOTO -> {
+            REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
-                        val selectedImage = data?.data
-                        require(selectedImage != null)
+                        val selectedFile = data?.data
+                        require(selectedFile != null)
                         val parcelFileDescriptor =
-                            contentResolver?.openFileDescriptor(selectedImage, "r", null)
+                            contentResolver?.openFileDescriptor(selectedFile, "r", null)
                         require(parcelFileDescriptor != null)
                         val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                         require(
-                            contentResolver != null && contentResolver?.getFileName(selectedImage) != null
+                            contentResolver != null && contentResolver?.getFileName(selectedFile) != null
                         )
                         val imageScopedFile =
-                            File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
+                            File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
+                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.localImageName =  "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
+                            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+                        }else{
+                            mPhotoFile = imageScopedFile
+                        }
 
-                        mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         if (mPhotoFile == null) {
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
