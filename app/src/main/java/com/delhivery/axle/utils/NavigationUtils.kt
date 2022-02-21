@@ -1,9 +1,14 @@
 package com.delhivery.axle.utils
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.view.ViewGroup
+import android.view.Window
 import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
@@ -19,6 +24,10 @@ import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+import android.view.LayoutInflater
+
+
+
 
 
 /**
@@ -169,7 +178,7 @@ class NavigationUtils @Inject constructor(
   ) {
     var intent= Intent()
        //should be changed based on user_mode
-        val userMode = userPrefs.userMode
+        val userMode = "post_truck"
         val kycSteps = if(userMode=="post_truck"){
       userPrefs.truckPostKyc.split(",").toTypedArray()
       }else{
@@ -213,8 +222,8 @@ class NavigationUtils @Inject constructor(
       }
       this.navigateKyc(context, false, bundle)
     }else{
-      val intent = Intent(context, HomeActivity::class.java)
-      this.navigate(intent, true)
+        showKycSubmittedDialog()
+
     }
   }
 
@@ -226,6 +235,18 @@ class NavigationUtils @Inject constructor(
      return "Step $currentStep of $totalStep"
    }
 
+    fun showKycSubmittedDialog() {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogKycSubmittedBinding.inflate(activity.layoutInflater)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        dialog.show()
+        Handler().postDelayed({
+            dialog.dismiss()
+            this.navigate(HomeActivity::class.java, true)
+        }, 2000)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
 }
 const val StepKey = "step"
 const val CurrentStepKey = "current_step"
