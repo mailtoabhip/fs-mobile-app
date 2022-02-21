@@ -121,6 +121,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 viewModel.updateUserDetails()
             }else{
                 uiUtils.hideProgress()
+                viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
                 resetUploadData()
                 uploadArray =  ArrayList()
                 dialogUtils.showUploadFailDialog(getString(R.string.label_gst_dialog_option2),this)
@@ -129,6 +130,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         )
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
+        })
+
+        viewModel.docVerificationFailedCount.observe(this, Observer {
+            if(viewModel.docVerificationFailedCount.value==2){
+                viewModel.docVerificationFailedCount.value=0
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                    TotalStepsKey)!!,null)
+            }
         })
 
         viewModel.userUpdateLiveData.observe(this, Observer {
