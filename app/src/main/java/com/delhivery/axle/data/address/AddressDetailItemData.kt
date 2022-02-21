@@ -16,7 +16,7 @@ data class AddressDetailData(
 
 ): BaseKeyTypeModel<String>(), Serializable {
     override fun key() =  address
-     fun get() = addressType
+    fun get() = addressType
     fun getPhoneNumber() = phone_number
     fun getProofDocType() = proofDocumentType
     fun getDocUrl() = documentUrls

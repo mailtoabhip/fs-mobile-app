@@ -11,6 +11,7 @@ import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_AUTO_LOGOUT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Date
@@ -38,11 +39,11 @@ class AuthenticationRepository @Inject constructor(
   fun sendOTP(phoneNo: String) =
     loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
       .map {
-        Triple(true, it.successMsg,it.isNewUser)
+        Pair(true, it.successMsg)
       }
       .onErrorReturn {
         /* handle error if needed */
-        Triple(false, "Invalid phone number", false)
+        Pair(false, "Invalid phone number")
       }
 
   /**

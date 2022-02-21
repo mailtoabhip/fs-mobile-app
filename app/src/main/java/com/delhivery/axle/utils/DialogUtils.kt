@@ -4,12 +4,14 @@ import android.Manifest
 import android.R.string
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Html
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.annotation.ColorInt
@@ -19,6 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.scope.ActivityScope
+import com.delhivery.axle.ui.accountrole.RoleUIState
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.dialogs.ErrorDialog
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
@@ -200,6 +203,279 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+
+    fun showConfirmRoleChangeDialog(desc: String,dialogUtilsInterface: DialogUtilsInterface,selected:String,userMode:String,visibility: Int) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogConfirmPermissionSwitchBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        bindingDialog.labelErrorDoc.setText(desc)
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+
+        bindingDialog.buttonConfirm.setOnClickListener {
+            //action after confirm button
+            if(userMode=="post_load" && (visibility==2 ||visibility==3) ){
+                showCompleteBusinessverificationDialog(dialogUtilsInterface)
+            }else{
+                dialogUtilsInterface.setAccountRoleSelection(selected)
+            }
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+    fun showRoleChangeDialog(visibility: Int,dialogUtilsInterface: DialogUtilsInterface,userMode:String,context: Context) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogEditRoleBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        if(visibility==1){
+            bindingDialog.shipperSection.visibility=View.VISIBLE
+            bindingDialog.transporterSection.visibility=View.GONE
+            bindingDialog.bothSection.visibility=View.GONE
+        }else if(visibility==2){
+            bindingDialog.shipperSection.visibility=View.GONE
+            bindingDialog.transporterSection.visibility=View.VISIBLE
+            bindingDialog.bothSection.visibility=View.GONE
+        }else if(visibility==3){
+            bindingDialog.shipperSection.visibility=View.GONE
+            bindingDialog.transporterSection.visibility=View.GONE
+            bindingDialog.bothSection.visibility=View.VISIBLE
+        }
+        bindingDialog.closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.shipperLayout.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = true
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+
+        }
+
+        bindingDialog.shipperLayout3.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = true
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.brokerLayout.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = true
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.brokerLayout2.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = true
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+
+        }
+
+        bindingDialog.brokerLayout3.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = true
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.ownerLayout2.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = true
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.ownerLayout3.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = true
+            bindingDialog.btnProceed.isEnabled=true
+
+        }
+
+        bindingDialog.transporterLayout.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = true
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.transporterLayout2.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = true
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = false
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+        bindingDialog.transporterLayout3.setOnClickListener {
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.shipperLayout.isSelected = false
+            bindingDialog.brokerLayout.isSelected = false
+            bindingDialog.transporterLayout.isSelected = false
+            bindingDialog.shipperLayout3.isSelected = false
+            bindingDialog.brokerLayout2.isSelected = false
+            bindingDialog.transporterLayout2.isSelected = false
+            bindingDialog.brokerLayout3.isSelected = false
+            bindingDialog.transporterLayout3.isSelected = true
+            bindingDialog.ownerLayout2.isSelected = false
+            bindingDialog.ownerLayout3.isSelected = false
+            bindingDialog.btnProceed.isEnabled=true
+        }
+
+
+        bindingDialog.btnProceed.setOnClickListener {
+            //action after confirm button
+
+            var selected = ""
+            var desc =""
+            if(bindingDialog.shipperLayout.isSelected ==true || bindingDialog.shipperLayout3.isSelected==true){
+                selected= "Shipper"
+            }else if(bindingDialog.transporterLayout.isSelected ==true || bindingDialog.transporterLayout2.isSelected==true || bindingDialog.transporterLayout3.isSelected==true){
+                selected ="Transporter"
+            }else if(bindingDialog.brokerLayout.isSelected ==true || bindingDialog.brokerLayout2.isSelected==true || bindingDialog.brokerLayout3.isSelected==true){
+                selected ="Broker"
+            }else if(bindingDialog.ownerLayout2.isSelected ==true || bindingDialog.ownerLayout3.isSelected==true){
+                selected ="Fleet Owner"
+            }
+            if(userMode=="post_load"){
+                desc= context.getString(R.string.sub_label_changing_from_post_load)
+            }else if(userMode=="post_truck"){
+                desc= context.getString(R.string.sub_label_changing_from_post_truck)
+            }
+            if(visibility==3){
+                desc=context.getString(R.string.sub_label_changing_to_both)
+            }
+
+            showConfirmRoleChangeDialog(desc,dialogUtilsInterface,selected,userMode,visibility)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+    //go to business verification process
+    fun showCompleteBusinessverificationDialog(dialogUtilsInterface: DialogUtilsInterface) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogCompleteBusinessVerificationBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        bindingDialog.buttonConfirm.setOnClickListener {
+            //action after confirm button
+           dialogUtilsInterface.navigateToBusinessVerification()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+
+
     /*show attachment dialog*/
      fun showAttachmentDialog(adapter:DocUploadAdapter,uploadArray:ArrayList<Pair<String, String>>,dialogUtilsInterface: DialogUtilsInterface,uploadText: String,awsUtils: AWSUtils) {
         val dialog = Dialog(activity)
@@ -304,6 +580,10 @@ interface TeamMemberInterface{
 interface DialogUtilsInterface {
 
     fun getRequestAadhaarOtp()
+
+    fun setAccountRoleSelection(selected: String)
+
+    fun navigateToBusinessVerification()
 
     fun captureImage(uploadImageName:String,localImageName:String)
 

@@ -18,6 +18,15 @@
     <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
   </style>
 
+  <!-- Action button delete-->
+  <style name="ActionDeleteButton">
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:background">@color/destructive_red</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textSize">@dimen/text_16sp</item>
+    <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+  </style>
+
   <!-- Outline Action button -->
   <style name="OutlineActionButton">
     <item name="android:layout_height">wrap_content</item>

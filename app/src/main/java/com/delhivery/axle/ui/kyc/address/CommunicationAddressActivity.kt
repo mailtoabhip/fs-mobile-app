@@ -124,8 +124,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             }
             viewModel.addNewAddress(false)
 
-            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!,null)
         }
 
         //check length and enable/disable submit button
@@ -171,8 +169,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
               //  startActivity(gstIntent(this))
-                navigationUtils.navigate(businessVerificationIntent(this),false)
-                finish()
+               /* navigationUtils.navigate(businessVerificationIntent(this),false)
+                finish()*/
+                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+              TotalStepsKey)!!,null)
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
             }
@@ -186,7 +186,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         binding.uploadDocLay.visibility=View.VISIBLE
         binding.docUploadedLay.visibility=View.GONE
         if(uploadArray.size>0){
-            uploadArray.removeAt(0)
+            uploadArray.clear()
         }
         docUploadProof= false
         enableSubmitButton()

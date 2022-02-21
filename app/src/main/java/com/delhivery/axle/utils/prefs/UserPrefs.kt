@@ -5,6 +5,7 @@ import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -286,14 +287,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
   /**
-   *  Account set up
-   */
-  var accountSetup: Boolean
-    set(value) = editor.putBoolean(PrefKeys.AccountSetup, value)
-            .apply()
-    get() = prefs.getBoolean(PrefKeys.AccountSetup, false)
-
-  /**
    *  User role
    */
   var userRole: String
@@ -477,6 +470,24 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         get() = prefs.getString(PrefKeys.shopNumber, "") ?: ""
 
 
+  /**
+   *  load board supplier
+   */
+  var isLoadBoardSupplier: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isLoadBoardSupplier, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isLoadBoardSupplier, false)
+
+  /**
+   *  load board client
+   */
+  var isLoadBoardClient: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isLoadBoardClient, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isLoadBoardClient, false)
+
+
+
     /**
    * Clear all preferences
    */
@@ -542,8 +553,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.LoadPostKyc)
             .apply()
-    editor.remove(PrefKeys.AccountSetup)
-            .apply()
     editor.remove(PrefKeys.UserMode)
             .apply()
     editor.remove(PrefKeys.UserRole)
@@ -583,6 +592,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.canViewThirdPartyLoads)
             .apply()
     editor.remove(PrefKeys.ownsTrucks)
+            .apply()
+    editor.remove(PrefKeys.isLoadBoardClient)
+            .apply()
+    editor.remove(PrefKeys.isLoadBoardSupplier)
             .apply()
     editor.commit()
   }
@@ -628,6 +641,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     profileImageUrl = user.profileImageUrl?:""
     canViewThirdPartyLoads = user.canViewThirdPartyLoads?: false
     ownTrucks = user.supplierDetails?.ownsTrucks?: false
+    isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
+    isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
   }
 
 
@@ -686,7 +701,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val DeepLinkArg = "deep_link_argument"
     const val LoadPostKyc = "post_load"
     const val TruckPostKyc = "post_truck"
-    const val AccountSetup = "account_set_up"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"
@@ -704,6 +718,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val profileImageUrl = "profile_image_url"
     const val  canViewThirdPartyLoads = "can_view_third_party_loads"
     const val  ownsTrucks = "owns_trucks"
+    const val  isLoadBoardSupplier = "is_load_board_supplier"
+    const val  isLoadBoardClient = "is_load_board_client"
 
     const val cinNumber = "cin_number"
     const val udyogNumber = "udyog_number"

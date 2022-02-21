@@ -34,6 +34,7 @@ import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.activity_identity_verification.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -60,7 +61,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
 
     val awsPath = "loadboard/iv/"
-  //  val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
+
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,12 +73,12 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         binding.textCin.isChecked=true
         binding.textUdyog.isChecked=false
         binding.textShop.isChecked=false
-//        if(intent?.extras!=null){
-//            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-//                TotalStepsKey)!!)
-//            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                TotalStepsKey)!!)
-//        }
+        if(intent?.extras!=null){
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                TotalStepsKey)!!)
+            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!)
+        }
 
     }
 
@@ -137,7 +138,27 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-              // api integration to be added
+                when {
+                    binding.editCin.length()>0 -> {
+                        userPrefs.cinNumber = viewModel.cinNumber
+                    }
+                    binding.editUdyog.length()>0 -> {
+                        userPrefs.udyogNumber = viewModel.udyogNumber
+                    }
+                    binding.editShop.length()>0 -> {
+                        userPrefs.shopNumber = viewModel.shopNumber
+                    }
+                }
+                //change flow as per config
+                navigationUtils.navigate(identityVerificationIntent(this),true,null)
+//            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                TotalStepsKey)!!,null)
+            }
+        })
+
+        viewModel.verificationDocUploadLiveData.observe(this, Observer {
+            if(it){
+                viewModel.updateUserDetails()
             }
         })
 
@@ -154,17 +175,14 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
 
         binding.btnVerifyIdentity.setOnClickListener {
-           if( binding.editCin.length()>0){
-               userPrefs.cinNumber = viewModel.cinNumber
-           }else if ( binding.editUdyog.length()>0){
-               userPrefs.udyogNumber = viewModel.udyogNumber
-           }else if ( binding.editShop.length()>0){
-               userPrefs.shopNumber = viewModel.shopNumber
+           if(binding.textCin.isChecked &&binding.editCin.length()>0){
+               viewModel.selected = "cin"
+           }else if (binding.textUdyog.isChecked && binding.editUdyog.length()>0){
+               viewModel.selected = "udhyog_aadhaar"
+           }else if (binding.textShop.isChecked&& binding.editShop.length()>0){
+               viewModel.selected = "shop_establishment"
            }
-            //change flow as per config
-            navigationUtils.navigate(identityVerificationIntent(this),true,null)
-//            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                TotalStepsKey)!!,null)
+            sendDocForVerification(uploadArray)
 
         }
 
@@ -267,11 +285,23 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
          binding.uploadDocLay.visibility=View.VISIBLE
          binding.docUploadedLay.visibility=View.GONE
          if(uploadArray.size>0){
-             uploadArray.removeAt(0)
+             uploadArray.clear()
          }
          binding.btnVerifyIdentity.isEnabled =false
      }
 
+    fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+        if(uploadArray.isNotEmpty()){
+            val imageUrls= mutableListOf<String>()
+            val s3url= awsUtils.awsBasePath()
+            for(i in uploadArray){
+                imageUrls.add(s3url+awsPath+i.first)
+            }
+            viewModel.verifyByDoc(imageUrls)
+        }else{
+            uiUtils.showToast("No file selected")
+        }
+    }
 
 
 
@@ -351,12 +381,16 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
                        var docType=""
-                        if(binding.textCin.isChecked){
-                            docType = "Cin_"
-                        }else if (binding.textUdyog.isChecked){
-                            docType = "Udyog_"
-                        }else if (binding.textShop.isChecked){
-                            docType = "Shop_"
+                        when {
+                            binding.textCin.isChecked -> {
+                                docType = "CIN_"
+                            }
+                            binding.textUdyog.isChecked -> {
+                                docType = "Udyog_"
+                            }
+                            binding.textShop.isChecked -> {
+                                docType = "Shop_"
+                            }
                         }
                         this.uploadImageName = docType + System.currentTimeMillis()+"."+imageScopedFile.extension
                         this.localImageName =  docType + System.currentTimeMillis()+"."+imageScopedFile.extension

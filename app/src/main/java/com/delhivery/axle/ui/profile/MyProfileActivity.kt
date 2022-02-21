@@ -60,14 +60,29 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
-        if(userPrefs.userName.isNotEmpty())
-        binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
+        if(userPrefs.companyName.isNotNullOrEmpty()) {
+            binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
+        }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         setVerficationStatus()
 
         binding.logoutLayout.setOnClickListener {
             confirmLogout()
+        }
+
+        binding.startKyc.setOnClickListener {
+            val bundle = Bundle()
+            if(userPrefs.pancard.isEmpty()){
+                bundle.putInt(StepKey, 0)
+            }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+                bundle.putInt(StepKey, 1)
+            }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+                bundle.putInt(StepKey, 1)
+            }else if(userPrefs.businessAddress.isEmpty()){
+                bundle.putInt(StepKey, 2)
+            }
+            navigationUtils.navigateKyc(this,false,bundle)
         }
 
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
@@ -152,21 +167,32 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun setVerficationStatus() {
-        if(userPrefs.verificationStatus.equals("pending")){
-            binding.verifyBadge.visibility = View.GONE
-            binding.kycpendingLayout.visibility = View.VISIBLE
-            binding.kycfailedLayout.visibility = View.GONE
-            binding.kycLayout.visibility = View.GONE
-        }else if(userPrefs.verificationStatus.equals("success")){
+        if((userPrefs.isLoadBoardClient == false || userPrefs.isLoadBoardSupplier == false)) {
             binding.verifyBadge.visibility = View.VISIBLE
             binding.kycpendingLayout.visibility = View.GONE
+            binding.ratingsLayout.visibility = View.GONE
             binding.kycfailedLayout.visibility = View.GONE
             binding.kycLayout.visibility = View.VISIBLE
-        }else if(userPrefs.verificationStatus.equals("failed")){
-            binding.verifyBadge.visibility = View.GONE
-            binding.kycpendingLayout.visibility = View.GONE
-            binding.kycfailedLayout.visibility = View.VISIBLE
-            binding.kycLayout.visibility = View.VISIBLE
+        }else{
+            if (userPrefs.verificationStatus.equals("pending")) {
+                binding.verifyBadge.visibility = View.GONE
+                binding.kycpendingLayout.visibility = View.VISIBLE
+                binding.ratingsLayout.visibility = View.VISIBLE
+                binding.kycfailedLayout.visibility = View.GONE
+                binding.kycLayout.visibility = View.GONE
+            } else if (userPrefs.verificationStatus.equals("success")) {
+                binding.verifyBadge.visibility = View.VISIBLE
+                binding.kycpendingLayout.visibility = View.GONE
+                binding.ratingsLayout.visibility = View.GONE
+                binding.kycfailedLayout.visibility = View.GONE
+                binding.kycLayout.visibility = View.VISIBLE
+            } else if (userPrefs.verificationStatus.equals("failed")) {
+                binding.verifyBadge.visibility = View.GONE
+                binding.kycpendingLayout.visibility = View.GONE
+                binding.ratingsLayout.visibility = View.VISIBLE
+                binding.kycfailedLayout.visibility = View.VISIBLE
+                binding.kycLayout.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -218,20 +244,12 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun downloadLogo() {
-        compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                .onBackground()
-                .subscribe { granted, error ->
-                    if (error == null && granted) {
-                        val file = getFile()
-                        if (file != null) {
-                            viewModel.getDownloadDelegationToken(viewModel.userPrefs.profileImageUrl, file)
-                        } else {
-                            uiUtils.showSnackbar("Can't process image")
-                        }
-                    } else {
-                        uiUtils.showSnackbar(getString(R.string.storage_permission))
-                    }
-                }
+        val file = getFile()
+        if (file != null) {
+            viewModel.getDownloadDelegationToken(viewModel.userPrefs.profileImageUrl, file)
+        } else {
+            uiUtils.showSnackbar("Can't process image")
+        }
     }
 
     private fun getFile(): File? {

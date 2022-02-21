@@ -157,6 +157,12 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
        viewModel.getRequestAadhaarOtp(true)
     }
 
+    override fun setAccountRoleSelection(selected: String) {
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
     override fun onAWSSuccess(
         path: String
     ) {
