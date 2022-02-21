@@ -37,6 +37,7 @@ class GstVerificationViewModel@Inject constructor(
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
 
     var gstDetailData = MutableLiveData<GstDetailItemData>()
+    var docVerificationFailedCount = MutableLiveData<Int>().apply { postValue(0) }
 
     var otpRecieved = MutableLiveData<Boolean>()
 

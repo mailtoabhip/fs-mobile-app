@@ -132,12 +132,19 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
                 }else{
                     uiUtils.hideProgress()
+                    viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
                     resetUploadData()
                     uploadArray =  ArrayList()
                    dialogUtils.showUploadFailDialog(getString(R.string.upload_aadhaar_text),this)
                 }
             }
         )
+        viewModel.docVerificationFailedCount.observe(this, Observer {
+            if(viewModel.docVerificationFailedCount.value==2){
+                viewModel.docVerificationFailedCount.value=0
+                viewModel.updateUserDetails()
+            }
+        })
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
@@ -146,7 +153,6 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             if (it) {
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
-             //   navigationUtils.navigate(HomeActivity::class.java, true)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }
