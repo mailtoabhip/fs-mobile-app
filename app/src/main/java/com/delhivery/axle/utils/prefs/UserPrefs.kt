@@ -486,6 +486,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.isLoadBoardClient, false)
 
+  /**
+   *  identity needed
+   */
+  var identityNeeded: Boolean
+    set(value) = editor.putBoolean(PrefKeys.identityNeeded, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.identityNeeded, false)
 
 
     /**
@@ -597,6 +604,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.isLoadBoardSupplier)
             .apply()
+      editor.remove(PrefKeys.identityNeeded)
+              .apply()
     editor.commit()
   }
 
@@ -720,10 +729,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val  ownsTrucks = "owns_trucks"
     const val  isLoadBoardSupplier = "is_load_board_supplier"
     const val  isLoadBoardClient = "is_load_board_client"
-
     const val cinNumber = "cin_number"
     const val udyogNumber = "udyog_number"
     const val shopNumber = "shop_number"
+    const val identityNeeded = "identity_needed"
   }
 }
 

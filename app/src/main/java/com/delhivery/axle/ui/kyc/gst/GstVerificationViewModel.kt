@@ -49,8 +49,7 @@ class GstVerificationViewModel@Inject constructor(
     /* steps */
     var currentStep = ""
 
-    var gstNumbersLiveData =
-            MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var gstDetailsLiveData = MutableLiveData<GstDetailData>()
 

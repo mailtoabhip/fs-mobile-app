@@ -5,6 +5,12 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
+import com.delhivery.axle.ui.kyc.gst.GstDataItem
+import com.delhivery.axle.ui.kyc.gst.GstItem_TimeOut
+import com.delhivery.axle.ui.kyc.gst.GstProgressItem
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -41,6 +47,8 @@ class PanVerificationViewModel@Inject constructor(
      */
     private var panValidationRegex=  "[A-Z]{5}[0-9]{4}[A-Z]{1}";
 
+    var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
     /**
      * Validate PAN
      */
@@ -73,10 +81,21 @@ class PanVerificationViewModel@Inject constructor(
 
         if (panCardNumber.length == 10 || isValidPan) {
             compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
-                .onBackground()
+                    .flatMap { _Res-> loadboardRepository.gstNumbers(userPrefs.pancard)
+                            .map {
+                                val msg = if (_Res.isNotNullOrEmpty()) {
+                                    _Res
+                                } else {
+                                    "Error getting gst"
+                                }
+                                userPrefs.identityNeeded = it.gstin_numbers.isNullOrEmpty()
+                                Triple(_Res, msg, it)
+                            }
+                    }
+                    .onBackground()
                 .progress()
                 .subscribe { _res, error ->
-                    if (!error) {
+                    if (!error && !_res.second.equals("Error getting gst")) {
                         userUpdateLiveData.postValue(true)
                         userPrefs.pancard= panCardNumber
                     } else{
@@ -84,6 +103,26 @@ class PanVerificationViewModel@Inject constructor(
                         userUpdateLiveData.postValue(false)
                     }
                 }
+        }
+
+    }
+
+    fun updatePanUserDetails() {
+        if (!isConnected) return
+
+        if (panCardNumber.length == 10 || isValidPan) {
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,panNumber = panCardNumber))
+                    .onBackground()
+                    .progress()
+                    .subscribe { _res, error ->
+                        if (!error) {
+                            userUpdateLiveData.postValue(true)
+                            userPrefs.pancard= panCardNumber
+                        } else{
+                            error.handle()
+                            userUpdateLiveData.postValue(false)
+                        }
+                    }
         }
 
     }

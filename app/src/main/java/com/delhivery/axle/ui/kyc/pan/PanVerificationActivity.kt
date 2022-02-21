@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.actionDone
@@ -55,7 +56,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.btnVerifyPan.setOnClickListener {
-            viewModel.updateUserDetails()
+            if(viewModel.panCardNumber.toCharArray().get(3).toLowerCase().equals("p")){
+                viewModel.updatePanUserDetails()
+            }else{
+                viewModel.updateUserDetails()
+            }
+
         }
 
         binding.editPan.apply {
