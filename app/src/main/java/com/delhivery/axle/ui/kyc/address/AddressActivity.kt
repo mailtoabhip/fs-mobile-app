@@ -14,6 +14,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -23,7 +25,6 @@ import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
@@ -37,6 +38,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+
 
 class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface,AddressRVAdapterInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -416,14 +418,20 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 dialog.dismiss()
             }
         })
+        bindingDialog.docRemove.setOnClickListener {
+            resetUploadData()
+            bindingDialog.uploadDocLay.visibility= View.VISIBLE
+            bindingDialog.uploadedDocLay.visibility= View.GONE
+        }
 
        bindingDialog.uploadDocLay.setOnClickListener {
            viewModel.captureAddressProof.postValue(true)
        }
         viewModel.showSubmitedDialog.observe(this, Observer {
             if(it){
+                uiUtils.showToast("showsub")
                 bindingDialog.uploadDocLay.visibility= View.GONE
-                bindingDialog.uploadDocLay.visibility= View.VISIBLE
+                bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
             }
@@ -503,6 +511,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             dialog.dismiss()
         }
 
+        bindingDialog.docRemove.setOnClickListener {
+            resetUploadData()
+            bindingDialog.uploadDocLay.visibility= View.VISIBLE
+            bindingDialog.uploadedDocLay.visibility= View.GONE
+        }
 
 
         bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
@@ -584,7 +597,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         viewModel.showSubmitedDialog.observe(this, Observer {
             if(it){
                 bindingDialog.uploadDocLay.visibility= View.GONE
-                bindingDialog.uploadDocLay.visibility= View.VISIBLE
+                bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
             }
