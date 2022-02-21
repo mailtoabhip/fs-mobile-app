@@ -1,10 +1,13 @@
 package com.delhivery.axle.utils
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
@@ -19,12 +22,14 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.databinding.LayoutDelhiveryProgressBinding
 import com.delhivery.axle.databinding.LayoutFabCardMenuBinding
 import com.delhivery.axle.databinding.LayoutProgressBinding
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryFabCardMenuInterface
 import com.delhivery.axle.ui.custom.DelhiveryFabCardMenuItem
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.extensions.consumeTouch
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar

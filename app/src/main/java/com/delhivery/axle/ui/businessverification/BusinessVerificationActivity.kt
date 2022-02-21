@@ -120,7 +120,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         })
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-                showKycSubmittedDialog()
+               // showKycSubmittedDialog()
+                   navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+           TotalStepsKey)!!,null)
             }
         })
 

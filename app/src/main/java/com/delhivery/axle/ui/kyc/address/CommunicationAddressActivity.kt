@@ -169,10 +169,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
               //  startActivity(gstIntent(this))
-                navigationUtils.navigate(businessVerificationIntent(this),false)
-                finish()
-               /*  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-              TotalStepsKey)!!,null)*/
+               /* navigationUtils.navigate(businessVerificationIntent(this),false)
+                finish()*/
+                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+              TotalStepsKey)!!,null)
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
             }
