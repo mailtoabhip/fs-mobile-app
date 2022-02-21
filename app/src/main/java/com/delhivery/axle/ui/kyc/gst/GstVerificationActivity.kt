@@ -136,8 +136,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             if(viewModel.docVerificationFailedCount.value==2){
                 viewModel.docVerificationFailedCount.value=0
                 viewModel.updateUserDetails()
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
             }
         })
 
