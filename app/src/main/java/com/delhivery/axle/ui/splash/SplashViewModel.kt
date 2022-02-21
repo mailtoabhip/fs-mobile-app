@@ -49,10 +49,6 @@ class SplashViewModel @Inject constructor(
   }
 
   fun getOldUser():Boolean{
-    if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
-      return false
-    }else{
-      return true
-    }
+    return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)
   }
 }

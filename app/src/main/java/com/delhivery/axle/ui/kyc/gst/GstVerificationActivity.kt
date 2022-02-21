@@ -34,6 +34,7 @@ import com.delhivery.axle.databinding.ActivityVerifyGstBinding
 import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 
@@ -154,6 +155,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     }
 
     override fun navigateToBusinessVerification() {
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey, 0)
+        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun handleAction(

@@ -375,9 +375,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       val bundle = Bundle()
       if(userPrefs.pancard.isEmpty()){
         bundle.putInt(StepKey, 0)
-      }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+      }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
         bundle.putInt(StepKey, 1)
-      }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+      }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
         bundle.putInt(StepKey, 1)
        }else if(userPrefs.businessAddress.isEmpty()){
         bundle.putInt(StepKey, 2)

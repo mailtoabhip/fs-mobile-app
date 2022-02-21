@@ -49,8 +49,7 @@ class GstVerificationViewModel@Inject constructor(
     /* steps */
     var currentStep = ""
 
-    var gstNumbersLiveData =
-            MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var gstDetailsLiveData = MutableLiveData<GstDetailData>()
 
@@ -58,6 +57,8 @@ class GstVerificationViewModel@Inject constructor(
     var addressType ="gst"
 
     var gstFetchList = HashSet<String>()
+
+    var docTry = 0
 
     /**
      * Get delegation token for AWS
@@ -127,10 +128,15 @@ class GstVerificationViewModel@Inject constructor(
                     .progress()
                     .subscribe { _res, error ->
                         if (!error) {
+                            docTry = docTry+1;
                             if(_res.isVerified == true){
                                 docVerified.postValue(true)
                             }else{
-                                docVerified.postValue(false)
+                                if(docTry>=2){
+                                  docVerified.postValue(true)
+                                }else{
+                                    docVerified.postValue(false)
+                                }
                             }
                         } else {
                             error.handle()

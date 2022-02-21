@@ -48,7 +48,9 @@ data class UserModel(
         @SerializedName("name") var name: String?,
         @SerializedName("diesel_card_preference") var dieselCardPreferences: String? = "no",
         @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf(),
-        @SerializedName("can_view_third_party_loads") var canViewThirdPartyLoads: Boolean?
+        @SerializedName("can_view_third_party_loads") var canViewThirdPartyLoads: Boolean?,
+        @SerializedName("is_identity_verified") var isIdentityVerified: Boolean?,
+        @SerializedName("is_gsts_by_pan_not_registered") var isGstsByPanNotRegistered: Boolean?
         ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
