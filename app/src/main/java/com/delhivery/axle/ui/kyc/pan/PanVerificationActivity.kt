@@ -56,7 +56,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.btnVerifyPan.setOnClickListener {
-            if(viewModel.panCardNumber.toCharArray().get(3).toLowerCase().equals("p")){
+            if(viewModel.panCardNumber.toCharArray().get(3).toLowerCase().toString().equals("p")){
                 viewModel.updatePanUserDetails()
             }else{
                 viewModel.updateUserDetails()

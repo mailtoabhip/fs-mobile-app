@@ -7,6 +7,7 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import java.util.*
@@ -489,13 +490,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /**
    *  identity needed
    */
-  var identityNeeded: Boolean
-    set(value) = editor.putBoolean(PrefKeys.identityNeeded, value)
+  var isGstsByPanNotRegistered: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isGstsByPanNotRegistered, value)
             .apply()
-    get() = prefs.getBoolean(PrefKeys.identityNeeded, false)
+    get() = prefs.getBoolean(PrefKeys.isGstsByPanNotRegistered, false)
+
+  /**
+   *  identity verified
+   */
+  var isIdentityVerified: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isRcVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isRcVerified, false)
 
 
-    /**
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -604,8 +613,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.isLoadBoardSupplier)
             .apply()
-      editor.remove(PrefKeys.identityNeeded)
+      editor.remove(PrefKeys.isGstsByPanNotRegistered)
               .apply()
+    editor.remove(PrefKeys.isIdentityVerified)
+            .apply()
     editor.commit()
   }
 
@@ -645,6 +656,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isPanVerfied = user.isPanVerified?: false
     isGstVerfied= user.isGstVerified?: false
     isRcVerfied = user.isRcVerified?: false
+    isIdentityVerified = user.isIdentityVerified?: false
+    isGstsByPanNotRegistered = user.isGstsByPanNotRegistered?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
     verificationStatus = user.verificationStatus?: ""
     profileImageUrl = user.profileImageUrl?:""
@@ -732,7 +745,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val cinNumber = "cin_number"
     const val udyogNumber = "udyog_number"
     const val shopNumber = "shop_number"
-    const val identityNeeded = "identity_needed"
+    const val isGstsByPanNotRegistered = "is_gsts_by_pan_not_registered"
+    const val isIdentityVerified = "is_identity_verified"
   }
 }
 

@@ -57,6 +57,7 @@ class IdentityVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
+                    userPrefs.isIdentityVerified = true
                     userUpdateLiveData.postValue(true)
                 } else{
                     error.handle()

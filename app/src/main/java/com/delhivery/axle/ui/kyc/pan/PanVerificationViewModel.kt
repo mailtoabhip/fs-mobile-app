@@ -88,7 +88,7 @@ class PanVerificationViewModel@Inject constructor(
                                 } else {
                                     "Error getting gst"
                                 }
-                                userPrefs.identityNeeded = it.gstin_numbers.isNullOrEmpty()
+                                userPrefs.isGstsByPanNotRegistered = it.gstin_numbers.isNullOrEmpty()
                                 Triple(_Res, msg, it)
                             }
                     }

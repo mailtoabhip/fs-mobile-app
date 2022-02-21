@@ -178,7 +178,7 @@ class NavigationUtils @Inject constructor(
   ) {
     var intent= Intent()
        //should be changed based on user_mode
-        val userMode = "post_truck"
+        val userMode = userPrefs.userMode
         val kycSteps = if(userMode=="post_truck"){
       userPrefs.truckPostKyc.split(",").toTypedArray()
       }else{
@@ -187,10 +187,10 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
             }else{
-              if(userPrefs.identityNeeded) {
+              if(userPrefs.isGstsByPanNotRegistered) {
                 intent = Intent(context, IdentityVerificationActivity::class.java)
               }else{
                 intent = Intent(context, GstVerificationActivity::class.java)
