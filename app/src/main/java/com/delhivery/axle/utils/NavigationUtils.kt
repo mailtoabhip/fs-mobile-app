@@ -177,7 +177,7 @@ class NavigationUtils @Inject constructor(
   ) {
     var intent= Intent()
        //should be changed based on user_mode
-        val userMode = "post_truck"
+        val userMode = userPrefs.userMode
         val kycSteps = if(userMode=="post_truck"){
       userPrefs.truckPostKyc.split(",").toTypedArray()
       }else{
