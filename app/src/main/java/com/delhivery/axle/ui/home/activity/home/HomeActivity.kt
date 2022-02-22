@@ -18,6 +18,7 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
@@ -84,7 +85,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       //do nothing
     }else{
       if(!userPrefs.isUserVerfied){
-        showKycDialog()
+        if(userPrefs.pancard.isNullOrEmpty()) {
+          showKycDialog(0)
+        }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
+          showKycDialog(1)
+        }else  if(!userPrefs.getAddressList().isNullOrEmpty()){
+          showKycDialog(2)
+        }else  if(!userPrefs.userMode.equals("post_load")){
+          if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)
+          showKycDialog(3)
+        }
       }
     }
   }
@@ -366,31 +376,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   /*show KYC dialog*/
-  private fun showKycDialog() {
+  private fun showKycDialog(step: Int) {
     val dialog = Dialog(this)
     val bindingDialog= DialogKycStartBinding.inflate(layoutInflater)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(bindingDialog.root)
 
-
     bindingDialog.buttonStart.setOnClickListener {
       try {
 
         val bundle = Bundle()
-        if (userPrefs.pancard.isNullOrEmpty()) {
-          bundle.putInt(StepKey, 0)
-        } else if (userPrefs.pancard.isNotNullOrEmpty()&&!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3)
-            .toLowerCase().toString().equals("p")
-        ) {
-          bundle.putInt(StepKey, 1)
-        } else if (userPrefs.pancard.isNotNullOrEmpty()&&!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase()
-            .toString().equals("p")
-        ) {
-          bundle.putInt(StepKey, 1)
-        } else if (userPrefs.businessAddress.isNullOrEmpty()) {
-          bundle.putInt(StepKey, 2)
-        }
+        bundle.putInt(StepKey, step)
         navigationUtils.navigateKyc(this, false, bundle)
+
         dialog.dismiss()
       }catch (e:Exception){uiUtils.showSnackbar(e.printStackTrace().toString(),Snackbar.LENGTH_SHORT)
       dialog.dismiss()

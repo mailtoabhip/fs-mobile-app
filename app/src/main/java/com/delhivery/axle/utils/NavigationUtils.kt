@@ -178,10 +178,10 @@ class NavigationUtils @Inject constructor(
     var intent= Intent()
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
-        val kycSteps = if(userMode=="post_truck"){
-      userPrefs.truckPostKyc.split(",").toTypedArray()
+        val kycSteps = if(userMode=="post_load"){
+            userPrefs.loadPostKyc.split(",").toTypedArray()
       }else{
-      userPrefs.loadPostKyc.split(",").toTypedArray()
+            userPrefs.truckPostKyc.split(",").toTypedArray()
        }
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)

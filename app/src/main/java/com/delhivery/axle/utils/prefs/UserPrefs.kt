@@ -495,7 +495,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.isGstsByPanNotRegistered, false)
 
-  /**
+    /**
+     *  trucking document uploaded
+     */
+    var isTruckingDocumentUploaded: Boolean
+        set(value) = editor.putBoolean(PrefKeys.isTruckingDocumentUploaded, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.isTruckingDocumentUploaded, false)
+
+    /**
    *  identity verified
    */
   var isIdentityVerified: Boolean
@@ -623,6 +631,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
       editor.remove(PrefKeys.isCommunicationAddressVerified)
           .apply()
+      editor.remove(PrefKeys.isTruckingDocumentUploaded)
+          .apply()
     editor.commit()
   }
 
@@ -664,6 +674,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isRcVerfied = user.isRcVerified?: false
     isIdentityVerified = user.isIdentityVerified?: false
     isGstsByPanNotRegistered = user.isGstsByPanNotRegistered?: false
+    isTruckingDocumentUploaded = user.isTruckingDocumentUploaded?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
     verificationStatus = user.verificationStatus?: ""
     profileImageUrl = user.profileImageUrl?:""
@@ -754,7 +765,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isGstsByPanNotRegistered = "is_gsts_by_pan_not_registered"
     const val isIdentityVerified = "is_identity_verified"
       const val isCommunicationAddressVerified = "is_communication_address_verified"
-
+      const val isTruckingDocumentUploaded = "is_trucking_document_uploaded"
   }
 }
 

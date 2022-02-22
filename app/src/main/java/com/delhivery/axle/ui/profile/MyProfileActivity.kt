@@ -72,17 +72,33 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         binding.startKyc.setOnClickListener {
-            val bundle = Bundle()
-            if(userPrefs.pancard.isEmpty()){
-                bundle.putInt(StepKey, 0)
-            }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
-                bundle.putInt(StepKey, 1)
-            }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
-                bundle.putInt(StepKey, 1)
-            }else if(userPrefs.businessAddress.isEmpty()){
-                bundle.putInt(StepKey, 2)
+            if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+                //do nothing
+            }else{
+                if(!userPrefs.isUserVerfied){
+                    val bundle = Bundle()
+                    if(userPrefs.pancard.isNullOrEmpty()) {
+                        bundle.putInt(StepKey, 0)
+                        navigationUtils.navigateKyc(this,false,bundle)
+                    }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
+                        bundle.putInt(StepKey, 1)
+                        navigationUtils.navigateKyc(this,false,bundle)
+                    }else  if(!userPrefs.getAddressList().isNullOrEmpty()){
+                        bundle.putInt(StepKey, 2)
+                        navigationUtils.navigateKyc(this,false,bundle)
+                    }else  if(!userPrefs.userMode.equals("post_load")){
+                        if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
+                            bundle.putInt(StepKey, 3)
+                            navigationUtils.navigateKyc(this,false,bundle)
+                        }else{
+                            uiUtils.showSnackbar("KYC Completed, Verification Pending")
+                        }
+                    }else{
+                        uiUtils.showSnackbar("KYC Completed, Verification Pending")
+                    }
+                }
             }
-            navigationUtils.navigateKyc(this,false,bundle)
+
         }
 
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){

@@ -134,7 +134,7 @@
   <string name="action_upload_again">Upload Again</string>
     <string name="action_upload_rc_doc">Upload RC document</string>
     <string name="action_cancel">Cancel</string>
-    <string name="action_start_kyc">Start</string>
+    <string name="action_start_kyc">Start KYC</string>
     <string name="action_update_business_logo">Update business logo</string>
     <string name="action_restart_kyc">Try Again</string>
     <string name="action_add_member">Add Member</string>
