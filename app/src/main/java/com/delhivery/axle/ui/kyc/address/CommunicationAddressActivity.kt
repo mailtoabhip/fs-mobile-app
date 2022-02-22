@@ -128,19 +128,19 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         //check length and enable/disable submit button
-        binding.editCity.lengthAction(1){
+        binding.editCity.lengthAction(3){
             cityFilled = true
             enableSubmitButton()
         }
-        binding.editCity.lengthAction(0){
+        binding.editCity.lengthAction(2){
             cityFilled = false
             enableSubmitButton()
         }
-        binding.editArea.lengthAction(1){
+        binding.editArea.lengthAction(3){
             areaFilled = true
             enableSubmitButton()
         }
-        binding.editArea.lengthAction(0){
+        binding.editArea.lengthAction(2){
             areaFilled = false
             enableSubmitButton()
         }
