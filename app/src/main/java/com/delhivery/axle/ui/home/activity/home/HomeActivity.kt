@@ -56,7 +56,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var dplink_type : String = ""
 
   var fromLink = false
-
+  var vehicleNum =""
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -132,6 +132,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processDeepLink() {
+
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
       when(dplink_type){
@@ -182,7 +183,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         ACTIVATE_TRUCK_REDIRECT ->{
           if(dplink_tid != "") {
-            startActivity(truckIntent(this, fromLinks = true ,vehicleNumber = dplink_tid))
+           // startActivity(truckIntent(this, fromLinks = true ,vehicleNumber = dplink_tid))
+            fromLink = true
+            vehicleNum = dplink_tid
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
           else{
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -243,7 +247,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       ACTIVATE_TRUCK_NOTIFICATION ->{
-        startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
+     //   startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
+        fromLink = true
+        vehicleNum = vehicleNumber
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
       REDIRECT_TO_TRUCKS -> {

@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import com.delhivery.axle.R
+import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
@@ -19,7 +22,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     TitleProvider{
 
     var _title: String = "Home"
-
+    var vehicleNo = ""
+    var fromLink = false
     override val title: CharSequence
         get() = _title
 
@@ -53,6 +57,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         if(activity!!.fromLink){
             binding.tabLayout.getTabAt(1)?.select()
             activity.fromLink = false
+            if(activity.vehicleNum.isNotEmpty())
+            vehicleNo = activity.vehicleNum
+            fromLink = true
         }
     }
 
@@ -66,5 +73,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             }
         }
     }
+
 }
+
+
+
+
+
 

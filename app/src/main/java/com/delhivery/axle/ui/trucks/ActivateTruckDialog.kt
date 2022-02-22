@@ -17,6 +17,7 @@ import com.delhivery.axle.databinding.DialogBottomActivateTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.spinner_item.view.*
 import javax.inject.Inject
 
 class ActivateTruckDialog @Inject constructor(
@@ -26,7 +27,8 @@ class ActivateTruckDialog @Inject constructor(
     private val userPrefs: UserPrefs,
     private val analyticsUtil: AnalyticsUtil,
     private val uiUtils: UiUtils,
-    private val position:Int
+    private val position:Int,
+    private val fromLink:Boolean=false
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomActivateTruckBinding
 
@@ -68,6 +70,14 @@ class ActivateTruckDialog @Inject constructor(
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
 
+        if(fromLink){
+            binding.textCurrentCityActivate.text = data.destinationCity()
+            binding.textUnloadingDestinationActivate.text = data.originCity()
+            val originCityModel = CityModel(data.destinationCity()!!,data.currentCityCode,null,null)
+            val unloadingCityModel = CityModel(data.originCity()!!,data.unloadingDestinationCode,null,null)
+            truckCity =  originCityModel
+            truckDestination = unloadingCityModel
+        }
         //Set Previous Values
         if(data.unloadingDestinationAmount != null){
             sourcedAs = "FTL"

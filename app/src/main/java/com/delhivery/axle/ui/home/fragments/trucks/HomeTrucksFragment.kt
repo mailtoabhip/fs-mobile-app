@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -125,14 +127,20 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
         })
 
+
+
         /** Observe live Data*/
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
-            it?.let { _items -> adapter.operation(_items) }
-        })
+            it?.let { _items -> adapter.operation(_items) }})
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
+            if(!isLoadingData && HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
+                if(adapter.itemsList().size==5)
+                this.handleAction(HomeTrucksRequestAction_ActivateTruck,adapter.itemsList().get(4),4)
+                HomeLoadsTruckFragment._instance.fromLink = false
+            }
         })
 
         viewModel.noCityCodeError.observe(this, Observer {
@@ -237,7 +245,17 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
         })
 
-        refreshData()
+        if(HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
+            viewModel.searchPrefix = HomeLoadsTruckFragment._instance.vehicleNo
+            adapter.clearItems()
+            viewModel.userTrucksData.postValue(null)
+            viewModel.searchFlag = true
+            viewModel.getAllInventories(search = true)
+        }else{
+            HomeLoadsTruckFragment._instance.fromLink = false
+            HomeLoadsTruckFragment._instance.vehicleNo = ""
+            refreshData()
+        }
     }
 
 
@@ -313,7 +331,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()
+                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromLink).show()
                 }
             }
         }
@@ -740,6 +758,5 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     /** Create new frequent truck item*/
     private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
         ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
-
 
 }
