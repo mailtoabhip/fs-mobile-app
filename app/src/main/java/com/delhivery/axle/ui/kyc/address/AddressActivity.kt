@@ -138,8 +138,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 
-            } else {
-                uiUtils.showSnackbar("Error encountered, Please try again.")
             }
         })
 
@@ -495,7 +493,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
 
-
+        var docproofRec=""
         var addressRec= addressDataItem.key()
         var flatRec = addressRec.split(",").get(0)
         bindingDialog.editFlat.setText(flatRec)
@@ -514,7 +512,10 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }else  if(addressDataItem.data.proofDocumentType!!.startsWith("le",true)){
             spinnerIndex=3
         }
-        bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex) })
+        bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
+            docproofRec=bindingDialog.spinnerProof.selectedItem.toString()
+
+        })
 
         bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
@@ -538,6 +539,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
 
         bindingDialog.btnSubmitDetails.setOnClickListener {
+
+            viewModel.documentProofType =  docproofRec
+            viewModel.flatAddress = flatRec
+            viewModel.areaAddress = areaRec
+            viewModel.cityAddress = cityRec
+            viewModel.pincodeAddress =pincodeRec
+            viewModel.addNewAddress(true)
 
             viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
             viewModel.flatAddress = bindingDialog.editFlat.text.toString()

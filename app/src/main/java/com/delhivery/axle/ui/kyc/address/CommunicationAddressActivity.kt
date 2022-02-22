@@ -102,6 +102,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             if(p>0){
                 proofTypeFilled = true
+                showUploadImage()
                     if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
                         binding.textProof.visibility = View.GONE
                         binding.docLayout.visibility = View.GONE
@@ -109,7 +110,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 }else{
                     binding.textProof.visibility = View.VISIBLE
                     binding.docLayout.visibility = View.VISIBLE
-                    docUploadProof= false
+                        docUploadProof=false
                 }
                 enableSubmitButton()
             }else{
@@ -285,8 +286,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     private fun showFileSelected() {
        binding.uploadDocLay.visibility=View.GONE
         binding.docUploadedLay.visibility=View.VISIBLE
+        docUploadProof=true
         binding.docTitle.setText(uploadArray.get(0).first)
         binding.docSize.setText(uploadArray.get(0).second+" KB")
+        enableSubmitButton()
     }
 
 
@@ -368,8 +371,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

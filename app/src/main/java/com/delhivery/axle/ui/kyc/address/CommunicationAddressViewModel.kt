@@ -74,7 +74,7 @@ BaseViewModel() {
     fun addNewAddress(isDeleted:Boolean) {
         if (!isConnected) return
 
-       var address = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
+        var address = flatAddress + "," + areaAddress + "," + cityAddress + "-" + pincodeAddress
 
         documentProofType= when{
                     documentProofType.equals("Visiting Card")->"visiting_card"
@@ -128,6 +128,7 @@ BaseViewModel() {
                         }
 
                     } else {
+                        error.handle()
                         addAddressLiveData.postValue(false)
                     }
                 }
