@@ -57,6 +57,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         binding.btnVerifyPan.setOnClickListener {
                 viewModel.updateUserDetails()
+
         }
 
         binding.editPan.apply {

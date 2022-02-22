@@ -95,7 +95,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        title = ""
+        title = " "
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         /* Address Proof */
@@ -128,27 +128,27 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         //check length and enable/disable submit button
-        binding.editCity.lengthAction(3){
+        binding.editCity.lengthAction(1){
             cityFilled = true
             enableSubmitButton()
         }
-        binding.editCity.lengthAction(2){
+        binding.editCity.lengthAction(0){
             cityFilled = false
             enableSubmitButton()
         }
-        binding.editArea.lengthAction(3){
+        binding.editArea.lengthAction(1){
             areaFilled = true
             enableSubmitButton()
         }
-        binding.editArea.lengthAction(2){
+        binding.editArea.lengthAction(0){
             areaFilled = false
             enableSubmitButton()
         }
-        binding.editFlat.lengthAction(3){
+        binding.editFlat.lengthAction(1){
             flatFilled = true
             enableSubmitButton()
         }
-        binding.editFlat.lengthAction(2){
+        binding.editFlat.lengthAction(0){
             flatFilled = false
             enableSubmitButton()
         }
@@ -169,6 +169,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
        }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
+                    userPrefs.isCommunicationAddressVerified=true
                  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
               TotalStepsKey)!!,null)
             } else {

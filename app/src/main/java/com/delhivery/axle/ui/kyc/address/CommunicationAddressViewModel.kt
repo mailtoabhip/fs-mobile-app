@@ -36,6 +36,7 @@ BaseViewModel() {
     var alternateAddressAdded = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
+    var subAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
     var AddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -82,9 +83,8 @@ BaseViewModel() {
                     documentProofType.equals("Letter Head")->"letterhead"
                     documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
                     documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
-            else -> ""
+            else -> "not_selected"
         }
-       // documentProofType= documentProofType.toLowerCase().replace("\\s".toRegex(),"_")
         addressType= addressType.toLowerCase()
 
             compositeDisposable += loadboardRepository.addAddress(
@@ -148,8 +148,11 @@ BaseViewModel() {
             .subscribe { _res, error ->
                 if (!error) {
                     updateAddressLiveData.postValue(true)
+                    subAddressLiveData.postValue(true)
                 } else {
+                    error.handle()
                     updateAddressLiveData.postValue(false)
+                    subAddressLiveData.postValue(false)
                 }
             }
 

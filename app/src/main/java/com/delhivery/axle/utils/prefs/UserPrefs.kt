@@ -499,10 +499,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    *  identity verified
    */
   var isIdentityVerified: Boolean
-    set(value) = editor.putBoolean(PrefKeys.isRcVerified, value)
+    set(value) = editor.putBoolean(PrefKeys.isIdentityVerified, value)
             .apply()
-    get() = prefs.getBoolean(PrefKeys.isRcVerified, false)
+    get() = prefs.getBoolean(PrefKeys.isIdentityVerified, false)
 
+    var isCommunicationAddressVerified: Boolean
+        set(value) = editor.putBoolean(PrefKeys.isCommunicationAddressVerified, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.isCommunicationAddressVerified, false)
 
   /**
    * Clear all preferences
@@ -617,6 +621,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
               .apply()
     editor.remove(PrefKeys.isIdentityVerified)
             .apply()
+      editor.remove(PrefKeys.isCommunicationAddressVerified)
+          .apply()
     editor.commit()
   }
 
@@ -747,6 +753,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val shopNumber = "shop_number"
     const val isGstsByPanNotRegistered = "is_gsts_by_pan_not_registered"
     const val isIdentityVerified = "is_identity_verified"
+      const val isCommunicationAddressVerified = "is_communication_address_verified"
+
   }
 }
 
