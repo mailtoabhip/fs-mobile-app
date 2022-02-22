@@ -159,10 +159,11 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     override fun onAWSFailure() {
         if(showProg) {
             uiUtils.showSnackbar("Document download failed!")
-        }else {
-            val fullPath = awsURl+path
-            dList.get(fullPath)?.let { viewModel.fetchDetails(it, viewModel.imagePath) }
         }
+//        else {
+//            val fullPath = awsURl+path
+//            dList.get(fullPath)?.let { viewModel.fetchDetails(it, viewModel.imagePath) }
+//        }
         showProg = false
         uiUtils.hideProgress()
     }

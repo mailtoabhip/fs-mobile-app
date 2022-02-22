@@ -30,11 +30,13 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
+import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 
@@ -372,18 +374,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
 
     bindingDialog.buttonStart.setOnClickListener {
-      val bundle = Bundle()
-      if(userPrefs.pancard.isEmpty()){
-        bundle.putInt(StepKey, 0)
-      }else if(!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
-        bundle.putInt(StepKey, 1)
-      }else if(!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p")){
-        bundle.putInt(StepKey, 1)
-       }else if(userPrefs.businessAddress.isEmpty()){
-        bundle.putInt(StepKey, 2)
-      }
-      navigationUtils.navigateKyc(this,false,bundle)
+      try {
+
+        val bundle = Bundle()
+        if (userPrefs.pancard.isNullOrEmpty()) {
+          bundle.putInt(StepKey, 0)
+        } else if (userPrefs.pancard.isNotNullOrEmpty()&&!userPrefs.isAadhaartVerfied && userPrefs.pancard.toCharArray().get(3)
+            .toLowerCase().toString().equals("p")
+        ) {
+          bundle.putInt(StepKey, 1)
+        } else if (userPrefs.pancard.isNotNullOrEmpty()&&!userPrefs.isGstVerfied && !userPrefs.pancard.toCharArray().get(3).toLowerCase()
+            .toString().equals("p")
+        ) {
+          bundle.putInt(StepKey, 1)
+        } else if (userPrefs.businessAddress.isNullOrEmpty()) {
+          bundle.putInt(StepKey, 2)
+        }
+        navigationUtils.navigateKyc(this, false, bundle)
+        dialog.dismiss()
+      }catch (e:Exception){uiUtils.showSnackbar(e.printStackTrace().toString(),Snackbar.LENGTH_SHORT)
       dialog.dismiss()
+      }
     }
 
     bindingDialog.buttonCancel.setOnClickListener {

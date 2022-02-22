@@ -256,8 +256,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         }
        //  call for starting kyc flow with step 0 as per remote config
-         // bundle.putInt(StepKey,0)
-          //navigationUtils.navigateKyc(this,true,bundle)
+         // bundle.putInt(StepKey,1)
+         // navigationUtils.navigateKyc(this,true,bundle)
           navigationUtils.navigate(it.java, true, bundle)
       }
     }

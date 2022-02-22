@@ -12,8 +12,10 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.databinding.DialogVerifyAadharOtpBinding
 import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
+import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterfaceSix
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.addressVerificationIntent
@@ -39,10 +41,10 @@ class ShowVerificationOtpDialog @Inject constructor(
     private val viewModel: AadhaarVerificationViewModel,
     private val aadhaarVerificationActivity: AadhaarVerificationActivity
 
-) : Dialog(context),DelhiveryOTPViewInterface {
+) : Dialog(context),DelhiveryOTPViewInterfaceSix {
 
     /* dialog binding */
-    private lateinit var binding: DialogVerifyGstOtpBinding
+    private lateinit var binding: DialogVerifyAadharOtpBinding
 
     /* dismiss timeout disposable */
     private var timeoutDisposable: Disposable? = null
@@ -52,7 +54,7 @@ class ShowVerificationOtpDialog @Inject constructor(
         super.onCreate(savedInstanceState)
         setCancelable(true)
         /* dialog binding */
-        binding = DialogVerifyGstOtpBinding.inflate(layoutInflater)
+        binding = DialogVerifyAadharOtpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.otpNum.text = phoneNumber
@@ -88,7 +90,7 @@ class ShowVerificationOtpDialog @Inject constructor(
     override fun otpSubmitted(otp: CharArray) {
            binding.buttonShare.isEnabled = true
           binding.buttonShare.setOnClickListener {
-        if(otp.joinToString("").length==4){
+        if(otp.joinToString("").length==6){
             binding.gstotpError.visibility =  View.GONE
             binding.buttonShare.isEnabled = false
             viewModel.verifyRequestAadhaarOtp(otp)

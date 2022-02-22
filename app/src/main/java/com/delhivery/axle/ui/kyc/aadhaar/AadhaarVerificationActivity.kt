@@ -135,7 +135,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                     viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
                     resetUploadData()
                     uploadArray =  ArrayList()
-                   dialogUtils.showUploadFailDialog(getString(R.string.upload_aadhaar_text),this)
+                    if(viewModel.docVerificationFailedCount.value!! <1){
+                        dialogUtils.showUploadFailDialog(getString(R.string.upload_aadhaar_text),this)
+                    }
                 }
             }
         )

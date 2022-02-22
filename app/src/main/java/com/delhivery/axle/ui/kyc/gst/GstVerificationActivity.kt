@@ -125,7 +125,10 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
                 resetUploadData()
                 uploadArray =  ArrayList()
+                viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
+                if(viewModel.docVerificationFailedCount.value!! <1){
                 dialogUtils.showUploadFailDialog(getString(R.string.label_gst_dialog_option2),this)
+                }
             }
         }
         )
