@@ -160,10 +160,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if(showProg) {
             uiUtils.showSnackbar("Document download failed!")
         }
-//        else {
-//            val fullPath = awsURl+path
-//            dList.get(fullPath)?.let { viewModel.fetchDetails(it, viewModel.imagePath) }
-//        }
         showProg = false
         uiUtils.hideProgress()
     }

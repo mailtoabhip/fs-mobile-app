@@ -394,37 +394,37 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
 
         //check length and enable/disable submit button
-        bindingDialog.editCity.lengthAction(1){
+        bindingDialog.editCity.lengthAction(3){
             cityFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editCity.lengthAction(0){
+        bindingDialog.editCity.lengthAction(2){
             cityFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editArea.lengthAction(1){
+        bindingDialog.editArea.lengthAction(3){
             areaFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editArea.lengthAction(0){
+        bindingDialog.editArea.lengthAction(2){
             areaFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
         bindingDialog.editFlat.lengthAction(1){
             flatFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
         bindingDialog.editFlat.lengthAction(0){
             flatFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
         bindingDialog.editPincode.lengthAction(6){
             pincodeFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
         bindingDialog.editPincode.lengthAction(5){
             pincodeFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
         }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
@@ -438,7 +438,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         bindingDialog.docRemove.setOnClickListener {
             resetUploadData()
             docUploadProof=false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
             bindingDialog.uploadDocLay.visibility= View.VISIBLE
             bindingDialog.uploadedDocLay.visibility= View.GONE
         }
@@ -451,7 +451,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 bindingDialog.uploadDocLay.visibility= View.GONE
                 bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 docUploadProof=true
-                bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+                enableAddAddressDialogButton(bindingDialog)
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
             }
@@ -462,6 +462,10 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+    fun enableAddAddressDialogButton(bindingDialog:DialogAddAlternateAddressBinding){
+        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+
     }
 
 
@@ -495,7 +499,10 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+    fun enableEditAddressDialogButton(bindingDialog:DialogEditAlternateAddressBinding){
+        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
 
+    }
 
 
 
@@ -518,13 +525,15 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         var pincodeRec = citynPinRec.split("-").get(1)
         bindingDialog.editPincode.setText(pincodeRec)
         var spinnerIndex=0
-        if(addressDataItem.data.proofDocumentType!!.startsWith("v",true)){
-            spinnerIndex=1
-        }else  if(addressDataItem.data.proofDocumentType!!.startsWith("lr",true)){
-            spinnerIndex=2
-        }else  if(addressDataItem.data.proofDocumentType!!.startsWith("le",true)){
-            spinnerIndex=3
+        spinnerIndex= when{
+            addressDataItem.data.proofDocumentType!!.startsWith("V",true)->1
+            addressDataItem.data.proofDocumentType!!.startsWith("lr",true)->2
+            addressDataItem.data.proofDocumentType!!.startsWith("le",true)->3
+            addressDataItem.data.proofDocumentType!!.startsWith("ud",true)->4
+            addressDataItem.data.proofDocumentType!!.startsWith("sh",true)->5
+            else -> 0
         }
+
         bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
             docproofRec=bindingDialog.spinnerProof.selectedItem.toString()
 
@@ -539,7 +548,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             bindingDialog.uploadDocLay.visibility= View.VISIBLE
             bindingDialog.uploadedDocLay.visibility= View.GONE
             docUploadProof=false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
 
 
@@ -581,37 +590,37 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
 
         //check length and enable/disable submit button
-        bindingDialog.editCity.lengthAction(1){
+        bindingDialog.editCity.lengthAction(3){
             cityFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editCity.lengthAction(0){
+        bindingDialog.editCity.lengthAction(2){
             cityFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editArea.lengthAction(1){
+        bindingDialog.editArea.lengthAction(3){
             areaFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editArea.lengthAction(0){
+        bindingDialog.editArea.lengthAction(2){
             areaFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
         bindingDialog.editFlat.lengthAction(1){
             flatFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
         bindingDialog.editFlat.lengthAction(0){
             flatFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
         bindingDialog.editPincode.lengthAction(6){
             pincodeFilled = true
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
         bindingDialog.editPincode.lengthAction(5){
             pincodeFilled = false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+            enableEditAddressDialogButton(bindingDialog)
         }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
@@ -630,7 +639,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 bindingDialog.uploadDocLay.visibility= View.GONE
                 bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 docUploadProof=true
-                bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+                enableEditAddressDialogButton(bindingDialog)
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
             }
