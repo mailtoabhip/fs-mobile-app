@@ -173,7 +173,7 @@ class NetworkModule {
   fun providePaymentService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.PaymentService).create(
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.PayableService).create(
       PaymentService::class.java
   )
 
