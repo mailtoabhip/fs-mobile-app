@@ -174,84 +174,85 @@
                         android:textStyle="bold"
                         android:text="@string/address_proof_attachment"
                         />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/upload_doc_lay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintStart_toStartOf="parent">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/upload_icon"
+                            android:layout_width="@dimen/size_16dp"
+                            android:layout_height="@dimen/size_20dp"
+                            app:srcCompat="@drawable/ic_upload"
+                            android:layout_marginStart="@dimen/size_2dp"
+                            bind:layout_constraintTop_toTopOf="parent"
+                            bind:layout_constraintLeft_toLeftOf="parent"/>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            bind:layout_constraintTop_toTopOf="parent"
+                            android:textSize="@dimen/text_16sp"
+                            android:textColor="@color/colorAccent"
+                            android:textStyle="bold"
+                            app:layout_constraintLeft_toRightOf="@+id/upload_icon"
+                            android:text="@string/upload_document"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_16dp">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/upload_doc_lay"
-                            android:layout_width="match_parent"
+                        android:id="@+id/uploaded_doc_lay"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        app:layout_constraintTop_toBottomOf="@+id/upload_doc_lay"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintStart_toStartOf="parent">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/doc_icon"
+                            android:layout_width="@dimen/size_48dp"
+                            android:layout_height="@dimen/size_48dp"
+                            bind:srcCompat="@drawable/image_placeholder"
+                            app:srcCompat="@drawable/image_placeholder"
+                            android:layout_marginStart="@dimen/size_2dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/doc_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="visible"
-                            bind:layout_constraintTop_toTopOf="parent"
-                            bind:layout_constraintStart_toStartOf="parent">
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/upload_icon"
-                                android:layout_width="@dimen/size_16dp"
-                                android:layout_height="@dimen/size_20dp"
-                                app:srcCompat="@drawable/ic_upload"
-                                android:layout_marginStart="@dimen/size_2dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                bind:layout_constraintLeft_toLeftOf="parent"/>
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                android:textSize="@dimen/text_16sp"
-                                android:textColor="@color/colorAccent"
-                                android:textStyle="bold"
-                                app:layout_constraintLeft_toRightOf="@+id/upload_icon"
-                                android:text="@string/upload_document"/>
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
+                            android:width="@dimen/size_270dp"
+                            android:lines="2"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:textSize="@dimen/text_16sp"
+                            app:layout_constraintStart_toEndOf="@+id/doc_icon"
+                            app:layout_constraintEnd_toStartOf="@+id/doc_remove"
+                            android:text="IMG_344_98899"/>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/doc_size"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/uploaded_doc_lay"
-                            android:visibility="gone"
-                            bind:layout_constraintTop_toTopOf="parent"
-                            bind:layout_constraintStart_toStartOf="parent">
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/doc_icon"
-                                android:layout_width="@dimen/size_48dp"
-                                android:layout_height="@dimen/size_48dp"
-                                bind:srcCompat="@drawable/image_placeholder"
-                                android:layout_marginStart="@dimen/size_2dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                bind:layout_constraintLeft_toLeftOf="parent"
-                                bind:layout_constraintBottom_toBottomOf="parent" />
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/doc_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                android:textSize="@dimen/text_20sp"
-                                bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
-                                android:text="IMG_344_98899"/>
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/doc_size"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
-                                bind:layout_constraintTop_toBottomOf="@+id/doc_title"
-                                android:textSize="@dimen/text_16sp"
-                                android:textColor="@color/color_hint"
-                                bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
-                                android:text="233kb"/>
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/doc_remove"
-                                android:layout_width="@dimen/size_20dp"
-                                android:layout_height="@dimen/size_20dp"
-                                bind:srcCompat="@drawable/ic_remove"
-                                android:layout_marginStart="@dimen/size_2dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                bind:layout_constraintBottom_toBottomOf="parent"
-                                bind:layout_constraintRight_toRightOf="parent"/>
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                            android:layout_marginStart="@dimen/size_16dp"
+                            app:layout_constraintTop_toBottomOf="@+id/doc_title"
+                            android:textSize="@dimen/text_12sp"
+                            android:textColor="@color/color_hint"
+                            app:layout_constraintLeft_toRightOf="@+id/doc_icon"
+                            android:text="233kb"/>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/doc_remove"
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            app:srcCompat="@drawable/ic_remove"
+                            android:layout_marginStart="@dimen/size_2dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

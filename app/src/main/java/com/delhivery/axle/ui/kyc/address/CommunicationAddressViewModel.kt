@@ -36,6 +36,7 @@ BaseViewModel() {
     var alternateAddressAdded = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
+    var subAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
     var AddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -74,10 +75,16 @@ BaseViewModel() {
     fun addNewAddress(isDeleted:Boolean) {
         if (!isConnected) return
 
-       var address = flatAddress +","+areaAddress+","+cityAddress+"-"+pincodeAddress
+        var address = flatAddress + "," + areaAddress + "," + cityAddress + "-" + pincodeAddress
 
-        documentProofType=documentProofType.replace("\\s".toRegex(),"_")
-        documentProofType=documentProofType.toLowerCase()
+        documentProofType= when{
+                    documentProofType.equals("Visiting Card")->"visiting_card"
+                    documentProofType.equals("LR Copy")->"lr_copy"
+                    documentProofType.equals("Letter Head")->"letterhead"
+                    documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
+                    documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
+            else -> "not_selected"
+        }
         addressType= addressType.toLowerCase()
 
             compositeDisposable += loadboardRepository.addAddress(
@@ -121,6 +128,7 @@ BaseViewModel() {
                         }
 
                     } else {
+                        error.handle()
                         addAddressLiveData.postValue(false)
                     }
                 }
@@ -140,8 +148,11 @@ BaseViewModel() {
             .subscribe { _res, error ->
                 if (!error) {
                     updateAddressLiveData.postValue(true)
+                    subAddressLiveData.postValue(true)
                 } else {
+                    error.handle()
                     updateAddressLiveData.postValue(false)
+                    subAddressLiveData.postValue(false)
                 }
             }
 

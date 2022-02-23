@@ -1,9 +1,15 @@
 package com.delhivery.axle.utils
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
+import android.view.ViewGroup
+import android.view.Window
 import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
@@ -13,11 +19,14 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+import android.view.LayoutInflater
+import com.delhivery.axle.ui.kyc.address.AddressActivity
 
 
 /**
@@ -169,21 +178,32 @@ class NavigationUtils @Inject constructor(
     var intent= Intent()
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
-        val kycSteps = if(userMode=="post_truck"){
-      userPrefs.truckPostKyc.split(",").toTypedArray()
+        val kycSteps = if(userMode=="post_load"){
+            userPrefs.loadPostKyc.split(",").toTypedArray()
       }else{
-      userPrefs.loadPostKyc.split(",").toTypedArray()
+            userPrefs.truckPostKyc.split(",").toTypedArray()
        }
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().equals("p")){
+            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
+            }else if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
+                intent = Intent(context, GstVerificationActivity::class.java)
             }else{
-             intent= Intent(context, GstVerificationActivity::class.java)
+                if(userPrefs.isGstsByPanNotRegistered) {
+                    intent = Intent(context, IdentityVerificationActivity::class.java)
+                }else{
+                    intent = Intent(context, GstVerificationActivity::class.java)
+                }
             }
         }else  if(kycSteps.get(extras.getInt(StepKey))=="address"){
-          intent= Intent(context, CommunicationAddressActivity::class.java)
+           if(userPrefs.isGstsByPanNotRegistered){
+               intent= Intent(context, CommunicationAddressActivity::class.java)
+           }else{
+               intent= Intent(context, AddressActivity::class.java)
+           }
+
         }else  if(kycSteps.get(extras.getInt(StepKey))=="business"){
           intent= Intent(context, BusinessVerificationActivity::class.java)
         }
@@ -208,8 +228,8 @@ class NavigationUtils @Inject constructor(
       }
       this.navigateKyc(context, false, bundle)
     }else{
-      val intent = Intent(context, HomeActivity::class.java)
-      this.navigate(intent, true)
+        showKycSubmittedDialog()
+
     }
   }
 
@@ -221,6 +241,18 @@ class NavigationUtils @Inject constructor(
      return "Step $currentStep of $totalStep"
    }
 
+    fun showKycSubmittedDialog() {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogKycSubmittedBinding.inflate(activity.layoutInflater)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        dialog.show()
+        Handler().postDelayed({
+            dialog.dismiss()
+            this.navigate(HomeActivity::class.java, true)
+        }, 2000)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
 }
 const val StepKey = "step"
 const val CurrentStepKey = "current_step"

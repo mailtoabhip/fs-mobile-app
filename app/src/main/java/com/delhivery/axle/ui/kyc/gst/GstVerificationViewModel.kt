@@ -50,8 +50,7 @@ class GstVerificationViewModel@Inject constructor(
     /* steps */
     var currentStep = ""
 
-    var gstNumbersLiveData =
-            MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var gstDetailsLiveData = MutableLiveData<GstDetailData>()
 
@@ -60,7 +59,7 @@ class GstVerificationViewModel@Inject constructor(
 
     var gstFetchList = HashSet<String>()
 
-    /**
+   /**
      * Get delegation token for AWS
      */
     fun getDelegationToken(file: File) {

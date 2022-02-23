@@ -36,7 +36,7 @@ class LoadboardRepository @Inject constructor(
 
     fun updateCommunicationAddress(businessAddress:String,isSameAsGst:Boolean,phoneNumber: String) = loadboardService.updateNewAddress(
         UpdateAddressVerificationRequest(phoneNumber,businessAddress,isSameAsGst)
-    ).convertResponse()
+    ).convertMessageResponse()
 
 
     /**

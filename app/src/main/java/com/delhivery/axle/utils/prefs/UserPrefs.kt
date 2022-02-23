@@ -7,6 +7,7 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import java.util.*
@@ -447,6 +448,28 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.ownsTrucks, value)
             .apply()
     get() = prefs.getBoolean(PrefKeys.ownsTrucks, false)
+    /**
+     * cin number
+     */
+    var cinNumber: String
+        set(value) = editor.putString(PrefKeys.cinNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.cinNumber, "") ?: ""
+    /**
+     * udyog number
+     */
+    var udyogNumber: String
+        set(value) = editor.putString(PrefKeys.udyogNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.udyogNumber, "") ?: ""
+    /**
+     * shop number
+     */
+    var shopNumber: String
+        set(value) = editor.putString(PrefKeys.shopNumber,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.shopNumber, "") ?: ""
+
 
   /**
    *  load board supplier
@@ -464,6 +487,34 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.isLoadBoardClient, false)
 
+  /**
+   *  identity needed
+   */
+  var isGstsByPanNotRegistered: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isGstsByPanNotRegistered, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isGstsByPanNotRegistered, false)
+
+    /**
+     *  trucking document uploaded
+     */
+    var isTruckingDocumentUploaded: Boolean
+        set(value) = editor.putBoolean(PrefKeys.isTruckingDocumentUploaded, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.isTruckingDocumentUploaded, false)
+
+    /**
+   *  identity verified
+   */
+  var isIdentityVerified: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isIdentityVerified, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isIdentityVerified, false)
+
+    var isCommunicationAddressVerified: Boolean
+        set(value) = editor.putBoolean(PrefKeys.isCommunicationAddressVerified, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.isCommunicationAddressVerified, false)
 
   /**
    * Clear all preferences
@@ -556,6 +607,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.rcNumber)
             .apply()
+      editor.remove(PrefKeys.cinNumber)
+          .apply()
+      editor.remove(PrefKeys.udyogNumber)
+          .apply()
+      editor.remove(PrefKeys.shopNumber)
+          .apply()
     editor.remove(PrefKeys.verificationStatus)
             .apply()
     editor.remove(PrefKeys.profileImageUrl)
@@ -568,6 +625,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.isLoadBoardSupplier)
             .apply()
+      editor.remove(PrefKeys.isGstsByPanNotRegistered)
+              .apply()
+    editor.remove(PrefKeys.isIdentityVerified)
+            .apply()
+      editor.remove(PrefKeys.isCommunicationAddressVerified)
+          .apply()
+      editor.remove(PrefKeys.isTruckingDocumentUploaded)
+          .apply()
     editor.commit()
   }
 
@@ -607,6 +672,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isPanVerfied = user.isPanVerified?: false
     isGstVerfied= user.isGstVerified?: false
     isRcVerfied = user.isRcVerified?: false
+    isIdentityVerified = user.isIdentityVerified?: false
+    isGstsByPanNotRegistered = user.isGstsByPanNotRegistered?: false
+    isTruckingDocumentUploaded = user.isTruckingDocumentUploaded?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
     verificationStatus = user.verificationStatus?: ""
     profileImageUrl = user.profileImageUrl?:""
@@ -691,6 +759,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val  ownsTrucks = "owns_trucks"
     const val  isLoadBoardSupplier = "is_load_board_supplier"
     const val  isLoadBoardClient = "is_load_board_client"
+    const val cinNumber = "cin_number"
+    const val udyogNumber = "udyog_number"
+    const val shopNumber = "shop_number"
+    const val isGstsByPanNotRegistered = "is_gsts_by_pan_not_registered"
+    const val isIdentityVerified = "is_identity_verified"
+      const val isCommunicationAddressVerified = "is_communication_address_verified"
+      const val isTruckingDocumentUploaded = "is_trucking_document_uploaded"
   }
 }
 

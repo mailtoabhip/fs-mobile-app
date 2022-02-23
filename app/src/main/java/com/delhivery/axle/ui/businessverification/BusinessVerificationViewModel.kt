@@ -112,6 +112,7 @@ class BusinessVerificationViewModel@Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
+                        userPrefs.isRcVerfied=true
                         userUpdateLiveData.postValue(true)
                     } else{
                         error.handle()
@@ -129,6 +130,7 @@ class BusinessVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
+                    userPrefs.isRcVerfied=true
                     userUpdateLiveData.postValue(true)
                 } else{
                     error.handle()

@@ -85,7 +85,7 @@ interface LoadBoardService {
     @POST("/submit_address")
     fun updateNewAddress(
         @Body request: UpdateAddressVerificationRequest
-    ): Single<BaseResponse<Any>>
+    ): Single<BaseMessageResponse>
 
     /**
      * patch user details

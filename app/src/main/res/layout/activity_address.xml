@@ -48,7 +48,7 @@
                 android:lineSpacingExtra="@dimen/text_6sp"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/progress"
-                android:text="@string/sub_label_step3_4"
+                android:text="@{viewModel.currentStep}"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
                 />

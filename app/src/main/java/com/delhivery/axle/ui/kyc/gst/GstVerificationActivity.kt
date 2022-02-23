@@ -34,6 +34,7 @@ import com.delhivery.axle.databinding.ActivityVerifyGstBinding
 import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 
@@ -124,7 +125,10 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
                 resetUploadData()
                 uploadArray =  ArrayList()
+                viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
+                if(viewModel.docVerificationFailedCount.value!! <1){
                 dialogUtils.showUploadFailDialog(getString(R.string.label_gst_dialog_option2),this)
+                }
             }
         }
         )
@@ -162,6 +166,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     }
 
     override fun navigateToBusinessVerification() {
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey, 0)
+        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun handleAction(

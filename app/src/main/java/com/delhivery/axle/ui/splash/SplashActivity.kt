@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
@@ -254,9 +255,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_TRANSACTION_IDS, transactions)
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         }
-        /* call for starting kyc flow with step 0 as per remote config
-          bundle.putInt(StepKey,0)
-          navigationUtils.navigateKyc(this,true,bundle)*/
           navigationUtils.navigate(it.java, true, bundle)
       }
     }

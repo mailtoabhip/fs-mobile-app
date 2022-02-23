@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.kyc.address
+package com.delhivery.axle.ui.kyc.identityverification
 
 import android.Manifest
 import android.app.Activity
@@ -6,55 +6,48 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
-import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
+import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
+import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.utils.CurrentStepKey
-import com.delhivery.axle.utils.StepKey
-import com.delhivery.axle.utils.TotalStepsKey
-import com.delhivery.axle.utils.extensions.errorVibrate
-import com.delhivery.axle.utils.extensions.setup
-import kotlinx.android.synthetic.main.activity_verify_pan.*
-import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.*
+import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.activity_identity_verification.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface {
-    init {
-        StatusBarColor = Color.parseColor("#ededff")
-    }
+class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBinding, IdentityVerificationViewModel>(),
+    AWSUtils.AWSProgressInterface{
+
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
-    val awsPath = "loadboard/address/"
-    val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
-    var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
-
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
@@ -67,132 +60,134 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     lateinit var userPrefs: UserPrefs
 
 
-    var flatFilled = false
-    var areaFilled = false
-    var cityFilled = false
-    var pincodeFilled = false
-    var proofTypeFilled = false
-    var docUploadProof = true
+    val awsPath = "loadboard/iv/"
 
-
-    override fun getViewModelClass() = CommunicationAddressViewModel::class.java
-
-    override fun layoutId() = R.layout.activity_communication_address
-
-    override fun requireConnection() = false
-
+    var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.editCinLayout.visibility= View.VISIBLE
+        binding.layoutCin.isSelected=true
+        binding.layoutUdyog.isSelected=false
+        binding.layoutShop.isSelected=false
+        binding.textCin.isChecked=true
+        binding.textUdyog.isChecked=false
+        binding.textShop.isChecked=false
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
         }
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+
         setSupportActionBar(binding.toolbar)
-        title = " "
+        title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        /* Address Proof */
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
-                showUploadImage()
-                    if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
-                        binding.textProof.visibility = View.GONE
-                        binding.docLayout.visibility = View.GONE
-                        docUploadProof= true
-                }else{
-                    binding.textProof.visibility = View.VISIBLE
-                    binding.docLayout.visibility = View.VISIBLE
-                        docUploadProof=false
-                }
-                enableSubmitButton()
-            }else{
-                proofTypeFilled =false
-                enableSubmitButton()
-            }
+        binding.textCin.setOnClickListener{
+            binding.editCinLayout.visibility= View.VISIBLE
+            binding.editUdyogLayout.visibility= View.GONE
+            binding.editShopLayout.visibility= View.GONE
+            binding.layoutCin.isSelected=true
+            binding.layoutUdyog.isSelected=false
+            binding.layoutShop.isSelected=false
+            binding.textCin.isChecked=true
+            binding.textUdyog.isChecked=false
+            binding.textShop.isChecked=false
+            binding.editUdyog.text?.clear()
+            binding.editShop.text?.clear()
+            showUploadImage()
         }
-
-        binding.btnSubmitDetails.setOnClickListener {
-            if(pincodeFilled){
-              viewModel.documentProofType =  binding.spinnerProof.selectedItem.toString()
-            }
-            viewModel.addNewAddress(false)
-
+        binding.textUdyog.setOnClickListener{
+            binding.editCinLayout.visibility= View.GONE
+            binding.editUdyogLayout.visibility= View.VISIBLE
+            binding.editShopLayout.visibility= View.GONE
+            binding.layoutCin.isSelected=false
+            binding.layoutUdyog.isSelected=true
+            binding.layoutShop.isSelected=false
+            binding.textCin.isChecked=false
+            binding.textUdyog.isChecked=true
+            binding.textShop.isChecked=false
+            binding.editCin.text?.clear()
+            binding.editShop.text?.clear()
+            showUploadImage()
         }
-
-        //check length and enable/disable submit button
-        binding.editCity.lengthAction(3){
-            cityFilled = true
-            enableSubmitButton()
+        binding.textShop.setOnClickListener{
+            binding.editCinLayout.visibility= View.GONE
+            binding.editUdyogLayout.visibility= View.GONE
+            binding.editShopLayout.visibility= View.VISIBLE
+            binding.layoutCin.isSelected=false
+            binding.layoutUdyog.isSelected=false
+            binding.layoutShop.isSelected=true
+            binding.textCin.isChecked=false
+            binding.textUdyog.isChecked=false
+            binding.textShop.isChecked=true
+            binding.editCin.text?.clear()
+            binding.editUdyog.text?.clear()
+            showUploadImage()
         }
-        binding.editCity.lengthAction(2){
-            cityFilled = false
-            enableSubmitButton()
-        }
-        binding.editArea.lengthAction(3){
-            areaFilled = true
-            enableSubmitButton()
-        }
-        binding.editArea.lengthAction(2){
-            areaFilled = false
-            enableSubmitButton()
-        }
-        binding.editFlat.lengthAction(1){
-            flatFilled = true
-            enableSubmitButton()
-        }
-        binding.editFlat.lengthAction(0){
-            flatFilled = false
-            enableSubmitButton()
-        }
-        binding.editPincode.lengthAction(6){
-            pincodeFilled = true
-            enableSubmitButton()
-        }
-        binding.editPincode.lengthAction(5){
-            pincodeFilled = false
-            enableSubmitButton()
-        }
-        binding.uploadDocLay.setOnClickListener {
-            val imageName = "Add_" + System.currentTimeMillis()+".jpg"
-            captureImage(imageName, imageName)
-        }
-       binding.docRemove.setOnClickListener {
-           showUploadImage()
-       }
-        viewModel.addAddressLiveData.observe(this, Observer {
-            if (it) {
-                    userPrefs.isCommunicationAddressVerified=true
-                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-              TotalStepsKey)!!,null)
-            } else {
-                uiUtils.showSnackbar("Error encountered, Please try again.")
-            }
-        })
 
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
- }
-    private fun showUploadImage() {
-        binding.uploadDocLay.visibility=View.VISIBLE
-        binding.docUploadedLay.visibility=View.GONE
-        if(uploadArray.size>0){
-            uploadArray.clear()
+
+        viewModel.userUpdateLiveData.observe(this, Observer {
+            if(it){
+                when {
+                    binding.editCin.length()>0 -> {
+                        userPrefs.cinNumber = viewModel.cinNumber
+                    }
+                    binding.editUdyog.length()>0 -> {
+                        userPrefs.udyogNumber = viewModel.udyogNumber
+                    }
+                    binding.editShop.length()>0 -> {
+                        userPrefs.shopNumber = viewModel.shopNumber
+                    }
+                }
+                //change flow as per config
+       //         navigationUtils.navigate(identityVerificationIntent(this),true,null)
+            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                TotalStepsKey)!!,null)
+            }
+        })
+
+        viewModel.verificationDocUploadLiveData.observe(this, Observer {
+            if(it){
+                viewModel.updateUserDetails()
+            }
+        })
+
+        binding.docRemove.setOnClickListener {
+            showUploadImage()
         }
-        docUploadProof= false
-        enableSubmitButton()
+        binding.uploadDoc.setOnClickListener{
+            if((binding.textCin.isChecked && binding.editCin.length()>0)||(binding.textUdyog.isChecked&& binding.editUdyog.length()>0)||(binding.textShop.isChecked&& binding.editShop.length()>0)){
+                val imageName = "doc_" + System.currentTimeMillis()+".jpg"
+                captureImage(imageName, imageName)
+            }else{
+                uiUtils.showToast("Please provide details first")
+            }
+        }
+
+        binding.btnVerifyIdentity.setOnClickListener {
+           if(binding.textCin.isChecked &&binding.editCin.length()>0){
+               viewModel.selected = "cin"
+           }else if (binding.textUdyog.isChecked && binding.editUdyog.length()>0){
+               viewModel.selected = "udhyog_aadhaar"
+           }else if (binding.textShop.isChecked&& binding.editShop.length()>0){
+               viewModel.selected = "shop_establishment"
+           }
+            sendDocForVerification(uploadArray)
+
+        }
+
     }
-    private fun enableSubmitButton(){
-        binding.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
-    }
+
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
@@ -208,13 +203,25 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     if (isCamera) {
                         dispatchTakePictureIntent()
                     } else {
-                        dispatchGalleryIntent()
+                        dispatchFileIntent()
                     }
                 } else {
                     uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
                 }
             }
 
+    }
+    private fun dispatchFileIntent() {
+        val intent = Intent()
+        intent.type = "*/*"
+        val mimetypes = arrayOf("image/*", "application/pdf")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(
+            intent,
+            REQCODE_FILE_ATTACHMENTS
+        )
     }
 
     private fun dispatchTakePictureIntent() {
@@ -238,21 +245,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         return File.createTempFile(localImageName, ".jpg", storageDir)
     }
 
-    private fun dispatchGalleryIntent() {
-
-        val intent = Intent()
-        intent.type = "*/*"
-        val mimetypes = arrayOf("image/*", "application/pdf")
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
-        intent.action = Intent.ACTION_GET_CONTENT
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        startActivityForResult(
-            intent,
-            REQCODE_FILE_ATTACHMENTS
-        )
-    }
-
-
     private fun uploadImage(
         delegationToken: DelegationToken,
         file: File
@@ -269,12 +261,12 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         this.uploadImageName = uploadImageName
         this.localImageName = localImageName
 
-        val items = arrayOf<CharSequence>("Take Photo", "Choose from file", "Cancel")
+        val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = AlertDialog.Builder(this)
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)
-                items[item] == "Choose from file" -> requestImageCapturePermissions(false)
+                items[item] == "Choose a file" -> requestImageCapturePermissions(false)
                 items[item] == "Cancel" -> dialog.dismiss()
             }
         }
@@ -282,14 +274,34 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     }
 
     private fun showFileSelected() {
-       binding.uploadDocLay.visibility=View.GONE
+        binding.uploadDocLay.visibility=View.GONE
         binding.docUploadedLay.visibility=View.VISIBLE
-        docUploadProof=true
         binding.docTitle.setText(uploadArray.get(0).first)
         binding.docSize.setText(uploadArray.get(0).second+" KB")
-        enableSubmitButton()
+        binding.btnVerifyIdentity.isEnabled =true
     }
 
+     private fun showUploadImage() {
+         binding.uploadDocLay.visibility=View.VISIBLE
+         binding.docUploadedLay.visibility=View.GONE
+         if(uploadArray.size>0){
+             uploadArray.clear()
+         }
+         binding.btnVerifyIdentity.isEnabled =false
+     }
+
+    fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+        if(uploadArray.isNotEmpty()){
+            val imageUrls= mutableListOf<String>()
+            val s3url= awsUtils.awsBasePath()
+            for(i in uploadArray){
+                imageUrls.add(s3url+awsPath+i.first)
+            }
+            viewModel.verifyByDoc(imageUrls)
+        }else{
+            uiUtils.showToast("No file selected")
+        }
+    }
 
 
 
@@ -307,11 +319,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     }
 
 
-        override fun onAWSSuccess(
+    override fun onAWSSuccess(
         path: String
     ) {
         uiUtils.hideProgress()
-        viewModel.documentProofUrl.add(path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
@@ -369,8 +380,20 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        this.localImageName =  "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                       var docType=""
+                        when {
+                            binding.textCin.isChecked -> {
+                                docType = "CIN_"
+                            }
+                            binding.textUdyog.isChecked -> {
+                                docType = "Udyog_"
+                            }
+                            binding.textShop.isChecked -> {
+                                docType = "Shop_"
+                            }
+                        }
+                        this.uploadImageName = docType + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  docType + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
@@ -390,12 +413,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                 }
             }
-        }
-    }
+        }}
 
+    override fun getViewModelClass()= IdentityVerificationViewModel::class.java
 
-    fun businessVerificationIntent(
+    override fun layoutId()= R.layout.activity_identity_verification
+
+    override fun requireConnection()= false
+
+    private fun identityVerificationIntent(
         context: Context
-    ) = Intent(context, BusinessVerificationActivity::class.java).apply {
+    ) = Intent(context, CommunicationAddressActivity::class.java).apply {
     }
 }
+

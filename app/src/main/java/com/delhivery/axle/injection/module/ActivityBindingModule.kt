@@ -26,6 +26,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
@@ -259,6 +260,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsMyProfileActivityModule::class])
   internal abstract fun binMyProfileActivity(): MyProfileActivity
+
+  /* Account Action page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsIdentityVerificationActivityModule::class])
+  internal abstract fun bindIdentityVerificationActivity(): IdentityVerificationActivity
 }
 
 /**
@@ -387,6 +393,9 @@ internal abstract class AbsAccountDetailsActivityModule : ActivityModule<Account
 
 @Module
 internal abstract class AbsMyProfileActivityModule : ActivityModule<MyProfileActivity>()
+
+@Module
+internal abstract class AbsIdentityVerificationActivityModule : ActivityModule<IdentityVerificationActivity>()
 
 /**
  * Activity Binds Module

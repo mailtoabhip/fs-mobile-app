@@ -15,6 +15,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -108,7 +109,7 @@ class AuthenticationViewModel @Inject constructor(
             if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                LoadRequest
+                Disabled
               } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
@@ -122,7 +123,7 @@ class AuthenticationViewModel @Inject constructor(
             }else{
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                LoadRequest
+                Disabled
               }else if (_res.third.userMode.isNullOrEmpty() ) {
                 userPrefs.hasLoggedIn = false
                 AccountAction
