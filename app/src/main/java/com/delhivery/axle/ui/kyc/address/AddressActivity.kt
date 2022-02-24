@@ -13,6 +13,7 @@ import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -77,7 +78,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var areaFilled = false
     var cityFilled = false
     var pincodeFilled = false
-    var proofTypeFilled = false
+    var proofTypeFilled = true
     var docUploadProof = false
     var selectedAddress =""
     var isSameAsGST =false
@@ -123,14 +124,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     addressRVAdapter.operation(_items)
             }
         })
-        viewModel.alternateAddressAdded.observe(this, Observer {
+        viewModel.addressSavedChanges.observe(this, Observer {
             if(it){
             binding.btnAddAlternateAddress.visibility=View.GONE
             }
             else{
-                if(viewModel.addressSavedChanges) {
-                    binding.btnAddAlternateAddress.visibility = View.VISIBLE
-                }
+                binding.btnAddAlternateAddress.visibility = View.VISIBLE
             }
         })
         viewModel.subAddressLiveData.observe(this, Observer {
@@ -321,8 +320,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "Add_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
@@ -376,7 +375,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         bindingDialog.btnSubmitDetails.setOnClickListener {
 
             if(bindingDialog.spinnerProof.selectedItemPosition==0){
-                viewModel.documentProofType="not_selected"
+                viewModel.documentProofType=null
             }else{
                 viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
             }
@@ -386,7 +385,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             viewModel.showSubmitedDialog.value=false
             viewModel.addNewAddress(false)
-
+            viewModel.addressSavedChanges.value=true
             resetUploadData()
             uploadArray.clear()
             viewModel.showSubmitedDialog.postValue(false)
@@ -395,15 +394,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         }
 
-        //check length and enable/disable submit button
-      /*  bindingDialog.editCity.lengthAction(3){
-            cityFilled = true
-            enableAddAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editCity.lengthAction(2){
-            cityFilled = false
-            enableAddAddressDialogButton(bindingDialog)
-        }*/
 
         var cityLength = 0
         autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
@@ -510,6 +500,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.cityAddress = cityAddress
             viewModel.pincodeAddress = pinCode
             viewModel.addNewAddress(true)
+            viewModel.addressSavedChanges.value=false
             dialog.dismiss()
         }
 
@@ -522,6 +513,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     fun enableEditAddressDialogButton(bindingDialog:DialogEditAlternateAddressBinding){
         bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        Log.i("Flat",flatFilled.toString())
+        Log.i("are",areaFilled.toString())
+        Log.i("pinco",pincodeFilled.toString())
+        Log.i("city",cityFilled.toString())
+        Log.i("doc",docUploadProof.toString())
+
 
     }
 
@@ -586,8 +583,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             if(p>0){
                 proofTypeFilled = true
-            }else{
-                proofTypeFilled =false
             }
         }
 
@@ -606,6 +601,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             viewModel.addNewAddress(false)
+            viewModel.addressSavedChanges.value=true
             viewModel.showSubmitedDialog.postValue(false)
 
         }
@@ -643,14 +639,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 }
             }
         })
-      /*  bindingDialog.editCity.lengthAction(3){
-            cityFilled = true
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editCity.lengthAction(2){
-            cityFilled = false
-            enableEditAddressDialogButton(bindingDialog)
-        }*/
+
         bindingDialog.editArea.lengthAction(3){
             areaFilled = true
             enableEditAddressDialogButton(bindingDialog)

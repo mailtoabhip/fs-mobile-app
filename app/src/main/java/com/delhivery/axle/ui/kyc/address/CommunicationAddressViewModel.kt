@@ -34,7 +34,7 @@ BaseViewModel() {
     var documentProofUrl= mutableListOf<String>()
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
-    var addressSavedChanges = false
+    var addressSavedChanges = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var subAddressLiveData = MutableLiveData<Boolean>()
@@ -102,7 +102,6 @@ BaseViewModel() {
                     if (!error) {
                         addAddressLiveData.postValue(true)
                         if(!isDeleted) {
-                            addressSavedChanges=false
                             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                                 add(
                                     Pair(
@@ -115,7 +114,6 @@ BaseViewModel() {
                                 alternateAddressAdded.postValue(true)
                             }
                         }else{
-                            addressSavedChanges=true
                             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                                 add(
                                     Pair(

@@ -227,7 +227,7 @@
                                 android:id="@+id/doc_icon"
                                 android:layout_width="@dimen/size_48dp"
                                 android:layout_height="@dimen/size_48dp"
-                                bind:srcCompat="@drawable/image_placeholder"
+                                bind:srcCompat="@drawable/ic_doc_business"
                                 android:layout_marginStart="@dimen/size_2dp"
                                 bind:layout_constraintTop_toTopOf="parent"
                                 bind:layout_constraintLeft_toLeftOf="parent"
