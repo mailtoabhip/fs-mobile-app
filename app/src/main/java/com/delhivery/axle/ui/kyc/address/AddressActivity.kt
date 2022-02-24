@@ -118,9 +118,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         viewModel.AddressLiveData.observe(this, Observer {
             it?.let { _items ->
-          //      if(viewModel.addAddressLiveData.value!!) {
                     addressRVAdapter.operation(_items)
-          //      }
             }
         })
         viewModel.alternateAddressAdded.observe(this, Observer {
@@ -128,12 +126,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             binding.btnAddAlternateAddress.visibility=View.GONE
             }
             else{
-                binding.btnAddAlternateAddress.visibility=View.VISIBLE
+                if(viewModel.addressSavedChanges) {
+                    binding.btnAddAlternateAddress.visibility = View.VISIBLE
+                }
             }
         })
         viewModel.subAddressLiveData.observe(this, Observer {
             if (it) {
-                //  startActivity(gstIntent(this))
                 uiUtils.showSnackbar("Address updated")
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
@@ -261,6 +260,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         path: String
     ) {
         uiUtils.hideProgress()
+        viewModel.documentProofUrl.clear()
         viewModel.documentProofUrl.add(path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
@@ -382,14 +382,14 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.areaAddress = bindingDialog.editArea.text.toString()
             viewModel.cityAddress = bindingDialog.editCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
+            viewModel.showSubmitedDialog.value=false
             viewModel.addNewAddress(false)
-            viewModel.documentProofUrl.clear()
 
             resetUploadData()
             uploadArray.clear()
             viewModel.showSubmitedDialog.postValue(false)
             docUploadProof=false
-            bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+            enableAddAddressDialogButton(bindingDialog)
 
         }
 
@@ -428,7 +428,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
-                //  startActivity(gstIntent(this))
                 dialog.dismiss()
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
@@ -488,7 +487,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.cityAddress = cityAddress
             viewModel.pincodeAddress = pinCode
             viewModel.addNewAddress(true)
-            viewModel.documentProofUrl.clear()
             dialog.dismiss()
         }
 
@@ -512,7 +510,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
-
+        var docArray:ArrayList<Pair<String, String>> = ArrayList()
+        var docPath= addressDataItem.data.documentUrls?.get(0)
         var docproofRec=""
         var addressRec= addressDataItem.key()
         var flatRec = addressRec.split(",").get(0)
@@ -523,15 +522,25 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         var cityRec =citynPinRec.split("-").get(0)
         bindingDialog.editCity.setText(cityRec)
         var pincodeRec = citynPinRec.split("-").get(1)
+        docArray.add(Pair(docPath!!.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        bindingDialog.uploadDocLay.visibility= View.GONE
+        bindingDialog.uploadedDocLay.visibility= View.VISIBLE
+        bindingDialog.docTitle.setText(docArray.get(0).first)
+        docUploadProof=true
+        bindingDialog.btnSubmitDetails.isEnabled=true
+
         bindingDialog.editPincode.setText(pincodeRec)
+
         var spinnerIndex=0
-        spinnerIndex= when{
-            addressDataItem.data.proofDocumentType!!.startsWith("V",true)->1
-            addressDataItem.data.proofDocumentType!!.startsWith("lr",true)->2
-            addressDataItem.data.proofDocumentType!!.startsWith("le",true)->3
-            addressDataItem.data.proofDocumentType!!.startsWith("ud",true)->4
-            addressDataItem.data.proofDocumentType!!.startsWith("sh",true)->5
-            else -> 0
+        if(addressDataItem.data.proofDocumentType!=null) {
+            spinnerIndex = when {
+                addressDataItem.data.proofDocumentType!!.startsWith("V", true) -> 1
+                addressDataItem.data.proofDocumentType!!.startsWith("lr", true) -> 2
+                addressDataItem.data.proofDocumentType!!.startsWith("le", true) -> 3
+                addressDataItem.data.proofDocumentType!!.startsWith("ud", true) -> 4
+                addressDataItem.data.proofDocumentType!!.startsWith("sh", true) -> 5
+                else -> 0
+            }
         }
 
         bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
@@ -575,7 +584,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.cityAddress = bindingDialog.editCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             viewModel.addNewAddress(false)
-            viewModel.documentProofUrl.clear()
             viewModel.showSubmitedDialog.postValue(false)
 
         }

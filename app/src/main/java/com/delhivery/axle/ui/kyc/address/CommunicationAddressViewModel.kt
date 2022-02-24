@@ -29,11 +29,12 @@ BaseViewModel() {
     var pincodeAddress=""
     var cityAddress=""
     var phoneNum =userPrefs.phoneNumber!!
-    var documentProofType =""
+    var documentProofType: String? = null
     var selectedAdapterPos=-1
-    var documentProofUrl=mutableListOf("")
+    var documentProofUrl= mutableListOf<String>()
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
+    var addressSavedChanges = false
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var subAddressLiveData = MutableLiveData<Boolean>()
@@ -83,7 +84,7 @@ BaseViewModel() {
                     documentProofType.equals("Letter Head")->"letterhead"
                     documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
                     documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
-            else -> "not_selected"
+            else -> null
         }
         addressType= addressType.toLowerCase()
 
@@ -101,6 +102,7 @@ BaseViewModel() {
                     if (!error) {
                         addAddressLiveData.postValue(true)
                         if(!isDeleted) {
+                            addressSavedChanges=false
                             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                                 add(
                                     Pair(
@@ -113,6 +115,7 @@ BaseViewModel() {
                                 alternateAddressAdded.postValue(true)
                             }
                         }else{
+                            addressSavedChanges=true
                             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                                 add(
                                     Pair(
