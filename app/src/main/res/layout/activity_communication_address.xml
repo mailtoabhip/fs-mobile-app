@@ -119,8 +119,8 @@
                             android:textSize="@dimen/text_16sp"
                             android:text="@={ viewModel.areaAddress }"
                             />
-                        <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-                            android:id="@+id/edit_city"
+                        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+                            android:id="@+id/auto_complete_city"
                             android:layout_width="match_parent"
                             android:layout_marginTop="@dimen/size_24dp"
                             android:layout_height="@dimen/edit_text_height"

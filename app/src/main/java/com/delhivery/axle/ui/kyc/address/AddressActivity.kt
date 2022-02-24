@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.PersistableBundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -69,7 +71,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     @Inject
     lateinit var userPrefs: UserPrefs
 
-
+    @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
 
     var flatFilled = false
     var areaFilled = false
@@ -380,7 +382,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }
             viewModel.flatAddress = bindingDialog.editFlat.text.toString()
             viewModel.areaAddress = bindingDialog.editArea.text.toString()
-            viewModel.cityAddress = bindingDialog.editCity.text.toString()
+            viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             viewModel.addNewAddress(false)
             viewModel.documentProofUrl.clear()
@@ -394,14 +396,35 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
 
         //check length and enable/disable submit button
-        bindingDialog.editCity.lengthAction(3){
+      /*  bindingDialog.editCity.lengthAction(3){
             cityFilled = true
             enableAddAddressDialogButton(bindingDialog)
         }
         bindingDialog.editCity.lengthAction(2){
             cityFilled = false
             enableAddAddressDialogButton(bindingDialog)
+        }*/
+
+        var cityLength = 0
+        autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
+            uiUtils.toggleKeyboard()
+            cityFilled = true
+            cityLength = bindingDialog.autoCompleteCity.text.length
+            enableAddAddressDialogButton(bindingDialog)
         }
+        bindingDialog.autoCompleteCity.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s == null || s.length == 0) {
+                    cityFilled = false
+                    enableAddAddressDialogButton(bindingDialog)
+                }else if (cityLength>0&& s.length<cityLength){
+                    cityFilled = false
+                    enableAddAddressDialogButton(bindingDialog)
+                }
+            }
+        })
         bindingDialog.editArea.lengthAction(3){
             areaFilled = true
             enableAddAddressDialogButton(bindingDialog)
@@ -505,7 +528,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-
     private fun showEditAlternateAddressDialog(addressDataItem: AddressDataItem) {
         val dialog = Dialog(this)
         val bindingDialog = DialogEditAlternateAddressBinding.inflate(layoutInflater)
@@ -521,7 +543,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         bindingDialog.editArea.setText(areaRec)
         var citynPinRec = addressRec.split(",").get(2)
         var cityRec =citynPinRec.split("-").get(0)
-        bindingDialog.editCity.setText(cityRec)
+        bindingDialog.autoCompleteCity.setText(cityRec)
         var pincodeRec = citynPinRec.split("-").get(1)
         bindingDialog.editPincode.setText(pincodeRec)
         var spinnerIndex=0
@@ -572,7 +594,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
             viewModel.flatAddress = bindingDialog.editFlat.text.toString()
             viewModel.areaAddress = bindingDialog.editArea.text.toString()
-            viewModel.cityAddress = bindingDialog.editCity.text.toString()
+            viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
             viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
             viewModel.addNewAddress(false)
             viewModel.documentProofUrl.clear()
@@ -584,20 +606,43 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
 
             confirmDelete(bindingDialog.spinnerProof.selectedItem.toString(),bindingDialog.editFlat.text.toString(),bindingDialog.editArea.text.toString()
-                ,bindingDialog.editCity.text.toString(),bindingDialog.editPincode.text.toString())
+                ,bindingDialog.autoCompleteCity.text.toString(),bindingDialog.editPincode.text.toString())
 
         }
 
 
         //check length and enable/disable submit button
-        bindingDialog.editCity.lengthAction(3){
+        var cityLength = 0
+        if(bindingDialog.autoCompleteCity.length()>0){
+            cityLength =bindingDialog.autoCompleteCity.length()
+        }
+        autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
+            uiUtils.toggleKeyboard()
+            cityFilled = true
+            cityLength = bindingDialog.autoCompleteCity.text.length
+            enableEditAddressDialogButton(bindingDialog)
+        }
+        bindingDialog.autoCompleteCity.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s == null || s.length == 0) {
+                    cityFilled = false
+                    enableEditAddressDialogButton(bindingDialog)
+                }else if (cityLength>0&& s.length<cityLength){
+                    cityFilled = false
+                    enableEditAddressDialogButton(bindingDialog)
+                }
+            }
+        })
+      /*  bindingDialog.editCity.lengthAction(3){
             cityFilled = true
             enableEditAddressDialogButton(bindingDialog)
         }
         bindingDialog.editCity.lengthAction(2){
             cityFilled = false
             enableEditAddressDialogButton(bindingDialog)
-        }
+        }*/
         bindingDialog.editArea.lengthAction(3){
             areaFilled = true
             enableEditAddressDialogButton(bindingDialog)

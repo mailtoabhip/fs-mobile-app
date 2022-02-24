@@ -16,7 +16,7 @@ interface CityService {
   /**
    * Search cities
    */
-  @POST("/cities/suggestion/v1/")
+  @POST("/cities/suggestion/v2/")
   fun searchCities(
     @Body request: JsonObject
   ): Single<BaseResponse<CitiesResponse>>
@@ -24,7 +24,7 @@ interface CityService {
   /**
    * Get all cities
    */
-  @POST("/cities/v1/")
+  @POST("/cities/v2/")
   fun getAllCities(
     @Body request: JsonObject
   ): Single<BaseResponse<SearchCitiesResponse>>
