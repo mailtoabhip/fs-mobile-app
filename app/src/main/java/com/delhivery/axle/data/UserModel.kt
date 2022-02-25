@@ -34,7 +34,7 @@ data class UserModel(
         @SerializedName("referral_code") var referralCode: String?,
         @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?,
         @SerializedName("aadhaar_number") var aadhaarNumber: String?,
-        @SerializedName("other_address") var otherAddress: List<AddAddressModel>?,
+        @SerializedName("other_addresses") var otherAddress: List<AddAddressModel>?,
          @SerializedName("gst_number") var gstNumber: String?,
         @SerializedName("rc_number") var rcNumber: String?,
         @SerializedName("business_address") var businessAddress: String?,

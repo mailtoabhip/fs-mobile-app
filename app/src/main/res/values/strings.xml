@@ -396,6 +396,7 @@
     <string name="label_changes">Confirm Changes?</string>
     <string name="label_complete_business_verification">Complete Business Verification</string>
     <string name="label_complete_delete">Delete Address</string>
+    <string name="label_aadhaar_number">Aadhaar Number</string>
 
     <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
 

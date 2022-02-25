@@ -121,7 +121,7 @@ class AWSUtils @Inject constructor(
         ex: java.lang.Exception?
       ) {
         listener.onAWSFailure()
-      }
+     }
 
     })
 
