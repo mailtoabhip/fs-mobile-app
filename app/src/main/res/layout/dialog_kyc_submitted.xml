@@ -16,6 +16,7 @@
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_white_tick" />
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/details_submitted_successfully"
@@ -24,6 +25,7 @@
             android:textSize="@dimen/text_16sp"
             android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_sub_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/notify_kyc_verification"
