@@ -74,13 +74,15 @@ data class HomeTrucksRequestItemData(
     @ColorRes
     fun statusColor() = if(latestStatus == "Free")
         R.color.bid_placed_green
-    else
-        R.color.bid_placed_red
+      else if(latestStatus == "Active")
+        R.color.bid_placed_green
+    else R.color.bid_placed_red
 
     fun statusText()= if(latestStatus == "Free")
         "Looking for Load"
-    else
-        ""
+    else if(latestStatus == "Active")
+        "In a Trip"
+       else ""
 
     fun statusVisibilty() = if(latestStatus == "not_available")
         View.VISIBLE

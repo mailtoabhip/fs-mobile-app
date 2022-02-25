@@ -116,7 +116,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             ) {
                 if(s!=null && s.toString()!=""){
                     viewModel.searchPrefix = s.trim().toString()
-                    if(viewModel.searchPrefix.length >= 5) {
+                    if(viewModel.searchPrefix.length >= 3) {
                         adapter.clearItems()
                         viewModel.userTrucksData.postValue(null)
                         viewModel.searchFlag = true

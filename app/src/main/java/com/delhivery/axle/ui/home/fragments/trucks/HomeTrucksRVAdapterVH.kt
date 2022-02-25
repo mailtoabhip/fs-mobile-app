@@ -77,6 +77,11 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         _interface: HomeTrucksRVAdapterInterface
     ) {
         binding.request = item.data
+        if(item.data.latestStatus=="Active"){
+            binding.actionOptions.visibility = View.GONE
+        }else{
+            binding.actionOptions.visibility = View.VISIBLE
+        }
         binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
         binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
 
