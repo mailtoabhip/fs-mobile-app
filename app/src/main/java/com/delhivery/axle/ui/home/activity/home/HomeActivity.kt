@@ -392,6 +392,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         dialog.dismiss()
       }catch (e:Exception){uiUtils.showSnackbar(e.printStackTrace().toString(),Snackbar.LENGTH_SHORT)
       dialog.dismiss()
+        e.printStackTrace()
       }
     }
 
