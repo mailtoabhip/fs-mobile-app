@@ -26,6 +26,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import android.view.LayoutInflater
+import com.delhivery.axle.R
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 
 
@@ -246,6 +247,13 @@ class NavigationUtils @Inject constructor(
         val bindingDialog= DialogKycSubmittedBinding.inflate(activity.layoutInflater)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
+        if(userPrefs.isGstVerfied){
+            bindingDialog.titleText.text = activity.resources.getString(R.string.kyc_verified_successfully)
+            bindingDialog.titleSubText.text = activity.resources.getString(R.string.kyc_verified_complete_details)
+        }else{
+            bindingDialog.titleText.text = activity.resources.getString(R.string.details_submitted_successfully)
+            bindingDialog.titleSubText.text = activity.resources.getString(R.string.notify_kyc_verification)
+        }
         dialog.show()
         Handler().postDelayed({
             dialog.dismiss()

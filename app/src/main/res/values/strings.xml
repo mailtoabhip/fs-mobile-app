@@ -460,6 +460,8 @@
     <string name="upload_aadhaar_text">Upload Aadhaar document</string>
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
     <string name="details_submitted_successfully">Details submitted successfully!</string>
+    <string name="kyc_verified_successfully">KYC verified successfully!</string>
+    <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
     <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
     <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
     <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>
