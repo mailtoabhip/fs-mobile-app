@@ -150,6 +150,7 @@ BaseViewModel() {
                 if (!error) {
                     updateAddressLiveData.postValue(true)
                     subAddressLiveData.postValue(true)
+                    userPrefs.isSameAsGst=true
                 } else {
                     error.handle()
                     updateAddressLiveData.postValue(false)
