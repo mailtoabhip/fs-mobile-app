@@ -80,7 +80,9 @@ class AddVehicle(
     var destinationClusterId: String,
     var sourcedAs: String,
     var demandType: String,
-    var price: Double= 0.0
+    var price: Double= 0.0,
+    var spSecondaryId:String?=null,
+    var spSecondaryName:String?=null
 ){
     fun getRequest():JsonObject{
         val jsonObject = JsonObject()
@@ -98,6 +100,10 @@ class AddVehicle(
         jsonObject.addProperty("origin_cluster_id", originClusterId)
         jsonObject.addProperty("destination_cluster_id", destinationClusterId)
         jsonObject.addProperty("demand_type", demandType)
+        if(spSecondaryId!=null)
+        jsonObject.addProperty("sp_secondary_id", spSecondaryId)
+        if(spSecondaryName!=null)
+        jsonObject.addProperty("sp_secondary_name", spSecondaryName)
         if(sourcedAs == "FTL" && price != 0.0) {
             jsonObject.addProperty(
                 "unloading_destination_amount",
