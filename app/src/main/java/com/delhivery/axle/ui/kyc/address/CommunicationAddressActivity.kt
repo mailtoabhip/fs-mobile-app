@@ -133,15 +133,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         }
 
-        //check length and enable/disable submit button
-       /* binding.autoCompleteCity.lengthAction(3){
-            cityFilled = true
-            enableSubmitButton()
-        }
-        binding.autoCompleteCity.lengthAction(2){
-            cityFilled = false
-            enableSubmitButton()
-        }*/
+
         var cityLength = 0
         autoCompleteUtils.autoCompleteCity(binding.autoCompleteCity) {
             uiUtils.toggleKeyboard()
