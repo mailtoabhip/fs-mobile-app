@@ -66,7 +66,7 @@ class KYCDocumentsViewModel @Inject constructor(
                 }
     }
 
-    fun fetchDetails(data: DocDetailData, path:String) {
+    fun fetchDetails(data: DocDetailData) {
        docDetailsLiveData.postValue(data)
     }
 

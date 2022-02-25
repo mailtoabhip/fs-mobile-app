@@ -121,6 +121,8 @@ class AWSUtils @Inject constructor(
         ex: java.lang.Exception?
       ) {
         listener.onAWSFailure()
+
+        Log.d("smkdsklls", ex?.printStackTrace().toString())
       }
 
     })

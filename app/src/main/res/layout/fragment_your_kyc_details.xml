@@ -85,9 +85,47 @@
                 app:srcCompat="@drawable/ic_vector_circle_check"
                 android:layout_marginEnd="@dimen/size_6dp"
                 android:layout_gravity="center"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_aadhaar_number"
+            android:textColor="@color/heading_black"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:textStyle="normal"
+            android:id="@+id/label_aadhaar"
+            android:textSize="@dimen/text_14sp"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:layout_gravity="center"
+            android:padding="@dimen/size_4dp"
+            android:id="@+id/aadharLay"
+            android:background="@drawable/bg_all_round_corner_grey_boundary">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_aadhar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/size_6dp"
+                android:textSize="@dimen/text_16sp"
+                android:textColor="@color/faded_black"
+                android:layout_weight="1"
+                tools:text="DZPBE2087Q"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_vector_circle_check"
+                android:layout_marginEnd="@dimen/size_6dp"
+                android:layout_gravity="center"/>
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -139,7 +177,8 @@
             android:textSize="@dimen/text_14sp"/>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/edit_text_height"
             android:layout_marginTop="@dimen/size_6dp"
             android:layout_gravity="center"
             android:id="@+id/address_lay"
@@ -154,7 +193,7 @@
                 android:textSize="@dimen/text_16sp"
                 android:textColor="@color/faded_black"
                 android:layout_weight="1"
-                tools:text="Delhivery Ltd., Sector 44, Gurgaon"/>
+                tools:text="Delhivery Ltd., Sector 4 Gurgaon"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_kyc_detail_address_verified"
                 android:layout_width="wrap_content"
