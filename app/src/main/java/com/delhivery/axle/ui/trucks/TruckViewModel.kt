@@ -57,9 +57,9 @@ class TruckViewModel @Inject constructor(
         if(truckCity!!.orion_db_city_code!=null && truckDestination!!.orion_db_city_code!=null ){
             compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code?:"", truckDestination!!.orion_db_city_code?:"")
                 .flatMap { t->
-                    val addVehicleRequest = AddVehicle(userPrefs.userId(), userPrefs.userName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
+                    val addVehicleRequest = AddVehicle(userPrefs.parentId, userPrefs.parentName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
                         ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
-                        t.first, t.second, sourcedAs, userPrefs.demandType, truckPrice)
+                        t.first, t.second, sourcedAs, userPrefs.parentDemandType!!, truckPrice)
 
                     inventoryRepository.addInventory(addVehicleRequest.getRequest())
 

@@ -92,7 +92,7 @@ class HomeTrucksViewModel @Inject constructor(
         }
 
         val jsonObject = JsonObject()
-        jsonObject.addProperty("supplier_id", userPrefs.userId())
+        jsonObject.addProperty("supplier_id", userPrefs.parentId)
 
         jsonObject.addProperty("offset", offset)
         jsonObject.addProperty("limit", UserTrucksLoadLimit)

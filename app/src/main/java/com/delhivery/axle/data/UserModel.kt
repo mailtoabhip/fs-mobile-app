@@ -93,6 +93,7 @@ data class UserModel(
     false
   }
 
+
   fun getDieselPreferences() :Boolean = dieselCardPreferences == "yes"
 
 }

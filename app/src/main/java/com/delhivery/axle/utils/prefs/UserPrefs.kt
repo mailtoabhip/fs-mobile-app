@@ -287,6 +287,20 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
+    var parentId:String
+        set(value) = editor.putString(PrefKeys.ParentId ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentId, "") ?: ""
+
+    var parentName:String
+        set(value) = editor.putString(PrefKeys.ParentName ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentName, "") ?: ""
+
+    var parentDemandType:String?
+        set(value) = editor.putString(PrefKeys.ParentDemandType ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentDemandType, "") ?: ""
 
   /**
    * Clear all preferences
@@ -351,36 +365,57 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.DeepLinkArg)
         .apply()
+    editor.remove(PrefKeys.ParentId)
+      .apply()
+    editor.remove(PrefKeys.ParentName)
+      .apply()
+    editor.remove(PrefKeys.ParentDemandType)
+      .apply()
     editor.commit()
   }
 
   fun saveUser(user: UserModel) {
-    userName = user.name
-    onboardingStatus = user.onboardingStatus ?: "na"
-    supplierEnabled = user.supplierEnabled
-    isTestUser = user.testUser
-    tdsRate = user.getTDSSubtractor()
-    updatedTdsRate =
-      if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
-    bankName = user.bank ?: ""
-    companyName = user.companyName ?: ""
-    phoneNumber = user.phoneNo
-    ifscCode = user.ifscCode ?: ""
-    pancard = user.panCardNo ?: ""
-    accNumber = user.accNumber()
-    cityCode = user.baseCityCode
-    isParent = user.isParent()
-    userType = user.userType ?: ""
-    truckTypes = if (user.isParent()) {
-      user.truckTypes?.joinToString(separator = ",") {it}
-    } else {
-      user.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
-    }
-    demandType = user.demandType.joinToString(separator = ",") {it}
-    userPerformance = user.overallPerformance ?: ""
-    vendorEntity = user.vendorEntity ?: ""
-  }
+      userName = user.name
+      onboardingStatus = user.onboardingStatus ?: "na"
+      supplierEnabled = user.supplierEnabled
+      isTestUser = user.testUser
+      tdsRate = user.getTDSSubtractor()
+      updatedTdsRate =
+          if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
+      bankName = user.bank ?: ""
+      companyName = user.companyName ?: ""
+      phoneNumber = user.phoneNo
+      ifscCode = user.ifscCode ?: ""
+      pancard = user.panCardNo ?: ""
+      accNumber = user.accNumber()
+      cityCode = user.baseCityCode
+      isParent = user.isParent()
+      userType = user.userType ?: ""
+      truckTypes = if (user.isParent()) {
+          user.truckTypes?.joinToString(separator = ",") { it }
+      } else {
+          user.parentDetails?.truckTypes?.joinToString(separator = ",") { it }
+      }
+      demandType = user.demandType.joinToString(separator = ",") { it }
+      userPerformance = user.overallPerformance ?: ""
+      vendorEntity = user.vendorEntity ?: ""
+      parentId = if (user.isParent()) {
+          user.userId
+      } else {
+          user.parentDetails?.userId ?: ""
+      }
+      parentName = if (user.isParent()) {
+          user.name
+      } else {
+          user.parentDetails?.name ?: ""
+      }
+      parentDemandType = if (user.isParent()) {
+          user.demandType.joinToString(separator = ",") { it }
+      } else {
+          user.parentDetails?.demandType?.joinToString(separator = ",") { it }
+      }
 
+  }
   fun canBid() = if (supplierEnabled) {
     when (onboardingStatus) {
       "approved" -> APPROVED
@@ -434,7 +469,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
-      const val IsFirstLoginRPUser = "first_login_RP"
+    const val IsFirstLoginRPUser = "first_login_RP"
+    const val ParentId = "parent_id"
+    const val ParentName = "parent_name"
+    const val ParentDemandType = "parent_demand_type"
   }
 }
 
