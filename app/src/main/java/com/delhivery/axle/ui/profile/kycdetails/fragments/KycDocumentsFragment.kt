@@ -123,7 +123,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             docItem.docPath = file.path
             docItem.docUrl = data.docUrl
             dList.get(data.docUrl)?.docPath = file.path
-            Log.d("dmaskakaa",file.path)
             viewModel.getDownloadDelegationToken(item, file)
         } else {
             uiUtils.showSnackbar("Can't process image")
