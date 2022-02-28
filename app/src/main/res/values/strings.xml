@@ -442,7 +442,7 @@
     <string name="area_hint">Area, Street, Sector, Village</string>
     <string name="city_hint">City</string>
     <string name="address_proof_hint">Choose Proof Documents</string>
-    <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
+    <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
 
 
     <string name="address_proof_attachment">Address proof attachment</string>

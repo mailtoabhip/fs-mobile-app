@@ -100,7 +100,6 @@ class AutoCompleteUtils @Inject constructor(
     val jsonArray = JsonArray()
     jsonArray.add(jsonObject)
     parentJsonObject.add("suggesters", jsonArray)
-   // parentJsonObject.add("include_old_cities", JsonPrimitive(true))
 
     disposable?.dispose()
     if(userPrefs.jwtToken != null) {
