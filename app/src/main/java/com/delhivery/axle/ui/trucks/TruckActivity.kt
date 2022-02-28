@@ -380,7 +380,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         val truckSizeList = mutableListOf<TruckResponseArray>()
 
-        for(truck in truckItems.sortedBy { it.defaultMG }){
+        for(truck in (truckItems.sortedByDescending { it.truckUuid }.reversed()).sortedBy { it.defaultMG }){
             if(truck.truckType == type){
                 truckSizeList.add(truck)
             }
