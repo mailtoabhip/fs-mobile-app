@@ -58,7 +58,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     @Inject lateinit var bitmapUtils:BitmapUtils
 
     override fun getViewModelClass()= KYCDocumentsViewModel::class.java
-    val awsURl = "https://orion-service.s3.ap-southeast-1.amazonaws.com/"
 
     /* RV adapter */
     private val docRVAdapter: DocRVAdapter by lazy { DocRVAdapter(this) }
@@ -141,8 +140,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         val storageDir = activity?.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
         val basePath = "$storageDir/"+System.currentTimeMillis()
         val arrString = item.split("/")
-        Log.d("asmdaklalaaa", basePath)
-        return File(basePath + arrString[arrString.size - 1])
+        return File(basePath + "/"+arrString[arrString.size - 1])
     }
 
     override fun onAWSSuccess(path: String) {
@@ -150,8 +148,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if(showProg) {
             uiUtils.showSnackbar("Document downloaded successfully")
         }else {
-            val fullPath = awsURl+path
-            dList.get(fullPath)?.let { viewModel.fetchDetails(it, viewModel.imagePath) }
+            val fullPath = awsUtils.awsBasePath()+path
+            dList.get(fullPath)?.let { viewModel.fetchDetails(it) }
         }
         showProg = false
     }
@@ -167,7 +165,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     override fun handleAction(actionId: String, item: BaseDocRVAdapterItem<*>) {
         when (actionId) {
             DocAction_ViewDetails -> {
-                downloadLogo(item.data.key().replace(awsURl, ""))
+                downloadLogo(item.data.key().replace(awsUtils.awsBasePath(), ""))
             }
             TransactionTimeOutAction -> {
                 refreshData()
@@ -184,7 +182,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if(!dList.contains(data.docUrl)){
             dList.put(data.docUrl, data)
             showProg = false
-            downloadImage(data, data.docUrl.replace(awsURl, ""))
+            downloadImage(data, data.docUrl.replace(awsUtils.awsBasePath(), ""))
         }
     }
 

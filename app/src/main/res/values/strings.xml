@@ -396,6 +396,7 @@
     <string name="label_changes">Confirm Changes?</string>
     <string name="label_complete_business_verification">Complete Business Verification</string>
     <string name="label_complete_delete">Delete Address</string>
+    <string name="label_aadhaar_number">Aadhaar Number</string>
 
     <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
 
@@ -441,10 +442,12 @@
     <string name="area_hint">Area, Street, Sector, Village</string>
     <string name="city_hint">City</string>
     <string name="address_proof_hint">Choose Proof Documents</string>
+    <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
+
 
     <string name="address_proof_attachment">Address proof attachment</string>
     <string name="upload_document">Upload document</string>
-    <string name="truck_hint">Enter truck number</string>
+    <string name="truck_hint">Verify with truck RC</string>
     <string name="lr_hint">Upload LR/Loading note</string>
     <string name="sub_label_step3_4">Step 3 of 4</string>
     <string name="sub_label_address_details">Choose or add an address to use for communication</string>
@@ -457,6 +460,8 @@
     <string name="upload_aadhaar_text">Upload Aadhaar document</string>
     <string name="label_aadhaar_verification">Aadhaar Verification</string>
     <string name="details_submitted_successfully">Details submitted successfully!</string>
+    <string name="kyc_verified_successfully">KYC verified successfully!</string>
+    <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
     <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
     <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
     <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>

@@ -139,6 +139,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         viewModel.docVerificationFailedCount.observe(this, Observer {
             if(viewModel.docVerificationFailedCount.value==2){
                 viewModel.docVerificationFailedCount.value=0
+                userPrefs.isGstNotBypassed=false
                 viewModel.updateUserDetails()
             }
         })

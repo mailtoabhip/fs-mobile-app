@@ -435,8 +435,12 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             if(visibility==3){
                 desc=context.getString(R.string.sub_label_changing_to_both)
             }
+            if ((userMode=="post_load"&&visibility==1)|| (userMode=="post_truck"&&visibility==2) || (userMode=="both"&&visibility==3)){
+                dialogUtilsInterface.setAccountRoleSelection(selected)
+            }else{
+                showConfirmRoleChangeDialog(desc,dialogUtilsInterface,selected,userMode,visibility)
+            }
 
-            showConfirmRoleChangeDialog(desc,dialogUtilsInterface,selected,userMode,visibility)
             dialog.dismiss()
         }
 

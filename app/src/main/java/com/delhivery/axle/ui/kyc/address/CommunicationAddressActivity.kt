@@ -11,6 +11,9 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -23,7 +26,6 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
-import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -34,13 +36,16 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCitySelected
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface {
@@ -66,6 +71,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     @Inject
     lateinit var userPrefs: UserPrefs
 
+    @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
 
     var flatFilled = false
     var areaFilled = false
@@ -127,15 +133,27 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         }
 
-        //check length and enable/disable submit button
-        binding.editCity.lengthAction(3){
+
+        var cityLength = 0
+        autoCompleteUtils.autoCompleteCity(binding.autoCompleteCity) {
+            uiUtils.toggleKeyboard()
             cityFilled = true
+            cityLength = binding.autoCompleteCity.text.length
             enableSubmitButton()
         }
-        binding.editCity.lengthAction(2){
-            cityFilled = false
-            enableSubmitButton()
-        }
+        binding.autoCompleteCity.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s == null || s.length == 0) {
+                    cityFilled = false
+                    enableSubmitButton()
+                }else if (cityLength>0&& s.length<cityLength){
+                    cityFilled = false
+                    enableSubmitButton()
+                }
+            }
+        })
         binding.editArea.lengthAction(3){
             areaFilled = true
             enableSubmitButton()

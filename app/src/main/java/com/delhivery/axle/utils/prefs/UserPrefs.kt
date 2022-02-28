@@ -328,7 +328,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
 
-  /**
+//communication address is as same as Gst
+    var isSameAsGst: Boolean
+        set(value) = editor.putBoolean(PrefKeys.IsUserVerfied, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
+
+    /**
    * gst number
    */
   var gstNumber: String
@@ -391,6 +397,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.isGstVerified, value)
             .apply()
     get() = prefs.getBoolean(PrefKeys.isGstVerified, false)
+
+    /**
+     *  is gst verification step not bypassed
+     */
+    var isGstNotBypassed: Boolean
+        set(value) = editor.putBoolean(PrefKeys.isGstNotBypassed, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.isGstNotBypassed, false)
 
   /**
    *  aadhaar verified
@@ -633,6 +647,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
           .apply()
       editor.remove(PrefKeys.isTruckingDocumentUploaded)
           .apply()
+      editor.remove(PrefKeys.isSameAsGst)
+          .apply()
+      editor.remove(PrefKeys.isGstNotBypassed)
+          .apply()
     editor.commit()
   }
 
@@ -743,7 +761,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"
-    const val gstNumber = "gst_number"
+      const val isSameAsGst = "is_same_as_gst"
+      const val isGstNotBypassed = "is_gst_not_bypassed"
+      const val gstNumber = "gst_number"
     const val aadhaarNumber = "aadhaar_number"
     const val businessAddress = "business_address"
     const val gstAddress = "gst_address"

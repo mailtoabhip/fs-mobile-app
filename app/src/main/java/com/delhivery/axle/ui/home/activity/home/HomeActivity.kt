@@ -390,8 +390,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         navigationUtils.navigateKyc(this, false, bundle)
 
         dialog.dismiss()
-      }catch (e:Exception){uiUtils.showSnackbar(e.printStackTrace().toString(),Snackbar.LENGTH_SHORT)
-      dialog.dismiss()
+      }catch (e:Exception){
+        dialog.dismiss()
+        e.printStackTrace()
       }
     }
 

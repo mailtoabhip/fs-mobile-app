@@ -29,11 +29,12 @@ BaseViewModel() {
     var pincodeAddress=""
     var cityAddress=""
     var phoneNum =userPrefs.phoneNumber!!
-    var documentProofType =""
+    var documentProofType: String? = null
     var selectedAdapterPos=-1
-    var documentProofUrl=mutableListOf("")
+    var documentProofUrl= mutableListOf<String>()
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
+    var addressSavedChanges = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var subAddressLiveData = MutableLiveData<Boolean>()
@@ -83,7 +84,7 @@ BaseViewModel() {
                     documentProofType.equals("Letter Head")->"letterhead"
                     documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
                     documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
-            else -> "not_selected"
+            else -> null
         }
         addressType= addressType.toLowerCase()
 
@@ -149,6 +150,7 @@ BaseViewModel() {
                 if (!error) {
                     updateAddressLiveData.postValue(true)
                     subAddressLiveData.postValue(true)
+                    userPrefs.isSameAsGst=true
                 } else {
                     error.handle()
                     updateAddressLiveData.postValue(false)

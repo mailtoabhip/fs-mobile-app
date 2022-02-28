@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.*
@@ -37,6 +38,7 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
@@ -129,7 +131,9 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
             it?.let { state ->
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }
-                    AuthenticationUIState.OTP -> { }
+                    AuthenticationUIState.OTP -> {uiUtils.hideDelhiveryProgress()
+                    uiUtils.showSnackbar("Something went wrong, Please try again")
+                    }
                     AuthenticationUIState.Password ->{}
                     AuthenticationUIState.LoginProgress -> {
                         uiUtils.showDelhiveryProgress(
@@ -143,15 +147,20 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         uiUtils.showProgress()
                         val bundle = Bundle()
                         bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
+
+                       val intent = Intent(this@AccountDetailsActivity, SelectRouteActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         navigationUtils.navigateForActivityResult(
-                                intent = selectRouteIntent(this@AccountDetailsActivity),
+                            intent,
                                 requestCode = REQCODE_ADD_ROUTES, extras = bundle, finishAfter = true
                         )
                     }
                     /* Login success, user routes found - navigate to load requests */
                     AuthenticationUIState.LoadRequest -> {
                         uiUtils.showProgress()
-                        navigationUtils.navigate(HomeActivity::class.java, true)
+                        val intent = Intent(this@AccountDetailsActivity, HomeActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
                     }
                     /* otp verified, account set up needed */
                     AuthenticationUIState.AccountRole -> {

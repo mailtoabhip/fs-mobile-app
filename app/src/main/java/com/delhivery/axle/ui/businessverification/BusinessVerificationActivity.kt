@@ -152,6 +152,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.textLR.setOnClickListener{
             binding.editTruck.visibility=View.GONE
             binding.textLR.isChecked=true
+            binding.rcErrorMsg.visibility=View.GONE
+            binding.imgWrong.visibility = View.GONE
+            binding.editTruck.error= false
+            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
             binding.textTruck.isChecked=false
             binding.layoutUploadLR.isSelected=true
             binding.layoutTruckrd.isSelected=false

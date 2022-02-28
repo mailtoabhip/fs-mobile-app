@@ -190,7 +190,9 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun navigateToBusinessVerification() {
-        navigationUtils.navigate(BusinessVerificationActivity::class.java)
+     val bundle =Bundle()
+     bundle.putInt(StepKey, 3)
+        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun captureImage(

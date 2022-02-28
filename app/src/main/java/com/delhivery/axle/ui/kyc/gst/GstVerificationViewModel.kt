@@ -84,6 +84,8 @@ class GstVerificationViewModel@Inject constructor(
                     .subscribe { _res, error ->
                         if (!error) {
                             otpVerified.postValue(true)
+                            userPrefs.isGstNotBypassed=true
+
                         } else {
                             error.handle()
                             otpVerified.postValue(false)
@@ -129,6 +131,7 @@ class GstVerificationViewModel@Inject constructor(
                         if (!error) {
                             if(_res.isVerified == true){
                                 docVerified.postValue(true)
+                                userPrefs.isGstNotBypassed=true
                             }else{
                                 docVerified.postValue(false)
                             }
