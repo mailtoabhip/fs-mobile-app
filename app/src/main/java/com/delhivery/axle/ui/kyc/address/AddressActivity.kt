@@ -98,6 +98,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        title = " "
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
        viewModel.fetchAndAddUserAddress()
       binding.btnAddAlternateAddress.setOnClickListener {
           showAddAlternateAddressDialog()

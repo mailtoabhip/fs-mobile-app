@@ -234,22 +234,25 @@
                                 bind:layout_constraintBottom_toBottomOf="parent" />
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/doc_title"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginStart="@dimen/size_12dp"
                                 android:layout_marginHorizontal="@dimen/size_16dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                android:textSize="@dimen/text_20sp"
-                                bind:layout_constraintStart_toEndOf="@+id/doc_icon"
                                 bind:layout_constraintEnd_toStartOf="@+id/doc_remove"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginEnd="@dimen/size_30dp"
+                                android:textSize="@dimen/text_14sp"
+                                bind:layout_constraintStart_toEndOf="@+id/doc_icon"
                                 android:text="IMG_344_988"/>
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:id="@+id/doc_size"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:layout_marginEnd="@dimen/size_30dp"
                                 bind:layout_constraintTop_toBottomOf="@+id/doc_title"
-                                android:textSize="@dimen/text_16sp"
+                                android:textSize="@dimen/size_12dp"
                                 android:textColor="@color/color_hint"
                                 bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
                                 android:text="233kb"/>
