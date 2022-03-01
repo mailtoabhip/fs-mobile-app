@@ -21,6 +21,13 @@
             bind:tabTextAppearance="@style/CustomTextAppearanceTab"
             bind:tabIndicatorColor="@color/switch_blue"
             android:background="@color/white"
+            android:tabStripEnabled="true"
+            bind:tabBackground="@color/white"
+            bind:tabGravity="fill"
+            bind:tabMode="fixed"
+            bind:tabPaddingEnd="-1dp"
+            bind:tabPaddingStart="-1dp"
+            bind:tabRippleColor="@null"
             android:layout_height="wrap_content"/>
         <com.delhivery.axle.ui.custom.DelhiverViewPager
             android:id="@+id/viewpager"

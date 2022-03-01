@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.profile.kycdetails.fragments
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
@@ -20,7 +21,8 @@ import java.io.File
 import javax.inject.Inject
 
 class KYCDocumentsViewModel @Inject constructor(
-        private val userRepository: UserRepository
+        private val userRepository: UserRepository,
+        private val loadboardRepository: LoadboardRepository
 ) : BaseViewModel(){
 
    var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
@@ -30,7 +32,7 @@ class KYCDocumentsViewModel @Inject constructor(
     var docDetailsLiveData = MutableLiveData<DocDetailData>()
 
     fun setDataDoc(){
-        compositeDisposable += userRepository.getKycDocs()
+        compositeDisposable += loadboardRepository.getKycDetails(userRepository.userId())
                 .onBackground()
                 .subscribe { _res, error ->
                     mutableListOf<Pair<BaseDocRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -38,11 +40,16 @@ class KYCDocumentsViewModel @Inject constructor(
                         add(Pair(DocProgressItem(), DataRVAdapterOperationType.Remove))
 
                         if (!error) {
-                            if (_res.responseData?.kyc_documents!=null && _res.responseData?.kyc_documents?.isEmpty() == true) {
+                            if (_res.kycData.isNullOrEmpty()) {
                                 add(Pair(DocItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                             } else {
-                                for (url in _res.responseData?.kyc_documents!!) {
-                                    add(Pair(DocDataItem(DocDetailData(url, null)), DataRVAdapterOperationType.Add))
+                                val i =0;
+                                for(obj in _res.kycData) {
+                                    if(!obj.documentUrls.isNullOrEmpty()) {
+                                        for (url in obj.documentUrls) {
+                                            add(Pair(DocDataItem(DocDetailData(url, null, obj.verificationStatus,obj.verificationOverallType, obj.verificationType, obj.verificationStatusReasonCode, obj.verificationStatusReasonMessage)), DataRVAdapterOperationType.Add))
+                                        }
+                                    }
                                 }
                             }
                         } else {

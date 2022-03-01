@@ -71,6 +71,7 @@ class TripDetailsViewModel @Inject constructor(
   private val payableRepository: PayableRepository,
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
+  private val loadboardRepository: LoadboardRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -924,7 +925,7 @@ class TripDetailsViewModel @Inject constructor(
 
   fun fetchTeamMembers()
   {
-    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+    compositeDisposable += loadboardRepository.getUserTeamMembers(userRepository.userId())
         .onBackground()
         .progress()
         .subscribe { _res, error ->

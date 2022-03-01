@@ -10,6 +10,7 @@ import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -118,5 +119,47 @@ interface LoadBoardService {
     fun uploadDocument(
         @Body request: VerificationDocUploadRequest
     ): Single<BaseMessageResponse>
+
+    /**
+     * Get team member's detail
+     */
+    @GET("/get_child_users/{uuid}")
+    fun getTeamMembers(
+            @Path("uuid") userId: String
+    ): Single<BaseResponse<UserDetailResponse>>
+
+    /**
+     * Create secondary user
+     */
+    @POST("/create_child_user")
+    fun createSecondaryUser(
+            @Body payload: JsonObject
+    ): Single<BaseResponse<CreateUserResponse>>
+
+    /**
+     * Update secondary user
+     */
+    @PATCH("/update_user")
+    fun updateSecondaryUser(
+            @Body payload: JsonObject
+    ): Single<BaseMessageResponse>
+
+    /**
+     * Update Admin user
+     */
+    @PATCH("/update_user")
+    fun updateAdminUser(
+            @Body payload: JsonObject
+    ): Single<BaseMessageResponse>
+
+
+    /**
+     * Get KYC detail
+     */
+    @GET("/get_kyc_details/{uuid}")
+    fun getKYCDetails(
+            @Path("uuid") userId: String
+    ): Single<BaseResponse<KYCDetailResponse>>
+
 
 }

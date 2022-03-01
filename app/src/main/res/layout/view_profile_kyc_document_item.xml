@@ -44,9 +44,18 @@
                     android:id="@+id/text_document_size_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:textColor="@color/faded_black"
                     android:layout_marginTop="@dimen/size_2dp"
                     tools:text="34KB"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/error"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/error_red"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    tools:text="error"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -54,6 +63,7 @@
             android:id="@+id/image_button_download_document_profile"
             android:layout_width="@dimen/size_20dp"
             android:layout_height="@dimen/size_20dp"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_download_doc_blue"
             android:layout_gravity="center"/>
     </androidx.appcompat.widget.LinearLayoutCompat>

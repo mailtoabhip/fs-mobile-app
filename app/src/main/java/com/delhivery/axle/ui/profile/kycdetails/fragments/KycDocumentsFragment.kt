@@ -28,8 +28,11 @@ import com.delhivery.axle.databinding.FragmentKycDocumentsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.NavigationUtils
+import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.shockwave.pdfium.PdfDocument
 import com.shockwave.pdfium.PdfiumCore
 import java.io.ByteArrayOutputStream
@@ -51,7 +54,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     lateinit var path:String
     var showProg:Boolean = false
     var dList:HashMap<String, DocDetailData?> = HashMap()
-    var docItem:DocDetailData = DocDetailData("", null)
+    var docItem:DocDetailData = DocDetailData("", null, null, null,null, null, null)
 
     @Inject lateinit var awsUtils:AWSUtils
 
@@ -64,6 +67,10 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
 
     override fun layoutId() = R.layout.fragment_kyc_documents
 
+    @Inject lateinit var userPrefs: UserPrefs
+
+    @Inject lateinit var navigationUtils: NavigationUtils
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,9 +79,22 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             adapter = this@KycDocumentsFragment.docRVAdapter
         }
 
+        if(userPrefs.verificationStatus.equals("failed")){
+            binding.btnRetry.visibility = View.VISIBLE
+        }else{
+            binding.btnRetry.visibility = View.GONE
+        }
+
+        binding.btnRetry.setOnClickListener {
+            userPrefs.retryVerification = true
+            val bundle = Bundle()
+            bundle.putInt(StepKey, 0)
+            context?.let { it1 -> navigationUtils.navigateKyc(it1, true, bundle) }
+        }
+
         dList.clear()
         dList = HashMap()
-        docItem = DocDetailData("", null)
+        docItem = DocDetailData("", null, null, null,null, null, null)
         showProg = false
         refreshData()
 
