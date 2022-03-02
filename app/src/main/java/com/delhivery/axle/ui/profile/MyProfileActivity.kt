@@ -71,6 +71,17 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             confirmLogout()
         }
 
+        if(userPrefs.verificationStatus.equals("failed")){
+            if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
+                binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
+                binding.issues.visibility = View.VISIBLE
+            }else{
+                binding.issues.visibility = View.GONE
+            }
+        }else{
+            binding.issues.visibility = View.GONE
+        }
+
         binding.startKyc.setOnClickListener {
             if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
                 //do nothing
@@ -115,8 +126,55 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         viewModel.stateLiveData.observe(this, StateObserver())
 
         binding.kycLayout.setOnClickListener {
-            navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+            uiUtils.showProgress()
+            viewModel.getKYCDetails()
+
         }
+
+        viewModel.kycDetailData.observe(this, Observer {
+            if(it.kycData.isNullOrEmpty()){
+                uiUtils.showSnackbar("Something went wrong, please try again")
+            }else{
+                for (k in it.kycData){
+                    if(k.verificationOverallType.equals("identity")){
+                        userPrefs.identityType = k.verificationType.toString()
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.identityRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.identityRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }
+                    }else if(k.verificationOverallType.equals("pan")){
+                      if(k.verificationStatus.equals("failed")){
+                          if(k.verificationStatusReasonCode.equals("others")) {
+                              userPrefs.panRejectReason = k.verificationStatusReasonMessage?:""
+                          }else{
+                              userPrefs.panRejectReason = k.verificationStatusReasonCode?:""
+                          }
+                      }
+                    }else if(k.verificationOverallType.equals("trucking_business")){
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.rcRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.rcRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }
+                    }else if(k.verificationOverallType.equals("address")){
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.addressRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.addressRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }
+                    }
+                }
+                navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+            }
+            uiUtils.hideProgress()
+        })
 
         binding.profileLayout.setOnClickListener {
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
@@ -125,7 +183,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.teamLayout.setOnClickListener {
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
-
 
         if (viewModel.userPrefs.isParent) {
             binding.teamLayout.visibility = View.VISIBLE
@@ -195,7 +252,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 binding.kycpendingLayout.visibility = View.VISIBLE
                 binding.ratingsLayout.visibility = View.VISIBLE
                 binding.kycfailedLayout.visibility = View.GONE
-                binding.kycLayout.visibility = View.GONE
+                binding.kycLayout.visibility = View.VISIBLE
             } else if (userPrefs.verificationStatus.equals("success")) {
                 binding.verifyBadge.visibility = View.VISIBLE
                 binding.kycpendingLayout.visibility = View.GONE

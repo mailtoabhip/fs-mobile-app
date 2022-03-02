@@ -96,30 +96,6 @@ class UserRepository @Inject constructor(
   fun getDelegationToken(target: String) = umsService.getDelegationToken(target)
 
   /**
-   * Get team members
-   */
-  fun getUserTeamMembers(offset: Int, limit: Int, includeAllUsers: Boolean, sp_id: String) =
-    userService.getTeamMembers(offset, limit, includeAllUsers, sp_id).convertResponse()
-
-  /**
-   * Create secondary user
-   */
-  fun createSecondaryUser(jsonObject: JsonObject) =
-    userService.createSecondaryUser(jsonObject).convertResponse()
-
-  /**
-   * Update secondary user
-   */
-  fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
-    userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
-
-
-  /**
-   * Update Admin user
-   */
-  fun updateAdminUser(uuid: String, jsonObject: JsonObject) =
-      userService.updateAdminUser(uuid, jsonObject).convertMessageResponse()
-  /**
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())

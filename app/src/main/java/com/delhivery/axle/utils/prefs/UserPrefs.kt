@@ -525,10 +525,49 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.isIdentityVerified, false)
 
-    var isCommunicationAddressVerified: Boolean
-        set(value) = editor.putBoolean(PrefKeys.isCommunicationAddressVerified, value)
+  var isCommunicationAddressVerified: Boolean
+  set(value) = editor.putBoolean(PrefKeys.isCommunicationAddressVerified, value)
+          .apply()
+    get() = prefs.getBoolean(PrefKeys.isCommunicationAddressVerified, false)
+
+
+  var panRejectReason: String
+    set(value) = editor.putString(PrefKeys.panRejectReason,value)
             .apply()
-        get() = prefs.getBoolean(PrefKeys.isCommunicationAddressVerified, false)
+    get() = prefs.getString(PrefKeys.panRejectReason, "") ?: ""
+
+  var identityRejectReason: String
+    set(value) = editor.putString(PrefKeys.identityRejectReason,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.identityRejectReason, "") ?: ""
+
+
+  var addressRejectReason : String
+    set(value) = editor.putString(PrefKeys.addressRejectReason,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.addressRejectReason, "") ?: ""
+
+  var rcRejectReason: String
+    set(value) = editor.putString(PrefKeys.rcRejectReason,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.rcRejectReason, "") ?: ""
+
+  var identityType: String
+    set(value) = editor.putString(PrefKeys.identityType,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.identityType, "") ?: ""
+
+
+  var noOfVerificationIssues: String
+    set(value) = editor.putString(PrefKeys.noOfVerificationIssues ,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.noOfVerificationIssues, "") ?: ""
+
+  var retryVerification: Boolean
+    set(value) = editor.putBoolean(PrefKeys.retryVerification, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.retryVerification, false)
+
 
   /**
    * Clear all preferences
@@ -651,6 +690,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
           .apply()
       editor.remove(PrefKeys.isGstNotBypassed)
           .apply()
+
+    editor.remove(PrefKeys.panRejectReason)
+            .apply()
+    editor.remove(PrefKeys.addressRejectReason)
+            .apply()
+    editor.remove(PrefKeys.rcRejectReason)
+            .apply()
+    editor.remove(PrefKeys.identityType)
+            .apply()
+    editor.remove(PrefKeys.identityRejectReason)
+            .apply()
+    editor.remove(PrefKeys.noOfVerificationIssues)
+            .apply()
+    editor.remove(PrefKeys.retryVerification)
+            .apply()
     editor.commit()
   }
 
@@ -700,6 +754,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ownTrucks = user.supplierDetails?.ownsTrucks?: false
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
+    noOfVerificationIssues = user.noOfVerificationIssues?:""
   }
 
 
@@ -784,8 +839,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val shopNumber = "shop_number"
     const val isGstsByPanNotRegistered = "is_gsts_by_pan_not_registered"
     const val isIdentityVerified = "is_identity_verified"
-      const val isCommunicationAddressVerified = "is_communication_address_verified"
-      const val isTruckingDocumentUploaded = "is_trucking_document_uploaded"
+    const val isCommunicationAddressVerified = "is_communication_address_verified"
+    const val isTruckingDocumentUploaded = "is_trucking_document_uploaded"
+
+    const val panRejectReason = "pan_reject_reason"
+    const val identityRejectReason = "identity_reject_reason"
+    const val rcRejectReason = "rc_reject_reason"
+    const val addressRejectReason = "address_reject_reason"
+    const val identityType = "identity_type"
+    const val noOfVerificationIssues = "no_of_verification_issues"
+    const val retryVerification = "retry_verification"
   }
 }
 

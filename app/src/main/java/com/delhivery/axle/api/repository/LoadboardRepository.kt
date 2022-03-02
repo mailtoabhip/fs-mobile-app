@@ -11,6 +11,7 @@ import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -91,5 +92,33 @@ class LoadboardRepository @Inject constructor(
             }
 
     fun validatePanNumber(panNumber:String)= loadboardService.validatePanNumber(PanVerificationRequest(panNumber)).convertResponse()
+
+    /**
+     * Get team members
+     */
+    fun getUserTeamMembers(uuid:String) = loadboardService.getTeamMembers(uuid).convertResponse()
+
+    /**
+     * Create secondary user
+     */
+    fun createSecondaryUser(jsonObject: JsonObject) =
+            loadboardService.createSecondaryUser(jsonObject).convertResponse()
+
+    /**
+     * Update secondary user
+     */
+    fun updateSecondaryUser(jsonObject: JsonObject) =
+            loadboardService.updateSecondaryUser(jsonObject).convertMessageResponse()
+
+    /**
+     * Update Admin user
+     */
+    fun updateAdminUser(jsonObject: JsonObject) =
+            loadboardService.updateAdminUser(jsonObject).convertMessageResponse()
+
+    /**
+     * Get KYC details
+     */
+    fun getKycDetails(uuid:String) = loadboardService.getKYCDetails(uuid).convertResponse()
 
 }
