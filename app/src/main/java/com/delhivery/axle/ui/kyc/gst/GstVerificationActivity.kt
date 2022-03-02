@@ -73,6 +73,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!)
+            viewModel.errorText = "GST verification failed due to blurry image"
         }
     }
 
@@ -82,6 +83,10 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+
+        if(userPrefs.gstNumber.isNotNullOrEmpty()){
+           currSelectedGst=userPrefs.gstNumber
+        }
         binding.gstList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@GstVerificationActivity.gstRVAdapter
@@ -94,6 +99,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         viewModel.gstNumbersLiveData.observe(this, Observer {
             it?.let { _items ->
+
                 gstRVAdapter.operation(_items)
             }
         })
@@ -196,6 +202,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     override fun fetchCurrSelected(): String? {
       return currSelectedGst
     }
+
 
     override fun onAWSSuccess(
             path: String

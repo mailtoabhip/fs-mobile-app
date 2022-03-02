@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.kyc.gst
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -49,6 +50,8 @@ class GstVerificationViewModel@Inject constructor(
 
     /* steps */
     var currentStep = ""
+
+    var errorText:String? = ""
 
     var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 

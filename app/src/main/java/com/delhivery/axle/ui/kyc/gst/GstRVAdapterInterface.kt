@@ -21,4 +21,5 @@ interface GstRVAdapterInterface : ItemClickListener<BaseGstRVAdapterItem<*>> {
   fun fetchDetails(data: GstDetailData)
 
   fun fetchCurrSelected():String?
+
 }

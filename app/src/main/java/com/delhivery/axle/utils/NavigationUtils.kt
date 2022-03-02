@@ -184,6 +184,7 @@ class NavigationUtils @Inject constructor(
       }else{
             userPrefs.truckPostKyc.split(",").toTypedArray()
        }
+
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
