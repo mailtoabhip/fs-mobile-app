@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
-import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,8 +17,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -82,6 +79,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var docUploadProof = false
     var selectedAddress =""
     var isSameAsGST =false
+    var defaultSelectGst = true
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
     override fun layoutId() = R.layout.activity_address
@@ -122,13 +120,23 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@AddressActivity.addressRVAdapter
         }
-        viewModel.AddressLiveData.observe(this, Observer {
+
+        viewModel.addressLiveData.observe(this, Observer {
             it?.let { _items ->
                     addressRVAdapter.operation(_items)
+                        if((_items.get(0).first as AddressDataItem).data.addressType.equals("gst")){
+                            this.selectItem(_items.get(0).first as AddressDataItem, 0)
+                        }else{
+                            this.selectItem(_items.get(0).first as AddressDataItem, 1)
+                        }
+
+
+
             }
         })
         viewModel.addressSavedChanges.observe(this, Observer {
             if(it){
+
             binding.btnAddAlternateAddress.visibility=View.GONE
             }
             else{

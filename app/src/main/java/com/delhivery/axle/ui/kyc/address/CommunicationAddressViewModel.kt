@@ -8,8 +8,6 @@ import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -40,7 +38,7 @@ BaseViewModel() {
     var subAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
-    var AddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var addressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
     var lastSelectedAddressLiveData = MutableLiveData<AddressDataItem>()
     var addressDetailDataList = MutableLiveData<List<AddressDetailData>>()
     var selectedComminicationAddress =""
@@ -63,7 +61,7 @@ BaseViewModel() {
                    )
                )
            }.let {
-               AddressLiveData.postValue(it)
+               addressLiveData.postValue(it)
 
            }
            if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}
@@ -110,7 +108,7 @@ BaseViewModel() {
                                     )
                                 )
                             }.let {
-                                AddressLiveData.postValue(it)
+                                addressLiveData.postValue(it)
                                 alternateAddressAdded.postValue(true)
                             }
                         }else{
@@ -122,7 +120,7 @@ BaseViewModel() {
                                     )
                                 )
                             }.let {
-                                AddressLiveData.postValue(it)
+                                addressLiveData.postValue(it)
                                 alternateAddressAdded.postValue(false)
                             }
 

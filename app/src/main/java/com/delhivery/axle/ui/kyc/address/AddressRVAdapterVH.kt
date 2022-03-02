@@ -64,12 +64,23 @@ class AddressDataItemVH(binding: ViewAddressRequestItemBinding) :
             _interface.selectItem(item,adapterPosition)
 
         }
+        binding.addressType.setOnClickListener {
+            binding.relLay.isSelected=true
+            _interface.selectItem(item,adapterPosition)
+
+        }
+        binding.gstAddress.setOnClickListener {
+            binding.relLay.isSelected=true
+            _interface.selectItem(item,adapterPosition)
+
+        }
 
         if(item.data.isSelected==true){
             binding.relLay.isSelected=true
         }else{
             binding.relLay.isSelected=false
         }
+
 
         binding.root.clickToAction(HomeTripsRequestAction_ViewDetails, item, _interface)
     }
