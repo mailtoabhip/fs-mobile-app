@@ -55,7 +55,7 @@ class TeamMembersViewModel @Inject constructor(
 
               add(Pair(TeamMembersProgressItem(), Remove))
 
-              if (_res.total > 0) {
+              if (_res.count > 0) {
                 for (user in _res.users) {
                   if (user.isParent()) {
                     add(Pair(TeamMemberAdminUserItem(user), Add))
@@ -109,7 +109,7 @@ class TeamMembersViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            createUserLiveData.postValue(Pair(_res.message,number))
+            createUserLiveData.postValue(Pair(_res,number))
           } else {
             error.handle()
             createUserLiveData.postValue(null)
@@ -158,6 +158,7 @@ class TeamMembersViewModel @Inject constructor(
     val jsonObject = JsonObject()
     jsonObject.addProperty("is_deleted", true)
     jsonObject.addProperty("parent_uuid", uuid)
+    jsonObject.addProperty("parent_sp_id", userRepository.userId())
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)
@@ -183,6 +184,7 @@ class TeamMembersViewModel @Inject constructor(
       }
       jsonObject.addProperty("diesel_card_preference",dieselPreference)
       jsonObject.addProperty("parent_uuid", uuid)
+      jsonObject.addProperty("parent_sp_id", uuid)
       jsonObject.add("diesel_company", jsonArray)
       jsonObject.addProperty("parent_sp_id", uuid)
       jsonObject.addProperty("originator", "axle-app")

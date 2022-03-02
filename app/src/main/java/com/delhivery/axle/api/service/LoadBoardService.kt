@@ -126,7 +126,7 @@ interface LoadBoardService {
     @GET("/get_child_users/{uuid}")
     fun getTeamMembers(
             @Path("uuid") userId: String
-    ): Single<BaseResponse<UserDetailResponse>>
+    ): Single<BaseResponse<TeamDetailResponse>>
 
     /**
      * Create secondary user
@@ -134,7 +134,7 @@ interface LoadBoardService {
     @POST("/create_child_user")
     fun createSecondaryUser(
             @Body payload: JsonObject
-    ): Single<BaseResponse<CreateUserResponse>>
+    ): Single<BaseMessageResponse>
 
     /**
      * Update secondary user

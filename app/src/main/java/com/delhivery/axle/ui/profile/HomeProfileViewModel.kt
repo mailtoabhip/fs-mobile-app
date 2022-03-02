@@ -28,7 +28,7 @@ class HomeProfileViewModel @Inject constructor(
 
   var userRoleLiveData = MutableLiveData<Boolean>()
 
-  var kycDetailData = MutableLiveData<KYCDetailResponse>()
+  var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
 
   /* states */
   var stateLiveData = MutableLiveData<ProfileUIState>()
@@ -136,12 +136,12 @@ class HomeProfileViewModel @Inject constructor(
             }
   }
 
-  fun getKYCDetails() {
+  fun getKYCDetails(redirect:String) {
     compositeDisposable += loadboardRepository.getKycDetails(userRepository.userId())
             .onBackground()
             .subscribe { _res, error ->
               if (!error) {
-                kycDetailData.postValue(_res)
+                kycDetailData.postValue(Pair(_res,redirect))
               } else
                 error.handle()
             }

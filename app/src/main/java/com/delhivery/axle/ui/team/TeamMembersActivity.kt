@@ -170,9 +170,9 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
         val number = data.phoneNumber
         val dieselPreference = data.getDieselPreferences()
         val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
-        if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
+       if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
           editTeamMember(uuid, name!!, number!!, dieselPreference, dieselCompany )
-        }
+       }
       }
 
       DeleteTeamMemberAction_Delete -> {
@@ -217,8 +217,8 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     }
     bindingDialog.editMemberLayout.setOnClickListener {
       val uuid = data.userId
-      val name = data.name
-      val number = data.phoneNo
+      val name = data.userName
+      val number = data.phoneNumber
       val dieselPreference = data.getDieselPreferences()
       val dieselCompany = data.dieselCompany?: mutableListOf()
       if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
