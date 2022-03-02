@@ -32,6 +32,7 @@ BaseViewModel() {
     var otpVerified = MutableLiveData<Boolean>()
     var docVerified = MutableLiveData<Boolean>()
     var docVerificationFailedCount = MutableLiveData<Int>().apply { postValue(0) }
+    var errorText:String? = ""
 
 
     /* steps */

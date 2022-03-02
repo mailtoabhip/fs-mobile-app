@@ -28,6 +28,7 @@ import javax.inject.Inject
 import android.view.LayoutInflater
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.kyc.address.AddressActivity
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 
 /**
@@ -184,6 +185,21 @@ class NavigationUtils @Inject constructor(
       }else{
             userPrefs.truckPostKyc.split(",").toTypedArray()
        }
+      if(userPrefs.retryVerification){
+          if(userPrefs.panRejectReason.isNotNullOrEmpty()){
+              extras.putInt(StepKey,0)
+          }else if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+              extras.putInt(StepKey,1)
+          }else if(userPrefs.addressRejectReason.isNotNullOrEmpty()){
+              extras.putInt(StepKey,2)
+          }else if(userPrefs.rcRejectReason.isNotNullOrEmpty()&&kycSteps.size>3){
+              extras.putInt(StepKey,3)
+          }
+          else{
+              showKycSubmittedDialog()
+          }
+      }
+
 
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)

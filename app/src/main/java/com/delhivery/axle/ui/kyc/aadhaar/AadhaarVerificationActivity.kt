@@ -50,6 +50,7 @@ import javax.inject.Inject
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 
 
@@ -94,6 +95,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+
+            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.aadhaarError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.identityRejectReason
+            }else{
+                binding.aadhaarError.visibility=View.GONE
+            }
         }
     }
 
@@ -153,6 +161,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
+                if(userPrefs.retryVerification){
+                    userPrefs.identityRejectReason= ""
+                }
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
             } else {

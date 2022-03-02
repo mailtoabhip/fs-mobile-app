@@ -31,6 +31,7 @@ class IdentityVerificationViewModel@Inject constructor(
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var verificationDocUploadLiveData = MutableLiveData<Boolean>()
+    var errorText:String? = ""
 
     /**
      * Get delegation token for AWS

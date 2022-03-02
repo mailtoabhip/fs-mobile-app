@@ -34,7 +34,7 @@ class BusinessVerificationViewModel@Inject constructor(
 
     var currentStep = ""
 
-
+    var errorText:String? = ""
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var manualVerificationRequired = MutableLiveData<Boolean>()

@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -78,6 +79,12 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.identityError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.identityRejectReason
+            }else{
+                binding.identityError.visibility=View.GONE
+            }
         }
 
     }
@@ -148,6 +155,9 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                     binding.editShop.length()>0 -> {
                         userPrefs.shopNumber = viewModel.shopNumber
                     }
+                }
+                if(userPrefs.retryVerification){
+                    userPrefs.identityRejectReason= ""
                 }
                 //change flow as per config
        //         navigationUtils.navigate(identityVerificationIntent(this),true,null)

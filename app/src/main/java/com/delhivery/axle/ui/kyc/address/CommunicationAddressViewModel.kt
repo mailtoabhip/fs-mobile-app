@@ -45,10 +45,11 @@ BaseViewModel() {
     var addressDetailDataList = MutableLiveData<List<AddressDetailData>>()
     var selectedComminicationAddress =""
     var isSameAsGst =false
+    var errorText:String? = ""
 
 
 
-   fun fetchAndAddUserAddress(){
+    fun fetchAndAddUserAddress(){
    if(!userPrefs.getAddressList().isNullOrEmpty()){
        for(i in userPrefs.getAddressList()!!){
 

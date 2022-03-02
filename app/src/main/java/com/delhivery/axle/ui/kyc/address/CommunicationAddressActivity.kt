@@ -95,6 +95,12 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+            if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
+                binding.addressError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.addressRejectReason
+            }else{
+                binding.addressError.visibility=View.GONE
+            }
         }
     }
 
@@ -188,6 +194,9 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
                     userPrefs.isCommunicationAddressVerified=true
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= ""
+                }
                  navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
               TotalStepsKey)!!,null)
             } else {

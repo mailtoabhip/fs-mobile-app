@@ -31,10 +31,7 @@ import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.getFileName
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
-import com.delhivery.axle.utils.extensions.setup
+import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
@@ -93,12 +90,23 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+
+            if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
+                binding.addressError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.addressRejectReason
+            }else{
+                binding.addressError.visibility=View.GONE
+            }
         }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
        viewModel.fetchAndAddUserAddress()
+
+        if(userPrefs.retryVerification){
+            binding.btnSubmitDetails.setText(R.string.action_retry_verification)
+        }
       binding.btnAddAlternateAddress.setOnClickListener {
           showAddAlternateAddressDialog()
       }
@@ -135,6 +143,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         viewModel.subAddressLiveData.observe(this, Observer {
             if (it) {
                 uiUtils.showSnackbar("Address updated")
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= ""
+                }
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 

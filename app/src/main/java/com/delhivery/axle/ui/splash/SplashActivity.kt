@@ -255,9 +255,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_TRANSACTION_IDS, transactions)
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         }
-          bundle.putInt(StepKey,0)
-          navigationUtils.navigateKyc(this,true,bundle)
-     //     navigationUtils.navigate(it.java, true, bundle)
+          navigationUtils.navigate(it.java, true, bundle)
       }
     }
   }

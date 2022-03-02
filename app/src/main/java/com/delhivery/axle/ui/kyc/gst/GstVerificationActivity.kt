@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -73,7 +74,12 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!)
-            viewModel.errorText = "GST verification failed due to blurry image"
+            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.gstError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.identityRejectReason
+            }else{
+                binding.gstError.visibility=View.VISIBLE
+            }
         }
     }
 
@@ -83,7 +89,9 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
+        if(userPrefs.retryVerification){
+            binding.btnVerifyGst.setText(R.string.action_retry_verification)
+        }
         if(userPrefs.gstNumber.isNotNullOrEmpty()){
            currSelectedGst=userPrefs.gstNumber
         }
@@ -152,6 +160,9 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
+                if(userPrefs.retryVerification){
+                    userPrefs.identityRejectReason= ""
+                }
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                         TotalStepsKey)!!,null)
             } else {

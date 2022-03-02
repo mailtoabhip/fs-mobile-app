@@ -139,6 +139,8 @@
     <string name="action_restart_kyc">Try Again</string>
     <string name="action_add_member">Add Member</string>
     <string name="action_complete_verification">Complete Verification</string>
+    <string name="action_retry_verification">Retry Verification</string>
+
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
