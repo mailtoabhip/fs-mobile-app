@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.kyc.address
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -32,13 +33,14 @@ BaseViewModel() {
     var documentProofUrl= mutableListOf<String>()
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
-    var addressSavedChanges = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var subAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
     var showSubmitedDialog = MutableLiveData<Boolean>()
     var addressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var fetchGstAddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+    var fetchAltaddressLiveData = MutableLiveData<List<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>>()
     var lastSelectedAddressLiveData = MutableLiveData<AddressDataItem>()
     var addressDetailDataList = MutableLiveData<List<AddressDetailData>>()
     var selectedComminicationAddress =""
@@ -49,7 +51,7 @@ BaseViewModel() {
    fun fetchAndAddUserAddress(){
    if(!userPrefs.getAddressList().isNullOrEmpty()){
        for(i in userPrefs.getAddressList()!!){
-
+       Log.i("user_pref",i.toString())
            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                add(
                    Pair(
@@ -61,7 +63,8 @@ BaseViewModel() {
                    )
                )
            }.let {
-               addressLiveData.postValue(it)
+               if(i?.addressType!!.startsWith("al",true)){fetchAltaddressLiveData.postValue(it)}
+               if(i?.addressType!!.startsWith("g",true)){fetchGstAddressLiveData.postValue(it)}
 
            }
            if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}
