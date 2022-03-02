@@ -338,7 +338,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         path: String
     ) {
         uiUtils.hideProgress()
-        viewModel.documentProofUrl.add(path)
+            val s3url= awsUtils.awsBasePath()
+            viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()

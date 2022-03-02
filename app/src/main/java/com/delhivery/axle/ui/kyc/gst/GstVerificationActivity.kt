@@ -78,7 +78,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 binding.gstError.visibility=View.VISIBLE
                 viewModel.errorText = userPrefs.identityRejectReason
             }else{
-                binding.gstError.visibility=View.VISIBLE
+                binding.gstError.visibility=View.GONE
             }
         }
     }

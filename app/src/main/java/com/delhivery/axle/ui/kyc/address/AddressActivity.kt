@@ -273,7 +273,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     ) {
         uiUtils.hideProgress()
         viewModel.documentProofUrl.clear()
-        viewModel.documentProofUrl.add(path)
+        val s3url= awsUtils.awsBasePath()
+        viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()

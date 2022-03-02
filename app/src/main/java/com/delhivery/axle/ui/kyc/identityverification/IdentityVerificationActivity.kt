@@ -159,8 +159,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 if(userPrefs.retryVerification){
                     userPrefs.identityRejectReason= ""
                 }
-                //change flow as per config
-       //         navigationUtils.navigate(identityVerificationIntent(this),true,null)
+
             navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!,null)
             }

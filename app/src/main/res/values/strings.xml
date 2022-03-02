@@ -93,7 +93,7 @@
   <string name="action_resend_otp">Resend OTP</string>
   <string name="action_verify_otp">Verify OTP</string>
   <string name="action_save_proceed">Save &amp; Proceed</string>
-  <string name="action_verify_aadhaar">Verify Aadhaar</string>
+    <string name="action_verify_aadhaar">Verify Aadhaar</string>
   <string name="action_submit_details">Submit Details</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
