@@ -256,6 +256,7 @@
                         android:textColor="@color/error_red"
                         android:paddingStart="@dimen/size_12dp"
                         android:paddingTop="@dimen/size_6dp"
+                        android:id="@+id/btnRetry"
                         android:paddingBottom="@dimen/size_6dp"
                         android:paddingEnd="@dimen/size_12dp"
                         android:background="@drawable/bg_all_round_corner_red_border"

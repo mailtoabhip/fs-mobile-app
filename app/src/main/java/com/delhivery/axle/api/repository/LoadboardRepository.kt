@@ -102,7 +102,7 @@ class LoadboardRepository @Inject constructor(
      * Create secondary user
      */
     fun createSecondaryUser(jsonObject: JsonObject) =
-            loadboardService.createSecondaryUser(jsonObject).convertResponse()
+            loadboardService.createSecondaryUser(jsonObject).convertMessageResponse()
 
     /**
      * Update secondary user

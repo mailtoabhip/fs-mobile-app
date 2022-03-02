@@ -116,6 +116,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             downloadLogo()
         }
 
+        binding.btnRetry.setOnClickListener {
+            uiUtils.showProgress()
+            viewModel.getKYCDetails("retry")
+        }
+
         binding.card1.visibility = View.GONE
         binding.profile.visibility = View.VISIBLE
 
@@ -127,15 +132,15 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         binding.kycLayout.setOnClickListener {
             uiUtils.showProgress()
-            viewModel.getKYCDetails()
+            viewModel.getKYCDetails("detail")
 
         }
 
         viewModel.kycDetailData.observe(this, Observer {
-            if(it.kycData.isNullOrEmpty()){
+            if(it.first.kycData.isNullOrEmpty()){
                 uiUtils.showSnackbar("Something went wrong, please try again")
             }else{
-                for (k in it.kycData){
+                for (k in it.first.kycData!!){
                     if(k.verificationOverallType.equals("identity")){
                         userPrefs.identityType = k.verificationType.toString()
                         if(k.verificationStatus.equals("failed")){
@@ -171,7 +176,14 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }
                     }
                 }
-                navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+                if(it.second.equals("detail")) {
+                    navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+                }else{
+                    userPrefs.retryVerification = true
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey, 0)
+                    navigationUtils.navigateKyc(this, true, bundle)
+                }
             }
             uiUtils.hideProgress()
         })
@@ -252,7 +264,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 binding.kycpendingLayout.visibility = View.VISIBLE
                 binding.ratingsLayout.visibility = View.VISIBLE
                 binding.kycfailedLayout.visibility = View.GONE
-                binding.kycLayout.visibility = View.VISIBLE
+                binding.kycLayout.visibility = View.GONE
             } else if (userPrefs.verificationStatus.equals("success")) {
                 binding.verifyBadge.visibility = View.VISIBLE
                 binding.kycpendingLayout.visibility = View.GONE

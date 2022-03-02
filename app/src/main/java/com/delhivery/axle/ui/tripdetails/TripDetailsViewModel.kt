@@ -931,7 +931,7 @@ class TripDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error && _res != null) {
             fuelUserSpinnerOptions.clear()
-            if (_res.total > 0) {
+            if (_res.count > 0) {
               for (user in _res.users) {
                 if (user.phoneNumber != null) {
                   if (user.phoneNumber == userPrefs.phoneNumber)

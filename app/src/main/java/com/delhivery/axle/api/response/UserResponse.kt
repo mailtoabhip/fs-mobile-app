@@ -35,3 +35,8 @@ data class KYCResponse(
         @SerializedName("verification_status_reason_code") val verificationStatusReasonCode: String?,
         @SerializedName("verification_status_reason_message") val verificationStatusReasonMessage: String?
 )
+
+data class TeamDetailResponse(
+        @SerializedName("count") val count: Int,
+        @SerializedName("data") val users: List<UserModel>
+)

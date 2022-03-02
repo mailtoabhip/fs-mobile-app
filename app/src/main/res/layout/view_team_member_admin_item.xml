@@ -63,8 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/heading_black"
-            android:text="@{user.name}"
-            android:layout_marginStart="@dimen/size_20dp"
+            android:text="@{user.userName}"
             android:textSize="@dimen/text_18sp"
             tools:text="Supplier"/>
 
@@ -72,9 +71,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/faded_black"
-            android:text="@{user.phoneNo}"
-            android:layout_marginStart="@dimen/size_20dp"
-              android:textSize="@dimen/size_16dp"
+            android:text="@{user.phoneNumber}"
+             android:textSize="@dimen/text_16sp"
             tools:text="9876543210"/>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
