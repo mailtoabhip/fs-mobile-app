@@ -169,13 +169,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     override fun navigateToBusinessVerification() {
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val bundle = Bundle()
-        bundle.putInt(StepKey, 0)
-        navigationUtils.navigateKyc(this,false,bundle)
-    }
-
     override fun handleAction(
             actionId: String,
             item: BaseGstRVAdapterItem<*>
