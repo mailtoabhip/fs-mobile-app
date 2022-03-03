@@ -139,29 +139,15 @@
             />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_otp_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_12dp"
-            bind:autoSizeTextType="uniform"
-            android:fontFamily="sans-serif"
-            android:gravity="start"
-            android:textSize="@dimen/text_16sp"
-            android:text="@string/label_otp_text"
-            android:layout_below="@+id/labelotp"
-            android:textColor="@color/sub_heading_black"
-            tools:text="Enter the 4-digit code we have sent by SMS"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_otp_sent_to_phone_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             bind:autoSizeTextType="uniform"
             android:fontFamily="sans-serif"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_below="@+id/labelotp"
             android:gravity="start"
             android:textSize="@dimen/text_16sp"
-            android:layout_below="@+id/text_otp_label"
             android:textColor="@color/sub_heading_black"
             tools:text="to 8695900493"
             />
@@ -172,9 +158,8 @@
             android:fontFamily="sans-serif"
             android:textStyle="bold"
             android:textSize="@dimen/text_16sp"
-            android:layout_marginStart="@dimen/size_12dp"
-            android:layout_toEndOf="@+id/text_otp_sent_to_phone_no"
-            android:layout_below="@+id/text_otp_label"
+            android:layout_marginTop="@dimen/size_12dp"
+           android:layout_below="@+id/text_otp_sent_to_phone_no"
             android:textColor="@color/colorAccent"
             android:text="@string/action_change_number"
             tools:text="Change number"
@@ -184,7 +169,7 @@
             android:layout_below="@+id/text_otp_sent_to_phone_no"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_32dp"
+            android:layout_marginTop="44dp"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
