@@ -63,6 +63,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_uuid") val truckUUID: Any?,
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
   @SerializedName("status") val transactionStatus: String?= "",
+  @SerializedName("entity") val entity:String = "",
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,

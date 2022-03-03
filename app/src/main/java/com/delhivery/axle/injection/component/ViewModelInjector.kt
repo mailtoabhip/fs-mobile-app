@@ -12,11 +12,14 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -30,6 +33,7 @@ import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import dagger.Component
 import javax.inject.Singleton
@@ -191,6 +195,27 @@ interface ViewModelInjector {
    * Injects [SearchOngoingTripViewModel]
    */
   fun inject(viewModel: SearchOngoingTripViewModel)
+
+  /**
+   * Injects [HomeLoadsTruckViewModel]
+   */
+  fun inject(viewModel: HomeLoadsTruckViewModel)
+
+  /**
+   * Injects [HomeTrucksViewModel]
+   */
+  fun inject(viewModel: HomeTrucksViewModel)
+
+  /**
+   * Injects [TruckViewModel]
+   */
+  fun inject(viewModel: TruckViewModel)
+
+  /**
+   * Injects [SearchCityViewModel]
+   */
+  fun inject(viewModel: SearchCityViewModel)
+
 
   @Component.Builder
   interface Builder {

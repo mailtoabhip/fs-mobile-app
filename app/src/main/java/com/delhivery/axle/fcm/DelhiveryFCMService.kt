@@ -81,6 +81,9 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     val transactions = remoteMessage.data["transaction_ids"] ?: ""
     val preferredTransactionId = remoteMessage.data["transaction_id"] ?: ""
 
+    //For inventory use
+    val vehicleNumber = remoteMessage.data["vehicle_number"] ?: ""
+
 //    analyticsUtil.trackEvent(
 //            EVENT_NOTIFICATION_RECEIVE,
 //            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
@@ -95,6 +98,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
         putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
         putExtra(ARGS_TRANSACTION_IDS, transactions)
         putExtra(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+        putExtra(ARGS_VEHICLE_NUMBER, vehicleNumber)
       }
       val pendingIntent = PendingIntent.getActivity(
           this, 0, intent, PendingIntent.FLAG_ONE_SHOT
@@ -151,3 +155,4 @@ const val ARGS_NOTIFICATION_TYPE = "notification_type"
 const val ARGS_NOTIFICATION_KEY = "notification_service_notification_id"
 const val ARGS_DEEPLINK_TYPE = "deeplink_type"
 const val ARGS_DEEPLINK_ID = "deeplink_id"
+const val ARGS_VEHICLE_NUMBER = "vehicle_number"

@@ -288,7 +288,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.rvPmtSummary.visibility = View.VISIBLE
           viewModel.paymentBucketType = "all"
         }
-        viewModel.fetchWarehouseDetails()
+        if(t.second.entity!="OSCPL"){
+          viewModel.fetchWarehouseDetails()
+        }
         viewModel.fetchPayment()
         viewModel.fetchChargeListSummary()
         // viewModel.fetchPaymentSummary()

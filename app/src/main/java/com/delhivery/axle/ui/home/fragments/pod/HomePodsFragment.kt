@@ -34,7 +34,7 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.searchtrip.searchIntent
@@ -206,7 +206,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       }
 
       HomePodWarningAction_NoTrips -> {
-        action(NavigateHomeFragmentAction(LoadsFragment))
+        action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
       }
 
       HomePodWarningAction_TimeOut -> {

@@ -18,8 +18,10 @@ import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailAc
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeTruckLoadsFragmentBindingModule
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -32,6 +34,8 @@ import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
+import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
+import com.delhivery.axle.ui.trucks.TruckActivity
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
 import dagger.Module
@@ -76,7 +80,7 @@ abstract class ActivityBindingModule {
   /* Home activity */
   @ActivityScope
   @ContributesAndroidInjector(
-      modules = [AbsHomeActivityModule::class, HomeFragmentsBindingModule::class]
+      modules = [AbsHomeActivityModule::class, HomeFragmentsBindingModule::class, HomeTruckLoadsFragmentBindingModule::class]
   )
   internal abstract fun bindHomeActivity(): HomeActivity
 
@@ -172,9 +176,25 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsConsolidatedPageActivityModule::class])
   internal abstract fun bindConsolidatedPageActivity(): ConsolidatedPageActivity
 
+  /* Truck activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTruckActivityModule::class])
+  internal abstract fun bindTruckActivity(): TruckActivity
+
+  /* Search City Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchCityModule::class])
+  internal abstract fun bindSearchCityActivity() : SearchCity
+
+  /*Add Truck pathway activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAddTruckPathwayActivityModule::class])
+  internal abstract fun bindAddTruckPathwayActivity(): AddTruckPathwayActivity
+
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
   internal abstract fun bindModule(): InvalidActivity
+
 }
 
 /**
@@ -260,7 +280,17 @@ internal abstract class AbsConsolidatedPageActivityModule : ActivityModule<Conso
 internal abstract class AbsSearchOngoingTripActivityModule : ActivityModule<SearchOngoingTripActivity>()
 
 @Module
+internal abstract class AbsTruckActivityModule : ActivityModule<TruckActivity>()
+
+@Module
+internal abstract class AbsSearchCityModule : ActivityModule<SearchCity>()
+
+@Module
+internal abstract class AbsAddTruckPathwayActivityModule : ActivityModule<AddTruckPathwayActivity>()
+
+@Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
+
 
 /**
  * Activity Binds Module

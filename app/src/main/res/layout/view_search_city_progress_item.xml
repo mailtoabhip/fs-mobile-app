@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:padding="@dimen/size_14dp"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="@dimen/size_30dp"
+            android:layout_height="@dimen/size_30dp"
+            android:layout_gravity="center"
+            android:background="@color/colorShimmerPrimary"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_11dp"
+            android:orientation="vertical">
+            <View
+                android:layout_width="@dimen/size_120dp"
+                android:layout_height="@dimen/size_16dp"
+                android:background="@color/colorShimmerPrimary"/>
+            <View
+                android:layout_width="@dimen/size_120dp"
+                android:layout_height="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:background="@color/colorShimmerPrimary"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+</layout>

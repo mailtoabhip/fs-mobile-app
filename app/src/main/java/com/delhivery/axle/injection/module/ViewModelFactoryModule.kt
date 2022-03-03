@@ -1,5 +1,6 @@
 package com.delhivery.axle.injection.module
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
@@ -18,12 +19,15 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -40,6 +44,7 @@ import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
 import dagger.Binds
@@ -245,6 +250,26 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchOngoingTripViewModel::class)
   abstract fun bindSearchOngoingTripViewModel(viewModel: SearchOngoingTripViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeLoadsTruckViewModel::class)
+  abstract fun bindHomeLoadsTruckViewModel(homeLoadsTruckViewModel: HomeLoadsTruckViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeTrucksViewModel::class)
+  abstract fun bindHomeTrucksViewModel(homeTrucksViewModel: HomeTrucksViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TruckViewModel::class)
+  abstract fun bindTruckViewModel(truckViewModel: TruckViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchCityViewModel::class)
+  abstract fun bindSearchCityViewModel(searchCityViewModel: SearchCityViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

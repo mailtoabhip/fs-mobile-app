@@ -21,6 +21,8 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
+import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -53,6 +55,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var dplink_tid : String = ""
   var dplink_type : String = ""
 
+  var fromLink = false
+  var vehicleNum =""
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -70,10 +74,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
 
+    //For inventory
+    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
 
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+
+    fromLink = false
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -81,7 +90,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Load Requests"
+    title = "Home"
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -123,6 +132,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun processDeepLink() {
+
+    Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
@@ -149,14 +160,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           if (dplink_tid != "") {
             startActivity(tripDetailsIntent(dplink_tid, this))
           } else {
-            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
             startActivity(bidDetailsIntent(dplink_tid, this))
           } else {
-            fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
 
@@ -169,15 +180,32 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           )
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
+
+        ACTIVATE_TRUCK_REDIRECT ->{
+          if(dplink_tid != "") {
+           // startActivity(truckIntent(this, fromLinks = true ,vehicleNumber = dplink_tid))
+            fromLink = true
+            vehicleNum = dplink_tid
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+          else{
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+        }
+
+        MY_TRUCKS_REDIRECT -> {
+          fromLink = true
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
         else -> {
-          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
       }
     }
   }
 
   private fun processNotification() {
-    Log.d("noti",notificationType+notificationId)
+    Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
@@ -199,7 +227,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         else
         {
-          fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
       }
       LANE_PREFERENCE_UPDATE_NOTIFICATION -> {
@@ -217,8 +245,25 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       REDIRECT_TO_LOAD -> {
         startActivity(bidDetailsIntent(preferredTransactionId,this))
       }
+
+      ACTIVATE_TRUCK_NOTIFICATION ->{
+     //   startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
+        fromLink = true
+        vehicleNum = vehicleNumber
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
+
+      REDIRECT_TO_TRUCKS -> {
+        fromLink = true
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
+
+      TRUCK_REACHED_NOTIFICATION -> {
+        startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
+      }
+
       else -> {
-        fragmentAction(NavigateHomeFragmentAction(LoadsFragment))
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
     }
   }
@@ -253,10 +298,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
 
+    //For Inventory
+    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
     /**
      * Get Deep Link Parameters*/
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
+
+    fromLink = false
     processDeepLink()
 
     if (transactions.isNotEmpty())
@@ -348,7 +398,7 @@ enum class FragmentName(
         val position: Int,
         val frgName: String
 ) {
-  LoadsFragment(0, "loads_screen"),
+  HomeFragment(0, "home_screen"),
   BidsFragment(1, "bids_screen"),
   TripsFragment(3, "trips_screen" ),
   ProfileFragment(4, "profile_screen"),
@@ -371,6 +421,9 @@ private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
 private const val REDIRECT_TO_TRIP = "redirect_to_trip"
 private const val REDIRECT_TO_LOAD ="redirect_to_load"
+private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
+private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
+private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
 
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
@@ -382,6 +435,8 @@ private const val DOWNLOAD_LEDGER_POPUP_REDIRECT = "dnldldgr"
 private const val TRIP_DETAIL_REDIRECT = "trpdtl"
 private const val LOAD_DETAIL_REDIRECT = "biddtl"
 private const val ADVANCE_PENDING_REDIRECT = "advpend"
+private const val MY_TRUCKS_REDIRECT = "mytrucks"
+private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"

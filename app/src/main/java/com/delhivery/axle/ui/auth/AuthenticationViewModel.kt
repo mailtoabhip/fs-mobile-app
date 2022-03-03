@@ -107,7 +107,11 @@ class AuthenticationViewModel @Inject constructor(
             } else if (_res.third.isDeleted) {
               userPrefs.hasLoggedIn = false
               Disabled
-            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+            }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+              userPrefs.hasLoggedIn = true
+              userPrefs.lastLoginTime = Date().time
+              AddInventoryPathway
+            }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
               LoadRequest

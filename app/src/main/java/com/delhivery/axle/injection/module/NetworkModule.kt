@@ -173,7 +173,7 @@ class NetworkModule {
   fun providePaymentService(
     gson: Gson,
     okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.PaymentService).create(
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.PayableService).create(
       PaymentService::class.java
   )
 
@@ -285,5 +285,18 @@ class NetworkModule {
       okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.OMCService).create(
           OMCService::class.java
+  )
+
+
+  /**
+   * Provide [InventoryService]
+   */
+  @Provides
+  @Singleton
+  fun provideInventoryService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.InventoryService).create(
+    InventoryService::class.java
   )
 }
