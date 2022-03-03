@@ -108,20 +108,24 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.radioType.setOnCheckedChangeListener { group, checkedId ->
-            if(checkedId==binding.radioType.getChildAt(0).id){
-                viewModel.userMode = "post_load"
-                viewModel.changeRoleDialogVisibility=1
-            }else if(checkedId==binding.radioType.getChildAt(1).id){
-                viewModel.userMode = "post_truck"
-                viewModel.changeRoleDialogVisibility=2
-            }else if(checkedId==binding.radioType.getChildAt(2).id){
-                viewModel.userMode = "both"
-                viewModel.changeRoleDialogVisibility=3
+            if(viewModel.userPrefs.isPanVerfied && (!viewModel.userPrefs.isUserVerfied)){
+                uiUtils.showSnackbar("permission change is not allowed when profile is under KYC verification")
+            }else {
+                if (checkedId == binding.radioType.getChildAt(0).id) {
+                    viewModel.userMode = "post_load"
+                    viewModel.changeRoleDialogVisibility = 1
+                } else if (checkedId == binding.radioType.getChildAt(1).id) {
+                    viewModel.userMode = "post_truck"
+                    viewModel.changeRoleDialogVisibility = 2
+                } else if (checkedId == binding.radioType.getChildAt(2).id) {
+                    viewModel.userMode = "both"
+                    viewModel.changeRoleDialogVisibility = 3
+                }
+                setUserRoleOption()
             }
-            setUserRoleOption()
         }
         binding.occupationText.setOnClickListener {
-                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,this)
+                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,viewModel.userPrefs.isPanVerfied,viewModel.userPrefs.isUserVerfied,this)
         }
 
         viewModel.userUpdateLiveData.observe(this, androidx.lifecycle.Observer {
