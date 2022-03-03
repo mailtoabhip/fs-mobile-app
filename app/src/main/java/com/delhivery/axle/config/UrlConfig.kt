@@ -106,7 +106,7 @@ enum class UrlConfig(
       "https://orion-omc-uat.delhivery.com"
   ),
   InventoryService(
-      "https://orion-inventory-api.delhivery.com",
+      "https://orion-inventory-api-v2.delhivery.com",
       "https://zxfddco9gg.execute-api.ap-southeast-1.amazonaws.com/dev/",
       "https://mf9vem7911.execute-api.us-east-1.amazonaws.com/uat/"
 
