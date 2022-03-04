@@ -93,14 +93,16 @@
                 android:layout_width="wrap_content"
                 android:id="@+id/radioPostloads"
                 android:clickable="false"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="-4dp"
+                android:layout_alignParentStart="true"
                 android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_6sp"
+                android:layout_marginStart="@dimen/size_12dp"
+               android:layout_toEndOf="@+id/radioPostloads"
                 android:id="@+id/label_postloads"
                 android:text="@string/label_account_setup_primary_select_postloads"
                 android:textColor="@color/heading_black"
@@ -111,9 +113,11 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sublabel_postloads"
                 android:layout_width="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:gravity="start"
+                android:layout_toEndOf="@+id/radioPostloads"
                 android:layout_below="@+id/label_postloads"
                 android:text="@string/label_postloads"
                 android:layout_marginTop="4dp"
@@ -131,16 +135,18 @@
               android:layout_height="wrap_content">
             <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="-4dp"
                 android:id="@+id/radioPostTruck"
                 android:clickable="false"
-                android:layout_centerVertical="true"
-                android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_6sp"
+                android:layout_toEndOf="@+id/radioPostTruck"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:id="@+id/label_posttrucks"
                 android:text="@string/label_account_setup_primary_select_posttrucks"
                 android:textColor="@color/heading_black"
@@ -154,6 +160,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:gravity="start"
+                android:layout_toEndOf="@+id/radioPostTruck"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:layout_below="@+id/label_posttrucks"
                 android:text="@string/label_posttrucks"
                 android:layout_marginTop="4dp"
@@ -171,16 +179,18 @@
               android:layout_height="wrap_content">
             <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/radioPostBoth"
+                 android:id="@+id/radioPostBoth"
                 android:clickable="false"
-                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="-4dp"
                 android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_6sp"
+                android:layout_toEndOf="@+id/radioPostBoth"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:id="@+id/label_postboth"
                 android:text="@string/label_account_setup_primary_select_postboth"
                 android:textColor="@color/heading_black"
@@ -194,6 +204,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:gravity="start"
+                android:layout_toEndOf="@+id/radioPostBoth"
+                android:layout_marginStart="@dimen/size_12dp"
                 android:layout_below="@+id/label_postboth"
                 android:text="@string/label_postloads"
                 android:layout_marginTop="4dp"

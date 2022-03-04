@@ -22,7 +22,7 @@
     <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
     <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
     <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-    <string name="msg_otp_sent_to_phone_no">to %1$s.</string>
+    <string name="msg_otp_sent_to_phone_no">Enter the 4-digit code we have sent by SMS to %1$s.</string>
     <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
     <string name="msg_select_route_welcome_user">Welcome\n%s</string>
     <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -319,7 +319,7 @@
     <string name="label_account_setup_primary_select_postloads">Post Loads</string>
     <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
     <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
-    <string name="label_postloads">To find trucks &amp; ship your loads.</string>
+    <string name="label_postloads">To find both trucks &amp; loads</string>
     <string name="label_posttrucks">To find loads in your operating routes</string>
     <string name="label_postboth">To find both trucks &amp; loads</string>
     <string name="label_role">What is your occupation?</string>
