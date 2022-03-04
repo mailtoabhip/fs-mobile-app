@@ -83,13 +83,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
       //do nothing
-    }else{
+
+    }
+     else{
       if(!userPrefs.isUserVerfied){
         if(userPrefs.pancard.isNullOrEmpty()) {
           showKycDialog(0)
         }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
           showKycDialog(1)
-        }else  if(!userPrefs.getAddressList().isNullOrEmpty()){
+        }else  if(!userPrefs.businessAddress.isNullOrEmpty()){
           showKycDialog(2)
         }else  if(!userPrefs.userMode.equals("post_load")){
           if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)

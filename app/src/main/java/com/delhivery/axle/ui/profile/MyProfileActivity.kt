@@ -94,7 +94,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
                         bundle.putInt(StepKey, 1)
                         navigationUtils.navigateKyc(this,false,bundle)
-                    }else  if(!userPrefs.getAddressList().isNullOrEmpty()){
+                    }else  if(!userPrefs.businessAddress.isNullOrEmpty()){
                         bundle.putInt(StepKey, 2)
                         navigationUtils.navigateKyc(this,false,bundle)
                     }else  if(!userPrefs.userMode.equals("post_load")){

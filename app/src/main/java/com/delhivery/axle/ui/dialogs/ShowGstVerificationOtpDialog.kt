@@ -54,7 +54,7 @@ class ShowGstVerificationOtpDialog @Inject constructor(
         binding = DialogVerifyGstOtpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.otpNum.text = phoneNumber
+        binding.otpNum.text = viewModel.gstDetailData.value?.phoneNumber
         binding.otpView.otpViewInterface = this
         timerToResend()
         binding.closeBtn.setOnClickListener {

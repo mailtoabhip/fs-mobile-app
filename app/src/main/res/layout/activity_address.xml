@@ -21,7 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             />
-
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -105,7 +107,10 @@
                 android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_add_alternate_address"
-                style="@style/OutlineActionButton"
+                android:layout_height="wrap_content"
+                android:textColor="@color/sub_heading_black"
+                android:textSize="@dimen/text_14sp"
+                android:background="@color/white"
                 android:textAllCaps="false"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/addressList"
@@ -126,7 +131,7 @@
                 android:text="@string/action_submit_details"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
 

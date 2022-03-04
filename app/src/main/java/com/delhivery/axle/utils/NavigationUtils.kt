@@ -264,7 +264,7 @@ class NavigationUtils @Inject constructor(
         val bindingDialog= DialogKycSubmittedBinding.inflate(activity.layoutInflater)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
-        if(userPrefs.isGstVerfied && userPrefs.isSameAsGst && userPrefs.isGstNotBypassed){
+        if(userPrefs.isGstVerfied && userPrefs.isSameAsGst && userPrefs.isGstNotBypassed && userPrefs.userMode=="post_load"){
             bindingDialog.titleText.text = activity.resources.getString(R.string.kyc_verified_successfully)
             bindingDialog.titleSubText.text = activity.resources.getString(R.string.kyc_verified_complete_details)
         }else{
