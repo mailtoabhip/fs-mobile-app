@@ -24,7 +24,9 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
@@ -139,6 +141,19 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         }
 
+        if(userPrefs.businessAddress.isNotNullOrEmpty()){
+            if(!userPrefs.getAddressList().isNullOrEmpty()){
+                if(userPrefs.getAddressList()!!.size>0){
+                    for(item in userPrefs.getAddressList()!!){
+                        if(item?.addressType!!.startsWith("al")){
+                            fillDataFromBusinessAddress(item)
+                        }
+                    }
+                }
+
+            }
+
+        }
 
         var cityLength = 0
         autoCompleteUtils.autoCompleteCity(binding.autoCompleteCity) {
@@ -193,7 +208,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
        }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
-                    userPrefs.isCommunicationAddressVerified=true
+                var address =
+                    viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                viewModel.updateCommunicationAddress(address, false)
+                /* userPrefs.isCommunicationAddressVerified=true
                 if(userPrefs.retryVerification){
                     userPrefs.addressRejectReason= ""
                 }
@@ -201,9 +219,23 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
               TotalStepsKey)!!,null)
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
+            }*/
             }
         })
 
+        viewModel.subAddressLiveData.observe(this, Observer {
+            if (it) {
+                uiUtils.showSnackbar("Address updated")
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= ""
+                }
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                    TotalStepsKey)!!,null)
+
+            } else {
+                uiUtils.showSnackbar("Error encountered, Please try again.")
+            }
+        })
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
@@ -244,6 +276,74 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     }
 
+    private fun fillDataFromBusinessAddress(addressData: AddAddressModel){
+        var docArray:ArrayList<Pair<String, String>> = ArrayList()
+        var docPath =""
+        if(!addressData.documentUrls.isNullOrEmpty()){
+            docPath= addressData.documentUrls?.get(0)!!
+        }
+        var docproofRec=""
+        var addressRec =  addressData.address
+        var flatRec = addressRec?.split(",")?.get(0)
+        //binding.editFlat.setText(flatRec)
+        viewModel.flatAddress = flatRec!!
+        flatFilled=true
+        var areaRec = addressRec?.split(",")?.get(1)
+      //  binding.editArea.setText(areaRec)
+        viewModel.areaAddress = areaRec!!
+        areaFilled=true
+        var citynPinRec = addressRec?.split(",")?.get(2)
+        var cityRec =citynPinRec?.split("-")?.get(0)
+      //  binding.autoCompleteCity.setText(cityRec)
+        viewModel.cityAddress = cityRec!!
+        cityFilled=true
+        var pincodeRec = citynPinRec?.split("-")?.get(1)
+        pincodeFilled=true
+        viewModel.pincodeAddress = pincodeRec!!
+        if(docPath.isNullOrEmpty()){
+            resetUploadData()
+            showUploadImage()
+          //  binding.uploadDocLay.visibility= View.VISIBLE
+           // binding.uploadedDocLay.visibility= View.GONE
+            docUploadProof=false
+
+        }else{
+            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            if(addressData.documentUrls!=null)
+            viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
+            binding.uploadDocLay.visibility= View.GONE
+            binding.docUploadedLay.visibility = View.VISIBLE
+            binding.docTitle.setText(docArray.get(0).first)
+            docUploadProof=true
+        }
+
+        proofTypeFilled = true
+        var spinnerIndex=0
+        if(addressData.proofDocumentType!=null) {
+            spinnerIndex = when {
+                addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                else -> 0
+            }
+        }
+
+        binding.spinnerProof.post(Runnable { binding.spinnerProof.setSelection(spinnerIndex)
+            docproofRec=binding.spinnerProof.selectedItem.toString()
+
+        })
+
+        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+            if(p>0){
+                proofTypeFilled = true
+            }
+        }
+        enableSubmitButton()
+    }
+
+
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(packageManager) != null) {
@@ -279,6 +379,12 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         )
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,1)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
 
     private fun uploadImage(
         delegationToken: DelegationToken,

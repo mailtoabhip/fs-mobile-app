@@ -50,8 +50,10 @@ import javax.inject.Inject
 import androidx.core.app.ActivityCompat.startActivityForResult
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.activity_verify_pan.*
+import java.lang.StringBuilder
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
@@ -120,6 +122,20 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             }
         }
 
+        if(userPrefs.aadhaarNumber.isNotNullOrEmpty()){
+            var aadhaarfill = StringBuilder()
+            for((i,item) in userPrefs.aadhaarNumber.withIndex()){
+                aadhaarfill.append(item)
+                if(i==3){
+                    aadhaarfill.append("-")
+                }
+                if(i==7){
+                    aadhaarfill.append("-")
+                }
+            }
+            viewModel.aadhaarCardNumber = aadhaarfill.toString()
+        }
+
         binding.btnVerifyAadhaar.setOnClickListener {
             dialogUtils.showVerifcationOptionsDialog(getString(R.string.upload_aadhaar_text),this)
         }
@@ -172,8 +188,16 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         })
     }
 
+
     override fun getRequestAadhaarOtp() {
        viewModel.getRequestAadhaarOtp(true)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,0)
+        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun setAccountRoleSelection(selected: String) {

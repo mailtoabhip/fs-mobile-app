@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -312,7 +313,12 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,0)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

@@ -27,6 +27,7 @@ import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -191,8 +192,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,1)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(

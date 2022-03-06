@@ -24,14 +24,19 @@ import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.raisedFocus
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import javax.inject.Inject
 
 
 class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerificationViewModel>() {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
+    @Inject
+    lateinit var userPrefs: UserPrefs
+
     override fun getViewModelClass() = PanVerificationViewModel::class.java
 
     override fun layoutId() = R.layout.activity_verify_pan
@@ -49,6 +54,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navigationUtils.navigate(HomeActivity::class.java,true)
+    }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -77,6 +86,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
 
             }
+
+        if(userPrefs.pancard.isNotNullOrEmpty()){
+            viewModel.panCardNumber = userPrefs.pancard
+        }
 
            viewModel.validatePanLiveData.observe(
                this, Observer {

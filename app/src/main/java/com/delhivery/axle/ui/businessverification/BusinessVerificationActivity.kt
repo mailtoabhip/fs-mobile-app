@@ -188,7 +188,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,2)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
     override fun onAWSSuccess(
         path: String
     ) {

@@ -31,8 +31,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.databinding.ActivityVerifyGstBinding
 import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
@@ -94,6 +96,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         }
         if(userPrefs.gstNumber.isNotNullOrEmpty()){
            currSelectedGst=userPrefs.gstNumber
+
         }
         binding.gstList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -207,6 +210,21 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
       return currSelectedGst
     }
 
+    override fun fetchCheckedDetails(data: GstDetailItemData?) {
+        currSelectedGst = data?.gstNumber
+        viewModel.gstDetailData.value =  data
+        binding.btnVerifyGst.isEnabled =true
+    }
+
+
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val bundle = Bundle()
+        bundle.putInt(StepKey,0)
+        navigationUtils.navigateKyc(this,false,bundle)
+    }
 
     override fun onAWSSuccess(
             path: String
