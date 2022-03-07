@@ -128,6 +128,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
                         binding.alternateAddressLayout.isSelected = true
                         selectedAddressData = alternateAddressData
+                    }else{
+                        binding.gstAddressLayout.isSelected = true
+                        selectedAddressData = gstAddressData
                     }
                 }
 
@@ -223,6 +226,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 if(userPrefs.retryVerification){
                     userPrefs.addressRejectReason= ""
                 }
+                val listOfAddress = mutableListOf<AddAddressModel>()
+                listOfAddress.add(gstAddressData)
+                listOfAddress.add(alternateAddressData)
+                userPrefs.setAddressList(listOfAddress)
+                userPrefs.businessAddress = selectedAddressData.address!!
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 
