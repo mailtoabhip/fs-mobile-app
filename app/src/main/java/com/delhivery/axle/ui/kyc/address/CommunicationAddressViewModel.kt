@@ -34,6 +34,7 @@ BaseViewModel() {
     var addressType ="alternate"
     var alternateAddressAdded = MutableLiveData<Boolean>()
     var addAddressLiveData = MutableLiveData<Boolean>()
+    var deleteAddressLiveData = MutableLiveData<Boolean>()
     var updateAddressLiveData = MutableLiveData<Boolean>()
     var subAddressLiveData = MutableLiveData<Boolean>()
     var captureAddressProof = MutableLiveData<Boolean>()
@@ -46,13 +47,15 @@ BaseViewModel() {
     var selectedComminicationAddress =""
     var isSameAsGst =false
     var errorText:String? = ""
-
+    var gstAddress= ""
+    var alternateAddress = ""
 
 
     fun fetchAndAddUserAddress(){
    if(!userPrefs.getAddressList().isNullOrEmpty()){
-       for(i in userPrefs.getAddressList()!!){
-       Log.i("user_pref",i.toString())
+       for(address in userPrefs.getAddressList()!!){
+
+      /* Log.i("user_pref",i.toString())
            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                add(
                    Pair(
@@ -68,7 +71,7 @@ BaseViewModel() {
                if(i?.addressType!!.startsWith("g",true)){fetchGstAddressLiveData.postValue(it)}
 
            }
-           if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}
+           if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}*/
        }
    }
    }
@@ -102,8 +105,12 @@ BaseViewModel() {
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
-                        addAddressLiveData.postValue(true)
-                        if(!isDeleted) {
+                        if(isDeleted){
+                            deleteAddressLiveData.postValue(true)
+                        }else{
+                            addAddressLiveData.postValue(true)
+                        }
+                      /*  if(!isDeleted) {
                             mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                                 add(
                                     Pair(
@@ -128,7 +135,7 @@ BaseViewModel() {
                                 alternateAddressAdded.postValue(false)
                             }
 
-                        }
+                        }*/
 
                     } else {
                         error.handle()

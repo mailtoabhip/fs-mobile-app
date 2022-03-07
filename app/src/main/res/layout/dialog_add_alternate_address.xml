@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools"
     >
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -62,23 +60,14 @@
             bind:layout_constraintTop_toBottomOf="@+id/top_lay"
          android:layout_height="wrap_content">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/size_24dp"
-            android:orientation="vertical"
-            android:paddingStart="@dimen/size_24dp"
-            android:paddingEnd="@dimen/size_24dp"
-            android:paddingBottom="@dimen/size_24dp"
-           >
-
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         bind:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/size_32dp"
+        android:paddingStart="@dimen/size_24dp"
+        android:paddingEnd="@dimen/size_24dp"
+        android:paddingBottom="@dimen/size_24dp"
         bind:layout_constraintTop_toBottomOf="@+id/top_lay"
         android:orientation="vertical">
         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
@@ -264,9 +253,36 @@
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/size_32dp"
             android:text="@string/action_submit_details"
+            android:visibility="visible"
             />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/save_delete_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/size_32dp"
+            android:visibility="gone"
+            android:weightSum="2">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_confirm_delete"
+            style="@style/OutlineDeleteActionButton"
+            android:textAllCaps="false"
+            android:layout_marginEnd="@dimen/size_20dp"
+            android:layout_width="0dp"
+            android:text="@string/action_delete_address"
+            android:layout_weight="1"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_save_changes"
+            style="@style/ActionButton"
+            android:textAllCaps="false"
+            android:layout_width="0dp"
+            android:text="@string/action_save_changes"
+            android:layout_weight="1"
+            />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.constraintlayout.widget.ConstraintLayout>
      </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
