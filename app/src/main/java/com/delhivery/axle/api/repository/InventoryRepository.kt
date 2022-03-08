@@ -39,7 +39,15 @@ class InventoryRepository @Inject constructor(
             cityService.getClusterID(destinationCityId).convertResponse(),
             BiFunction<ClusterResponse, ClusterResponse,
                     Pair<String, String>> { t1, t2 ->
-                Pair(t1.clusters[0].clusterId, t2.clusters[0].clusterId)
+                Pair( if(t1.clusters.isNotEmpty()){
+                    t1.clusters[0].clusterId
+                }else{
+                    "dummy_cluster"
+                },if(t2.clusters.isNotEmpty()){
+                    t2.clusters[0].clusterId
+                }else{
+                    "dummy_cluster"})
+
             }
         )
 
