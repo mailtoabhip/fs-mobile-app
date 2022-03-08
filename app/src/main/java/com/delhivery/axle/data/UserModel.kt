@@ -52,7 +52,8 @@ data class UserModel(
         @SerializedName("is_identity_verified") var isIdentityVerified: Boolean?,
         @SerializedName("is_gsts_by_pan_not_registered") var isGstsByPanNotRegistered: Boolean?,
        @SerializedName("is_trucking_document_uploaded") var isTruckingDocumentUploaded: Boolean?,
-        @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?
+        @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
+      @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf()
         ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId

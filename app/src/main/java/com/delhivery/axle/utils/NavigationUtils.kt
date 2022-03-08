@@ -200,7 +200,6 @@ class NavigationUtils @Inject constructor(
           }
       }
 
-
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){

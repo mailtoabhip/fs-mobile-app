@@ -82,7 +82,7 @@ class IdentityVerificationViewModel@Inject constructor(
 
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
-        uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected,documentUrls = docList,cinNumber = if(cinNumber.isNotEmpty())cinNumber else null,udyogAadhaarNumber = if(udyogNumber.isNotEmpty())udyogNumber else null,shopEstablishmentNumber = if(shopNumber.isNotEmpty())shopNumber else null))
+        uploadDocForVerification(VerificationDocUploadRequest(verificationId =  if(cinNumber.isNotEmpty())cinNumber else if(udyogNumber.isNotEmpty())udyogNumber else if(shopNumber.isNotEmpty())shopNumber else null,proofDocumentType = selected,documentUrls = docList))
     }
 
 

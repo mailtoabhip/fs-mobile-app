@@ -320,7 +320,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
 
-  /**
+    /**
+     * identity doc url
+     */
+    var identityDocUrl: String
+        set(value) = editor.putString(PrefKeys.identityDocUrl ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.identityDocUrl, "") ?: ""
+
+    /**
    * Is user verified
    */
   var isUserVerfied: Boolean
@@ -705,6 +713,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.retryVerification)
             .apply()
+    editor.remove(PrefKeys.identityDocUrl)
+          .apply()
     editor.commit()
   }
 
@@ -755,6 +765,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
     noOfVerificationIssues = user.noOfVerificationIssues?:""
+      identityDocUrl = user.identity_doc_url?.get(0)?:""
   }
 
 
@@ -849,6 +860,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val identityType = "identity_type"
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
+    const val identityDocUrl = "identity_doc_url"
   }
 }
 

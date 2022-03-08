@@ -176,6 +176,11 @@ class GstVerificationViewModel@Inject constructor(
                                 userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-", "")
                                 val addressList = ArrayList<AddAddressModel>()
                                 addressList.add(AddAddressModel(phoneNumber = phoneNum,addressType= "gst", address = gstDetailData.value?.address, isDeleted = false, proofDocumentType = null, documentUrls = null))
+                                if(!userPrefs.getAddressList().isNullOrEmpty()){
+                                    if(userPrefs.getAddressList()!!.size>1){
+                                       addressList.add(userPrefs.getAddressList()!!.get(1) as AddAddressModel)
+                                    }
+                                }
                                 userPrefs.setAddressList(addressList)
                                 userPrefs.isGstVerfied = true
                                 userUpdateLiveData.postValue(true)
