@@ -75,7 +75,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var areaFilled = false
     var cityFilled = false
     var pincodeFilled = false
-    var proofTypeFilled = true
+    var proofTypeFilled = false
     var docUploadProof = false
     var selectedAddress =""
     var isSameAsGST =false
@@ -415,6 +415,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             proofTypeFilled = p>0
+            enableAddAddressDialogButton(bindingDialog)
         }
 
         bindingDialog.btnSubmitDetails.setOnClickListener {
@@ -562,7 +563,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         userPrefs.setAddressList(listOfAddress)
     }
     fun enableAddAddressDialogButton(bindingDialog:DialogAddAlternateAddressBinding){
-        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        bindingDialog.btnSaveChanges.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
 
     }
     private fun fillDataFromBusinessAddress(addressData: AddAddressModel,bindingDialog: DialogAddAlternateAddressBinding){
@@ -606,7 +607,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             docUploadProof=true
         }
 
-        proofTypeFilled = true
+
         var spinnerIndex=0
         if(addressData.proofDocumentType!=null) {
             spinnerIndex = when {
@@ -617,18 +618,15 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 addressData.proofDocumentType!!.startsWith("sh", true) -> 5
                 else -> 0
             }
-        }
 
+        }
+        if(spinnerIndex>0){
+            proofTypeFilled=true
+        }
         bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
             viewModel.documentProofType=bindingDialog.spinnerProof.selectedItem.toString()
-
         })
 
-        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
-            }
-        }
         enableAddAddressDialogButton(bindingDialog)
     }
     fun confirmDelete(proofType :String,flatAddress:String,areaAddress:String,cityAddress:String,pinCode:String, editDialog:Dialog) {

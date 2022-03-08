@@ -86,7 +86,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     }
      else{
-      if(!userPrefs.isUserVerfied){
+      showKycDialog(2)
+     /* if(!userPrefs.isUserVerfied){
         if(userPrefs.pancard.isNullOrEmpty()) {
           showKycDialog(0)
         }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
@@ -97,7 +98,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)
           showKycDialog(3)
         }
-      }
+      }*/
     }
   }
 
