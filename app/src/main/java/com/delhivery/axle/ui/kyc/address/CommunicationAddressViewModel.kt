@@ -51,33 +51,6 @@ BaseViewModel() {
     var alternateAddress = ""
 
 
-    fun fetchAndAddUserAddress(){
-   if(!userPrefs.getAddressList().isNullOrEmpty()){
-       for(address in userPrefs.getAddressList()!!){
-
-      /* Log.i("user_pref",i.toString())
-           mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-               add(
-                   Pair(
-                       AddressDataItem(
-                           AddressDetailData(userPrefs.phoneNumber,
-                               i?.address!!,i.proofDocumentType,i.documentUrls,i.addressType,i.isDeleted)
-                       ),
-                       DataRVAdapterOperationType.Add
-                   )
-               )
-           }.let {
-               if(i?.addressType!!.startsWith("al",true)){fetchAltaddressLiveData.postValue(it)}
-               if(i?.addressType!!.startsWith("g",true)){fetchGstAddressLiveData.postValue(it)}
-
-           }
-           if(i?.addressType!!.startsWith("al",true)){alternateAddressAdded.postValue(true)}*/
-       }
-   }
-   }
-
-
-
     fun addNewAddress(isDeleted:Boolean) {
         if (!isConnected) return
 
@@ -110,33 +83,6 @@ BaseViewModel() {
                         }else{
                             addAddressLiveData.postValue(true)
                         }
-                      /*  if(!isDeleted) {
-                            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                                add(
-                                    Pair(
-                                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
-                                        DataRVAdapterOperationType.Add
-                                    )
-                                )
-                            }.let {
-                                addressLiveData.postValue(it)
-                                alternateAddressAdded.postValue(true)
-                            }
-                        }else{
-                            mutableListOf<Pair<BaseAddressRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                                add(
-                                    Pair(
-                                        AddressDataItem(AddressDetailData(userPrefs.phoneNumber, address,documentProofType,documentProofUrl,addressType,isDeleted)),
-                                        DataRVAdapterOperationType.Remove
-                                    )
-                                )
-                            }.let {
-                                addressLiveData.postValue(it)
-                                alternateAddressAdded.postValue(false)
-                            }
-
-                        }*/
-
                     } else {
                         error.handle()
                         addAddressLiveData.postValue(false)
@@ -151,7 +97,6 @@ BaseViewModel() {
             selectedAddress,
             isSameAsGst,
             userPrefs.phoneNumber!!
-
         )
             .onBackground()
             .progress()
@@ -159,7 +104,7 @@ BaseViewModel() {
                 if (!error) {
                     updateAddressLiveData.postValue(true)
                     subAddressLiveData.postValue(true)
-                    userPrefs.isSameAsGst=true
+                    userPrefs.isSameAsGst=isSameAsGst
                 } else {
                     error.handle()
                     updateAddressLiveData.postValue(false)

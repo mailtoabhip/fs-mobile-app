@@ -412,7 +412,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     var isGstNotBypassed: Boolean
         set(value) = editor.putBoolean(PrefKeys.isGstNotBypassed, value)
             .apply()
-        get() = prefs.getBoolean(PrefKeys.isGstNotBypassed, false)
+        get() = prefs.getBoolean(PrefKeys.isGstNotBypassed, isGstVerfied)
 
   /**
    *  aadhaar verified

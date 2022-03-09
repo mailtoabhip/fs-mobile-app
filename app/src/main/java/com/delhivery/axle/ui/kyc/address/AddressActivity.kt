@@ -457,6 +457,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 }
             }
         })
+
         bindingDialog.editArea.lengthAction(3){
             areaFilled = true
             enableAddAddressDialogButton(bindingDialog)
@@ -564,6 +565,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
     fun enableAddAddressDialogButton(bindingDialog:DialogAddAlternateAddressBinding){
         bindingDialog.btnSaveChanges.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
 
     }
     private fun fillDataFromBusinessAddress(addressData: AddAddressModel,bindingDialog: DialogAddAlternateAddressBinding){
