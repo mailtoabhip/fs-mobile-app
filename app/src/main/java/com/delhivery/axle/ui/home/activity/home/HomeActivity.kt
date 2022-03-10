@@ -56,6 +56,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var dplink_type : String = ""
 
   var fromLink = false
+  var fromNotification = false
+  var fromDeepLink = false
   var vehicleNum =""
   @Inject lateinit var userPrefs : UserPrefs
 
@@ -83,6 +85,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
     fromLink = false
+    var fromNotification = false
+    var fromDeepLink = false
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -183,8 +187,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         ACTIVATE_TRUCK_REDIRECT ->{
           if(dplink_tid != "") {
-           // startActivity(truckIntent(this, fromLinks = true ,vehicleNumber = dplink_tid))
-            fromLink = true
+            fromDeepLink = true
             vehicleNum = dplink_tid
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -194,7 +197,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
 
         MY_TRUCKS_REDIRECT -> {
-          fromLink = true
+          fromDeepLink = true
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
         else -> {
@@ -247,19 +250,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       ACTIVATE_TRUCK_NOTIFICATION ->{
-     //   startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
-        fromLink = true
+        fromNotification = true
         vehicleNum = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
       REDIRECT_TO_TRUCKS -> {
-        fromLink = true
+        fromNotification = true
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
       TRUCK_REACHED_NOTIFICATION -> {
-        startActivity(truckIntent(this, fromLinks = true, vehicleNumber = vehicleNumber))
+        fromNotification = true
+        vehicleNum = vehicleNumber
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
 
       else -> {
@@ -307,6 +311,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
     fromLink = false
+    fromNotification=false
+    fromDeepLink=false
     processDeepLink()
 
     if (transactions.isNotEmpty())

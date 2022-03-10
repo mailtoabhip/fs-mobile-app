@@ -28,7 +28,9 @@ class ActivateTruckDialog @Inject constructor(
     private val analyticsUtil: AnalyticsUtil,
     private val uiUtils: UiUtils,
     private val position:Int,
-    private val fromLink:Boolean=false
+    private val fromDeepLink:Boolean=false,
+    private val fromNotification:Boolean=false
+
 ) : AlertDialog(context){
     private lateinit var binding: DialogBottomActivateTruckBinding
 
@@ -70,7 +72,7 @@ class ActivateTruckDialog @Inject constructor(
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
 
-        if(fromLink){
+        if(fromDeepLink||fromNotification){
             binding.textCurrentCityActivate.text = data.destinationCity()
             binding.textUnloadingDestinationActivate.text = data.originCity()
             val originCityModel = CityModel(data.destinationCity()!!,data.currentCityCode,null,null)
@@ -147,11 +149,30 @@ class ActivateTruckDialog @Inject constructor(
         }
 
         if (flag){
-            analyticsUtil.trackEvent(
-                EVENT_ACTIVATE_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                mutableListOf(userPrefs.userId(), data.inventoryId)
-            )
+            when {
+                fromDeepLink -> {
+                    analyticsUtil.trackEvent(
+                        EVENT_ACTIVATE_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
+                        mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_DEEP_LINKING)
+                    )
+                }
+                fromNotification -> {
+                    analyticsUtil.trackEvent(
+                        EVENT_ACTIVATE_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
+                        mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_NOTIFICATION)
+                    )
+                }
+                else -> {
+                    analyticsUtil.trackEvent(
+                        EVENT_ACTIVATE_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
+                        mutableListOf(userPrefs.userId(), data.inventoryId)
+                    )
+                }
+            }
+
             uiUtils.showProgress()
             dialogInterface.activateTruck(data, data.inventoryId, truckCity!!, truckDestination!! ,sourcedAs, truckPrice, position)
             dismiss()

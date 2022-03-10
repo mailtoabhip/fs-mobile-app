@@ -136,10 +136,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
-            if(!isLoadingData && HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
+            if(!isLoadingData && (HomeLoadsTruckFragment._instance.fromDeepLink||HomeLoadsTruckFragment._instance.fromNotification) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
                 if(adapter.itemsList().size==5)
                 this.handleAction(HomeTrucksRequestAction_ActivateTruck,adapter.itemsList().get(4),4)
-                HomeLoadsTruckFragment._instance.fromLink = false
+                HomeLoadsTruckFragment._instance.fromNotification = false
+                HomeLoadsTruckFragment._instance.fromDeepLink = false
             }
         })
 
@@ -245,14 +246,34 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
         })
 
-        if(HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
+        if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
             viewModel.searchPrefix = HomeLoadsTruckFragment._instance.vehicleNo
             adapter.clearItems()
             viewModel.userTrucksData.postValue(null)
             viewModel.searchFlag = true
             viewModel.getAllInventories(search = true)
         }else{
-            HomeLoadsTruckFragment._instance.fromLink = false
+            if(HomeLoadsTruckFragment._instance.fromNotification){
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
+                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_NOTIFICATION)
+                )
+            }else if(HomeLoadsTruckFragment._instance.fromDeepLink){
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME,PROPERTY_SOURCE),
+                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_DEEP_LINKING)
+                )
+            }else{
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), "trucks_screen")
+                )
+            }
+            HomeLoadsTruckFragment._instance.fromDeepLink = false
+            HomeLoadsTruckFragment._instance.fromNotification = false
             HomeLoadsTruckFragment._instance.vehicleNo = ""
             refreshData()
         }
@@ -331,7 +352,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromLink).show()
+                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromDeepLink,HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
             }
         }
