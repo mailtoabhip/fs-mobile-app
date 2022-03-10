@@ -42,11 +42,11 @@ class InventoryRepository @Inject constructor(
                 Pair( if(t1.clusters.isNotEmpty()){
                     t1.clusters[0].clusterId
                 }else{
-                    "dummy_cluster"
+                    "unmapped_cluster"
                 },if(t2.clusters.isNotEmpty()){
                     t2.clusters[0].clusterId
                 }else{
-                    "dummy_cluster"})
+                    "unmapped_cluster"})
 
             }
         )
