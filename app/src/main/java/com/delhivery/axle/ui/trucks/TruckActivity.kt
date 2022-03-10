@@ -64,7 +64,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.sourcedAsIntent = intent.getStringExtra(Sourced)?: ""
         viewModel.fromLinks = intent.getBooleanExtra(FromLinks, false)
         viewModel.vehicleNumberIntent = intent.getStringExtra(VehicleNumber) ?: ""
-
+        viewModel.sourceIntent = intent.getStringExtra(AddTruckSource) ?: ""
 
     }
 
@@ -354,7 +354,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         if(flag) {
             analyticsUtil.trackEvent(
                 EVENT_ADD_TRUCK,
-                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_SOURCE),
                 mutableListOf(userPrefs.userId())
             )
             uiUtils.showProgress("Adding truck")
@@ -483,6 +483,7 @@ private const val MaxCap = "max_cap"
 private const val Sourced = "sources_as"
 private const val FromLinks = "notification_deeplink"
 private const val VehicleNumber = "vehicle_number"
+private const val AddTruckSource = "source"
 
 
 
@@ -499,7 +500,8 @@ fun truckIntent(
     maxCap: Double =0.0,
     sourcesAS: String= "",
     fromLinks:Boolean = false,
-    vehicleNumber: String= ""
+    vehicleNumber: String= "",
+    source:String=""
 ) = Intent(context, TruckActivity::class.java).apply {
     putExtra(TruckType, truckType)
     putExtra(TruckSize, truckSize)
@@ -509,5 +511,6 @@ fun truckIntent(
     putExtra(Sourced, sourcesAS)
     putExtra(FromLinks, fromLinks)
     putExtra(VehicleNumber , vehicleNumber)
+    putExtra(AddTruckSource , source)
 
 }

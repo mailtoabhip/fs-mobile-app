@@ -134,6 +134,8 @@ const val EVENT_BANNER_CLICK_SCROLL = "click_add_truck_scroll_banner"
 const val EVENT_VIEW_MY_TRUCK = "view_my_truck"
 
 
+
+
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
 const val PROPERTY_DESTINATION = "destination"
@@ -227,3 +229,7 @@ const val VALUE_FUTURE_ADJUSTMENT = "future_adjustment"
 const val VALUE_RECOVERY_ADJUSTMENT = "recovery_adjustment"
 const val VALUE_NOTIFICATION = "notification"
 const val VALUE_DEEP_LINKING = "deep_linking"
+const val VALUE_ADD_TRUCK_TOP_BANNER = "add_truck_top_banner"
+const val VALUE_ADD_TRUCK_SCROLL_BANNER= "add_truck_scroll_banner"
+const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
+const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"
