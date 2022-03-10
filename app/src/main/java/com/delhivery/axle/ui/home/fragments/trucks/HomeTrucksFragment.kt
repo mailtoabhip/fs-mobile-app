@@ -247,6 +247,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         })
 
         if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
+            analyticsUtil.trackEvent(
+                EVENT_VIEW_MY_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId(), "trucks_screen")
+            )
             viewModel.searchPrefix = HomeLoadsTruckFragment._instance.vehicleNo
             adapter.clearItems()
             viewModel.userTrucksData.postValue(null)

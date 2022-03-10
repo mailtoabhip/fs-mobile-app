@@ -64,7 +64,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         viewModel.sourcedAsIntent = intent.getStringExtra(Sourced)?: ""
         viewModel.fromLinks = intent.getBooleanExtra(FromLinks, false)
         viewModel.vehicleNumberIntent = intent.getStringExtra(VehicleNumber) ?: ""
-        viewModel.sourceIntent = intent.getStringExtra(AddTruckSource) ?: ""
+        viewModel.addTruckSourceIntent = intent.getStringExtra(AddTruckSource) ?: ""
 
     }
 
@@ -355,7 +355,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             analyticsUtil.trackEvent(
                 EVENT_ADD_TRUCK,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_SOURCE),
-                mutableListOf(userPrefs.userId())
+                mutableListOf(userPrefs.userId(),viewModel.addTruckSourceIntent)
             )
             uiUtils.showProgress("Adding truck")
             viewModel.addNewTruck(sourcedAs.toUpperCase())
