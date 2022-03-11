@@ -85,8 +85,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
 
     fromLink = false
-    var fromNotification = false
-    var fromDeepLink = false
+    fromNotification = false
+    fromDeepLink = false
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
