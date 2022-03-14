@@ -229,6 +229,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 if(userPrefs.retryVerification){
                     userPrefs.addressRejectReason= ""
                 }
+                var address = viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                addDataToPreference(address)
+                userPrefs.businessAddress = address
+
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 
@@ -240,6 +244,14 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             uploadImage(it.first, it.second)
         })
  }
+
+    private fun addDataToPreference(address:String){
+        val listOfAddress = mutableListOf<AddAddressModel>()
+        val alternateAddressData =  AddAddressModel(userPrefs.phoneNumber, address,viewModel.documentProofType,viewModel.documentProofUrl,viewModel.addressType,false)
+        listOfAddress.add(alternateAddressData)
+
+        userPrefs.setAddressList(listOfAddress)
+    }
     private fun showUploadImage() {
         binding.uploadDocLay.visibility=View.VISIBLE
         binding.docUploadedLay.visibility=View.GONE
@@ -381,6 +393,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)

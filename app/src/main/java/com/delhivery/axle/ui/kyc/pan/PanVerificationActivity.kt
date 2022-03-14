@@ -56,6 +56,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
         navigationUtils.navigate(HomeActivity::class.java,true)
     }
     override fun onPostCreate(savedInstanceState: Bundle?) {

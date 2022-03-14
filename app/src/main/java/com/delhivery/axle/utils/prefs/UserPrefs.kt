@@ -576,8 +576,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.retryVerification, false)
 
+    var retryVerificationOnBack: Boolean
+        set(value) = editor.putBoolean(PrefKeys.retryVerificationOnBack, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.retryVerificationOnBack, false)
 
-  /**
+
+    /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -713,6 +718,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.retryVerification)
             .apply()
+        editor.remove(PrefKeys.retryVerificationOnBack)
+            .apply()
     editor.remove(PrefKeys.identityDocUrl)
           .apply()
     editor.commit()
@@ -755,7 +762,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isGstVerfied= user.isGstVerified?: false
     isRcVerfied = user.isRcVerified?: false
     isIdentityVerified = user.isIdentityVerified?: false
-    isGstsByPanNotRegistered = user.isGstsByPanNotRegistered?: false
+    isGstsByPanNotRegistered = user.isGstsByPanNotRegistered?: true
     isTruckingDocumentUploaded = user.isTruckingDocumentUploaded?: false
     isAadhaartVerfied = user.isAadhaarVerified?: false
     verificationStatus = user.verificationStatus?: ""
@@ -860,7 +867,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val identityType = "identity_type"
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
-    const val identityDocUrl = "identity_doc_url"
+      const val retryVerificationOnBack = "retry_verification_on_back"
+      const val identityDocUrl = "identity_doc_url"
   }
 }
 

@@ -195,6 +195,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,0)
         navigationUtils.navigateKyc(this,false,bundle)

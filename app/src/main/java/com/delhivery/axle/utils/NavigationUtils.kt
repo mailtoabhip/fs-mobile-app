@@ -180,23 +180,56 @@ class NavigationUtils @Inject constructor(
     var intent= Intent()
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
+        var backToHome = false
         val kycSteps = if(userMode=="post_load"){
             userPrefs.loadPostKyc.split(",").toTypedArray()
       }else{
             userPrefs.truckPostKyc.split(",").toTypedArray()
        }
       if(userPrefs.retryVerification){
-          if(userPrefs.panRejectReason.isNotNullOrEmpty()){
-              extras.putInt(StepKey,0)
-          }else if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
-              extras.putInt(StepKey,1)
-          }else if(userPrefs.addressRejectReason.isNotNullOrEmpty()){
-              extras.putInt(StepKey,2)
-          }else if(userPrefs.rcRejectReason.isNotNullOrEmpty()&&kycSteps.size>3){
-              extras.putInt(StepKey,3)
-          }
-          else{
-              showKycSubmittedDialog()
+          if(userPrefs.retryVerificationOnBack){
+              if(extras.getInt(StepKey)==2){
+                  if(userPrefs.addressRejectReason.isNotNullOrEmpty()){
+                      extras.putInt(StepKey,2)
+                  } else if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+                      extras.putInt(StepKey,1)
+                  }else if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
+                      extras.putInt(StepKey, 0)
+                  }else{
+                      backToHome=true
+                  }
+              }else if(extras.getInt(StepKey)==1){
+                   if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+                      extras.putInt(StepKey,1)
+                  }else if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
+                      extras.putInt(StepKey, 0)
+                  }else{
+                       backToHome=true
+                   }
+              }else if(extras.getInt(StepKey)==1){
+                  if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
+                      extras.putInt(StepKey, 0)
+                  }else{
+                      backToHome=true
+                  }
+              }
+              userPrefs.retryVerificationOnBack=false
+          }else {
+              if (userPrefs.panRejectReason.isNotNullOrEmpty()) {
+                  Log.d("reject", userPrefs.panRejectReason)
+                  extras.putInt(StepKey, 0)
+              } else if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                  Log.d("rejectGSt", userPrefs.isGstsByPanNotRegistered.toString())
+                  Log.d("reject", userPrefs.panRejectReason)
+                  extras.putInt(StepKey, 1)
+              } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()) {
+                  Log.d("reject", userPrefs.panRejectReason)
+                  extras.putInt(StepKey, 2)
+              } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && kycSteps.size > 3) {
+                  extras.putInt(StepKey, 3)
+              } else {
+                  showKycSubmittedDialog()
+              }
           }
       }
 
@@ -228,7 +261,12 @@ class NavigationUtils @Inject constructor(
         bundle.putInt(TotalStepsKey, kycSteps.size)
         bundle.putInt(CurrentStepKey, extras.getInt(StepKey))
         intent.putExtras(bundle)
-        activity.startActivity(intent)
+      if(backToHome){
+          backToHome=false
+          activity.finish()
+      }else {
+          activity.startActivity(intent)
+      }
 
     //finish activity, if required
     if (finishAfter) {

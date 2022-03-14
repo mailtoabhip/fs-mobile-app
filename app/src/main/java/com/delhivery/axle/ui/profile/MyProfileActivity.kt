@@ -180,6 +180,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
                 }else{
                     userPrefs.retryVerification = true
+                    userPrefs.retryVerificationOnBack=false
                     val bundle = Bundle()
                     bundle.putInt(StepKey, 0)
                     navigationUtils.navigateKyc(this, true, bundle)

@@ -74,6 +74,7 @@ class IdentityVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res!=null) {
+                    userPrefs.identityDocUrl = verificationDocUploadRequest.documentUrls?.get(0)?:""
                     verificationDocUploadLiveData.postValue(true)
                 } else
                     error.handle()

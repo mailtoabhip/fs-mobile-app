@@ -87,6 +87,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
 
         binding.btnRetry.setOnClickListener {
             userPrefs.retryVerification = true
+            userPrefs.retryVerificationOnBack=false
             val bundle = Bundle()
             bundle.putInt(StepKey, 0)
             context?.let { it1 -> navigationUtils.navigateKyc(it1, true, bundle) }
