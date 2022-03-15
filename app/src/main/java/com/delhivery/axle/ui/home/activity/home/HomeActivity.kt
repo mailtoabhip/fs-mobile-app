@@ -36,6 +36,15 @@ import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
 import java.util.*
 import javax.inject.Inject
+import android.app.ActivityManager
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.work.*
+import com.delhivery.axle.tokenExpiryHandling.RefreshAuthTokenService
+import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
+import com.delhivery.axle.ui.home.fragments.*
+import java.util.concurrent.TimeUnit
+
 
 
 /**
@@ -85,12 +94,30 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromLink = false
   }
 
+  @RequiresApi(Build.VERSION_CODES.M)
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Home"
+
+    val constraints = Constraints.Builder()
+      .setRequiresBatteryNotLow(false)
+      .setRequiresCharging(false)
+      .setRequiresDeviceIdle(false)
+      .build()
+
+    val repeatingRequest
+            = PeriodicWorkRequestBuilder<RefreshTokenWorker>(16, TimeUnit.MINUTES)
+      .setConstraints(constraints)
+      .build()
+
+    WorkManager.getInstance().enqueueUniquePeriodicWork(
+      RefreshTokenWorker.WORK_NAME,
+      ExistingPeriodicWorkPolicy.REPLACE,
+      repeatingRequest)
+
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -129,6 +156,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /**
      * Process Deep Link */
     processDeepLink()
+  }
+
+  private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+    val manager: ActivityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+      if (serviceClass.name == service.service.getClassName()) {
+        return true
+      }
+    }
+    return false
   }
 
   private fun processDeepLink() {

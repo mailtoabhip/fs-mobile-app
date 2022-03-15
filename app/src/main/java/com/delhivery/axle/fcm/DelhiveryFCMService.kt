@@ -26,6 +26,14 @@ import com.google.firebase.messaging.RemoteMessage
 import dagger.android.AndroidInjection
 import dagger.android.DaggerActivity
 import javax.inject.Inject
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.delhivery.axle.BuildConfig
+import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
+import java.util.concurrent.TimeUnit
+
 
 /**
  * Created by saurabhdhillon
@@ -66,10 +74,12 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
+    Log.d("prefs","started")
     remoteMessage.let { sendNotification(it) }
   }
 
   private fun sendNotification(remoteMessage: RemoteMessage) {
+    Log.d("prefs","send notifi. started")
     val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       buildNotificationChannel()
       Builder(this, DEFAULT_NOTIFICATION_CHANNEL)
@@ -89,6 +99,27 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 //            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
 //            mutableListOf(userPrefs.userId(), notificationType, userPrefs.userPerformance)
 //    )
+    val n= remoteMessage.notification
+    if(n==null){
+      val constraints = Constraints.Builder()
+        .setRequiresBatteryNotLow(false)
+        .setRequiresCharging(false)
+        .apply {
+          if (Build.VERSION.SDK_INT >= VERSION_CODES.O)
+            setRequiresDeviceIdle(false)
+        }
+        .build()
+
+      val repeatingRequest
+              = PeriodicWorkRequestBuilder<RefreshTokenWorker>(16, TimeUnit.MINUTES)
+        .setConstraints(constraints)
+        .build()
+
+      WorkManager.getInstance().enqueueUniquePeriodicWork(
+        RefreshTokenWorker.WORK_NAME,
+        ExistingPeriodicWorkPolicy.REPLACE,
+        repeatingRequest)
+    }
 
     remoteMessage.notification?.let {
       val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

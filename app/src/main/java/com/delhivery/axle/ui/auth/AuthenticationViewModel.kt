@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.auth
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.BuildConfig
+import java.util.*
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -114,7 +116,7 @@ class AuthenticationViewModel @Inject constructor(
             }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-              LoadRequest
+              UpdateTokenExpiryDetails
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
@@ -131,6 +133,16 @@ class AuthenticationViewModel @Inject constructor(
           }
         }
   }
+
+  fun updateTokenDetails(){
+    if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {
+      userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 3
+    } else {
+      userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 15
+    }
+    state = LoadRequest
+  }
+
 
   /**
    * Login password
