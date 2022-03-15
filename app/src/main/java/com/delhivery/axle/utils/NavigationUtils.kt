@@ -28,6 +28,7 @@ import javax.inject.Inject
 import android.view.LayoutInflater
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.kyc.address.AddressActivity
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 
@@ -199,14 +200,14 @@ class NavigationUtils @Inject constructor(
                       backToHome=true
                   }
               }else if(extras.getInt(StepKey)==1){
-                   if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+                  if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
                       extras.putInt(StepKey,1)
                   }else if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
                       extras.putInt(StepKey, 0)
                   }else{
                        backToHome=true
                    }
-              }else if(extras.getInt(StepKey)==1){
+              }else if(extras.getInt(StepKey)==0){
                   if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
                       extras.putInt(StepKey, 0)
                   }else{
@@ -216,14 +217,10 @@ class NavigationUtils @Inject constructor(
               userPrefs.retryVerificationOnBack=false
           }else {
               if (userPrefs.panRejectReason.isNotNullOrEmpty()) {
-                  Log.d("reject", userPrefs.panRejectReason)
                   extras.putInt(StepKey, 0)
               } else if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
-                  Log.d("rejectGSt", userPrefs.isGstsByPanNotRegistered.toString())
-                  Log.d("reject", userPrefs.panRejectReason)
                   extras.putInt(StepKey, 1)
               } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()) {
-                  Log.d("reject", userPrefs.panRejectReason)
                   extras.putInt(StepKey, 2)
               } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && kycSteps.size > 3) {
                   extras.putInt(StepKey, 3)
@@ -261,6 +258,8 @@ class NavigationUtils @Inject constructor(
         bundle.putInt(TotalStepsKey, kycSteps.size)
         bundle.putInt(CurrentStepKey, extras.getInt(StepKey))
         intent.putExtras(bundle)
+      Log.d("back",backToHome.toString())
+
       if(backToHome){
           backToHome=false
           activity.finish()
