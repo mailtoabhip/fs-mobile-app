@@ -190,6 +190,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,2)
         navigationUtils.navigateKyc(this,true,bundle)

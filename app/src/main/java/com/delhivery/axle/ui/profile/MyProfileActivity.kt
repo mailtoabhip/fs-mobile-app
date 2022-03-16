@@ -98,7 +98,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         bundle.putInt(StepKey, 2)
                         navigationUtils.navigateKyc(this,false,bundle)
                     }else  if(!userPrefs.userMode.equals("post_load")){
-                        if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
+                        if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
                             bundle.putInt(StepKey, 3)
                             navigationUtils.navigateKyc(this,false,bundle)
                         }else{

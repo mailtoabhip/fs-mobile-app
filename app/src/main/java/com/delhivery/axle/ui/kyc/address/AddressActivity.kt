@@ -199,6 +199,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)

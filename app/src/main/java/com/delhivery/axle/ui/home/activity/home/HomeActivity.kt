@@ -94,7 +94,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }else  if(userPrefs.businessAddress.isNullOrEmpty()){
           showKycDialog(2)
         }else  if(!userPrefs.userMode.equals("post_load")){
-          if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)
+          if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)
           showKycDialog(3)
         }
       }

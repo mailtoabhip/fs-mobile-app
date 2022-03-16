@@ -182,6 +182,7 @@ class NavigationUtils @Inject constructor(
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
         var backToHome = false
+        var retryDone  = false
         val kycSteps = if(userMode=="post_load"){
             userPrefs.loadPostKyc.split(",").toTypedArray()
       }else{
@@ -225,7 +226,8 @@ class NavigationUtils @Inject constructor(
               } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && kycSteps.size > 3) {
                   extras.putInt(StepKey, 3)
               } else {
-                  showKycSubmittedDialog()
+                  retryDone=true
+                  uiUtils.showSnackbar("KYC Completed, Verification Pending")
               }
           }
       }
@@ -264,13 +266,19 @@ class NavigationUtils @Inject constructor(
           backToHome=false
           activity.finish()
       }else {
-          activity.startActivity(intent)
+          if(!retryDone){
+              activity.startActivity(intent)
+          }
       }
 
     //finish activity, if required
-    if (finishAfter) {
-      activity.finish()
-    }
+      if(retryDone){
+          retryDone=false
+      }else {
+          if (finishAfter) {
+              activity.finish()
+          }
+      }
   }
 
   fun checkNavigationKycStep(context: Context, currentStep: Int, totalStep: Int, extras: Bundle?){
