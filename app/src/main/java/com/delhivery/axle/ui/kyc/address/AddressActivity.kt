@@ -564,8 +564,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         userPrefs.setAddressList(listOfAddress)
     }
     fun enableAddAddressDialogButton(bindingDialog:DialogAddAlternateAddressBinding){
-        bindingDialog.btnSaveChanges.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
-        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
+        bindingDialog.btnSaveChanges.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
+        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&docUploadProof
 
     }
     private fun fillDataFromBusinessAddress(addressData: AddAddressModel,bindingDialog: DialogAddAlternateAddressBinding){
