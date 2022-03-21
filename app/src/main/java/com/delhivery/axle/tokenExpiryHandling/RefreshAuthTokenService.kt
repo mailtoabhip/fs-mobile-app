@@ -71,7 +71,7 @@ class RefreshAuthTokenService : Service(){
     private fun validateAndRefreshToken() {
         Log.d("prefs","service "+userPrefs.tokenExpiryTime.toString())
 
-        if (userPrefs.jwtToken != null && userPrefs.tokenExpiryTime <= Date().time) {
+        if (userPrefs.jwtToken != null) {
             Log.d("prefs","service2")
             if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {
                 refreshToken("https://api-stage-ums.delhivery.com/v2/refresh_token/?force=1")
@@ -96,30 +96,21 @@ class RefreshAuthTokenService : Service(){
                 val strResponse = response?.body()?.string()
                 val json = JSONObject(strResponse)
                 val jwtToken = json.getString("jwt")
+                Log.d("prefs", jwtToken)
                 userPrefs.jwtToken = jwtToken
-                if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {
-                    userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 3
-                } else {
-                    userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 15
-
-                }
-                Log.d("prefs", userPrefs.tokenExpiryTime.toString())
+                stopForeground(true)
+                stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
+                WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
             }
         })
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(userPrefs.jwtToken != null) {
-            restartService()
-        }
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        if(userPrefs.jwtToken != null) {
-            Handler().postDelayed({ restartService() }, 1000 * 20)
-        }
     }
 
     fun restartService() {
@@ -138,10 +129,6 @@ class RefreshAuthTokenService : Service(){
                 startService(restartServiceIntent)
             }
         }
-//        val restartServicePendingIntent: PendingIntent = PendingIntent.getService(this, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
-//        applicationContext.getSystemService(Context.ALARM_SERVICE);
-//        val alarmService: AlarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
-//        alarmService.set(AlarmManager.ELAPSED_REALTIME, userPrefs.tokenExpiryTime, restartServicePendingIntent)
     }
 
 }

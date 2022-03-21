@@ -102,23 +102,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     setSupportActionBar(binding.toolbar)
     title = "Home"
 
-    val constraints = Constraints.Builder()
-      .setRequiresBatteryNotLow(false)
-      .setRequiresCharging(false)
-      .setRequiresDeviceIdle(false)
-      .build()
-
-    val repeatingRequest
-            = PeriodicWorkRequestBuilder<RefreshTokenWorker>(16, TimeUnit.MINUTES)
-      .setConstraints(constraints)
-      .build()
-
-    WorkManager.getInstance().enqueueUniquePeriodicWork(
-      RefreshTokenWorker.WORK_NAME,
-      ExistingPeriodicWorkPolicy.REPLACE,
-      repeatingRequest)
-
-
     /* setup view pager */
     binding.viewpager.apply {
       offscreenPageLimit = HomeFragmentType.count()
