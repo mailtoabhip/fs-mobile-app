@@ -145,13 +145,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.UserOverallPerformance, "") ?: ""
 
   /**
-   * Current token expiry time in milli seconds
-   */
-  var tokenExpiryTime: Long
-    set(value) = editor.putLong(PrefKeys.CurrentTokenExpiryTimeInMillis, value).apply()
-    get() = prefs.getLong(PrefKeys.CurrentTokenExpiryTimeInMillis, Date().time)
-
-  /**
    *  Has edited routes flag
    */
   var hasEditedRoute: Boolean
@@ -479,7 +472,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ParentId = "parent_id"
     const val ParentName = "parent_name"
     const val ParentDemandType = "parent_demand_type"
-    const val CurrentTokenExpiryTimeInMillis = "current_token_expiry_time"
   }
 }
 

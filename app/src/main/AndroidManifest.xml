@@ -45,15 +45,6 @@
             android:stopWithTask="false"
             >
         </service>
-        <receiver android:name=".tokenExpiryHandling.RunWithOs"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="2147483647">
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-
-            </intent-filter>
-        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

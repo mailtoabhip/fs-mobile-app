@@ -94,7 +94,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromLink = false
   }
 
-  @RequiresApi(Build.VERSION_CODES.M)
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -139,16 +138,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /**
      * Process Deep Link */
     processDeepLink()
-  }
-
-  private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-    val manager: ActivityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-    for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-      if (serviceClass.name == service.service.getClassName()) {
-        return true
-      }
-    }
-    return false
   }
 
   private fun processDeepLink() {

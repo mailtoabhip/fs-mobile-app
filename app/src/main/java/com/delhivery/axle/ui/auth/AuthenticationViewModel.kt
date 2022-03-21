@@ -116,7 +116,7 @@ class AuthenticationViewModel @Inject constructor(
             }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
               userPrefs.hasLoggedIn = true
               userPrefs.lastLoginTime = Date().time
-              UpdateTokenExpiryDetails
+              LoadRequest
             } else {
               userPrefs.hasLoggedIn = true
               userPrefs.hasEditedRoute = true
@@ -133,16 +133,6 @@ class AuthenticationViewModel @Inject constructor(
           }
         }
   }
-
-  fun updateTokenDetails(){
-    if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {
-      userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 3
-    } else {
-      userPrefs.tokenExpiryTime = Date().time + 1000 * 60 * 60 * 15
-    }
-    state = LoadRequest
-  }
-
 
   /**
    * Login password

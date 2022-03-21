@@ -69,8 +69,6 @@ class RefreshAuthTokenService : Service(){
     }
 
     private fun validateAndRefreshToken() {
-        Log.d("prefs","service "+userPrefs.tokenExpiryTime.toString())
-
         if (userPrefs.jwtToken != null) {
             Log.d("prefs","service2")
             if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {

@@ -250,9 +250,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 proTip = "Some tip regarding how to bid, or whats to be considered while bidding. "
             )
           }
-          UpdateTokenExpiryDetails -> {
-            viewModel.updateTokenDetails()
-          }
           /* Login success, No user routes found - select route activity */
           SelectRoute -> {
             userPrefs.firstRoute = true
