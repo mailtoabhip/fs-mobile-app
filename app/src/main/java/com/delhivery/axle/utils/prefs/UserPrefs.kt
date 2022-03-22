@@ -144,6 +144,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.UserOverallPerformance, value).apply()
     get() = prefs.getString(PrefKeys.UserOverallPerformance, "") ?: ""
 
+
   /**
    *  Has edited routes flag
    */

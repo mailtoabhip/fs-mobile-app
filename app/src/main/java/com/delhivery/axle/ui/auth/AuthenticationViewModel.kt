@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.auth
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.BuildConfig
 import java.util.*
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.repository.NotificationRepository
@@ -17,7 +16,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import retrofit2.HttpException
-import java.util.*
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
