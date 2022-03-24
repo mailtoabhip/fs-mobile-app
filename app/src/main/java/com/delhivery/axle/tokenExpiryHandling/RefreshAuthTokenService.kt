@@ -94,7 +94,6 @@ class RefreshAuthTokenService : Service(){
                 val strResponse = response?.body()?.string()
                 val json = JSONObject(strResponse)
                 val jwtToken = json.getString("jwt")
-                Log.d("prefs", jwtToken)
                 userPrefs.jwtToken = jwtToken
                 stopForeground(true)
                 stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
