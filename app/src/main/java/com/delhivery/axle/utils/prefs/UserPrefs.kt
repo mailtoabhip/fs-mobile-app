@@ -5,6 +5,7 @@ import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -771,7 +772,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ownTrucks = user.supplierDetails?.ownsTrucks?: false
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
-    noOfVerificationIssues = user.noOfVerificationIssues?:""
+    noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
       identityDocUrl = user.identity_doc_url?.get(0)?:""
   }
 
