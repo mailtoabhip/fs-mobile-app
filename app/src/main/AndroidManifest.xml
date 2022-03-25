@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".KotlinApp"
@@ -30,6 +32,13 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+        </service>
+
+        <service
+            android:name=".tokenExpiryHandling.RefreshAuthTokenService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:stopWithTask="false"
+            >
         </service>
 
         <provider
