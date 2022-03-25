@@ -56,7 +56,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 binding.errorPan.visibility = View.VISIBLE
                 binding.imageKycDetailPanVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
                 binding.textKycPanNumberProfile.setTextColor(resources.getColor(R.color.error_red))
-                binding.errorPan.text = "Pan verification failed due to "+ userPrefs.panRejectReason
+                if(userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    binding.errorPan.text = "Document under verification"
+                }else {
+                    binding.errorPan.text = "Pan verification failed due to " + userPrefs.panRejectReason
+                }
             }else{
                 binding.panLay.isSelected = false
                 binding.errorPan.visibility = View.GONE
@@ -74,7 +78,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 if( userPrefs.gstNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "GST Number"
                     binding.textKycGstNumberProfile.text = userPrefs.gstNumber
-                    setGstError("GST verification failed due to "+userPrefs.identityRejectReason)
+                    if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                         setGstError("Document under verification")
+                }else {
+                    setGstError("GST verification failed due to " + userPrefs.identityRejectReason)
+                     }
                 }else{
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
@@ -84,7 +92,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 if(userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Aadhaar Number"
                     binding.textKycGstNumberProfile.text = userPrefs.aadhaarNumber
-                    setGstError("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                         setGstError("Document under verification")
+                }else {
+                          setGstError("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                      }
                 }else{
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
@@ -94,7 +106,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 if(userPrefs.cinNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "CIN"
                     binding.textKycGstNumberProfile.text = userPrefs.cinNumber
-                    setGstError("CIN verification failed due to " + userPrefs.identityRejectReason)
+                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                         setGstError("Document under verification")
+                }else {
+                          setGstError("CIN verification failed due to " + userPrefs.identityRejectReason)
+                      }
                 }else{
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
@@ -104,7 +120,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 if(userPrefs.udyogNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Udyog Aadhaar"
                     binding.textKycGstNumberProfile.text = userPrefs.udyogNumber
-                    setGstError("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                         setGstError("Document under verification")
+                }else {
+                          setGstError("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                      }
                 }else{
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
@@ -114,7 +134,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 if(userPrefs.shopNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Shop Establishment"
                     binding.textKycGstNumberProfile.text = userPrefs.shopNumber
-                    setGstError("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                         setGstError("Document under verification")
+                }else {
+                          setGstError("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                      }
                 }else{
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
@@ -164,7 +188,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                 binding.errorTruck.visibility = View.VISIBLE
                 binding.imageRc.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
                 binding.textRc.setTextColor(resources.getColor(R.color.error_red))
-                binding.errorTruck.text = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
+                 if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    binding.errorTruck.text = "Document under verification"
+                }else {
+                     binding.errorTruck.text = "Truck RC verification failed due to " + userPrefs.rcRejectReason
+                 }
             }else{
                 binding.truckRcLay.isSelected = false
                 binding.errorTruck.visibility = View.GONE
@@ -182,7 +210,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             binding.errorAddress.visibility = View.VISIBLE
             binding.imageKycDetailAddressVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
             binding.textKycAddressProfile.setTextColor(resources.getColor(R.color.error_red))
-            binding.errorAddress.text = "Address verification failed due to "+ userPrefs.addressRejectReason
+             if(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    binding.errorAddress.text = "Document under verification"
+             }else {
+                 binding.errorAddress.text = "Address verification failed due to " + userPrefs.addressRejectReason
+             }
         }else{
             binding.addressLay.isSelected = false
             binding.errorAddress.visibility = View.GONE
