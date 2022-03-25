@@ -149,6 +149,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }else{
                                 userPrefs.identityRejectReason = k.verificationStatusReasonCode?:""
                             }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
                         }
                     }else if(k.verificationOverallType.equals("pan")){
                       if(k.verificationStatus.equals("failed")){
@@ -157,6 +159,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                           }else{
                               userPrefs.panRejectReason = k.verificationStatusReasonCode?:""
                           }
+                      }else if(k.verificationStatus.equals("pending")){
+                          userPrefs.identityRejectReason = "Document under verification"
                       }
                     }else if(k.verificationOverallType.equals("trucking_business")){
                         if(k.verificationStatus.equals("failed")){
@@ -165,6 +169,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }else{
                                 userPrefs.rcRejectReason = k.verificationStatusReasonCode?:""
                             }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
                         }
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
@@ -173,6 +179,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }else{
                                 userPrefs.addressRejectReason = k.verificationStatusReasonCode?:""
                             }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
                         }
                     }
                 }
