@@ -86,7 +86,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 TotalStepsKey)!!)
             if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
                 binding.businessError.visibility=View.VISIBLE
-                viewModel.errorText = userPrefs.rcRejectReason
+                viewModel.errorText = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
             }else{
                 binding.businessError.visibility=View.GONE
             }

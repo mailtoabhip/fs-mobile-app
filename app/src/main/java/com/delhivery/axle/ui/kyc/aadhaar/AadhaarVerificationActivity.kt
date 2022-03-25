@@ -100,7 +100,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.aadhaarError.visibility=View.VISIBLE
-                viewModel.errorText = userPrefs.identityRejectReason
+                viewModel.errorText = ("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
             }else{
                 binding.aadhaarError.visibility=View.GONE
             }

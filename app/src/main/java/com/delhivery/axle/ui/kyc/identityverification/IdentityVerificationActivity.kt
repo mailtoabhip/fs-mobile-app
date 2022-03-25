@@ -75,18 +75,40 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         binding.textCin.isChecked=true
         binding.textUdyog.isChecked=false
         binding.textShop.isChecked=false
-        if(intent?.extras!=null){
-            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
-                binding.identityError.visibility=View.VISIBLE
-                viewModel.errorText = userPrefs.identityRejectReason
-            }else{
-                binding.identityError.visibility=View.GONE
+        if(intent?.extras!=null) {
+            viewModel.currentStep = navigationUtils.getNavigationStepFormat(
+                intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                    TotalStepsKey
+                )!!
+            )
+            progress.progress = navigationUtils.getNavigationPercentage(
+                intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+                    TotalStepsKey
+                )!!
+            )
+            if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.identityError.visibility = View.VISIBLE
+
+                if (userPrefs.identityType.equals("cin")) {
+                    if (userPrefs.cinNumber.isNotNullOrEmpty()) {
+                        binding.identityError.text = ("CIN verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
+                    if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
+
+                        binding.identityError.text=("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else if (userPrefs.identityType.equals("shop_establishment")) {
+                    if (userPrefs.shopNumber.isNotNullOrEmpty()) {
+
+                        binding.identityError.text=("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                }
+            }else {
+                binding.identityError.visibility = View.GONE
             }
         }
+
 
     }
 
