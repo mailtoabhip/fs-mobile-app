@@ -206,16 +206,16 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                     binding.tvRc.visibility = View.VISIBLE
                     binding.truckRcLay.visibility = View.VISIBLE
                     binding.textRc.text = userPrefs.rcNumber
-                    (binding.businessRadio.getChildAt(0) as RadioButton).isChecked = true
-                    (binding.businessRadio.getChildAt(0) as RadioButton).isEnabled = true
-                    (binding.businessRadio.getChildAt(1) as RadioButton).isEnabled = false
+                    binding.rcRadio.isChecked = true
+                    binding.rcRadio.isEnabled = true
+                    binding.lrRadio.isEnabled = false
                 }
             }else{
                 binding.tvRc.visibility = View.VISIBLE
                 binding.truckRcLay.visibility = View.GONE
-                (binding.businessRadio.getChildAt(1) as RadioButton).isChecked = true
-                (binding.businessRadio.getChildAt(1) as RadioButton).isEnabled = true
-                (binding.businessRadio.getChildAt(0) as RadioButton).isEnabled = false
+                binding.lrRadio.isChecked = true
+                binding.lrRadio.isEnabled = true
+                binding.rcRadio.isEnabled = false
             }
 
         }else{
