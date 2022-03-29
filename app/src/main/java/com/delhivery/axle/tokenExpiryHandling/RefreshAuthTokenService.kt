@@ -61,7 +61,7 @@ class RefreshAuthTokenService : Service(){
         throw UnsupportedOperationException("Not yet implemented")
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Handler().postDelayed({validateAndRefreshToken()},1000*30)
+        validateAndRefreshToken()
 
         onTaskRemoved(intent)
 
