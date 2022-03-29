@@ -10,6 +10,7 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.KotlinApp.Companion.CHANNEL_ID
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
@@ -61,7 +62,7 @@ class RefreshAuthTokenService : Service(){
         throw UnsupportedOperationException("Not yet implemented")
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Handler().postDelayed({validateAndRefreshToken()},1000*30)
+        validateAndRefreshToken()
 
         onTaskRemoved(intent)
 
@@ -91,13 +92,21 @@ class RefreshAuthTokenService : Service(){
             }
 
             override fun onResponse(response: Response?) {
-                val strResponse = response?.body()?.string()
-                val json = JSONObject(strResponse)
-                val jwtToken = json.getString("jwt")
-                userPrefs.jwtToken = jwtToken
-                stopForeground(true)
-                stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
-                WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+                try {
+                    val strResponse = response?.body()?.string()
+                    val json = JSONObject(strResponse)
+                    if (!json.isNull("jwt")) {
+                        val jwtToken = json.optString("jwt")
+                        if (jwtToken.isNotNullOrEmpty()){
+                            userPrefs.jwtToken = jwtToken
+                        }
+                    }
+                    stopForeground(true)
+                    stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
+                    WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+                } catch (e: Exception){
+                    e.printStackTrace()
+                }
             }
         })
     }
