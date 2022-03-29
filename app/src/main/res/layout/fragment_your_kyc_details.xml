@@ -166,6 +166,26 @@
             android:textColor="@color/heading_black"
             android:textStyle="normal"
             android:textSize="@dimen/text_14sp"/>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/businessRadio"
+            android:layout_height="match_parent">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:text="Truck RC"
+                android:id="@+id/rcRadio"
+                android:textSize="@dimen/text_14sp"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:id="@+id/lrRadio"
+                android:enabled="false"
+                android:textSize="@dimen/text_14sp"
+                 android:layout_marginStart="@dimen/size_16dp"
+                android:text="LR Copy - Loading Note"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"

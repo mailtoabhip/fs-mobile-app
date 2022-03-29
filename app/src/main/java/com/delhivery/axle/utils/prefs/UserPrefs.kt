@@ -582,8 +582,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
         get() = prefs.getBoolean(PrefKeys.retryVerificationOnBack, false)
 
+  var businessType: String
+    set(value) = editor.putString(PrefKeys.businessType,value)
+            .apply()
+    get() = prefs.getString(PrefKeys.businessType, "") ?: ""
 
-    /**
+
+  /**
    * Clear all preferences
    */
   fun clearPrefs() {
@@ -723,6 +728,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.identityDocUrl)
           .apply()
+    editor.remove(PrefKeys.businessType)
+            .apply()
     editor.commit()
   }
 
@@ -866,6 +873,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val rcRejectReason = "rc_reject_reason"
     const val addressRejectReason = "address_reject_reason"
     const val identityType = "identity_type"
+    const val businessType = "business_type"
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
       const val retryVerificationOnBack = "retry_verification_on_back"

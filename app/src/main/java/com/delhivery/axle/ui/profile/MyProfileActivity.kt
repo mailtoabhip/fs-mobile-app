@@ -163,6 +163,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                           userPrefs.panRejectReason = "Document under verification"
                       }
                     }else if(k.verificationOverallType.equals("trucking_business")){
+                        userPrefs.businessType = k.verificationType.toString()
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.rcRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
