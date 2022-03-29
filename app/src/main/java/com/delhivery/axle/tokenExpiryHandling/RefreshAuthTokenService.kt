@@ -91,14 +91,18 @@ class RefreshAuthTokenService : Service(){
             }
 
             override fun onResponse(response: Response?) {
-                val strResponse = response?.body()?.string()
-                val json = JSONObject(strResponse)
-                if (!json.isNull("jwt")) {
-                    val jwtToken = json.getString("jwt")
-                    userPrefs.jwtToken = jwtToken
+                try {
+                    val strResponse = response?.body()?.string()
+                    val json = JSONObject(strResponse)
+                    if (!json.isNull("jwt")) {
+                        val jwtToken = json.getString("jwt")
+                        userPrefs.jwtToken = jwtToken
+                    }
                     stopForeground(true)
                     stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
                     WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+                } catch (e: Exception){
+                    e.printStackTrace()
                 }
             }
         })
