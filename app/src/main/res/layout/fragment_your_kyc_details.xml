@@ -180,7 +180,6 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:id="@+id/lrRadio"
-                android:enabled="false"
                 android:textSize="@dimen/text_14sp"
                  android:layout_marginStart="@dimen/size_16dp"
                 android:text="LR Copy - Loading Note"
