@@ -183,7 +183,19 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
         binding.uploadDoc.setOnClickListener{
             if((binding.textCin.isChecked && binding.editCin.length()>0)||(binding.textUdyog.isChecked&& binding.editUdyog.length()>0)||(binding.textShop.isChecked&& binding.editShop.length()>0)){
-                val imageName = "doc_" + System.currentTimeMillis()+".jpg"
+                var docType=""
+                when {
+                    binding.textCin.isChecked -> {
+                        docType = "CIN_"
+                    }
+                    binding.textUdyog.isChecked -> {
+                        docType = "Udyog_"
+                    }
+                    binding.textShop.isChecked -> {
+                        docType = "Shop_"
+                    }
+                }
+                val imageName = docType + System.currentTimeMillis()+".jpg"
                 captureImage(imageName, imageName)
             }else{
                 uiUtils.showToast("Please provide details first")
