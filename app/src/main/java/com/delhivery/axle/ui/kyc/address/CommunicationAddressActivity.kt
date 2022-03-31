@@ -99,7 +99,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 TotalStepsKey)!!)
             if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
                 binding.addressError.visibility=View.VISIBLE
-                viewModel.errorText = userPrefs.addressRejectReason
+                viewModel.errorText = "Address verification failed due to "+ userPrefs.addressRejectReason
             }else{
                 binding.addressError.visibility=View.GONE
             }

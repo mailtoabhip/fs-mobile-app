@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.profile.kycdetails.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.RadioButton
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentYourKycDetailsBinding
 import com.delhivery.axle.utils.NavigationUtils
@@ -10,6 +10,7 @@ import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
+
 
 class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBinding, YourKYCDetailsViewModel>() {
 
@@ -33,173 +34,197 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(userPrefs.verificationStatus.equals("failed")){
+        if (userPrefs.verificationStatus.equals("failed")) {
             binding.btnRetry.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.btnRetry.visibility = View.GONE
         }
 
         binding.btnRetry.setOnClickListener {
             userPrefs.retryVerification = true
-            userPrefs.retryVerificationOnBack=false
+            userPrefs.retryVerificationOnBack = false
             val bundle = Bundle()
             bundle.putInt(StepKey, 0)
             context?.let { it1 -> navigationUtils.navigateKyc(it1, true, bundle) }
         }
 
-        if(userPrefs.pancard.isNotNullOrEmpty()){
+        if (userPrefs.pancard.isNotNullOrEmpty()) {
             binding.textKycPanNumberProfile.text = userPrefs.pancard
             binding.labelPan.visibility = View.VISIBLE
             binding.panLay.visibility = View.VISIBLE
-            if(userPrefs.panRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){
+            if (userPrefs.panRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied) {
                 binding.panLay.isSelected = true
                 binding.errorPan.visibility = View.VISIBLE
                 binding.imageKycDetailPanVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
                 binding.textKycPanNumberProfile.setTextColor(resources.getColor(R.color.error_red))
-                if(userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification")){
+                if (userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification")) {
                     binding.errorPan.text = "Document under verification"
-                }else {
+                } else {
                     binding.errorPan.text = "Pan verification failed due to " + userPrefs.panRejectReason
                 }
-            }else{
+            } else {
                 binding.panLay.isSelected = false
                 binding.errorPan.visibility = View.GONE
                 binding.imageKycDetailPanVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
                 binding.textKycPanNumberProfile.setTextColor(resources.getColor(R.color.faded_black))
             }
-        }else{
+        } else {
             binding.labelPan.visibility = View.GONE
             binding.panLay.visibility = View.GONE
             binding.errorPan.visibility = View.GONE
         }
 
         if (userPrefs.identityType.isNotNullOrEmpty()) {
-           if (userPrefs.identityType.equals("gst")) {
-                if( userPrefs.gstNumber.isNotNullOrEmpty()) {
+            if (userPrefs.identityType.equals("gst")) {
+                if (userPrefs.gstNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "GST Number"
                     binding.textKycGstNumberProfile.text = userPrefs.gstNumber
-                    if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
-                         setGstError("Document under verification")
-                }else {
-                    setGstError("GST verification failed due to " + userPrefs.identityRejectReason)
-                     }
-                }else{
+                    if (userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")) {
+                        setGstError("Document under verification")
+                    } else {
+                        setGstError("GST verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else {
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
             } else if (userPrefs.identityType.equals("aadhaar")) {
-                if(userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
+                if (userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Aadhaar Number"
                     binding.textKycGstNumberProfile.text = userPrefs.aadhaarNumber
-                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
-                         setGstError("Document under verification")
-                }else {
-                          setGstError("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
-                      }
-                }else{
+                    if (userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")) {
+                        setGstError("Document under verification")
+                    } else {
+                        setGstError("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else {
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
             } else if (userPrefs.identityType.equals("cin")) {
-                if(userPrefs.cinNumber.isNotNullOrEmpty()) {
+                if (userPrefs.cinNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "CIN"
                     binding.textKycGstNumberProfile.text = userPrefs.cinNumber
-                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
-                         setGstError("Document under verification")
-                }else {
-                          setGstError("CIN verification failed due to " + userPrefs.identityRejectReason)
-                      }
-                }else{
+                    if (userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")) {
+                        setGstError("Document under verification")
+                    } else {
+                        setGstError("CIN verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else {
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
             } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
-                if(userPrefs.udyogNumber.isNotNullOrEmpty()) {
+                if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Udyog Aadhaar"
                     binding.textKycGstNumberProfile.text = userPrefs.udyogNumber
-                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
-                         setGstError("Document under verification")
-                }else {
-                          setGstError("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
-                      }
-                }else{
+                    if (userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")) {
+                        setGstError("Document under verification")
+                    } else {
+                        setGstError("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else {
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
             } else if (userPrefs.identityType.equals("shop_establishment")) {
-                if(userPrefs.shopNumber.isNotNullOrEmpty()) {
+                if (userPrefs.shopNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Shop Establishment"
                     binding.textKycGstNumberProfile.text = userPrefs.shopNumber
-                      if(userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
-                         setGstError("Document under verification")
-                }else {
-                          setGstError("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
-                      }
-                }else{
+                    if (userPrefs.identityRejectReason.isNotNullOrEmpty() && userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")) {
+                        setGstError("Document under verification")
+                    } else {
+                        setGstError("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                    }
+                } else {
                     binding.labelGst.visibility = View.GONE
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
-            }else{
+            } else {
                 binding.labelGst.visibility = View.GONE
                 binding.gstLay.visibility = View.GONE
                 binding.errorGst.visibility = View.GONE
             }
-        }else{
+        } else {
             binding.labelGst.visibility = View.GONE
             binding.gstLay.visibility = View.GONE
             binding.errorGst.visibility = View.GONE
         }
 
-        if(userPrefs.businessAddress.isNotNullOrEmpty()){
-                binding.textKycAddressProfile.text = userPrefs.businessAddress
-               setAddressError()
-        }else{
-            if (userPrefs.getAddressList().isNullOrEmpty()){
+        if (userPrefs.businessAddress.isNotNullOrEmpty()) {
+            binding.textKycAddressProfile.text = userPrefs.businessAddress
+            setAddressError()
+        } else {
+            if (userPrefs.getAddressList().isNullOrEmpty()) {
+                binding.labelAddress.visibility = View.GONE
+                binding.addressLay.visibility = View.GONE
+                binding.errorAddress.visibility = View.GONE
+            } else {
+                if (userPrefs.getAddressList()?.get(0) != null) {
+                    binding.textKycAddressProfile.text = userPrefs.getAddressList()?.get(0)?.address
+                    setAddressError()
+                } else {
                     binding.labelAddress.visibility = View.GONE
                     binding.addressLay.visibility = View.GONE
                     binding.errorAddress.visibility = View.GONE
-            } else{
-                    if(userPrefs.getAddressList()?.get(0)!=null){
-                        binding.textKycAddressProfile.text = userPrefs.getAddressList()?.get(0)?.address
-                        setAddressError()
-                    }else{
-                        binding.labelAddress.visibility = View.GONE
-                        binding.addressLay.visibility = View.GONE
-                        binding.errorAddress.visibility = View.GONE
-                    }
+                }
             }
         }
 
-        if(userPrefs.rcNumber.isEmpty()){
-            binding.tvRc.visibility = View.GONE
-            binding.truckRcLay.visibility = View.GONE
-        }else{
-            binding.tvRc.visibility = View.VISIBLE
-            binding.truckRcLay.visibility = View.VISIBLE
-            binding.textRc.text = userPrefs.rcNumber
+        if (userPrefs.businessType.isNotNullOrEmpty()) {
 
             if(userPrefs.rcRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){
                 binding.truckRcLay.isSelected = true
                 binding.errorTruck.visibility = View.VISIBLE
                 binding.imageRc.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
                 binding.textRc.setTextColor(resources.getColor(R.color.error_red))
-                 if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
+                if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
                     binding.errorTruck.text = "Document under verification"
                 }else {
-                     binding.errorTruck.text = "Truck RC verification failed due to " + userPrefs.rcRejectReason
-                 }
+                    binding.errorTruck.text = "Business verification failed due to " + userPrefs.rcRejectReason
+                }
             }else{
                 binding.truckRcLay.isSelected = false
                 binding.errorTruck.visibility = View.GONE
                 binding.imageRc.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
                 binding.textRc.setTextColor(resources.getColor(R.color.faded_black))
             }
+
+            if (userPrefs.businessType.equals("rc")) {
+                if(userPrefs.rcNumber.isEmpty()){
+                    binding.tvRc.visibility = View.GONE
+                    binding.truckRcLay.visibility = View.GONE
+                    binding.businessRadio.visibility = View.GONE
+                    binding.errorTruck.visibility = View.GONE
+                }else{
+                    binding.businessRadio.visibility = View.VISIBLE
+                    binding.tvRc.visibility = View.VISIBLE
+                    binding.truckRcLay.visibility = View.VISIBLE
+                    binding.textRc.text = userPrefs.rcNumber
+                    binding.rcRadio.isChecked = true
+                    binding.rcRadio.isEnabled = true
+                    binding.lrRadio.isEnabled = false
+                }
+            }else{
+                binding.tvRc.visibility = View.VISIBLE
+                binding.truckRcLay.visibility = View.GONE
+                binding.lrRadio.isChecked = true
+                binding.lrRadio.isEnabled = true
+                binding.rcRadio.isEnabled = false
+            }
+
+        }else{
+            binding.tvRc.visibility = View.GONE
+            binding.truckRcLay.visibility = View.GONE
+            binding.businessRadio.visibility = View.GONE
+            binding.errorTruck.visibility = View.GONE
         }
+
     }
 
     private fun setAddressError(){
@@ -223,7 +248,7 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
         }
     }
 
-    private fun setGstError(message:String){
+    private fun setGstError(message: String){
         binding.labelGst.visibility = View.VISIBLE
         binding.gstLay.visibility = View.VISIBLE
         if(userPrefs.identityRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){

@@ -394,7 +394,7 @@
     <string name="label_kyc_failed">KYC verification failed!</string>
     <string name="label_member_name">Member Name</string>
     <string name="label_create_member">Enter member details</string>
-    <string name="label_truck_rc">Truck RC</string>
+    <string name="label_truck_rc">Business Verification Method</string>
     <string name="label_changes">Confirm Changes?</string>
     <string name="label_complete_business_verification">Complete Business Verification</string>
     <string name="label_complete_delete">Delete Address</string>
