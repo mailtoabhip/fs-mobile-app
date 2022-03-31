@@ -71,6 +71,17 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             confirmLogout()
         }
 
+        if(userPrefs.verificationStatus.equals("failed")){
+            if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
+                binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
+                binding.issues.visibility = View.VISIBLE
+            }else{
+                binding.issues.visibility = View.GONE
+            }
+        }else{
+            binding.issues.visibility = View.GONE
+        }
+
         binding.startKyc.setOnClickListener {
             if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
                 //do nothing
@@ -83,11 +94,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
                         bundle.putInt(StepKey, 1)
                         navigationUtils.navigateKyc(this,false,bundle)
-                    }else  if(!userPrefs.getAddressList().isNullOrEmpty()){
+                    }else  if(userPrefs.businessAddress.isNullOrEmpty()){
                         bundle.putInt(StepKey, 2)
                         navigationUtils.navigateKyc(this,false,bundle)
                     }else  if(!userPrefs.userMode.equals("post_load")){
-                        if( userPrefs.rcNumber.isNotNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
+                        if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
                             bundle.putInt(StepKey, 3)
                             navigationUtils.navigateKyc(this,false,bundle)
                         }else{
@@ -105,6 +116,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             downloadLogo()
         }
 
+        binding.btnRetry.setOnClickListener {
+            uiUtils.showProgress()
+            viewModel.getKYCDetails("retry")
+        }
+
         binding.card1.visibility = View.GONE
         binding.profile.visibility = View.VISIBLE
 
@@ -115,8 +131,71 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         viewModel.stateLiveData.observe(this, StateObserver())
 
         binding.kycLayout.setOnClickListener {
-            navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+            uiUtils.showProgress()
+            viewModel.getKYCDetails("detail")
+
         }
+
+        viewModel.kycDetailData.observe(this, Observer {
+            if(it.first.kycData.isNullOrEmpty()){
+                uiUtils.showSnackbar("Something went wrong, please try again")
+            }else{
+                for (k in it.first.kycData!!){
+                    if(k.verificationOverallType.equals("identity")){
+                        userPrefs.identityType = k.verificationType.toString()
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.identityRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.identityRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
+                        }
+                    }else if(k.verificationOverallType.equals("pan")){
+                      if(k.verificationStatus.equals("failed")){
+                          if(k.verificationStatusReasonCode.equals("others")) {
+                              userPrefs.panRejectReason = k.verificationStatusReasonMessage?:""
+                          }else{
+                              userPrefs.panRejectReason = k.verificationStatusReasonCode?:""
+                          }
+                      }else if(k.verificationStatus.equals("pending")){
+                          userPrefs.identityRejectReason = "Document under verification"
+                      }
+                    }else if(k.verificationOverallType.equals("trucking_business")){
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.rcRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.rcRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
+                        }
+                    }else if(k.verificationOverallType.equals("address")){
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.addressRejectReason = k.verificationStatusReasonMessage?:""
+                            }else{
+                                userPrefs.addressRejectReason = k.verificationStatusReasonCode?:""
+                            }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.identityRejectReason = "Document under verification"
+                        }
+                    }
+                }
+                if(it.second.equals("detail")) {
+                    navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+                }else{
+                    userPrefs.retryVerification = true
+                    userPrefs.retryVerificationOnBack=false
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey, 0)
+                    navigationUtils.navigateKyc(this, true, bundle)
+                }
+            }
+            uiUtils.hideProgress()
+        })
 
         binding.profileLayout.setOnClickListener {
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
@@ -125,7 +204,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.teamLayout.setOnClickListener {
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
-
 
         if (viewModel.userPrefs.isParent) {
             binding.teamLayout.visibility = View.VISIBLE

@@ -56,7 +56,10 @@ class GstDataItemVH(binding: ViewGstRequestItemBinding) :
     binding.gstAddress.text = item.data.gstDetailItemData?.address
     binding.gstCallNum.text = item.data.gstDetailItemData?.phoneNumber
     binding.gstNum.text = item.data?.gstNumber
-    binding.radioGst.isChecked = _interface.fetchCurrSelected()!=null && _interface.fetchCurrSelected().equals(item.data.gstDetailItemData?.gstNumber)
+    binding.radioGst.isChecked = (_interface.fetchCurrSelected()!=null && _interface.fetchCurrSelected().equals(item.data.gstDetailItemData?.gstNumber))
+     if(binding.radioGst.isChecked){
+        _interface.fetchCheckedDetails(item.data.gstDetailItemData)
+     }
   }
 }
 

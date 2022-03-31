@@ -35,10 +35,13 @@ import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.android.synthetic.main.activity_address.*
 import kotlinx.android.synthetic.main.activity_verify_pan.*
+import kotlinx.android.synthetic.main.activity_verify_pan.progress
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -81,6 +84,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+            if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
+                binding.businessError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.rcRejectReason
+            }else{
+                binding.businessError.visibility=View.GONE
+            }
         }
 
     }
@@ -91,6 +100,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if(userPrefs.retryVerification){
+            binding.btnVerifyBusiness.setText(R.string.action_retry_verification)
+        }
 
         binding.textTruck.setOnClickListener{
             binding.editTruck.visibility=View.VISIBLE
@@ -120,7 +133,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         })
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-               // showKycSubmittedDialog()
+                if(userPrefs.retryVerification){
+                    userPrefs.rcRejectReason= ""
+                }
                    navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
            TotalStepsKey)!!,null)
             }
@@ -173,7 +188,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
+        val bundle = Bundle()
+        bundle.putInt(StepKey,2)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
     override fun onAWSSuccess(
         path: String
     ) {

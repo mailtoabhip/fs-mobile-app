@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.team
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.teammembers.TeamWarningItem_NoMember
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -26,6 +27,7 @@ import javax.inject.Inject
 
 class TeamMembersViewModel @Inject constructor(
   private val userRepository: UserRepository,
+  private val loadboardRepository: LoadboardRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), TeamMembersCreateDialogInterface ,TeamMembersEditDialogInterface, AdminViewDialogInterface {
 
@@ -44,7 +46,7 @@ class TeamMembersViewModel @Inject constructor(
 
     Pair(TeamMembersProgressItem(), AddUpdate).let { membersLiveData.postValue(listOf(it)) }
 
-    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+    compositeDisposable += loadboardRepository.getUserTeamMembers(userRepository.userId())
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -53,7 +55,7 @@ class TeamMembersViewModel @Inject constructor(
 
               add(Pair(TeamMembersProgressItem(), Remove))
 
-              if (_res.total > 0) {
+              if (_res.count > 0) {
                 for (user in _res.users) {
                   if (user.isParent()) {
                     add(Pair(TeamMemberAdminUserItem(user), Add))
@@ -94,19 +96,20 @@ class TeamMembersViewModel @Inject constructor(
     for (i in dieselCompany){
         jsonArray.add(i)
     }
-    jsonObject.addProperty("name", name)
-    jsonObject.addProperty("phone_no", number)
-    jsonObject.addProperty("parent_sp_id", userRepository.userId())
+    jsonObject.addProperty("user_name", name)
+    jsonObject.addProperty("phone_number", "+91"+number)
+    jsonObject.addProperty("parent_uuid", userRepository.userId())
     jsonObject.addProperty("diesel_card_preference",dieselPreference)
     jsonObject.add("diesel_company", jsonArray)
+    jsonObject.addProperty("parent_sp_id", userRepository.userId())
     jsonObject.addProperty("originator", "axle-app")
 
-    compositeDisposable += userRepository.createSecondaryUser(jsonObject)
+    compositeDisposable += loadboardRepository.createSecondaryUser(jsonObject)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            createUserLiveData.postValue(Pair(_res.message,number))
+            createUserLiveData.postValue(Pair(_res,number))
           } else {
             error.handle()
             createUserLiveData.postValue(null)
@@ -129,12 +132,14 @@ class TeamMembersViewModel @Inject constructor(
     for (i in dieselCompany){
       jsonArray.add(i)
     }
-    jsonObject.addProperty("name", name)
+    jsonObject.addProperty("user_name", name)
+    jsonObject.addProperty("parent_uuid", uuid)
     jsonObject.addProperty("diesel_card_preference",dieselPreference)
     jsonObject.add("diesel_company", jsonArray)
+    jsonObject.addProperty("parent_sp_id", uuid)
     jsonObject.addProperty("originator", "axle-app")
 
-    compositeDisposable += userRepository.updateSecondaryUser(uuid, jsonObject)
+    compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -152,9 +157,11 @@ class TeamMembersViewModel @Inject constructor(
   fun deleteMember(uuid: String) {
     val jsonObject = JsonObject()
     jsonObject.addProperty("is_deleted", true)
+    jsonObject.addProperty("parent_uuid", uuid)
+    jsonObject.addProperty("parent_sp_id", userRepository.userId())
     jsonObject.addProperty("originator", "axle-app")
 
-    compositeDisposable += userRepository.updateSecondaryUser(uuid, jsonObject)
+    compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
@@ -176,10 +183,13 @@ class TeamMembersViewModel @Inject constructor(
         jsonArray.add(i)
       }
       jsonObject.addProperty("diesel_card_preference",dieselPreference)
+      jsonObject.addProperty("parent_uuid", uuid)
+      jsonObject.addProperty("parent_sp_id", uuid)
       jsonObject.add("diesel_company", jsonArray)
+      jsonObject.addProperty("parent_sp_id", uuid)
       jsonObject.addProperty("originator", "axle-app")
 
-      compositeDisposable += userRepository.updateAdminUser( uuid , jsonObject)
+      compositeDisposable += loadboardRepository.updateAdminUser(jsonObject)
           .onBackground()
           .progress()
           .subscribe{ _res , error ->

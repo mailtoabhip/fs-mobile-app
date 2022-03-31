@@ -22,7 +22,7 @@
     <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
     <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
     <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-    <string name="msg_otp_sent_to_phone_no">to %1$s.</string>
+    <string name="msg_otp_sent_to_phone_no">Enter the 4-digit code we have sent by SMS to %1$s.</string>
     <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
     <string name="msg_select_route_welcome_user">Welcome\n%s</string>
     <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -93,7 +93,7 @@
   <string name="action_resend_otp">Resend OTP</string>
   <string name="action_verify_otp">Verify OTP</string>
   <string name="action_save_proceed">Save &amp; Proceed</string>
-  <string name="action_verify_aadhaar">Verify Aadhaar</string>
+    <string name="action_verify_aadhaar">Verify Aadhaar</string>
   <string name="action_submit_details">Submit Details</string>
   <string name="action_select_routes">Select Routes</string>
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
@@ -139,6 +139,8 @@
     <string name="action_restart_kyc">Try Again</string>
     <string name="action_add_member">Add Member</string>
     <string name="action_complete_verification">Complete Verification</string>
+    <string name="action_retry_verification">Retry Verification</string>
+
 
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
@@ -317,7 +319,7 @@
     <string name="label_account_setup_primary_select_postloads">Post Loads</string>
     <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
     <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
-    <string name="label_postloads">To find trucks &amp; ship your loads.</string>
+    <string name="label_postloads">To find both trucks &amp; loads</string>
     <string name="label_posttrucks">To find loads in your operating routes</string>
     <string name="label_postboth">To find both trucks &amp; loads</string>
     <string name="label_role">What is your occupation?</string>
@@ -448,7 +450,7 @@
     <string name="address_proof_attachment">Address proof attachment</string>
     <string name="upload_document">Upload document</string>
     <string name="truck_hint">Verify with truck RC</string>
-    <string name="lr_hint">Upload LR/Loading note</string>
+    <string name="lr_hint">Upload LR-LN</string>
     <string name="sub_label_step3_4">Step 3 of 4</string>
     <string name="sub_label_address_details">Choose or add an address to use for communication</string>
     <string name="action_add_alternate_address">+ Add alternate address</string>
@@ -462,7 +464,7 @@
     <string name="details_submitted_successfully">Details submitted successfully!</string>
     <string name="kyc_verified_successfully">KYC verified successfully!</string>
     <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
-    <string name="notify_kyc_verification">We will notify you when your KYC verification \nis complete</string>
+    <string name="notify_kyc_verification">We will notify you when your KYC verification is complete</string>
     <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
     <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>
     <string name="sub_label_changing_from_post_truck">With this change, you will not be allowed to Post Trucks. Your trip history will still be accessible</string>

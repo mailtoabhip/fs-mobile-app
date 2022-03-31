@@ -64,6 +64,7 @@ class TripsViewModel @Inject constructor(
   private val userRepository: UserRepository,
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
+  private val loadboardRepository: LoadboardRepository,
   private val userPrefs: UserPrefs
 ) : BaseViewModel(), FilterTripsInterface, ChangePaymentModeInterface{
 
@@ -473,13 +474,13 @@ class TripsViewModel @Inject constructor(
 
   fun fetchTeamMembers()
   {
-    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+    compositeDisposable += loadboardRepository.getUserTeamMembers(userRepository.userId())
         .onBackground()
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
             fuelUserSpinnerOptions.clear()
-            if (_res.total > 0) {
+            if (_res.count > 0) {
               for (user in _res.users) {
                 if (user.phoneNumber != null) {
                   if (user.phoneNumber == userPrefs.phoneNumber)

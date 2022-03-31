@@ -204,7 +204,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     }
 
 
-    fun showConfirmRoleChangeDialog(desc: String,dialogUtilsInterface: DialogUtilsInterface,selected:String,userMode:String,visibility: Int) {
+    fun showConfirmRoleChangeDialog(desc: String,dialogUtilsInterface: DialogUtilsInterface,selected:String,userMode:String,visibility: Int,isKycStarted:Boolean,isUserVerified:Boolean) {
         val dialog = Dialog(activity)
         val bindingDialog= DialogConfirmPermissionSwitchBinding.inflate(activity.layoutInflater)
 
@@ -220,7 +220,11 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         bindingDialog.buttonConfirm.setOnClickListener {
             //action after confirm button
             if(userMode=="post_load" && (visibility==2 ||visibility==3) ){
-                showCompleteBusinessverificationDialog(dialogUtilsInterface)
+              if(!isKycStarted){
+                  dialogUtilsInterface.setAccountRoleSelection(selected)
+              }else if(isUserVerified) {
+                  showCompleteBusinessverificationDialog(dialogUtilsInterface)
+              }
             }else{
                 dialogUtilsInterface.setAccountRoleSelection(selected)
             }
@@ -235,7 +239,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     }
 
 
-    fun showRoleChangeDialog(visibility: Int,dialogUtilsInterface: DialogUtilsInterface,userMode:String,context: Context) {
+    fun showRoleChangeDialog(visibility: Int,dialogUtilsInterface: DialogUtilsInterface,userMode:String,isKycStarted:Boolean,isUserVerified:Boolean,context: Context) {
         val dialog = Dialog(activity)
         val bindingDialog= DialogEditRoleBinding.inflate(activity.layoutInflater)
 
@@ -438,7 +442,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             if ((userMode=="post_load"&&visibility==1)|| (userMode=="post_truck"&&visibility==2) || (userMode=="both"&&visibility==3)){
                 dialogUtilsInterface.setAccountRoleSelection(selected)
             }else{
-                showConfirmRoleChangeDialog(desc,dialogUtilsInterface,selected,userMode,visibility)
+                showConfirmRoleChangeDialog(desc,dialogUtilsInterface,selected,userMode,visibility,isKycStarted,isUserVerified)
             }
 
             dialog.dismiss()

@@ -34,7 +34,7 @@ class BusinessVerificationViewModel@Inject constructor(
 
     var currentStep = ""
 
-
+    var errorText:String? = ""
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var manualVerificationRequired = MutableLiveData<Boolean>()
@@ -143,8 +143,23 @@ class BusinessVerificationViewModel@Inject constructor(
 
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
+       if(selected.value.equals("rc")) {
+           uploadDocForVerification(
+               VerificationDocUploadRequest(
+                   verificationId = truckNumber.value,
+                   proofDocumentType = selected.value,
+                   documentUrls = docList
+               )
+           )
+       }else{
+           uploadDocForVerification(
+               VerificationDocUploadRequest(
+                   proofDocumentType = selected.value,
+                   documentUrls = docList
+               )
+           )
 
-      uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected.value,documentUrls = docList))
+       }
 
     }
 

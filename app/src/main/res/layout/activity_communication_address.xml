@@ -78,13 +78,30 @@
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
                 />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/address_error"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:drawableLeft="@drawable/ic_vector_error"
+                android:drawablePadding="@dimen/size_8dp"
+                android:lineSpacingExtra="@dimen/text_6sp"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_hint"
+                android:text="@{viewModel.errorText}"
+                android:textColor="@color/destructive_red"
+                android:textSize="@dimen/text_16sp"
+                />
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     bind:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="@dimen/size_32dp"
-                    bind:layout_constraintTop_toBottomOf="@+id/aadhaar_hint"
+                    bind:layout_constraintTop_toBottomOf="@+id/address_error"
                     android:orientation="vertical">
                         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                             android:id="@+id/edit_flat"
@@ -167,6 +184,7 @@
                             android:id="@+id/spinner_proof"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/edit_text_height"
+                            android:paddingBottom="@dimen/size_12dp"
                             android:background="@drawable/bg_spinner"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toTopOf="parent"
@@ -234,22 +252,25 @@
                                 bind:layout_constraintBottom_toBottomOf="parent" />
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/doc_title"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginStart="@dimen/size_12dp"
                                 android:layout_marginHorizontal="@dimen/size_16dp"
-                                bind:layout_constraintTop_toTopOf="parent"
-                                android:textSize="@dimen/text_20sp"
-                                bind:layout_constraintStart_toEndOf="@+id/doc_icon"
                                 bind:layout_constraintEnd_toStartOf="@+id/doc_remove"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginEnd="@dimen/size_30dp"
+                                android:textSize="@dimen/text_14sp"
+                                bind:layout_constraintStart_toEndOf="@+id/doc_icon"
                                 android:text="IMG_344_988"/>
                             <androidx.appcompat.widget.AppCompatTextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:id="@+id/doc_size"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:layout_marginEnd="@dimen/size_30dp"
                                 bind:layout_constraintTop_toBottomOf="@+id/doc_title"
-                                android:textSize="@dimen/text_16sp"
+                                android:textSize="@dimen/size_12dp"
                                 android:textColor="@color/color_hint"
                                 bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
                                 android:text="233kb"/>

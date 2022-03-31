@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -30,8 +31,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.databinding.ActivityVerifyGstBinding
 import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
@@ -73,6 +76,12 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!)
+            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.gstError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.identityRejectReason
+            }else{
+                binding.gstError.visibility=View.GONE
+            }
         }
     }
 
@@ -82,6 +91,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        if(userPrefs.retryVerification){
+            binding.btnVerifyGst.setText(R.string.action_retry_verification)
+        }
+        if(userPrefs.gstNumber.isNotNullOrEmpty()){
+           currSelectedGst=userPrefs.gstNumber
+
+        }
         binding.gstList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@GstVerificationActivity.gstRVAdapter
@@ -94,6 +110,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         viewModel.gstNumbersLiveData.observe(this, Observer {
             it?.let { _items ->
+
                 gstRVAdapter.operation(_items)
             }
         })
@@ -146,6 +163,9 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
+                if(userPrefs.retryVerification){
+                    userPrefs.identityRejectReason= ""
+                }
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                         TotalStepsKey)!!,null)
             } else {
@@ -169,13 +189,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     override fun navigateToBusinessVerification() {
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val bundle = Bundle()
-        bundle.putInt(StepKey, 0)
-        navigationUtils.navigateKyc(this,false,bundle)
-    }
-
     override fun handleAction(
             actionId: String,
             item: BaseGstRVAdapterItem<*>
@@ -195,6 +208,23 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     override fun fetchCurrSelected(): String? {
       return currSelectedGst
+    }
+
+    override fun fetchCheckedDetails(data: GstDetailItemData?) {
+        currSelectedGst = data?.gstNumber
+        viewModel.gstDetailData.value =  data
+        binding.btnVerifyGst.isEnabled =true
+    }
+
+
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
+        val bundle = Bundle()
+        bundle.putInt(StepKey,0)
+        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun onAWSSuccess(

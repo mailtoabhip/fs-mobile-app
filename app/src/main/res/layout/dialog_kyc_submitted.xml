@@ -31,7 +31,11 @@
             android:text="@string/notify_kyc_verification"
             android:textColor="@color/sub_heading_black"
             android:layout_marginTop="@dimen/size_6dp"
+            android:layout_marginLeft="@dimen/size_6dp"
+            android:layout_marginRight="@dimen/size_6dp"
             android:textAlignment="center"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_8dp"
             android:textSize="@dimen/text_14sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

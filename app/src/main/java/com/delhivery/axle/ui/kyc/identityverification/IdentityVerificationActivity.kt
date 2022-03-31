@@ -29,8 +29,10 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -78,6 +80,12 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+            if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+                binding.identityError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.identityRejectReason
+            }else{
+                binding.identityError.visibility=View.GONE
+            }
         }
 
     }
@@ -90,46 +98,30 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.textCin.setOnClickListener{
-            binding.editCinLayout.visibility= View.VISIBLE
-            binding.editUdyogLayout.visibility= View.GONE
-            binding.editShopLayout.visibility= View.GONE
-            binding.layoutCin.isSelected=true
-            binding.layoutUdyog.isSelected=false
-            binding.layoutShop.isSelected=false
-            binding.textCin.isChecked=true
-            binding.textUdyog.isChecked=false
-            binding.textShop.isChecked=false
-            binding.editUdyog.text?.clear()
-            binding.editShop.text?.clear()
-            showUploadImage()
+            clickedCin(false)
         }
         binding.textUdyog.setOnClickListener{
-            binding.editCinLayout.visibility= View.GONE
-            binding.editUdyogLayout.visibility= View.VISIBLE
-            binding.editShopLayout.visibility= View.GONE
-            binding.layoutCin.isSelected=false
-            binding.layoutUdyog.isSelected=true
-            binding.layoutShop.isSelected=false
-            binding.textCin.isChecked=false
-            binding.textUdyog.isChecked=true
-            binding.textShop.isChecked=false
-            binding.editCin.text?.clear()
-            binding.editShop.text?.clear()
-            showUploadImage()
+            clickedUdyog(false)
+
         }
         binding.textShop.setOnClickListener{
-            binding.editCinLayout.visibility= View.GONE
-            binding.editUdyogLayout.visibility= View.GONE
-            binding.editShopLayout.visibility= View.VISIBLE
-            binding.layoutCin.isSelected=false
-            binding.layoutUdyog.isSelected=false
-            binding.layoutShop.isSelected=true
-            binding.textCin.isChecked=false
-            binding.textUdyog.isChecked=false
-            binding.textShop.isChecked=true
-            binding.editCin.text?.clear()
-            binding.editUdyog.text?.clear()
-            showUploadImage()
+            clickedShopNumber(false)
+
+        }
+
+        when {
+            userPrefs.cinNumber.isNotNullOrEmpty() -> {
+                clickedCin(true)
+                viewModel.cinNumber = userPrefs.cinNumber
+            }
+            userPrefs.udyogNumber.isNotNullOrEmpty() -> {
+                clickedUdyog(true)
+                viewModel.udyogNumber = userPrefs.udyogNumber
+            }
+            userPrefs.shopNumber.isNotNullOrEmpty() -> {
+                clickedShopNumber(true)
+                viewModel.shopNumber = userPrefs.shopNumber
+            }
         }
 
         viewModel.delegationLiveData.observe(this, Observer {
@@ -149,8 +141,10 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                         userPrefs.shopNumber = viewModel.shopNumber
                     }
                 }
-                //change flow as per config
-       //         navigationUtils.navigate(identityVerificationIntent(this),true,null)
+                if(userPrefs.retryVerification){
+                    userPrefs.identityRejectReason= ""
+                }
+
             navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!,null)
             }
@@ -188,7 +182,54 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
     }
 
-
+   private fun clickedCin(uploaded:Boolean){
+       binding.editCinLayout.visibility= View.VISIBLE
+       binding.editUdyogLayout.visibility= View.GONE
+       binding.editShopLayout.visibility= View.GONE
+       binding.layoutCin.isSelected=true
+       binding.layoutUdyog.isSelected=false
+       binding.layoutShop.isSelected=false
+       binding.textCin.isChecked=true
+       binding.textUdyog.isChecked=false
+       binding.textShop.isChecked=false
+       binding.editUdyog.text?.clear()
+       binding.editShop.text?.clear()
+       if(uploaded){
+           showUploadedDoc()
+       }else showUploadImage()
+   }
+    private fun clickedUdyog(uploaded: Boolean){
+        binding.editCinLayout.visibility= View.GONE
+        binding.editUdyogLayout.visibility= View.VISIBLE
+        binding.editShopLayout.visibility= View.GONE
+        binding.layoutCin.isSelected=false
+        binding.layoutUdyog.isSelected=true
+        binding.layoutShop.isSelected=false
+        binding.textCin.isChecked=false
+        binding.textUdyog.isChecked=true
+        binding.textShop.isChecked=false
+        binding.editCin.text?.clear()
+        binding.editShop.text?.clear()
+        if(uploaded){
+            showUploadedDoc()
+        }else showUploadImage()
+    }
+    private fun clickedShopNumber(uploaded: Boolean){
+        binding.editCinLayout.visibility= View.GONE
+        binding.editUdyogLayout.visibility= View.GONE
+        binding.editShopLayout.visibility= View.VISIBLE
+        binding.layoutCin.isSelected=false
+        binding.layoutUdyog.isSelected=false
+        binding.layoutShop.isSelected=true
+        binding.textCin.isChecked=false
+        binding.textUdyog.isChecked=false
+        binding.textShop.isChecked=true
+        binding.editCin.text?.clear()
+        binding.editUdyog.text?.clear()
+        if(uploaded){
+            showUploadedDoc()
+        }else showUploadImage()
+    }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
@@ -210,6 +251,16 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 }
             }
 
+    }
+
+    private fun showUploadedDoc(){
+        if(userPrefs.identityDocUrl.isNullOrEmpty()){
+         showUploadImage()
+        }else{
+            resetUploadData()
+            uploadArray.add(Pair(userPrefs.identityDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected()
+        }
     }
     private fun dispatchFileIntent() {
         val intent = Intent()
@@ -303,7 +354,13 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
+        val bundle = Bundle()
+        bundle.putInt(StepKey,0)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

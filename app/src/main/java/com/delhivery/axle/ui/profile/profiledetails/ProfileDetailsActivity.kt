@@ -8,10 +8,8 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
@@ -25,11 +23,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityProfileDetailsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_profile_details.*
@@ -37,7 +34,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 
@@ -108,20 +104,24 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.radioType.setOnCheckedChangeListener { group, checkedId ->
-            if(checkedId==binding.radioType.getChildAt(0).id){
-                viewModel.userMode = "post_load"
-                viewModel.changeRoleDialogVisibility=1
-            }else if(checkedId==binding.radioType.getChildAt(1).id){
-                viewModel.userMode = "post_truck"
-                viewModel.changeRoleDialogVisibility=2
-            }else if(checkedId==binding.radioType.getChildAt(2).id){
-                viewModel.userMode = "both"
-                viewModel.changeRoleDialogVisibility=3
+            if(viewModel.userPrefs.isPanVerfied && (!viewModel.userPrefs.isUserVerfied)){
+                uiUtils.showSnackbar("permission change is not allowed when profile is under KYC verification")
+            }else {
+                if (checkedId == binding.radioType.getChildAt(0).id) {
+                    viewModel.userMode = "post_load"
+                    viewModel.changeRoleDialogVisibility = 1
+                } else if (checkedId == binding.radioType.getChildAt(1).id) {
+                    viewModel.userMode = "post_truck"
+                    viewModel.changeRoleDialogVisibility = 2
+                } else if (checkedId == binding.radioType.getChildAt(2).id) {
+                    viewModel.userMode = "both"
+                    viewModel.changeRoleDialogVisibility = 3
+                }
+                setUserRoleOption()
             }
-            setUserRoleOption()
         }
         binding.occupationText.setOnClickListener {
-                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,this)
+                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,viewModel.userPrefs.isPanVerfied,viewModel.userPrefs.isUserVerfied,this)
         }
 
         viewModel.userUpdateLiveData.observe(this, androidx.lifecycle.Observer {
@@ -192,7 +192,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     override fun navigateToBusinessVerification() {
      val bundle =Bundle()
      bundle.putInt(StepKey, 3)
-        navigationUtils.navigateKyc(this,false,bundle)
+        navigationUtils.navigateKyc(this, false, bundle)
     }
 
     override fun captureImage(
@@ -215,6 +215,11 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun sendDocForVerification(uploadArray: ArrayList<Pair<String, String>>) {
+    }
+
+    override fun onBackPressed() {
+        navigationUtils.navigate(MyProfileActivity::class.java, true)
+        super.onBackPressed()
     }
 
     private fun loadImage(

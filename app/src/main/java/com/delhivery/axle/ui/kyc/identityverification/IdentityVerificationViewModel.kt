@@ -31,6 +31,7 @@ class IdentityVerificationViewModel@Inject constructor(
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var verificationDocUploadLiveData = MutableLiveData<Boolean>()
+    var errorText:String? = ""
 
     /**
      * Get delegation token for AWS
@@ -73,6 +74,7 @@ class IdentityVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res!=null) {
+                    userPrefs.identityDocUrl = verificationDocUploadRequest.documentUrls?.get(0)?:""
                     verificationDocUploadLiveData.postValue(true)
                 } else
                     error.handle()
@@ -81,7 +83,7 @@ class IdentityVerificationViewModel@Inject constructor(
 
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
-        uploadDocForVerification(VerificationDocUploadRequest(proofDocumentType = selected,documentUrls = docList,cinNumber = if(cinNumber.isNotEmpty())cinNumber else null,udyogAadhaarNumber = if(udyogNumber.isNotEmpty())udyogNumber else null,shopEstablishmentNumber = if(shopNumber.isNotEmpty())shopNumber else null))
+        uploadDocForVerification(VerificationDocUploadRequest(verificationId =  if(cinNumber.isNotEmpty())cinNumber else if(udyogNumber.isNotEmpty())udyogNumber else if(shopNumber.isNotEmpty())shopNumber else null,proofDocumentType = selected,documentUrls = docList))
     }
 
 

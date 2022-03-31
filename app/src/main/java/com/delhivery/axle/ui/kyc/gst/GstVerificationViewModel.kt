@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.kyc.gst
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -49,6 +50,8 @@ class GstVerificationViewModel@Inject constructor(
 
     /* steps */
     var currentStep = ""
+
+    var errorText:String? = ""
 
     var gstNumbersLiveData = MutableLiveData<List<Pair<BaseGstRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
@@ -173,6 +176,11 @@ class GstVerificationViewModel@Inject constructor(
                                 userPrefs.gstNumber = gstDetailData.value?.gstNumber!!.replace("-", "")
                                 val addressList = ArrayList<AddAddressModel>()
                                 addressList.add(AddAddressModel(phoneNumber = phoneNum,addressType= "gst", address = gstDetailData.value?.address, isDeleted = false, proofDocumentType = null, documentUrls = null))
+                                if(!userPrefs.getAddressList().isNullOrEmpty()){
+                                    if(userPrefs.getAddressList()!!.size>1){
+                                       addressList.add(userPrefs.getAddressList()!!.get(1) as AddAddressModel)
+                                    }
+                                }
                                 userPrefs.setAddressList(addressList)
                                 userPrefs.isGstVerfied = true
                                 userUpdateLiveData.postValue(true)

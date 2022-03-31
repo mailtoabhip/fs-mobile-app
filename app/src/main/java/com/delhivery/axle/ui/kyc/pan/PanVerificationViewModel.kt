@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.kyc.pan
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
@@ -89,6 +90,7 @@ class PanVerificationViewModel@Inject constructor(
                                     "Error getting gst"
                                 }
                                 userPrefs.isGstsByPanNotRegistered = it.gstin_numbers.isNullOrEmpty()
+                                Log.d("reject",it.gstin_numbers.isNullOrEmpty().toString())
                                 Triple(_Res, msg, it)
                             }
                     }

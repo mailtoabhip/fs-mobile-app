@@ -78,6 +78,23 @@
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
                 />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:visibility="gone"
+                android:id="@+id/aadhaar_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:fontFamily="sans-serif"
+                android:drawableLeft="@drawable/ic_vector_error"
+                android:drawablePadding="@dimen/size_8dp"
+                android:lineSpacingExtra="@dimen/text_6sp"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_hint"
+                android:text="@{viewModel.errorText}"
+                android:textColor="@color/destructive_red"
+                android:textSize="@dimen/text_16sp"
+                />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/aadhaar_edit_layout"
                 android:layout_width="match_parent"
@@ -86,7 +103,7 @@
                 bind:cardElevation="@dimen/size_2dp"
                 bind:cardCornerRadius="@dimen/size_6dp"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_hint">
+                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_error">
                 <com.delhivery.axle.ui.custom.DelhiveryAadhaarFormattedEditText
                     android:id="@+id/edit_aadhaar"
                     android:layout_width="match_parent"

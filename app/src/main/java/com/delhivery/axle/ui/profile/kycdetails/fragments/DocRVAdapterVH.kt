@@ -19,6 +19,7 @@ import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 /**
  * Base Doc items RV adapter view holder
@@ -67,6 +68,20 @@ class DocDataItemVH(binding: ViewProfileKycDocumentItemBinding) :
       _interface.showImage(item.data, binding.textDocumentSizeProfile, binding.docImage)
     val arrString =item.data.docUrl.split("/")
     binding.name.text = arrString.get(arrString.size-1) ?: ""
+    if(item.data.verificationStatus.isNotNullOrEmpty() && item.data.verificationStatus.equals("failed")){
+      binding.imageButtonDownloadDocumentProfile.visibility = View.GONE
+      binding.textDocumentSizeProfile.visibility =View.GONE
+      binding.error.visibility = View.VISIBLE
+      if(item.data.verificationStatusReasonCode.equals("others")){
+        binding.error.text = "Verification failed due to "+item.data.verificationStatusReasonMessage
+      }else{
+        binding.error.text = "Verification failed due to "+item.data.verificationStatusReasonCode
+      }
+    }else{
+      binding.imageButtonDownloadDocumentProfile.visibility = View.VISIBLE
+      binding.textDocumentSizeProfile.visibility = View.VISIBLE
+      binding.error.visibility = View.GONE
+    }
     binding.imageButtonDownloadDocumentProfile.setOnClickListener { _interface.handleAction(DocAction_ViewDetails, item) }
  }
 }

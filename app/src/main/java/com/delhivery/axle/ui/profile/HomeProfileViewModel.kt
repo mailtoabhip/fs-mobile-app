@@ -1,9 +1,11 @@
 package com.delhivery.axle.ui.profile
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.KYCDetailResponse
 import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.UserModel
@@ -18,12 +20,15 @@ import javax.inject.Inject
 class HomeProfileViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
+  private val loadboardRepository: LoadboardRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
 
   var userRoleLiveData = MutableLiveData<Boolean>()
+
+  var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
 
   /* states */
   var stateLiveData = MutableLiveData<ProfileUIState>()
@@ -126,6 +131,17 @@ class HomeProfileViewModel @Inject constructor(
             .subscribe { _res, error ->
               if (!error) {
                 delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+              } else
+                error.handle()
+            }
+  }
+
+  fun getKYCDetails(redirect:String) {
+    compositeDisposable += loadboardRepository.getKycDetails(userRepository.userId())
+            .onBackground()
+            .subscribe { _res, error ->
+              if (!error) {
+                kycDetailData.postValue(Pair(_res,redirect))
               } else
                 error.handle()
             }

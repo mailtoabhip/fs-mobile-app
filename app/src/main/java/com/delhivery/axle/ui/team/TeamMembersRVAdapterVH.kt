@@ -9,6 +9,7 @@ import com.delhivery.axle.api.request.TeamMemberAction_options
 import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 /**
  * Created by Vibhor for Delhivery Pvt Ltd
@@ -76,7 +77,9 @@ class TeamMembersAdminUserItemVH(binding: ViewTeamMemberAdminItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
-    binding.logoTeamMember.text = item.data.name?.get(0)?.toUpperCase().toString()
+    if(item.data.userName.isNotNullOrEmpty()) {
+      binding.logoTeamMember.text = item.data.userName?.get(0)?.toUpperCase().toString()
+    }
     binding.adminCardContainer.clickToAction(ViewAdminMember, item, _interface)
   }
 }
@@ -93,7 +96,9 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
     _interface: TeamMembersRVAdapterInterface
   ) {
     binding.user = item.data
-    binding.logoTeamMember.text = item.data.name?.get(0)?.toUpperCase().toString()
+    if(item.data.userName.isNotNullOrEmpty()) {
+      binding.logoTeamMember.text = item.data.userName?.get(0)?.toUpperCase().toString()
+    }
     binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, adapterPosition, _interface)
     //binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
 //    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)

@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.kyc.gst
 
 import com.delhivery.axle.data.gst.GstDetailData
+import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 
 interface GstRVAdapterInterface : ItemClickListener<BaseGstRVAdapterItem<*>> {
@@ -21,4 +22,7 @@ interface GstRVAdapterInterface : ItemClickListener<BaseGstRVAdapterItem<*>> {
   fun fetchDetails(data: GstDetailData)
 
   fun fetchCurrSelected():String?
+
+    fun fetchCheckedDetails(data: GstDetailItemData?)
+
 }

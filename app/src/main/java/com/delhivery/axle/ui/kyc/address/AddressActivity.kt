@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
-import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,26 +17,24 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.getFileName
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
-import com.delhivery.axle.utils.extensions.setup
+import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
+import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -45,7 +42,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface,AddressRVAdapterInterface {
+class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface{
 
 
     init {
@@ -56,10 +53,10 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
     val awsPath = "loadboard/address/"
+    var addressDeleted =false
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
-    private val addressRVAdapter by lazy { AddressRVAdapter(this) }
 
     @Inject
     lateinit var imageUtils: ImageUtils
@@ -78,10 +75,14 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var areaFilled = false
     var cityFilled = false
     var pincodeFilled = false
-    var proofTypeFilled = true
+    var proofTypeFilled = false
     var docUploadProof = false
     var selectedAddress =""
     var isSameAsGST =false
+    var defaultSelectGst = true
+    var selectedAddressData= AddAddressModel()
+    var alternateAddressData= AddAddressModel()
+    var gstAddressData= AddAddressModel()
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
     override fun layoutId() = R.layout.activity_address
@@ -93,17 +94,74 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 TotalStepsKey)!!)
             progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
+
+            if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
+                binding.addressError.visibility=View.VISIBLE
+                viewModel.errorText = userPrefs.addressRejectReason
+            }else{
+                binding.addressError.visibility=View.GONE
+            }
         }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-       viewModel.fetchAndAddUserAddress()
-      binding.btnAddAlternateAddress.setOnClickListener {
-          showAddAlternateAddressDialog()
+        setSupportActionBar(binding.toolbar)
+        title = " "
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if(!userPrefs.getAddressList().isNullOrEmpty()){
+            for(addressData in userPrefs.getAddressList()!!){
+                if(addressData?.addressType!!.startsWith("g",true)){
+                    viewModel.gstAddress= addressData.address?:""
+                    binding.gstAddressLayout.visibility = View.VISIBLE
+                    gstAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
+                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
+                        binding.gstAddressLayout.isSelected = true
+                        selectedAddressData = gstAddressData
+                    }else if(userPrefs.getAddressList()!!.size<2){
+                        binding.gstAddressLayout.isSelected = true
+                        selectedAddressData = gstAddressData
+                    }
+                }else if(addressData?.addressType!!.startsWith("al",true)){
+                    viewModel.alternateAddress= addressData.address?:""
+                    binding.alternateAddressLayout.visibility = View.VISIBLE
+                    binding.btnAddAlternateAddress.visibility = View.GONE
+                    alternateAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
+                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
+                        binding.alternateAddressLayout.isSelected = true
+                        selectedAddressData = alternateAddressData
+                    }else{
+                        binding.gstAddressLayout.isSelected = true
+                        selectedAddressData = gstAddressData
+                    }
+                }
+
+
+            }
+        }
+        if(userPrefs.retryVerification){
+            binding.btnSubmitDetails.setText(R.string.action_retry_verification)
+        }
+        binding.gstAddressLayout.setOnClickListener {
+            binding.gstAddressLayout.isSelected = true
+            binding.alternateAddressLayout.isSelected = false
+            selectedAddressData = gstAddressData
+        }
+
+        binding.alternateAddressLayout.setOnClickListener {
+            binding.gstAddressLayout.isSelected = false
+            binding.alternateAddressLayout.isSelected = true
+            selectedAddressData = alternateAddressData
+        }
+
+        binding.btnAddAlternateAddress.setOnClickListener {
+          showAddAlternateAddressDialog(false,null)
       }
         binding.btnSubmitDetails.setOnClickListener {
-            viewModel.updateCommunicationAddress(selectedAddress,isSameAsGST)
+            if(selectedAddressData.addressType.equals("gst")){
+                isSameAsGST =true
+            }
+            viewModel.updateCommunicationAddress(selectedAddressData.address!!,isSameAsGST)
         }
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
@@ -115,26 +173,18 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 viewModel.captureAddressProof.postValue(false)
             }
         })
-        binding.addressList.apply {
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            adapter = this@AddressActivity.addressRVAdapter
+        binding.iconEdit.setOnClickListener {
+            showAddAlternateAddressDialog(true,alternateAddressData)
         }
-        viewModel.AddressLiveData.observe(this, Observer {
-            it?.let { _items ->
-                    addressRVAdapter.operation(_items)
-            }
-        })
-        viewModel.addressSavedChanges.observe(this, Observer {
-            if(it){
-            binding.btnAddAlternateAddress.visibility=View.GONE
-            }
-            else{
-                binding.btnAddAlternateAddress.visibility = View.VISIBLE
-            }
-        })
+
         viewModel.subAddressLiveData.observe(this, Observer {
             if (it) {
                 uiUtils.showSnackbar("Address updated")
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= ""
+                }
+                 addDataToPreference()
+                userPrefs.businessAddress = selectedAddressData.address!!
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 
@@ -147,8 +197,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.retryVerificationOnBack=true
+        val bundle = Bundle()
+        bundle.putInt(StepKey,1)
+        navigationUtils.navigateKyc(this,true,bundle)
+    }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
@@ -262,7 +317,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     ) {
         uiUtils.hideProgress()
         viewModel.documentProofUrl.clear()
-        viewModel.documentProofUrl.add(path)
+        val s3url= awsUtils.awsBasePath()
+        viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
@@ -345,13 +401,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-
-
-
-
-
-
-    private fun showAddAlternateAddressDialog() {
+    private fun showAddAlternateAddressDialog(isEdit:Boolean, addressData: AddAddressModel?) {
         val dialog = Dialog(this)
         val bindingDialog =DialogAddAlternateAddressBinding.inflate(layoutInflater)
 
@@ -359,42 +409,35 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.setContentView(bindingDialog.root)
         bindingDialog.uploadDocLay.visibility= View.VISIBLE
         bindingDialog.uploadedDocLay.visibility= View.GONE
+        docUploadProof=false
         bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
         }
 
         bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
-                viewModel.documentProofType="not_selected"
-            }else{
-                proofTypeFilled =true
-            }
+            proofTypeFilled = p>0
+            enableAddAddressDialogButton(bindingDialog)
         }
 
         bindingDialog.btnSubmitDetails.setOnClickListener {
-
-            if(bindingDialog.spinnerProof.selectedItemPosition==0){
-                viewModel.documentProofType=null
-            }else{
-                viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
-            }
-            viewModel.flatAddress = bindingDialog.editFlat.text.toString()
-            viewModel.areaAddress = bindingDialog.editArea.text.toString()
-            viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
-            viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
-            viewModel.showSubmitedDialog.value=false
+            viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
+            viewModel.flatAddress =  bindingDialog.editFlat.text.toString()
+            viewModel.areaAddress =  bindingDialog.editArea.text.toString()
+            viewModel.cityAddress =  bindingDialog.autoCompleteCity.text.toString()
+            viewModel.pincodeAddress =  bindingDialog.editPincode.text.toString()
             viewModel.addNewAddress(false)
-            viewModel.addressSavedChanges.value=true
-            resetUploadData()
-            uploadArray.clear()
-            viewModel.showSubmitedDialog.postValue(false)
-            docUploadProof=false
-            enableAddAddressDialogButton(bindingDialog)
-
+            dialog.dismiss()
         }
-
-
+        bindingDialog.btnSaveChanges.setOnClickListener {
+            viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
+            viewModel.flatAddress =  bindingDialog.editFlat.text.toString()
+            viewModel.areaAddress =  bindingDialog.editArea.text.toString()
+            viewModel.cityAddress =  bindingDialog.autoCompleteCity.text.toString()
+            viewModel.pincodeAddress =  bindingDialog.editPincode.text.toString()
+            viewModel.addNewAddress(false)
+            dialog.dismiss()
+        }
+        var onlyDelete = false
         var cityLength = 0
         autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
             uiUtils.toggleKeyboard()
@@ -415,6 +458,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 }
             }
         })
+
         bindingDialog.editArea.lengthAction(3){
             areaFilled = true
             enableAddAddressDialogButton(bindingDialog)
@@ -441,12 +485,45 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
-                dialog.dismiss()
+                viewModel.alternateAddress= viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                viewModel.addressType = "alternate"
+                binding.alternateAddressLayout.visibility = View.VISIBLE
+                binding.btnAddAlternateAddress.visibility = View.GONE
+                alternateAddressData =  AddAddressModel(userPrefs.phoneNumber,   viewModel.alternateAddress,viewModel.documentProofType,viewModel.documentProofUrl,viewModel.addressType,false)
+                binding.alternateAddressLayout.isSelected = true
+                binding.gstAddressLayout.isSelected = false
+                binding.alterateAddressText.setText(viewModel.alternateAddress)
+                selectedAddressData = alternateAddressData
+                addDataToPreference()
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
-                dialog.dismiss()
             }
         })
+        viewModel.deleteAddressLiveData.observe(this, Observer {
+            if (it) {
+                    viewModel.alternateAddress=""
+                    binding.alternateAddressLayout.visibility = View.GONE
+                    binding.btnAddAlternateAddress.visibility = View.VISIBLE
+                    binding.gstAddressLayout.isSelected = true
+                    alternateAddressData =  AddAddressModel()
+                    selectedAddressData = gstAddressData
+                    addDataToPreference()
+            } else {
+                uiUtils.showSnackbar("Error encountered, Please try again.")
+            }
+        })
+
+        viewModel.showSubmitedDialog.observe(this, Observer {
+            if(it){
+                bindingDialog.uploadDocLay.visibility= View.GONE
+                bindingDialog.uploadedDocLay.visibility= View.VISIBLE
+                docUploadProof=true
+                bindingDialog.docTitle.setText(uploadArray.get(0).first)
+                bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
+                enableAddAddressDialogButton(bindingDialog)
+            }
+        })
+
         bindingDialog.docRemove.setOnClickListener {
             resetUploadData()
             docUploadProof=false
@@ -458,30 +535,104 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
        bindingDialog.uploadDocLay.setOnClickListener {
            viewModel.captureAddressProof.postValue(true)
        }
-        viewModel.showSubmitedDialog.observe(this, Observer {
-            if(it){
-                bindingDialog.uploadDocLay.visibility= View.GONE
-                bindingDialog.uploadedDocLay.visibility= View.VISIBLE
-                docUploadProof=true
-                enableAddAddressDialogButton(bindingDialog)
-                bindingDialog.docTitle.setText(uploadArray.get(0).first)
-                bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
-            }
-        })
+        bindingDialog.btnConfirmDelete.setOnClickListener {
+            confirmDelete(viewModel.documentProofType!!,viewModel.flatAddress,viewModel.areaAddress,viewModel.cityAddress,viewModel.pincodeAddress,dialog)
+        }
+
+        if(isEdit&& addressData!=null){
+            bindingDialog.btnSubmitDetails.visibility = View.GONE
+            bindingDialog.saveDeleteLl.visibility = View.VISIBLE
+            fillDataFromBusinessAddress(addressData,bindingDialog)
+        }else{
+            bindingDialog.btnSubmitDetails.visibility = View.VISIBLE
+            bindingDialog.saveDeleteLl.visibility = View.GONE
+        }
 
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
+
+    }
+
+    fun addDataToPreference(){
+        val listOfAddress = mutableListOf<AddAddressModel>()
+        listOfAddress.add(gstAddressData)
+        if(alternateAddressData.addressType.equals("alternate")){
+            listOfAddress.add(alternateAddressData)
+        }
+        userPrefs.setAddressList(listOfAddress)
     }
     fun enableAddAddressDialogButton(bindingDialog:DialogAddAlternateAddressBinding){
+        bindingDialog.btnSaveChanges.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
         bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
 
     }
+    private fun fillDataFromBusinessAddress(addressData: AddAddressModel,bindingDialog: DialogAddAlternateAddressBinding){
+        var docArray:ArrayList<Pair<String, String>> = ArrayList()
+        var docPath =""
+        if(!addressData.documentUrls.isNullOrEmpty()){
+            docPath= addressData.documentUrls?.get(0)!!
+        }
+        var docproofRec=""
+        var addressRec =  addressData.address
+        var flatRec = addressRec?.split(",")?.get(0)
+        bindingDialog.editFlat.setText(flatRec)
+         viewModel.flatAddress = flatRec!!
+        flatFilled=true
+        var areaRec = addressRec?.split(",")?.get(1)
+        bindingDialog.editArea.setText(areaRec)
+        viewModel.areaAddress = areaRec!!
+        areaFilled=true
+        var citynPinRec = addressRec?.split(",")?.get(2)
+        var cityRec =citynPinRec?.split("-")?.get(0)
+        bindingDialog.autoCompleteCity.setText(cityRec)
+         viewModel.cityAddress = cityRec!!
+        cityFilled=true
+        var pincodeRec = citynPinRec?.split("-")?.get(1)
+        pincodeFilled=true
+        bindingDialog.editPincode.setText(pincodeRec)
+         viewModel.pincodeAddress = pincodeRec!!
+        if(docPath.isNullOrEmpty()){
+            resetUploadData()
+            bindingDialog.uploadDocLay.visibility= View.VISIBLE
+            bindingDialog.uploadedDocLay.visibility= View.GONE
+            docUploadProof=false
+
+        }else{
+            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            if(addressData.documentUrls!=null)
+                viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
+            bindingDialog.uploadDocLay.visibility= View.GONE
+            bindingDialog.uploadedDocLay.visibility = View.VISIBLE
+            bindingDialog.docTitle.setText(docArray.get(0).first)
+            docUploadProof=true
+        }
 
 
-    fun confirmDelete(proofType :String,flatAddress:String,areaAddress:String,cityAddress:String,pinCode:String) {
+        var spinnerIndex=0
+        if(addressData.proofDocumentType!=null) {
+            spinnerIndex = when {
+                addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                else -> 0
+            }
+
+        }
+        if(spinnerIndex>0){
+            proofTypeFilled=true
+        }
+        bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
+            viewModel.documentProofType=bindingDialog.spinnerProof.selectedItem.toString()
+        })
+
+        enableAddAddressDialogButton(bindingDialog)
+    }
+    fun confirmDelete(proofType :String,flatAddress:String,areaAddress:String,cityAddress:String,pinCode:String, editDialog:Dialog) {
         val dialog = Dialog(this)
         val bindingDialog = DialogConfirmAddressDialogBinding.inflate(layoutInflater)
 
@@ -494,13 +645,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         bindingDialog.buttonConfirm.setOnClickListener {
             //action after confirm button
+            editDialog.dismiss()
             viewModel.documentProofType =  proofType
             viewModel.flatAddress = flatAddress
             viewModel.areaAddress = areaAddress
             viewModel.cityAddress = cityAddress
             viewModel.pincodeAddress = pinCode
             viewModel.addNewAddress(true)
-            viewModel.addressSavedChanges.value=false
             dialog.dismiss()
         }
 
@@ -509,266 +660,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
-    fun enableEditAddressDialogButton(bindingDialog:DialogEditAlternateAddressBinding){
-        bindingDialog.btnSubmitDetails.isEnabled = flatFilled&&areaFilled&&pincodeFilled&&cityFilled&&proofTypeFilled&&docUploadProof
-        Log.i("Flat",flatFilled.toString())
-        Log.i("are",areaFilled.toString())
-        Log.i("pinco",pincodeFilled.toString())
-        Log.i("city",cityFilled.toString())
-        Log.i("doc",docUploadProof.toString())
-
-
-    }
-
-
-    private fun showEditAlternateAddressDialog(addressDataItem: AddressDataItem) {
-        val dialog = Dialog(this)
-        val bindingDialog = DialogEditAlternateAddressBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-        var docArray:ArrayList<Pair<String, String>> = ArrayList()
-        var docPath= addressDataItem.data.documentUrls?.get(0)
-        var docproofRec=""
-        var addressRec= addressDataItem.key()
-        var flatRec = addressRec.split(",").get(0)
-        bindingDialog.editFlat.setText(flatRec)
-        var areaRec = addressRec.split(",").get(1)
-        bindingDialog.editArea.setText(areaRec)
-        var citynPinRec = addressRec.split(",").get(2)
-        var cityRec =citynPinRec.split("-").get(0)
-        bindingDialog.autoCompleteCity.setText(cityRec)
-        var pincodeRec = citynPinRec.split("-").get(1)
-        docArray.add(Pair(docPath!!.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        bindingDialog.uploadDocLay.visibility= View.GONE
-        bindingDialog.uploadedDocLay.visibility= View.VISIBLE
-        bindingDialog.docTitle.setText(docArray.get(0).first)
-        docUploadProof=true
-        bindingDialog.btnSubmitDetails.isEnabled=true
-
-        bindingDialog.editPincode.setText(pincodeRec)
-
-        var spinnerIndex=0
-        if(addressDataItem.data.proofDocumentType!=null) {
-            spinnerIndex = when {
-                addressDataItem.data.proofDocumentType!!.startsWith("V", true) -> 1
-                addressDataItem.data.proofDocumentType!!.startsWith("lr", true) -> 2
-                addressDataItem.data.proofDocumentType!!.startsWith("le", true) -> 3
-                addressDataItem.data.proofDocumentType!!.startsWith("ud", true) -> 4
-                addressDataItem.data.proofDocumentType!!.startsWith("sh", true) -> 5
-                else -> 0
-            }
-        }
-
-        bindingDialog.spinnerProof.post(Runnable { bindingDialog.spinnerProof.setSelection(spinnerIndex)
-            docproofRec=bindingDialog.spinnerProof.selectedItem.toString()
-
-        })
-
-        bindingDialog.closeBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialog.docRemove.setOnClickListener {
-            resetUploadData()
-            bindingDialog.uploadDocLay.visibility= View.VISIBLE
-            bindingDialog.uploadedDocLay.visibility= View.GONE
-            docUploadProof=false
-            enableEditAddressDialogButton(bindingDialog)
-        }
-
-
-        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
-            }
-        }
-
-        bindingDialog.btnSubmitDetails.setOnClickListener {
-
-            viewModel.documentProofType =  docproofRec
-            viewModel.flatAddress = flatRec
-            viewModel.areaAddress = areaRec
-            viewModel.cityAddress = cityRec
-            viewModel.pincodeAddress =pincodeRec
-            viewModel.addNewAddress(true)
-
-            viewModel.documentProofType =  bindingDialog.spinnerProof.selectedItem.toString()
-            viewModel.flatAddress = bindingDialog.editFlat.text.toString()
-            viewModel.areaAddress = bindingDialog.editArea.text.toString()
-            viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
-            viewModel.pincodeAddress =bindingDialog.editPincode.text.toString()
-            viewModel.addNewAddress(false)
-            viewModel.addressSavedChanges.value=true
-            viewModel.showSubmitedDialog.postValue(false)
-
-        }
-        bindingDialog.btnConfirmDelete.setOnClickListener {
-
-
-
-            confirmDelete(bindingDialog.spinnerProof.selectedItem.toString(),bindingDialog.editFlat.text.toString(),bindingDialog.editArea.text.toString()
-                ,bindingDialog.autoCompleteCity.text.toString(),bindingDialog.editPincode.text.toString())
-
-        }
-
-
-        //check length and enable/disable submit button
-        var cityLength = 0
-        if(bindingDialog.autoCompleteCity.length()>0){
-            cityLength =bindingDialog.autoCompleteCity.length()
-        }
-        autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
-            uiUtils.toggleKeyboard()
-            cityFilled = true
-            cityLength = bindingDialog.autoCompleteCity.text.length
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.autoCompleteCity.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable) {
-                if (s == null || s.length == 0) {
-                    cityFilled = false
-                    enableEditAddressDialogButton(bindingDialog)
-                }else if (cityLength>0&& s.length<cityLength){
-                    cityFilled = false
-                    enableEditAddressDialogButton(bindingDialog)
-                }
-            }
-        })
-
-        bindingDialog.editArea.lengthAction(3){
-            areaFilled = true
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editArea.lengthAction(2){
-            areaFilled = false
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editFlat.lengthAction(1){
-            flatFilled = true
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editFlat.lengthAction(0){
-            flatFilled = false
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editPincode.lengthAction(6){
-            pincodeFilled = true
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        bindingDialog.editPincode.lengthAction(5){
-            pincodeFilled = false
-            enableEditAddressDialogButton(bindingDialog)
-        }
-        viewModel.addAddressLiveData.observe(this, Observer {
-            if (it) {
-                dialog.dismiss()
-            } else {
-                uiUtils.showSnackbar("Error encountered, Please try again.")
-                dialog.dismiss()
-            }
-        })
-
-        bindingDialog.uploadDocLay.setOnClickListener {
-            viewModel.captureAddressProof.postValue(true)
-        }
-        viewModel.showSubmitedDialog.observe(this, Observer {
-            if(it){
-                bindingDialog.uploadDocLay.visibility= View.GONE
-                bindingDialog.uploadedDocLay.visibility= View.VISIBLE
-                docUploadProof=true
-                enableEditAddressDialogButton(bindingDialog)
-                bindingDialog.docTitle.setText(uploadArray.get(0).first)
-                bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
-            }
-        })
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-
-    }
-
-
-
-
-
-
-
-    override fun handleAction(actionId: String, item: BaseAddressRVAdapterItem<*>) {
-
-    }
-
-    override fun editItem(item: AddressDataItem) {
-        showEditAlternateAddressDialog(item)
-    }
-
-    override fun selectItem(item: AddressDataItem, position: Int) {
-        selectedAddress=item.data.key()
-        if(item.data.addressType.equals("gst",true)) {
-            isSameAsGST=true
-        }
-
-        if(viewModel.selectedAdapterPos==-1) {
-           var addressDataItem= AddressDataItem(
-                AddressDetailData(
-                    item.data.phone_number,
-                    item.data?.address!!,
-                    item.data.proofDocumentType,
-                    item.data.documentUrls,
-                    item.data.addressType,
-                    item.data.isDeleted,
-                    true
-                )
-            )
-            viewModel.selectedAdapterPos=position
-            viewModel.lastSelectedAddressLiveData.postValue(addressDataItem)
-            addressRVAdapter.updateItem(addressDataItem)
-            addressRVAdapter.notifyDataSetChanged()
-
-        }else{
-
-        if(viewModel.selectedAdapterPos==position){
-           addressRVAdapter.updateItem(item)
-            addressRVAdapter.notifyDataSetChanged()
-        }else{
-          var addressDataItem=AddressDataItem(
-              AddressDetailData(
-                  item.data.phone_number,
-                  item.data?.address!!,
-                  item.data.proofDocumentType,
-                  item.data.documentUrls,
-                  item.data.addressType,
-                  item.data.isDeleted,
-                  true
-              )
-          )
-            var lastAddressDataItem=AddressDataItem(
-                AddressDetailData(
-                    viewModel.lastSelectedAddressLiveData.value?.data?.phone_number,
-                    viewModel.lastSelectedAddressLiveData.value?.data?.address!!,
-                    viewModel.lastSelectedAddressLiveData.value?.data?.proofDocumentType,
-                    viewModel.lastSelectedAddressLiveData.value?.data?.documentUrls,
-                    viewModel.lastSelectedAddressLiveData.value?.data?.addressType,
-                    viewModel.lastSelectedAddressLiveData.value?.data?.isDeleted,
-                    false
-                )
-            )
-            viewModel.selectedAdapterPos=position
-            viewModel.lastSelectedAddressLiveData.postValue(addressDataItem)
-            addressRVAdapter.updateItem(addressDataItem)
-            addressRVAdapter.updateItem(lastAddressDataItem)
-            addressRVAdapter.notifyDataSetChanged()
-
-        }
-
-    }
     }
 
     override fun requireConnection(): Boolean =true
