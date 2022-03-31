@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
@@ -437,6 +438,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       viewModel.year = year
       var month = monthOfYear + 1
       viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
+      Log.i("loading Date", viewModel.loadingDate)
       binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
       if (viewModel.loadingDate.isNotNullOrEmpty()) {
         analyticsUtil.trackEvent(
@@ -448,9 +450,20 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       } else {
         uiUtils.showSnackbar("Please choose valid date")
       }
+
     }, year, month, day)
 
+    datePickerDialog.setOnCancelListener {
+      binding.toggleRemovedLoadedFilter.visibility = View.GONE
+      binding.loadedAfter.text = "Loaded after"
+      viewModel.loadingDateFilter = false
+      viewModel.date = -1
+      viewModel.month = -1
+      viewModel.year = -1
+    }
+
     datePickerDialog.show()
+
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
