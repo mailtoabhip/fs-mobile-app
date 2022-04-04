@@ -206,7 +206,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
            if(binding.textCin.isChecked &&binding.editCin.length()>0){
                viewModel.selected = "cin"
            }else if (binding.textUdyog.isChecked && binding.editUdyog.length()>0){
-               viewModel.selected = "udhyog_aadhaar"
+               viewModel.selected = "udyog_aadhaar"
            }else if (binding.textShop.isChecked&& binding.editShop.length()>0){
                viewModel.selected = "shop_establishment"
            }
