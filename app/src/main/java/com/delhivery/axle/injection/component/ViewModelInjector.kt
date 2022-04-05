@@ -1,5 +1,6 @@
 package com.delhivery.axle.injection.component
 
+import android.view.inputmethod.BaseInputConnection
 import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
@@ -21,6 +22,8 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
@@ -245,6 +248,11 @@ interface ViewModelInjector {
    * Injects [IdentityVerificationViewModel]
    */
   fun inject(viewModel: IdentityVerificationViewModel)
+
+  /**
+   * Injects [BasicDetailsViewModel]
+   */
+  fun inject(viewModel: BasicDetailsViewModel)
 
   @Component.Builder
   interface Builder {

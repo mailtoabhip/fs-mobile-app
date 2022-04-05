@@ -53,8 +53,7 @@
   <color name="yellow">#FBBF24</color>
   <color name="destructive_red">#DC2626</color>
   <color name="sub_details_grey">#6B7586</color>
+  <color name="multi_select_hint"> #525B7A</color>
+  <color name="dark_blue">#3F61CD</color>
 
-
-
->>>>>>> AB#148779-onboarding-profile-page-updation
 </resources>

@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
@@ -36,6 +37,7 @@ import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -265,6 +267,16 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsIdentityVerificationActivityModule::class])
   internal abstract fun bindIdentityVerificationActivity(): IdentityVerificationActivity
+
+  /* Basic Details page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBasicDetailsActivityModule::class])
+  internal abstract fun bindBasicDetailsActivity(): BasicDetailsActivity
+
+  /* Search City page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchCityStateActivityModule::class])
+  internal abstract fun bindSearchCityStateActivity(): SearchCityStateActivity
 }
 
 /**
@@ -396,6 +408,12 @@ internal abstract class AbsMyProfileActivityModule : ActivityModule<MyProfileAct
 
 @Module
 internal abstract class AbsIdentityVerificationActivityModule : ActivityModule<IdentityVerificationActivity>()
+
+@Module
+internal abstract class AbsBasicDetailsActivityModule : ActivityModule<BasicDetailsActivity>()
+
+@Module
+internal abstract class AbsSearchCityStateActivityModule : ActivityModule<SearchCityStateActivity>()
 
 /**
  * Activity Binds Module

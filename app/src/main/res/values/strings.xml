@@ -84,6 +84,9 @@
     <string name="hint_enter_name">Enter name</string>
     <string name="hint_number">Enter number</string>
     <string name="hint_diesel">Enable to register them for diesel card</string>
+    <string name="hint_enter_origin">Enter origin city</string>
+    <string name="hint_enter_destination">Enter destination city or state</string>
+    <string name="hint_select_multi_cities">You can select multiple cities/states</string>
 
   <!--Actions (action_)-->
   <string name="action_hello_world">Action Hello World</string>
@@ -399,8 +402,13 @@
     <string name="label_complete_business_verification">Complete Business Verification</string>
     <string name="label_complete_delete">Delete Address</string>
     <string name="label_aadhaar_number">Aadhaar Number</string>
-
+    <string name="label_origin">Origin Location</string>
+    <string name="label_destination">Destination Location</string>
+    <string name="label_truck_preference">Truck Preference</string>
     <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
+    <string name="label_open">Open Body</string>
+    <string name="label_trailer">Trailer</string>
+    <string name="label_closed">Container</string>
 
     <!--Error (error_-->
     <string name="error_no_internet">No Internet connection</string>
@@ -478,6 +486,7 @@
     <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
     <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
     <string name="proof_attachment">Proof Attachment</string>
+    <string name="hint_search_city">Search by city</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>

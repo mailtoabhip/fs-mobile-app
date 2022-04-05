@@ -78,3 +78,4 @@ data class SearchCityModel(
 data class SearchCitiesResponse(
   @SerializedName("records") val cities: List<SearchCityModel>
 )
+const val CitySelected = "city_selected"
