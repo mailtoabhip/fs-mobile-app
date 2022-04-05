@@ -111,8 +111,12 @@ class AutoCompleteUtils @Inject constructor(
               editText.dismissDropDown()
           }
           .doFinally {
+              try{
               editText.progress(false)
               editText.showDropDown()
+              }catch (e:Exception){
+
+              }
           }
           .subscribe { _res, _err ->
               if (!_err && _res != null) {
