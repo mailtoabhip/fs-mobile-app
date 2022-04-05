@@ -414,7 +414,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
           TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
           TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-        ))
+        ), VALUE_ADD_TRUCK_TOP_BANNER)
       }
 
       HomeLoadsBannerAction -> {
@@ -427,12 +427,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
           TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
           TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-        ))
+        ), VALUE_ADD_TRUCK_SCROLL_BANNER)
       }
     }
   }
 
-  private fun showAddTruckDialog(items: List<TruckFrequentItem>) {
+  private fun showAddTruckDialog(items: List<TruckFrequentItem>,source:String) {
     val dialog = Dialog(context!!)
     val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
@@ -444,7 +444,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       val itemBinding = createTruckFrequentItem(bindingDialog)
       itemBinding.data = item
       itemBinding.root.setOnClickListener{
-        context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)
+        context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs,source = source)
           , REQCODE_ADD_TRUCK) }
         dialog.dismiss()
       }
@@ -456,7 +456,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     }
 
     bindingDialog.addTruckLayout.setOnClickListener{
-      context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+      context?.let { startActivityForResult(truckIntent(context!!,source = source), REQCODE_ADD_TRUCK) }
       dialog.dismiss()
     }
 

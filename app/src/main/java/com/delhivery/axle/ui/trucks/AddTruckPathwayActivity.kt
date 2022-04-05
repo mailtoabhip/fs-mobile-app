@@ -35,7 +35,7 @@ class AddTruckPathwayActivity : BaseActivity<ActivityAddTruckBinding, TruckViewM
 
         binding.btnAction.setOnClickListener {
             navigationUtils.navigateForActivityResult(
-                intent = truckIntent(this@AddTruckPathwayActivity),
+                intent = truckIntent(this@AddTruckPathwayActivity,source = VALUE_ADD_TRUCK_ONBOARDING_PAGE),
                 requestCode = REQCODE_ADD_TRUCK
             )
         }

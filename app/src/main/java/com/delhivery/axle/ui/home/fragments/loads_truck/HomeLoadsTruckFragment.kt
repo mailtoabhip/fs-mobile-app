@@ -23,7 +23,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
 
     var _title: String = "Home"
     var vehicleNo = ""
-    var fromLink = false
+    var fromNotification = false
+    var fromDeepLink = false
     override val title: CharSequence
         get() = _title
 
@@ -54,12 +55,19 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         binding.tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_loads_home)
         binding.tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_my_truck)
 
-        if(activity!!.fromLink){
+        if(activity!!.fromDeepLink){
             binding.tabLayout.getTabAt(1)?.select()
-            activity.fromLink = false
+            activity.fromDeepLink = false
             if(activity.vehicleNum.isNotEmpty())
-            vehicleNo = activity.vehicleNum
-            fromLink = true
+               vehicleNo = activity.vehicleNum
+            fromDeepLink=true
+        }
+        if(activity.fromNotification){
+            binding.tabLayout.getTabAt(1)?.select()
+            activity.fromNotification = false
+            if(activity.vehicleNum.isNotEmpty())
+                vehicleNo = activity.vehicleNum
+            fromNotification=true
         }
     }
 

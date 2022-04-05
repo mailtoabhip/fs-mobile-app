@@ -35,6 +35,7 @@ class TruckViewModel @Inject constructor(
     var sourcedAsIntent: String = ""
     var fromLinks:Boolean = false
     var vehicleNumberIntent: String = ""
+    var addTruckSourceIntent: String = ""
 
     var truckType : String = ""
     var truckSize: String = ""

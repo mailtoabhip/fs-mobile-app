@@ -87,14 +87,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                 TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                 TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-            ))
+            ), VALUE_ADD_TRUCK_PAGE)
           //  context?.let {  EditTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
         }
         binding.addTruckFloating.setOnClickListener {
             showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
                 TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                 TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-            ))
+            ),VALUE_ADD_TRUCK_PAGE)
 
         }
 
@@ -136,10 +136,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
-            if(!isLoadingData && HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
+            if(!isLoadingData && (HomeLoadsTruckFragment._instance.fromDeepLink||HomeLoadsTruckFragment._instance.fromNotification) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
                 if(adapter.itemsList().size==5)
                 this.handleAction(HomeTrucksRequestAction_ActivateTruck,adapter.itemsList().get(4),4)
-                HomeLoadsTruckFragment._instance.fromLink = false
+                HomeLoadsTruckFragment._instance.fromNotification = false
+                HomeLoadsTruckFragment._instance.fromDeepLink = false
             }
         })
 
@@ -245,14 +246,39 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
         })
 
-        if(HomeLoadsTruckFragment._instance.fromLink && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
+        if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
+            analyticsUtil.trackEvent(
+                EVENT_VIEW_MY_TRUCK,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId(), "trucks_screen")
+            )
             viewModel.searchPrefix = HomeLoadsTruckFragment._instance.vehicleNo
             adapter.clearItems()
             viewModel.userTrucksData.postValue(null)
             viewModel.searchFlag = true
             viewModel.getAllInventories(search = true)
         }else{
-            HomeLoadsTruckFragment._instance.fromLink = false
+            if(HomeLoadsTruckFragment._instance.fromNotification){
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
+                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_NOTIFICATION)
+                )
+            }else if(HomeLoadsTruckFragment._instance.fromDeepLink){
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME,PROPERTY_SOURCE),
+                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_DEEP_LINKING)
+                )
+            }else{
+                analyticsUtil.trackEvent(
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), "trucks_screen")
+                )
+            }
+            HomeLoadsTruckFragment._instance.fromDeepLink = false
+            HomeLoadsTruckFragment._instance.fromNotification = false
             HomeLoadsTruckFragment._instance.vehicleNo = ""
             refreshData()
         }
@@ -295,7 +321,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksWarningAction_NoTrucks ->{
-                context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+                context?.let { startActivityForResult(truckIntent(context!!,source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
             }
 
             HomeTrucksTimeOutAction ->{
@@ -312,7 +338,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                     TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                     TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-                ))
+                ), VALUE_ADD_TRUCK_TOP_BANNER)
             }
         }
     }
@@ -331,14 +357,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromLink).show()
+                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromDeepLink,HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
             }
         }
     }
 
 
-    private fun showAddTruckDialog(items: List<TruckFrequentItem>) {
+    private fun showAddTruckDialog(items: List<TruckFrequentItem>,source:String) {
         val dialog = Dialog(context!!)
         val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
@@ -350,7 +376,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             val itemBinding = createTruckFrequentItem(bindingDialog)
             itemBinding.data = item
             itemBinding.root.setOnClickListener{
-                context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs)
+                context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs,source = source)
                     , REQCODE_ADD_TRUCK) }
                 dialog.dismiss()
             }
@@ -362,7 +388,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.addTruckLayout.setOnClickListener{
-            context?.let { startActivityForResult(truckIntent(context!!), REQCODE_ADD_TRUCK) }
+            context?.let { startActivityForResult(truckIntent(context!!,source = source), REQCODE_ADD_TRUCK) }
             dialog.dismiss()
         }
 
