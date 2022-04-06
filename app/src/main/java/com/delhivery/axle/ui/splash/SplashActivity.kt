@@ -245,7 +245,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       when (state) {
         Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
+        Home -> BasicDetailsActivity::class
         AccountAction -> AccountActionActivity::class
         AccountRole-> AccountRoleActivity::class
         AccountDetails -> AccountDetailsActivity::class

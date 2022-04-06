@@ -46,7 +46,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       // viewModel.cityType = intent.getStringExtra(CityType) ?: ""
+        viewModel.cityType = intent.getStringExtra(CityType) ?: ""
        // viewModel.fromDialog = intent.getBooleanExtra(FromDialog, false)
     }
 
@@ -208,16 +208,14 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
 
 
 private const val FromDialog = "from_dialog"
-private const val CityType = "city_type"
+const val CityType = "city_type"
 
 /**
  * Search City Intent
  */
 fun searchCityIntent(
-    context: Context,
-    cityType: String,
-    fromDialog: Boolean = false
+    context: Context
 ) = Intent( context, SearchCityStateActivity::class.java).apply {
-    putExtra(CityType, cityType)
-    putExtra(FromDialog, fromDialog)
+   // putExtra(CityType, cityType)
+   // putExtra(FromDialog, fromDialog)
 }
