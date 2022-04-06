@@ -438,7 +438,6 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       viewModel.year = year
       var month = monthOfYear + 1
       viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
-      Log.i("loading Date", viewModel.loadingDate)
       binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
       if (viewModel.loadingDate.isNotNullOrEmpty()) {
         analyticsUtil.trackEvent(
