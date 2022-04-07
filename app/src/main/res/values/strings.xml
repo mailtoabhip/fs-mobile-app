@@ -85,53 +85,53 @@
     <string name="hint_number">Enter number</string>
     <string name="hint_diesel">Enable to register them for diesel card</string>
 
-  <!--Actions (action_)-->
-  <string name="action_hello_world">Action Hello World</string>
-  <string name="action_add_user">Add User</string>
-  <string name="action_get_users">Get all users</string>
-  <string name="action_send_otp">Get OTP</string>
-  <string name="action_resend_otp">Resend OTP</string>
-  <string name="action_verify_otp">Verify OTP</string>
-  <string name="action_save_proceed">Save &amp; Proceed</string>
+    <!--Actions (action_)-->
+    <string name="action_hello_world">Action Hello World</string>
+    <string name="action_add_user">Add User</string>
+    <string name="action_get_users">Get all users</string>
+    <string name="action_send_otp">Get OTP</string>
+    <string name="action_resend_otp">Resend OTP</string>
+    <string name="action_verify_otp">Verify OTP</string>
+    <string name="action_save_proceed">Save &amp; Proceed</string>
     <string name="action_verify_aadhaar">Verify Aadhaar</string>
-  <string name="action_submit_details">Submit Details</string>
-  <string name="action_select_routes">Select Routes</string>
-  <string name="action_skip_select_routes">Skip, I’ll select later</string>
-  <string name="action_skip">SKIP</string>
-  <string name="action_search">Search</string>
-  <string name="action_place_bid">Place Bid</string>
-  <string name="action_start_bidding">Start Bidding</string>
-  <string name="action_delete">Delete</string>
+    <string name="action_submit_details">Submit Details</string>
+    <string name="action_select_routes">Select Routes</string>
+    <string name="action_skip_select_routes">Skip, I’ll select later</string>
+    <string name="action_skip">SKIP</string>
+    <string name="action_search">Search</string>
+    <string name="action_place_bid">Place Bid</string>
+    <string name="action_start_bidding">Start Bidding</string>
+    <string name="action_delete">Delete</string>
     <string name="action_delete_address">Delete Address</string>
     <string name="action_no_dont_delete">No, Don’t Delete</string>
-  <string name="action_edit_bid">Edit Bid</string>
-  <string name="action_confirm_route">Confirm Route</string>
-  <string name="action_deselect_all_states">Deselect all states</string>
-  <string name="action_select_all_states">Select all states</string>
-  <string name="action_go_to_load_requests">GO to load requests</string>
-  <string name="action_add_more_route">Add more routes</string>
-  <string name="action_confirm">Confirm</string>
-  <string name="action_save">Save</string>
+    <string name="action_edit_bid">Edit Bid</string>
+    <string name="action_confirm_route">Confirm Route</string>
+    <string name="action_deselect_all_states">Deselect all states</string>
+    <string name="action_select_all_states">Select all states</string>
+    <string name="action_go_to_load_requests">GO to load requests</string>
+    <string name="action_add_more_route">Add more routes</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_save">Save</string>
     <string name="action_save_changes">Save Changes</string>
-  <string name="action_logout_from_app">Logout from the app</string>
-  <string name="action_dismiss">DISMISS</string>
-  <string name="action_continue">Continue</string>
-  <string name="action_revise_bid">Revise bid</string>
-  <string name="action_update_route">Update Route</string>
-  <string name="action_call_driver">Call Driver</string>
-  <string name="action_edit_bid_underline"><u>Edit?</u></string>
-  <string name="action_done">Done !</string>
-  <string name="action_add_vehicle_type">+ Vehicle Type</string>
-  <string name="action_get_started">Get Started</string>
-  <string name="action_change_number">Change number</string>
-  <string name="action_proceed_account">Proceed</string>
-  <string name="action_terms_conditions">Terms &amp; Conditions</string>
-  <string name="action_create_account">Create Account</string>
-  <string name="action_login">Login</string>
-  <string name="action_verify_gst">Verify GST number</string>
-  <string name="action_submit">Submit</string>
-  <string name="action_upload_more">Upload More</string>
-  <string name="action_upload_again">Upload Again</string>
+    <string name="action_logout_from_app">Logout from the app</string>
+    <string name="action_dismiss">DISMISS</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_revise_bid">Revise bid</string>
+    <string name="action_update_route">Update Route</string>
+    <string name="action_call_driver">Call Driver</string>
+    <string name="action_edit_bid_underline"><u>Edit?</u></string>
+    <string name="action_done">Done !</string>
+    <string name="action_add_vehicle_type">+ Vehicle Type</string>
+    <string name="action_get_started">Get Started</string>
+    <string name="action_change_number">Change number</string>
+    <string name="action_proceed_account">Proceed</string>
+    <string name="action_terms_conditions">Terms &amp; Conditions</string>
+    <string name="action_create_account">Create Account</string>
+    <string name="action_login">Login</string>
+    <string name="action_verify_gst">Verify GST number</string>
+    <string name="action_submit">Submit</string>
+    <string name="action_upload_more">Upload More</string>
+    <string name="action_upload_again">Upload Again</string>
     <string name="action_upload_rc_doc">Upload RC document</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_start_kyc">Start KYC</string>
@@ -478,12 +478,21 @@
     <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
     <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
     <string name="proof_attachment">Proof Attachment</string>
+    <string name="proof_account">Account Proof</string>
+    <string name="sub_label_proof_account">Cancelled cheque/Passbook front page</string>
     <string name="sub_label_no_of_trucks">Number of owned trucks</string>
+    <string name="sub_label_account_number">Account Number</string>
     <string name="sub_label_no_of_attached_trucks">Number of attached trucks </string>
+    <string name="sub_label_ifsc">IFSC Code</string>
+    <string name="sub_label_account_holder">Account Holder Name</string>
     <string name="hint_owned_truck">Owned Truck</string>
     <string name="hint_attached_truck">Attached truck</string>
     <string name="sub_label_verification_method">Verification Method</string>
     <string name="sub_label_verification_method_desc">One of your truck has to be verified</string>
+    <string name="account_holder_name_warning">Account holder name doesn’t match with name on PAN</string>
+    <string name="name_declarion_text"><![CDATA[I declare that the above mentioned bank account belongs to me & I want my advance & balance payment in the same account]]></string>
+    <string name="optional_four_c">"194C Declaration (Optional) "</string>
+    <string name="label_i_agree">I Agree</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
@@ -525,5 +534,5 @@
         <item>Fleet Owner</item>
         <item>Transporter</item>
     </string-array>
-     q
+    q
 </resources>

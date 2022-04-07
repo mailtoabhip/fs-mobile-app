@@ -19,10 +19,10 @@ import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
+import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
-import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding

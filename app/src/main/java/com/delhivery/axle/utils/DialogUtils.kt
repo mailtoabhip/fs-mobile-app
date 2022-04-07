@@ -14,6 +14,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.WebViewClient
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -578,6 +579,30 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
+
+
+    fun showWebViewDialog(url: String) {
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogWebviewBinding.inflate(activity.layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        bindingDialog.webview.webViewClient= WebViewClient()
+        bindingDialog.webview.settings.javaScriptEnabled=true
+        bindingDialog.webview.loadUrl(url)
+
+        bindingDialog.buttonUploadAgain.setOnClickListener {
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    }
+
+
 
 }
 
