@@ -24,7 +24,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-        <activity android:name=".ui.paymentdetails.PaymentDetailsActivity"></activity>
+        <activity android:name=".ui.paymentdetails.VendorPolicyActivity"></activity>
+        <activity android:name=".ui.paymentdetails.PaymentDetailsActivity" />
 
         <service
             android:name=".fcm.DelhiveryFCMService"

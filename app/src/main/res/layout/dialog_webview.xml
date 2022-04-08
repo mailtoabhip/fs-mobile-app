@@ -15,17 +15,7 @@
     android:layout_height="wrap_content">
 </WebView>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_upload_again"
-            android:layout_width="match_parent"
-            style="@style/ActionButton"
-            android:textAllCaps="false"
-            android:layout_marginTop="@dimen/size_20dp"
-            android:layout_marginEnd="@dimen/size_16dp"
-            android:layout_marginStart="@dimen/size_16dp"
-            android:layout_height="wrap_content"
-            android:text="@string/label_i_agree"
-            />
+
 
 
 

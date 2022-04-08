@@ -72,6 +72,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
+    var truckNum =false
+    var ownedTruck =false
+    var attachedTruck =false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.editTruck.visibility=View.VISIBLE
@@ -79,18 +83,18 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.layoutUploadLR.isSelected=false
         binding.textLR.isChecked=false
         binding.textTruck.isChecked=true
-        if(intent?.extras!=null){
-            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
-                binding.businessError.visibility=View.VISIBLE
-                viewModel.errorText = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
-            }else{
-                binding.businessError.visibility=View.GONE
-            }
-        }
+//        if(intent?.extras!=null){
+//            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
+//                TotalStepsKey)!!)
+//            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                TotalStepsKey)!!)
+//            if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
+//                binding.businessError.visibility=View.VISIBLE
+//                viewModel.errorText = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
+//            }else{
+//                binding.businessError.visibility=View.GONE
+//            }
+//        }
 
     }
 
@@ -99,6 +103,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         setSupportActionBar(binding.toolbar)
         title = ""
+
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(userPrefs.retryVerification){
@@ -110,14 +116,38 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutTruckrd.isSelected=true
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
+            truckNum=false
+            setSubmitButtonEnable()
+            binding.layoutUploadLR.visibility=View.GONE
             binding.textTruck.isChecked=true
+            binding.layoutTruckrd.visibility=View.VISIBLE
 
         }
         viewModel.truckNumber.observe(this, Observer {
             if(it.length>=9){
-                binding.btnVerifyBusiness.isEnabled=true
+                truckNum=true
+                setSubmitButtonEnable()
             }else{
-                binding.btnVerifyBusiness.isEnabled=false
+                truckNum=false
+                setSubmitButtonEnable()
+            }
+        })
+        viewModel.ownedTruck.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                ownedTruck=true
+                setSubmitButtonEnable()
+            }else{
+                ownedTruck=false
+                setSubmitButtonEnable()
+            }
+        })
+        viewModel.attachedTruck.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                attachedTruck=true
+                setSubmitButtonEnable()
+            }else{
+                attachedTruck=false
+                setSubmitButtonEnable()
             }
         })
         viewModel.delegationLiveData.observe(this, Observer {
@@ -174,7 +204,14 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.textTruck.isChecked=false
             binding.layoutUploadLR.isSelected=true
             binding.layoutTruckrd.isSelected=false
+            binding.layoutTruckrd.visibility=View.GONE
+            binding.layoutUploadLR.visibility=View.VISIBLE
+            truckNum=true
+            setSubmitButtonEnable()
             viewModel.selected.value="lr"
+
+        }
+        binding.layoutUploadLR.setOnClickListener {
             val imageName = "LR_doc_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
@@ -186,6 +223,14 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         }
 
+    }
+
+    fun setSubmitButtonEnable(){
+        if(attachedTruck && ownedTruck && truckNum ){
+            binding.btnVerifyBusiness.isEnabled=true
+        }else{
+            binding.btnVerifyBusiness.isEnabled=false
+        }
     }
 
     override fun onBackPressed() {

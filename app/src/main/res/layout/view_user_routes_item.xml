@@ -50,7 +50,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:textColor="@color/faded_black"
-              android:text="@string/label_origin_city"
+              android:text="@string/label_origin_location"
               android:textSize="@dimen/text_16sp" />
 
           <androidx.appcompat.widget.AppCompatTextView
@@ -95,7 +95,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:textColor="@color/faded_black"
-              android:text="@string/label_destination_states"
+              android:text="@string/label_destination_location"
               android:textSize="@dimen/text_16sp" />
 
           <androidx.appcompat.widget.AppCompatTextView

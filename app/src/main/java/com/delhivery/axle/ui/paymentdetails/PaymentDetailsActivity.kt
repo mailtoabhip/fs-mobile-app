@@ -40,10 +40,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 // 194c uploa condition
 
         binding.btnSubmit.setOnClickListener {
-           dialogUtils.showWebViewDialog("https://www.geeksforgeeks.org/")
+
         }
-
-
     }
 
 

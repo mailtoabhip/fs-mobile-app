@@ -29,6 +29,9 @@ class BusinessVerificationViewModel@Inject constructor(
 ) :BaseViewModel(){
 
     var truckNumber=MutableLiveData<String>()
+    var attachedTruck=MutableLiveData<String>()
+    var ownedTruck=MutableLiveData<String>()
+
 
     var selected = MutableLiveData<String>()
 

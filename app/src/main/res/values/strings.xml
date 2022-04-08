@@ -171,11 +171,13 @@
     <string name="label_to">To</string>
     <string name="label_target_price">Target price</string>
     <string name="label_origin_city">Origin city</string>
+    <string name="label_origin_location">Origin Location</string>
     <string name="label_starting_city">Starting City</string>
     <string name="label_pickup_location">Pickup location</string>
     <string name="label_truck_details">Truck details</string>
     <string name="label_no_trips_yet">No trips yet !</string>
     <string name="label_destination_city">Destination city</string>
+    <string name="label_destination_location">Destination Location</string>
     <string name="label_ending_city">Ending City</string>
     <string name="label_from_state">From %1$s</string>
     <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>

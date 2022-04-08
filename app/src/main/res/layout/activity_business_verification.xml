@@ -117,6 +117,7 @@
                 android:layout_height="@dimen/edit_text_height"
                 android:imeOptions="actionDone"
                 android:layout_marginTop="@dimen/size_8dp"
+                android:text="@{viewModel.ownedTruck}"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/owned_trucks_textView"
                 android:paddingStart="@dimen/size_12dp"
@@ -144,6 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_height"
                 android:imeOptions="actionDone"
+                android:text="@{viewModel.attachedTruck}"
                 android:layout_marginTop="@dimen/size_8dp"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/attached_trucks_textView"
@@ -280,8 +282,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:id="@+id/layout_upload_LR"
+                android:visibility="gone"
+                bind:layout_constraintTop_toTopOf="parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_20dp"
                 bind:layout_constraintTop_toBottomOf="@+id/radio_lay"
                 bind:layout_constraintStart_toStartOf="parent">
                 <androidx.appcompat.widget.AppCompatImageView
