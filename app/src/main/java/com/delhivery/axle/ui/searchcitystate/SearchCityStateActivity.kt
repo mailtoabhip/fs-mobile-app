@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.CitySelected
@@ -15,17 +16,22 @@ import com.delhivery.axle.data.search.SearchTimeOutAction
 import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchCityStateBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, SearchCityStateViewModel>() ,
-    SearchCityStateRVAdapterInterface{
+    SearchCityStateRVAdapterInterface {
 
     init {
         hasInlineProgress = true
     }
+
+  //  var selectedCityStates = mutableSetOf<CityModel>()
 
     override fun getViewModelClass() = SearchCityStateViewModel::class.java
 
@@ -43,11 +49,14 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
 
     private val adapter by lazy { SearchCityStateRvAdapter(this) }
 
+    private val selectedAdapter by lazy { SelectedCityStateRvAdapter(this) }
+
+    private val popularAdapter by lazy { PopularCitiesAdapter(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
-       // viewModel.fromDialog = intent.getBooleanExtra(FromDialog, false)
+
     }
 
 
@@ -63,11 +72,28 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
             adapter = this@SearchCityStateActivity.adapter
 
         }
+        binding.rvSelectedCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            adapter = this@SearchCityStateActivity.selectedAdapter
+
+        }
+
+        binding.rvPopularCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = this@SearchCityStateActivity.popularAdapter
+
+        }
 
         viewModel.searchLiveData.observe(this, Observer {
             adapter.resetStaticData()
             if (it != null) {
-                adapter.operation(it)
+                if (viewModel.searchText.length>2){
+                    adapter.operation(it)
+                }else{
+                    adapter.operation(it)
+                    adapter.resetStaticData()
+                }
+
             }
         })
 
@@ -87,14 +113,15 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
                 count: Int
             ) {
                 if (s != null) {
-                   // binding.historyLayout.visibility= View.GONE
+                    binding.popularLl.visibility= View.GONE
                     try {
                         viewModel.searchText = s.trim().toString()
                         Log.d("prefix", s.trim().toString())
 
-                        if (viewModel.searchText.length in 3..10) {
+                        if (viewModel.searchText.length in 3..30) {
                             refreshData()
                         } else {
+                            binding.popularLl.visibility= View.VISIBLE
                             adapter.resetStaticData()
                         }
                     }  catch (e: Exception) {
@@ -104,61 +131,33 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
             }
         })
 
-        if (viewModel.searchText.length in 3..10) {
+        if (viewModel.searchText.length in 3..30) {
             refreshData()
         }
+        viewModel.getPopularCities()
+        viewModel.popularCitiesLiveData.observe(this, Observer {
+            popularAdapter.operation(it)
+        })
 
-        initObservers()
-    }
+        binding.btnSaveDestination.setOnClickListener{
+            setResult(REQCODE_DESTINATION_SELECT_CITY, Intent().apply {
+                putExtra("City", selectedCityStates)
+                putExtra(CityType, viewModel.cityType)
+            })
+            finish()
+        }
 
-    /**
-     * init observers
-     */
-    private fun initObservers() {
-        /* observe live data for search history */
-      /*  viewModel.searchCityHistoryLiveData()
-            .observe(this, SearchCityHistoryObserver() )*/
-    }
-
-    /**
-     * Search load history observer
-     */
-   /* inner class SearchCityHistoryObserver : Observer<List<SearchCityEntity>> {
-        override fun onChanged(t: List<SearchCityEntity>?) {
-            t?.let { items ->
-                binding.containerHistory.removeAllViews()
-                items.forEachIndexed { index, item ->
-                    val itemBinding = historyItemBinding()
-                    itemBinding.request = item.originCity
-                    itemBinding.root.setOnClickListener {
-                        val data = item.originCity as CityModel
-                        if(viewModel.fromDialog){
-                            LocalBroadcastManager.getInstance(this@SearchCity)
-                                .sendBroadcast(Intent("get_selected_city").apply {
-                                    putExtra("City",data)
-                                    putExtra(CityType,viewModel.cityType)
-                                }
-                                )
-                        }
-                        else {
-                            setResult(REQCODE_SELECT_CITY, Intent().apply {
-                                putExtra("City", data)
-                                putExtra(CityType, viewModel.cityType)
-                            })
-                        }
-                        finish()
-                    }
-                    itemBinding.root.setOnLongClickListener {
-                        viewModel.deleteCity(item)
-                        true
-                    }
-                    binding.containerHistory.addView(itemBinding.root, index)
-                }
+        if(selectedCityStates.size>0){
+            for(item in selectedCityStates){
+                selectedAdapter.operation(SearchDataItem(item),DataRVAdapterOperationType.Add)
             }
-            *//* title as per search results *//*
-            binding.textHistoryTitle.visible(!t.isNullOrEmpty())
-        }*/
-  //  }
+            adapter.notifyDataSetChanged()
+            selectedAdapter.notifyDataSetChanged()
+            popularAdapter.notifyDataSetChanged()
+            binding.btnSaveDestination.isEnabled =true
+        }
+
+    }
 
     override fun handleAction(
         actionId: String,
@@ -166,23 +165,19 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         when(actionId){
             CitySelected -> {
                 val data = item.data as CityModel
-               // viewModel.saveToHistory(data)
-                if(viewModel.fromDialog){
-                    LocalBroadcastManager.getInstance(this@SearchCityStateActivity)
-                        .sendBroadcast(Intent("get_selected_city").apply {
-                            putExtra("City",data)
-                            putExtra(CityType,viewModel.cityType)
-                        }
-                        )
-                }
-                else {
-                    setResult(REQCODE_SELECT_CITY, Intent().apply {
-                        putExtra("City", data)
-                        putExtra(CityType, viewModel.cityType)
-                    })
-                }
-                finish()
+                    if(selectedCityStates.contains(data)){
+                    selectedCityStates.remove(data)
+                        selectedAdapter.operation(item,DataRVAdapterOperationType.Remove)
+                    }else{
+                        selectedAdapter.operation(item,DataRVAdapterOperationType.Add)
+                        selectedCityStates.add(data)
+                    }
+                    adapter.notifyDataSetChanged()
+                    selectedAdapter.notifyDataSetChanged()
+                    popularAdapter.notifyDataSetChanged()
+                binding.btnSaveDestination.isEnabled = selectedCityStates.size>0
             }
+
             SearchWarningAction_NoResult -> {
                 refreshData()
             }
@@ -198,24 +193,19 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         viewModel.searchCity(viewModel.searchText)
     }
 
-    /**
-     * Create new history item binding
-     */
-  /*  private fun historyItemBinding() = ViewSearchCityItemBinding.inflate(
-        layoutInflater, binding.containerHistory, false
-    )*/
 }
 
 
 private const val FromDialog = "from_dialog"
 const val CityType = "city_type"
+const val SelectedData = "selected_data"
+
 
 /**
  * Search City Intent
  */
 fun searchCityIntent(
     context: Context
-) = Intent( context, SearchCityStateActivity::class.java).apply {
-   // putExtra(CityType, cityType)
-   // putExtra(FromDialog, fromDialog)
-}
+) = Intent( context, SearchCityStateActivity::class.java)
+var selectedCityStates = ArrayList<CityModel>()
+

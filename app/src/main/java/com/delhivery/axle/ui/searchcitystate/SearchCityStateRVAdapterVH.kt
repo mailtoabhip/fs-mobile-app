@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.searchcitystate
 
 import android.view.View
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.CitySelected
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -45,9 +46,8 @@ class SearchDataItemVH(binding: ViewSearchCityStateItemBinding) :
         _interface: SearchCityStateRVAdapterInterface
     ) {
         binding.request = item.data
-
-        binding.cityLayout.clickToAction(CitySelected ,item, _interface)
-
+        binding.checkboxCityState.clickToAction(CitySelected,item, _interface)
+        binding.checkboxCityState.isChecked = selectedCityStates.contains(item.data)
     }
 }
 

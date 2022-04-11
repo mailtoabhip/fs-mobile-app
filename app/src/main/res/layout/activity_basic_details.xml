@@ -88,7 +88,6 @@
                         bind:layout_constraintTop_toBottomOf="parent"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:inputType="text"
-                        android:digits="@string/allowed_char_address"
                         android:singleLine="true"
                         android:paddingStart="@dimen/size_12dp"
                         android:paddingEnd="@dimen/size_12dp"
@@ -115,7 +114,6 @@
                         bind:layout_constraintTop_toBottomOf="parent"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:inputType="text"
-                        android:digits="@string/allowed_char_address"
                         android:singleLine="true"
                         android:paddingStart="@dimen/size_12dp"
                         android:paddingEnd="@dimen/size_12dp"
@@ -171,13 +169,13 @@
                                android:layout_height="0dp"
                                android:orientation="horizontal"
                                bind:layout_constraintGuide_percent="0.25" />
-                           <CheckBox
+                           <androidx.appcompat.widget.AppCompatImageButton
                                android:id="@+id/check_box_open_body"
-                               style="@style/CheckBoxStyle"
+                               android:background="@drawable/checkbox_selector"
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
                                bind:layout_constraintEnd_toEndOf="@id/img_open_truck"
-                               bind:layout_constraintHorizontal_bias="1.5"
+                               bind:layout_constraintHorizontal_bias="1.2"
                                bind:layout_constraintStart_toStartOf="@id/img_open_truck"
                                bind:layout_constraintTop_toTopOf="@+id/guideline1"
                                bind:layout_constraintBottom_toBottomOf="@+id/guideline1" />
@@ -216,12 +214,13 @@
                                android:layout_height="0dp"
                                android:orientation="horizontal"
                                bind:layout_constraintGuide_percent="0.25" />
-                           <CheckBox
+                           <androidx.appcompat.widget.AppCompatImageButton
                                android:id="@+id/check_box_container"
+                               android:background="@drawable/checkbox_selector"
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
                                bind:layout_constraintEnd_toEndOf="@id/img_container"
-                               bind:layout_constraintHorizontal_bias="1.5"
+                               bind:layout_constraintHorizontal_bias="1.2"
                                bind:layout_constraintStart_toStartOf="@id/img_container"
                                bind:layout_constraintTop_toTopOf="@id/guideline2"
                                bind:layout_constraintBottom_toBottomOf="@id/guideline2" />
@@ -259,12 +258,13 @@
                                android:layout_height="0dp"
                                android:orientation="horizontal"
                                bind:layout_constraintGuide_percent="0.25" />
-                           <CheckBox
+                           <androidx.appcompat.widget.AppCompatImageButton
                                android:id="@+id/check_box_trailer"
+                               android:background="@drawable/checkbox_selector"
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
                                bind:layout_constraintEnd_toEndOf="@id/img_trailer"
-                               bind:layout_constraintHorizontal_bias="1.5"
+                               bind:layout_constraintHorizontal_bias="1.2"
                                bind:layout_constraintStart_toStartOf="@id/img_trailer"
                                bind:layout_constraintTop_toTopOf="@id/guideline3"
                                bind:layout_constraintBottom_toBottomOf="@id/guideline3" />

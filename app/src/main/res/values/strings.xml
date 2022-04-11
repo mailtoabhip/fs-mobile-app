@@ -487,6 +487,10 @@
     <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
     <string name="proof_attachment">Proof Attachment</string>
     <string name="hint_search_city">Search by city</string>
+    <string name="hint_search_city_state">Search by city or state</string>
+    <string name="selected_cities_states">Selected Cities/States</string>
+    <string name="popular_cities">Popular Cities</string>
+
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>

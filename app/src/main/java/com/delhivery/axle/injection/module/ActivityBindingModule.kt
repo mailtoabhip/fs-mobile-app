@@ -38,6 +38,7 @@ import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
+import com.delhivery.axle.ui.searchcitystate.SearchOriginCityActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentsBindingModule
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripActivity
@@ -277,6 +278,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSearchCityStateActivityModule::class])
   internal abstract fun bindSearchCityStateActivity(): SearchCityStateActivity
+
+  /* Search Origin City page activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSearchOriginCityActivityModule::class])
+  internal abstract fun bindSearchOriginCityActivity(): SearchOriginCityActivity
 }
 
 /**
@@ -414,6 +420,9 @@ internal abstract class AbsBasicDetailsActivityModule : ActivityModule<BasicDeta
 
 @Module
 internal abstract class AbsSearchCityStateActivityModule : ActivityModule<SearchCityStateActivity>()
+
+@Module
+internal abstract class AbsSearchOriginCityActivityModule : ActivityModule<SearchOriginCityActivity>()
 
 /**
  * Activity Binds Module

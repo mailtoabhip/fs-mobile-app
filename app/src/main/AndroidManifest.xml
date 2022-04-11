@@ -223,6 +223,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.searchcitystate.SearchCityStateActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.searchcitystate.SearchOriginCityActivity"
             android:screenOrientation="portrait"/>
 
     </application>

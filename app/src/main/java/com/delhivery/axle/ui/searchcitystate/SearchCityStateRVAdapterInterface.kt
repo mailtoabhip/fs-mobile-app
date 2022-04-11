@@ -19,4 +19,7 @@ interface SearchCityStateRVAdapterInterface : BaseDataRVAdapter.ItemClickListene
         actionId: String,
         item: BaseCityStateRVAdapterItem<*>
     )
+
+
+
 }
