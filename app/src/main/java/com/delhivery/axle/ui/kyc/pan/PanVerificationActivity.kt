@@ -1,32 +1,21 @@
 package com.delhivery.axle.ui.kyc.pan
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
-import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
-import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_verify_pan.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 
@@ -48,8 +37,6 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             if(intent?.extras!=null){
                 viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                     TotalStepsKey)!!)
-                progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!)
             }
 
     }
@@ -61,10 +48,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        title = ""
+        setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
                 viewModel.updateUserDetails()
 

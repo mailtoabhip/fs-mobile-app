@@ -95,8 +95,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!)
             if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
                 binding.addressError.visibility=View.VISIBLE
                 viewModel.errorText = userPrefs.addressRejectReason

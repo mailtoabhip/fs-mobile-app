@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:title="@string/title_account_setup"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/light_line_grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.14" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.86" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/step_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline1"
+            app:srcCompat="@drawable/ic_incomplete_step" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/route_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@string/routes_amp_trucks"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="@id/step_1"
+            app:layout_constraintStart_toStartOf="@+id/step_1"
+            app:layout_constraintTop_toBottomOf="@+id/step_1" />
+
+        <View
+            android:id="@+id/line_1"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/light_line_grey"
+            app:layout_constraintBottom_toBottomOf="@id/step_1"
+            app:layout_constraintEnd_toStartOf="@+id/step_2"
+            app:layout_constraintStart_toEndOf="@+id/step_1"
+            app:layout_constraintTop_toTopOf="@id/step_1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/step_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline1"
+            app:srcCompat="@drawable/ic_incomplete_step" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/kyc_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@string/kyc_details"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="@id/step_2"
+            app:layout_constraintStart_toStartOf="@+id/step_2"
+            app:layout_constraintTop_toBottomOf="@+id/step_2" />
+
+        <View
+            android:id="@+id/line_2"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/light_line_grey"
+            app:layout_constraintBottom_toBottomOf="@id/step_2"
+            app:layout_constraintEnd_toStartOf="@+id/step_3"
+            app:layout_constraintStart_toEndOf="@+id/step_2"
+            app:layout_constraintTop_toTopOf="@id/step_2" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/step_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline1"
+            app:srcCompat="@drawable/ic_incomplete_step" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/payment_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@string/payment_details"
+            android:textSize="@dimen/text_12sp"
+            app:layout_constraintBottom_toTopOf="@id/guideline2"
+            app:layout_constraintEnd_toEndOf="@id/step_3"
+            app:layout_constraintStart_toStartOf="@+id/step_3"
+            app:layout_constraintTop_toBottomOf="@+id/step_3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/light_line_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

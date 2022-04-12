@@ -74,8 +74,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                     TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!)
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.gstError.visibility=View.VISIBLE
                 viewModel.errorText = userPrefs.identityRejectReason

@@ -39,9 +39,6 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_address.*
-import kotlinx.android.synthetic.main.activity_verify_pan.*
-import kotlinx.android.synthetic.main.activity_verify_pan.progress
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -81,8 +78,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.textTruck.isChecked=true
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!)
             if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
                 binding.businessError.visibility=View.VISIBLE

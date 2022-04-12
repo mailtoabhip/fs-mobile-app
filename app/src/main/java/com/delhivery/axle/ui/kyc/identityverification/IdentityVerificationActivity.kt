@@ -78,8 +78,6 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
-            progress.progress = navigationUtils.getNavigationPercentage(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!)
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.identityError.visibility=View.VISIBLE
                 viewModel.errorText = userPrefs.identityRejectReason

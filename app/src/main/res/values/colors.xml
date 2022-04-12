@@ -53,8 +53,5 @@
   <color name="yellow">#FBBF24</color>
   <color name="destructive_red">#DC2626</color>
   <color name="sub_details_grey">#6B7586</color>
-
-
-
->>>>>>> AB#148779-onboarding-profile-page-updation
+  <color name="light_line_grey">#E4E4E4</color>
 </resources>

@@ -25,10 +25,9 @@ import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-import android.view.LayoutInflater
 import com.delhivery.axle.R
+import com.delhivery.axle.databinding.ViewProgressStepsBinding
 import com.delhivery.axle.ui.kyc.address.AddressActivity
-import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 
@@ -302,7 +301,41 @@ class NavigationUtils @Inject constructor(
    fun getNavigationStepFormat(currentStep: Int, totalStep: Int):String{
      return "Step $currentStep of $totalStep"
    }
+   fun showProgressSteps(progressStepLayout: ViewProgressStepsBinding, step:Int) {
 
+       when (step) {
+           1 -> {
+               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
+               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_incomplete_step))
+               progressStepLayout.step3.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_incomplete_step))
+               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
+               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.light_line_grey)
+               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
+               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+           }
+           2 -> {
+               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
+               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
+               progressStepLayout.step3.setImageDrawable (activity.resources.getDrawable(R.drawable.ic_incomplete_step))
+               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
+               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.light_line_grey)
+               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
+               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+           }
+           3 -> {
+               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
+               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
+               progressStepLayout.step3.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
+               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
+               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.colorAccent)
+               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
+           }
+       }
+   }
     fun showKycSubmittedDialog() {
         val dialog = Dialog(activity)
         val bindingDialog= DialogKycSubmittedBinding.inflate(activity.layoutInflater)

@@ -14,6 +14,7 @@
     <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
     <string name="title_dialog_apply_filter">Apply filter</string>
     <string name="title_dialog_delete_member">Delete Member</string>
+    <string name="title_account_setup">Account Setup</string>
 
     <!--Messages (msg_)-->
     <string name="msg_hello_world">Message Hello World</string>
@@ -478,6 +479,10 @@
     <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
     <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
     <string name="proof_attachment">Proof Attachment</string>
+    <string name="routes_amp_trucks"><![CDATA[Routes & Trucks]]></string>
+    <string name="kyc_details">KYC Details</string>
+    <string name="payment_details">Payment Details</string>
+    <string name="hint_for_quick_processing">For quick processing use Business PAN</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
