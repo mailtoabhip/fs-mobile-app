@@ -7,8 +7,5 @@ import com.delhivery.axle.utils.prefs.GlobalPrefs
 import javax.inject.Inject
 
 class BasicDetailsViewModel @Inject constructor(
-    private val authenticationRepository: AuthenticationRepository,
-    private val notificationRepository: NotificationRepository,
-    private val globalPrefs: GlobalPrefs
 ) : BaseViewModel() {
 }
