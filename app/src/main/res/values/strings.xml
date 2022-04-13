@@ -342,7 +342,7 @@
     <string name="label_identity_verification">Identity Verification</string>
     <string name="label_pan_details">PAN details </string>
     <string name="label_aadhaar">Aadhaar details </string>
-    <string name="label_communication_address">Communication address </string>
+    <string name="label_communication_address">Office address </string>
     <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
     <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
     <string name="sub_label_communication_details"> Enter your address details to use for communication</string>

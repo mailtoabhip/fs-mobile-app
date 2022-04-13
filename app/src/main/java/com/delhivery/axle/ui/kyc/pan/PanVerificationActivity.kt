@@ -61,7 +61,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             lengthAction(9){
                binding.btnVerifyPan.isEnabled = false
                 binding.panVerifyProgress.visibility = View.GONE
-                binding.textPanName.visibility = View.GONE
+                binding.textPanName.visibility = View.VISIBLE
                 binding.imgCorrect.visibility = View.GONE
                 binding.editPan.error= false
             }
@@ -69,7 +69,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             lengthAction(10) {
                 binding.editPan.isEnabled=false
                 binding.panVerifyProgress.visibility = View.VISIBLE
-                binding.textPanName.visibility = View.GONE
+                binding.textPanName.visibility = View.VISIBLE
                 viewModel.validatePAN()
             }
 

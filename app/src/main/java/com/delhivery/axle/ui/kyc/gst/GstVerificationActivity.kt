@@ -85,9 +85,10 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        title = ""
+        setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
+
 
         if(userPrefs.retryVerification){
             binding.btnVerifyGst.setText(R.string.action_retry_verification)

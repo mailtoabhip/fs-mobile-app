@@ -17,11 +17,12 @@
         android:background="@color/blue_bg"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_toolbar"
-            />
+      <include
+          android:id="@+id/progress_step_layout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          layout="@layout/view_progress_steps"
+          android:layout_marginBottom="@dimen/size_24dp"/>
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -32,28 +33,18 @@
             android:paddingStart="@dimen/size_24dp"
             android:paddingEnd="@dimen/size_24dp"
             android:paddingBottom="@dimen/size_48dp">
-            <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:id="@+id/progress"
-                android:layout_marginBottom="@dimen/size_24dp"
-                bind:layout_constraintTop_toTopOf="parent"
-                android:max="100"
-                android:progressDrawable="@drawable/account_progress"
-                android:progress="66"/>
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/step_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_6sp"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/progress"
+                bind:layout_constraintTop_toTopOf="parent"
                 android:text="@{viewModel.currentStep}"
                 android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_12sp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/address_text"
@@ -61,12 +52,12 @@
                 android:layout_height="wrap_content"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/step_text"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_8dp"
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="@dimen/text_6sp"
                 android:text="@string/label_communication_address"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_24sp"
+                android:textSize="@dimen/text_18sp"
                 android:textStyle="bold"
                 />
             <androidx.appcompat.widget.AppCompatTextView
@@ -80,7 +71,7 @@
                 bind:layout_constraintTop_toBottomOf="@+id/address_text"
                 android:text="@string/sub_label_address_details"
                 android:textColor="@color/sub_heading_black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:visibility="gone"
