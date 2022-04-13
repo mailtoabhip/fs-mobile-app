@@ -151,4 +151,8 @@
     <item name="textAllCaps">false</item>
     <item name="android:textAllCaps">false</item>
   </style>
+
+  <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:textSize">@dimen/text_14sp</item>
+  </style>
 </resources>

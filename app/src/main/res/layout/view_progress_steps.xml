@@ -10,10 +10,15 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         app:title="@string/title_account_setup"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+       />
 
     <View
         android:layout_width="match_parent"
