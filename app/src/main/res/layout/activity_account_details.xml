@@ -138,14 +138,14 @@
               />
 
           <CheckBox
-              android:layout_width="wrap_content"
-              android:text="@string/label_agree"
               android:id="@+id/checkTerms"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              android:layout_marginTop="@dimen/size_16dp"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
               android:layout_below="@+id/edit_referral_code"
-              android:layout_height="wrap_content"/>
+              android:layout_marginTop="@dimen/size_16dp"
+              android:text="@string/label_agree"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp" />
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/termsCondtions"

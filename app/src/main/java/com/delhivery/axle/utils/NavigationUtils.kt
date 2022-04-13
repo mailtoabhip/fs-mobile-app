@@ -217,13 +217,13 @@ class NavigationUtils @Inject constructor(
               }
               userPrefs.retryVerificationOnBack=false
           }else {
-              if (userPrefs.panRejectReason.isNotNullOrEmpty()) {
+              if (userPrefs.panRejectReason.isNotNullOrEmpty()&& (userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification"))) {
                   extras.putInt(StepKey, 0)
-              } else if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
+              } else if (userPrefs.identityRejectReason.isNotNullOrEmpty() && !(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification"))) {
                   extras.putInt(StepKey, 1)
-              } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()) {
+              } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()&& !(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification"))) {
                   extras.putInt(StepKey, 2)
-              } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && kycSteps.size > 3) {
+              } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && !(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")) &&kycSteps.size > 3) {
                   extras.putInt(StepKey, 3)
               } else {
                   retryDone=true

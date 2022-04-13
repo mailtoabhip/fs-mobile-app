@@ -68,20 +68,8 @@ class DocDataItemVH(binding: ViewProfileKycDocumentItemBinding) :
       _interface.showImage(item.data, binding.textDocumentSizeProfile, binding.docImage)
     val arrString =item.data.docUrl.split("/")
     binding.name.text = arrString.get(arrString.size-1) ?: ""
-    if(item.data.verificationStatus.isNotNullOrEmpty() && item.data.verificationStatus.equals("failed")){
-      binding.imageButtonDownloadDocumentProfile.visibility = View.GONE
-      binding.textDocumentSizeProfile.visibility =View.GONE
-      binding.error.visibility = View.VISIBLE
-      if(item.data.verificationStatusReasonCode.equals("others")){
-        binding.error.text = "Verification failed due to "+item.data.verificationStatusReasonMessage
-      }else{
-        binding.error.text = "Verification failed due to "+item.data.verificationStatusReasonCode
-      }
-    }else{
-      binding.imageButtonDownloadDocumentProfile.visibility = View.VISIBLE
-      binding.textDocumentSizeProfile.visibility = View.VISIBLE
-      binding.error.visibility = View.GONE
-    }
+    binding.imageButtonDownloadDocumentProfile.visibility = View.VISIBLE
+    binding.textDocumentSizeProfile.visibility = View.VISIBLE
     binding.imageButtonDownloadDocumentProfile.setOnClickListener { _interface.handleAction(DocAction_ViewDetails, item) }
  }
 }

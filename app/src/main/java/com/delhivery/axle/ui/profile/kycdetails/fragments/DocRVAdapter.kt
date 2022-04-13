@@ -3,14 +3,12 @@ package com.delhivery.axle.ui.profile.kycdetails.fragments
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.utils.BitmapUtils
 
 /**
  * RV adapter for [DocActivity]

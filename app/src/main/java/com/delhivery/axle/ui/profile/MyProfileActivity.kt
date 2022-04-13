@@ -145,9 +145,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         userPrefs.identityType = k.verificationType.toString()
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
-                                userPrefs.identityRejectReason = k.verificationStatusReasonMessage?:""
+                                userPrefs.identityRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
-                                userPrefs.identityRejectReason = k.verificationStatusReasonCode?:""
+                                userPrefs.identityRejectReason = k.verificationStatusReasonCode?.replace("_"," ")?:""
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.identityRejectReason = "Document under verification"
@@ -155,32 +155,33 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }else if(k.verificationOverallType.equals("pan")){
                       if(k.verificationStatus.equals("failed")){
                           if(k.verificationStatusReasonCode.equals("others")) {
-                              userPrefs.panRejectReason = k.verificationStatusReasonMessage?:""
+                              userPrefs.panRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                           }else{
-                              userPrefs.panRejectReason = k.verificationStatusReasonCode?:""
+                              userPrefs.panRejectReason = k.verificationStatusReasonCode?.replace("_"," ")?:""
                           }
                       }else if(k.verificationStatus.equals("pending")){
-                          userPrefs.identityRejectReason = "Document under verification"
+                          userPrefs.panRejectReason = "Document under verification"
                       }
                     }else if(k.verificationOverallType.equals("trucking_business")){
+                        userPrefs.businessType = k.verificationType.toString()
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
-                                userPrefs.rcRejectReason = k.verificationStatusReasonMessage?:""
+                                userPrefs.rcRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
-                                userPrefs.rcRejectReason = k.verificationStatusReasonCode?:""
+                                userPrefs.rcRejectReason = k.verificationStatusReasonCode?.replace("_"," ")?:""
                             }
                         }else if(k.verificationStatus.equals("pending")){
-                            userPrefs.identityRejectReason = "Document under verification"
+                            userPrefs.rcRejectReason = "Document under verification"
                         }
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
-                                userPrefs.addressRejectReason = k.verificationStatusReasonMessage?:""
+                                userPrefs.addressRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
-                                userPrefs.addressRejectReason = k.verificationStatusReasonCode?:""
+                                userPrefs.addressRejectReason = k.verificationStatusReasonCode?.replace("_"," ")?:""
                             }
                         }else if(k.verificationStatus.equals("pending")){
-                            userPrefs.identityRejectReason = "Document under verification"
+                            userPrefs.addressRejectReason = "Document under verification"
                         }
                     }
                 }
