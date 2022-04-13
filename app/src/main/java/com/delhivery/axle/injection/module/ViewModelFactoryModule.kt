@@ -32,11 +32,14 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
+import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -323,6 +326,16 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(IdentityVerificationViewModel::class)
   abstract fun bindIdentityVerificationViewModel(viewModel:IdentityVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BasicDetailsViewModel::class)
+  abstract fun bindBasicDetailsViewModel(viewModel:BasicDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchCityStateViewModel::class)
+  abstract fun bindSearchCityStateViewModel(viewModel:SearchCityStateViewModel): ViewModel
 
 
   @Binds

@@ -76,7 +76,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     TotalStepsKey)!!)
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.gstError.visibility=View.VISIBLE
-                viewModel.errorText = userPrefs.identityRejectReason
+                viewModel.errorText = ("GST verification failed due to "+userPrefs.identityRejectReason)
             }else{
                 binding.gstError.visibility=View.GONE
             }

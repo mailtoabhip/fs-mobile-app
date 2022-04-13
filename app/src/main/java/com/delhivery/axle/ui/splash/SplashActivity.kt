@@ -26,7 +26,9 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs

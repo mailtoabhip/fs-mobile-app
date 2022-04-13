@@ -86,7 +86,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     }
      else{
-      if(!userPrefs.isUserVerfied){
+      if(!userPrefs.isUserVerfied && userPrefs.noOfVerificationIssues.isNullOrEmpty()){
         if(userPrefs.pancard.isNullOrEmpty()) {
           showKycDialog(0)
         }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
