@@ -43,15 +43,15 @@
             bind:shadow="@{ @dimen/size_4dp }"
             />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_loads"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_8dp"
             android:layout_marginTop="@dimen/size_8dp"
-            android:saveEnabled="false"
-            />
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:saveEnabled="false" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/routes_banner"

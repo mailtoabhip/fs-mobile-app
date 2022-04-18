@@ -2,9 +2,12 @@ package com.delhivery.axle.ui.home.fragments.loads
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.View
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
@@ -19,15 +22,12 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
-import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
+import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.data.home.trucks.TruckFrequentItem
+import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
+import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
@@ -35,7 +35,9 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
@@ -47,7 +49,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import javax.inject.Inject
 
-class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
+class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
     HomeLoadsRVAdapterInterface, TitleProvider {
 
   var _title: String = "Load Request"
@@ -401,7 +403,68 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
         viewModel.filterVehicleType = null
         viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
       }
+
+      HomeLoadsPriorityAction -> {
+        analyticsUtil.trackEvent(
+          EVENT_BANNER_CLICK_TOP,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId(), "loads_screen")
+        )
+        showAddTruckDialog(mutableListOf(
+          TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+        ), VALUE_ADD_TRUCK_TOP_BANNER)
+      }
+
+      HomeLoadsBannerAction -> {
+        analyticsUtil.trackEvent(
+          EVENT_BANNER_CLICK_SCROLL,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId(), "loads_screen")
+        )
+
+        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+        ), VALUE_ADD_TRUCK_SCROLL_BANNER)
+      }
     }
+  }
+
+  private fun showAddTruckDialog(items: List<TruckFrequentItem>,source:String) {
+    val dialog = Dialog(context!!)
+    val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+    bindingDialog.containerTrucks.removeAllViews()
+    items.forEachIndexed { index, item ->
+      val itemBinding = createTruckFrequentItem(bindingDialog)
+      itemBinding.data = item
+      itemBinding.root.setOnClickListener{
+        context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs,source = source)
+          , REQCODE_ADD_TRUCK) }
+        dialog.dismiss()
+      }
+
+      bindingDialog.containerTrucks.addView(itemBinding.root, index)
+    }
+    bindingDialog.closeBtn.setOnClickListener{
+      dialog.dismiss()
+    }
+
+    bindingDialog.addTruckLayout.setOnClickListener{
+      context?.let { startActivityForResult(truckIntent(context!!,source = source), REQCODE_ADD_TRUCK) }
+      dialog.dismiss()
+    }
+
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
   private fun showVehicleFilterDialog(){
@@ -646,4 +709,8 @@ class HomeLoadsFragment : HomeBaseFragment<FragmentHomeLoadsBinding, HomeLoadsVi
 
     override fun isLoading() = isLoadingData
   }
+
+  /** Create new frequent truck item*/
+  private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
+    ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
 }

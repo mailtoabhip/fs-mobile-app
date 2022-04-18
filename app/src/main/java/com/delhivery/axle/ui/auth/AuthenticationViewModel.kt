@@ -114,6 +114,10 @@ class AuthenticationViewModel @Inject constructor(
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest
+              }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+                userPrefs.hasLoggedIn = true
+                userPrefs.lastLoginTime = Date().time
+                AddInventoryPathway
               } else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.hasEditedRoute = true
@@ -133,7 +137,11 @@ class AuthenticationViewModel @Inject constructor(
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                 userPrefs.hasLoggedIn = false
                 AccountDetails
-              } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+              }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+                userPrefs.hasLoggedIn = true
+                userPrefs.lastLoginTime = Date().time
+                AddInventoryPathway
+              }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest

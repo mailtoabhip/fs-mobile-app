@@ -21,8 +21,7 @@ import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
 import com.delhivery.axle.ui.dialogs.LedgerSuccessDialog
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.searchongoingtrip.searchOngoingTripIntent
@@ -221,7 +220,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     when (requestCode) {
       REQCODE_NO_TRIPS -> {
         if (resultCode == Activity.RESULT_OK) {
-          action(NavigateHomeFragmentAction(LoadsFragment))
+          action(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
       }
       else -> {

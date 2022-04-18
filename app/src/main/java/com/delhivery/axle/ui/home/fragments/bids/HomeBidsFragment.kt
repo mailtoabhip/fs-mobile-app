@@ -25,7 +25,7 @@ import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -239,7 +239,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
 
       HomeBidsWarningAction_NoBids -> {
-        action(NavigateHomeFragmentAction(LoadsFragment))
+        action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
       }
 
       HomeBidsTimeOutAction -> {
@@ -268,7 +268,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     when (requestCode) {
       REQCODE_NO_ROUTES -> {
         if (resultCode == RESULT_OK) {
-          action(NavigateHomeFragmentAction(LoadsFragment))
+          action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
         }
       }
       else -> {

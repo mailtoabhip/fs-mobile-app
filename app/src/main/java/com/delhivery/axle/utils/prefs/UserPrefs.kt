@@ -276,6 +276,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.IsFirstRoute, false)
 
+    /**
+     * First time login with Vendor Entity as RP/BOTH
+     */
+    var firstLoginRPUser: Boolean
+        set(value) = editor.putBoolean(PrefKeys.IsFirstLoginRPUser, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.IsFirstLoginRPUser, true)
   /**
    * Vendor Entity
    */
@@ -289,6 +296,20 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.DeepLinkArg, "") ?: ""
 
+    var parentId:String
+        set(value) = editor.putString(PrefKeys.ParentId ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentId, "") ?: ""
+
+    var parentName:String
+        set(value) = editor.putString(PrefKeys.ParentName ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentName, "") ?: ""
+
+    var parentDemandType:String?
+        set(value) = editor.putString(PrefKeys.ParentDemandType ,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.ParentDemandType, "") ?: ""
   /**
    *  User role
    */
@@ -613,62 +634,62 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   fun clearPrefs() {
     editor.remove(PrefKeys.JWTToken)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.OnboardingStatus)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.SupplierEnabled)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.IsTestUser)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.RouteUpdate)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.PhoneNumber)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.HasLoggedIn)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.TdsRate)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.UpdateTdsRate)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.UserName)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.BankName)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.AccountNumber)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.CompanyName)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.PhoneNumber)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.IfscCode)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.Pancard)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.CityCode)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.GNCityCode)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.MaxPMTRate)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.IsParent)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.TruckTypes)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.DemandType)
     editor.remove(PrefKeys.LogoutStatus)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.StartTime)
-            .apply()
+        .apply()
     editor.remove((PrefKeys.LastLoginTime))
-            .apply()
+        .apply()
     editor.remove(PrefKeys.IsFirstRoute)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.UserOverallPerformance)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.VendorEntity)
-            .apply()
+        .apply()
     editor.remove(PrefKeys.DeepLinkArg)
             .apply()
     editor.remove(PrefKeys.LoadPostKyc)
@@ -752,10 +773,56 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.lanesPreference)
       .apply()
+        .apply()
+    editor.remove(PrefKeys.ParentId)
+      .apply()
+    editor.remove(PrefKeys.ParentName)
+      .apply()
+    editor.remove(PrefKeys.ParentDemandType)
+      .apply()
     editor.commit()
   }
 
   fun saveUser(user: UserModel) {
+      userName = user.name
+      onboardingStatus = user.onboardingStatus ?: "na"
+      supplierEnabled = user.supplierEnabled
+      isTestUser = user.testUser
+      tdsRate = user.getTDSSubtractor()
+      updatedTdsRate =
+          if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
+      bankName = user.bank ?: ""
+      companyName = user.companyName ?: ""
+      phoneNumber = user.phoneNo
+      ifscCode = user.ifscCode ?: ""
+      pancard = user.panCardNo ?: ""
+      accNumber = user.accNumber()
+      cityCode = user.baseCityCode
+      isParent = user.isParent()
+      userType = user.userType ?: ""
+      truckTypes = if (user.isParent()) {
+          user.truckTypes?.joinToString(separator = ",") { it }
+      } else {
+          user.parentDetails?.truckTypes?.joinToString(separator = ",") { it }
+      }
+      demandType = user.demandType.joinToString(separator = ",") { it }
+      userPerformance = user.overallPerformance ?: ""
+      vendorEntity = user.vendorEntity ?: ""
+      parentId = if (user.isParent()) {
+          user.userId
+      } else {
+          user.parentDetails?.userId ?: ""
+      }
+      parentName = if (user.isParent()) {
+          user.name
+      } else {
+          user.parentDetails?.name ?: ""
+      }
+      parentDemandType = if (user.isParent()) {
+          user.demandType.joinToString(separator = ",") { it }
+      } else {
+          user.parentDetails?.demandType?.joinToString(separator = ",") { it }
+      }
     userName = user.userName?:""
     onboardingStatus = user.supplierDetails?.onboardingStatus ?: "na"
     supplierEnabled = user.isSpEnabled
@@ -807,6 +874,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   }
 
 
+  }
   fun canBid() = if (supplierEnabled) {
     when (onboardingStatus) {
       "approved" -> APPROVED
@@ -860,6 +928,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserOverallPerformance = "overall_performance"
     const val VendorEntity = "vendor_entity"
     const val DeepLinkArg = "deep_link_argument"
+    const val IsFirstLoginRPUser = "first_login_RP"
+    const val ParentId = "parent_id"
+    const val ParentName = "parent_name"
+    const val ParentDemandType = "parent_demand_type"
     const val LoadPostKyc = "post_load"
     const val TruckPostKyc = "post_truck"
     const val UserRole = "user_role"

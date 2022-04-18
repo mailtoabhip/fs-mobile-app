@@ -75,6 +75,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
+
+     //For Inventory only
+    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -257,6 +260,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
           bundle.putString(ARGS_TRANSACTION_IDS, transactions)
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+          //For Inventory
+          bundle.putString(ARGS_VEHICLE_NUMBER, vehicleNumber)
         }
           navigationUtils.navigate(it.java, true, bundle)
       }

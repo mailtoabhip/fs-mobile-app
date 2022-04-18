@@ -74,6 +74,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   var transactions = ""
   var transactionIds = listOf<String>()
   var preferredTransactionId = ""
+  var vehicleNumber: String = ""
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 

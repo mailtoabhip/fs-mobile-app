@@ -14,9 +14,11 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
@@ -29,6 +31,7 @@ import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -42,6 +45,7 @@ import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.ui.userroutes.ManageRouteViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import dagger.Component
@@ -224,12 +228,12 @@ interface ViewModelInjector {
    * Injects [YourKYCDetailsViewModel]
    */
   fun inject(viewModel: YourKYCDetailsViewModel)
-  
+
   /**
    * Injects [PanVerificationViewModel]
    */
   fun inject(viewModel: PanVerificationViewModel)
-  
+
   /**
    * Injects [BusinessVeificationViewModel]
    */
@@ -259,6 +263,27 @@ interface ViewModelInjector {
    * Injects [ManageRouteViewModel]
    */
   fun inject(viewModel: ManageRouteViewModel)
+
+  /**
+   * Injects [HomeLoadsTruckViewModel]
+   */
+  fun inject(viewModel: HomeLoadsTruckViewModel)
+
+  /**
+   * Injects [HomeTrucksViewModel]
+   */
+  fun inject(viewModel: HomeTrucksViewModel)
+
+  /**
+   * Injects [TruckViewModel]
+   */
+  fun inject(viewModel: TruckViewModel)
+
+  /**
+   * Injects [SearchCityViewModel]
+   */
+  fun inject(viewModel: SearchCityViewModel)
+
 
   @Component.Builder
   interface Builder {

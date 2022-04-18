@@ -3,9 +3,11 @@ package com.delhivery.axle.ui.home.fragments
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -14,9 +16,6 @@ import dagger.android.ContributesAndroidInjector
 abstract class HomeFragmentsBindingModule {
   @ContributesAndroidInjector
   internal abstract fun provideBidsFragment(): HomeBidsFragment
-
-  @ContributesAndroidInjector
-  internal abstract fun provideLoadsFragment(): HomeLoadsFragment
 
   @ContributesAndroidInjector
   internal abstract fun provideTripsFragment(): HomeTripsFragment
@@ -32,5 +31,9 @@ abstract class HomeFragmentsBindingModule {
 
   @ContributesAndroidInjector
   internal abstract fun providePodFragment(): HomePodsFragment
+
+  @ContributesAndroidInjector
+  internal abstract fun provideLoadsTruckFragment(): HomeLoadsTruckFragment
+
 
 }

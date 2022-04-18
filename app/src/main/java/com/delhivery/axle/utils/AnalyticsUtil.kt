@@ -3,6 +3,7 @@ package com.delhivery.axle.utils
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.util.Property
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -123,6 +124,15 @@ const val EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS = "view_change_payment_mod
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE = "view_change_payment_mode_done"
 const val EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL = "view_change_payment_mode_trip_cancel"
 const val EVENT_DEEP_LINK_ADD_FUEL_PAYMENT = "deep_link_add_fuel_payment"
+const val EVENT_ACTIVATE_TRUCK = "activate_truck"
+const val EVENT_DEACTIVATE_TRUCK = "deactivate_truck"
+const val EVENT_EDIT_TRUCK = "edit_truck"
+const val EVENT_DELETE_TRUCK = "delete_truck"
+const val EVENT_ADD_TRUCK = "add_truck"
+const val EVENT_BANNER_CLICK_TOP = "click_add_truck_top_banner"
+const val EVENT_BANNER_CLICK_SCROLL = "click_add_truck_scroll_banner"
+const val EVENT_VIEW_MY_TRUCK = "view_my_truck"
+
 
 
 
@@ -186,6 +196,8 @@ const val PROPERTY_RECD_TRIP_IDS = "recd_trip_ids"
 const val PROPERTY_TIME_SINCE_LAST_LOGIN = "time_since_last_login"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT = "change_payment_diesel_payout"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_card_number"
+const val PROPERTY_INVENTORY_ID = "inventory_id"
+const val PROPERTY_REASON = "reason_for_deactivating"
 
 
 
@@ -217,3 +229,9 @@ const val VALUE_COMPLETE_ROUTE = "complete_route"
 const val CUSTOM_PHONE_NUMBER = "phone_number"
 const val VALUE_FUTURE_ADJUSTMENT = "future_adjustment"
 const val VALUE_RECOVERY_ADJUSTMENT = "recovery_adjustment"
+const val VALUE_NOTIFICATION = "notification"
+const val VALUE_DEEP_LINKING = "deep_linking"
+const val VALUE_ADD_TRUCK_TOP_BANNER = "add_truck_top_banner"
+const val VALUE_ADD_TRUCK_SCROLL_BANNER= "add_truck_scroll_banner"
+const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
+const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"

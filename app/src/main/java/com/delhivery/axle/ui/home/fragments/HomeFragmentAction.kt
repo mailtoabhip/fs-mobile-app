@@ -20,3 +20,7 @@ abstract class BaseHomeFragmentAction(val type: HomeFragmentActionType)
 class NavigateHomeFragmentAction(val fragmentType: HomeFragmentType) : BaseHomeFragmentAction(
     Navigate
 )
+
+class NavigateHomeLoadsFragmentAction(val fragmentType: HomeLoadsTruckFragmentType) : BaseHomeFragmentAction(
+    Navigate
+)

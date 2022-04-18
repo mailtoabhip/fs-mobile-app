@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".KotlinApp"
@@ -32,6 +34,13 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+        </service>
+
+        <service
+            android:name=".tokenExpiryHandling.RefreshAuthTokenService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:stopWithTask="false"
+            >
         </service>
 
         <provider
@@ -167,8 +176,16 @@
             android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.trucks.TruckActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchCity.SearchCity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.trucks.AddTruckPathwayActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.profile.HelpSupportActivity"
             android:screenOrientation="portrait" />

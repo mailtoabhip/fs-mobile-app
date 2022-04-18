@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_query"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_12dp"
+            android:layout_marginLeft="@dimen/size_8dp"
+            android:layout_marginRight="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:hint="@string/hint_search_city"
+            android:background="@drawable/bg_search_bar_light"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:paddingStart="@dimen/size_48dp"
+            android:textColorHint="@color/color_hint"
+            android:textSize="@dimen/text_16sp"
+            />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/history_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_query">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_history_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_16sp"
+                android:lineSpacingExtra="4sp"
+                android:padding="@dimen/size_14dp"
+                android:text="@string/label_your_recent_search"
+                android:textColor="@color/sub_heading_black"
+                />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/container_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/size_4dp"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:orientation="vertical"
+                />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_city_items"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/history_layout"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

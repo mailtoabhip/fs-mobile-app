@@ -121,7 +121,7 @@ companion object{
                 )
                 bidPriceLiveData.postValue(null)
               }
-              else -> if(((transaction.isDMTIndent() ||dmtStatus == "dmt" ) && !fromPage) || (dmtStatus == "dmt" && active)){
+              else -> if(((transaction.isDMTIndent() || dmtStatus == "dmt" ) && !fromPage )|| (dmtStatus == "dmt" && active)){
                   transactionBidLiveData.postValue(
                           BidDetailsUserBidState_BulkLoad_Edit(
                                   _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
