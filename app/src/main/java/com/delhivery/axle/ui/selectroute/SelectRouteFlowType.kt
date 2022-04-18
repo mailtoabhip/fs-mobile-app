@@ -4,7 +4,8 @@ enum class SelectRouteFlowType(
   val typeId: Int
 ) {
   AddNewRoute(0),
-  EditRoute(1);
+  EditRoute(1),
+  DeleteRoute(2);
 
   companion object {
     /**

@@ -161,5 +161,30 @@ interface LoadBoardService {
             @Path("uuid") userId: String
     ): Single<BaseResponse<KYCDetailResponse>>
 
+  /**
+   * Add Route details
+   */
+  @POST("/routes/{uuid}")
+  fun addRoute(
+    @Path("uuid") userId: String,
+    @Body updateRouteRequest: UpdateRouteRequest
+  ): Single<BaseMessageResponse>
 
+  /**
+   * Edit Route details
+   */
+  @PATCH("/routes/{uuid}")
+  fun editRoute(
+    @Path("uuid") userId: String,
+    @Body updateRouteRequest: UpdateRouteRequest
+  ): Single<BaseMessageResponse>
+
+  /**
+   * Delete Route Details
+   */
+  @HTTP(method = "DELETE", path = "/routes/{uuid}", hasBody = true)
+  fun deleteRoute(
+    @Path("uuid") userId: String,
+    @Body updateRouteRequest: UpdateRouteRequest
+  ): Single<BaseMessageResponse>
 }

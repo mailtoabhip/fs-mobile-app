@@ -47,6 +47,12 @@ class LoadboardRepository @Inject constructor(
            loadboardService.updateUser(updateUserRequest).convertMessageResponse()
 
     /**
+     * add route
+     */
+    fun addRoute(updateUserRequest: UpdateUserRequest) =
+        loadboardService.updateUser(updateUserRequest).convertMessageResponse()
+
+    /**
      * validate RC
      */
     fun validateRC(rcNumber :String)  =
@@ -120,5 +126,20 @@ class LoadboardRepository @Inject constructor(
      * Get KYC details
      */
     fun getKycDetails(uuid:String) = loadboardService.getKYCDetails(uuid).convertResponse()
+
+    /**
+     * Add route details
+     */
+    fun addRouteDetails(uuid:String,updateRouteRequest: UpdateRouteRequest) = loadboardService.addRoute(uuid,updateRouteRequest).convertMessageResponse()
+
+    /**
+     * Edit route details
+     */
+    fun editRouteDetails(uuid:String,updateRouteRequest: UpdateRouteRequest) = loadboardService.editRoute(uuid,updateRouteRequest).convertMessageResponse()
+
+    /**
+     * Delete route details
+     */
+    fun deleteRouteDetails(uuid:String,updateRouteRequest: UpdateRouteRequest) = loadboardService.deleteRoute(uuid,updateRouteRequest).convertMessageResponse()
 
 }

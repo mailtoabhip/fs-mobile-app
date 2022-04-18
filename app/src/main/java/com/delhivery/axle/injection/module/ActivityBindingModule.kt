@@ -51,6 +51,7 @@ import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
+import com.delhivery.axle.ui.userroutes.ManageRouteActivity
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
 import dagger.Module
@@ -283,6 +284,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSearchOriginCityActivityModule::class])
   internal abstract fun bindSearchOriginCityActivity(): SearchOriginCityActivity
+
+  /* Manage Route */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsMangeRouteActivityModule::class])
+  internal abstract fun bindManageRouteActivity(): ManageRouteActivity
 }
 
 /**
@@ -423,6 +429,9 @@ internal abstract class AbsSearchCityStateActivityModule : ActivityModule<Search
 
 @Module
 internal abstract class AbsSearchOriginCityActivityModule : ActivityModule<SearchOriginCityActivity>()
+
+@Module
+internal abstract class AbsMangeRouteActivityModule : ActivityModule<ManageRouteActivity>()
 
 /**
  * Activity Binds Module

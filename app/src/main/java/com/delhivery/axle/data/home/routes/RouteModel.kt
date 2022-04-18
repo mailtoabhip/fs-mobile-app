@@ -4,6 +4,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.UserCity
+import java.io.Serializable
 
 /**
  * Route model
@@ -11,7 +12,7 @@ import com.delhivery.axle.data.UserCity
 data class RouteModel(
   var origin: UserCity,
   var destinations: MutableSet<StateModel> = mutableSetOf()
-) : BaseKeyTypeModel<String>() {
+) : BaseKeyTypeModel<String>(),Serializable {
 
   override fun key() = origin.city
 

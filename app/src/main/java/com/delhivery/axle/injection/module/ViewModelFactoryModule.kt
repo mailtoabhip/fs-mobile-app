@@ -56,6 +56,7 @@ import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
+import com.delhivery.axle.ui.userroutes.ManageRouteViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
 import dagger.Binds
@@ -336,6 +337,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchCityStateViewModel::class)
   abstract fun bindSearchCityStateViewModel(viewModel:SearchCityStateViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ManageRouteViewModel::class)
+  abstract fun bindManageRouteViewModel(viewModel:ManageRouteViewModel): ViewModel
 
 
   @Binds

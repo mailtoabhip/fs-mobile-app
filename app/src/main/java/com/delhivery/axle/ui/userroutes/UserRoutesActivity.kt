@@ -27,10 +27,13 @@ import com.delhivery.axle.databinding.DialogUserRouteBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.RouteDeleteDialog
+import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.AddNewRoute
+import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.DeleteRoute
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.activity.SelectRouteOriginCityExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
+import com.delhivery.axle.utils.REQCODE_DELETE_ROUTES
 import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import okhttp3.Route
@@ -104,7 +107,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
 
     binding.addRouteNewButton.setOnClickListener {
       navigationUtils.navigateForActivityResult(
-          intent = selectRouteIntent(this@UserRoutesActivity),
+          intent = manageRouteIntent(this@UserRoutesActivity,AddNewRoute),
           requestCode = REQCODE_ADD_ROUTES
       )
     }
@@ -125,19 +128,25 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
       RoutesAction_ViewDetails -> {
         val data  = item.data as RouteModel
         val bundle = Bundle()
-        bundle.putString(SelectRouteOriginCityExtra, data.origin.orion_db_city_code)
+        bundle.putSerializable(SelectedRouteIntentExtra, data)
         navigationUtils.navigateForActivityResult(
-            intent = selectRouteIntent(this@UserRoutesActivity, EditRoute),
+            intent = manageRouteIntent(this@UserRoutesActivity, EditRoute),
             requestCode = REQCODE_EDIT_ROUTE, extras = bundle
         )
       }
       RoutesAction_DeleteRoute -> {
-        RouteDeleteDialog(this, item.data as RouteModel , viewModel, uiUtils).show()
+        val data  = item.data as RouteModel
+        val bundle = Bundle()
+        bundle.putSerializable(SelectedRouteIntentExtra, data)
+        navigationUtils.navigateForActivityResult(
+          intent = manageRouteIntent(this@UserRoutesActivity, DeleteRoute),
+          requestCode = REQCODE_DELETE_ROUTES, extras = bundle
+        )
       }
       
       WarningAction_NoRoutes -> {
         navigationUtils.navigateForActivityResult(
-          intent = selectRouteIntent(this@UserRoutesActivity),
+          intent = manageRouteIntent(this@UserRoutesActivity,AddNewRoute),
           requestCode = REQCODE_ADD_ROUTES
         )
       }
@@ -166,15 +175,20 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
     }
     bindingDialog.editRouteLayout.setOnClickListener {
       val bundle = Bundle()
-      bundle.putString(SelectRouteOriginCityExtra, data.origin.orion_db_city_code)
+      bundle.putSerializable(SelectRouteOriginCityExtra, data)
       navigationUtils.navigateForActivityResult(
-        intent = selectRouteIntent(this@UserRoutesActivity, EditRoute),
+        intent = manageRouteIntent(this@UserRoutesActivity, EditRoute),
         requestCode = REQCODE_EDIT_ROUTE, extras = bundle
       )
       dialog.dismiss()
     }
     bindingDialog.deleteRouteLayout.setOnClickListener {
-      RouteDeleteDialog(this, data , viewModel, uiUtils).show()
+      val bundle = Bundle()
+      bundle.putSerializable(SelectedRouteIntentExtra, data)
+      navigationUtils.navigateForActivityResult(
+        intent = manageRouteIntent(this@UserRoutesActivity, DeleteRoute),
+        requestCode = REQCODE_DELETE_ROUTES, extras = bundle
+      )
       dialog.dismiss()
     }
 

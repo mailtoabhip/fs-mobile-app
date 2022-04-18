@@ -15,6 +15,7 @@
     <string name="title_dialog_apply_filter">Apply filter</string>
     <string name="title_dialog_delete_member">Delete Member</string>
     <string name="title_account_setup">Account Setup</string>
+   <string name="title_enter_route_details">Enter route details</string>
 
     <!--Messages (msg_)-->
     <string name="msg_hello_world">Message Hello World</string>
@@ -496,8 +497,9 @@
     <string name="kyc_details">KYC Details</string>
     <string name="payment_details">Payment Details</string>
     <string name="hint_for_quick_processing">For quick processing use Business PAN</string>
+  <string name="add_route">Add Route</string>
 
-    <string-array name="array_truck_type">
+  <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
         <item>Closed</item>
         <item>Open</item>
