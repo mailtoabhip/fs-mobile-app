@@ -20,5 +20,18 @@ data class UpdateUserRequest (
     @SerializedName("rc_number") val rcNumber:String? =null,
     @SerializedName("cin_number") val cinNumber:String? =null,
     @SerializedName("udyog_aadhaar_number") val udyogAadhaarNumber:String? =null,
-    @SerializedName("shop_establishment_number") val shopEstablishmentNumber:String? =null
+    @SerializedName("shop_establishment_number") val shopEstablishmentNumber:String? =null,
+    @SerializedName("route_preferences") val routePreferences:List<OriginDestinations>? =null,
+    @SerializedName("truck_preferences") val truckPreferences:List<String>? =null
+)
+
+data class OriginDestinations(
+    @SerializedName("origin") var origin: RouteDetails?=null,
+    @SerializedName("destination") var destination: RouteDetails?=null
+)
+
+data class RouteDetails(
+    @SerializedName("location_id") var locationId: String?=null,
+    @SerializedName("location") var location: String?=null,
+    @SerializedName("location_type") var locationType: String?=null
 )

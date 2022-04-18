@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
+import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please

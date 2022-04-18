@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
@@ -42,6 +43,7 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
     }
 
     private val adapter by lazy { SearchOriginCityRvAdapter(this) }
+   private val popularAdapter by lazy{ PopularOriginLocationAdapter(this)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +65,21 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
             adapter = this@SearchOriginCityActivity.adapter
 
         }
+        binding.rvPopularCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = this@SearchOriginCityActivity.popularAdapter
+
+        }
 
         viewModel.searchLiveData.observe(this, Observer {
-            adapter.resetStaticData()
             if (it != null) {
-                adapter.operation(it)
+                if (viewModel.searchText.length>2){
+                    adapter.operation(it)
+                }else{
+                    adapter.operation(it)
+                    adapter.resetStaticData()
+                }
+
             }
         })
 
@@ -87,7 +99,7 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
                 count: Int
             ) {
                 if (s != null) {
-                    // binding.historyLayout.visibility= View.GONE
+                    binding.popularLl.visibility= View.GONE
                     try {
                         viewModel.searchText = s.trim().toString()
                         Log.d("prefix", s.trim().toString())
@@ -96,6 +108,7 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
                             refreshData()
                         } else {
                             adapter.resetStaticData()
+                            binding.popularLl.visibility= View.VISIBLE
                         }
                     }  catch (e: Exception) {
                         binding.editQuery.error = e.message
@@ -111,6 +124,11 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
         if(viewModel.selectedData.isNotEmpty()){
             binding.editQuery.setText(viewModel.selectedData)
         }
+
+        viewModel.getPopularCities()
+        viewModel.popularCitiesLiveData.observe(this, Observer {
+            popularAdapter.operation(it)
+        })
     }
     override fun handleAction(
         actionId: String,

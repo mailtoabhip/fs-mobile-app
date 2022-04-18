@@ -3,6 +3,7 @@ package com.delhivery.axle.utils.prefs
 import android.content.Context
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
+import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -390,6 +391,25 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     return arrayItems
   }
 
+  fun setLanesPreferences(lanesList: List<RouteMappingModel>?){
+    val gson = Gson()
+    val json = gson.toJson(lanesList)
+    editor.putString(PrefKeys.lanesPreference,json)
+      .apply()
+  }
+
+
+  fun getLanesPreference(): List<RouteMappingModel?>? {
+    var arrayItems: List<RouteMappingModel?>? = null
+    val serializedObject: String? = prefs.getString(PrefKeys.lanesPreference, null)
+    if (serializedObject != null) {
+      val gson = Gson()
+      val type: Type = object : TypeToken<List<RouteMappingModel?>?>() {}.getType()
+      arrayItems = gson.fromJson<List<RouteMappingModel>>(serializedObject, type)
+    }
+    return arrayItems
+  }
+
 
   /**
    *  pan verified
@@ -730,6 +750,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
           .apply()
     editor.remove(PrefKeys.businessType)
             .apply()
+    editor.remove(PrefKeys.lanesPreference)
+      .apply()
     editor.commit()
   }
 
@@ -780,7 +802,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
-      identityDocUrl = user.identity_doc_url?.get(0)?:""
+    identityDocUrl = user.identity_doc_url?.get(0)?:""
+    setLanesPreferences(user.supplierDetails?.routes)
   }
 
 
@@ -842,9 +865,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"
-      const val isSameAsGst = "is_same_as_gst"
-      const val isGstNotBypassed = "is_gst_not_bypassed"
-      const val gstNumber = "gst_number"
+    const val isSameAsGst = "is_same_as_gst"
+    const val isGstNotBypassed = "is_gst_not_bypassed"
+    const val gstNumber = "gst_number"
     const val aadhaarNumber = "aadhaar_number"
     const val businessAddress = "business_address"
     const val gstAddress = "gst_address"
@@ -876,8 +899,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val businessType = "business_type"
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
-      const val retryVerificationOnBack = "retry_verification_on_back"
-      const val identityDocUrl = "identity_doc_url"
+    const val retryVerificationOnBack = "retry_verification_on_back"
+    const val identityDocUrl = "identity_doc_url"
+    const val lanesPreference= "lanes_preference"
   }
 }
 

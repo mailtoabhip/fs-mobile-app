@@ -490,7 +490,7 @@
     <string name="hint_search_city">Search by city</string>
     <string name="hint_search_city_state">Search by city or state</string>
     <string name="selected_cities_states">Selected Cities/States</string>
-    <string name="popular_cities">Popular Cities</string>
+    <string name="popular_cities">Popular Locations</string>
 
     <string name="routes_amp_trucks"><![CDATA[Routes & Trucks]]></string>
     <string name="kyc_details">KYC Details</string>

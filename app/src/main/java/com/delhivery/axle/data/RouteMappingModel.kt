@@ -28,7 +28,8 @@ fun List<RouteMappingModel>.toRoutes(): MutableList<RouteModel> {
 
 data class UserCity(
   @SerializedName("city") val city: String,
-  @SerializedName("city_id") val orion_db_city_code: String? = ""
+  @SerializedName("city_id") val orion_db_city_code: String? = "",
+  @SerializedName("type") val type:String="city"
 ) : BaseKeyTypeModel<String>() {
   override fun key() = orion_db_city_code ?: ""
 

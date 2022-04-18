@@ -6,6 +6,7 @@ data class StateModel(
   @SerializedName("state") val state: String,
   @SerializedName("state_id") val stateId: String,
   @SerializedName("gn_state_code") val gnStateCode: String,
+  @SerializedName("type") val type: String="state",
   var checked: Boolean = false
 ) : BaseKeyTypeModel<String>() {
 

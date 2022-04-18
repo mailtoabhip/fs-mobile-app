@@ -55,3 +55,4 @@ class SearchTimeoutItem(data: SearchTimeOutItemData) :
  */
 class SearchProgressItem(data: SearchProgressItemData = SearchProgressItemData()) :
     BaseCityStateRVAdapterItem<SearchProgressItemData>(SearchCityStateRvAdapterItemType.Progress, data)
+
