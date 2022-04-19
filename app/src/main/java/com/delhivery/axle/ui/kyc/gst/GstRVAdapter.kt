@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.kyc.gst
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter

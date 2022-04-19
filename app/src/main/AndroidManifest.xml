@@ -215,6 +215,25 @@
         <activity
             android:name=".ui.kyc.identityverification.IdentityVerificationActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".ui.kyc.address.AddressActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.businessverification.BusinessVerificationActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.kyc.identityverification.IdentityVerificationActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.onboarding.BasicDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.searchcitystate.SearchCityStateActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.searchcitystate.SearchOriginCityActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
