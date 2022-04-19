@@ -30,7 +30,7 @@
                 android:orientation="vertical"
                 android:paddingStart="@dimen/size_24dp"
                 android:paddingEnd="@dimen/size_24dp"
-                android:paddingBottom="@dimen/size_48dp">
+                android:paddingBottom="@dimen/size_24dp">
                 <ProgressBar
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
@@ -74,15 +74,7 @@
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/account_num_lay"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/size_8dp"
-                    android:layout_width="match_parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/account_num_textView"
-                    android:background="@drawable/bg_all_round_corner_blue_selector"
-                    android:padding="@dimen/size_1dp"
-                    >
+
                 <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                     android:id="@+id/account_num_edittext"
                     android:layout_width="match_parent"
@@ -91,14 +83,13 @@
                     android:text="@={ viewModel.accountText }"
                     android:layout_marginTop="@dimen/size_8dp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_num_textView"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp"
-                    android:hint="@string/hint_owned_truck"
+                    android:hint="@string/hint_account_num"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/IFSC_textView"
                     android:layout_width="wrap_content"
@@ -107,20 +98,12 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/account_num_lay"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_num_edittext"
                     android:text="@string/sub_label_ifsc"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                 <androidx.constraintlayout.widget.ConstraintLayout
-                     android:id="@+id/ifsc_edittext_lay"
-                     android:layout_height="wrap_content"
-                     android:layout_width="match_parent"
-                     android:layout_margin="@dimen/size_8dp"
-                     bind:layout_constraintTop_toBottomOf="@+id/IFSC_textView"
-                    android:background="@drawable/bg_all_round_corner_blue_selector"
-                    android:padding="@dimen/size_1dp"
-                     >
+
                 <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                     android:id="@+id/ifsc_edittext"
                     android:layout_width="match_parent"
@@ -129,15 +112,14 @@
                     android:text= "@={ viewModel.ifscText }"
                     android:layout_marginTop="@dimen/size_8dp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/IFSC_textView"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp"
-                    android:hint="@string/hint_attached_truck"
+                    android:hint="@string/sub_label_ifsc"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
 
                     />
-                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_textView"
                     android:layout_width="wrap_content"
@@ -146,20 +128,12 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/ifsc_edittext_lay"
+                    bind:layout_constraintTop_toBottomOf="@+id/ifsc_edittext"
                     android:text="@string/sub_label_account_holder"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/account_holder_edittext_lay"
-                     android:layout_height="wrap_content"
-                     android:layout_width="match_parent"
-                     android:layout_margin="@dimen/size_8dp"
-                    bind:layout_constraintTop_toBottomOf="@+id/account_holder_textView"
-                    android:background="@drawable/bg_all_round_corner_blue_selector"
-                    android:padding="@dimen/size_1dp"
-                     >
+
                 <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                     android:id="@+id/account_holder_edittext"
                     android:layout_width="match_parent"
@@ -168,17 +142,14 @@
                     android:text= "@={ viewModel.accountHolderText }"
                     android:layout_marginTop="@dimen/size_8dp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_holder_textView"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp"
-                    android:hint="@string/hint_attached_truck"
+                    android:hint="@string/sub_label_account_holder"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
 
                     />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_warning"
@@ -189,7 +160,7 @@
                     android:drawablePadding="@dimen/size_8dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/account_holder_edittext_lay"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_holder_edittext"
                     android:text="@string/account_holder_name_warning"
                     android:textColor="@color/destructive_red"
                     android:textSize="@dimen/text_14sp"
@@ -411,22 +382,25 @@
                     bind:layout_constraintTop_toBottomOf="@+id/upload_doc1"
                     android:text="@string/name_declarion_text"
                     />
-
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_submit"
                     style="@style/ActionButton"
                     android:enabled="false"
                     android:textAllCaps="false"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/name_declaration"
-                    android:layout_alignParentBottom="true"
+                    bind:layout_constraintTop_toBottomOf="@id/name_declaration"
                     android:layout_width="match_parent"
                     android:layout_marginTop="@dimen/size_32dp"
                     android:text="@string/action_submit_details"
                     />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </androidx.core.widget.NestedScrollView>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </layout>
 
 

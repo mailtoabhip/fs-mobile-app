@@ -20,5 +20,12 @@ data class UpdateUserRequest (
     @SerializedName("rc_number") val rcNumber:String? =null,
     @SerializedName("cin_number") val cinNumber:String? =null,
     @SerializedName("udyog_aadhaar_number") val udyogAadhaarNumber:String? =null,
-    @SerializedName("shop_establishment_number") val shopEstablishmentNumber:String? =null
-)
+    @SerializedName("shop_establishment_number") val shopEstablishmentNumber:String? =null,
+    @SerializedName("number_of_owned_trucks") val numberOfOwnedTrucks:Int? =null,
+    @SerializedName("number_of_attached_trucks") val numberOfAttachedTrucks:Int? =null,
+    @SerializedName("account_number") val accountNumber:String? =null,
+    @SerializedName("ifsc_code") val ifscCode:String? =null,
+    @SerializedName("account_holder_name") val accountHolderName:String? =null
+
+
+    )

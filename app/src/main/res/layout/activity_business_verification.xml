@@ -10,6 +10,11 @@
         <import type="android.view.View" />
 
     </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blue_bg"
+        android:orientation="vertical">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,6 +29,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -190,7 +196,7 @@
                 android:id="@+id/radio_lay"
                 bind:layout_constraintTop_toBottomOf="@+id/verification_desc"
                 android:layout_height="wrap_content">
-                <androidx.appcompat.widget.AppCompatRadioButton
+                <RadioButton
                     android:id="@+id/text_truck"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/edit_text_height"
@@ -204,7 +210,7 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                <androidx.appcompat.widget.AppCompatRadioButton
+                <RadioButton
                     android:id="@+id/text_LR"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"
@@ -234,7 +240,6 @@
 
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:background="@drawable/bg_all_round_corner_blue_selector"
                     android:id="@+id/layout_truckrd"
                     android:padding="@dimen/size_1dp"
                     bind:layout_constraintTop_toTopOf="parent"
@@ -283,10 +288,10 @@
                 android:layout_width="match_parent"
                 android:id="@+id/layout_upload_LR"
                 android:visibility="gone"
-                bind:layout_constraintTop_toTopOf="parent"
                 android:layout_height="wrap_content"
                 bind:layout_constraintTop_toBottomOf="@+id/radio_lay"
-                bind:layout_constraintStart_toStartOf="parent">
+                bind:layout_constraintStart_toStartOf="parent"
+                >
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/upload_icon"
                     android:layout_width="@dimen/size_16dp"
@@ -308,21 +313,81 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_verify_business"
-                style="@style/ActionButton"
-                android:enabled="false"
-                android:textAllCaps="false"
-                bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
-                android:layout_alignParentBottom="true"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/doc_uploaded_lay"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/size_32dp"
-                android:text="@string/action_submit_details"
-                />
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                bind:layout_constraintTop_toBottomOf="@+id/radio_lay"
+                bind:layout_constraintStart_toStartOf="parent"
+                >
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/doc_icon"
+                    android:layout_width="@dimen/size_48dp"
+                    android:layout_height="@dimen/size_48dp"
+                    bind:srcCompat="@drawable/ic_doc_business"
+                    android:layout_marginStart="@dimen/size_2dp"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintLeft_toLeftOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/doc_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginHorizontal="@dimen/size_16dp"
+                    bind:layout_constraintEnd_toStartOf="@+id/doc_remove"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="@dimen/size_30dp"
+                    android:textSize="@dimen/text_14sp"
+                    bind:layout_constraintStart_toEndOf="@+id/doc_icon"
+                    android:text="IMG_344_988"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="0dp"
+                    android:id="@+id/doc_size"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    bind:layout_constraintTop_toBottomOf="@+id/doc_title"
+                    android:textSize="@dimen/size_12dp"
+                    android:textColor="@color/color_hint"
+                    bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
+                    android:text="233kb"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/doc_remove"
+                    android:layout_width="@dimen/size_20dp"
+                    android:layout_height="@dimen/size_20dp"
+                    bind:srcCompat="@drawable/ic_remove"
+                    android:layout_marginStart="@dimen/size_2dp"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent"
+                    bind:layout_constraintRight_toRightOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_verify_business"
+            style="@style/ActionButton"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:enabled="false"
+            android:textAllCaps="false"
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintBottom_toBottomOf="parent"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/size_32dp"
+            android:text="@string/action_proceed_account"
+            />
+    </RelativeLayout>
+
 </layout>
 
 

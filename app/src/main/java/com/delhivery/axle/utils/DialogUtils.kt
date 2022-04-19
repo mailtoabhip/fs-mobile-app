@@ -507,12 +507,17 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonSubmit.setOnClickListener {
-            dialogUtilsInterface.sendDocForVerification(uploadArray)
+          //  dialogUtilsInterface.sendDocForVerification(uploadArray)
             dialog.dismiss()
         }
 
         bindingDialog.buttonUploadMore.setOnClickListener {
-            val imageName = "Aadhaar_" + System.currentTimeMillis()+".jpg"
+          var imageName=""
+          if(uploadText==  activity.getString(R.string.label_business)){
+             imageName = "LR_" + System.currentTimeMillis()+".jpg"
+          }else {
+             imageName = "Aadhaar_" + System.currentTimeMillis() + ".jpg"
+          }
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }

@@ -23,6 +23,7 @@ import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewMo
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
@@ -249,6 +250,9 @@ interface ViewModelInjector {
 
 
   fun inject(viewModel: PaymentDetailsViewModel)
+
+  fun inject(viewModel: BankDetailsViewModel)
+
 
   @Component.Builder
   interface Builder {

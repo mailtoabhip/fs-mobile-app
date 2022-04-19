@@ -452,7 +452,7 @@
     <string name="address_proof_attachment">Address proof attachment</string>
     <string name="upload_document">Upload document</string>
     <string name="truck_hint">Truck RC</string>
-    <string name="lr_hint">LR Copy - Loading Note</string>
+    <string name="lr_hint">LR-LN</string>
     <string name="sub_label_step3_4">Step 3 of 4</string>
     <string name="sub_label_address_details">Choose or add an address to use for communication</string>
     <string name="action_add_alternate_address">+ Add alternate address</string>
@@ -495,6 +495,7 @@
     <string name="name_declarion_text"><![CDATA[I declare that the above mentioned bank account belongs to me & I want my advance & balance payment in the same account]]></string>
     <string name="optional_four_c">"194C Declaration (Optional) "</string>
     <string name="label_i_agree">I Agree</string>
+    <string name="hint_account_num">Account Number</string>
 
     <string-array name="array_truck_type">
         <item>Choose Vehicle</item>
@@ -536,5 +537,4 @@
         <item>Fleet Owner</item>
         <item>Transporter</item>
     </string-array>
-    q
 </resources>
