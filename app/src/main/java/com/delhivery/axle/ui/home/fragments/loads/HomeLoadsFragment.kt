@@ -135,7 +135,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       when (it) {
         false -> binding.rvLoads.apply {
           this@HomeLoadsFragment.visible = true
-          binding.routesBanner.visibility = View.VISIBLE
+          binding.routesBanner.visibility = View.GONE
           addOnScrollListener(BannerRVScrollListener())
         }
 

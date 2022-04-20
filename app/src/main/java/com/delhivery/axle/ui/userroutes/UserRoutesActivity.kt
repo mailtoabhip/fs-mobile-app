@@ -175,7 +175,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
     }
     bindingDialog.editRouteLayout.setOnClickListener {
       val bundle = Bundle()
-      bundle.putSerializable(SelectRouteOriginCityExtra, data)
+      bundle.putSerializable(SelectedRouteIntentExtra, data)
       navigationUtils.navigateForActivityResult(
         intent = manageRouteIntent(this@UserRoutesActivity, EditRoute),
         requestCode = REQCODE_EDIT_ROUTE, extras = bundle

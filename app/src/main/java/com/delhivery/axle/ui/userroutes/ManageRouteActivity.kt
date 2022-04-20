@@ -11,6 +11,7 @@ import com.delhivery.axle.data.home.routes.RouteModel
 import com.delhivery.axle.databinding.ActivityManageRouteBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.searchcitystate.CityType
+import com.delhivery.axle.ui.searchcitystate.HaveOldDestinations
 import com.delhivery.axle.ui.searchcitystate.SelectedData
 import com.delhivery.axle.ui.searchcitystate.searchCityIntent
 import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
@@ -72,6 +73,11 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
     binding.editDestination.setOnClickListener {
       val bundle = Bundle()
       bundle.putString(CityType,"destination")
+      if(binding.editDestination.text.isNullOrEmpty()){
+        bundle.putBoolean(HaveOldDestinations,false)
+      }else{
+        bundle.putBoolean(HaveOldDestinations,true)
+      }
       navigationUtils.navigateForActivityResult(
         intent = searchCityIntent(this@ManageRouteActivity),
         requestCode = REQCODE_DESTINATION_SELECT_CITY, extras = bundle

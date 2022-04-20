@@ -22,11 +22,8 @@ class SplashViewModel @Inject constructor(
    * Post splash state
    */
   fun postState() = when {
-    !globalPrefs.isOnboardingCompleted -> Onboarding
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
-    authenticationRepository.authStatus() && userPrefs.userMode.isEmpty() && getOldUser()-> AccountAction
-    authenticationRepository.authStatus() && userPrefs.userRole.isEmpty()&& getOldUser()-> AccountRole
-    authenticationRepository.authStatus() && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
+    authenticationRepository.authStatus() && userPrefs.hasLoggedIn && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
     else -> Auth
   }
 

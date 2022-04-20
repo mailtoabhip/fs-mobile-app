@@ -18,6 +18,7 @@ import com.delhivery.axle.data.StateModelList
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.ui.searchcitystate.CityType
+import com.delhivery.axle.ui.searchcitystate.HaveOldDestinations
 import com.delhivery.axle.ui.searchcitystate.SelectedData
 import com.delhivery.axle.ui.searchcitystate.searchCityIntent
 import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
@@ -119,6 +120,11 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         binding.editDestination.setOnClickListener {
             val bundle = Bundle()
             bundle.putString(CityType,"destination")
+            if(binding.editDestination.text.isNullOrEmpty()){
+                bundle.putBoolean(HaveOldDestinations,false)
+            }else{
+                bundle.putBoolean(HaveOldDestinations,true)
+            }
             navigationUtils.navigateForActivityResult(
                 intent = searchCityIntent(this@BasicDetailsActivity),
                 requestCode = REQCODE_DESTINATION_SELECT_CITY, extras = bundle
@@ -131,9 +137,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-                val bundle = Bundle()
-                bundle.putInt(StepKey,0)
-                navigationUtils.navigateKyc(this,false,bundle)
+               navigationUtils.navigateOnboardingSteps()
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }
@@ -215,6 +219,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
     fun enableSubmit(){
         binding.btnSubmitDetails.isEnabled = !binding.editDestination.text.isNullOrEmpty() && !binding.editOrigin.text.isNullOrEmpty()&&(binding.checkBoxContainer.isSelected||binding.checkBoxOpenBody.isSelected||binding.checkBoxTrailer.isSelected)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+        finishAffinity()
     }
 }
 

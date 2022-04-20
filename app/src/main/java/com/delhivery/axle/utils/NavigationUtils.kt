@@ -28,8 +28,9 @@ import javax.inject.Inject
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
 import com.delhivery.axle.ui.kyc.address.AddressActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-
+import com.delhivery.axle.utils.extensions.not
 
 /**
  * Navigation Utils, utility class helps for navigation among activity with other options
@@ -289,10 +290,45 @@ class NavigationUtils @Inject constructor(
       }
       this.navigateKyc(context, false, bundle)
     }else{
-        showKycSubmittedDialog()
+      navigateOnboardingSteps()
 
     }
   }
+
+  fun navigateOnboardingSteps(){
+
+    if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+      //do nothing
+
+    }
+    else{
+      if(!userPrefs.isUserVerfied){
+        if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
+          val intent = Intent(activity, BasicDetailsActivity::class.java)
+          this.navigate(intent,true,null)
+        }else if(userPrefs.pancard.isNullOrEmpty()) {
+          val bundle = Bundle()
+          bundle.putInt(StepKey, 0)
+          this.navigateKyc(activity, false, bundle)
+        }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
+          val bundle = Bundle()
+          bundle.putInt(StepKey, 1)
+          this.navigateKyc(activity, false, bundle)
+        }else  if(userPrefs.businessAddress.isNullOrEmpty()){
+          val bundle = Bundle()
+          bundle.putInt(StepKey, 2)
+          this.navigateKyc(activity, false, bundle)
+        }else  if(!userPrefs.userMode.equals("post_load")){
+          if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
+            val bundle = Bundle()
+            bundle.putInt(StepKey, 3)
+            this.navigateKyc(activity, false, bundle)
+          }
+        }
+
+        }
+      }
+    }
 
   fun getNavigationPercentage(currentStep: Int, totalStep: Int):Int{
     return (currentStep*100)/totalStep
@@ -356,6 +392,8 @@ class NavigationUtils @Inject constructor(
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }
+
+
 const val StepKey = "step"
 const val CurrentStepKey = "current_step"
 const val TotalStepsKey = "total_steps"

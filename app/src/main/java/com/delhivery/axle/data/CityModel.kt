@@ -119,8 +119,6 @@ val CityStateModelList = listOf(
   CityModel("Uttarakhand", "UK", "","Uttarakhand","state"),
   CityModel("West bengal", "WB", "","West bengal","state")
 )
-const val CitySelected = "city_selected"
-
 
 /**
  * Cluster Response

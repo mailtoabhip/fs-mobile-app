@@ -68,6 +68,8 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
         onLocationButtonClicked()
 
+        userPrefs.hasLoggedIn = false
+
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
 
@@ -116,8 +118,6 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.updateUserStatusLiveData.postValue(null)
-        startActivity(accountRoleIntent(this, viewModel.mode, viewModel.role))
     }
 
     override fun updateLocationFlowState(flowState: LocationFlowState) {
@@ -142,7 +142,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         )
                     }
                     /* Login success, No user routes found - select route activity */
-                    AuthenticationUIState.SelectRoute -> {
+                   /* AuthenticationUIState.SelectRoute -> {
                         userPrefs.firstRoute = true
                         uiUtils.showProgress()
                         val bundle = Bundle()
@@ -154,7 +154,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                             intent,
                                 requestCode = REQCODE_ADD_ROUTES, extras = bundle, finishAfter = true
                         )
-                    }
+                    }*/
                     /* Login success, user routes found - navigate to load requests */
                     AuthenticationUIState.LoadRequest -> {
                         uiUtils.showProgress()
@@ -163,14 +163,14 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         startActivity(intent)
                     }
                     /* otp verified, account set up needed */
-                    AuthenticationUIState.AccountRole -> {
+                   /* AuthenticationUIState.AccountRole -> {
                         uiUtils.showProgress("Loading...")
                         navigationUtils.navigate(AccountRoleActivity::class.java, false)
                     }
                     AuthenticationUIState.AccountAction -> {
                         uiUtils.showProgress("Loading...")
                         navigationUtils.navigate(AccountActionActivity::class.java, false)
-                    }
+                    }*/
                     AuthenticationUIState.AccountDetails -> {
                         uiUtils.showProgress("Loading...")
                         navigationUtils.navigate(AccountDetailsActivity::class.java, false)

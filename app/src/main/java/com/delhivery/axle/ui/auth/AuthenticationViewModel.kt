@@ -110,20 +110,20 @@ class AuthenticationViewModel @Inject constructor(
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
                 LoadRequest
-              } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+              } else /*if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) */{
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest
-              }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+            /*  }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
-                AddInventoryPathway
-              } else {
+                AddInventoryPathway*/
+              }/* else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.hasEditedRoute = true
                 userPrefs.lastLoginTime = Date().time
                 SelectRoute
-              }
+              }*/
             }else{
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
@@ -137,20 +137,20 @@ class AuthenticationViewModel @Inject constructor(
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                 userPrefs.hasLoggedIn = false
                 AccountDetails
-              }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
+             /* }else if ((_res.third.vendorEntity.equals("RP") ||_res.third.vendorEntity.equals("BOTH"))&& userPrefs.firstLoginRPUser) {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
-                AddInventoryPathway
-              }  else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+                AddInventoryPathway*/
+              }  else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest
-              } else {
+              }/* else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.hasEditedRoute = true
                 userPrefs.lastLoginTime = Date().time
                 SelectRoute
-              }
+              }*/
             }
           } else {
             if (error is HttpException) {

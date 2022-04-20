@@ -247,11 +247,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
     } else {
       when (state) {
-        Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
         Home -> HomeActivity::class
-        AccountAction -> AccountActionActivity::class
-        AccountRole-> AccountRoleActivity::class
         AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()

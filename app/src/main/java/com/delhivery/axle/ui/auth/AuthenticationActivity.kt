@@ -278,7 +278,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.showProgress("Loading...")
           }
           /* Login success, No user routes found - select route activity */
-          SelectRoute -> {
+         /* SelectRoute -> {
             userPrefs.firstRoute = true
             // Capture event
             analyticsUtil.trackEvent(
@@ -293,9 +293,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                     intent = selectRouteIntent(this@AuthenticationActivity),
                     requestCode = REQCODE_ADD_ROUTES, extras = bundle
             )
-          }
+          }*/
           /* Login success, user first time login with entity as RP/Both */
-          AddInventoryPathway -> {
+         /* AddInventoryPathway -> {
             userPrefs.firstLoginRPUser = false
             // Capture event
             analyticsUtil.trackEvent(
@@ -305,7 +305,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             )
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(AddTruckPathwayActivity::class.java, true)
-          }
+          }*/
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
             // Capture event
@@ -318,17 +318,17 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           /* otp verified, account set up needed */
-          AccountRole -> {
+        /*  AccountRole -> {
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountRoleActivity::class.java, false)
-          }
-          AccountAction -> {
+          }*/
+        /*  AccountAction -> {
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountActionActivity::class.java, false)
-          }
+          }*/
           AccountDetails -> {
             uiUtils.showProgress("Loading...")
-            navigationUtils.navigate(AccountDetailsActivity::class.java, false)
+            navigationUtils.navigate(AccountDetailsActivity::class.java, true)
           }
           Disabled -> {
             uiUtils.hideDelhiveryProgress()

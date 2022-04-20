@@ -56,6 +56,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         super.onCreate(savedInstanceState)
 
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
+        viewModel.haveOldDestinations = intent.getBooleanExtra(HaveOldDestinations,false)
 
     }
 
@@ -146,17 +147,19 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
             })
             finish()
         }
-
-        if(selectedCityStates.size>0){
-            for(item in selectedCityStates){
-                selectedAdapter.operation(SearchDataItem(item),DataRVAdapterOperationType.Add)
-            }
-            adapter.notifyDataSetChanged()
-            selectedAdapter.notifyDataSetChanged()
-            popularAdapter.notifyDataSetChanged()
-            binding.btnSaveDestination.isEnabled =true
-        }
-
+         if(viewModel.haveOldDestinations) {
+             if (selectedCityStates.size > 0) {
+                 for (item in selectedCityStates) {
+                     selectedAdapter.operation(SearchDataItem(item), DataRVAdapterOperationType.Add)
+                 }
+                 adapter.notifyDataSetChanged()
+                 selectedAdapter.notifyDataSetChanged()
+                 popularAdapter.notifyDataSetChanged()
+                 binding.btnSaveDestination.isEnabled = true
+             }
+         }else{
+             selectedCityStates.clear()
+         }
     }
 
     override fun handleAction(
@@ -199,6 +202,8 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
 private const val FromDialog = "from_dialog"
 const val CityType = "city_type"
 const val SelectedData = "selected_data"
+const val HaveOldDestinations = "have_old_destinations"
+
 
 
 /**

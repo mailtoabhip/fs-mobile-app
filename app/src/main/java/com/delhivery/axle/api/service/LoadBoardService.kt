@@ -187,4 +187,13 @@ interface LoadBoardService {
     @Path("uuid") userId: String,
     @Body updateRouteRequest: UpdateRouteRequest
   ): Single<BaseMessageResponse>
+
+  /**
+   * get popular locations
+   */
+  @GET("/popular_locations")
+  fun getPopularLocations(
+    @Query("user_id") userId: String
+  ): Single<BaseResponse<List<PopularLocationsResponse>>>
+
 }

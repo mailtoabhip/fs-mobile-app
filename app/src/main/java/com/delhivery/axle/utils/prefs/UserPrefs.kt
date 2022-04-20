@@ -773,7 +773,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.lanesPreference)
       .apply()
-        .apply()
     editor.remove(PrefKeys.ParentId)
       .apply()
     editor.remove(PrefKeys.ParentName)
@@ -784,45 +783,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   }
 
   fun saveUser(user: UserModel) {
-      userName = user.name
-      onboardingStatus = user.onboardingStatus ?: "na"
-      supplierEnabled = user.supplierEnabled
-      isTestUser = user.testUser
-      tdsRate = user.getTDSSubtractor()
-      updatedTdsRate =
-          if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
-      bankName = user.bank ?: ""
-      companyName = user.companyName ?: ""
-      phoneNumber = user.phoneNo
-      ifscCode = user.ifscCode ?: ""
-      pancard = user.panCardNo ?: ""
-      accNumber = user.accNumber()
-      cityCode = user.baseCityCode
-      isParent = user.isParent()
-      userType = user.userType ?: ""
-      truckTypes = if (user.isParent()) {
-          user.truckTypes?.joinToString(separator = ",") { it }
-      } else {
-          user.parentDetails?.truckTypes?.joinToString(separator = ",") { it }
-      }
-      demandType = user.demandType.joinToString(separator = ",") { it }
-      userPerformance = user.overallPerformance ?: ""
-      vendorEntity = user.vendorEntity ?: ""
-      parentId = if (user.isParent()) {
-          user.userId
-      } else {
-          user.parentDetails?.userId ?: ""
-      }
-      parentName = if (user.isParent()) {
-          user.name
-      } else {
-          user.parentDetails?.name ?: ""
-      }
-      parentDemandType = if (user.isParent()) {
-          user.demandType.joinToString(separator = ",") { it }
-      } else {
-          user.parentDetails?.demandType?.joinToString(separator = ",") { it }
-      }
     userName = user.userName?:""
     onboardingStatus = user.supplierDetails?.onboardingStatus ?: "na"
     supplierEnabled = user.isSpEnabled
@@ -834,7 +794,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     companyName = user.businessName ?: ""
     phoneNumber = user.phoneNumber
     ifscCode = user.supplierDetails?.ifscCode ?: ""
-    pancard = user.panNumber ?: ""
+    pancard = user.supplierDetails?.panNumber ?: ""
     accNumber = user.accNumber()
     cityCode = user.supplierDetails?.baseCityCode
     isParent = user.isParent()
@@ -850,9 +810,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
     isUserVerfied = user.isUserVerified
-    aadhaarNumber = user.aadhaarNumber?: ""
-    gstNumber = user.gstNumber?: ""
-    rcNumber = user.rcNumber?: ""
+    aadhaarNumber = user.supplierDetails?.aadhaarNumber?: ""
+    gstNumber = user.supplierDetails?.gstNumber?: ""
+    rcNumber = user.supplierDetails?.rcNumber?: ""
     businessAddress = user.businessAddress?: ""
     setAddressList(user.otherAddress)
     isPanVerfied = user.isPanVerified?: false
@@ -874,7 +834,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   }
 
 
-  }
   fun canBid() = if (supplierEnabled) {
     when (onboardingStatus) {
       "approved" -> APPROVED

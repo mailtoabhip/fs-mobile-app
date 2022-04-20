@@ -142,4 +142,9 @@ class LoadboardRepository @Inject constructor(
      */
     fun deleteRouteDetails(uuid:String,updateRouteRequest: UpdateRouteRequest) = loadboardService.deleteRoute(uuid,updateRouteRequest).convertMessageResponse()
 
+    /**
+     *get popular locations
+     */
+    fun getPopularLocations(uuid:String) = loadboardService.getPopularLocations(uuid).convertResponse()
+
 }

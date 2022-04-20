@@ -83,39 +83,39 @@ class AccountDetailsViewModel @Inject constructor(
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                                 userPrefs.hasLoggedIn = false
                                 Disabled
-                            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+                            } else /*if (_res.third.hasRoutes() && userPrefs.hasEditedRoute)*/ {
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.lastLoginTime = Date().time
                                 LoadRequest
-                            } else {
+                            }/* else {
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.hasEditedRoute = true
                                 userPrefs.lastLoginTime = Date().time
                                 SelectRoute
-                            }
+                            }*/
                         }else{
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                                 userPrefs.hasLoggedIn = false
                                 Disabled
-                            }else if (_res.third.userMode.isNullOrEmpty() ) {
+                           /* }else if (_res.third.userMode.isNullOrEmpty() ) {
                                 userPrefs.hasLoggedIn = false
                                 AccountAction
                             } else if (_res.third.userRole.isNullOrEmpty()) {
                                 userPrefs.hasLoggedIn = false
-                                AuthenticationUIState.AccountRole
+                                AuthenticationUIState.AccountRole*/
                             }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                                 userPrefs.hasLoggedIn = false
                                 AccountDetails
-                            } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+                            } else/* if (_res.third.hasRoutes() && userPrefs.hasEditedRoute)*/ {
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.lastLoginTime = Date().time
                                 LoadRequest
-                            } else {
+                            }/* else {
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.hasEditedRoute = true
                                 userPrefs.lastLoginTime = Date().time
                                 SelectRoute
-                            }
+                            }*/
                         }
                     } else {
                         if (error is HttpException) {

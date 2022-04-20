@@ -94,24 +94,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromNotification = false
     fromDeepLink = false
 
-    if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
-      //do nothing
+    navigationUtils.navigateOnboardingSteps()
 
-    }
-     else{
-      if(!userPrefs.isUserVerfied && userPrefs.noOfVerificationIssues.isNullOrEmpty()){
-        if(userPrefs.pancard.isNullOrEmpty()) {
-          showKycDialog(0)
-        }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
-          showKycDialog(1)
-        }else  if(userPrefs.businessAddress.isNullOrEmpty()){
-          showKycDialog(2)
-        }else  if(!userPrefs.userMode.equals("post_load")){
-          if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded)
-          showKycDialog(3)
-        }
-      }
-    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -432,41 +416,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     startActivity(userTripsIntent(this, "payment_view", 0))
 
   }
-
-  /*show KYC dialog*/
-  private fun showKycDialog(step: Int) {
-    val dialog = Dialog(this)
-    val bindingDialog= DialogKycStartBinding.inflate(layoutInflater)
-    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-    dialog.setContentView(bindingDialog.root)
-
-    bindingDialog.buttonStart.setOnClickListener {
-      try {
-
-        val bundle = Bundle()
-        bundle.putInt(StepKey, step)
-        navigationUtils.navigateKyc(this, false, bundle)
-
-        dialog.dismiss()
-      }catch (e:Exception){
-        dialog.dismiss()
-        e.printStackTrace()
-      }
-    }
-
-    bindingDialog.buttonCancel.setOnClickListener {
-      dialog.dismiss()
-    }
-
-    dialog.show()
-    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-    dialog.window!!.setGravity(Gravity.BOTTOM)
-  }
-
-
-
 
 }
 
