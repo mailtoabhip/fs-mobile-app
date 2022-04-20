@@ -14,6 +14,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.WebViewClient
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -506,12 +507,17 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonSubmit.setOnClickListener {
-            dialogUtilsInterface.sendDocForVerification(uploadArray)
+          //  dialogUtilsInterface.sendDocForVerification(uploadArray)
             dialog.dismiss()
         }
 
         bindingDialog.buttonUploadMore.setOnClickListener {
-            val imageName = "Aadhaar_" + System.currentTimeMillis()+".jpg"
+          var imageName=""
+          if(uploadText==  activity.getString(R.string.label_business)){
+             imageName = "LR_" + System.currentTimeMillis()+".jpg"
+          }else {
+             imageName = "Aadhaar_" + System.currentTimeMillis() + ".jpg"
+          }
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }
@@ -578,6 +584,10 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
+
+
+
+
 
 }
 

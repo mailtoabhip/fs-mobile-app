@@ -1,40 +1,33 @@
-package com.delhivery.axle.ui.businessverification
+package com.delhivery.axle.ui.paymentdetails
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.widget.RadioGroup
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
 import androidx.databinding.library.BuildConfig
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
-import com.delhivery.axle.databinding.DialogKycSubmittedBinding
-//import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
+import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
+import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
+import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.DialogUtilsInterface
+import com.delhivery.axle.utils.FileCompressor
+import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.REQCODE_CAMERA
+import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
+import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -46,8 +39,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-
-class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding,BusinessVerificationViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, PaymentDetailsViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
     UploadedItemRVAdapterInterface {
 
     private var isCamera: Boolean = false
@@ -66,200 +58,152 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     lateinit var userPrefs: UserPrefs
 
 
-    val awsPath = "loadboard/lr/"
+    val awsPath = "loadboard/payment/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
-
-    var truckNum =false
-    var ownedTruck =false
-    var attachedTruck =false
+    var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
+    var accountNum=false
+    var accountName=false
+    var ifsc = false
+    var docUpload =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.editTruck.visibility=View.VISIBLE
-        binding.layoutTruckrd.isSelected=true
-        binding.layoutUploadLR.isSelected=false
-        binding.textLR.isChecked=false
-        binding.textTruck.isChecked=true
-        if(intent?.extras!=null){
-            viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
-                TotalStepsKey)!!)
-            if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
-                binding.businessError.visibility=View.VISIBLE
-                viewModel.errorText = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
-            }else{
-                binding.businessError.visibility=View.GONE
-            }
-        }
-
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        setSupportActionBar(binding.progressStepLayout.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
-
-        if(userPrefs.retryVerification){
-            binding.btnVerifyBusiness.setText(R.string.action_retry_verification)
-        }
-
-        binding.textTruck.setOnClickListener{
-            binding.editTruck.visibility=View.VISIBLE
-            binding.layoutTruckrd.isSelected=true
-            binding.layoutUploadLR.isSelected=false
-            binding.textLR.isChecked=false
-            truckNum=false
-            setSubmitButtonEnable()
-            binding.layoutUploadLR.visibility=View.GONE
-            binding.textTruck.isChecked=true
-            binding.layoutTruckrd.visibility=View.VISIBLE
-
-        }
-        viewModel.truckNumber.observe(this, Observer {
-            if(it.length>=9){
-                truckNum=true
-                setSubmitButtonEnable()
+        viewModel.accountHolderText.observe(this, Observer {
+            if(userPrefs.bankName.equals(it,true)){
+                binding.accountHolderWarning.visibility= View.GONE
+                binding.nameDeclaration.visibility=View.GONE
             }else{
-                truckNum=false
-                setSubmitButtonEnable()
+                binding.accountHolderWarning.visibility= View.VISIBLE
+                binding.nameDeclaration.visibility=View.VISIBLE
+
             }
         })
-
-        binding.ownedTrucksEdittext.lengthAction(1){
-            ownedTruck=true
-            setSubmitButtonEnable()
-        }
-        binding.ownedTrucksEdittext.lengthAction(0){
-            ownedTruck=false
-            setSubmitButtonEnable()
-        }
-        binding.attachedTrucksEdittext.lengthAction(1){
-            attachedTruck=true
-            setSubmitButtonEnable()
-        }
-         binding.attachedTrucksEdittext.lengthAction(0){
-            attachedTruck=false
-            setSubmitButtonEnable()
-        }
 
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
-        viewModel.rcVerificationErrorMsg.observe(this, Observer {
-            binding.editTruck.error=true
-            ViewCompat.setElevation(binding.imgWrong, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
-            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.error_red))
-            binding.rcErrorMsg.visibility=View.VISIBLE
-            binding.imgWrong.visibility = View.VISIBLE
-            binding.rcErrorMsg.setText(it)
-        })
-        viewModel.userUpdateLiveData.observe(this, Observer {
-            if(it){
-                if(userPrefs.retryVerification){
-                    userPrefs.rcRejectReason= ""
-                }
-                   navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-           TotalStepsKey)!!,null)
-            }
-        })
 
-        viewModel.manualVerificationRequired.observe(this, Observer {
-            if(it) {
-                viewModel.selected.value = "rc"
-                dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
-            }else{
-                //show successfully submitted page
-                    if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
-                        viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
-                    }
-
-            }
-        })
         viewModel.verificationDocUploadMsg.observe(this, Observer {
-            //show successfully submitted page
-            viewModel.updateUserDetails()
+                if(viewModel.selected194CUpload.value==true){
+                    sendDocForVerification(uploadArray1)
+                    viewModel.selected194CUpload.value=false
+                }else{
+                   viewModel.updateUserDetails()
+                }
         })
 
-        binding.editTruck.lengthAction(8){
-            binding.rcErrorMsg.visibility =  View.GONE
-            binding.imgWrong.visibility =  View.GONE
-            binding.editTruck.error= false
-            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
-        }
 
-
-        binding.textLR.setOnClickListener{
-            binding.editTruck.visibility=View.GONE
-            binding.textLR.isChecked=true
-            binding.rcErrorMsg.visibility=View.GONE
-            binding.imgWrong.visibility = View.GONE
-            binding.editTruck.error= false
-            binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
-            binding.textTruck.isChecked=false
-            binding.layoutUploadLR.isSelected=true
-            binding.layoutTruckrd.isSelected=false
-            binding.layoutTruckrd.visibility=View.GONE
-            binding.layoutUploadLR.visibility=View.VISIBLE
-            truckNum=false
-            setSubmitButtonEnable()
-            viewModel.selected.value="lr"
-
-        }
-        binding.layoutUploadLR.setOnClickListener {
-            val imageName = "LR_doc_" + System.currentTimeMillis()+".jpg"
-            captureImage(imageName, imageName)
-        }
-
-        binding.btnVerifyBusiness.setOnClickListener {
-            if(binding.textTruck.isChecked){
-                if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
-                    viewModel.validateRC(viewModel.truckNumber.value!!)
-                }
-            }else{
-                sendDocForVerification(uploadArray)
+// 194c upload condition
+        if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
+            if (userPrefs.ownedTruck.toInt() <= 10) {
+                binding.uploadDoc1.visibility = View.VISIBLE
+            } else {
+                binding.uploadDoc1.visibility = View.GONE
             }
-            viewModel.ownedTruck.value=binding.ownedTrucksEdittext.text.toString()
-            viewModel.attachedTruck.value=binding.attachedTrucksEdittext.text.toString()
-
+        }
+    // show error reject
+        userPrefs.identityRejectReason=""
+        if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.visibility=View.VISIBLE
+        }else{
+            binding.paymentError.visibility=View.GONE
         }
 
+        binding.btnSubmit.setOnClickListener {
+          sendDocForVerification(uploadArray)
+            if(binding.nameDeclaration.isChecked){
+                viewModel.nameDeclaration=true
+            }else{
+                viewModel.nameDeclaration=false
+            }
+        }
+        binding.uploadDocLay.setOnClickListener {
+            val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
+            captureImage(imageName, imageName)
+            viewModel.selected194CUpload.value=false
+        }
+        binding.uploadDocLay1.setOnClickListener {
+            val imageName = "194C_" + System.currentTimeMillis()+".jpg"
+            captureImage(imageName, imageName)
+            viewModel.selected194CUpload.value=true
+        }
         binding.docRemove.setOnClickListener {
             showUploadImage()
         }
+        binding.docRemove1.setOnClickListener {
+            showUploadImage1()
+            viewModel.selected194CUpload.value=false
+
+        }
+        viewModel.accountText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                accountNum=true
+                enableSubmitButton()
+            }else{
+                accountNum=false
+                enableSubmitButton()
+            }
+        })
+        viewModel.accountHolderText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                accountName=true
+                enableSubmitButton()
+            }else{
+                accountName=false
+                enableSubmitButton()
+            }
+        })
+        viewModel.ifscText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                ifsc=true
+                enableSubmitButton()
+            }else{
+                ifsc=false
+                enableSubmitButton()
+            }
+        })
+
+
 
     }
 
-    fun setSubmitButtonEnable(){
-        if(attachedTruck && ownedTruck && truckNum ){
-            binding.btnVerifyBusiness.isEnabled=true
+    fun enableSubmitButton(){
+        if(accountName&&accountNum&&ifsc&&docUpload) {
+            binding.btnSubmit.isEnabled = true
         }else{
-            binding.btnVerifyBusiness.isEnabled=false
+            binding.btnSubmit.isEnabled = false
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,2)
-        navigationUtils.navigateKyc(this,true,bundle)
-    }
+    override fun layoutId() = R.layout.activity_payment_details
+
+    override fun requireConnection() =true
+
+    override fun getViewModelClass()= PaymentDetailsViewModel::class.java
     override fun onAWSSuccess(
         path: String
     ) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
-        showFileSelected()
+        if(viewModel.selected194CUpload.value != true){
+            uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected()
+
+        }else{
+            uploadArray1.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected1()
+        }
         resetUploadData()
     }
 
     override fun onAWSFailure() {
         uiUtils.hideProgress()
         uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
         resetUploadData()
     }
 
@@ -334,8 +278,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        if(viewModel.selected194CUpload.value != true) {
+            this.uploadImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }else{
+            this.uploadImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -350,25 +303,42 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     }
 
     private fun showFileSelected() {
-        binding.layoutUploadLR.visibility=View.GONE
+        binding.uploadDocLay.visibility=View.GONE
         binding.docUploadedLay.visibility=View.VISIBLE
         binding.docTitle.setText(uploadArray.get(0).first)
         binding.docSize.setText(uploadArray.get(0).second+" KB")
-        truckNum=true
-        setSubmitButtonEnable()
+        docUpload=true
+        enableSubmitButton()
+
+    }
+    private fun showFileSelected1() {
+        binding.uploadDocLay1.visibility=View.GONE
+        binding.docUploadedLay1.visibility=View.VISIBLE
+        binding.docTitle1.setText(uploadArray1.get(0).first)
+        binding.docSize1.setText(uploadArray1.get(0).second+" KB")
+
     }
 
     private fun showUploadImage() {
-        binding.layoutUploadLR.visibility=View.VISIBLE
+        binding.uploadDocLay.visibility=View.VISIBLE
         binding.docUploadedLay.visibility=View.GONE
         if(uploadArray.size>0){
             uploadArray.clear()
         }
-        truckNum=false
-        setSubmitButtonEnable()
+        docUpload=false
+        enableSubmitButton()
+
+    }
+    private fun showUploadImage1() {
+        binding.uploadDocLay1.visibility=View.VISIBLE
+        binding.docUploadedLay1.visibility=View.GONE
+        if(uploadArray1.size>0){
+            uploadArray1.clear()
+        }
+
     }
 
-     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+    override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
             val imageUrls= mutableListOf<String>()
             val s3url= awsUtils.awsBasePath()
@@ -382,21 +352,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         uploadArray.clear()
     }
 
-    private fun showKycSubmittedDialog() {
-        val dialog = Dialog(this)
-        val bindingDialog= DialogKycSubmittedBinding.inflate(layoutInflater)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-        dialog.show()
-        Handler().postDelayed({
-            dialog.dismiss()
-            //change flow as per config
-            navigationUtils.navigate(HomeActivity::class.java, true)
-         /*     navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-            TotalStepsKey)!!,null)*/
-        }, 2000)
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
+
     private fun createImageFile(): File {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(localImageName, ".jpg", storageDir)
@@ -449,7 +405,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                 }
             }
-            REQCODE_FILE_ATTACHMENTS->{
+            REQCODE_FILE_ATTACHMENTS ->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
                         val selectedFile = data?.data
@@ -465,8 +421,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(viewModel.selected194CUpload.value != true) {
+                            this.uploadImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }else{
+                            this.uploadImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
@@ -492,14 +457,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun handleDeleteAction(item: Pair<String, String>) {
         uploadArray.remove(item)
     }
-
-
-    override fun getViewModelClass()= BusinessVerificationViewModel::class.java
-
-    override fun layoutId()=R.layout.activity_business_verification
-
-    override fun requireConnection()= false
-
 
 
 }

@@ -37,6 +37,8 @@ import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
@@ -353,6 +355,15 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(IdentityVerificationViewModel::class)
   abstract fun bindIdentityVerificationViewModel(viewModel:IdentityVerificationViewModel): ViewModel
 
+  @Binds
+  @IntoMap
+  @ViewModelScope(PaymentDetailsViewModel::class)
+  abstract fun bindPaymentDetailsViewModel(viewModel: PaymentDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BankDetailsViewModel::class)
+  abstract fun bindBankDetailsViewModel(viewModel: BankDetailsViewModel): ViewModel
   @Binds
   @IntoMap
   @ViewModelScope(BasicDetailsViewModel::class)

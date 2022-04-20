@@ -35,3 +35,14 @@ data class RouteDetails(
     @SerializedName("location") var location: String?=null,
     @SerializedName("location_type") var locationType: String?=null
 )
+    @SerializedName("shop_establishment_number") val shopEstablishmentNumber:String? =null,
+    @SerializedName("number_of_owned_trucks") val numberOfOwnedTrucks:Int? =null,
+    @SerializedName("number_of_attached_trucks") val numberOfAttachedTrucks:Int? =null,
+    @SerializedName("account_number") val accountNumber:String? =null,
+    @SerializedName("ifsc_code") val ifscCode:String? =null,
+    @SerializedName("account_holder_name") val accountHolderName:String? =null,
+    @SerializedName("name_declaration") val nameDeclaration:String? =null
+
+
+
+    )

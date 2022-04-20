@@ -60,7 +60,7 @@ BaseViewModel() {
                     documentProofType.equals("Visiting Card")->"visiting_card"
                     documentProofType.equals("LR Copy")->"lr_copy"
                     documentProofType.equals("Letter Head")->"letterhead"
-                    documentProofType.equals("Udyog Aadhaar Certificate")->"udhyog_aadhaar"
+                    documentProofType.equals("Udyog Aadhaar Certificate")->"udyog_aadhaar"
                     documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
             else -> null
         }

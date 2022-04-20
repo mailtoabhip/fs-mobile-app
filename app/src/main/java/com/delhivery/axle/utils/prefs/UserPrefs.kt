@@ -628,68 +628,78 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.businessType, "") ?: ""
 
+  var ownedTruck: String
+    set(value) = editor.putString(PrefKeys.ownedTruck,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ownedTruck, "") ?: ""
+
+  var attachedTruck: String
+    set(value) = editor.putString(PrefKeys.attachedTruck,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
+
 
   /**
    * Clear all preferences
    */
   fun clearPrefs() {
     editor.remove(PrefKeys.JWTToken)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.OnboardingStatus)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.SupplierEnabled)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsTestUser)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.RouteUpdate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.PhoneNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.HasLoggedIn)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.TdsRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UpdateTdsRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UserName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.BankName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.AccountNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.CompanyName)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.PhoneNumber)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IfscCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.Pancard)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.CityCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.GNCityCode)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.MaxPMTRate)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.MaxCostPerKM)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsParent)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.TruckTypes)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.DemandType)
     editor.remove(PrefKeys.LogoutStatus)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.StartTime)
-        .apply()
+            .apply()
     editor.remove((PrefKeys.LastLoginTime))
-        .apply()
+            .apply()
     editor.remove(PrefKeys.IsFirstRoute)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.UserOverallPerformance)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.VendorEntity)
-        .apply()
+            .apply()
     editor.remove(PrefKeys.DeepLinkArg)
             .apply()
     editor.remove(PrefKeys.LoadPostKyc)
@@ -779,6 +789,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.ParentDemandType)
       .apply()
+    editor.remove(PrefKeys.ownedTruck)
+        .apply()
+    editor.remove(PrefKeys.attachedTruck)
+        .apply()
     editor.commit()
   }
 
@@ -928,6 +942,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val addressRejectReason = "address_reject_reason"
     const val identityType = "identity_type"
     const val businessType = "business_type"
+    const val ownedTruck = "owned_truck"
+    const val attachedTruck = "attached_truck"
+
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
     const val retryVerificationOnBack = "retry_verification_on_back"
