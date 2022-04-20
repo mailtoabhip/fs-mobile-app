@@ -11,7 +11,7 @@
   <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@drawable/bg_splash_gradient"
+      android:background="#E5E5E5"
       >
 
     <View
@@ -27,8 +27,7 @@
         android:layout_width="@dimen/size_96dp"
         android:layout_height="@dimen/size_96dp"
         android:layout_gravity="center"
-        android:alpha="0"
-        app:srcCompat="@drawable/splash_logo"
+        app:srcCompat="@drawable/splash_img"
         />
 
     <androidx.appcompat.widget.AppCompatImageView

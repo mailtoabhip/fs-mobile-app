@@ -93,8 +93,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         })
 
         viewModel.verificationDocUploadMsg.observe(this, Observer {
-
-
+            uiUtils.showSnackbar(it)
         })
 
         viewModel.delegationDownloadLiveData.observe(this, Observer {
@@ -122,7 +121,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                         ?.div(1024)).toString()
                     )
                 )
-               showFileSelected()
+               show194CSelected()
             }
         })
 
@@ -130,12 +129,19 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
             download=true
         }
-        binding.uploadDoc1.setOnClickListener {
+        binding.docDownload1.setOnClickListener {
+            downloadLogo(viewModel.nine4CkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
+            download=true
+        }
+        binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
         binding.docRemove1.setOnClickListener {
             showUploadImage()
+        }
+        binding.btnSubmit.setOnClickListener {
+            sendDocForVerification(uploadArray)
         }
 
 
@@ -286,7 +292,16 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         binding.docTitle1.setText(uploadArray.get(0).first)
         binding.docSize1.setText(uploadArray.get(0).second+" KB")
         binding.btnSubmit.isEnabled=true
-
+        binding.docRemove1.visibility=View.VISIBLE
+        binding.docDownload1.visibility=View.GONE
+    }
+    private fun show194CSelected() {
+        binding.uploadDocLay1.visibility=View.GONE
+        binding.docUploadedLay1.visibility=View.VISIBLE
+        binding.docTitle1.setText(uploadArray.get(0).first)
+        binding.docSize1.setText(uploadArray.get(0).second+" KB")
+        binding.docRemove1.visibility=View.GONE
+        binding.docDownload1.visibility=View.VISIBLE
     }
     private fun showAccountProof() {
         binding.docUploadedLay.visibility=View.VISIBLE

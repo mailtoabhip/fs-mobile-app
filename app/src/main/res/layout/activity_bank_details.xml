@@ -342,6 +342,15 @@
                                 android:id="@+id/doc_remove1"
                                 android:layout_width="@dimen/size_20dp"
                                 android:layout_height="@dimen/size_20dp"
+                                bind:srcCompat="@drawable/ic_remove"
+                                android:layout_marginStart="@dimen/size_2dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                bind:layout_constraintRight_toRightOf="parent"/>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/doc_download1"
+                                android:layout_width="@dimen/size_20dp"
+                                android:layout_height="@dimen/size_20dp"
                                 bind:srcCompat="@drawable/ic_download_doc_blue"
                                 android:layout_marginStart="@dimen/size_2dp"
                                 bind:layout_constraintTop_toTopOf="parent"

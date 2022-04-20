@@ -118,12 +118,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         binding.btnSubmit.setOnClickListener {
           sendDocForVerification(uploadArray)
         }
-        binding.uploadDoc.setOnClickListener {
+        binding.uploadDocLay.setOnClickListener {
             val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
             viewModel.selected194CUpload.value=false
         }
-        binding.uploadDoc1.setOnClickListener {
+        binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
             viewModel.selected194CUpload.value=true
