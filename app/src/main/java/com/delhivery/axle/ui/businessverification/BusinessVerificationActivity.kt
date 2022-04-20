@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +20,10 @@ import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
+import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
-import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
@@ -72,6 +73,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
+    var truckNum =false
+    var ownedTruck =false
+    var attachedTruck =false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.editTruck.visibility=View.VISIBLE
@@ -99,6 +104,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         setSupportActionBar(binding.toolbar)
         title = ""
+
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(userPrefs.retryVerification){
@@ -110,16 +117,40 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutTruckrd.isSelected=true
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
+            truckNum=false
+            setSubmitButtonEnable()
+            binding.layoutUploadLR.visibility=View.GONE
             binding.textTruck.isChecked=true
+            binding.layoutTruckrd.visibility=View.VISIBLE
 
         }
         viewModel.truckNumber.observe(this, Observer {
             if(it.length>=9){
-                binding.btnVerifyBusiness.isEnabled=true
+                truckNum=true
+                setSubmitButtonEnable()
             }else{
-                binding.btnVerifyBusiness.isEnabled=false
+                truckNum=false
+                setSubmitButtonEnable()
             }
         })
+
+        binding.ownedTrucksEdittext.lengthAction(1){
+            ownedTruck=true
+            setSubmitButtonEnable()
+        }
+        binding.ownedTrucksEdittext.lengthAction(0){
+            ownedTruck=false
+            setSubmitButtonEnable()
+        }
+        binding.attachedTrucksEdittext.lengthAction(1){
+            attachedTruck=true
+            setSubmitButtonEnable()
+        }
+         binding.attachedTrucksEdittext.lengthAction(0){
+            attachedTruck=false
+            setSubmitButtonEnable()
+        }
+
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
@@ -147,7 +178,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }else{
                 //show successfully submitted page
-                viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
+                    if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
+                        viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
+                    }
 
             }
         })
@@ -174,18 +207,43 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.textTruck.isChecked=false
             binding.layoutUploadLR.isSelected=true
             binding.layoutTruckrd.isSelected=false
+            binding.layoutTruckrd.visibility=View.GONE
+            binding.layoutUploadLR.visibility=View.VISIBLE
+            truckNum=false
+            setSubmitButtonEnable()
             viewModel.selected.value="lr"
+
+        }
+        binding.layoutUploadLR.setOnClickListener {
             val imageName = "LR_doc_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
 
         binding.btnVerifyBusiness.setOnClickListener {
             if(binding.textTruck.isChecked){
-               viewModel.validateRC(viewModel.truckNumber.value!!)
+                if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
+                    viewModel.validateRC(viewModel.truckNumber.value!!)
+                }
+            }else{
+                sendDocForVerification(uploadArray)
             }
+            viewModel.ownedTruck.value=binding.ownedTrucksEdittext.text.toString()
+            viewModel.attachedTruck.value=binding.attachedTrucksEdittext.text.toString()
 
         }
 
+        binding.docRemove.setOnClickListener {
+            showUploadImage()
+        }
+
+    }
+
+    fun setSubmitButtonEnable(){
+        if(attachedTruck && ownedTruck && truckNum ){
+            binding.btnVerifyBusiness.isEnabled=true
+        }else{
+            binding.btnVerifyBusiness.isEnabled=false
+        }
     }
 
     override fun onBackPressed() {
@@ -201,6 +259,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         uiUtils.hideProgress()
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
+        showFileSelected()
         resetUploadData()
     }
 
@@ -297,7 +356,26 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         builder.show()
     }
 
-    override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+    private fun showFileSelected() {
+        binding.layoutUploadLR.visibility=View.GONE
+        binding.docUploadedLay.visibility=View.VISIBLE
+        binding.docTitle.setText(uploadArray.get(0).first)
+        binding.docSize.setText(uploadArray.get(0).second+" KB")
+        truckNum=true
+        setSubmitButtonEnable()
+    }
+
+    private fun showUploadImage() {
+        binding.layoutUploadLR.visibility=View.VISIBLE
+        binding.docUploadedLay.visibility=View.GONE
+        if(uploadArray.size>0){
+            uploadArray.clear()
+        }
+        truckNum=false
+        setSubmitButtonEnable()
+    }
+
+     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
             val imageUrls= mutableListOf<String>()
             val s3url= awsUtils.awsBasePath()

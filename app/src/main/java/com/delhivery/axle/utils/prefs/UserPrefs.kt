@@ -587,6 +587,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.businessType, "") ?: ""
 
+  var ownedTruck: String
+    set(value) = editor.putString(PrefKeys.ownedTruck,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ownedTruck, "") ?: ""
+
+  var attachedTruck: String
+    set(value) = editor.putString(PrefKeys.attachedTruck,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
+
 
   /**
    * Clear all preferences
@@ -730,6 +740,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
           .apply()
     editor.remove(PrefKeys.businessType)
             .apply()
+    editor.remove(PrefKeys.ownedTruck)
+        .apply()
+    editor.remove(PrefKeys.attachedTruck)
+        .apply()
     editor.commit()
   }
 
@@ -874,6 +888,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val addressRejectReason = "address_reject_reason"
     const val identityType = "identity_type"
     const val businessType = "business_type"
+    const val ownedTruck = "owned_truck"
+    const val attachedTruck = "attached_truck"
+
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"
       const val retryVerificationOnBack = "retry_verification_on_back"

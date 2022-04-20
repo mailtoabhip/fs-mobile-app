@@ -1,9 +1,9 @@
-package com.delhivery.axle.ui.profile
+package com.delhivery.axle.ui.paymentdetails
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -14,10 +14,12 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityBankDetailsBinding
+import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
+import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
@@ -37,11 +39,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetailsViewModel>(),
-    DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, PaymentDetailsViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
     UploadedItemRVAdapterInterface {
-
-
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -63,23 +62,44 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
-
-
-    lateinit var path:String
-    var showProg:Boolean = false
-    var download=false
+    var accountNum=false
+    var accountName=false
+    var ifsc = false
+    var docUpload =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getKycDoc()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title =  "Bank Details"
 
+        viewModel.accountHolderText.observe(this, Observer {
+            if(userPrefs.bankName.equals(it,true)){
+                binding.accountHolderWarning.visibility= View.GONE
+                binding.nameDeclaration.visibility=View.GONE
+            }else{
+                binding.accountHolderWarning.visibility= View.VISIBLE
+                binding.nameDeclaration.visibility=View.VISIBLE
+
+            }
+        })
+
+        viewModel.delegationLiveData.observe(this, Observer {
+            uploadImage(it.first, it.second)
+        })
+
+        viewModel.verificationDocUploadMsg.observe(this, Observer {
+                if(viewModel.selected194CUpload.value==true){
+                    sendDocForVerification(uploadArray1)
+                    viewModel.selected194CUpload.value=false
+                }else{
+                   viewModel.updateUserDetails()
+                }
+        })
+
+
+// 194c upload condition
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
                 binding.uploadDoc1.visibility = View.VISIBLE
@@ -87,83 +107,98 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                 binding.uploadDoc1.visibility = View.GONE
             }
         }
-
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
-
-        viewModel.verificationDocUploadMsg.observe(this, Observer {
-            uiUtils.showSnackbar(it)
-        })
-
-        viewModel.delegationDownloadLiveData.observe(this, Observer {
-            if (it != null) {
-                awsUtils.startDownload(it.first, it.second, it.third, this)
-                viewModel.imagePath = it.third.path
-            }
-        })
-        viewModel.accountkycDocuments.observe(this, Observer {
-            if(it.isNotNullOrEmpty()){
-                uploadArray1.add(
-                    Pair(
-                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    )
-                )
-             showAccountProof()
-            }
-        })
-        viewModel.nine4CkycDocuments.observe(this, Observer {
-            if(it.isNotNullOrEmpty()){
-                uploadArray.add(
-                    Pair(
-                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    )
-                )
-               show194CSelected()
-            }
-        })
-
-        binding.docRemove.setOnClickListener {
-            downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
-            download=true
+    // show error reject
+        userPrefs.identityRejectReason=""
+        if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.visibility=View.VISIBLE
+        }else{
+            binding.paymentError.visibility=View.GONE
         }
-        binding.docDownload1.setOnClickListener {
-            downloadLogo(viewModel.nine4CkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
-            download=true
+
+        binding.btnSubmit.setOnClickListener {
+          sendDocForVerification(uploadArray)
+            if(binding.nameDeclaration.isChecked){
+                viewModel.nameDeclaration=true
+            }else{
+                viewModel.nameDeclaration=false
+            }
+        }
+        binding.uploadDocLay.setOnClickListener {
+            val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
+            captureImage(imageName, imageName)
+            viewModel.selected194CUpload.value=false
         }
         binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
+            viewModel.selected194CUpload.value=true
         }
-        binding.docRemove1.setOnClickListener {
+        binding.docRemove.setOnClickListener {
             showUploadImage()
         }
-        binding.btnSubmit.setOnClickListener {
-            sendDocForVerification(uploadArray)
+        binding.docRemove1.setOnClickListener {
+            showUploadImage1()
+            viewModel.selected194CUpload.value=false
+
         }
+        viewModel.accountText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                accountNum=true
+                enableSubmitButton()
+            }else{
+                accountNum=false
+                enableSubmitButton()
+            }
+        })
+        viewModel.accountHolderText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                accountName=true
+                enableSubmitButton()
+            }else{
+                accountName=false
+                enableSubmitButton()
+            }
+        })
+        viewModel.ifscText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                ifsc=true
+                enableSubmitButton()
+            }else{
+                ifsc=false
+                enableSubmitButton()
+            }
+        })
 
 
-}
+
+    }
+
+    fun enableSubmitButton(){
+        if(accountName&&accountNum&&ifsc&&docUpload) {
+            binding.btnSubmit.isEnabled = true
+        }else{
+            binding.btnSubmit.isEnabled = false
+        }
+    }
+
+    override fun layoutId() = R.layout.activity_payment_details
+
+    override fun requireConnection() =true
+
+    override fun getViewModelClass()= PaymentDetailsViewModel::class.java
     override fun onAWSSuccess(
         path: String
     ) {
-        if(!download) {
-            uiUtils.hideProgress()
-            uploadArray.add(
-                Pair(
-                    path.replace(awsPath, ""), (mPhotoFile?.length()
-                    ?.div(1024)).toString()
-                )
-            )
+        uiUtils.hideProgress()
+        if(viewModel.selected194CUpload.value != true){
+            uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected()
-            resetUploadData()
+
         }else{
-            uiUtils.hideProgress()
-            uiUtils.showSnackbar("Document downloaded successfully")
-            showProg = false
+            uploadArray1.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected1()
         }
+        resetUploadData()
     }
 
     override fun onAWSFailure() {
@@ -189,34 +224,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                 requestImageCapturePermissions(isCamera)
             }
         }
-    }
-
-    private fun downloadLogo(item: String) {
-        compositeDisposable += requestPermission(
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        )
-            .onBackground()
-            .subscribe { granted, error ->
-                if (error == null && granted) {
-                    showProg = true
-                    uiUtils.showProgress()
-                    val file = getFile(item)
-                    if (file != null) {
-                        viewModel.getDownloadDelegationToken(item, file)
-                    } else {
-                        uiUtils.showSnackbar("Can't process image")
-                    }
-                } else {
-                    uiUtils.hideProgress()
-                    uiUtils.showSnackbar(getString(R.string.storage_permission))
-                }
-            }
-    }
-    private fun getFile(item: String): File? {
-        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        val basePath = "$storageDir/"+System.currentTimeMillis()
-        val arrString = item.split("/")
-        return File(basePath + arrString[arrString.size - 1])
     }
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
@@ -271,8 +278,17 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        if(viewModel.selected194CUpload.value != true) {
+            this.uploadImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }else{
+            this.uploadImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -287,37 +303,40 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     }
 
     private fun showFileSelected() {
-        binding.uploadDocLay1.visibility=View.GONE
-        binding.docUploadedLay1.visibility=View.VISIBLE
-        binding.docTitle1.setText(uploadArray.get(0).first)
-        binding.docSize1.setText(uploadArray.get(0).second+" KB")
-        binding.btnSubmit.isEnabled=true
-        binding.docRemove1.visibility=View.VISIBLE
-        binding.docDownload1.visibility=View.GONE
-    }
-    private fun show194CSelected() {
-        binding.uploadDocLay1.visibility=View.GONE
-        binding.docUploadedLay1.visibility=View.VISIBLE
-        binding.docTitle1.setText(uploadArray.get(0).first)
-        binding.docSize1.setText(uploadArray.get(0).second+" KB")
-        binding.docRemove1.visibility=View.GONE
-        binding.docDownload1.visibility=View.VISIBLE
-    }
-    private fun showAccountProof() {
+        binding.uploadDocLay.visibility=View.GONE
         binding.docUploadedLay.visibility=View.VISIBLE
-        binding.docTitle.setText(uploadArray1.get(0).first)
-        binding.docSize.setText(uploadArray1.get(0).second+" KB")
+        binding.docTitle.setText(uploadArray.get(0).first)
+        binding.docSize.setText(uploadArray.get(0).second+" KB")
+        docUpload=true
+        enableSubmitButton()
+
+    }
+    private fun showFileSelected1() {
+        binding.uploadDocLay1.visibility=View.GONE
+        binding.docUploadedLay1.visibility=View.VISIBLE
+        binding.docTitle1.setText(uploadArray1.get(0).first)
+        binding.docSize1.setText(uploadArray1.get(0).second+" KB")
+
     }
 
     private fun showUploadImage() {
-        binding.uploadDocLay1.visibility=View.VISIBLE
-        binding.docUploadedLay1.visibility=View.GONE
+        binding.uploadDocLay.visibility=View.VISIBLE
+        binding.docUploadedLay.visibility=View.GONE
         if(uploadArray.size>0){
             uploadArray.clear()
         }
-        binding.btnSubmit.isEnabled=false
-    }
+        docUpload=false
+        enableSubmitButton()
 
+    }
+    private fun showUploadImage1() {
+        binding.uploadDocLay1.visibility=View.VISIBLE
+        binding.docUploadedLay1.visibility=View.GONE
+        if(uploadArray1.size>0){
+            uploadArray1.clear()
+        }
+
+    }
 
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
@@ -402,8 +421,17 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(viewModel.selected194CUpload.value != true) {
+                            this.uploadImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }else{
+                            this.uploadImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
@@ -430,11 +458,5 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         uploadArray.remove(item)
     }
 
-
-    override fun getViewModelClass() = BankDetailsViewModel::class.java
-
-    override fun layoutId() = R.layout.activity_bank_details
-
-    override fun requireConnection() = true
 
 }

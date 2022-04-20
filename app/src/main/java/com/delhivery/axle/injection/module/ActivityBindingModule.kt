@@ -32,6 +32,8 @@ import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
@@ -269,6 +271,16 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsIdentityVerificationActivityModule::class])
   internal abstract fun bindIdentityVerificationActivity(): IdentityVerificationActivity
 
+  /* payment details page Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPaymentDetailsActivityModule::class])
+  internal abstract fun bindPaymentDetailsActivity(): PaymentDetailsActivity
+
+  /* policy details page Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsVendorPolicyActivityModule::class])
+  internal abstract fun bindVendorPolicyActivity(): VendorPolicyActivity
+
   /* Basic Details page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBasicDetailsActivityModule::class])
@@ -284,6 +296,8 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsSearchOriginCityActivityModule::class])
   internal abstract fun bindSearchOriginCityActivity(): SearchOriginCityActivity
 }
+
+
 
 /**
  * Activity common modules,
@@ -414,6 +428,12 @@ internal abstract class AbsMyProfileActivityModule : ActivityModule<MyProfileAct
 
 @Module
 internal abstract class AbsIdentityVerificationActivityModule : ActivityModule<IdentityVerificationActivity>()
+
+@Module
+internal abstract class AbsPaymentDetailsActivityModule : ActivityModule<PaymentDetailsActivity>()
+
+@Module
+internal abstract class AbsVendorPolicyActivityModule : ActivityModule<VendorPolicyActivity>()
 
 @Module
 internal abstract class AbsBasicDetailsActivityModule : ActivityModule<BasicDetailsActivity>()

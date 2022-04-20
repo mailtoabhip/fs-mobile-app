@@ -29,6 +29,8 @@ class BusinessVerificationViewModel@Inject constructor(
 ) :BaseViewModel(){
 
     var truckNumber=MutableLiveData<String>()
+    var attachedTruck=MutableLiveData<String>()
+    var ownedTruck=MutableLiveData<String>()
 
     var selected = MutableLiveData<String>()
 
@@ -107,12 +109,13 @@ class BusinessVerificationViewModel@Inject constructor(
     fun updateUserDetails() {
         if (!isConnected) return
 
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,isTruckingDocumentUploaded = true))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,isTruckingDocumentUploaded = true,numberOfAttachedTrucks = attachedTruck.value?.toInt(),numberOfOwnedTrucks = ownedTruck.value?.toInt()))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
                         userPrefs.isRcVerfied=true
+                        userPrefs.ownedTruck= ownedTruck.value.toString()
                         userUpdateLiveData.postValue(true)
                     } else{
                         error.handle()
@@ -125,12 +128,13 @@ class BusinessVerificationViewModel@Inject constructor(
     fun updateUserRCDetails(rc: String) {
         if (!isConnected) return
 
-        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,rcNumber = rc))
+        compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,rcNumber = rc,numberOfAttachedTrucks = attachedTruck.value?.toInt(),numberOfOwnedTrucks = ownedTruck.value?.toInt()))
             .onBackground()
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
                     userPrefs.isRcVerfied=true
+                    userPrefs.attachedTruck=attachedTruck.value.toString()
                     userUpdateLiveData.postValue(true)
                 } else{
                     error.handle()
