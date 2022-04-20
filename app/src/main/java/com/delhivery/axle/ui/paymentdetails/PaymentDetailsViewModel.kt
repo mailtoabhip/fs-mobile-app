@@ -62,20 +62,24 @@ class PaymentDetailsViewModel@Inject constructor(
 
     fun updateUserDetails() {
         if (!isConnected) return
+        if (!userPrefs.phoneNumber.isNullOrEmpty()) {
 
-        compositeDisposable += loadboardRepository.updateUser(
-            UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!,accountNumber = accountText.value,ifscCode = ifscText.value,accountHolderName = accountHolderText.value)
-        )
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                   userUpdateLiveData.postValue(true)
-                } else{
-                    error.handle()
+            compositeDisposable += loadboardRepository.updateUser(
+                UpdateUserRequest(
+                    phoneNumber = userPrefs.phoneNumber!!, accountNumber = accountText.value,
+                    ifscCode = ifscText.value, accountHolderName = accountHolderText.value
+                )
+            )
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error) {
+                        userUpdateLiveData.postValue(true)
+                    } else {
+                        error.handle()
+                    }
                 }
-            }
-
+        }
     }
 
 

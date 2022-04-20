@@ -178,7 +178,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }else{
                 //show successfully submitted page
-                viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
+                    if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
+                        viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
+                    }
 
             }
         })

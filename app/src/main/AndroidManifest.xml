@@ -24,8 +24,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
-        <activity android:name=".ui.paymentdetails.VendorPolicyActivity"></activity>
-        <activity android:name=".ui.paymentdetails.PaymentDetailsActivity" />
+
 
         <service
             android:name=".fcm.DelhiveryFCMService"
@@ -233,7 +232,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.searchcitystate.SearchOriginCityActivity"
             android:screenOrientation="portrait"/>
-
+        <activity android:name=".ui.paymentdetails.VendorPolicyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.paymentdetails.PaymentDetailsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -84,9 +84,6 @@ private val userPrefs: UserPrefs
                 }
               }
             }
-            Log.d("kycDoc",accountkycDocuments.value.toString())
-            Log.d("kycDoc",nine4CkycDocuments.value.toString())
-
           } else
             error.handle()
         }
