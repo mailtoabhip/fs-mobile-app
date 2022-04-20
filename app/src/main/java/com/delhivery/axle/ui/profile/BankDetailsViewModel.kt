@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -24,7 +25,12 @@ private val userPrefs: UserPrefs
   var ifscText= userPrefs.ifscCode
   var accountHolderText= userPrefs.accNumber
   var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
+  var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
   var verificationDocUploadMsg = MutableLiveData<String>()
+  val accountkycDocuments = MutableLiveData<String>()
+  val nine4CkycDocuments = MutableLiveData<String>()
+  var imagePath = ""
+
 
   fun getDelegationToken(file: File) {
     compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
@@ -60,6 +66,38 @@ private val userPrefs: UserPrefs
           )
       )
   }
+  fun getKycDoc(){
+    compositeDisposable += userRepository.getKycDocs()
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res!=null) {
+            _res.responseData?.kyc_documents?.forEach {
+              if(it.contains("loadboard/payment",true)){
+                 if(it.contains("loadboard/payment/account_proof")){
+                   accountkycDocuments.value=it
+                 }
+                if(it.contains("loadboard/payment/194C")){
+                  nine4CkycDocuments.value=it
+                }
+              }
+            }
+            Log.d("kycDoc",accountkycDocuments.value.toString())
+            Log.d("kycDoc",nine4CkycDocuments.value.toString())
 
+          } else
+            error.handle()
+        }
+  }
+  fun getDownloadDelegationToken(awsPath: String, file: File) {
+    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
+        .onBackground()
+        .subscribe { _res, error ->
+          if (!error) {
+            delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
+          } else
+            error.handle()
+        }
+  }
 
 }

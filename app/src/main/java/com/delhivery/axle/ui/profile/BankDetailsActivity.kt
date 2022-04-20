@@ -62,10 +62,16 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     val awsPath = "loadboard/payment/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
+    var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
 
+
+    lateinit var path:String
+    var showProg:Boolean = false
+    var download=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getKycDoc()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -90,8 +96,42 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 
         })
+
+        viewModel.delegationDownloadLiveData.observe(this, Observer {
+            if (it != null) {
+                awsUtils.startDownload(it.first, it.second, it.third, this)
+                viewModel.imagePath = it.third.path
+            }
+        })
+        viewModel.accountkycDocuments.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                uploadArray1.add(
+                    Pair(
+                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )
+             showAccountProof()
+            }
+        })
+        viewModel.nine4CkycDocuments.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                uploadArray.add(
+                    Pair(
+                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )
+               showFileSelected()
+            }
+        })
+
+        binding.docRemove.setOnClickListener {
+            downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
+            download=true
+        }
         binding.uploadDoc1.setOnClickListener {
-            val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
+            val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
         binding.docRemove1.setOnClickListener {
@@ -103,11 +143,21 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     override fun onAWSSuccess(
         path: String
     ) {
-        uiUtils.hideProgress()
-
-            uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        if(!download) {
+            uiUtils.hideProgress()
+            uploadArray.add(
+                Pair(
+                    path.replace(awsPath, ""), (mPhotoFile?.length()
+                    ?.div(1024)).toString()
+                )
+            )
             showFileSelected()
-        resetUploadData()
+            resetUploadData()
+        }else{
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Document downloaded successfully")
+            showProg = false
+        }
     }
 
     override fun onAWSFailure() {
@@ -133,6 +183,34 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                 requestImageCapturePermissions(isCamera)
             }
         }
+    }
+
+    private fun downloadLogo(item: String) {
+        compositeDisposable += requestPermission(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        )
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    showProg = true
+                    uiUtils.showProgress()
+                    val file = getFile(item)
+                    if (file != null) {
+                        viewModel.getDownloadDelegationToken(item, file)
+                    } else {
+                        uiUtils.showSnackbar("Can't process image")
+                    }
+                } else {
+                    uiUtils.hideProgress()
+                    uiUtils.showSnackbar(getString(R.string.storage_permission))
+                }
+            }
+    }
+    private fun getFile(item: String): File? {
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        val basePath = "$storageDir/"+System.currentTimeMillis()
+        val arrString = item.split("/")
+        return File(basePath + arrString[arrString.size - 1])
     }
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
@@ -187,8 +265,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.uploadImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -209,6 +287,11 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         binding.docSize1.setText(uploadArray.get(0).second+" KB")
         binding.btnSubmit.isEnabled=true
 
+    }
+    private fun showAccountProof() {
+        binding.docUploadedLay.visibility=View.VISIBLE
+        binding.docTitle.setText(uploadArray1.get(0).first)
+        binding.docSize.setText(uploadArray1.get(0).second+" KB")
     }
 
     private fun showUploadImage() {
@@ -304,8 +387,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "account_proof_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "account_proof_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

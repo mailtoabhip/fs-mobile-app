@@ -124,7 +124,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             viewModel.selected194CUpload.value=false
         }
         binding.uploadDoc1.setOnClickListener {
-            val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
+            val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
             viewModel.selected194CUpload.value=true
         }
@@ -273,8 +273,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        if(viewModel.selected194CUpload.value != true) {
+            this.uploadImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }else{
+            this.uploadImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+        }
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -407,8 +416,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "account_proof_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "account_proof_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(viewModel.selected194CUpload.value != true) {
+                            this.uploadImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }else{
+                            this.uploadImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                            this.localImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                        }
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
