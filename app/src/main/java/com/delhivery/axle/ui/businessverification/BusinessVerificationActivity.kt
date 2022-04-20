@@ -221,7 +221,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         binding.btnVerifyBusiness.setOnClickListener {
             if(binding.textTruck.isChecked){
-               viewModel.validateRC(viewModel.truckNumber.value!!)
+                if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
+                    viewModel.validateRC(viewModel.truckNumber.value!!)
+                }
             }else{
                 sendDocForVerification(uploadArray)
             }
@@ -238,10 +240,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     fun setSubmitButtonEnable(){
         if(attachedTruck && ownedTruck && truckNum ){
-            Log.d("submitEnable",attachedTruck.toString())
-            Log.d("submitEnable",ownedTruck.toString())
-            Log.d("submitEnable",truckNum.toString())
-
             binding.btnVerifyBusiness.isEnabled=true
         }else{
             binding.btnVerifyBusiness.isEnabled=false
