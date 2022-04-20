@@ -25,7 +25,9 @@ data class UpdateUserRequest (
     @SerializedName("number_of_attached_trucks") val numberOfAttachedTrucks:Int? =null,
     @SerializedName("account_number") val accountNumber:String? =null,
     @SerializedName("ifsc_code") val ifscCode:String? =null,
-    @SerializedName("account_holder_name") val accountHolderName:String? =null
+    @SerializedName("account_holder_name") val accountHolderName:String? =null,
+    @SerializedName("name_declaration") val nameDeclaration:String? =null
+
 
 
     )

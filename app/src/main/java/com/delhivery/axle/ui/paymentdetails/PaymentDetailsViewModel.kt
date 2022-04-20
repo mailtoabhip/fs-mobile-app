@@ -29,6 +29,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var verificationDocUploadMsg = MutableLiveData<String>()
     var selected194CUpload= MutableLiveData<Boolean>()
     var userUpdateLiveData = MutableLiveData<Boolean>()
+    var nameDeclaration =false
 
 
 
@@ -65,10 +66,16 @@ class PaymentDetailsViewModel@Inject constructor(
         if (!userPrefs.phoneNumber.isNullOrEmpty()) {
 
             compositeDisposable += loadboardRepository.updateUser(
+                if (nameDeclaration){
                 UpdateUserRequest(
                     phoneNumber = userPrefs.phoneNumber!!, accountNumber = accountText.value,
-                    ifscCode = ifscText.value, accountHolderName = accountHolderText.value
-                )
+                    ifscCode = ifscText.value, accountHolderName = accountHolderText.value,nameDeclaration = "yes"
+                )}else{
+                    UpdateUserRequest(
+                        phoneNumber = userPrefs.phoneNumber!!, accountNumber = accountText.value,
+                        ifscCode = ifscText.value, accountHolderName = accountHolderText.value
+                    )
+                }
             )
                 .onBackground()
                 .progress()

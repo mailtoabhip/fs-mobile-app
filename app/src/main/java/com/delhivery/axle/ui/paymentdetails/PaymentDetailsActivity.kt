@@ -117,6 +117,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
         binding.btnSubmit.setOnClickListener {
           sendDocForVerification(uploadArray)
+            if(binding.nameDeclaration.isChecked){
+                viewModel.nameDeclaration=true
+            }else{
+                viewModel.nameDeclaration=false
+            }
         }
         binding.uploadDocLay.setOnClickListener {
             val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
