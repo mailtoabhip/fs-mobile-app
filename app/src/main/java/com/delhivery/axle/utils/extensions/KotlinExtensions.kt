@@ -80,39 +80,22 @@ fun ContentResolver.getFileName(uri: Uri): String {
   return name
 }
 
-
 fun EditText.addRxTextWatcher(): Observable<String?> {
-  val userInputSubject = BehaviorSubject.create<String>()
+
+  return Observable.create {
     addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) {
-
-      }
-      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        s?.toString()?.let { it1 ->userInputSubject.onNext(it1); }
-      }
-      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-      }
-    })
-
-  return userInputSubject
-}
-
-object RxSearchObservable {
-  fun fromView(searchView: EditText): Observable<String> {
-    val subject = PublishSubject.create<String>()
-    searchView.addTextChangedListener(object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) {
       }
 
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-        s?.toString()?.let { it1 -> subject.onNext(it1) }
+        s?.toString()?.let { it1 -> it.onNext(it1) }
       }
 
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
       }
     })
-    return subject
   }
 }
+
 

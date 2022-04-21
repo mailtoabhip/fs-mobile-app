@@ -507,7 +507,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonSubmit.setOnClickListener {
-          //  dialogUtilsInterface.sendDocForVerification(uploadArray)
+            dialogUtilsInterface.sendDocForVerification(uploadArray)
             dialog.dismiss()
         }
 
