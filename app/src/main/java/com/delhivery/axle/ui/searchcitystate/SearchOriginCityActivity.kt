@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
@@ -17,7 +18,10 @@ import com.delhivery.axle.databinding.ActivitySearchOriginCityBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.extensions.addRxTextWatcher
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.android.schedulers.AndroidSchedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, SearchCityStateViewModel>() ,
@@ -73,51 +77,39 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
 
         viewModel.searchLiveData.observe(this, Observer {
             if (it != null) {
-                if (viewModel.searchText.length>2){
+                    adapter.clearItems()
                     adapter.operation(it)
-                }else{
-                    adapter.operation(it)
-                    adapter.resetStaticData()
-                }
-
             }
         })
 
-        binding.editQuery.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) = Unit
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-                if (s != null) {
+        binding.editQuery.addRxTextWatcher()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (!TextUtils.isEmpty(it)) {
                     binding.popularLl.visibility= View.GONE
                     try {
-                        viewModel.searchText = s.trim().toString()
-                        Log.d("prefix", s.trim().toString())
+                        viewModel.searchText = it?.trim().toString()
+                        Log.d("prefix", it?.trim().toString())
 
-                        if (viewModel.searchText.length in 3..10) {
+                        if (viewModel.searchText.length in 2..10) {
                             refreshData()
                         } else {
-                            adapter.resetStaticData()
+                            adapter.clearItems()
                             binding.popularLl.visibility= View.VISIBLE
                         }
                     }  catch (e: Exception) {
                         binding.editQuery.error = e.message
                     }
+                }else{
+                    adapter.clearItems()
+                    binding.popularLl.visibility= View.VISIBLE
                 }
             }
-        })
 
-        if (viewModel.searchText.length in 3..10) {
+        if (viewModel.searchText.length in 2..10) {
             refreshData()
         }
 
@@ -155,7 +147,7 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
     }
 
     private fun refreshData() {
-        adapter.resetStaticData()
+        adapter.clearItems()
         viewModel.searchCity(viewModel.searchText)
     }
 

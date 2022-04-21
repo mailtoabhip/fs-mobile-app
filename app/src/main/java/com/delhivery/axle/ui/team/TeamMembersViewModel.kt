@@ -133,6 +133,7 @@ class TeamMembersViewModel @Inject constructor(
       jsonArray.add(i)
     }
     jsonObject.addProperty("user_name", name)
+    jsonObject.addProperty("phone_number", userPrefs.phoneNumber)
     jsonObject.addProperty("parent_uuid", uuid)
     jsonObject.addProperty("diesel_card_preference",dieselPreference)
     jsonObject.add("diesel_company", jsonArray)
@@ -156,6 +157,7 @@ class TeamMembersViewModel @Inject constructor(
    */
   fun deleteMember(uuid: String) {
     val jsonObject = JsonObject()
+    jsonObject.addProperty("phone_number", userPrefs.phoneNumber)
     jsonObject.addProperty("is_deleted", true)
     jsonObject.addProperty("parent_uuid", uuid)
     jsonObject.addProperty("parent_sp_id", userRepository.userId())
@@ -182,6 +184,7 @@ class TeamMembersViewModel @Inject constructor(
       for (i in dieselCompany){
         jsonArray.add(i)
       }
+      jsonObject.addProperty("phone_number", userPrefs.phoneNumber)
       jsonObject.addProperty("diesel_card_preference",dieselPreference)
       jsonObject.addProperty("parent_uuid", uuid)
       jsonObject.addProperty("parent_sp_id", uuid)

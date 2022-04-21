@@ -34,9 +34,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.ObservableSource
-
-import com.delhivery.axle.utils.extensions.RxSearchObservable
-import com.delhivery.axle.utils.extensions.RxSearchObservable.fromView
 import io.reactivex.Observable
 import io.reactivex.annotations.NonNull
 import io.reactivex.functions.Consumer
@@ -104,53 +101,40 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         }
 
         viewModel.searchLiveData.observe(this, Observer {
-            adapter.resetStaticData()
             if (it != null) {
-                if (viewModel.searchText.length>2){
+                    adapter.clearItems()
                     adapter.operation(it)
-                }else{
-                    adapter.operation(it)
-                    adapter.resetStaticData()
-                }
-
             }
         })
 
-        binding.editQuery.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) = Unit
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-                if (s != null) {
+        binding.editQuery.addRxTextWatcher()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (!TextUtils.isEmpty(it)) {
                     binding.popularLl.visibility= View.GONE
                     try {
-                        viewModel.searchText = s.trim().toString()
-                        Log.d("prefix", s.trim().toString())
+                        viewModel.searchText = it?.trim().toString()
+                        Log.d("prefix", it?.trim().toString())
 
-                        if (viewModel.searchText.length in 3..30) {
+                        if (viewModel.searchText.length in 2..10) {
                             refreshData()
                         } else {
+                            adapter.clearItems()
                             binding.popularLl.visibility= View.VISIBLE
-                            adapter.resetStaticData()
                         }
                     }  catch (e: Exception) {
                         binding.editQuery.error = e.message
                     }
+                } else{
+                    adapter.clearItems()
+                    binding.popularLl.visibility= View.VISIBLE
                 }
             }
-        })
 
-        if (viewModel.searchText.length in 3..30) {
+        if (viewModel.searchText.length in 2..30) {
             refreshData()
         }
         viewModel.getPopularCities()
@@ -210,7 +194,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
     }
 
     private fun refreshData() {
-        adapter.resetStaticData()
+        adapter.clearItems()
         viewModel.searchCity(viewModel.searchText)
     }
 
