@@ -25,6 +25,9 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
              uiUtils.hideProgress()
            }
 
+          binding.buttonUploadAgain.setOnClickListener{
+            navigationUtils.showKycSubmittedDialog()
+          }
         }
 
         override fun onBackPressed() {

@@ -17,9 +17,11 @@ import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
 import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
@@ -74,6 +76,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
+        setSupportActionBar(binding.progressStepLayout.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
+
         viewModel.accountHolderText.observe(this, Observer {
             if(userPrefs.bankName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
@@ -98,6 +104,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 }
         })
 
+        viewModel.userUpdateLiveData.observe(this, Observer {
+            if(it){
+                navigationUtils.navigate(VendorPolicyActivity::class.java,false,null)
+            }
+        })
 
 // 194c upload condition
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
@@ -169,8 +180,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         })
 
+    }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navigationUtils.navigate(BusinessVerificationActivity::class.java,true)
     }
 
     fun enableSubmitButton(){

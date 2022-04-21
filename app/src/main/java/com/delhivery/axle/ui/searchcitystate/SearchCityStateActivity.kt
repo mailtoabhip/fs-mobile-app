@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
@@ -19,10 +20,28 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.extensions.addRxTextWatcher
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Predicate
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
+import kotlinx.android.synthetic.main.spinner_item.text
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.ObservableSource
+
+import com.delhivery.axle.utils.extensions.RxSearchObservable
+import com.delhivery.axle.utils.extensions.RxSearchObservable.fromView
+import io.reactivex.Observable
+import io.reactivex.annotations.NonNull
+import io.reactivex.functions.Consumer
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.SECONDS
 
 class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, SearchCityStateViewModel>() ,
     SearchCityStateRVAdapterInterface {
@@ -31,7 +50,6 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         hasInlineProgress = true
     }
 
-  //  var selectedCityStates = mutableSetOf<CityModel>()
 
     override fun getViewModelClass() = SearchCityStateViewModel::class.java
 

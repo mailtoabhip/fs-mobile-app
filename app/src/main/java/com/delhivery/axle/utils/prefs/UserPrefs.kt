@@ -638,7 +638,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
 
-
+  var agreedTermCondition: Boolean
+    set(value) = editor.putBoolean(PrefKeys.agreedTermCondition, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.agreedTermCondition, false)
   /**
    * Clear all preferences
    */
@@ -793,6 +796,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.attachedTruck)
         .apply()
+    editor.remove(PrefKeys.agreedTermCondition)
+      .apply()
     editor.commit()
   }
 
@@ -821,6 +826,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
     vendorEntity = user.supplierDetails?.vendorEntity ?: ""
+    parentId = if (user.isParent()) {
+      user.userId
+    } else {
+      user.supplierDetails?.parentDetails?.userId ?: ""
+    }
+    parentName = if (user.isParent()) {
+      user.userName?:""
+    } else {
+      user.supplierDetails?.parentDetails?.name ?: ""
+    }
+    parentDemandType = if (user.isParent()) {
+      user.supplierDetails?.demandType?.joinToString(separator = ",") { it }
+    } else {
+      user.supplierDetails?.parentDetails?.demandType?.joinToString(separator = ",") { it }
+    }
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
     isUserVerfied = user.isUserVerified
@@ -845,6 +865,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
+    agreedTermCondition = user.agreedTermCondition?:false
   }
 
 
@@ -950,6 +971,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val retryVerificationOnBack = "retry_verification_on_back"
     const val identityDocUrl = "identity_doc_url"
     const val lanesPreference= "lanes_preference"
+
+    const val agreedTermCondition= "agreedTermCondition"
+
   }
 }
 
