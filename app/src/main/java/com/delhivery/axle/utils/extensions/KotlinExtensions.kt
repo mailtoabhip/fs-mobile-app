@@ -3,6 +3,16 @@ package com.delhivery.axle.utils.extensions
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+
+
+
 
 /**
  * Check if string is not null and not blank either
@@ -69,3 +79,40 @@ fun ContentResolver.getFileName(uri: Uri): String {
 
   return name
 }
+
+
+fun EditText.addRxTextWatcher(): Observable<String?> {
+  val userInputSubject = BehaviorSubject.create<String>()
+    addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) {
+
+      }
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        s?.toString()?.let { it1 ->userInputSubject.onNext(it1); }
+      }
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+      }
+    })
+
+  return userInputSubject
+}
+
+object RxSearchObservable {
+  fun fromView(searchView: EditText): Observable<String> {
+    val subject = PublishSubject.create<String>()
+    searchView.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) {
+      }
+
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+        s?.toString()?.let { it1 -> subject.onNext(it1) }
+      }
+
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+      }
+    })
+    return subject
+  }
+}
+

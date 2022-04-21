@@ -29,8 +29,9 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 
 /**
  * Navigation Utils, utility class helps for navigation among activity with other options
@@ -295,7 +296,7 @@ class NavigationUtils @Inject constructor(
     }
   }
 
-  fun navigateOnboardingSteps(){
+  fun navigateOnboardingSteps(fromHome: Boolean=false) {
 
     if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
       //do nothing
@@ -309,21 +310,34 @@ class NavigationUtils @Inject constructor(
         }else if(userPrefs.pancard.isNullOrEmpty()) {
           val bundle = Bundle()
           bundle.putInt(StepKey, 0)
-          this.navigateKyc(activity, false, bundle)
+          this.navigateKyc(activity, fromHome, bundle)
         }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
           val bundle = Bundle()
           bundle.putInt(StepKey, 1)
-          this.navigateKyc(activity, false, bundle)
+          this.navigateKyc(activity, fromHome, bundle)
         }else  if(userPrefs.businessAddress.isNullOrEmpty()){
           val bundle = Bundle()
           bundle.putInt(StepKey, 2)
-          this.navigateKyc(activity, false, bundle)
+          this.navigateKyc(activity, fromHome, bundle)
         }else  if(!userPrefs.userMode.equals("post_load")){
-          if( userPrefs.rcNumber.isNullOrEmpty() || !userPrefs.isTruckingDocumentUploaded){
+          if( userPrefs.rcNumber.isNullOrEmpty() && !userPrefs.isTruckingDocumentUploaded){
             val bundle = Bundle()
             bundle.putInt(StepKey, 3)
-            this.navigateKyc(activity, false, bundle)
+            this.navigateKyc(activity, fromHome, bundle)
+          }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty()){
+            val intent = Intent(activity, PaymentDetailsActivity::class.java)
+            this.navigate(intent,fromHome,null)
+          }else if(!userPrefs.agreedTermCondition){
+            val intent = Intent(activity, VendorPolicyActivity::class.java)
+            this.navigate(intent,fromHome,null)
           }
+        }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty()){
+          val intent = Intent(activity, PaymentDetailsActivity::class.java)
+          this.navigate(intent,fromHome,null)
+
+        }else if(!userPrefs.agreedTermCondition){
+          val intent = Intent(activity, VendorPolicyActivity::class.java)
+          this.navigate(intent,fromHome,null)
         }
 
         }

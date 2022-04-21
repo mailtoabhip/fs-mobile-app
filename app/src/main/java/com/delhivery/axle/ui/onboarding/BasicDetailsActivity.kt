@@ -4,37 +4,19 @@ import android.graphics.Color
 import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityBasicDetailsBinding
-import com.delhivery.axle.databinding.ActivityOnboardingBinding
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.ui.base.BaseActivity
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.Observer
 import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.StateModel
-import com.delhivery.axle.data.StateModelList
-import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
-import com.delhivery.axle.ui.kyc.pan.panKey
 import com.delhivery.axle.ui.searchcitystate.CityType
 import com.delhivery.axle.ui.searchcitystate.HaveOldDestinations
 import com.delhivery.axle.ui.searchcitystate.SelectedData
 import com.delhivery.axle.ui.searchcitystate.searchCityIntent
 import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
 import com.delhivery.axle.ui.searchcitystate.selectedCityStates
-import com.delhivery.axle.ui.selectroute.SelectRouteFlowType
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
-import com.delhivery.axle.utils.CurrentStepKey
-import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
-import com.delhivery.axle.utils.StepKey
-import com.delhivery.axle.utils.TotalStepsKey
 import com.delhivery.axle.utils.prefs.UserPrefs
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetailsViewModel>() {

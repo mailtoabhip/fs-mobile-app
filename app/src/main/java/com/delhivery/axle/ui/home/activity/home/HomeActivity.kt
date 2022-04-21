@@ -1,10 +1,7 @@
 package com.delhivery.axle.ui.home.activity.home
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -13,33 +10,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
-import com.delhivery.axle.databinding.DialogKycStartBinding
 import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
-import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
-import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 
@@ -94,12 +85,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromNotification = false
     fromDeepLink = false
 
-    navigationUtils.navigateOnboardingSteps()
+    viewModel.getUserDetails()
 
   }
 
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+
+    viewModel.userUpdateLiveData.observe(this, Observer {
+      if(it){
+        navigationUtils.navigateOnboardingSteps(true)
+
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
@@ -154,6 +151,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     /**
      * Process Deep Link */
     processDeepLink()
+      }
+    })
   }
 
   private fun processDeepLink() {

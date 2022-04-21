@@ -42,15 +42,17 @@ data class UserModel(
         @SerializedName("profile_image_url") var profileImageUrl: String?,
         @SerializedName("phone_no") var phoneNo: String?,
         @SerializedName("name") var name: String?,
+        @SerializedName("demand_type") var demandType : List<String>,
         @SerializedName("diesel_card_preference") var dieselCardPreferences: String? = "no",
         @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf(),
         @SerializedName("can_view_third_party_loads") var canViewThirdPartyLoads: Boolean?,
         @SerializedName("is_identity_verified") var isIdentityVerified: Boolean?,
         @SerializedName("is_gsts_by_pan_not_registered") var isGstsByPanNotRegistered: Boolean?,
-       @SerializedName("is_trucking_document_uploaded") var isTruckingDocumentUploaded: Boolean?,
+        @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
-      @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf()
-        ) : BaseKeyTypeModel<String>(), Serializable {
+        @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
+        @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?
+  ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
 

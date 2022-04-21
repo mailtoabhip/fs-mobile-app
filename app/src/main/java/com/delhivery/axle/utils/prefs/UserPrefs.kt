@@ -7,9 +7,7 @@ import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import java.util.*
@@ -644,7 +642,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
 
-
+  var vendorPolicyAccepted: Boolean
+    set(value) = editor.putBoolean(PrefKeys.vendorPolicyAccepted, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.vendorPolicyAccepted, false)
   /**
    * Clear all preferences
    */
@@ -799,6 +800,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.attachedTruck)
         .apply()
+    editor.remove(PrefKeys.vendorPolicyAccepted)
+      .apply()
     editor.commit()
   }
 
@@ -827,6 +830,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
     vendorEntity = user.supplierDetails?.vendorEntity ?: ""
+    parentId = if (user.isParent()) {
+      user.userId
+    } else {
+      user.supplierDetails?.parentDetails?.userId ?: ""
+    }
+    parentName = if (user.isParent()) {
+      user.userName?:""
+    } else {
+      user.supplierDetails?.parentDetails?.name ?: ""
+    }
+    parentDemandType = if (user.isParent()) {
+      user.supplierDetails?.demandType?.joinToString(separator = ",") { it }
+    } else {
+      user.supplierDetails?.parentDetails?.demandType?.joinToString(separator = ",") { it }
+    }
     userMode = user.userMode?: ""
     userRole = user.userRole?: ""
     isUserVerfied = user.isUserVerified
@@ -851,6 +869,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
+    vendorPolicyAccepted = user.vendorPolicyAccepted?:false
   }
 
 
@@ -957,6 +976,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val retryVerificationOnBack = "retry_verification_on_back"
     const val identityDocUrl = "identity_doc_url"
     const val lanesPreference= "lanes_preference"
+
+    const val vendorPolicyAccepted= "agreedTermCondition"
+
   }
 }
 
