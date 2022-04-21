@@ -42,6 +42,7 @@ class BusinessVerificationViewModel@Inject constructor(
     var manualVerificationRequired = MutableLiveData<Boolean>()
     var rcVerificationErrorMsg = MutableLiveData<String>()
     var verificationDocUploadMsg = MutableLiveData<String>()
+    var verificationDocUploadFailed = MutableLiveData<Boolean>()
 
 
 
@@ -99,9 +100,15 @@ class BusinessVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res!=null) {
+                  userPrefs.businessDocUrl =
+                    verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                     verificationDocUploadMsg.postValue(_res)
-                } else
-                    error.handle()
+                } else {
+                    userPrefs.businessDocUrl =
+                      verificationDocUploadRequest.documentUrls?.get(0) ?: ""
+                  verificationDocUploadFailed.postValue(true)
+                  error.handle()
+                }
             }
     }
 
@@ -117,6 +124,7 @@ class BusinessVerificationViewModel@Inject constructor(
                         userPrefs.isRcVerfied=true
                         userPrefs.ownedTruck= ownedTruck.value.toString()
                         userUpdateLiveData.postValue(true)
+                      userPrefs.isTruckingDocumentUploaded=true
                     } else{
                         error.handle()
                         userUpdateLiveData.postValue(false)

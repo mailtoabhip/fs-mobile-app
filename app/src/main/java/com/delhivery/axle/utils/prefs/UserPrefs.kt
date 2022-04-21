@@ -348,8 +348,22 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         set(value) = editor.putString(PrefKeys.identityDocUrl ,value)
             .apply()
         get() = prefs.getString(PrefKeys.identityDocUrl, "") ?: ""
+  var businessDocUrl: String
+    set(value) = editor.putString(PrefKeys.businessDocUrl ,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.businessDocUrl, "") ?: ""
 
-    /**
+  var paymentDocUrl: String
+    set(value) = editor.putString(PrefKeys.paymentDocUrl ,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.paymentDocUrl, "") ?: ""
+  var ninteen4CDocUrl: String
+    set(value) = editor.putString(PrefKeys.ninteen4CDocUrl ,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ninteen4CDocUrl, "") ?: ""
+
+
+  /**
    * Is user verified
    */
   var isUserVerfied: Boolean
@@ -655,6 +669,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
 
+  var rcManualverificationreq: Boolean
+    set(value) = editor.putBoolean(PrefKeys.rcManualVerificationReq,value)
+        .apply()
+    get() = prefs.getBoolean(PrefKeys.rcManualVerificationReq, false)
+
   var vendorPolicyAccepted: Boolean
     set(value) = editor.putBoolean(PrefKeys.vendorPolicyAccepted, value)
       .apply()
@@ -822,6 +841,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.paymentAccountNumber)
         .apply()
     editor.remove(PrefKeys.paymentIFSCCode)
+        .apply()
+    editor.remove(PrefKeys.rcManualVerificationReq)
         .apply()
     editor.commit()
   }
@@ -991,6 +1012,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val businessType = "business_type"
     const val ownedTruck = "owned_truck"
     const val attachedTruck = "attached_truck"
+    const val rcManualVerificationReq = "rc_manual_verification_req"
     const val paymentAccountNumber = "payment_account_number"
     const val paymentAccountName = "payment_account_name"
     const val paymentIFSCCode = "payment_ifsc_code"
@@ -999,8 +1021,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val retryVerification = "retry_verification"
     const val retryVerificationOnBack = "retry_verification_on_back"
     const val identityDocUrl = "identity_doc_url"
+    const val businessDocUrl = "business_doc_url"
+    const val paymentDocUrl = "payment_doc_url"
+    const val ninteen4CDocUrl = "ninteen4c_doc_url"
     const val lanesPreference= "lanes_preference"
-
     const val vendorPolicyAccepted= "agreedTermCondition"
 
   }

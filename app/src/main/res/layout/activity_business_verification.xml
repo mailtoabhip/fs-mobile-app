@@ -285,7 +285,7 @@
                 android:id="@+id/layout_upload_LR"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                bind:layout_constraintTop_toBottomOf="@+id/radio_lay"
+                bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
                 bind:layout_constraintStart_toStartOf="parent"
                 >
                 <androidx.appcompat.widget.AppCompatImageView
@@ -314,7 +314,7 @@
                 android:layout_width="match_parent"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                bind:layout_constraintTop_toBottomOf="@+id/radio_lay"
+                bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
                 bind:layout_constraintStart_toStartOf="parent"
                 >
                 <androidx.appcompat.widget.AppCompatImageView

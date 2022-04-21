@@ -69,7 +69,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     val awsPath = "loadboard/lr/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
-
     var truckNum =false
     var ownedTruck =false
     var attachedTruck =false
@@ -93,13 +92,20 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
         if(userPrefs.ownedTruck.isNotNullOrEmpty()){
             viewModel.ownedTruck.value=userPrefs.ownedTruck
+            ownedTruck=true
+            setSubmitButtonEnable()
         }
         if(userPrefs.attachedTruck.isNotNullOrEmpty()){
             viewModel.attachedTruck.value=userPrefs.attachedTruck
+            attachedTruck=true
+            setSubmitButtonEnable()
         }
         if(userPrefs.rcNumber.isNotNullOrEmpty()){
             viewModel.truckNumber.value=userPrefs.rcNumber
+            truckNum=true
+            setSubmitButtonEnable()
         }
+        showUploadedDoc()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -118,7 +124,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutTruckrd.isSelected=true
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
-            truckNum=false
+            if(viewModel.truckNumber.value.isNotNullOrEmpty()){
+                truckNum=true
+            }else{
+                truckNum=false
+            }
+            resetUploadData()
+            uploadArray.clear()
             setSubmitButtonEnable()
             binding.layoutUploadLR.visibility=View.GONE
             binding.textTruck.isChecked=true
@@ -133,6 +145,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 truckNum=false
                 setSubmitButtonEnable()
             }
+            userPrefs.rcManualverificationreq=false
+            resetUploadData()
+            showUploadImage()
+            binding.layoutUploadLR.visibility=View.GONE
         })
 
         binding.ownedTrucksEdittext.lengthAction(1){
@@ -178,9 +194,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             }
         })
 
+        viewModel.verificationDocUploadFailed.observe(this, Observer {
+            showUploadedDoc()
+            userPrefs.ninteen4CDocUrl=""
+            userPrefs.paymentDocUrl=""
+        })
+
+
         viewModel.manualVerificationRequired.observe(this, Observer {
             if(it) {
                 viewModel.selected.value = "rc"
+                userPrefs.rcManualverificationreq=true
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
             }else{
                 //show successfully submitted page
@@ -211,11 +235,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.editTruck.error= false
             binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
             binding.textTruck.isChecked=false
+            userPrefs.rcManualverificationreq=true
             binding.layoutUploadLR.isSelected=true
             binding.layoutTruckrd.isSelected=false
             binding.layoutTruckrd.visibility=View.GONE
             binding.layoutUploadLR.visibility=View.VISIBLE
             truckNum=false
+            showUploadImage()
             setSubmitButtonEnable()
             viewModel.selected.value="lr"
 
@@ -228,7 +254,11 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.btnVerifyBusiness.setOnClickListener {
             if(binding.textTruck.isChecked){
                 if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
-                    viewModel.validateRC(viewModel.truckNumber.value!!)
+                    if(viewModel.manualVerificationRequired.value!=true) {
+                        viewModel.validateRC(viewModel.truckNumber.value!!)
+                    }else{
+                        sendDocForVerification(uploadArray)
+                    }
                 }
             }else{
                 sendDocForVerification(uploadArray)
@@ -242,6 +272,14 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             showUploadImage()
         }
 
+    }
+
+    private fun showUploadedDoc(){
+        if(!userPrefs.businessDocUrl.isNullOrEmpty()){
+            resetUploadData()
+            uploadArray.add(Pair(userPrefs.businessDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected()
+        }
     }
 
     fun setSubmitButtonEnable(){
@@ -345,8 +383,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         uploadImageName: String,
         localImageName: String
     ) {
-        this.uploadImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
-        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        if(!binding.textTruck.isChecked) {
+            this.uploadImageName =
+                "Lr_doc_" + userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "Lr_doc_" + userPrefs.phoneNumber + ".jpg"
+        }else{
+            this.uploadImageName =
+                "RC_doc_"+ userPrefs.phoneNumber + ".jpg"
+            this.localImageName =
+                "Rc_doc_" + userPrefs.phoneNumber + ".jpg"
+        }
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -476,8 +523,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        this.localImageName =  "Lr_doc_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(!binding.textTruck.isChecked) {
+                            this.uploadImageName = "Lr_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
+                            this.localImageName =  "Lr_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        }else{
+                            this.uploadImageName = "RC_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
+                            this.localImageName =  "RC_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        }
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

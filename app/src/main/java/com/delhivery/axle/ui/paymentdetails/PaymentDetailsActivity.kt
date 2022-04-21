@@ -83,6 +83,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.ifscCode.isNotNullOrEmpty()){
             viewModel.ifscText.value=userPrefs.ifscCode
         }
+        showUploadedDoc()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -99,9 +100,16 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 binding.accountHolderWarning.visibility= View.GONE
                 binding.nameDeclaration.visibility=View.GONE
             }else{
-                binding.accountHolderWarning.visibility= View.VISIBLE
-                binding.nameDeclaration.visibility=View.VISIBLE
+                if(it.isNotNullOrEmpty()) {
+                    binding.accountHolderWarning.visibility = View.VISIBLE
+                    binding.nameDeclaration.visibility = View.VISIBLE
+                }
             }
+        })
+        viewModel.verificationDocUploadFailed.observe(this, Observer {
+            showUploadedDoc()
+            userPrefs.ninteen4CDocUrl=""
+            userPrefs.paymentDocUrl=""
         })
 
 
@@ -130,11 +138,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
                 navigationUtils.navigate(VendorPolicyActivity::class.java,false,null)
             }
-            if(viewModel.selected194CUpload.value != true) {
-                showUploadImage()
-            }else{
-                showUploadImage1()
-            }
+
         })
 
 // 194c upload condition
@@ -266,6 +270,23 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         }
     }
+    private fun showUploadedDoc(){
+        if(userPrefs.paymentDocUrl.isNullOrEmpty()){
+            showUploadImage()
+        }else{
+            resetUploadData()
+            uploadArray.add(Pair(userPrefs.paymentDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected()
+        }
+        if(userPrefs.ninteen4CDocUrl.isNullOrEmpty()){
+            showUploadImage1()
+        }else{
+            resetUploadData()
+            uploadArray1.add(Pair(userPrefs.ninteen4CDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            showFileSelected1()
+        }
+    }
+
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera

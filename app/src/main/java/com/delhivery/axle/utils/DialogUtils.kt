@@ -192,7 +192,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         }
 
         bindingDialog.buttonUploadAgain.setOnClickListener {
-            val imageName = "Lr_doc_" + System.currentTimeMillis()+".jpg"
+            val imageName = "RC_doc_" + System.currentTimeMillis()+".jpg"
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }

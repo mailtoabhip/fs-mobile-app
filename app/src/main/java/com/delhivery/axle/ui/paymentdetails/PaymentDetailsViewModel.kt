@@ -27,6 +27,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var accountHolderText=MutableLiveData<String>()
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var verificationDocUploadMsg = MutableLiveData<String>()
+    var verificationDocUploadFailed = MutableLiveData<Boolean>()
     var selected194CUpload= MutableLiveData<Boolean>()
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var vendorUserUpdateLiveData = MutableLiveData<Boolean>()
@@ -56,9 +57,24 @@ class PaymentDetailsViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res!=null) {
+                    if (selected194CUpload.value==true) {
+                        userPrefs.ninteen4CDocUrl =
+                            verificationDocUploadRequest.documentUrls?.get(0) ?: ""
+                    }else{
+                        userPrefs.paymentDocUrl =
+                            verificationDocUploadRequest.documentUrls?.get(0) ?: ""
+                    }
                     verificationDocUploadMsg.postValue(_res)
                 } else
-                    error.handle()
+                    if (selected194CUpload.value==true) {
+                        userPrefs.ninteen4CDocUrl =
+                            verificationDocUploadRequest.documentUrls?.get(0) ?: ""
+                    }else{
+                        userPrefs.paymentDocUrl =
+                            verificationDocUploadRequest.documentUrls?.get(0) ?: ""
+                    }
+                verificationDocUploadFailed.postValue(true)
+                error.handle()
             }
     }
 
