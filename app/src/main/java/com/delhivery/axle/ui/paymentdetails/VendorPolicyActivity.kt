@@ -1,16 +1,17 @@
 package com.delhivery.axle.ui.paymentdetails
 
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebViewClient
-import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_vendor_policy.*
+import javax.inject.Inject
 
 class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDetailsViewModel>() {
 
+       @Inject
+       lateinit var userPrefs: UserPrefs
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             binding.webView.webViewClient = WebViewClient()
@@ -25,6 +26,7 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
     binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")
 
     viewModel.vendorUserUpdateLiveData.observe(this, Observer {
+      userPrefs.vendorPolicyAccepted = true
       navigationUtils.showKycSubmittedDialog()
     })
     binding.buttonIAgree.setOnClickListener{
