@@ -5,10 +5,14 @@ import android.webkit.WebViewClient
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_vendor_policy.*
+import javax.inject.Inject
 
 class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDetailsViewModel>() {
 
+       @Inject
+       lateinit var userPrefs: UserPrefs
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -20,14 +24,17 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
             val pdf = "https://icseindia.org/document/sample.pdf"
             binding.webView.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=$pdf")
-            uiUtils.showProgress()
+          //  uiUtils.showProgress()
            if(binding.webView.progress==25){
              uiUtils.hideProgress()
            }
 
           binding.buttonUploadAgain.setOnClickListener{
+            //call update user api first
+            userPrefs.vendorPolicyAccepted = true
             navigationUtils.showKycSubmittedDialog()
           }
+
         }
 
         override fun onBackPressed() {
