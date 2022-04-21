@@ -7,9 +7,7 @@ import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.prefs.UserPrefs.PrefKeys.gstAddress
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 import java.util.*
@@ -638,10 +636,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.attachedTruck, "") ?: ""
 
-  var agreedTermCondition: Boolean
-    set(value) = editor.putBoolean(PrefKeys.agreedTermCondition, value)
+  var vendorPolicyAccepted: Boolean
+    set(value) = editor.putBoolean(PrefKeys.vendorPolicyAccepted, value)
       .apply()
-    get() = prefs.getBoolean(PrefKeys.agreedTermCondition, false)
+    get() = prefs.getBoolean(PrefKeys.vendorPolicyAccepted, false)
   /**
    * Clear all preferences
    */
@@ -796,7 +794,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.attachedTruck)
         .apply()
-    editor.remove(PrefKeys.agreedTermCondition)
+    editor.remove(PrefKeys.vendorPolicyAccepted)
       .apply()
     editor.commit()
   }
@@ -865,7 +863,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
-    agreedTermCondition = user.agreedTermCondition?:false
+    vendorPolicyAccepted = user.vendorPolicyAccepted?:false
   }
 
 
@@ -972,7 +970,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val identityDocUrl = "identity_doc_url"
     const val lanesPreference= "lanes_preference"
 
-    const val agreedTermCondition= "agreedTermCondition"
+    const val vendorPolicyAccepted= "agreedTermCondition"
 
   }
 }
