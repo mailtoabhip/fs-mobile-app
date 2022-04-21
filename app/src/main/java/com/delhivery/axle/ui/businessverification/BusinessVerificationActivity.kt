@@ -91,7 +91,15 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 binding.businessError.visibility=View.GONE
             }
         }
-
+        if(userPrefs.ownedTruck.isNotNullOrEmpty()){
+            viewModel.ownedTruck.value=userPrefs.ownedTruck
+        }
+        if(userPrefs.attachedTruck.isNotNullOrEmpty()){
+            viewModel.attachedTruck.value=userPrefs.attachedTruck
+        }
+        if(userPrefs.rcNumber.isNotNullOrEmpty()){
+            viewModel.truckNumber.value=userPrefs.rcNumber
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -160,6 +168,11 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 if(userPrefs.retryVerification){
                     userPrefs.rcRejectReason= ""
                 }
+                userPrefs.ownedTruck=viewModel.ownedTruck.value.toString()
+                userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
+                userPrefs.rcNumber=viewModel.truckNumber.value.toString()
+
+
                    navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
            TotalStepsKey)!!,null)
             }
@@ -251,7 +264,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     ) {
         uiUtils.hideProgress()
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
         showFileSelected()
         resetUploadData()
     }
@@ -259,7 +271,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun onAWSFailure() {
         uiUtils.hideProgress()
         uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_business),awsUtils)
         resetUploadData()
     }
 

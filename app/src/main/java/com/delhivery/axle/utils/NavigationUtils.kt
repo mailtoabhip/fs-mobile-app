@@ -327,7 +327,7 @@ class NavigationUtils @Inject constructor(
           }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty()){
             val intent = Intent(activity, PaymentDetailsActivity::class.java)
             this.navigate(intent,fromHome,null)
-          }else if(!userPrefs.agreedTermCondition){
+          }else if(!userPrefs.vendorPolicyAccepted){
             val intent = Intent(activity, VendorPolicyActivity::class.java)
             this.navigate(intent,fromHome,null)
           }
@@ -335,7 +335,7 @@ class NavigationUtils @Inject constructor(
           val intent = Intent(activity, PaymentDetailsActivity::class.java)
           this.navigate(intent,fromHome,null)
 
-        }else if(!userPrefs.agreedTermCondition){
+        }else if(!userPrefs.vendorPolicyAccepted){
           val intent = Intent(activity, VendorPolicyActivity::class.java)
           this.navigate(intent,fromHome,null)
         }

@@ -29,6 +29,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var verificationDocUploadMsg = MutableLiveData<String>()
     var selected194CUpload= MutableLiveData<Boolean>()
     var userUpdateLiveData = MutableLiveData<Boolean>()
+    var vendorUserUpdateLiveData = MutableLiveData<Boolean>()
     var nameDeclaration =false
 
 
@@ -69,8 +70,8 @@ class PaymentDetailsViewModel@Inject constructor(
                 if (nameDeclaration){
                 UpdateUserRequest(
                     phoneNumber = userPrefs.phoneNumber!!, accountNumber = accountText.value,
-                    ifscCode = ifscText.value, accountHolderName = accountHolderText.value,nameDeclaration = "yes"
-                )}else{
+                    ifscCode = ifscText.value, accountHolderName = accountHolderText.value,nameDeclaration = "yes")
+                }else{
                     UpdateUserRequest(
                         phoneNumber = userPrefs.phoneNumber!!, accountNumber = accountText.value,
                         ifscCode = ifscText.value, accountHolderName = accountHolderText.value
@@ -83,11 +84,34 @@ class PaymentDetailsViewModel@Inject constructor(
                     if (!error) {
                         userUpdateLiveData.postValue(true)
                     } else {
+                        userUpdateLiveData.postValue(false)
                         error.handle()
                     }
                 }
         }
     }
+
+    fun updateUserDetailsForVendorPolicy() {
+        if (!isConnected) return
+        if (!userPrefs.phoneNumber.isNullOrEmpty()) {
+            compositeDisposable += loadboardRepository.updateUser(
+                    UpdateUserRequest(
+                        phoneNumber = userPrefs.phoneNumber!!,vendorPolicyAccepted = true
+            )
+            )
+                .onBackground()
+                .progress()
+                .subscribe { _res, error ->
+                    if (!error) {
+                        vendorUserUpdateLiveData.postValue(true)
+                    } else {
+                        vendorUserUpdateLiveData.postValue(false)
+                        error.handle()
+                    }
+                }
+        }
+    }
+
 
 
 

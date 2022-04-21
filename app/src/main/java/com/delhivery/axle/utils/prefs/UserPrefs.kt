@@ -532,6 +532,19 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
         get() = prefs.getString(PrefKeys.shopNumber, "") ?: ""
 
+  var paymentAccountNumber: String
+    set(value) = editor.putString(PrefKeys.paymentAccountNumber,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.paymentAccountNumber, "") ?: ""
+  var paymentAccountName: String
+    set(value) = editor.putString(PrefKeys.paymentAccountName,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.paymentAccountName, "") ?: ""
+  var paymentIFSCCode: String
+    set(value) = editor.putString(PrefKeys.paymentIFSCCode,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.paymentIFSCCode, "") ?: ""
+
 
   /**
    *  load board supplier
@@ -770,6 +783,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
     editor.remove(PrefKeys.panRejectReason)
             .apply()
+    editor.remove(PrefKeys.paymentRejectReason)
+        .apply()
     editor.remove(PrefKeys.addressRejectReason)
             .apply()
     editor.remove(PrefKeys.rcRejectReason)
@@ -802,6 +817,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.vendorPolicyAccepted)
       .apply()
+    editor.remove(PrefKeys.paymentAccountName)
+        .apply()
+    editor.remove(PrefKeys.paymentAccountNumber)
+        .apply()
+    editor.remove(PrefKeys.paymentIFSCCode)
+        .apply()
     editor.commit()
   }
 
@@ -970,6 +991,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val businessType = "business_type"
     const val ownedTruck = "owned_truck"
     const val attachedTruck = "attached_truck"
+    const val paymentAccountNumber = "payment_account_number"
+    const val paymentAccountName = "payment_account_name"
+    const val paymentIFSCCode = "payment_ifsc_code"
 
     const val noOfVerificationIssues = "no_of_verification_issues"
     const val retryVerification = "retry_verification"

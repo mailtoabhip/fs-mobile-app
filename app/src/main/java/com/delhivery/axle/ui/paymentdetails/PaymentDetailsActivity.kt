@@ -74,6 +74,15 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.text="Payment verification failed due to"+userPrefs.paymentRejectReason
         }
+        if(userPrefs.paymentAccountName.isNotNullOrEmpty()){
+            viewModel.accountHolderText.value=userPrefs.paymentAccountName
+        }
+        if(userPrefs.accNumber.isNotNullOrEmpty()){
+            viewModel.accountText.value=userPrefs.accNumber
+        }
+        if(userPrefs.ifscCode.isNotNullOrEmpty()){
+            viewModel.ifscText.value=userPrefs.ifscCode
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -83,8 +92,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
 
+
+
         viewModel.accountHolderText.observe(this, Observer {
-            if(userPrefs.bankName.equals(it,true)){
+            if(userPrefs.userName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
                 binding.nameDeclaration.visibility=View.GONE
             }else{
@@ -109,7 +120,20 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
+                userPrefs.accNumber = viewModel.accountText.value.toString()
+                userPrefs.ifscCode = viewModel.ifscText.value.toString()
+                userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
+
+                if(userPrefs.retryVerification){
+                     userPrefs.paymentRejectReason=""
+                }
+
                 navigationUtils.navigate(VendorPolicyActivity::class.java,false,null)
+            }
+            if(viewModel.selected194CUpload.value != true) {
+                showUploadImage()
+            }else{
+                showUploadImage1()
             }
         })
 
@@ -367,6 +391,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             uiUtils.showToast("No file selected")
         }
         uploadArray.clear()
+
     }
 
 

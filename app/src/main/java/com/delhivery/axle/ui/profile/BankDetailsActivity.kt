@@ -132,6 +132,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         })
 
         binding.btnRetry.setOnClickListener {
+            userPrefs.retryVerification=true
             navigationUtils.navigate(PaymentDetailsActivity::class.java)
         }
 

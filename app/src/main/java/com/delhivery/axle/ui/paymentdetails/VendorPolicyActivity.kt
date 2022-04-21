@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.paymentdetails
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebViewClient
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -12,25 +13,27 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
             binding.webView.webViewClient = WebViewClient()
-
             binding.webView.settings.javaScriptEnabled = true
-
-            binding.webView.settings.setSupportZoom(true)
-
-            val pdf = "https://orion.delhivery.com/assets/orion_vendor_policy.pdf"
-            binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")
-
-            uiUtils.showProgress()
-           if(binding.webView.progress==1){
-             uiUtils.hideProgress()
-           }
-
-          binding.buttonUploadAgain.setOnClickListener{
-            navigationUtils.showKycSubmittedDialog()
-          }
         }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+    binding.webView.settings.setSupportZoom(true)
+
+    val pdf = "https://orion.delhivery.com/assets/orion_vendor_policy.pdf"
+    binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")
+
+    viewModel.vendorUserUpdateLiveData.observe(this, Observer {
+      navigationUtils.showKycSubmittedDialog()
+    })
+    binding.buttonIAgree.setOnClickListener{
+      viewModel.updateUserDetailsForVendorPolicy()
+    }
+
+  }
+
+
 
         override fun onBackPressed() {
             if (webView.canGoBack())
