@@ -29,7 +29,9 @@ data class UpdateUserRequest (
     @SerializedName("ifsc_code") val ifscCode:String? =null,
     @SerializedName("account_holder_name") val accountHolderName:String? =null,
     @SerializedName("name_declaration") val nameDeclaration:String? =null,
-    @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?=null
+    @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?=null,
+    @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?=null
+
 
 )
 

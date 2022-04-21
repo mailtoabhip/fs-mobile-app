@@ -256,7 +256,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
-    viewModel.checkUserRoutes()
     if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
       viewModel.routeUpdated = false

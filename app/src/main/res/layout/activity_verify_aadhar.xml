@@ -116,13 +116,26 @@
                     />
 
             </androidx.cardview.widget.CardView>
+            <CheckBox
+                android:id="@+id/aadhaarTermCondition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_edit_layout"
+                bind:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:gravity="top"
+                android:paddingTop="@dimen/size_4dp"
+                android:text="@string/label_aadhaar_consent"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                />
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_verify_aadhaar"
                 style="@style/ActionButton"
                 android:enabled="false"
                 android:textAllCaps="false"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/aadhaar_edit_layout"
+                bind:layout_constraintTop_toBottomOf="@+id/aadhaarTermCondition"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/size_32dp"

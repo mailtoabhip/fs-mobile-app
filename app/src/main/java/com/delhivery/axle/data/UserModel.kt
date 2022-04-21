@@ -51,8 +51,10 @@ data class UserModel(
         @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
         @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
-        @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?
-  ) : BaseKeyTypeModel<String>(), Serializable {
+        @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?,
+        @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?
+
+) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
 

@@ -678,6 +678,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.vendorPolicyAccepted, value)
       .apply()
     get() = prefs.getBoolean(PrefKeys.vendorPolicyAccepted, false)
+
+  var aadhaarPolicyAccepted: Boolean
+    set(value) = editor.putBoolean(PrefKeys.aadhaarPolicyAccepted, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.aadhaarPolicyAccepted, false)
   /**
    * Clear all preferences
    */
@@ -844,6 +849,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.rcManualVerificationReq)
         .apply()
+    editor.remove(PrefKeys.aadhaarPolicyAccepted)
+      .apply()
     editor.commit()
   }
 
@@ -912,6 +919,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
     vendorPolicyAccepted = user.vendorPolicyAccepted?:false
+    aadhaarPolicyAccepted= user.aadhaarPolicyAccepted?:false
   }
 
 
@@ -1026,6 +1034,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ninteen4CDocUrl = "ninteen4c_doc_url"
     const val lanesPreference= "lanes_preference"
     const val vendorPolicyAccepted= "agreedTermCondition"
+    const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
 
   }
 }

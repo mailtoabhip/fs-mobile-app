@@ -43,6 +43,8 @@ BaseViewModel() {
 
     var aadhaarCardNumber=""
 
+    var aadhaarPolicyAccepted=false
+
     var otpStatusLiveData = MutableLiveData<Boolean>()
 
     fun verifyRequestAadhaarOtp(otp: CharArray) {
@@ -133,7 +135,7 @@ BaseViewModel() {
         if (!isConnected) return
 
         if (aadhaarCardNumber.length == 14) {
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-","")))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), aadhaarNumber = aadhaarCardNumber.replace("-",""),aadhaarPolicyAccepted= aadhaarPolicyAccepted))
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->

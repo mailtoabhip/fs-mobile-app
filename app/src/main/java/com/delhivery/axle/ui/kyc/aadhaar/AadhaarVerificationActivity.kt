@@ -112,10 +112,10 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
         binding.editAadhaar.apply {
             lengthAction(14){
-                  binding.btnVerifyAadhaar.isEnabled = true
+                enableSubmit()
             }
             lengthAction(13){
-                binding.btnVerifyAadhaar.isEnabled = false
+               enableSubmit()
             }
         }
 
@@ -131,6 +131,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 }
             }
             viewModel.aadhaarCardNumber = aadhaarfill.toString()
+            binding.aadhaarTermCondition.isChecked =true
+            viewModel.aadhaarPolicyAccepted = true
         }
 
         binding.btnVerifyAadhaar.setOnClickListener {
@@ -185,6 +187,16 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         })
     }
 
+    private fun enableSubmit() {
+        if(binding.editAadhaar.length()==14 && binding.aadhaarTermCondition.isChecked){
+            viewModel.aadhaarPolicyAccepted = true
+            binding.btnVerifyAadhaar.isEnabled =true
+        }else{
+            viewModel.aadhaarPolicyAccepted = false
+            binding.btnVerifyAadhaar.isEnabled =false
+        }
+
+    }
 
     override fun getRequestAadhaarOtp() {
        viewModel.getRequestAadhaarOtp(true)

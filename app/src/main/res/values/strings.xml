@@ -77,6 +77,7 @@
   <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
   <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
   <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
+  <string name="msg_privacy_policy"> Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -154,7 +155,7 @@
   <string name="action_get_started">Get Started</string>
   <string name="action_change_number">Change number</string>
   <string name="action_proceed_account">Proceed</string>
-  <string name="action_terms_conditions">Terms &amp; Conditions</string>
+  <string name="action_terms_conditions">Privacy Policy</string>
   <string name="action_create_account">Create Account</string>
   <string name="action_login">Login</string>
   <string name="action_verify_gst">Verify GST number</string>
@@ -395,8 +396,8 @@
   <string name="label_transporter_select">I have trucks &amp; also loads to ship</string>
   <string name="label_tellus">Tell us about yourself</string>
   <string name="label_tellus_detail">Fill in the details below to create your account</string>
-  <string name="label_agree">I agree to Delhivery’s</string>
-  <string name="label_agree_whatsapp">I agree to receive notifications on WhatsApp</string>
+  <string name="label_agree"> I have read and I accept the </string>
+  <string name="label_agree_whatsapp">I agree to receiving updates from Delhivery through WhatsApp in relation to my use of this service</string>
   <string name="sub_label_step1_3">Step 1 of 3</string>
   <string name="sub_label_step2_3">Step 2 of 3</string>
   <string name="sub_label_step3_3">Step 3 of 3</string>
@@ -578,6 +579,11 @@
   <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
   <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
   <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
+  <string name="i_read_accept">I have read and I accept the&#160; </string>
+  <string name="and"> &#160;and&#160; </string>
+  <string name="label_condition">Conditions of Use.</string>
+  <string name="our_privacy_policy_outlines">Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
+  <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
