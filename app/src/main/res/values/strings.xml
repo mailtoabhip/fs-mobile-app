@@ -273,6 +273,7 @@
   <string name="label_trip_detail">Trip Details</string>
   <string name="label_transaction_id">Transaction Id</string>
   <string name="label_bank_details">Bank Details</string>
+  <string name="label_payment_details">Payment Details</string>
   <string name="label_enter_amount">Enter Amount</string>
   <string name="label_confirm_transfer">CONFIRM TRANSFER</string>
   <string name="label_balance">Balance</string>
