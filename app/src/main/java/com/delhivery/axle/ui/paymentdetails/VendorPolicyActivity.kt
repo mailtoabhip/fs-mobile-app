@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.paymentdetails
 
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebViewClient
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
@@ -18,10 +19,11 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
             binding.webView.settings.setSupportZoom(true)
 
-            val pdf = "https://icseindia.org/document/sample.pdf"
-            binding.webView.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=$pdf")
+            val pdf = "https://orion.delhivery.com/assets/orion_vendor_policy.pdf"
+            binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")
+
             uiUtils.showProgress()
-           if(binding.webView.progress==25){
+           if(binding.webView.progress==1){
              uiUtils.hideProgress()
            }
 

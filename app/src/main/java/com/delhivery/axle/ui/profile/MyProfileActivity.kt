@@ -182,6 +182,17 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
                         }
+                    }else if(k.verificationOverallType.equals("payment")){
+                        if(k.verificationStatus.equals("failed")){
+                            if(k.verificationStatusReasonCode.equals("others")) {
+                                userPrefs.paymentRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
+                            }else{
+                                userPrefs.paymentRejectReason = k.verificationStatusReasonCode?.replace("_"," ")?:""
+                            }
+                        }else if(k.verificationStatus.equals("pending")){
+                            userPrefs.paymentRejectReason = "Document under verification"
+                        }
+
                     }
                 }
                 if(it.second.equals("detail")) {

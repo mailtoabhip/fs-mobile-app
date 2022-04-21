@@ -381,6 +381,18 @@
                     android:layout_marginTop="@dimen/size_32dp"
                     android:text="@string/action_save_changes"
                     />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_retry"
+                    style="@style/ActionButton"
+                    android:visibility="gone"
+                    android:enabled="false"
+                    android:textAllCaps="false"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/name_declaration"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/size_32dp"
+                    android:text="@string/label_retry"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>

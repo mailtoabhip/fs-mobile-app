@@ -28,6 +28,7 @@ import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivi
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
@@ -56,6 +57,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   var currentCode :Int =0
   var type :String = ""
   var tid :String  = ""
+  lateinit var isAuthenticated :SplashPostState
+  var ifUpdateFalse=false
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -86,6 +89,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     /* start splash animation */
     animate()
     checkForDynamicLinks()
+    binding.btnGetStarted.setOnClickListener {
+      if(ifUpdateFalse) {
+        postAnimate(isAuthenticated)
+      }
+    }
+
   }
 
   private fun checkForDynamicLinks() {
@@ -112,16 +121,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
    * Splash animation chain
    */
   private fun animate() {
-    val isAuthenticated = viewModel.postState()
-    please(1500, OvershootInterpolator()) {
-      animate(binding.textDelhivery) toBe {
-        alpha(1f)
-      }
-      animate(binding.imgLogo) toBe {
-        alpha(1f)
-        scale(1.6f, 1.6f)
-      }
-    }.withEndAction {
+     isAuthenticated = viewModel.postState()
+
       checkForUpdatedVersion { it ->
         when (it) {
           true -> {
@@ -151,13 +152,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             )
           }
           false -> {
-            postAnimate(isAuthenticated)
+           ifUpdateFalse=true
           }
         }
       }
-    }
-        .setStartDelay(SplashAnimationDelay / 2)
-        .start()
+
   }
 
   private fun openPlayStore() {

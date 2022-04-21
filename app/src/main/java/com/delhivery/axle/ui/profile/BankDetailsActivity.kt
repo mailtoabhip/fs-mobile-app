@@ -18,6 +18,7 @@ import com.delhivery.axle.databinding.ActivityBankDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
@@ -72,6 +73,11 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getKycDoc()
+        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.text="Payment verification failed due to"+userPrefs.paymentRejectReason
+            binding.btnRetry.visibility=View.VISIBLE
+            binding.btnSubmit.visibility=View.GONE
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -124,6 +130,10 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                show194CSelected()
             }
         })
+
+        binding.btnRetry.setOnClickListener {
+            navigationUtils.navigate(PaymentDetailsActivity::class.java)
+        }
 
         binding.docRemove.setOnClickListener {
             downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)

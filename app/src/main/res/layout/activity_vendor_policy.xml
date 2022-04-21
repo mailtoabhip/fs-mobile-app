@@ -16,7 +16,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/button_upload_again"
+            android:layout_above="@+id/vendor_policy_text"
             >
 
         <!-- Place Web-view on the Screen -->
@@ -29,16 +29,26 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/vendor_policy_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_i_agree"
+        android:text="@string/sub_label_vendor_policy"
+        android:textAlignment="center"
+        android:textColor="@color/sub_heading_black"
+        android:layout_margin="@dimen/size_16dp"
+        />
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_upload_again"
+        android:id="@+id/button_i_agree"
         android:layout_width="match_parent"
         style="@style/ActionButton"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/size_20dp"
         android:layout_marginEnd="@dimen/size_16dp"
         android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginBottom="@dimen/size_16dp"
         android:layout_height="wrap_content"
         android:text="@string/label_i_agree"
         />

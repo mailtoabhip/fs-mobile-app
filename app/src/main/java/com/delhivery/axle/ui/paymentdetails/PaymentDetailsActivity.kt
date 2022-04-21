@@ -69,6 +69,9 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.text="Payment verification failed due to"+userPrefs.paymentRejectReason
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -81,9 +84,9 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }else{
                 binding.accountHolderWarning.visibility= View.VISIBLE
                 binding.nameDeclaration.visibility=View.VISIBLE
-
             }
         })
+
 
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
