@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -45,7 +46,11 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     override fun onBackPressed() {
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
-        navigationUtils.navigate(BasicDetailsActivity::class.java,true)
+      if(userPrefs.retryVerification){
+        navigationUtils.navigate(MyProfileActivity::class.java, true)
+      }else {
+        navigationUtils.navigate(BasicDetailsActivity::class.java, true)
+      }
     }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)

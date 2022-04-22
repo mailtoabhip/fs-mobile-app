@@ -34,6 +34,8 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -124,27 +126,19 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutTruckrd.isSelected=true
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
-            if(viewModel.truckNumber.value.isNotNullOrEmpty()){
-                truckNum=true
-            }else{
-                truckNum=false
-            }
             resetUploadData()
+            if(viewModel.truckNumber.value!!.length>=8){
+                truckNum=true
+                setSubmitButtonEnable()
+            }
             uploadArray.clear()
-            setSubmitButtonEnable()
+            binding.docUploadedLay.visibility=View.GONE
             binding.layoutUploadLR.visibility=View.GONE
             binding.textTruck.isChecked=true
             binding.layoutTruckrd.visibility=View.VISIBLE
 
         }
         viewModel.truckNumber.observe(this, Observer {
-            if(it.length>=9){
-                truckNum=true
-                setSubmitButtonEnable()
-            }else{
-                truckNum=false
-                setSubmitButtonEnable()
-            }
             userPrefs.rcManualverificationreq=false
             resetUploadData()
             showUploadImage()
@@ -168,6 +162,16 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             setSubmitButtonEnable()
         }
 
+        viewModel.truckNumber.observe(this, Observer {
+            if(it.length>=8){
+                truckNum=true
+                setSubmitButtonEnable()
+            }else{
+                truckNum=false
+                setSubmitButtonEnable()
+            }
+        })
+
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
@@ -187,7 +191,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 userPrefs.ownedTruck=viewModel.ownedTruck.value.toString()
                 userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
-
+//                navigationUtils.navigate(PaymentDetailsActivity::class.java,false,null)
 
                    navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
            TotalStepsKey)!!,null)

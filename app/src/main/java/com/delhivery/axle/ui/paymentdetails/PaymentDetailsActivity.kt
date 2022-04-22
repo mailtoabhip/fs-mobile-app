@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
@@ -93,8 +94,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
 
-
-
         viewModel.accountHolderText.observe(this, Observer {
             if(userPrefs.userName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
@@ -135,10 +134,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 if(userPrefs.retryVerification){
                      userPrefs.paymentRejectReason=""
                 }
-
                 navigationUtils.navigate(VendorPolicyActivity::class.java,false,null)
             }
-
         })
 
 // 194c upload condition
@@ -215,7 +212,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     override fun onBackPressed() {
         super.onBackPressed()
-        navigationUtils.navigate(BusinessVerificationActivity::class.java,true)
+        if(userPrefs.retryVerification){
+            navigationUtils.navigate(MyProfileActivity::class.java, true)
+        }else {
+            navigationUtils.navigate(BusinessVerificationActivity::class.java, true)
+        }
     }
 
     fun enableSubmitButton(){

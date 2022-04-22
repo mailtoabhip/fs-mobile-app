@@ -121,10 +121,9 @@ class BusinessVerificationViewModel@Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     if (!error) {
-                        userPrefs.isRcVerfied=true
                         userPrefs.ownedTruck= ownedTruck.value.toString()
                         userUpdateLiveData.postValue(true)
-                      userPrefs.isTruckingDocumentUploaded=true
+                        userPrefs.isTruckingDocumentUploaded=true
                     } else{
                         error.handle()
                         userUpdateLiveData.postValue(false)
@@ -141,7 +140,7 @@ class BusinessVerificationViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error) {
-                    userPrefs.isRcVerfied=true
+                    userPrefs.rcNumber=rc
                     userPrefs.attachedTruck=attachedTruck.value.toString()
                     userUpdateLiveData.postValue(true)
                 } else{
