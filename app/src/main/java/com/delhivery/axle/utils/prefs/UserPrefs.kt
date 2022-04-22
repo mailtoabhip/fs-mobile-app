@@ -922,6 +922,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     aadhaarPolicyAccepted= user.supplierDetails?.aadhaarPolicyAccepted?:false
     businessDocUrl= user.supplierDetails?.business_doc_url?:""
     paymentDocUrl=user.supplierDetails?.account_doc_url?:""
+    ninteen4CDocUrl=user.supplierDetails?.ninteen_doc_url?:""
   }
 
 

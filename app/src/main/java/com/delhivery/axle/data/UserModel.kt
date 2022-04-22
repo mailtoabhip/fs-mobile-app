@@ -31,7 +31,6 @@ data class UserModel(
         @SerializedName("user_name") var userName: String?,
         @SerializedName("business_name") var businessName: String?,
         @SerializedName("referral_code") var referralCode: String?,
-        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?,
         @SerializedName("other_addresses") var otherAddress: List<AddAddressModel>?,
         @SerializedName("business_address") var businessAddress: String?,
         @SerializedName("is_pan_verified") var isPanVerified: Boolean?,
@@ -161,6 +160,8 @@ data class SupplierModel(
         @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?,
         @SerializedName("trucking_business_proof_url") var business_doc_url: String?=null,
         @SerializedName("account_proof_url") var account_doc_url: String?=null,
-        @SerializedName("identity_doc_url") var ninteen_doc_url: String?=null
+        @SerializedName("sec_194_declaration") var ninteen_doc_url: String?=null,
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean
 
-)
+
+    )
