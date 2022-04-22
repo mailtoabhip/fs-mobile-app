@@ -191,9 +191,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 userPrefs.ownedTruck=viewModel.ownedTruck.value.toString()
                 userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
-//                navigationUtils.navigate(PaymentDetailsActivity::class.java,false,null)
 
-                   navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
            TotalStepsKey)!!,null)
             }
         })
