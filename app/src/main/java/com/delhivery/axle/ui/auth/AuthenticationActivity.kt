@@ -277,35 +277,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             //hide keyboard show progress view
             uiUtils.showProgress("Loading...")
           }
-          /* Login success, No user routes found - select route activity */
-         /* SelectRoute -> {
-            userPrefs.firstRoute = true
-            // Capture event
-            analyticsUtil.trackEvent(
-                    EVENT_OTP_VERIFIED,
-                    mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
-                    mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
-            )
-            uiUtils.hideDelhiveryProgress()
-            val bundle = Bundle()
-            bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
-            navigationUtils.navigateForActivityResult(
-                    intent = selectRouteIntent(this@AuthenticationActivity),
-                    requestCode = REQCODE_ADD_ROUTES, extras = bundle
-            )
-          }*/
-          /* Login success, user first time login with entity as RP/Both */
-         /* AddInventoryPathway -> {
-            userPrefs.firstLoginRPUser = false
-            // Capture event
-            analyticsUtil.trackEvent(
-              EVENT_OTP_VERIFIED,
-              mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
-              mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
-            )
-            uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(AddTruckPathwayActivity::class.java, true)
-          }*/
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
             // Capture event
@@ -317,15 +288,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.hideDelhiveryProgress()
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
-          /* otp verified, account set up needed */
-        /*  AccountRole -> {
-            uiUtils.showProgress("Loading...")
-            navigationUtils.navigate(AccountRoleActivity::class.java, false)
-          }*/
-        /*  AccountAction -> {
-            uiUtils.showProgress("Loading...")
-            navigationUtils.navigate(AccountActionActivity::class.java, false)
-          }*/
           AccountDetails -> {
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)

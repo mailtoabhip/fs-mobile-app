@@ -48,8 +48,12 @@ class SearchDataItemVH(binding: ViewSearchCityStateItemBinding) :
         binding.request = item.data
         binding.checkboxCityState.clickToAction(CitySelected,item, _interface)
         for(selectedItem in selectedCityStates){
-            if(selectedItem.orionDbCityCode.equals(item.data.orionDbCityCode))
+            if(selectedItem.orionDbCityCode.equals(item.data.orionDbCityCode)){
             binding.checkboxCityState.isChecked = true
+             }
+            else{
+                binding.checkboxCityState.isChecked =false
+            }
         }
 
     }
