@@ -303,6 +303,7 @@ class NavigationUtils @Inject constructor(
 
     }
     else{
+      Log.d("us",userPrefs.isUserVerfied.toString())
       if(!userPrefs.isUserVerfied){
         if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
@@ -324,7 +325,7 @@ class NavigationUtils @Inject constructor(
             val bundle = Bundle()
             bundle.putInt(StepKey, 3)
             this.navigateKyc(activity, fromHome, bundle)
-          }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty()){
+          }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty() || userPrefs.accNumber.equals("Not Available",true)){
             val intent = Intent(activity, PaymentDetailsActivity::class.java)
             this.navigate(intent,fromHome,null)
           }else if(!userPrefs.vendorPolicyAccepted){
@@ -336,7 +337,7 @@ class NavigationUtils @Inject constructor(
             }
           }
 
-        }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty()){
+        }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty() || userPrefs.accNumber.equals("Not Available",true)){
           val intent = Intent(activity, PaymentDetailsActivity::class.java)
           this.navigate(intent,fromHome,null)
 

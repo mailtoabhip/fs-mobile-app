@@ -123,13 +123,13 @@ class BusinessVerificationViewModel@Inject constructor(
                     if (!error) {
                         userPrefs.ownedTruck= ownedTruck.value.toString()
                         userUpdateLiveData.postValue(true)
+//                        userPrefs.isUserVerfied=false
                         userPrefs.isTruckingDocumentUploaded=true
                     } else{
                         error.handle()
                         userUpdateLiveData.postValue(false)
                     }
                 }
-
     }
 
     fun updateUserRCDetails(rc: String) {
@@ -141,7 +141,8 @@ class BusinessVerificationViewModel@Inject constructor(
             .subscribe { _res, error ->
                 if (!error) {
                     userPrefs.rcNumber=rc
-                    userPrefs.attachedTruck=attachedTruck.value.toString()
+//                  userPrefs.isUserVerfied=false
+                  userPrefs.attachedTruck=attachedTruck.value.toString()
                     userUpdateLiveData.postValue(true)
                 } else{
                     error.handle()
