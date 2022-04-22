@@ -31,7 +31,6 @@ data class UserModel(
         @SerializedName("user_name") var userName: String?,
         @SerializedName("business_name") var businessName: String?,
         @SerializedName("referral_code") var referralCode: String?,
-        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean?,
         @SerializedName("other_addresses") var otherAddress: List<AddAddressModel>?,
         @SerializedName("business_address") var businessAddress: String?,
         @SerializedName("is_pan_verified") var isPanVerified: Boolean?,
@@ -50,11 +49,9 @@ data class UserModel(
         @SerializedName("is_gsts_by_pan_not_registered") var isGstsByPanNotRegistered: Boolean?,
         @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
-        @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
-        @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?,
-        @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?
+        @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf()
 
-) : BaseKeyTypeModel<String>(), Serializable {
+    ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
 
@@ -155,5 +152,11 @@ data class SupplierModel(
         @SerializedName("diesel_company") var dieselCompany : List<String>? = mutableListOf(),
         @SerializedName("is_load_board_supplier") var isLoadBoardSupplier: Boolean = false,
         @SerializedName("enabled_for_marketplace") var enabledForMarketplace: Boolean = false,
-        @SerializedName("enabled_for_orion") var enabledForOrion: Boolean = false
-)
+        @SerializedName("enabled_for_orion") var enabledForOrion: Boolean = false,
+        @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?,
+        @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?,
+        @SerializedName("trucking_business_proof_url") var businessDocUrl: String?=null,
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean
+
+
+    )

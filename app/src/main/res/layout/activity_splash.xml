@@ -11,7 +11,7 @@
   <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@color/splash_background"
+      android:background="@color/white"
       >
 
     <View
@@ -28,7 +28,7 @@
         android:layout_height="@dimen/size_96dp"
         android:layout_gravity="center"
         android:layout_centerInParent="true"
-        app:srcCompat="@drawable/splash_img"
+        app:srcCompat="@drawable/ic_splash_img"
         />
 
     <androidx.appcompat.widget.AppCompatImageView

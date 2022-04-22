@@ -73,11 +73,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getKycDoc()
-        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
-            binding.paymentError.text="Payment verification failed due to"+userPrefs.paymentRejectReason
-            binding.btnRetry.visibility=View.VISIBLE
-            binding.btnSubmit.visibility=View.GONE
-        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -85,7 +80,13 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Bank Details"
-
+        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.visibility=View.VISIBLE
+            binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
+            binding.btnRetry.visibility=View.VISIBLE
+            binding.btnRetry.isEnabled=true
+            binding.btnSubmit.visibility=View.GONE
+        }
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
                 binding.uploadDoc1.visibility = View.VISIBLE

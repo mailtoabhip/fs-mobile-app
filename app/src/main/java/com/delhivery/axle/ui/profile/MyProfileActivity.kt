@@ -132,7 +132,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.kycLayout.setOnClickListener {
             uiUtils.showProgress()
             viewModel.getKYCDetails("detail")
-
         }
 
         viewModel.kycDetailData.observe(this, Observer {
@@ -182,7 +181,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
                         }
-                    }else if(k.verificationOverallType.equals("payment")){
+                    }else if(k.verificationOverallType.equals("bank_details")){
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.paymentRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""

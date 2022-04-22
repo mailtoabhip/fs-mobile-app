@@ -73,7 +73,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
-            binding.paymentError.text="Payment verification failed due to"+userPrefs.paymentRejectReason
+            binding.paymentError.visibility=View.VISIBLE
+            viewModel.errorText="Payment verification failed due to "+userPrefs.paymentRejectReason
+        }else{
+            binding.paymentError.visibility=View.GONE
         }
         if(userPrefs.paymentAccountName.isNotNullOrEmpty()){
             viewModel.accountHolderText.value=userPrefs.paymentAccountName
@@ -133,8 +136,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
                 if(userPrefs.retryVerification){
                      userPrefs.paymentRejectReason=""
+                    navigationUtils.navigate(MyProfileActivity::class.java,false,null)
+                }else {
+                    navigationUtils.navigate(VendorPolicyActivity::class.java, false, null)
                 }
-                navigationUtils.navigate(VendorPolicyActivity::class.java,false,null)
             }
         })
 
@@ -145,13 +150,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             } else {
                 binding.uploadDoc1.visibility = View.GONE
             }
-        }
-    // show error reject
-        userPrefs.identityRejectReason=""
-        if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
-            binding.paymentError.visibility=View.VISIBLE
-        }else{
-            binding.paymentError.visibility=View.GONE
         }
 
         binding.btnSubmit.setOnClickListener {

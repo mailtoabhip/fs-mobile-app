@@ -24,7 +24,7 @@ private val userPrefs: UserPrefs
 ): BaseViewModel() {
   var accountText= userPrefs.accNumber
   var ifscText= userPrefs.ifscCode
-  var accountHolderText= userPrefs.accNumber
+  var accountHolderText= userPrefs.paymentAccountName
   var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
   var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
   var verificationDocUploadMsg = MutableLiveData<String>()
