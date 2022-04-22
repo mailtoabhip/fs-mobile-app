@@ -156,7 +156,9 @@ data class SupplierModel(
         @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?,
         @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?,
         @SerializedName("trucking_business_proof_url") var businessDocUrl: String?=null,
-        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean
+        @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean,
+        @SerializedName("number_of_owned_trucks") var numberOfOwnedTrucks: String?,
+        @SerializedName("number_of_attached_trucks") var numberOfAttachedTrucks: String?
 
 
     )

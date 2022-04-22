@@ -373,9 +373,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
 //communication address is as same as Gst
     var isSameAsGst: Boolean
-        set(value) = editor.putBoolean(PrefKeys.IsUserVerfied, value)
+        set(value) = editor.putBoolean(PrefKeys.isSameAsGst, value)
             .apply()
-        get() = prefs.getBoolean(PrefKeys.IsUserVerfied, false)
+        get() = prefs.getBoolean(PrefKeys.isSameAsGst, false)
 
     /**
    * gst number
@@ -923,6 +923,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     businessDocUrl= user.supplierDetails?.businessDocUrl?:""
     paymentDocUrl=user.supplierDetails?.accountProofUrl?:""
     ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
+    ownedTruck = user.supplierDetails?.numberOfOwnedTrucks?:""
+    attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
   }
 
 
