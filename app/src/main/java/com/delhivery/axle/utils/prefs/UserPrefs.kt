@@ -918,8 +918,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
-    vendorPolicyAccepted = user.vendorPolicyAccepted?:false
-    aadhaarPolicyAccepted= user.aadhaarPolicyAccepted?:false
+    vendorPolicyAccepted = user.supplierDetails?.vendorPolicyAccepted?:false
+    aadhaarPolicyAccepted= user.supplierDetails?.aadhaarPolicyAccepted?:false
+    businessDocUrl= user.supplierDetails?.business_doc_url?:""
+    paymentDocUrl=user.supplierDetails?.account_doc_url?:""
   }
 
 
