@@ -51,9 +51,6 @@ data class UserModel(
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
         @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf()
 
-
-
-
     ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
@@ -158,9 +155,7 @@ data class SupplierModel(
         @SerializedName("enabled_for_orion") var enabledForOrion: Boolean = false,
         @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?,
         @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?,
-        @SerializedName("trucking_business_proof_url") var business_doc_url: String?=null,
-        @SerializedName("account_proof_url") var account_doc_url: String?=null,
-        @SerializedName("sec_194_declaration") var ninteen_doc_url: String?=null,
+        @SerializedName("trucking_business_proof_url") var businessDocUrl: String?=null,
         @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean
 
 

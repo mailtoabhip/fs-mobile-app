@@ -920,9 +920,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     setLanesPreferences(user.supplierDetails?.routes)
     vendorPolicyAccepted = user.supplierDetails?.vendorPolicyAccepted?:false
     aadhaarPolicyAccepted= user.supplierDetails?.aadhaarPolicyAccepted?:false
-    businessDocUrl= user.supplierDetails?.business_doc_url?:""
-    paymentDocUrl=user.supplierDetails?.account_doc_url?:""
-    ninteen4CDocUrl=user.supplierDetails?.ninteen_doc_url?:""
+    businessDocUrl= user.supplierDetails?.businessDocUrl?:""
+    paymentDocUrl=user.supplierDetails?.accountProofUrl?:""
+    ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
   }
 
 
