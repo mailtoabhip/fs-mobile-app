@@ -65,16 +65,17 @@ class PaymentDetailsViewModel@Inject constructor(
                             verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                     }
                     verificationDocUploadMsg.postValue(_res)
-                } else
-                    if (selected194CUpload.value==true) {
+                } else {
+                    if (selected194CUpload.value == true) {
                         userPrefs.ninteen4CDocUrl =
                             verificationDocUploadRequest.documentUrls?.get(0) ?: ""
-                    }else{
+                    } else {
                         userPrefs.paymentDocUrl =
                             verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                     }
-                verificationDocUploadFailed.postValue(true)
-                error.handle()
+                    verificationDocUploadFailed.postValue(true)
+                    error.handle()
+                }
             }
     }
 
