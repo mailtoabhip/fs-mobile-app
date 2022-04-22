@@ -118,7 +118,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                enableSubmit()
             }
         }
-
+        binding.aadhaarTermCondition.setOnClickListener {
+            if(binding.aadhaarTermCondition.isChecked){
+                enableSubmit()
+            }else{
+                enableSubmit()
+            }
+        }
         if(userPrefs.aadhaarNumber.isNotNullOrEmpty()){
             var aadhaarfill = StringBuilder()
             for((i,item) in userPrefs.aadhaarNumber.withIndex()){

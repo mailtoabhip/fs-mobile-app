@@ -139,12 +139,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             viewModel.addNewAddress(false)
 
         }
-
+        var isEdited = false
         if(userPrefs.businessAddress.isNotNullOrEmpty()){
             if(!userPrefs.getAddressList().isNullOrEmpty()){
                 if(userPrefs.getAddressList()!!.size>0){
                     for(item in userPrefs.getAddressList()!!){
                         if(item?.addressType!!.startsWith("al")){
+                            isEdited = true
                             fillDataFromBusinessAddress(item)
                         }
                     }
@@ -155,12 +156,22 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         }
 
         var cityLength = 0
-        autoCompleteUtils.autoCompleteCity(binding.autoCompleteCity) {
-            uiUtils.toggleKeyboard()
-            cityFilled = true
-            cityLength = binding.autoCompleteCity.text.length
-            enableSubmitButton()
+        if(isEdited){
+            autoCompleteUtils.skipFirstAutoCompleteCity(binding.autoCompleteCity) {
+                uiUtils.toggleKeyboard()
+                cityFilled = true
+                cityLength = binding.autoCompleteCity.text.length
+                enableSubmitButton()
+            }
+        }else{
+            autoCompleteUtils.autoCompleteCity(binding.autoCompleteCity) {
+                uiUtils.toggleKeyboard()
+                cityFilled = true
+                cityLength = binding.autoCompleteCity.text.length
+                enableSubmitButton()
+            }
         }
+
         binding.autoCompleteCity.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}

@@ -436,11 +436,20 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         var onlyDelete = false
         var cityLength = 0
-        autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
-            uiUtils.toggleKeyboard()
-            cityFilled = true
-            cityLength = bindingDialog.autoCompleteCity.text.length
-            enableAddAddressDialogButton(bindingDialog)
+        if(isEdit&& addressData!=null){
+            autoCompleteUtils.skipFirstAutoCompleteCity(bindingDialog.autoCompleteCity) {
+                uiUtils.toggleKeyboard()
+                cityFilled = true
+                cityLength = bindingDialog.autoCompleteCity.text.length
+                enableAddAddressDialogButton(bindingDialog)
+            }
+        }else{
+            autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
+                uiUtils.toggleKeyboard()
+                cityFilled = true
+                cityLength = bindingDialog.autoCompleteCity.text.length
+                enableAddAddressDialogButton(bindingDialog)
+            }
         }
         bindingDialog.autoCompleteCity.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

@@ -61,6 +61,20 @@ class AutoCompleteUtils @Inject constructor(
         })
   }
 
+  fun skipFirstAutoCompleteCity(
+    editText: DelhiveryCityAutoEditText,
+    action: (CityModel) -> Unit
+  ) {
+    val d = RxTextView.textChanges(editText)
+      .filter { it.length >= 3 }
+      .skip(1)
+      .subscribe({
+        resetNetworkSuggestions(it.toString(), editText, action)
+      }, {
+        it.printStackTrace()
+      })
+  }
+
   /**
    * Re-fetch suggestions
    */
