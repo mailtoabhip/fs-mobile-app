@@ -23,10 +23,6 @@ class ProfileDetailsViewModel @Inject constructor(
     var userName = MutableLiveData<String>()
     var businessName = MutableLiveData<String>()
     var mobile = userPrefs.phoneNumber?.replace("+91","")
-    var userMode = userPrefs.userMode
-    var userRole = userPrefs.userRole
-    var loadSwitch = userPrefs.canViewThirdPartyLoads
-    var changeRoleDialogVisibility =0
 
     var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
     var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
@@ -53,7 +49,7 @@ class ProfileDetailsViewModel @Inject constructor(
 
     fun updateUserDetails() {
         if (!isConnected) return
-            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), userName = userName.value?.trim(), businessName = businessName.value?.trim(), userMode = userMode, userRole = userRole, profileImageUrl = imageUrl, canViewThirdPartyLoads = loadSwitch))
+            compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber= userPrefs.phoneNumber.toString(), userName = userName.value?.trim(), businessName = businessName.value?.trim(), profileImageUrl = imageUrl))
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->
@@ -61,9 +57,6 @@ class ProfileDetailsViewModel @Inject constructor(
                             userPrefs.companyName = businessName.value?:""
                             userPrefs.userName = userName.value?:""
                             userPrefs.profileImageUrl = imageUrl?:""
-                            userPrefs.userRole = userRole?:""
-                            userPrefs.userMode = userMode?:""
-                            userPrefs.canViewThirdPartyLoads = loadSwitch?:false
                             userUpdateLiveData.postValue(true)
                         } else{
                             error.handle()

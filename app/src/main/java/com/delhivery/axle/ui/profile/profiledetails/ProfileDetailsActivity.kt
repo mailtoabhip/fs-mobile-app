@@ -69,8 +69,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         uiUtils.toggleKeyboard()
         binding.busineesName.clearFocus()
 
-        setUserRoleOption()
-
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
             downloadLogo()
             binding.card1.visibility = View.VISIBLE
@@ -78,19 +76,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         }else{
             binding.card1.visibility = View.GONE
             binding.profile.visibility = View.VISIBLE
-        }
-
-        if((viewModel.userPrefs.isLoadBoardClient == false || viewModel.userPrefs.isLoadBoardSupplier == false)){
-            binding.switchLay.visibility = View.VISIBLE
-            binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
-        }else{
-            if(viewModel.userPrefs.userMode.equals("post_load")) {
-                binding.switchLay.visibility = View.GONE
-            }else{
-                binding.switchLay.visibility = View.VISIBLE
-                binding.loadSwitch.isChecked = viewModel.userPrefs.canViewThirdPartyLoads
-            }
-
         }
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
@@ -103,26 +88,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             enableSubmitButton()
         })
 
-        binding.radioType.setOnCheckedChangeListener { group, checkedId ->
-            if(viewModel.userPrefs.isPanVerfied && (!viewModel.userPrefs.isUserVerfied)){
-                uiUtils.showSnackbar("permission change is not allowed when profile is under KYC verification")
-            }else {
-                if (checkedId == binding.radioType.getChildAt(0).id) {
-                    viewModel.userMode = "post_load"
-                    viewModel.changeRoleDialogVisibility = 1
-                } else if (checkedId == binding.radioType.getChildAt(1).id) {
-                    viewModel.userMode = "post_truck"
-                    viewModel.changeRoleDialogVisibility = 2
-                } else if (checkedId == binding.radioType.getChildAt(2).id) {
-                    viewModel.userMode = "both"
-                    viewModel.changeRoleDialogVisibility = 3
-                }
-                setUserRoleOption()
-            }
-        }
-        binding.occupationText.setOnClickListener {
-                dialogUtils.showRoleChangeDialog(viewModel.changeRoleDialogVisibility, this,viewModel.userPrefs.userMode,viewModel.userPrefs.isPanVerfied,viewModel.userPrefs.isUserVerfied,this)
-        }
 
         viewModel.userUpdateLiveData.observe(this, androidx.lifecycle.Observer {
             if (it) {
@@ -149,8 +114,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         })
 
         binding.btnSave.setOnClickListener {
-            viewModel.loadSwitch = loadSwitch.isChecked
-            viewModel.userRole = binding.occupationText.text.toString().replace(" ", "_").toLowerCase()
             viewModel.updateUserDetails()
         }
 
@@ -186,7 +149,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun setAccountRoleSelection(selected: String) {
-        binding.occupationText.setText(selected)
     }
 
     override fun navigateToBusinessVerification() {
@@ -306,40 +268,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         }
     }
 
-    private fun setUserRoleOption(){
-        if(viewModel.userMode.equals("post_truck")) {
-            (binding.radioType.getChildAt(1) as RadioButton).isChecked = true
-
-            viewModel.changeRoleDialogVisibility=2
-            setRoleSelect()
-        }else  if(viewModel.userMode.equals("post_load")) {
-            (binding.radioType.getChildAt(0) as RadioButton).isChecked = true
-
-            viewModel.changeRoleDialogVisibility=1
-            setRoleSelect()
-        }else  if(viewModel.userMode.equals("both")) {
-            (binding.radioType.getChildAt(2) as RadioButton).isChecked = true
-            viewModel.changeRoleDialogVisibility=3
-            setRoleSelect()
-        }
-    }
-
-    private fun setRoleSelect(){
-        if (viewModel.userPrefs.userRole.isNotNullOrEmpty()) {
-            val myString = viewModel.userPrefs.userRole.split("_")
-            val y = StringBuilder()
-            var i = 0
-            for (m in myString){
-                i= i+1
-                if(i>1){
-                    y.append(" ")
-                }
-                y.append(m.substring(0, 1).toUpperCase() + m.substring(1).toLowerCase())
-
-            }
-            binding.occupationText.setText(y.toString())
-        }
-    }
 
     private fun createImageFile(): File {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
