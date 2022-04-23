@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.databinding.library.BuildConfig
@@ -31,6 +32,7 @@ import com.delhivery.axle.utils.ImageUtils
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
+import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -69,6 +71,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     var accountName=false
     var ifsc = false
     var docUpload =false
+    var nameDec =true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,8 +104,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             if(userPrefs.userName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
                 binding.nameDeclaration.visibility=View.GONE
+                nameDec=true
+                enableSubmitButton()
             }else{
                 if(it.isNotNullOrEmpty()) {
+                    nameDec=false
+                    enableSubmitButton()
                     binding.accountHolderWarning.visibility = View.VISIBLE
                     binding.nameDeclaration.visibility = View.VISIBLE
                 }
@@ -196,15 +203,27 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 enableSubmitButton()
             }
         })
-        viewModel.ifscText.observe(this, Observer {
-            if(it.isNotNullOrEmpty()){
-                ifsc=true
+
+        binding.ifscEdittext.lengthAction(1){
+            ifsc=true
+            enableSubmitButton()
+        }
+        binding.ifscEdittext.lengthAction(0){
+            ifsc=false
+            enableSubmitButton()
+        }
+
+
+        binding.nameDeclaration.setOnClickListener {
+            if(binding.nameDeclaration.isChecked){
+                nameDec=true
+                Log.d("enable",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString())
                 enableSubmitButton()
             }else{
-                ifsc=false
+                nameDec=false
                 enableSubmitButton()
             }
-        })
+        }
 
     }
 
@@ -213,12 +232,16 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.retryVerification){
             navigationUtils.navigate(MyProfileActivity::class.java, true)
         }else {
+            val bundle = Bundle()
+            bundle.putInt(StepKey,3)
+            navigationUtils.navigateKyc(this,true,bundle)
             navigationUtils.navigate(BusinessVerificationActivity::class.java, true)
         }
     }
 
     fun enableSubmitButton(){
-        if(accountName&&accountNum&&ifsc&&docUpload) {
+        if(accountName&&accountNum&&ifsc&&docUpload&&nameDec) {
+            Log.d("enable",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString())
             binding.btnSubmit.isEnabled = true
         }else{
             binding.btnSubmit.isEnabled = false
@@ -370,7 +393,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         binding.docSize.setText(uploadArray.get(0).second+" KB")
         docUpload=true
         enableSubmitButton()
-
     }
     private fun showFileSelected1() {
         binding.uploadDocLay1.visibility=View.GONE
@@ -388,7 +410,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         }
         docUpload=false
         enableSubmitButton()
-
     }
     private fun showUploadImage1() {
         binding.uploadDocLay1.visibility=View.VISIBLE

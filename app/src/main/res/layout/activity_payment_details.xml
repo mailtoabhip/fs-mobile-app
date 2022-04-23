@@ -98,7 +98,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"
                     android:imeOptions="actionDone"
-                    android:textAllCaps="true"
                     android:text= "@={ viewModel.ifscText }"
                     android:layout_marginTop="@dimen/size_8dp"
                     bind:layout_constraintStart_toStartOf="parent"
@@ -367,6 +366,7 @@
 
                 <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/name_declaration"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     bind:layout_constraintStart_toStartOf="parent"

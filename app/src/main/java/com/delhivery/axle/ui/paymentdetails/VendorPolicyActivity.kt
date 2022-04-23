@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.paymentdetails
 
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -23,6 +25,9 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     binding.webView.settings.setSupportZoom(true)
+    setSupportActionBar(binding.toolbar)
+    title = ""
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     val pdf = "https://orion.delhivery.com/assets/orion_vendor_policy.pdf"
     binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")

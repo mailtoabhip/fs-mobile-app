@@ -102,6 +102,7 @@ class PaymentDetailsViewModel@Inject constructor(
                         userUpdateLiveData.postValue(true)
                     } else {
                         userUpdateLiveData.postValue(false)
+                        verificationDocUploadFailed.postValue(true)
                         error.handle()
                     }
                 }

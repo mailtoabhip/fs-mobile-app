@@ -279,14 +279,22 @@
                     android:id="@+id/rc_error_msg"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
+           <androidx.constraintlayout.widget.ConstraintLayout
+               android:layout_width="match_parent"
+               android:id="@+id/upload_lay"
+               android:layout_height="wrap_content"
+               bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
+               bind:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:id="@+id/layout_upload_LR"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
                 bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintBottom_toBottomOf="parent"
+
                 >
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/upload_icon"
@@ -314,7 +322,7 @@
                 android:layout_width="match_parent"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                bind:layout_constraintTop_toBottomOf="@+id/truck_edit_layout"
+                bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"
                 >
                 <androidx.appcompat.widget.AppCompatImageView
@@ -359,29 +367,27 @@
                     bind:layout_constraintBottom_toBottomOf="parent"
                     bind:layout_constraintRight_toRightOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
+           </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_verify_business"
+                style="@style/ActionButton"
+                android:layout_marginTop="@dimen/size_16dp"
+                bind:layout_constraintTop_toBottomOf="@+id/upload_lay"
+                android:enabled="false"
+                android:textAllCaps="false"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintBottom_toBottomOf="parent"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/size_32dp"
+                android:text="@string/action_proceed_account"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_verify_business"
-            style="@style/ActionButton"
-            android:layout_marginStart="@dimen/size_24dp"
-            android:layout_marginEnd="@dimen/size_24dp"
-            android:enabled="false"
-            android:textAllCaps="false"
-            bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintBottom_toBottomOf="parent"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/size_32dp"
-            android:text="@string/action_proceed_account"
-            />
+
     </RelativeLayout>
 
 </layout>

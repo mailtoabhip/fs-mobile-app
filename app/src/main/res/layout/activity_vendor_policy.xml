@@ -9,13 +9,22 @@
         <import type="android.view.View" />
 
     </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            app:navigationIcon="@drawable/ic_close_black"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
             android:layout_above="@+id/vendor_policy_text"
             >
 
@@ -34,10 +43,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/button_i_agree"
+        android:autoLink="web"
         android:text="@string/sub_label_vendor_policy"
         android:textAlignment="center"
         android:textColor="@color/sub_heading_black"
         android:layout_margin="@dimen/size_16dp"
+        android:linksClickable="true"
         />
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_i_agree"
