@@ -46,40 +46,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-
-          <CheckBox
-              android:id="@+id/checkTerms"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/privacyText"
-              android:textColor="@color/colorAccent"
-              android:textSize="@dimen/text_14sp"
-              />
-
-          <CheckBox
-              android:id="@+id/checkWhatsapp"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/checkTerms"
-              android:layout_marginTop="@dimen/size_8dp"
-              android:gravity="top"
-              android:paddingTop="@dimen/size_4dp"
-              android:text="@string/label_agree_whatsapp"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              />
-
-          <androidx.appcompat.widget.AppCompatButton
-              android:id="@+id/btn_create_account"
-              android:layout_width="match_parent"
-              android:layout_below="@+id/checkWhatsapp"
-              android:layout_marginTop="@dimen/size_32dp"
-              android:enabled="false"
-              android:text="@string/action_proceed_account"
-              android:textAllCaps="false"
-              style="@style/ActionButton"
-              />
-
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/label_tellus"
               android:layout_width="wrap_content"
@@ -105,32 +71,6 @@
               android:text="@string/label_tellus_detail"
               android:textColor="@color/sub_heading_black"
               android:textSize="@dimen/text_16sp"
-              />
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/privacyText"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/edit_referral_code"
-              android:layout_marginBottom="@dimen/size_4dp"
-              android:layout_marginStart="@dimen/size_6dp"
-              android:layout_marginTop="22dp"
-              android:fontFamily="sans-serif"
-              android:text="@string/our_privacy_policy_outlines"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              />
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/conditionPrivacy"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/privacyText"
-              android:layout_marginStart="@dimen/size_6dp"
-              android:layout_toEndOf="@+id/checkTerms"
-              android:fontFamily="sans-serif"
-              android:paddingTop="@dimen/size_4dp"
-              android:text="@string/action_terms_conditions"
-              android:textColor="@color/colorAccent"
-              android:textSize="@dimen/text_14sp"
               />
           <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
               android:id="@+id/edit_name"
@@ -184,6 +124,54 @@
               android:text="@={viewModel.referral_code}"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
+              />
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/privacyText"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/edit_referral_code"
+              android:layout_marginBottom="@dimen/size_4dp"
+              android:layout_marginStart="@dimen/size_6dp"
+              android:layout_marginTop="22dp"
+              android:fontFamily="sans-serif"
+              android:text="@string/our_privacy_policy_outlines"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              />
+          <CheckBox
+              android:id="@+id/checkTerms"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/privacyText"
+              android:gravity="top"
+              android:paddingTop="@dimen/size_4dp"
+              android:text="@string/i_read_accept"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              />
+
+          <CheckBox
+              android:id="@+id/checkWhatsapp"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/checkTerms"
+              android:layout_marginTop="@dimen/size_8dp"
+              android:gravity="top"
+              android:paddingTop="@dimen/size_4dp"
+              android:text="@string/label_agree_whatsapp"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_14sp"
+              />
+
+          <androidx.appcompat.widget.AppCompatButton
+              android:id="@+id/btn_create_account"
+              android:layout_width="match_parent"
+              android:layout_below="@+id/checkWhatsapp"
+              android:layout_marginTop="@dimen/size_32dp"
+              android:enabled="false"
+              android:text="@string/action_proceed_account"
+              android:textAllCaps="false"
+              style="@style/ActionButton"
               />
         </RelativeLayout>
 

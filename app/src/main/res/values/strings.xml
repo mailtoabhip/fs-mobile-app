@@ -579,10 +579,8 @@
   <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
   <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
   <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
-  <string name="i_read_accept">I have read and I accept the&#160; </string>
-  <string name="and"> &#160;and&#160; </string>
-  <string name="label_condition">Conditions of Use.</string>
-  <string name="our_privacy_policy_outlines">Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
+  <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
+  <string name="our_privacy_policy_outlines">Our <a href="https://orion.delhivery.com/#/paymentterms">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion.delhivery.com/#/paymentterms">Conditions of Use</a> govern your use of this application.</string>
   <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
 
   <string-array name="array_truck_type">

@@ -79,23 +79,22 @@ fun ContentResolver.getFileName(uri: Uri): String {
 
   return name
 }
+  fun androidx.appcompat.widget.SearchView.getQueryTextChangeObservable(): Observable<String> {
+    val subject = PublishSubject.create<String>()
 
-fun EditText.addRxTextWatcher(): Observable<String?> {
-
-  return Observable.create {
-    addTextChangedListener(object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) {
+    setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+      override fun onQueryTextSubmit(query: String?): Boolean {
+        subject.onComplete()
+        return true
       }
 
-      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-        s?.toString()?.let { it1 -> it.onNext(it1) }
-      }
-
-      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+      override fun onQueryTextChange(newText: String): Boolean {
+        subject.onNext(newText)
+        return true
       }
     })
+
+    return subject
   }
-}
 
 

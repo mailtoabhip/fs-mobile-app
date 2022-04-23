@@ -8,6 +8,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -21,6 +22,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.addRxTextWatcher
+import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Scheduler
@@ -107,31 +109,39 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
             }
         })
 
-        binding.editQuery.addRxTextWatcher()
+        binding.closeIcon.setOnClickListener{
+            binding.editQuery.setQuery("",false)
+        }
+        binding.editQuery.getQueryTextChangeObservable()
             .debounce(300, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (!TextUtils.isEmpty(it)) {
-                    binding.popularLl.visibility= View.GONE
-                    try {
-                        viewModel.searchText = it?.trim().toString()
-                        Log.d("prefix", it?.trim().toString())
-
-                        if (viewModel.searchText.length in 2..10) {
-                            refreshData()
-                        } else {
-                            adapter.clearItems()
-                            binding.popularLl.visibility= View.VISIBLE
-                        }
-                    }  catch (e: Exception) {
-                        binding.editQuery.error = e.message
+            .filter { text ->
+                if (text.isEmpty()) {
+                    this?.runOnUiThread {
+                        binding.popularLl.visibility = View.VISIBLE
+                        binding.rvCityItems.visibility = View.GONE
+                        binding.searchIcon.visibility = View.VISIBLE
+                        binding.closeIcon.visibility = View.GONE
                     }
-                } else{
-                    adapter.clearItems()
-                    binding.popularLl.visibility= View.VISIBLE
+                    return@filter false
+                } else {
+                    return@filter true
                 }
+            }
+            .distinctUntilChanged()
+            .switchMap { query ->
+                dataFromNetwork(query)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                if(result.length>1)
+                    this?.runOnUiThread {
+                        binding.popularLl.visibility = View.GONE
+                        binding.rvCityItems.visibility = View.VISIBLE
+                        binding.searchIcon.visibility = View.GONE
+                        binding.closeIcon.visibility = View.VISIBLE
+                    }
+                viewModel.searchCity(result)
             }
 
         if (viewModel.searchText.length in 2..30) {
@@ -170,13 +180,13 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         when(actionId){
             CitySelected -> {
                 val data = item.data as CityModel
-                    if(selectedCityStates.contains(data)){
-                    selectedCityStates.remove(data)
-                        selectedAdapter.operation(item,DataRVAdapterOperationType.Remove)
-                    }else{
-                        selectedAdapter.operation(item,DataRVAdapterOperationType.Add)
-                        selectedCityStates.add(data)
-                    }
+                    if(selectedCityStates.any{ it.orionDbCityCode == data.orionDbCityCode}){
+                            selectedCityStates.remove(selectedCityStates.find { it.orionDbCityCode == data.orionDbCityCode })
+                            selectedAdapter.operation(item,DataRVAdapterOperationType.Remove)
+                        }else{
+                            selectedAdapter.operation(item,DataRVAdapterOperationType.Add)
+                            selectedCityStates.add(data)
+                        }
                     adapter.notifyDataSetChanged()
                     selectedAdapter.notifyDataSetChanged()
                     popularAdapter.notifyDataSetChanged()
@@ -196,6 +206,14 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
     private fun refreshData() {
         adapter.clearItems()
         viewModel.searchCity(viewModel.searchText)
+    }
+
+    private fun dataFromNetwork(query: String): Observable<String> {
+        return Observable.just(true)
+            .delay(0, TimeUnit.SECONDS)
+            .map {
+                query
+            }
     }
 
 }

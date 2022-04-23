@@ -1,12 +1,13 @@
 package com.delhivery.axle.ui.searchcitystate
 
+import android.util.Log
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.CitySelected
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
-
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 
 abstract class BaseSearchCityStateRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseCityStateRVAdapterItem<*>>(
     binding: B
@@ -47,13 +48,8 @@ class SearchDataItemVH(binding: ViewSearchCityStateItemBinding) :
     ) {
         binding.request = item.data
         binding.checkboxCityState.clickToAction(CitySelected,item, _interface)
-        for(selectedItem in selectedCityStates){
-            if(selectedItem.orionDbCityCode.equals(item.data.orionDbCityCode)){
+        if(selectedCityStates.any{ it.orionDbCityCode == item.data.orionDbCityCode}){
             binding.checkboxCityState.isChecked = true
-             }
-            else{
-                binding.checkboxCityState.isChecked =false
-            }
         }
 
     }
