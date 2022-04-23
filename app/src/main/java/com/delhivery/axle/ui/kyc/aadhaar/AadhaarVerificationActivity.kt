@@ -97,7 +97,12 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 TotalStepsKey)!!)
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.aadhaarError.visibility=View.VISIBLE
-                viewModel.errorText = ("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                if(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    viewModel.errorText = userPrefs.identityRejectReason
+                }else {
+                    viewModel.errorText =
+                        ("Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                }
             }else{
                 binding.aadhaarError.visibility=View.GONE
             }

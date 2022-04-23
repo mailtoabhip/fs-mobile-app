@@ -83,20 +83,26 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
             )
             if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.identityError.visibility = View.VISIBLE
+                if(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    viewModel.errorText = userPrefs.identityRejectReason
+                }else {
+                    if (userPrefs.identityType.equals("cin")) {
+                        if (userPrefs.cinNumber.isNotNullOrEmpty()) {
+                            binding.identityError.text =
+                                ("CIN verification failed due to " + userPrefs.identityRejectReason)
+                        }
+                    } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
+                        if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
 
-                if (userPrefs.identityType.equals("cin")) {
-                    if (userPrefs.cinNumber.isNotNullOrEmpty()) {
-                        binding.identityError.text = ("CIN verification failed due to " + userPrefs.identityRejectReason)
-                    }
-                } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
-                    if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
+                            binding.identityError.text =
+                                ("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                        }
+                    } else if (userPrefs.identityType.equals("shop_establishment")) {
+                        if (userPrefs.shopNumber.isNotNullOrEmpty()) {
 
-                        binding.identityError.text=("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
-                    }
-                } else if (userPrefs.identityType.equals("shop_establishment")) {
-                    if (userPrefs.shopNumber.isNotNullOrEmpty()) {
-
-                        binding.identityError.text=("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                            binding.identityError.text =
+                                ("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                        }
                     }
                 }
             }else {

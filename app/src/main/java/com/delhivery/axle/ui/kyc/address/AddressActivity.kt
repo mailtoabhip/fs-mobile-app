@@ -93,8 +93,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
             if(userPrefs.addressRejectReason.isNotNullOrEmpty()) {
-                binding.addressError.visibility=View.VISIBLE
-                viewModel.errorText = "Address verification failed due to "+ userPrefs.addressRejectReason
+                binding.addressError.visibility = View.VISIBLE
+                if(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    viewModel.errorText = userPrefs.addressRejectReason
+                }else {
+                    viewModel.errorText =
+                        "Address verification failed due to " + userPrefs.addressRejectReason
+                }
             }else{
                 binding.addressError.visibility=View.GONE
             }

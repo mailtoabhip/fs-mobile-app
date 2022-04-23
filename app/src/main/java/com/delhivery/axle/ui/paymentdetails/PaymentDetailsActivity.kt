@@ -77,7 +77,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         super.onCreate(savedInstanceState)
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
-            viewModel.errorText="Payment verification failed due to "+userPrefs.paymentRejectReason
+            if(userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
+                viewModel.errorText = userPrefs.paymentRejectReason
+            }else {
+                viewModel.errorText =
+                    "Payment verification failed due to " + userPrefs.paymentRejectReason
+            }
         }else{
             binding.paymentError.visibility=View.GONE
         }

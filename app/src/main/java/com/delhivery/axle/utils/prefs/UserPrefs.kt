@@ -1020,7 +1020,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val identityRejectReason = "identity_reject_reason"
     const val rcRejectReason = "rc_reject_reason"
     const val addressRejectReason = "address_reject_reason"
-    const val paymentRejectReason = "pan_reject_reason"
+    const val paymentRejectReason = "payment_reject_reason"
     const val identityType = "identity_type"
     const val businessType = "business_type"
     const val ownedTruck = "owned_truck"

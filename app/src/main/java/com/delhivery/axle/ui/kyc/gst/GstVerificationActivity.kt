@@ -76,7 +76,12 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     TotalStepsKey)!!)
             if(userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.gstError.visibility=View.VISIBLE
-                viewModel.errorText = ("GST verification failed due to "+userPrefs.identityRejectReason)
+                if(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    viewModel.errorText = userPrefs.identityRejectReason
+                }else {
+                    viewModel.errorText =
+                        ("GST verification failed due to " + userPrefs.identityRejectReason)
+                }
             }else{
                 binding.gstError.visibility=View.GONE
             }

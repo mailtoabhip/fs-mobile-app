@@ -87,7 +87,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 TotalStepsKey)!!)
             if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
                 binding.businessError.visibility=View.VISIBLE
-                viewModel.errorText = "Truck RC verification failed due to "+ userPrefs.rcRejectReason
+                if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
+                    viewModel.errorText = userPrefs.rcRejectReason
+                }else {
+                    if (userPrefs.rcNumber.isNotNullOrEmpty()) {
+                        viewModel.errorText =
+                            "Truck RC verification failed due to " + userPrefs.rcRejectReason
+                    } else {
+                        viewModel.errorText =
+                            "LR-LN verification failed due to " + userPrefs.rcRejectReason
+                    }
+                }
             }else{
                 binding.businessError.visibility=View.GONE
             }

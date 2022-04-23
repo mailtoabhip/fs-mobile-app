@@ -86,6 +86,15 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             binding.btnRetry.visibility=View.VISIBLE
             binding.btnRetry.isEnabled=true
             binding.btnSubmit.visibility=View.GONE
+            if(userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
+                binding.paymentError.text=userPrefs.paymentRejectReason
+            }else {
+                binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
+            }
+        }else{
+            binding.paymentError.visibility=View.GONE
+            binding.btnRetry.visibility=View.GONE
+            binding.btnSubmit.visibility=View.VISIBLE
         }
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
