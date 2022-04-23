@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -169,6 +170,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
                  binding.btnSaveDestination.isEnabled = true
              }
          }else{
+             binding.editQuery.focusClick()
              selectedCityStates.clear()
          }
     }

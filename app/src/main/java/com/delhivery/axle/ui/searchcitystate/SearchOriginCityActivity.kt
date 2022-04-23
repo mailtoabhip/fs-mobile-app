@@ -18,6 +18,7 @@ import com.delhivery.axle.databinding.ActivitySearchOriginCityBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
@@ -124,6 +125,8 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
             binding.popularLl.visibility= View.GONE
             binding.searchIcon.visibility = View.GONE
             binding.closeIcon.visibility = View.VISIBLE
+        }else{
+            binding.editQuery.focusClick()
         }
         if (viewModel.searchText.length in 2..10) {
             refreshData()

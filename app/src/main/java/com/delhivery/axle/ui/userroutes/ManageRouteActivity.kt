@@ -32,7 +32,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
   /* flow type */
   private var flowType: SelectRouteFlowType = AddNewRoute
   private var selectedData:RouteModel?=null
-
+  var changedData = false
   override fun getViewModelClass() = ManageRouteViewModel::class.java
 
   override fun layoutId() = R.layout.activity_manage_route
@@ -118,7 +118,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
 
   override fun onResume() {
     super.onResume()
-    if(selectedData!=null){
+    if(selectedData!=null && !changedData){
       viewModel.selectedOrigin = CityModel(selectedData!!.origin.city,selectedData!!.origin.orion_db_city_code,"","",selectedData!!.origin.type?:"city")
       binding.editOrigin.setText(viewModel.selectedOrigin!!.cityName().trim())
       viewModel.oldOrigin =   viewModel.selectedOrigin
@@ -159,6 +159,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
             for(item in cities){
               citiesNames.add(item.cityName())
             }
+            changedData = true
             binding.editDestination.setText(citiesNames.joinToString(separator = ", "))
             enableSubmit()
           }

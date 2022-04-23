@@ -29,7 +29,7 @@
             android:layout_marginRight="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_16dp"
             app:queryHint="@string/hint_search_city"
-            android:background="@drawable/bg_all_round_corner_grey_boundary"
+            android:background="@drawable/bg_login_edit"
             app:iconifiedByDefault="false"
             app:closeIcon="@null"
             app:searchIcon="@null"
