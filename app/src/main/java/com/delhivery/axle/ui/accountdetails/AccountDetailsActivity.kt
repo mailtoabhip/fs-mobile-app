@@ -80,39 +80,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         onLocationButtonClicked()
 
         userPrefs.hasLoggedIn = false
-        val firstString = getString(string.i_read_accept)
-        val secondString = getString(string.label_privacy_policy)
-        val thirdString = getString(string.and)
-        val fourthString = getString(string.label_condition)
-        val word1: Spannable = SpannableString(firstString)
-        val word2: Spannable = SpannableString(secondString)
-        val word3: Spannable = SpannableString(thirdString)
-        val word4: Spannable = SpannableString(fourthString)
-        word1.setSpan(ForegroundColorSpan(this.resources.getColor(R.color.heading_black)), 0, word1.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        binding.conditionPrivacy.setText(word1)
-
-        val span2: ClickableSpan = object : ClickableSpan() {
-            override fun onClick(textView: View) {
-                when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/paymentterms")) {
-                    false -> uiUtils.showSnackbar("Could not open url")
-                }
-            }
-        }
-        word2.setSpan(span2, 0, word2.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        binding.conditionPrivacy.append(word2)
-        word3.setSpan(ForegroundColorSpan(this.resources.getColor(R.color.heading_black)), 0, word3.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        binding.conditionPrivacy.append(word3)
-        val span4: ClickableSpan = object : ClickableSpan() {
-            override fun onClick(textView: View) {
-                //to be replaced with condition url
-                when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/paymentterms")) {
-                    false -> uiUtils.showSnackbar("Could not open url")
-                }
-            }
-        }
-        word4.setSpan(span4, 0, word4.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        binding.conditionPrivacy.append(word4)
-        binding.conditionPrivacy.movementMethod = LinkMovementMethod.getInstance()
+        binding.privacyText.movementMethod = LinkMovementMethod.getInstance()
 
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())

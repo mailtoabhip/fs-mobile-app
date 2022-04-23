@@ -84,22 +84,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
       )
     }
 
-    if(selectedData!=null){
-      viewModel.selectedOrigin = CityModel(selectedData!!.origin.city,selectedData!!.origin.orion_db_city_code,"","",selectedData!!.origin.type?:"city")
-      binding.editOrigin.setText(viewModel.selectedOrigin!!.cityName().trim())
-      viewModel.oldOrigin =   viewModel.selectedOrigin
-      selectedCityStates = ArrayList<CityModel>()
-      for(item in selectedData!!.destinations){
-        val cityModel = CityModel(item.state,item.stateId,"",item.state,item.type?:"state")
-        selectedCityStates.add(cityModel)
-      }
-      val citiesNames = ArrayList<String>()
-      for(item in selectedCityStates){
-        citiesNames.add(item.cityName())
-      }
-      binding.editDestination.setText(citiesNames.joinToString(separator = ", "))
 
-    }
     if(flowType==AddNewRoute){
       binding.btnSubmitDetails.text = "Add Route"
     }else if(flowType==EditRoute){
@@ -131,6 +116,25 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
     })
   }
 
+  override fun onResume() {
+    super.onResume()
+    if(selectedData!=null){
+      viewModel.selectedOrigin = CityModel(selectedData!!.origin.city,selectedData!!.origin.orion_db_city_code,"","",selectedData!!.origin.type?:"city")
+      binding.editOrigin.setText(viewModel.selectedOrigin!!.cityName().trim())
+      viewModel.oldOrigin =   viewModel.selectedOrigin
+      selectedCityStates = ArrayList<CityModel>()
+      for(item in selectedData!!.destinations){
+        val cityModel = CityModel(item.state,item.stateId,"",item.state,item.type?:"state")
+        selectedCityStates.add(cityModel)
+      }
+      val citiesNames = ArrayList<String>()
+      for(item in selectedCityStates){
+        citiesNames.add(item.cityName())
+      }
+      binding.editDestination.setText(citiesNames.joinToString(separator = ", "))
+
+    }
+  }
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     when (requestCode) {
       REQCODE_SELECT_CITY -> {

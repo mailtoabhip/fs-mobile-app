@@ -19,8 +19,12 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.addRxTextWatcher
+import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.spinner_item.view.text
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -81,42 +85,50 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
                     adapter.operation(it)
             }
         })
-
-        binding.editQuery.addRxTextWatcher()
+        binding.closeIcon.setOnClickListener{
+            binding.editQuery.setQuery("",false)
+        }
+        binding.editQuery.getQueryTextChangeObservable()
             .debounce(300, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (!TextUtils.isEmpty(it)) {
-                    binding.popularLl.visibility= View.GONE
-                    try {
-                        viewModel.searchText = it?.trim().toString()
-                        Log.d("prefix", it?.trim().toString())
-
-                        if (viewModel.searchText.length in 2..10) {
-                            refreshData()
-                        } else {
-                            adapter.clearItems()
-                            binding.popularLl.visibility= View.VISIBLE
-                        }
-                    }  catch (e: Exception) {
-                        binding.editQuery.error = e.message
+            .filter { text ->
+                if (text.isEmpty()) {
+                    this?.runOnUiThread {
+                        binding.popularLl.visibility = View.VISIBLE
+                        binding.rvCityItems.visibility = View.GONE
+                        binding.searchIcon.visibility = View.VISIBLE
+                        binding.closeIcon.visibility = View.GONE
                     }
-                }else{
-                    adapter.clearItems()
-                    binding.popularLl.visibility= View.VISIBLE
+                    return@filter false
+                } else {
+                    return@filter true
                 }
             }
-
+            .distinctUntilChanged()
+            .switchMap { query ->
+                dataFromNetwork(query)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                if(result.length>1)
+                    this?.runOnUiThread {
+                        binding.rvCityItems.visibility = View.VISIBLE
+                        binding.popularLl.visibility = View.GONE
+                        binding.searchIcon.visibility = View.GONE
+                        binding.closeIcon.visibility = View.VISIBLE
+                    }
+                viewModel.searchCity(result)
+            }
+        if(viewModel.selectedData.isNotEmpty()){
+            binding.editQuery.setQuery(viewModel.selectedData,false)
+            viewModel.searchText = viewModel.selectedData
+            binding.popularLl.visibility= View.GONE
+            binding.searchIcon.visibility = View.GONE
+            binding.closeIcon.visibility = View.VISIBLE
+        }
         if (viewModel.searchText.length in 2..10) {
             refreshData()
         }
-
-        if(viewModel.selectedData.isNotEmpty()){
-            binding.editQuery.setText(viewModel.selectedData)
-        }
-
         viewModel.getPopularCities()
         viewModel.popularCitiesLiveData.observe(this, Observer {
             popularAdapter.operation(it)
@@ -149,6 +161,15 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
     private fun refreshData() {
         adapter.clearItems()
         viewModel.searchCity(viewModel.searchText)
+    }
+
+
+    private fun dataFromNetwork(query: String): Observable<String> {
+        return Observable.just(true)
+            .delay(0, TimeUnit.SECONDS)
+            .map {
+                query
+            }
     }
 
 }
