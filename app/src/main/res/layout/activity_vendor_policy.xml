@@ -42,14 +42,28 @@
         android:id="@+id/vendor_policy_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/button_i_agree"
+        android:layout_above="@id/vendor_policy_link"
         android:autoLink="web"
+        android:layout_marginTop="@dimen/size_16dp"
         android:text="@string/sub_label_vendor_policy"
         android:textAlignment="center"
         android:textColor="@color/sub_heading_black"
-        android:layout_margin="@dimen/size_16dp"
         android:linksClickable="true"
         />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vendor_policy_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/button_i_agree"
+            android:autoLink="web"
+            android:visibility="visible"
+             android:layout_marginBottom="@dimen/size_16dp"
+            android:text="@string/sub_label_vendor_link"
+            android:textAlignment="center"
+            android:textColor="@color/link"
+            android:linksClickable="true"
+            />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_i_agree"
         android:layout_width="match_parent"

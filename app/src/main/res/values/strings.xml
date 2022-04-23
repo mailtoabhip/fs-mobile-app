@@ -539,8 +539,8 @@
   <string name="sub_label_changing_from_post_load">With this change, you will not be allowed to Post Loads. Your load history will still be accessible</string>
   <string name="sub_label_changing_to_both">With this change, you can now Post Trucks &amp; Loads. Your trip &amp; load history will still be accessible</string>
   <string name="label_edit_occupation">"Edit My Occupation "</string>
-  <string name="sub_label_vendor_policy">"By tapping “I Agree”, I have read &amp; agree to \n<a href="https://orion.delhivery.com/#/paymentterms">Delhivery’s Partner Policy"</a></string>
-
+  <string name="sub_label_vendor_policy">"By tapping “I Agree”, I have read &amp; agree to </string>
+  <string name="sub_label_vendor_link">"Delhivery’s Partner Policy"</string>
 
   <string name="cin_number">CIN Number</string>
   <string name="udyog_aadhaar_number">Udyog Aadhaar Number </string>

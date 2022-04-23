@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.paymentdetails
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.webkit.WebViewClient
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -19,7 +19,7 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             binding.webView.webViewClient = WebViewClient()
-            binding.webView.settings.javaScriptEnabled = true
+          binding.webView.settings.javaScriptEnabled = true
         }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -29,6 +29,11 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
     title = ""
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+
+    binding.vendorPolicyLink.setOnClickListener {
+      val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://orion.delhivery.com/#/paymentterms"))
+      startActivity(browserIntent)
+    }
     val pdf = "https://orion.delhivery.com/assets/orion_vendor_policy.pdf"
     binding.webView.loadUrl("https://docs.google.com/gview?embedded=true&url=$pdf")
 

@@ -18,7 +18,6 @@ import com.delhivery.axle.databinding.ActivitySearchOriginCityBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
-import com.delhivery.axle.utils.extensions.addRxTextWatcher
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
