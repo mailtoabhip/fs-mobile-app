@@ -155,7 +155,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         viewModel.kycDetailData.observe(this, Observer {
-            userPrefs.paymentRejectReason="blurry image"
             if(it.first.kycData.isNullOrEmpty()){
                 uiUtils.showSnackbar("Something went wrong, please try again")
             }else{

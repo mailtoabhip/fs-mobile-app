@@ -146,7 +146,6 @@
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spinner_proof"
                 android:layout_width="match_parent"
-                android:paddingBottom="@dimen/size_12dp"
                 android:layout_height="@dimen/edit_text_height"
                 android:gravity="center_vertical"
                 android:background="@drawable/bg_spinner"

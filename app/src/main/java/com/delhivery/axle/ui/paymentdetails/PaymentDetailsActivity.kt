@@ -126,7 +126,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             userPrefs.paymentDocUrl=""
         })
 
-
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
@@ -366,7 +365,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -377,7 +375,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
     }
 
     override fun getRequestAadhaarOtp() {
