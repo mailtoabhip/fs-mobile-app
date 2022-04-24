@@ -134,10 +134,10 @@ class TeamMembersViewModel @Inject constructor(
     }
     jsonObject.addProperty("user_name", name)
     jsonObject.addProperty("phone_number", userPrefs.phoneNumber)
-    jsonObject.addProperty("parent_uuid", uuid)
+    jsonObject.addProperty("uuid", uuid)
     jsonObject.addProperty("diesel_card_preference",dieselPreference)
     jsonObject.add("diesel_company", jsonArray)
-    jsonObject.addProperty("parent_sp_id", uuid)
+    jsonObject.addProperty("parent_uuid", uuid)
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)

@@ -58,6 +58,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
+        userPrefs.paymentRejectReason="blurry image"
+
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
             binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
@@ -79,6 +81,16 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }
         }else{
             binding.issues.visibility = View.GONE
+        }
+        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
+            if(!userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
+                binding.issuesPayment.text = "1 Issues"
+                binding.issuesPayment.visibility=View.VISIBLE
+            }else{
+                binding.issuesPayment.visibility=View.GONE
+            }
+        }else{
+            binding.issuesPayment.visibility=View.GONE
         }
 
         binding.startKyc.setOnClickListener {
@@ -135,6 +147,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         viewModel.kycDetailData.observe(this, Observer {
+            userPrefs.paymentRejectReason="blurry image"
             if(it.first.kycData.isNullOrEmpty()){
                 uiUtils.showSnackbar("Something went wrong, please try again")
             }else{

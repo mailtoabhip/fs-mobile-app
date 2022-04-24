@@ -220,7 +220,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       val name = data.userName
       val number = data.phoneNumber
       val dieselPreference = data.getDieselPreferences()
-      val dieselCompany = data.dieselCompany?: mutableListOf()
+      val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
       if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
         if (name != null) {
           editTeamMember(uuid, name, number!!, dieselPreference, dieselCompany )

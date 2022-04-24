@@ -199,12 +199,38 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 enableSubmitButton()
             }
         })
+        binding.accountNumEdittext.lengthAction(1){
+            accountNum=true
+            enableSubmitButton()
+        }
+        binding.accountNumEdittext.lengthAction(1){
+            accountNum=false
+            enableSubmitButton()
+        }
         viewModel.accountHolderText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 accountName=true
                 enableSubmitButton()
             }else{
                 accountName=false
+                enableSubmitButton()
+            }
+        })
+        binding.accountHolderEdittext.lengthAction(1){
+            accountName=true
+            enableSubmitButton()
+        }
+        binding.accountHolderEdittext.lengthAction(0){
+            accountName=false
+            enableSubmitButton()
+        }
+
+        viewModel.ifscText.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                ifsc=true
+                enableSubmitButton()
+            }else{
+                ifsc=false
                 enableSubmitButton()
             }
         })
