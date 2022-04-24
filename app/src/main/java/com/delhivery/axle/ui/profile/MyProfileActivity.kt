@@ -58,7 +58,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
-        userPrefs.paymentRejectReason="blurry image"
 
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {

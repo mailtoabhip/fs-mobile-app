@@ -21,7 +21,13 @@ data class RouteModel(
   fun stateNames() = if (destinations.size > 0) {
     val destinationString = java.lang.StringBuilder()
     var stateString = ""
+    var count =0
     for (destination in destinations) {
+      if(count<3){
+        count++
+      }else{
+        break
+      }
       destinationString.append(destination.state)
       destinationString.append(", ")
     }
@@ -29,7 +35,12 @@ data class RouteModel(
     if (stateString.endsWith(", ")) {
       stateString = stateString.substring(0, destinationString.length - 2)
     }
-    stateString + " +${destinations.size}"
+    if(destinations.size>3) {
+      stateString + " +${destinations.size - 3}"
+    }else{
+      stateString
+    }
+
   } else {
     ""
   }
