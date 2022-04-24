@@ -868,6 +868,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ifscCode = user.supplierDetails?.ifscCode ?: ""
     pancard = user.supplierDetails?.panNumber ?: ""
     accNumber = user.accNumber()
+    paymentAccountNumber= user.supplierDetails?.accountNo?:""
+    paymentAccountName=user.supplierDetails?.name?:""
+    cinNumber=user.supplierDetails?.cInNumber?:""
+    shopNumber=user.supplierDetails?.shopEstablishment?:""
+    udyogNumber=user.supplierDetails?.udyogAadhar?:""
     cityCode = user.supplierDetails?.baseCityCode
     isParent = user.isParent()
     userType = user.userType ?: ""
@@ -915,7 +920,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ownTrucks = user.supplierDetails?.ownsTrucks?: false
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
-    noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty()) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
+    noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty() || user.noOfVerificationIssues?.equals("0.0")==false) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
     identityDocUrl = user.identity_doc_url?.get(0)?:""
     setLanesPreferences(user.supplierDetails?.routes)
     vendorPolicyAccepted = user.supplierDetails?.vendorPolicyAccepted?:false
