@@ -8,6 +8,7 @@ import com.delhivery.axle.data.CitySelected
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.biddetails.BulkBidsRVAdapterInterface
 
 abstract class BaseSearchCityStateRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseCityStateRVAdapterItem<*>>(
     binding: B
@@ -35,6 +36,7 @@ abstract class BaseSearchCityStateRVAdapterViewHolder<out B : ViewDataBinding, I
         item: IT,
         _interface: SearchCityStateRVAdapterInterface
     ) = post { _interface.handleAction(actionId, item) }
+
 }
 
 /**
@@ -48,8 +50,10 @@ class SearchDataItemVH(binding: ViewSearchCityStateItemBinding) :
     ) {
         binding.request = item.data
         binding.checkboxCityState.clickToAction(CitySelected,item, _interface)
-        if(selectedCityStates.any{ it.orionDbCityCode == item.data.orionDbCityCode}){
+        if(selectedCityStates.any{ it.orionDbCityCode.equals(item.data.orionDbCityCode) && it.cityName() == item.data.cityName()}){
             binding.checkboxCityState.isChecked = true
+        }else{
+            binding.checkboxCityState.isChecked = false
         }
 
     }

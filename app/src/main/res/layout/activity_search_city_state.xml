@@ -28,7 +28,7 @@
             android:layout_marginLeft="@dimen/size_16dp"
             android:layout_marginRight="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_16dp"
-            app:queryHint="@string/hint_search_city"
+            app:queryHint="@string/hint_search_city_state"
             android:background="@drawable/bg_login_edit"
             app:iconifiedByDefault="false"
             app:closeIcon="@null"

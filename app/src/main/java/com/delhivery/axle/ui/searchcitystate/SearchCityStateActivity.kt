@@ -191,16 +191,16 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         when(actionId){
             CitySelected -> {
                 val data = item.data as CityModel
-                    if(selectedCityStates.any{ it.orionDbCityCode == data.orionDbCityCode}){
-                            selectedCityStates.remove(selectedCityStates.find { it.orionDbCityCode == data.orionDbCityCode })
+                    if(selectedCityStates.any{ it.orionDbCityCode.equals(data.orionDbCityCode) && it.cityName() == data.cityName() }){
+                            selectedCityStates.remove(selectedCityStates.find { it.orionDbCityCode.equals(data.orionDbCityCode) && it.cityName() == data.cityName() })
                             selectedAdapter.operation(item,DataRVAdapterOperationType.Remove)
                         }else{
                             selectedAdapter.operation(item,DataRVAdapterOperationType.Add)
                             selectedCityStates.add(data)
                         }
-                    adapter.notifyDataSetChanged()
-                    selectedAdapter.notifyDataSetChanged()
                     popularAdapter.notifyDataSetChanged()
+                    selectedAdapter.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged()
                 binding.btnSaveDestination.isEnabled = selectedCityStates.size>0
             }
 
@@ -213,6 +213,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
             }
         }
     }
+
 
     private fun refreshData() {
         adapter.clearItems()
