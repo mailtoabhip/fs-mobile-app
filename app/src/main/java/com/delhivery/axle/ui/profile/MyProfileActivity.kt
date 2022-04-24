@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.widget.AppCompatImageView
@@ -58,7 +59,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
-        userPrefs.paymentRejectReason="blurry image"
 
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
@@ -74,9 +74,17 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         if(userPrefs.verificationStatus.equals("failed")){
             if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
-                binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
-                binding.issues.visibility = View.VISIBLE
+                if(userPrefs.paymentRejectReason.isNotNullOrEmpty()|| !userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification"))
+                {
+                binding.issues.text = (userPrefs.noOfVerificationIssues.toInt()-1).toString()+" Issues"
+                }else{
+                    binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
+                }
+                    binding.issues.visibility = View.VISIBLE
             }else{
+                binding.issues.visibility = View.GONE
+            }
+            if(binding.issues.text.trim().equals("0 Issues")){
                 binding.issues.visibility = View.GONE
             }
         }else{
@@ -186,6 +194,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
+                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.addressRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
@@ -193,9 +202,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
+                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                         }
                     }else if(k.verificationOverallType.equals("bank_details")){
                         if(k.verificationStatus.equals("failed")){
+
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.paymentRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{

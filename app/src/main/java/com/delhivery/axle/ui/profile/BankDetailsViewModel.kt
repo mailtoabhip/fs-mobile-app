@@ -22,7 +22,7 @@ private  val loadboardRepository: LoadboardRepository,
 private val userPrefs: UserPrefs
 
 ): BaseViewModel() {
-  var accountText= userPrefs.accNumber
+  var accountText= userPrefs.paymentAccountNumber
   var ifscText= userPrefs.ifscCode
   var accountHolderText= userPrefs.paymentAccountName
   var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()

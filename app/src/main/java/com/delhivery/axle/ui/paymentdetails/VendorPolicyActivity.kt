@@ -54,8 +54,10 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
         override fun onBackPressed() {
             if (webView.canGoBack())
                 webView.goBack()
-            else
-                super.onBackPressed()
+            else {
+              super.onBackPressed()
+              navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
+            }
         }
 
     override fun getViewModelClass() = PaymentDetailsViewModel::class.java

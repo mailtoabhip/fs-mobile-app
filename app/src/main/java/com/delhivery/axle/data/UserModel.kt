@@ -158,7 +158,8 @@ data class SupplierModel(
         @SerializedName("trucking_business_proof_url") var businessDocUrl: String?=null,
         @SerializedName("receive_whatsapp_notifications") var receiveWhatsappNotifications: Boolean,
         @SerializedName("number_of_owned_trucks") var numberOfOwnedTrucks: String?,
-        @SerializedName("number_of_attached_trucks") var numberOfAttachedTrucks: String?
-
-
+        @SerializedName("number_of_attached_trucks") var numberOfAttachedTrucks: String?,
+        @SerializedName("cin_number") var cInNumber: String?,
+        @SerializedName("udyog_aadhaar_number") var shopEstablishment: String?,
+        @SerializedName("shop_establishment_number") var udyogAadhar: String?
     )

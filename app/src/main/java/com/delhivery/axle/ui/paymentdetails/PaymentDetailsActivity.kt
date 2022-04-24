@@ -90,7 +90,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             viewModel.accountHolderText.value=userPrefs.paymentAccountName
         }
         if(userPrefs.accNumber.isNotNullOrEmpty() && !userPrefs.accNumber.equals("Not available",true)){
-            viewModel.accountText.value=userPrefs.accNumber
+            viewModel.accountText.value=userPrefs.paymentAccountNumber
         }
         if(userPrefs.ifscCode.isNotNullOrEmpty()){
             viewModel.ifscText.value=userPrefs.ifscCode
