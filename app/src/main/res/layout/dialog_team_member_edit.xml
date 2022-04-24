@@ -111,7 +111,7 @@
                 android:inputType="phone"
                 android:enabled="false"
                 android:clickable="false"
-                android:maxLength="10"
+                android:maxLength="13"
                 android:id="@+id/text_number"
                 android:text="@{number}"
                 android:hint="@string/hint_number"

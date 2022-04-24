@@ -137,7 +137,7 @@ class TeamMembersViewModel @Inject constructor(
     jsonObject.addProperty("uuid", uuid)
     jsonObject.addProperty("diesel_card_preference",dieselPreference)
     jsonObject.add("diesel_company", jsonArray)
-    jsonObject.addProperty("parent_uuid", uuid)
+    jsonObject.addProperty("parent_uuid", userRepository.userId())
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)
@@ -159,8 +159,8 @@ class TeamMembersViewModel @Inject constructor(
     val jsonObject = JsonObject()
     jsonObject.addProperty("phone_number", userPrefs.phoneNumber)
     jsonObject.addProperty("is_deleted", true)
-    jsonObject.addProperty("parent_uuid", uuid)
-    jsonObject.addProperty("parent_sp_id", userRepository.userId())
+    jsonObject.addProperty("uuid", uuid)
+    jsonObject.addProperty("parent_uuid", userRepository.userId())
     jsonObject.addProperty("originator", "axle-app")
 
     compositeDisposable += loadboardRepository.updateSecondaryUser(jsonObject)

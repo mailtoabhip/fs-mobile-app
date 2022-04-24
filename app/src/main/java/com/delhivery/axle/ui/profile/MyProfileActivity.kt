@@ -193,7 +193,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
-                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.addressRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
@@ -201,7 +200,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
-                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                         }
                     }else if(k.verificationOverallType.equals("bank_details")){
                         if(k.verificationStatus.equals("failed")){

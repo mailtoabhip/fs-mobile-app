@@ -125,7 +125,7 @@ class TeamMembersEditDialog @Inject constructor(
                     } catch (e: Exception) {
                         name = ""
                     }
-                    binding.btnConfirm.isEnabled = s.length>0 && binding.textNumber.text?.length==10
+                    binding.btnConfirm.isEnabled = s.length>0 && binding.textNumber.text?.length==13
                 }else{
                     binding.btnConfirm.isEnabled = false
                 }
@@ -187,7 +187,7 @@ class TeamMembersEditDialog @Inject constructor(
     private fun submit() {
         try {
             if (name.isNotEmpty() || number.isNotEmpty()) {
-                require(number.length == 10) {
+                require(number.length == 13) {
                     "Please enter valid phone number"
                 }
                 if (userNumber.isNotNullOrEmpty()) {
