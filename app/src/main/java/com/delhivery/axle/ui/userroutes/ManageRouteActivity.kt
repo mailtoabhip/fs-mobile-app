@@ -32,7 +32,8 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
   /* flow type */
   private var flowType: SelectRouteFlowType = AddNewRoute
   private var selectedData:RouteModel?=null
-  var changedData = false
+  var changedDestinationData = false
+  var changedOriginData =false
   override fun getViewModelClass() = ManageRouteViewModel::class.java
 
   override fun layoutId() = R.layout.activity_manage_route
@@ -118,10 +119,15 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
 
   override fun onResume() {
     super.onResume()
-    if(selectedData!=null && !changedData){
+    if(selectedData!=null && !changedOriginData){
       viewModel.selectedOrigin = CityModel(selectedData!!.origin.city,selectedData!!.origin.orion_db_city_code,"","",selectedData!!.origin.type?:"city")
       binding.editOrigin.setText(viewModel.selectedOrigin!!.cityName().trim())
       viewModel.oldOrigin =   viewModel.selectedOrigin
+    }
+    if(selectedData!=null&&changedOriginData){
+      viewModel.oldOrigin =  CityModel(selectedData!!.origin.city,selectedData!!.origin.orion_db_city_code,"","",selectedData!!.origin.type?:"city")
+    }
+    if(selectedData!=null && !changedDestinationData){
       selectedCityStates = ArrayList<CityModel>()
       for(item in selectedData!!.destinations){
         val cityModel = CityModel(item.state,item.stateId,"",item.state,item.type?:"state")
@@ -143,6 +149,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
           val city = data.getSerializableExtra("City") as CityModel
           if(type =="origin") {
             viewModel.selectedOrigin = city
+            changedOriginData = true
             binding.editOrigin.setText(city.cityName().trim())
             enableSubmit()
           }
@@ -159,7 +166,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
             for(item in cities){
               citiesNames.add(item.cityName())
             }
-            changedData = true
+            changedDestinationData = true
             binding.editDestination.setText(citiesNames.joinToString(separator = ", "))
             enableSubmit()
           }
