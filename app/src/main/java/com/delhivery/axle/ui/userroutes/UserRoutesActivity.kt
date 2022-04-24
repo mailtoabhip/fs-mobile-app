@@ -116,7 +116,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
   }
 
   private fun refreshData() {
-    adapter.resetStaticData()
+    adapter.clearItems()
     viewModel.fetchUserRoutes()
   }
 

@@ -161,7 +161,9 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         }
          if(viewModel.haveOldDestinations) {
              if (selectedCityStates.size > 0) {
+                 oldSelectedCityStates.clear()
                  for (item in selectedCityStates) {
+                     oldSelectedCityStates.add(item)
                      selectedAdapter.operation(SearchDataItem(item), DataRVAdapterOperationType.Add)
                  }
                  adapter.notifyDataSetChanged()
@@ -173,6 +175,14 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
              binding.editQuery.focusClick()
              selectedCityStates.clear()
          }
+    }
+
+    override fun onBackPressed() {
+        selectedCityStates.clear()
+        for(item in oldSelectedCityStates){
+           selectedCityStates.add(item)
+        }
+        super.onBackPressed()
     }
 
     override fun handleAction(
@@ -234,4 +244,5 @@ fun searchCityIntent(
     context: Context
 ) = Intent( context, SearchCityStateActivity::class.java)
 var selectedCityStates = ArrayList<CityModel>()
+var oldSelectedCityStates = ArrayList<CityModel>()
 

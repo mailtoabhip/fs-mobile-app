@@ -303,7 +303,7 @@ class NavigationUtils @Inject constructor(
 
     }
     else{
-      Log.d("userVerified",userPrefs.isUserVerfied.toString())
+
       if(!userPrefs.isUserVerfied){
         if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
