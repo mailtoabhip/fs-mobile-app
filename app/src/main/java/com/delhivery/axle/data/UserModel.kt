@@ -161,5 +161,7 @@ data class SupplierModel(
         @SerializedName("number_of_attached_trucks") var numberOfAttachedTrucks: String?,
         @SerializedName("cin_number") var cInNumber: String?,
         @SerializedName("udyog_aadhaar_number") var udyogAadhar: String?,
-        @SerializedName("shop_establishment_number") var shopEstablishment: String?
-    )
+        @SerializedName("shop_establishment_number") var shopEstablishment: String?,
+        @SerializedName("pan_holder_name") var panHolderName: String?
+
+)

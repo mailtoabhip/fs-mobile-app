@@ -492,6 +492,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.rcNumber, "") ?: ""
 
+  var panName: String
+    set(value) = editor.putString(PrefKeys.panName,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.panName, "") ?: ""
+
   /**
    * verificationStatus
    */
@@ -851,6 +856,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.aadhaarPolicyAccepted)
       .apply()
+    editor.remove(PrefKeys.panName)
+        .apply()
     editor.commit()
   }
 
@@ -905,6 +912,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     aadhaarNumber = user.supplierDetails?.aadhaarNumber?: ""
     gstNumber = user.supplierDetails?.gstNumber?: ""
     rcNumber = user.supplierDetails?.rcNumber?: ""
+    rcNumber = user.supplierDetails?.panHolderName?: ""
     businessAddress = user.businessAddress?: ""
     setAddressList(user.otherAddress)
     isPanVerfied = user.isPanVerified?: false
@@ -1007,6 +1015,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isRcVerified = "is_rc_verified"
     const val isGstVerified = "is_gst_verified"
     const val rcNumber = "rc_number"
+    const val panName = "pan_name"
     const val verificationStatus = "verification_status"
     const val profileImageUrl = "profile_image_url"
     const val  canViewThirdPartyLoads = "can_view_third_party_loads"

@@ -106,7 +106,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
 
         viewModel.accountHolderText.observe(this, Observer {
-            if(userPrefs.userName.equals(it,true)){
+            if(userPrefs.panName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
                 binding.nameDeclaration.visibility=View.GONE
                 nameDec=true

@@ -93,6 +93,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                        binding.imgCorrect.visibility = View.VISIBLE
                        binding.textPanName.visibility = View.VISIBLE
                        binding.textPanName.text =  getString(R.string.msg_verified_pan_name, it.panHolderName)
+                       userPrefs.panName= it.panHolderName!!
                        viewModel.panType = it.panCardType!!
                }
            )
