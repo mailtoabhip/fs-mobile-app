@@ -237,13 +237,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   private fun postAnimate(state: SplashPostState) {
     /**
-     * Check If it's from deep link*/
+     * Check If it's from deep link
+     * */
     if (state == Home && type != "") {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
       bundle.putString(ARGS_DEEPLINK_ID , tid)
      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
-
     } else {
       when (state) {
         Auth -> AuthenticationActivity::class
