@@ -81,7 +81,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     var pincodeFilled = false
     var proofTypeFilled = false
     var docUploadProof = true
-
+    var dataSetFromPref =false
 
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
@@ -117,25 +117,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
 
         /* Address Proof */
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
-                showUploadImage()
-                    if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
-                        binding.textProof.visibility = View.GONE
-                        binding.docLayout.visibility = View.GONE
-                        docUploadProof= true
-                }else{
-                    binding.textProof.visibility = View.VISIBLE
-                    binding.docLayout.visibility = View.VISIBLE
-                        docUploadProof=false
-                }
-                enableSubmitButton()
-            }else{
-                proofTypeFilled =false
-                enableSubmitButton()
-            }
-        }
 
         binding.btnSubmitDetails.setOnClickListener {
             if(pincodeFilled){
@@ -221,6 +202,34 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
        binding.docRemove.setOnClickListener {
            showUploadImage()
        }
+
+        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+            if(p>0){
+                proofTypeFilled = true
+                if(!dataSetFromPref){
+                    showUploadImage()
+                }
+                Log.d("udyog",userPrefs.udyogNumber)
+                if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
+                    binding.textProof.visibility = View.GONE
+                    binding.docLayout.visibility = View.GONE
+                    docUploadProof= true
+                }else{
+                    binding.textProof.visibility = View.VISIBLE
+                    binding.docLayout.visibility = View.VISIBLE
+                    if(!dataSetFromPref) {
+                        docUploadProof = false
+                    }else{
+                        dataSetFromPref=false
+                    }
+                }
+                enableSubmitButton()
+            }else{
+                proofTypeFilled =false
+                enableSubmitButton()
+            }
+        }
+
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
                 var address =
@@ -342,6 +351,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             binding.docUploadedLay.visibility = View.VISIBLE
             binding.docTitle.setText(docArray.get(0).first)
             docUploadProof=true
+            dataSetFromPref=true
         }
 
         proofTypeFilled = true
@@ -373,7 +383,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -384,7 +393,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
     }
 
     private fun createImageFile(): File {

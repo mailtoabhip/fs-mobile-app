@@ -291,7 +291,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -302,7 +301,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
     }
 
     override  fun captureImage(

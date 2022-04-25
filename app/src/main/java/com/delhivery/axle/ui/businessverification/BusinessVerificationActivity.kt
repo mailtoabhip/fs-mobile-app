@@ -369,7 +369,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -380,7 +379,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
     }
 
     override fun getRequestAadhaarOtp() {

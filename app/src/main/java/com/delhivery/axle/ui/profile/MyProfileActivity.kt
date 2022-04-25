@@ -155,7 +155,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         viewModel.kycDetailData.observe(this, Observer {
-            userPrefs.paymentRejectReason="blurry image"
             if(it.first.kycData.isNullOrEmpty()){
                 uiUtils.showSnackbar("Something went wrong, please try again")
             }else{
@@ -194,7 +193,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                         }
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
-                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.addressRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
@@ -202,11 +200,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
-                            Log.d("addressFailed",k.verificationStatusReasonMessage?.replace("_"," ")?:"")
                         }
                     }else if(k.verificationOverallType.equals("bank_details")){
                         if(k.verificationStatus.equals("failed")){
-
                             if(k.verificationStatusReasonCode.equals("others")) {
                                 userPrefs.paymentRejectReason = k.verificationStatusReasonMessage?.replace("_"," ")?:""
                             }else{
@@ -221,11 +217,13 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 if(it.second.equals("detail")) {
                     navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
                 }else{
-                    userPrefs.retryVerification = true
-                    userPrefs.retryVerificationOnBack=false
-                    val bundle = Bundle()
-                    bundle.putInt(StepKey, 0)
-                    navigationUtils.navigateKyc(this, true, bundle)
+                    if(!it.second.equals("noredirect")) {
+                        userPrefs.retryVerification = true
+                        userPrefs.retryVerificationOnBack = false
+                        val bundle = Bundle()
+                        bundle.putInt(StepKey, 0)
+                        navigationUtils.navigateKyc(this, true, bundle)
+                    }
                 }
             }
             uiUtils.hideProgress()
@@ -329,6 +327,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        viewModel.getKYCDetails("noredirect")
+
     }
 
 

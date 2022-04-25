@@ -83,6 +83,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var selectedAddressData= AddAddressModel()
     var alternateAddressData= AddAddressModel()
     var gstAddressData= AddAddressModel()
+    var dataSetFromPref =false
+
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
     override fun layoutId() = R.layout.activity_address
@@ -231,7 +233,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -242,7 +243,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
     }
 
     private fun createImageFile(): File {
@@ -416,10 +416,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             dialog.dismiss()
         }
 
-        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            proofTypeFilled = p>0
-            enableAddAddressDialogButton(bindingDialog)
-        }
 
         bindingDialog.btnSubmitDetails.setOnClickListener {
             viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
@@ -559,6 +555,19 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             bindingDialog.saveDeleteLl.visibility = View.GONE
         }
 
+        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+            proofTypeFilled = p>0
+            if(!dataSetFromPref){
+                resetUploadData()
+                bindingDialog.uploadDocLay.visibility= View.VISIBLE
+                bindingDialog.uploadedDocLay.visibility= View.GONE
+                docUploadProof=false
+            }else{
+                dataSetFromPref=false
+            }
+            enableAddAddressDialogButton(bindingDialog)
+        }
+
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -619,6 +628,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             bindingDialog.uploadedDocLay.visibility = View.VISIBLE
             bindingDialog.docTitle.setText(docArray.get(0).first)
             docUploadProof=true
+            dataSetFromPref=true
         }
 
 
