@@ -134,7 +134,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                         viewModel.selectedOrigin = CityModel(item!!.origin.city,item.origin.orion_db_city_code,"","",item.origin.type?:"city")
                     }
                     if(viewModel.selectedOrigin!!.city.equals(item!!.origin.city)){
-                        val cityModel = CityModel(item.destination.state,item.destination.gnStateCode,"",item.destination.state,item.destination.type?:"state")
+                        val cityModel = CityModel(item.destination.state,item.destination.stateId,"",item.destination.state,item.destination.type?:"state")
                         selectedCityStates.add(cityModel)
                     }
                 }
