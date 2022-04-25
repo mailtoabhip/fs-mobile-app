@@ -28,6 +28,7 @@ import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivi
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
@@ -247,7 +248,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     } else {
       when (state) {
         Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
+        Home -> PaymentDetailsActivity::class
         AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()

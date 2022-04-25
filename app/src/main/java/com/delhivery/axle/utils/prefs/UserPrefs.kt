@@ -876,7 +876,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     pancard = user.supplierDetails?.panNumber ?: ""
     accNumber = user.accNumber()
     paymentAccountNumber= user.supplierDetails?.accountNo?:""
-    paymentAccountName=user.supplierDetails?.name?:""
+    paymentAccountName=user.accountHolderName?:""
     cinNumber=user.supplierDetails?.cInNumber?:""
     shopNumber=user.supplierDetails?.shopEstablishment?:""
     udyogNumber=user.supplierDetails?.udyogAadhar?:""
