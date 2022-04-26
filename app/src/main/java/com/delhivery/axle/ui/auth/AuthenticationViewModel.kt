@@ -119,12 +119,6 @@ class AuthenticationViewModel @Inject constructor(
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
                 LoadRequest
-              }else if (_res.third.userMode.isNullOrEmpty() ) {
-                userPrefs.hasLoggedIn = false
-                AccountAction
-              } else if (_res.third.userRole.isNullOrEmpty()) {
-                userPrefs.hasLoggedIn = false
-                AccountRole
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                 userPrefs.hasLoggedIn = false
                 AccountDetails

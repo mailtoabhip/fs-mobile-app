@@ -115,7 +115,7 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         binding.editQuery.getQueryTextChangeObservable()
             .debounce(300, TimeUnit.MILLISECONDS)
             .filter { text ->
-                if (text.isEmpty()) {
+                if (text.length<2) {
                     this?.runOnUiThread {
                         binding.popularLl.visibility = View.VISIBLE
                         binding.rvCityItems.visibility = View.GONE
