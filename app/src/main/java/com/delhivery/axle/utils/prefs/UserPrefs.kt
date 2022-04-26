@@ -912,7 +912,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     aadhaarNumber = user.supplierDetails?.aadhaarNumber?: ""
     gstNumber = user.supplierDetails?.gstNumber?: ""
     rcNumber = user.supplierDetails?.rcNumber?: ""
-    rcNumber = user.supplierDetails?.panHolderName?: ""
+    panName = user.supplierDetails?.panHolderName?: ""
     businessAddress = user.businessAddress?: ""
     setAddressList(user.otherAddress)
     isPanVerfied = user.isPanVerified?: false
