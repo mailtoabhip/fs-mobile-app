@@ -137,10 +137,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
             resetUploadData()
-            if(viewModel.truckNumber.value!!.length>=8){
-                truckNum=true
-                setSubmitButtonEnable()
-            }
+          if(viewModel.truckNumber.value.isNotNullOrEmpty()) {
+              if (viewModel.truckNumber.value?.length!!>=8) {
+                  truckNum = true
+                  setSubmitButtonEnable()
+              }
+          }
             uploadArray.clear()
             binding.docUploadedLay.visibility=View.GONE
             binding.layoutUploadLR.visibility=View.GONE
