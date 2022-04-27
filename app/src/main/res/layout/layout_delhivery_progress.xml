@@ -64,7 +64,7 @@
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@{ message }"
           android:textColor="@color/heading_black"
-          tools:text="This usually takes few seconds to load. please be patient."
+          tools:text="This usually takes few seconds to load. Please be patient."
           />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -60,7 +60,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
-
         if(userPrefs.companyName.isNotNullOrEmpty()) {
             binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
         }
@@ -74,7 +73,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         if(userPrefs.verificationStatus.equals("failed")){
             if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
-                if(userPrefs.paymentRejectReason.isNotNullOrEmpty()|| !userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification"))
+                if(userPrefs.paymentRejectReason.isNotNullOrEmpty()&& !userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification") && !userPrefs.noOfVerificationIssues.equals("0"))
                 {
                 binding.issues.text = (userPrefs.noOfVerificationIssues.toInt()-1).toString()+" Issues"
                 }else{
@@ -84,6 +83,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }else{
                 binding.issues.visibility = View.GONE
             }
+            if(binding.issues.text.trim().equals("1 Issues")){
+                binding.issues.text="1 Issue"
+            }
             if(binding.issues.text.trim().equals("0 Issues")){
                 binding.issues.visibility = View.GONE
             }
@@ -92,7 +94,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             if(!userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
-                binding.issuesPayment.text = "1 Issues"
+                binding.issuesPayment.text = "1 Issue"
                 binding.issuesPayment.visibility=View.VISIBLE
             }else{
                 binding.issuesPayment.visibility=View.GONE
