@@ -220,6 +220,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           fromDeepLink = true
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
+        KYC_REJECTION ->{
+          navigationUtils.navigate(MyProfileActivity::class.java)
+        }
+        KYC_VERIFIED ->{
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
@@ -469,6 +475,9 @@ private const val LOAD_DETAIL_REDIRECT = "biddtl"
 private const val ADVANCE_PENDING_REDIRECT = "advpend"
 private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
+private const val KYC_REJECTION = "kycrejected"
+private const val KYC_VERIFIED = "kycverified"
+
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"
