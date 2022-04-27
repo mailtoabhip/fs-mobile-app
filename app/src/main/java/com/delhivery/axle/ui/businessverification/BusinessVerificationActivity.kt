@@ -36,6 +36,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -85,14 +86,15 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
-            if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
-                binding.businessError.visibility=View.VISIBLE
-                if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
-                    viewModel.errorText = userPrefs.rcRejectReason
-                }else {
-                    if (userPrefs.rcNumber.isNotNullOrEmpty()) {
-                        viewModel.errorText =
-                            "Truck RC verification failed due to " + userPrefs.rcRejectReason
+        }
+        if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
+            binding.businessError.visibility=View.VISIBLE
+            if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
+                viewModel.errorText = userPrefs.rcRejectReason
+            }else {
+                if (userPrefs.rcNumber.isNotNullOrEmpty()) {
+                    viewModel.errorText =
+                        "Truck RC verification failed due to " + userPrefs.rcRejectReason
                     } else {
                         viewModel.errorText =
                             "LR-LN verification failed due to " + userPrefs.rcRejectReason
@@ -101,7 +103,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             }else{
                 binding.businessError.visibility=View.GONE
             }
-        }
+
         if(userPrefs.ownedTruck.isNotNullOrEmpty()){
             viewModel.ownedTruck.value=userPrefs.ownedTruck
             ownedTruck=true
@@ -112,10 +114,35 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             attachedTruck=true
             setSubmitButtonEnable()
         }
-        if(userPrefs.rcNumber.isNotNullOrEmpty()){
-            viewModel.truckNumber.value=userPrefs.rcNumber
-            truckNum=true
-            setSubmitButtonEnable()
+
+        if(!userPrefs.businessDocUrl.isNullOrEmpty()){
+            if(userPrefs.businessDocUrl.contains("Lr_doc",true)){
+                binding.editTruck.visibility=View.GONE
+                binding.textLR.isChecked=true
+                binding.rcErrorMsg.visibility=View.GONE
+                binding.imgWrong.visibility = View.GONE
+                binding.editTruck.error= false
+                binding.editTruck.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
+                binding.textTruck.isChecked=false
+                userPrefs.rcManualverificationreq=true
+                binding.layoutUploadLR.isSelected=true
+                binding.layoutTruckrd.isSelected=false
+                binding.layoutTruckrd.visibility=View.GONE
+                setSubmitButtonEnable()
+                viewModel.selected.value="lr"
+            }else{
+                if(userPrefs.rcNumber.isNotNullOrEmpty()){
+                    viewModel.truckNumber.value=userPrefs.rcNumber
+                    truckNum=true
+                    setSubmitButtonEnable()
+                }
+            }
+        }else{
+              if(userPrefs.rcNumber.isNotNullOrEmpty()){
+              viewModel.truckNumber.value=userPrefs.rcNumber
+              truckNum=true
+               setSubmitButtonEnable()
+            }
         }
         showUploadedDoc()
     }
@@ -197,15 +224,15 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         })
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-                if(userPrefs.retryVerification){
-                    userPrefs.rcRejectReason= ""
-                }
                 userPrefs.ownedTruck=viewModel.ownedTruck.value.toString()
                 userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
-
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-           TotalStepsKey)!!,null)
+                if(userPrefs.retryVerification){
+                    userPrefs.rcRejectReason= ""
+                    navigationUtils.navigate(MyProfileActivity::class.java,true)
+                }else{
+                    navigationUtils.navigate(PaymentDetailsActivity::class.java,false)
+                }
             }
         })
 
@@ -217,7 +244,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
 
         viewModel.manualVerificationRequired.observe(this, Observer {
-            if(it) {
+            if(it&&userPrefs.rcManualverificationreq) {
                 viewModel.selected.value = "rc"
                 userPrefs.rcManualverificationreq=true
                 dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
@@ -226,7 +253,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
                         viewModel.updateUserRCDetails(viewModel.truckNumber.value!!)
                     }
-
             }
         })
         viewModel.verificationDocUploadMsg.observe(this, Observer {
@@ -269,7 +295,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.btnVerifyBusiness.setOnClickListener {
             if(binding.textTruck.isChecked){
                 if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
-                    if(viewModel.manualVerificationRequired.value!=true) {
+                    if(viewModel.manualVerificationRequired.value!=true || userPrefs.rcManualverificationreq!=true) {
                         viewModel.validateRC(viewModel.truckNumber.value!!)
                     }else{
                         sendDocForVerification(uploadArray)
@@ -285,6 +311,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
         binding.docRemove.setOnClickListener {
             showUploadImage()
+
         }
 
     }
@@ -414,7 +441,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)
                 items[item] == "Choose a file" -> requestImageCapturePermissions(false)
-                items[item] == "Cancel" -> dialog.dismiss()
+                items[item] == "Cancel" -> {dialog.dismiss()
+                userPrefs.rcManualverificationreq=false
+                }
             }
         }
         builder.show()
@@ -425,7 +454,11 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         binding.docUploadedLay.visibility=View.VISIBLE
         binding.docTitle.setText(uploadArray.get(0).first)
         binding.docSize.setText(uploadArray.get(0).second+" KB")
-        truckNum=true
+        if(viewModel.truckNumber.value.isNullOrEmpty()&&binding.textTruck.isChecked){
+          truckNum=false
+        }else{
+            truckNum=true
+        }
         setSubmitButtonEnable()
     }
 

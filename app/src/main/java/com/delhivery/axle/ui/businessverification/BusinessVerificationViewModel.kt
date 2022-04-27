@@ -68,6 +68,7 @@ class BusinessVerificationViewModel@Inject constructor(
             .subscribe { _res, error ->
                 if (!error) {
                     manualVerificationRequired.postValue(_res.manualVerificationRequired)
+                    userPrefs.rcManualverificationreq=_res.manualVerificationRequired
                 } else{
                   //  error.handle()
                 val errorBody = error.errorResponseBody()
@@ -107,6 +108,7 @@ class BusinessVerificationViewModel@Inject constructor(
                     userPrefs.businessDocUrl =
                       verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                   verificationDocUploadFailed.postValue(true)
+                  userPrefs.rcManualverificationreq=false
                   error.handle()
                 }
             }

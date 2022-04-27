@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
 import com.delhivery.axle.ui.searchcitystate.selectedCityStates
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -119,7 +120,9 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-               navigationUtils.navigateOnboardingSteps()
+                val bundle = Bundle()
+                bundle.putInt(StepKey,0)
+                navigationUtils.navigateKyc(this,false,bundle)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }
