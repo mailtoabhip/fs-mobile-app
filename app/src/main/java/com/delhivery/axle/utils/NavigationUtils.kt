@@ -228,6 +228,7 @@ class NavigationUtils @Inject constructor(
                   extras.putInt(StepKey, 3)
               } else {
                   retryDone=true
+                  userPrefs.verificationStatus="pending"
                   uiUtils.showSnackbar("KYC Completed, Verification Pending")
               }
           }

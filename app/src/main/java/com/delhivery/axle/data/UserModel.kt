@@ -52,7 +52,6 @@ data class UserModel(
         @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
         @SerializedName("account_holder_name") var accountHolderName: String?
 
-
     ) : BaseKeyTypeModel<String>(), Serializable {
 
   override fun key() = userId
@@ -165,7 +164,7 @@ data class SupplierModel(
         @SerializedName("udyog_aadhaar_number") var udyogAadhar: String?,
         @SerializedName("shop_establishment_number") var shopEstablishment: String?,
         @SerializedName("pan_holder_name") var panHolderName: String?,
-        @SerializedName("account_holder_name") var accountHolderName: String?
+        @SerializedName("beneficiary_name") var accountHolderName: String?
 
 
 )

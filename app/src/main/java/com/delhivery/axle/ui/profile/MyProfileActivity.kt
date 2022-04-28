@@ -55,7 +55,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
@@ -130,7 +129,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }
                 }
             }
-
         }
 
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
@@ -330,9 +328,19 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel.getKYCDetails("noredirect")
-
+        setVerficationStatus()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getKYCDetails("noredirect")
+        setVerficationStatus()
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        setVerficationStatus()
+    }
 
     /**
      * ProfileUIState

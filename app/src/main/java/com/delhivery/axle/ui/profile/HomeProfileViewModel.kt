@@ -29,6 +29,8 @@ class HomeProfileViewModel @Inject constructor(
 
   var userRoleLiveData = MutableLiveData<Boolean>()
 
+  var verificationStatus = MutableLiveData<String>()
+
   var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
 
   /* states */

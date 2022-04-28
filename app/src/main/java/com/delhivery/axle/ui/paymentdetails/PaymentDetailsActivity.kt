@@ -144,10 +144,9 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 userPrefs.accNumber = viewModel.accountText.value.toString()
                 userPrefs.ifscCode = viewModel.ifscText.value.toString()
                 userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
-
                 if(userPrefs.retryVerification){
                      userPrefs.paymentRejectReason=""
-                    navigationUtils.navigate(MyProfileActivity::class.java,false,null)
+                    navigationUtils.navigate(MyProfileActivity::class.java,true,null)
                 }else {
                     navigationUtils.navigate(VendorPolicyActivity::class.java, false, null)
                 }
