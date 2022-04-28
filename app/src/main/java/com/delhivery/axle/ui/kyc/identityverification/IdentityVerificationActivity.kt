@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -145,6 +146,10 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 clickedShopNumber(true)
                 viewModel.shopNumber = userPrefs.shopNumber
             }
+        }
+        if(userPrefs.cinNumber.isNullOrEmpty() &&userPrefs.udyogNumber.isNullOrEmpty()&&userPrefs.shopNumber.isNullOrEmpty()){
+            binding.editCin.focusClick()
+            clickedCin(true)
         }
 
         viewModel.delegationLiveData.observe(this, Observer {

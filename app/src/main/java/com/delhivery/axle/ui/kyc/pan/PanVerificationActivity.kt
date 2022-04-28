@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.errorVibrate
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -83,6 +84,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         if(userPrefs.pancard.isNotNullOrEmpty()){
             viewModel.panCardNumber = userPrefs.pancard
+        }else{
+          binding.editPan.focusClick()
         }
 
            viewModel.validatePanLiveData.observe(

@@ -168,15 +168,10 @@ class AuthenticationViewModel @Inject constructor(
           } else if (_res.third.supplierDetails?.isDeleted == true) {
             userPrefs.hasLoggedIn = false
             Disabled
-          } else if (_res.third.hasRoutes() && userPrefs.hasEditedRoute) {
+          } else {
             userPrefs.hasLoggedIn = true
             userPrefs.lastLoginTime = Date().time
             LoadRequest
-          } else {
-            userPrefs.hasLoggedIn = true
-            userPrefs.hasEditedRoute = true
-            userPrefs.lastLoginTime = Date().time
-            SelectRoute
           }
         } else {
 //          if (error is HttpException) {

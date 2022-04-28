@@ -53,6 +53,7 @@ import android.text.style.ForegroundColorSpan
 import android.widget.TextView.BufferType
 import com.delhivery.axle.R.string
 import com.delhivery.axle.config.UrlConfig
+import com.delhivery.axle.utils.extensions.focusClick
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
@@ -121,6 +122,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         receiveWhatsappNotifications = viewModel.whatsapp.value,
                 isLocationEnabled = viewModel.locationOption.value))
             }
+        binding.editName.focusClick()
     }
 
     fun checkEnable() {

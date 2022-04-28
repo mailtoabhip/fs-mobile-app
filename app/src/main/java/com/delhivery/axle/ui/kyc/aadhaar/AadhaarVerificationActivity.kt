@@ -51,6 +51,7 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import java.lang.StringBuilder
@@ -144,6 +145,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             viewModel.aadhaarCardNumber = aadhaarfill.toString()
             binding.aadhaarTermCondition.isChecked =true
             viewModel.aadhaarPolicyAccepted = true
+        }else{
+            binding.editAadhaar.focusClick()
         }
 
         binding.btnVerifyAadhaar.setOnClickListener {

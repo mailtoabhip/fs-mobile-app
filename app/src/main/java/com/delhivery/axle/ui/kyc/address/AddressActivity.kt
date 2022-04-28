@@ -445,6 +445,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 enableAddAddressDialogButton(bindingDialog)
             }
         }else{
+             bindingDialog.editFlat.focusClick()
             autoCompleteUtils.autoCompleteCity(bindingDialog.autoCompleteCity) {
                 uiUtils.toggleKeyboard()
                 cityFilled = true

@@ -139,6 +139,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
             }
 
+        }else{
+            binding.editFlat.focusClick()
         }
 
         var cityLength = 0

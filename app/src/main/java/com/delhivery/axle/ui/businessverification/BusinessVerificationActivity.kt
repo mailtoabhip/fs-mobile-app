@@ -38,6 +38,7 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -108,6 +109,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             viewModel.ownedTruck.value=userPrefs.ownedTruck
             ownedTruck=true
             setSubmitButtonEnable()
+        }else{
+            binding.ownedTrucksEdittext.focusClick()
         }
         if(userPrefs.attachedTruck.isNotNullOrEmpty()){
             viewModel.attachedTruck.value=userPrefs.attachedTruck

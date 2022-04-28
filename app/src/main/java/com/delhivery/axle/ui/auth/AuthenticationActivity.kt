@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.auth
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
@@ -27,6 +29,7 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.Config.AxleOnboardingEmail
 import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
@@ -100,7 +103,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
-      //raisedFocus()
+      // raisedFocus()
       lengthAction(9){
         binding.btnSendOtp.isEnabled = false
       }
@@ -253,8 +256,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         when (state) {
           PhoneNo -> {
             //show keyboard
-            binding.editPhoneNo.requestFocus()
-            uiUtils.toggleKeyboard(false)
+            Handler(Looper.getMainLooper()).postDelayed({
+              binding.editPhoneNo.requestFocus()
+              uiUtils.toggleKeyboard(false)
+            }, 600)
           }
           OTP -> {
             uiUtils.hideDelhiveryProgress()

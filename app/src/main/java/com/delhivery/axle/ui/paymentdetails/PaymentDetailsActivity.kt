@@ -33,6 +33,7 @@ import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.StepKey
+import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -88,6 +89,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         }
         if(userPrefs.paymentAccountName.isNotNullOrEmpty()){
             viewModel.accountHolderText.value=userPrefs.paymentAccountName
+        }else{
+            binding.accountHolderEdittext.focusClick()
         }
         if(userPrefs.paymentAccountNumber.isNotNullOrEmpty() && !userPrefs.paymentAccountNumber.equals("Not available",true)){
             viewModel.accountText.value=userPrefs.paymentAccountNumber

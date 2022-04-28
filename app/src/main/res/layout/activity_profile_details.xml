@@ -87,6 +87,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/action_update_business_logo"
                         android:id="@+id/updateLogo"
+                        android:visibility="gone"
                         android:textColor="@color/colorAccent"
                         android:textSize="@dimen/text_14sp"/>
 
@@ -111,6 +112,7 @@
                         android:background="@drawable/bg_login_edit"
                         android:padding="@dimen/size_6dp"
                         android:singleLine="true"
+                        android:enabled="false"
                         android:imeOptions="actionNext"
                         android:id="@+id/busineesName"
                         tools:text="Jeeyam Logistics"
@@ -135,6 +137,7 @@
                         android:layout_height="@dimen/edit_text_height"
                         android:background="@drawable/bg_login_edit"
                         android:padding="@dimen/size_6dp"
+                        android:enabled="false"
                         android:imeOptions="actionDone"
                         android:singleLine="true"
                         tools:text="Jeeyam Logistics"
@@ -162,7 +165,6 @@
                         android:padding="@dimen/size_6dp"
                         android:enabled="false"
                         android:clickable="false"
-                        android:backgroundTint="@color/grey_bg"
                         android:text="@{viewModel.mobile}"
                         android:textColor="@color/heading_black"
                         android:textSize="@dimen/text_16sp" />     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -177,6 +179,7 @@
             android:layout_margin="@dimen/size_14dp"
             style="@style/ActionButton"
             android:enabled="false"
+            android:visibility="gone"
             android:text="Save Details"
             android:id="@+id/btnSave"
             android:layout_gravity="bottom"
