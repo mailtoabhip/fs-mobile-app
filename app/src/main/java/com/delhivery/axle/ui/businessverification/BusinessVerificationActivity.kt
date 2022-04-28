@@ -229,7 +229,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
                 if(userPrefs.retryVerification){
                     userPrefs.rcRejectReason= ""
-                    userPrefs.verificationStatus="pending"
+                    if(!userPrefs.isBankDetailsRejected) {
+                        userPrefs.verificationStatus = "pending"
+                    }
                     navigationUtils.navigate(MyProfileActivity::class.java,true)
                 }else{
                     navigationUtils.navigate(PaymentDetailsActivity::class.java,false)

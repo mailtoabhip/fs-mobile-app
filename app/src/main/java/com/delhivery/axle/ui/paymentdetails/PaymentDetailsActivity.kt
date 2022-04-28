@@ -145,7 +145,9 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 userPrefs.ifscCode = viewModel.ifscText.value.toString()
                 userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
                 if(userPrefs.retryVerification){
-                     userPrefs.paymentRejectReason=""
+                    userPrefs.paymentRejectReason=""
+                    userPrefs.isBankDetailsRejected=false
+                    checkStatus()
                     navigationUtils.navigate(MyProfileActivity::class.java,true,null)
                 }else {
                     navigationUtils.navigate(VendorPolicyActivity::class.java, false, null)
@@ -275,6 +277,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         }else{
             binding.btnSubmit.isEnabled = false
         }
+    }
+    fun checkStatus(){
+        if (userPrefs.panRejectReason.isNotNullOrEmpty()&& (userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+        } else if (userPrefs.identityRejectReason.isNotNullOrEmpty() && !(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+        } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()&& !(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+        } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && !(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+        } else {
+            userPrefs.verificationStatus="pending"
+        }
+
+
     }
 
     override fun layoutId() = R.layout.activity_payment_details

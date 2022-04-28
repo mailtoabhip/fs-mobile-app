@@ -324,8 +324,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         binding.docUploadedLay1.visibility=View.VISIBLE
         binding.docTitle1.setText(uploadArray.get(0).first)
         binding.docSize1.setText(uploadArray.get(0).second+" KB")
-        binding.docRemove1.visibility=View.GONE
-        binding.docDownload1.visibility=View.VISIBLE
+        binding.docRemove1.visibility=View.VISIBLE
+        binding.docDownload1.visibility=View.GONE
     }
     private fun showAccountProof() {
         binding.docUploadedLay.visibility=View.VISIBLE

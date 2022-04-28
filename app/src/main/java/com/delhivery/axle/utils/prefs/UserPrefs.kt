@@ -888,7 +888,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     shopNumber=user.supplierDetails?.shopEstablishment?:""
     udyogNumber=user.supplierDetails?.udyogAadhar?:""
     cityCode = user.supplierDetails?.baseCityCode
-    isBankDetailsRejected=user.isBankDetailsRejected==false
+    isBankDetailsRejected=user.isBankDetailsRejected?:false
     isParent = user.isParent()
     userType = user.userType ?: ""
     truckTypes = if (user.isParent()) {
