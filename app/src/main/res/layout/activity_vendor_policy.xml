@@ -24,6 +24,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_lay"
             android:layout_below="@+id/toolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +41,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_doc_vendor" />
+                    app:srcCompat="@drawable/ic_doc_policy" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_review_agree"
@@ -1127,9 +1128,11 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_lay"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
+            android:layout_marginBottom="@dimen/size_8dp"
             android:layout_height="wrap_content">
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/vendor_policy_text"
