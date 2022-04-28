@@ -33,6 +33,19 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
                 false -> uiUtils.showSnackbar("Could not open url")
             }
         }
+        binding.terms.setOnClickListener {
+            //TODO:-to be replaced at the time of release
+            when (contactUtils.openURL("https://orion-dev.delhivery.com/#/axle-app-conditions")) {
+                false -> uiUtils.showSnackbar("Could not open url")
+            }
+        }
+        binding.privacy.setOnClickListener {
+            //TODO :- to be replaced at the time of release
+            when (contactUtils.openURL("https://orion-dev.delhivery.com/#/axle-app-privacy-policy")) {
+                false -> uiUtils.showSnackbar("Could not open url")
+            }
+        }
+
 
         if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
             binding.paymentTerms.visibility = View.VISIBLE
