@@ -486,8 +486,6 @@
                 android:layout_width="match_parent"
                 android:id="@+id/routeLayout"
                 android:padding="@dimen/size_16dp"
-                android:visibility="gone"
-                bind:visibility="@{ state != ProfileUIState.PostLoad }"
                 bind:layout_constraintTop_toBottomOf="@+id/bankLayout"
                 android:layout_height="wrap_content">
 
@@ -523,7 +521,6 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/earningsLayout"
-                bind:visibility="@{ state == ProfileUIState.Axle }"
                 android:padding="@dimen/size_16dp"
                 bind:layout_constraintTop_toBottomOf="@+id/routeLayout"
                 android:layout_height="wrap_content">
@@ -599,8 +596,6 @@
                android:paddingStart="@dimen/size_16dp"
                 android:paddingTop="@dimen/size_16dp"
                 android:paddingBottom="@dimen/size_16dp"
-                android:visibility="gone"
-                bind:visibility="@{state == ProfileUIState.Axle}"
                 bind:layout_constraintTop_toBottomOf="@+id/teamLayout"
                 android:layout_height="wrap_content">
 

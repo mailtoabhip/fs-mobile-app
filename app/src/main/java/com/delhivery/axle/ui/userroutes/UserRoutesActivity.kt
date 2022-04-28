@@ -173,6 +173,11 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
     bindingDialog.closeBtn.setOnClickListener{
       dialog.dismiss()
     }
+    if(adapter.itemCount==1){
+      bindingDialog.deleteRouteLayout.visibility = View.GONE
+    }else{
+      bindingDialog.deleteRouteLayout.visibility = View.VISIBLE
+    }
     bindingDialog.editRouteLayout.setOnClickListener {
       val bundle = Bundle()
       bundle.putSerializable(SelectedRouteIntentExtra, data)
