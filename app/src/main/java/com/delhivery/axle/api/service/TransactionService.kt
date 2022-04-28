@@ -41,7 +41,8 @@ interface TransactionService {
     @Query("truck_types") vehicleType: String? = null,
     @Query("valid_loads_only") validLoads: String = "yes",
     @Query("exclude_truck_types") excludeTruckTypes: String? = null,
-    @Query("filter_vehicle_type") filterVehicleType: Boolean?= null
+    @Query("filter_vehicle_type") filterVehicleType: Boolean?= null,
+    @Query("bidding_going_on") biddingGoingOn: Boolean?= false
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

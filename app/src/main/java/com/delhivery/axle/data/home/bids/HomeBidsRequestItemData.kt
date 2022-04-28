@@ -751,3 +751,4 @@ data class TruckSpecification(
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
+const val HomeBidsRequestAction_DeleteItem = "delete_item"

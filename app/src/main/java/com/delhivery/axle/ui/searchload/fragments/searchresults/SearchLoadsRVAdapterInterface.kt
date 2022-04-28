@@ -2,7 +2,9 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
+import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterItem
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
+import com.delhivery.axle.ui.searchtrip.BaseSearchRVAdapterItem
 
 /**
  * Adapter interface for [SearchLoadsFragment]
@@ -30,4 +32,6 @@ interface SearchLoadsRVAdapterInterface : ItemClickListener<BaseSearchLoadsRVAda
     item: BaseSearchLoadsRVAdapterItem<*>,
     position: Int
   )
+
+  fun deleteItem(item: BaseSearchLoadsRVAdapterItem<*>, position: Int)
 }

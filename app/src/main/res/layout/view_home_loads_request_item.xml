@@ -313,9 +313,8 @@
             tools:visibility="gone"
             android:layout_marginTop="@dimen/size_12dp"
             android:id="@+id/timerLayout"
-            android:visibility="@{ request.timerPlaceLayoutVisibility()}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_status_exp"
             android:background="@drawable/bg_gradient_orange_16"
             android:layout_height="wrap_content">
           <androidx.appcompat.widget.AppCompatImageView

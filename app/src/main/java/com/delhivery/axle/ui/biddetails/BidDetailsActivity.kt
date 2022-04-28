@@ -139,19 +139,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }
-
-        if(viewModel.active){
-          if(binding.transaction!!.bidEndingTime.isNotNullOrEmpty()){
-            binding.transaction!!.bidEndingTime.let { it?.let { it1 -> setTimer(it1) } }
-          }else{
-            binding.timerLayout.visibility = View.GONE
-          }
-        }else{
-          binding.timerLayout.visibility = View.GONE
-        }
-
-
-
       }
     })
 
@@ -322,6 +309,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
         }
 
+        if(binding.transaction!!.timerPlaceLayoutVisibility() == View.VISIBLE ){
+          if(binding.transaction!!.bidEndingTime.isNotNullOrEmpty()){
+            binding.transaction!!.bidEndingTime.let { it?.let { it1 -> setTimer(it1) } }
+          }else{
+            binding.timerLayout.visibility = View.GONE
+          }
+        }else{
+          binding.timerLayout.visibility = View.GONE
+        }
+
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"
@@ -346,6 +343,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             )
                 .apply {
                   btnPlaceBid.setOnClickListener { bidDialog() }
+                  binding.timerLayout.visibility = View.VISIBLE
                 }
           }
           is BidDetailsUserBidState_PlaceBid -> {
@@ -361,11 +359,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
                 }
                 btnPlaceBid.setOnClickListener { bidDialog() }
+                binding.timerLayout.visibility = View.VISIBLE
               }
           }
           is BidDetailsUserBidState_EditBid -> {
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
+                  binding.timerLayout.visibility = View.GONE
+
                   val data = viewModel.transaction as HomeBidsRequestItemData
                   data.numBids = state.bidsCount
                   data.transactionBid = state.lowestAndUserBidPair.first
@@ -448,6 +449,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
                     driverPhone =
                             state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                    binding.timerLayout.visibility = View.GONE
                   }
           }
           is BidDetailsUserBidState_RejectedBid -> {
@@ -461,6 +463,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       StringUtils.formatAmount(state.userBid.bidAmount)
                     }
                     textUserHighestBid.text = bidText
+                    binding.timerLayout.visibility = View.GONE
                   }
           }
           is BidDetailsUserBidState_CancelledBid -> {
@@ -474,6 +477,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   StringUtils.formatAmount(state.userBid.bidAmount)
                 }
                 textUserHighestBid.text = bidText
+                binding.timerLayout.visibility = View.GONE
               }
           }
 
@@ -495,7 +499,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
 
               }
-
+              binding.timerLayout.visibility = View.GONE
               btnReviseBidInsider.setOnClickListener{ bidDialog()}
             }
           }
@@ -503,7 +507,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }?.let { _binding ->
           /* bidding ended */
           binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
-
+          binding.timerLayout.visibility = View.GONE
           binding.containerActions.apply {
             removeAllViews()
             addView(_binding.root)

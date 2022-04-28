@@ -6,7 +6,6 @@ import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
 interface DmtBidsAdapterInterface: BaseSummaryDataRVAdapter.ItemClickListener<BaseDmtBidSummaryRVAdapterItem<*>> {
     override fun onItemClicked(item: BaseDmtBidSummaryRVAdapterItem<*>, position: Int) {}
 
-
     fun handleAction(
         actionId: String,
         position: Int,
@@ -14,6 +13,4 @@ interface DmtBidsAdapterInterface: BaseSummaryDataRVAdapter.ItemClickListener<Ba
     )
 
     fun itemCapacity(capacity:Double)
-
-
 }

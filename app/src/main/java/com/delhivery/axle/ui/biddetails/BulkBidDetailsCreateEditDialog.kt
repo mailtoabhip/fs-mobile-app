@@ -293,7 +293,6 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                 binding.volumePlaced.text = String.format(context.getString(R.string.msg_volume_of_bids),volumePlaced)
                 adapter.operation(listOf(Pair(DmtBidSummaryItem(bidData), DataRVAdapterOperationType.Remove)))
                 adapter.notifyDataSetChanged()
-
             }
         }
     }

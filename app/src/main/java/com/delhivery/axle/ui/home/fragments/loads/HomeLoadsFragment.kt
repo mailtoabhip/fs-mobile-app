@@ -28,13 +28,13 @@ import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
+import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
-import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -68,6 +68,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   var isInternal = false
   var pos = 0
 
+  var currSize:Int? = null
+  var itemDeleted:Boolean = false
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -89,8 +91,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   }
 
   override fun onViewCreated(
-    view: View,
-    savedInstanceState: Bundle?
+          view: View,
+          savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
 
@@ -109,9 +111,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       addOnScrollListener(PaginationInterface())
     }
 
+    binding.rvLoads.setItemAnimator(null);
+
     binding.editStickySearch.setOnClickListener {
       handleAction(
-          HomeTripsSearchAction_Search, HomeLoadsSearchItem()
+              HomeTripsSearchAction_Search, HomeLoadsSearchItem()
       )
     }
 
@@ -153,30 +157,30 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       if (it.first) {
         val data = adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
         BidDetailsCreateEditDialog(
-            context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs , "load_screen"
+                context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "load_screen"
         ).show()
       }
     })
 
     viewModel.bidsActionLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.toggleKeyboard()
-          .apply {
-            when {
-              it != null -> {
-                val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
-                data?.transactionBid = it.second
+              .apply {
+                when {
+                  it != null -> {
+                    val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                    data?.transactionBid = it.second
 
-                if (data != null) {
-                  uiUtils.showProgress()
-                  viewModel.fetchLowestBid(data, it.first)
+                    if (data != null) {
+                      uiUtils.showProgress()
+                      viewModel.fetchLowestBid(data, it.first)
+                    }
+                  }
                 }
               }
-            }
-          }
     })
 
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
-      if(it != null){
+      if (it != null) {
         val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
         data?.bulkTransactionBids = it.second
         adapter.notifyItemChanged(it.first)
@@ -184,42 +188,41 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
 
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
-      if(it.first == 10){
-        Toast.makeText(context,"Bids Created Successfully",Toast.LENGTH_SHORT).show()
+      if (it.first == 10) {
+        Toast.makeText(context, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
       }
-      if(it.first == 20){
-        Toast.makeText(context,"Bids Updated Successfully",Toast.LENGTH_SHORT).show()
+      if (it.first == 20) {
+        Toast.makeText(context, "Bids Updated Successfully", Toast.LENGTH_SHORT).show()
       }
-      if(it.first == 30){
-        Toast.makeText(context,"Bids Deleted Successfully",Toast.LENGTH_SHORT).show()
+      if (it.first == 30) {
+        Toast.makeText(context, "Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
       }
-        if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
-          viewModel.transactionBidForBulk(it.second, pos)
-          viewModel.editFlg = mutableListOf(false, false, false)
-        }
+      if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
+        viewModel.transactionBidForBulk(it.second, pos)
+        viewModel.editFlg = mutableListOf(false, false, false)
+      }
     })
 
     viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.hideProgress()
       if (it != null) {
-        if (it.second.oneVisibility()==View.VISIBLE || it.second.twoVisibility()==View.VISIBLE){
+        if (it.second.oneVisibility() == View.VISIBLE || it.second.twoVisibility() == View.VISIBLE) {
           analyticsUtil.trackEvent(
                   EVENT_BID_INLINE_PROMPT,
-                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.demandType, userPrefs.userPerformance)
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+                  mutableListOf(userPrefs.userId(), it.second.key(), userPrefs.demandType, userPrefs.userPerformance)
           )
 
-        }
-        else if (it.second.threeVisibility()==View.VISIBLE || it.second.fourVisibility()==View.VISIBLE){
+        } else if (it.second.threeVisibility() == View.VISIBLE || it.second.fourVisibility() == View.VISIBLE) {
           analyticsUtil.trackEvent(
                   EVENT_BID_REVISE_PROMPT,
-                  mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_DEMAND_TYPE , PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId() , it.second.key() , userPrefs.demandType, userPrefs.userPerformance)
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+                  mutableListOf(userPrefs.userId(), it.second.key(), userPrefs.demandType, userPrefs.userPerformance)
           )
         }
 
         BidConfirmReviseDialog(
-            context!!, it.second, viewModel, it.first
+                context!!, it.second, viewModel, it.first
         ).show()
       }
       adapter.notifyItemChanged(it.first)
@@ -243,14 +246,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
       uiUtils.hideProgress()
-      if(it!= null ){
-        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
-        if(it.second.truckUUID != null) {
+      if (it != null) {
+        val pageTitle = if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if (it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
-            pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
-        }
-        else{
-          Toast.makeText(context, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+                  pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
+        } else {
+          Toast.makeText(context, "No Vehicle Types Found", Toast.LENGTH_SHORT).show()
         }
       }
     })
@@ -300,8 +302,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   }
 
   override fun handleAction(
-    actionId: String,
-    item: BaseHomeLoadsRVAdapterItem<*>
+          actionId: String,
+          item: BaseHomeLoadsRVAdapterItem<*>
   ) {
     // handle actions here
     when (actionId) {
@@ -309,17 +311,17 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val data = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_LIST_ITEM,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_LOAD, data.transactionId ?: "")
+                EVENT_LIST_ITEM,
+                mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+                mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(data.key(), it, if(data.isDMTIndent()) "dmt" else "")) }
+        context?.let { startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
       }
 
       HomeLoadsSearchAction_Search -> {
         context?.let {
           startActivity(
-              Intent(it, SearchLoadActivity::class.java)
+                  Intent(it, SearchLoadActivity::class.java)
           )
         }
       }
@@ -327,9 +329,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       HomeLoadsInfoAction_EditRoute -> {
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_EDIT_ROUTE,
-            mutableListOf(PROPERTY_SOURCE),
-            mutableListOf(VALUE_LOAD_INFO)
+                EVENT_EDIT_ROUTE,
+                mutableListOf(PROPERTY_SOURCE),
+                mutableListOf(VALUE_LOAD_INFO)
         )
         context?.let {
           startActivity(userRoutesIntent(it))
@@ -339,9 +341,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       HomeLoadsWarningAction_NoLoads -> {
         // Capture event
         analyticsUtil.trackEvent(
-            EVENT_EDIT_ROUTE,
-            mutableListOf(PROPERTY_SOURCE),
-            mutableListOf(VALUE_NO_RESULTS)
+                EVENT_EDIT_ROUTE,
+                mutableListOf(PROPERTY_SOURCE),
+                mutableListOf(VALUE_NO_RESULTS)
         )
         context?.let {
           startActivity(userRoutesIntent(it))
@@ -378,7 +380,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         //Capture Event
         analyticsUtil.trackEvent(
                 EVENT_SHOW_ADDITIONAL_LOADS,
-                mutableListOf(PROPERTY_USER_ID , PROPERTY_DEMAND_TYPE),
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE),
                 mutableListOf(userPrefs.userId(), userPrefs.demandType)
         )
 
@@ -402,40 +404,40 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             }
           }
         }
-        val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
+        val exclude_truck_str = exclude_truck_types.joinToString(separator = ",") { it }
         viewModel.filterVehicleType = null
         viewModel.fetchUserTransactions(false, demandType, isInternal, true, exclude_truck_str)
       }
 
       HomeLoadsPriorityAction -> {
         analyticsUtil.trackEvent(
-          EVENT_BANNER_CLICK_TOP,
-          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-          mutableListOf(userPrefs.userId(), "loads_screen")
+                EVENT_BANNER_CLICK_TOP,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId(), "loads_screen")
         )
         showAddTruckDialog(mutableListOf(
-          TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
         ), VALUE_ADD_TRUCK_TOP_BANNER)
       }
 
       HomeLoadsBannerAction -> {
         analyticsUtil.trackEvent(
-          EVENT_BANNER_CLICK_SCROLL,
-          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-          mutableListOf(userPrefs.userId(), "loads_screen")
+                EVENT_BANNER_CLICK_SCROLL,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                mutableListOf(userPrefs.userId(), "loads_screen")
         )
 
-        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-          TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-          TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
         ), VALUE_ADD_TRUCK_SCROLL_BANNER)
       }
     }
   }
 
-  private fun showAddTruckDialog(items: List<TruckFrequentItem>,source:String) {
+  private fun showAddTruckDialog(items: List<TruckFrequentItem>, source: String) {
     val dialog = Dialog(context!!)
     val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
@@ -447,8 +449,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       val itemBinding = createTruckFrequentItem(bindingDialog)
       itemBinding.data = item
       itemBinding.root.setOnClickListener{
-        context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs,source = source)
-          , REQCODE_ADD_TRUCK) }
+        context?.let { startActivityForResult(truckIntent(context!!, item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
         dialog.dismiss()
       }
 
@@ -459,7 +460,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     }
 
     bindingDialog.addTruckLayout.setOnClickListener{
-      context?.let { startActivityForResult(truckIntent(context!!,source = source), REQCODE_ADD_TRUCK) }
+      context?.let { startActivityForResult(truckIntent(context!!, source = source), REQCODE_ADD_TRUCK) }
       dialog.dismiss()
     }
 
@@ -474,9 +475,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     lateinit var dialog: AlertDialog
 
     // Initialize an array of vehicles
-    val arrayVehicle = arrayOf("open","closed","trailer","all")
+    val arrayVehicle = arrayOf("open", "closed", "trailer", "all")
 
-    val arrayChecked = booleanArrayOf(false,false,false,false)
+    val arrayChecked = booleanArrayOf(false, false, false, false)
 
     var currentVehicleFilterList = listOf<String>()
     currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
@@ -517,12 +518,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
 
-      viewModel.vehicleStr = filterVehicleTypes.joinToString( separator = ",") {it}
+      viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
       viewModel.filterVehicleType = true
       refreshData()
     }
 
-    builder.setNegativeButton("Cancel") {_, _ ->
+    builder.setNegativeButton("Cancel") { _, _ ->
       dialog.dismiss()
     }
 
@@ -531,24 +532,23 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   }
 
   override fun handleAction(
-    actionId: String,
-    item: BaseHomeLoadsRVAdapterItem<*>,
-    position: Int
+          actionId: String,
+          item: BaseHomeLoadsRVAdapterItem<*>,
+          position: Int
   ) {
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
-            pos =position
+            pos = position
             val data = item.data as HomeBidsRequestItemData
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
-            }
-            else{
+            } else {
               item.data.let {
                 BidDetailsCreateEditDialog(
-                        context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
+                        context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
                 ).show()
               }
             }
@@ -557,29 +557,55 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_not_approved,
+                string.msg_dialog_supplier_not_approved,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_disabled,
+                string.msg_dialog_supplier_disabled,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
     }
   }
 
+  override fun deleteItem(item: BaseHomeLoadsRVAdapterItem<*>, position: Int) {
+    binding.rvLoads.post(Runnable {
+      val bidData = item.data as  HomeBidsRequestItemData
+      currSize = currSize?.minus(1)
+      itemDeleted = true
+      adapter.operation(listOf(Pair(HomeLoadsRequestItem(bidData), DataRVAdapterOperationType.Remove)))
+      adapter.notifyDataSetChanged()
+    })
+  }
+
+  override fun fetchCurrSize(): Int? {
+    return currSize
+  }
+
+  override fun itemDeleted(): Boolean {
+    return itemDeleted
+  }
+
+  override fun itemDeleted(cp: Boolean) {
+    itemDeleted = cp
+  }
+
+  override fun updateCurrSize(size: Int) {
+    currSize = size
+  }
+
   fun hide() {
     binding.routesBanner.animate()
         .translationY(
-            PositionAnimExpectation.dpToPx(
-                this@HomeLoadsFragment.context!!, binding.routesBanner.height.toFloat()
-            )
+                PositionAnimExpectation.dpToPx(
+                        this@HomeLoadsFragment.context!!, binding.routesBanner.height.toFloat()
+                )
         )
         .setInterpolator(AccelerateInterpolator(2f))
         .setDuration(200L)
@@ -589,9 +615,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   fun show() {
     binding.routesBanner.animate()
         .translationY(
-            -PositionAnimExpectation.dpToPx(
-                this@HomeLoadsFragment.context!!, 0f
-            )
+                -PositionAnimExpectation.dpToPx(
+                        this@HomeLoadsFragment.context!!, 0f
+                )
         )
         .setInterpolator(DecelerateInterpolator(2f))
         .setDuration(400L)
@@ -599,9 +625,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   }
 
   override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
+          requestCode: Int,
+          resultCode: Int,
+          data: Intent?
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == REQCODE_EDIT_ROUTE && resultCode == RESULT_OK) {
@@ -627,16 +653,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
    * Home loads rv scroll listener for search bar animation related stuff
    */
   inner class HomeLoadsRVScrollListener(
-    private val stickyView: DelhiveryAnimatedSearchBar,
-    private val elevation: Float = 12f
+          private val stickyView: DelhiveryAnimatedSearchBar,
+          private val elevation: Float = 12f
   ) : OnScrollListener() {
     /* Current toolbar elevation */
     private var toolbarElevation = -1f
 
     override fun onScrolled(
-      recyclerView: RecyclerView,
-      dx: Int,
-      dy: Int
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 
@@ -680,9 +706,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   inner class BannerRVScrollListener : OnScrollListener() {
 
     override fun onScrolled(
-      recyclerView: RecyclerView,
-      dx: Int,
-      dy: Int
+            recyclerView: RecyclerView,
+            dx: Int,
+            dy: Int
     ) {
       super.onScrolled(recyclerView, dx, dy)
 

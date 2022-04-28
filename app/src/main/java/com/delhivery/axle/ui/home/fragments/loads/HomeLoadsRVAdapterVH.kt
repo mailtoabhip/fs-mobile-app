@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_DeleteItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
@@ -87,18 +88,14 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
 
     if(item.data.isDMTIndent()){
       binding.timerLayout.visibility = View.GONE
-      binding.main.visibility = View.VISIBLE
     }else{
       if(item.data.bidEndingTime.isNotNullOrEmpty()){
+        binding.timerLayout.visibility = View.VISIBLE
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(item.data.bidEndingTime)
         val mills: Long = date1.getTime() - date2.getTime()
-           if (date1.compareTo(date2) == 0) {
-            binding.main.visibility = View.GONE
-          } else if (date1.compareTo(date2) < 0) {
-             binding.main.visibility = View.GONE
-          } else if (date1.compareTo(date2) > 0) {
+           if (date1.compareTo(date2) > 0) {
 
              countDownTimer?.cancel()
 
@@ -109,42 +106,28 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                    val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
                    val secs = ((millisUntilFinished/ 1000).toInt() % 60).toLong()
                    val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
-                   if (diff.equals("00:00:00s")) {
-                     binding.main.visibility = View.GONE
-                   } else {
-                     binding.timerLayout.visibility = View.VISIBLE
-                     binding.main.visibility = View.VISIBLE
                      binding.timerTime.setText(diff)
-                   }
                  } catch (e: Exception) {
                    e.printStackTrace()
                  }
                }
 
                override fun onFinish() {
-                 binding.timerLayout.visibility = View.GONE
-                 binding.main.visibility = View.GONE
+                 _interface.deleteItem(item, adapterPosition)
                }
              }.start()
-
-              //setTimer(mills, countDownTimer)
           }
 
       }else{
-        if(item.data.transactionBid== null) {
-          binding.main.visibility = View.GONE
-        }else{
-          binding.timerLayout.visibility = View.VISIBLE
-        }
+          binding.timerLayout.visibility = View.GONE
       }
-
     }
 
     if(item.data.indentOrigin.equals("LH")){
       if(item.data.indentHaltCenters.isNullOrEmpty()){
         binding.stopNo.text = "No Stops"
       }else{
-        binding.stopNo.text = item.data.indentHaltCenters.size.toString()
+        binding.stopNo.text = item.data.indentHaltCenters.size.toString()+" Stops"
       }
     }else{
       var total = 0
@@ -162,7 +145,6 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
       }
 
     }
-
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
     )
@@ -334,7 +316,13 @@ internal class HomeLoadsMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBinding
             item: HomeLoadsSummaryItem,
             _interface: HomeLoadsRVAdapterInterface
     ) {
-      binding.loadsCount.text = "("+item.data.count.toString()+")"
+      if(_interface.fetchCurrSize()!=null && _interface.itemDeleted()){
+        _interface.itemDeleted(false)
+        binding.loadsCount.text = "(" + _interface.fetchCurrSize().toString() + ")"
+      }else {
+        _interface.updateCurrSize(item.data.count)
+        binding.loadsCount.text = "(" + item.data.count.toString() + ")"
+      }
     }
   }
 }
