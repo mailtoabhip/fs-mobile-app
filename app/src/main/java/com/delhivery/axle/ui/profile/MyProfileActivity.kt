@@ -301,6 +301,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 binding.kycpendingLayout.visibility = View.VISIBLE
                 binding.ratingsLayout.visibility = View.VISIBLE
                 binding.kycfailedLayout.visibility = View.GONE
+                binding.kycLayout.visibility = View.VISIBLE
             } else if (userPrefs.verificationStatus.equals("success")) {
                 binding.verifyBadge.visibility = View.VISIBLE
                 binding.kycpendingLayout.visibility = View.GONE

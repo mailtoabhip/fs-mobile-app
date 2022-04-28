@@ -117,7 +117,7 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
                     binding.gstLay.visibility = View.GONE
                     binding.errorGst.visibility = View.GONE
                 }
-            } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
+            } else if (userPrefs.identityType.equals("udyog_aadhaar")) {
                 if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
                     binding.labelGst.text = "Udyog Aadhaar"
                     binding.textKycGstNumberProfile.text = userPrefs.udyogNumber
@@ -235,11 +235,11 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             binding.errorAddress.visibility = View.VISIBLE
             binding.imageKycDetailAddressVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
             binding.textKycAddressProfile.setTextColor(resources.getColor(R.color.error_red))
-             if(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification")){
-                    binding.errorAddress.text = "Document under verification"
-             }else {
-                 binding.errorAddress.text = "Address verification failed due to " + userPrefs.addressRejectReason
-             }
+            if(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification")){
+                binding.errorAddress.text = "Document under verification"
+            }else {
+                binding.errorAddress.text = "Address verification failed due to " + userPrefs.addressRejectReason
+            }
         }else{
             binding.addressLay.isSelected = false
             binding.errorAddress.visibility = View.GONE
