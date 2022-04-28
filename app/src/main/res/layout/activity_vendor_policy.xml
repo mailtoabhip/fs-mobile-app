@@ -40,7 +40,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_call" />
+                    app:srcCompat="@drawable/ic_doc_vendor" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_review_agree"
@@ -72,7 +72,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/seprator_1"
-                    app:srcCompat="@drawable/ic_vector_upload_error" />
+                    app:srcCompat="@drawable/early_pod" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_incentive"
@@ -114,7 +114,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/seprator_2"
-                    app:srcCompat="@drawable/ic_vector_upload_error" />
+                    app:srcCompat="@drawable/ic_cancellation" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_cancellation"
@@ -366,7 +366,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/seprator_3"
-                    app:srcCompat="@drawable/ic_vector_upload_error" />
+                    app:srcCompat="@drawable/ic_munshi" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_munsiyana"
@@ -641,7 +641,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/seprator_4"
-                    app:srcCompat="@drawable/ic_vector_upload_error" />
+                    app:srcCompat="@drawable/ic_damage" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_damage"
@@ -716,7 +716,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="< ₹5,000"
+                        android:text="&lt; ₹5,000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dm_4"
@@ -786,7 +786,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/seprator_5"
-                    app:srcCompat="@drawable/ic_vector_upload_error" />
+                    app:srcCompat="@drawable/ic_deduction" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_dd"
@@ -1123,54 +1123,59 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/cl_dd_open_body" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/vendor_policy_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/vendor_policy_link"
-                    android:layout_marginTop="@dimen/size_16dp"
-                    android:autoLink="web"
-                    android:linksClickable="true"
-                    android:text="@string/sub_label_vendor_policy"
-                    android:textAlignment="center"
-                    android:textColor="@color/sub_heading_black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/seprator_bottom" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/vendor_policy_link"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/button_i_agree"
-                    android:layout_marginBottom="@dimen/size_16dp"
-                    android:autoLink="web"
-                    android:linksClickable="true"
-                    android:text="@string/sub_label_vendor_link"
-                    android:textAlignment="center"
-                    android:textColor="@color/link"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/vendor_policy_text" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_i_agree"
-                    style="@style/ActionButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="@dimen/size_16dp"
-                    android:text="@string/label_i_agree"
-                    android:textAllCaps="false"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/vendor_policy_link" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </androidx.core.widget.NestedScrollView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vendor_policy_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/vendor_policy_link"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:text="@string/sub_label_vendor_policy"
+            android:textAlignment="center"
+            android:textColor="@color/sub_heading_black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vendor_policy_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/button_i_agree"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:text="@string/sub_label_vendor_link"
+            android:textAlignment="center"
+            android:textColor="@color/link"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vendor_policy_text" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_i_agree"
+            style="@style/ActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_8dp"
+            android:text="@string/label_i_agree"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vendor_policy_link" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 
 </layout>

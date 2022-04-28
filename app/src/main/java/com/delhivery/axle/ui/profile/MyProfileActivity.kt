@@ -72,7 +72,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         if(userPrefs.verificationStatus.equals("failed")){
             if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
-                if(userPrefs.paymentRejectReason.isNotNullOrEmpty()&& !userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification") && !userPrefs.noOfVerificationIssues.equals("0"))
+                if(userPrefs.isBankDetailsRejected && !userPrefs.noOfVerificationIssues.equals("0"))
                 {
                 binding.issues.text = (userPrefs.noOfVerificationIssues.toInt()-1).toString()+" Issues"
                 }else{
@@ -91,13 +91,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }else{
             binding.issues.visibility = View.GONE
         }
-        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
-            if(!userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
+        if(userPrefs.isBankDetailsRejected){
                 binding.issuesPayment.text = "1 Issue"
                 binding.issuesPayment.visibility=View.VISIBLE
-            }else{
-                binding.issuesPayment.visibility=View.GONE
-            }
         }else{
             binding.issuesPayment.visibility=View.GONE
         }

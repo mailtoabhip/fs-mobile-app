@@ -50,7 +50,7 @@ data class UserModel(
         @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
         @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
-        @SerializedName("account_holder_name") var accountHolderName: String?
+        @SerializedName("is_bank_details_rejected") var isBankDetailsRejected: Boolean?
 
     ) : BaseKeyTypeModel<String>(), Serializable {
 

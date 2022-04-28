@@ -688,6 +688,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.aadhaarPolicyAccepted, value)
       .apply()
     get() = prefs.getBoolean(PrefKeys.aadhaarPolicyAccepted, false)
+
+  var isBankDetailsRejected: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isBankDetailsRejected, value)
+        .apply()
+    get() = prefs.getBoolean(PrefKeys.isBankDetailsRejected, false)
   /**
    * Clear all preferences
    */
@@ -858,6 +863,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.panName)
         .apply()
+    editor.remove(PrefKeys.isBankDetailsRejected)
+        .apply()
     editor.commit()
   }
 
@@ -881,6 +888,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     shopNumber=user.supplierDetails?.shopEstablishment?:""
     udyogNumber=user.supplierDetails?.udyogAadhar?:""
     cityCode = user.supplierDetails?.baseCityCode
+    isBankDetailsRejected=user.isBankDetailsRejected==false
     isParent = user.isParent()
     userType = user.userType ?: ""
     truckTypes = if (user.isParent()) {
@@ -1054,6 +1062,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val lanesPreference= "lanes_preference"
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
+    const val isBankDetailsRejected= "is_bank_details_rejected"
+
 
   }
 }
