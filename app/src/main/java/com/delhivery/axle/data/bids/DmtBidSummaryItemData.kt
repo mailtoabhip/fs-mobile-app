@@ -22,7 +22,9 @@ data class DmtBidSummaryItemData (
     var truckTypes : List<TruckResponseArray> = mutableListOf(),
     var bidIds: List<String> = mutableListOf(),
     var added: Boolean = false,
-    var deleted: Boolean = false
+    var deleted: Boolean = false,
+    var expectedArrivalTimePickup:String = "",
+    var expectedArrivalTimePickupRemark:String = ""
     ): BaseKeyTypeModel<String>() {
 
         override fun key() = vehicleType
@@ -40,6 +42,9 @@ data class DmtBidSummaryItemData (
 
         fun truckCount() = if(truckCount!=0) truckCount.toString()
            else ""
+
+        fun repTime() = if(truckCount!=0) truckCount.toString()
+        else ""
 
         fun isEnabled()= status != "confirmed"
 

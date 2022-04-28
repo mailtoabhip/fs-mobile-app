@@ -248,6 +248,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       viewModel.processPaymentSummary()
     })
 
+    viewModel.indentLiveData.observe(this, Observer {
+      runOnUiThread {
+        if(it.isNotNullOrEmpty()){
+          binding.textViaDestination.text = it
+        }
+      }
+    })
+
     refreshData()
   }
 
@@ -291,8 +299,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         if(t.second.entity!="OSCPL"){
           viewModel.fetchWarehouseDetails()
         }
+
+        if(binding.transaction?.indentOrigin.equals("LH")){
+          if(!binding.transaction?.indentHaltCenters.isNullOrEmpty()){
+            for(code in binding.transaction?.indentHaltCenters!!){
+              viewModel.fetchIndentCenters(code.haltCenterCode)
+            }
+          }
+        }else{
+           val stopBuilder = StringBuilder()
+          if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+           stopBuilder.append(StringUtils.capitalize(binding.transaction?.stop1City))
+          }
+          if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
+            stopBuilder.append(", ").append(StringUtils.capitalize(binding.transaction?.stop2City))
+          }
+          binding.textViaDestination.text = stopBuilder.toString()
+        }
+
         viewModel.fetchPayment()
         viewModel.fetchChargeListSummary()
+
+
         // viewModel.fetchPaymentSummary()
         // viewModel.fetchChargeSummary()
         // viewModel.fetchListInvoices()

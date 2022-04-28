@@ -3,7 +3,10 @@ package com.delhivery.axle.ui.biddetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
+import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -23,12 +26,14 @@ import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -71,6 +76,45 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
     viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
+
+
+  }
+
+  private fun setTimer(bidEndingTime: String) {
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    val date1: Date = format.parse(format.format(Date()))
+    val date2: Date = format.parse(bidEndingTime)
+    val mills: Long = date1.getTime() - date2.getTime()
+    if (date1.compareTo(date2) == 0) {
+      binding.timerLayout.visibility = View.GONE
+    } else if (date1.compareTo(date2) < 0) {
+      binding.timerLayout.visibility = View.GONE
+    } else if (date1.compareTo(date2) > 0) {
+      object : CountDownTimer(mills, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+          try {
+            val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+            val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+            val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+            val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+            if (diff.equals("00:00:00s")) {
+              binding.timerLayout.visibility = View.GONE
+            } else {
+              binding.timerLayout.visibility = View.VISIBLE
+              binding.timerTime.setText(diff)
+            }
+          } catch (e: Exception) {
+            e.printStackTrace()
+          }
+        }
+
+        override fun onFinish() {
+          binding.timerLayout.visibility = View.GONE
+        }
+      }.start()
+    }
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -95,6 +139,19 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }
+
+        if(viewModel.active){
+          if(binding.transaction!!.bidEndingTime.isNotNullOrEmpty()){
+            binding.transaction!!.bidEndingTime.let { it?.let { it1 -> setTimer(it1) } }
+          }else{
+            binding.timerLayout.visibility = View.GONE
+          }
+        }else{
+          binding.timerLayout.visibility = View.GONE
+        }
+
+
+
       }
     })
 
@@ -144,6 +201,51 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       refreshData()
     }
 
+    viewModel.indentLiveData.observe(this, Observer {
+      runOnUiThread {
+        if(!it.isEmpty()){
+
+          if(it.containsKey(1)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(1)
+          }
+          if(it.containsKey(2)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(1)
+          }
+          if(it.containsKey(3)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(3)
+          }
+          if(it.containsKey(4)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(4)
+          }
+          if(it.containsKey(5)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(5)
+          }
+          if(it.containsKey(6)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(6)
+          }
+          if(it.containsKey(7)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(7)
+          }
+          if(it.containsKey(8)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(8)
+          }
+          if(it.containsKey(9)){
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = it.get(9)
+          }
+
+        }
+      }
+    })
+
     refreshData()
   }
 
@@ -189,6 +291,37 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           title = _transaction.tripDisplayName()
         }
+
+        if(binding.transaction?.indentOrigin.equals("LH")){
+          if(binding.transaction?.indentHaltCenters.isNullOrEmpty()){
+            binding.stopNo.text = "No Stops"
+          }else{
+            binding.stopNo.text = binding.transaction?.indentHaltCenters!!.size.toString()
+            var i = 0
+            for(code in binding.transaction?.indentHaltCenters!!){
+              viewModel.fetchIndentCenters(code.haltCenterCode,i+1 )
+            }
+          }
+        }else{
+          var total = 0
+          if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+            total = 1
+            binding.textViaDestination.card1.visibility = View.VISIBLE
+            binding.textViaDestination.city1.text = binding.transaction?.stop1City
+          }
+          if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
+            total = 2
+            binding.textViaDestination.card2.visibility = View.VISIBLE
+            binding.textViaDestination.city2.text = binding.transaction?.stop2City
+          }
+
+          if(total>0){
+            binding.stopNo.text = "$total Stops"
+          }else{
+            binding.stopNo.text = "No Stops"
+          }
+        }
+
       } else {
         binding.error = true
         binding.containerError.title = "Session Time Out"

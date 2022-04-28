@@ -89,7 +89,7 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* vehicle_type filter */
   var vehicleStr = userPrefs.truckTypes
-  var type = userPrefs.demandType
+  //var type = userPrefs.demandType
 
   var paginateCount =0
 
@@ -122,8 +122,8 @@ class HomeLoadsViewModel @Inject constructor(
    * Fetch user [Requested] transactions
    */
   fun fetchUserTransactions(
-    paginate: Boolean = false, express: String?= null,
-    isExpress: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
+    paginate: Boolean = false, demandType: String,
+    isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -143,7 +143,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, type, vehicleTypes, express, excludeTruckTypes, filterVehicleType)
+    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType)
         .flatMap { t ->
           offset = t.offset
           total = t.total
@@ -174,7 +174,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsWarningItem_NoLoads, Add))
               } else {
                   add(Pair(HomeLoadsSearchItem(), AddUpdate))
-                  add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isExpress)), AddUpdate))
+                  add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                   if(!paginate) {
                       add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
@@ -262,10 +262,12 @@ class HomeLoadsViewModel @Inject constructor(
     bidAmount: Int,
     pmtRate: Int,
     commercialType: String,
-    position: Int
+    position: Int,
+    expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.createBid(
-        isPMT, transactionId, bidAmount, pmtRate, commercialType
+        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
@@ -289,10 +291,12 @@ class HomeLoadsViewModel @Inject constructor(
     bidAmount: Int,
     pmtRate: Int,
     commercialType: String,
-    position: Int
+    position: Int,
+    expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.editBid(
-        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
+        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -64,6 +65,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
   @SerializedName("status") val transactionStatus: String?= "",
   @SerializedName("entity") val entity:String = "",
+  @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
+  @SerializedName("indent_origin") val indentOrigin:String? =  null,
+  @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -122,6 +126,11 @@ data class HomeBidsRequestItemData(
     View.VISIBLE
   else
     View.INVISIBLE
+
+  fun timerPlaceLayoutVisibility()= if(!isDMTIndent() && (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null )
+    View.VISIBLE
+  else
+    View.GONE
 
 
   fun requestedCapacityVisibility() = if(isPMTIndent() && !isDMTIndent())
@@ -470,7 +479,7 @@ data class HomeBidsRequestItemData(
     val sb = StringBuilder()
     if(showNum)
       sb.append("1. ")
-    sb.append("Express")
+    sb.append("Delhivery Load")
     if (tatMinutes != null) {
       val tat = tatMinutes?.toDouble() ?: 0.0
       if (tat > 60) {

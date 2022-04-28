@@ -182,6 +182,32 @@
           />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/rep_time"
+        style="@style/TextInputLayoutAppearance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_12sp"
+        android:text="@string/hint_rep_time"
+       app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+      <androidx.appcompat.widget.AppCompatSpinner
+          android:id="@+id/edit_time"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:background="@drawable/bg_form_edit"
+          android:drawSelectorOnTop="true"
+          android:spinnerMode="dropdown"
+          android:layout_marginBottom="@dimen/size_12dp"
+           android:entries="@array/reportingTimeItems"
+          android:imeOptions="actionDone"
+          android:textSize="@dimen/text_14sp"
+          />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/label_bid"
         android:layout_width="wrap_content"

@@ -7,6 +7,9 @@ import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Base Home bids RV adapter view holder
@@ -70,10 +73,43 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.isDMTIndent()){
+      binding.timerLayout.visibility = View.GONE
+    }else{
+      if(item.data.bidEndingTime.isNotNullOrEmpty()){
+        item.data.bidEndingTime?.let { setTimer(it) }
+      }
+    }
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
     )
+  }
+
+  private fun setTimer(bidEndingTime: String) {
+    val updateTimer = Timer()
+    updateTimer.schedule(object : TimerTask() {
+      override fun run() {
+        try {
+          val format = SimpleDateFormat("hh:mm:ss aa")
+          val date1: Date = format.parse(format.format(Date()))
+          val date2: Date = format.parse(bidEndingTime)
+          val mills: Long = date1.getTime() - date2.getTime()
+          val hours = (mills / (1000 * 60 * 60)).toInt()
+          val mins = (mills / (1000 * 60)).toInt() % 60
+          val secs = ((mills / 1000).toInt() % 60).toLong()
+          val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+          if(diff.equals("00:00:00s")){
+            binding.timerLayout.visibility = View.GONE
+          }else{
+            binding.timerLayout.visibility = View.VISIBLE
+            binding.timerTime.setText(diff)
+          }
+        } catch (e: Exception) {
+          e.printStackTrace()
+        }
+      }
+    }, 0, 1000)
   }
 }
 

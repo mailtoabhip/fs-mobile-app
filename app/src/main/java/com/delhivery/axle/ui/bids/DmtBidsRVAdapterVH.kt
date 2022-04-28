@@ -1,23 +1,26 @@
 package com.delhivery.axle.ui.bids
 
+import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.bids.DELETE_ITEM
-import com.delhivery.axle.data.bids.DmtBidSummaryItemData
 import com.delhivery.axle.data.bids.EXPAND_CARD
-import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
 import com.delhivery.axle.databinding.ViewBidCreateEditItemBinding
 import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.biddetails.DmtBidsAdapterInterface
 import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
-import com.delhivery.axle.ui.ledger.LedgerSpinnerAdapter
-import kotlin.math.abs
+import java.text.SimpleDateFormat
+import java.util.*
 
 abstract class BaseDmtBidsRVAdapterVH<out B: ViewDataBinding,
         IT : BaseDmtBidSummaryRVAdapterItem<*>>(binding: B) : BaseViewHolder<B>(binding) {
@@ -83,6 +86,74 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                     binding.item?.vehicleType = option.truckUuid!!
                 }
                 }
+        }
+
+
+        val items= context.resources.getStringArray(R.array.reportingTimeItems)
+        val spinnerAdapter= object : ArrayAdapter<String>(context,android.R.layout.simple_spinner_item, items) {
+
+            override fun isEnabled(position: Int): Boolean {
+                return position != 0
+            }
+
+            override fun getDropDownView(
+                    position: Int,
+                    convertView: View?,
+                    parent: ViewGroup
+            ): View {
+                val view: TextView = super.getDropDownView(position, convertView, parent) as TextView
+                if(position == 0) {
+                    view.setTextColor(Color.GRAY)
+                }
+                return view
+            }
+
+        }
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.editTime.adapter = spinnerAdapter
+
+        binding.editTime.apply {
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>) = Unit
+                override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View,
+                        position: Int,
+                        id: Long
+                ) {
+
+                    val option = parent.getItemAtPosition(position) as String
+                    if(option == items[0]){
+                        (view as TextView).setTextColor(Color.GRAY)
+                    }
+                    val text: String = binding.editTime.selectedItem.toString()
+                    if(text.equals("Select Time")){
+                        binding.item?.expectedArrivalTimePickup = ""
+                        binding.item?.expectedArrivalTimePickupRemark = ""
+                     }else{
+                        val myDate = Date()
+                        val calendar: Calendar = Calendar.getInstance()
+                        calendar.setTimeZone(TimeZone.getTimeZone("UTC"))
+                        calendar.setTime(myDate)
+                        if(text.equals("Immediately")) {
+                            calendar.add(Calendar.MINUTE,30);
+                        }else if(text.equals("Within 4 hours")) {
+                            calendar.add(Calendar.HOUR, 4);
+                        }else if(text.equals("Between 4-12 hours")) {
+                            calendar.add(Calendar.HOUR, 12);
+                        }else if(text.equals("Tomorrow")) {
+                            calendar.add(Calendar.HOUR, 24);
+                        }
+                        val time: Date = calendar.getTime()
+                        val outputFmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS")
+                        val dateAsString: String = outputFmt.format(time)
+                        binding.item?.expectedArrivalTimePickup = dateAsString
+                        binding.item?.expectedArrivalTimePickupRemark = option
+                    }
+
+                }
+            }
         }
         binding.editTrucks.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?){

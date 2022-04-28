@@ -40,7 +40,6 @@ interface TransactionService {
     @Query("demand_types") vendorType: String ? = "orion",
     @Query("truck_types") vehicleType: String? = null,
     @Query("valid_loads_only") validLoads: String = "yes",
-    @Query("speed") speed: String?= null,
     @Query("exclude_truck_types") excludeTruckTypes: String? = null,
     @Query("filter_vehicle_type") filterVehicleType: Boolean?= null
   ): Single<BaseResponse<TransactionsResponse>>

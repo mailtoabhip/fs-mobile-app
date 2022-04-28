@@ -1,7 +1,10 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
+import android.os.CountDownTimer
+import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -11,6 +14,11 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.concurrent.timer
+
 
 /**
  * Base Home bids RV adapter view holder
@@ -18,46 +26,48 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 abstract class BaseHomeLoadsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseHomeLoadsRVAdapterItem<*>>(binding: B) :
     BaseViewHolder<B>(binding) {
   abstract fun bind(
-    item: IT,
-    _interface: HomeLoadsRVAdapterInterface
+          item: IT,
+          _interface: HomeLoadsRVAdapterInterface
   )
+
+  var countDownTimer:CountDownTimer? = null
 
   /**
    * Add on click listener for action
    */
   protected fun View.clickToAction(
-    actionId: String,
-    item: IT,
-    _interface: HomeLoadsRVAdapterInterface
+          actionId: String,
+          item: IT,
+          _interface: HomeLoadsRVAdapterInterface
   ) = setOnClickListener { action(actionId, item, _interface) }
 
   /**
    * Add on click listener for action with position
    */
   protected fun View.clickToAction(
-    actionId: String,
-    item: IT,
-    position: Int,
-    _interface: HomeLoadsRVAdapterInterface
+          actionId: String,
+          item: IT,
+          position: Int,
+          _interface: HomeLoadsRVAdapterInterface
   ) = setOnClickListener { action(actionId, item, position, _interface) }
 
   /**
    * Post action to UI
    */
   protected fun View.action(
-    actionId: String,
-    item: IT,
-    _interface: HomeLoadsRVAdapterInterface
+          actionId: String,
+          item: IT,
+          _interface: HomeLoadsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item) }
 
   /**
    * Post action to UI with position
    */
   protected fun View.action(
-    actionId: String,
-    item: IT,
-    position: Int,
-    _interface: HomeLoadsRVAdapterInterface
+          actionId: String,
+          item: IT,
+          position: Int,
+          _interface: HomeLoadsRVAdapterInterface
   ) = post { _interface.handleAction(actionId, item, position) }
 }
 
@@ -66,18 +76,98 @@ abstract class BaseHomeLoadsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
  */
 class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsRequestItemBinding, HomeLoadsRequestItem>(
-        binding
+            binding
     ) {
+
   override fun bind(
-    item: HomeLoadsRequestItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsRequestItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+
+    if(item.data.isDMTIndent()){
+      binding.timerLayout.visibility = View.GONE
+      binding.main.visibility = View.VISIBLE
+    }else{
+      if(item.data.bidEndingTime.isNotNullOrEmpty()){
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(item.data.bidEndingTime)
+        val mills: Long = date1.getTime() - date2.getTime()
+           if (date1.compareTo(date2) == 0) {
+            binding.main.visibility = View.GONE
+          } else if (date1.compareTo(date2) < 0) {
+             binding.main.visibility = View.GONE
+          } else if (date1.compareTo(date2) > 0) {
+
+             countDownTimer?.cancel()
+
+             countDownTimer =  object : CountDownTimer(mills, 1000) {
+               override fun onTick(millisUntilFinished: Long) {
+                 try {
+                   val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                   val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+                   val secs = ((millisUntilFinished/ 1000).toInt() % 60).toLong()
+                   val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+                   if (diff.equals("00:00:00s")) {
+                     binding.main.visibility = View.GONE
+                   } else {
+                     binding.timerLayout.visibility = View.VISIBLE
+                     binding.main.visibility = View.VISIBLE
+                     binding.timerTime.setText(diff)
+                   }
+                 } catch (e: Exception) {
+                   e.printStackTrace()
+                 }
+               }
+
+               override fun onFinish() {
+                 binding.timerLayout.visibility = View.GONE
+                 binding.main.visibility = View.GONE
+               }
+             }.start()
+
+              //setTimer(mills, countDownTimer)
+          }
+
+      }else{
+        if(item.data.transactionBid== null) {
+          binding.main.visibility = View.GONE
+        }else{
+          binding.timerLayout.visibility = View.VISIBLE
+        }
+      }
+
+    }
+
+    if(item.data.indentOrigin.equals("LH")){
+      if(item.data.indentHaltCenters.isNullOrEmpty()){
+        binding.stopNo.text = "No Stops"
+      }else{
+        binding.stopNo.text = item.data.indentHaltCenters.size.toString()
+      }
+    }else{
+      var total = 0
+      if (!TextUtils.isEmpty(item.data.stop1City)) {
+       total = 1
+      }
+      if (!TextUtils.isEmpty(item.data.stop2City)) {
+        total = 2
+      }
+
+      if(total>0){
+        binding.stopNo.text = "$total Stops"
+      }else{
+        binding.stopNo.text = "No Stops"
+      }
+
+    }
+
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
-    binding.viewBidInfo.clickToAction(
-        HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
+    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
     )
   }
+
 }
 
 /**
@@ -85,11 +175,11 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
  */
 internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsProgressItemBinding, HomeLoadsProgressItem>(
-        binding
+            binding
     ) {
   override fun bind(
-    item: HomeLoadsProgressItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsProgressItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
   }
 }
@@ -99,11 +189,11 @@ internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding
  */
 internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeLoadsSearchItem>(
-        binding
+            binding
     ) {
   override fun bind(
-    item: HomeLoadsSearchItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsSearchItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
   }
 }
@@ -113,11 +203,11 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
  */
 internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewWarningItemBinding, HomeLoadsWarningItem>(
-        binding
+            binding
     ) {
   override fun bind(
-    item: HomeLoadsWarningItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsWarningItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
@@ -131,11 +221,11 @@ internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :
  */
 internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBinding) :
   BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckBannerItemBinding, HomeLoadsAddTruckItem>(
-    binding
+          binding
   ) {
   override fun bind(
-    item: HomeLoadsAddTruckItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsAddTruckItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
       binding.layoutBanner.clickToAction(HomeLoadsBannerAction, item, _interface)
   }
@@ -146,11 +236,11 @@ internal class HomeLoadsAddTruckItemVH(binding: ViewHomeLoadsTruckBannerItemBind
  */
 internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityItemBinding) :
   BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsTruckPriorityItemBinding, HomeLoadsTruckPriorityAccessItem>(
-    binding
+          binding
   ) {
   override fun bind(
-    item: HomeLoadsTruckPriorityAccessItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsTruckPriorityAccessItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
       binding.truckBanner.clickToAction(HomeLoadsPriorityAction, item, _interface)
   }
@@ -162,15 +252,15 @@ internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityI
 internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsFilterItemBinding, HomeLoadsFilterItem>(binding) {
   override fun bind(
-    item: HomeLoadsFilterItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsFilterItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     if (item.data.actionLabel) {
       binding.toggleRemovedMark.visibility = View.VISIBLE
     } else {
       binding.toggleRemovedMark.visibility = View.GONE
     }
-    binding.llExpressToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
+    binding.llFilterToggle.clickToAction(HomeLoadsFilterAction, item, _interface)
     binding.llVehicleFilter.clickToAction(HomeLoadsVehicleFilterAction, item, _interface)
   }
 }
@@ -181,8 +271,8 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadsFilterItemBinding) :
 internal class HomeLoadsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeLoadsTimeoutItem>(binding) {
   override fun bind(
-    item: HomeLoadsTimeoutItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsTimeoutItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
@@ -196,17 +286,17 @@ internal class HomeLoadsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
  */
 internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsInfoItemBinding, HomeLoadsInfoItem>(
-        binding
+            binding
     ) {
   override fun bind(
-    item: HomeLoadsInfoItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsInfoItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
     val searchString = SpannableString(item.data.searchString)
     searchString.setSpan(
-        colorSpan, searchString.length - 12,
-        searchString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            colorSpan, searchString.length - 12,
+            searchString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     binding.textSearch.text = searchString
     binding.textSearch.clickToAction(HomeLoadsInfoAction_Search, item, _interface)
@@ -219,30 +309,30 @@ internal class HomeLoadsInfoItemVH(binding: ViewHomeLoadsInfoItemBinding) :
  */
 internal class HomeLoadsMoreInfoItemVH(binding: ViewHomeLoadsMoreInfoItemBinding) :
   BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsMoreInfoItemBinding, HomeLoadsMoreInfoItem>(
-    binding
+          binding
   ) {
   override fun bind(
-    item: HomeLoadsMoreInfoItem,
-    _interface: HomeLoadsRVAdapterInterface
+          item: HomeLoadsMoreInfoItem,
+          _interface: HomeLoadsRVAdapterInterface
   ) {
     val colorSpan = ForegroundColorSpan(ContextCompat.getColor(context, R.color.status_active))
 
     val editRouteString: Spannable = SpannableString(item.data.editRouteString)
     editRouteString.setSpan(
-      colorSpan, editRouteString.length - 6,
-      editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            colorSpan, editRouteString.length - 6,
+            editRouteString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     binding.textEditRoute.text = editRouteString
     binding.textEditRoute.clickToAction(HomeLoadsInfoAction_EditRoute, item, _interface)
   }
 
-  internal class HomeLoadsSummaryItemVH(binding:ViewHomeSummaryItemBinding):
+  internal class HomeLoadsSummaryItemVH(binding: ViewHomeSummaryItemBinding):
     BaseHomeLoadsRVAdapterViewHolder<ViewHomeSummaryItemBinding, HomeLoadsSummaryItem>(
-      binding
+            binding
     ) {
     override fun bind(
-      item: HomeLoadsSummaryItem,
-      _interface: HomeLoadsRVAdapterInterface
+            item: HomeLoadsSummaryItem,
+            _interface: HomeLoadsRVAdapterInterface
     ) {
       binding.loadsCount.text = "("+item.data.count.toString()+")"
     }

@@ -51,7 +51,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
         setContentView(binding.root)
         binding.route = transaction.tripRouteOriginDes()
         binding.request = transaction
-        binding.page=pageTitle
+        binding.page = pageTitle
         var availableTrucks: List<String>? = null
         availableTrucks = if( transaction.truckUUID is String) {
             listOf<String>(*((transaction.truckUUID as String).split(",")).toTypedArray())
@@ -195,11 +195,23 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     }
                 }
             }
+
+            var isRep = false
+            for(item in adapter.itemsList()) {
+                val bidData = item.data as DmtBidSummaryItemData
+                if(bidData.expectedArrivalTimePickupRemark == "Select Time" || bidData.expectedArrivalTimePickupRemark.isEmpty()) {
+                    isRep = true
+                    break
+                }
+            }
+
             if( duplicate  ){
                 Toast.makeText(context, "Duplicate Vehicle types Found", Toast.LENGTH_SHORT).show()
             }
             else if(isZero){
                 Toast.makeText(context, "Truck Count or PMT rate can't be zero", Toast.LENGTH_SHORT).show()
+            }else if(isRep){
+                Toast.makeText(context, "Please select vehicle reporting time", Toast.LENGTH_SHORT).show()
             }
             else {
                 if (pageTitle == "EDIT BIDS") {
@@ -219,7 +231,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                                     }
 
                                     if (diff != 0 || pmtFlag) {
-                                        modifyPayload.add(ModifyVehicleData(bidData.pmtRate, bidData.vehicleCapacity, diff, bidData.vehicleType, "modify", bidData.bidIds, pmtFlag))
+                                        modifyPayload.add(ModifyVehicleData(bidData.pmtRate, bidData.vehicleCapacity, diff, bidData.vehicleType, "modify", bidData.bidIds, pmtFlag, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
 
                                     }
                                     dmtBidSummaryItemDataList.remove(i)
@@ -230,7 +242,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             if (!match) {
                                 if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
                                     val freightCost = bidData.pmtRate * bidData.vehicleCapacity
-                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost))
+                                    createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
                                 }
                             }
 
@@ -246,7 +258,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                         val bidData = item.data as DmtBidSummaryItemData
                         if (bidData.truckCount != 0 && bidData.pmtRate != 0.0) {
                             val freightCost = bidData.pmtRate * bidData.vehicleCapacity
-                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost))
+                            createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
                         }
                     }
                     dialogInterface.createBids(transaction.key(), position, createPayload, unAllocatedLoad)

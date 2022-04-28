@@ -57,16 +57,17 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override val title: CharSequence
     get() = _title
 
-  private val MINIMUM = 25
-  var scrollDist = 0
-  var visible = false
-  var express: String?= null
-  var isExpress = false
-  var pos = 0
-
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
   @Inject lateinit var userPrefs: UserPrefs
+
+  private val MINIMUM = 25
+  var scrollDist = 0
+  var visible = false
+  var demandType: String = ""
+  var isInternal = false
+  var pos = 0
+
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -92,6 +93,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    demandType = userPrefs.demandType
 
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
@@ -293,7 +296,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, express, isExpress)
+    viewModel.fetchUserTransactions(false, demandType, isInternal)
   }
 
   override fun handleAction(
@@ -357,12 +360,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(userPrefs.userId())
         )
 
-        if (isExpress) {
-          isExpress = false
-          express = null
+        if (isInternal) {
+          isInternal = false
+          demandType = userPrefs.demandType
         } else {
-          isExpress = true
-          express = "EXP"
+          isInternal = true
+          demandType = "Internal"
         }
         refreshData()
       }
@@ -401,7 +404,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
         val exclude_truck_str = exclude_truck_types.joinToString( separator = ",") {it}
         viewModel.filterVehicleType = null
-        viewModel.fetchUserTransactions(false, express, isExpress, true, exclude_truck_str)
+        viewModel.fetchUserTransactions(false, demandType, isInternal, true, exclude_truck_str)
       }
 
       HomeLoadsPriorityAction -> {
@@ -703,7 +706,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(50) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, express, isExpress)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
 
     override fun hasMore() = viewModel.hasMoreData
 

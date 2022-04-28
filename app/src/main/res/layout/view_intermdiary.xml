@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+ <HorizontalScrollView
+     android:layout_width="wrap_content"
+     android:scrollIndicators="none"
+     android:layout_height="wrap_content">
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:orientation="horizontal"
+           android:layout_height="wrap_content">
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card1"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city1"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+         </LinearLayout>
+          <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card2"
+              android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.AppCompatImageView
+                  android:id="@+id/img2"
+                  android:layout_gravity="center_vertical"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  app:srcCompat="@drawable/ic_arrow_forward_black"
+                  />
+
+
+              <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city2"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+       </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card3"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/img3"
+                 android:layout_gravity="center_vertical"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/ic_arrow_forward_black"
+                 />
+
+
+             <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city3"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+         </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card4"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/img4"
+                 android:layout_gravity="center_vertical"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/ic_arrow_forward_black"
+                 />
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city4"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+         </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card5"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/img5"
+                 android:layout_gravity="center_vertical"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/ic_arrow_forward_black"
+                 />
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city5"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+         </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card6"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/img7"
+                 android:layout_gravity="center_vertical"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/ic_arrow_forward_black"
+                 />
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city6"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+         </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card8"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+             <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/img8"
+                 android:layout_gravity="center_vertical"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 app:srcCompat="@drawable/ic_arrow_forward_black"
+                 />
+
+
+             <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city8"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+         </LinearLayout>
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/card9"
+             android:visibility="gone"
+             android:layout_gravity="center_vertical"
+             android:layout_height="wrap_content">
+
+           <androidx.appcompat.widget.AppCompatTextView
+               android:id="@+id/city9"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:fontFamily="sans-serif"
+               android:textColor="@color/heading_black"
+               android:textSize="@dimen/text_16sp"
+               tools:text="Panjim"
+               />
+
+         </LinearLayout>
+       </LinearLayout>
+
+ </HorizontalScrollView>
+</layout>
