@@ -20,7 +20,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            bind:shadow="@{ @dimen/size_1dp }"
             />
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -32,21 +35,7 @@
                 android:paddingEnd="@dimen/size_24dp"
                 android:paddingBottom="@dimen/size_48dp">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/payment_error"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_16dp"
-                    android:fontFamily="sans-serif"
-                    android:drawableLeft="@drawable/ic_vector_error"
-                    android:drawablePadding="@dimen/size_8dp"
-                    android:lineSpacingExtra="@dimen/text_6sp"
-                    bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/progress"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_16sp"
-                    />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_num_textView"
@@ -56,7 +45,7 @@
                     android:layout_marginTop="@dimen/size_32dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/payment_error"
+                    bind:layout_constraintTop_toBottomOf="@+id/progress"
                     android:text="@string/sub_label_account_number"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_16sp"
@@ -239,13 +228,26 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/payment_error"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:fontFamily="sans-serif"
+                    android:drawablePadding="@dimen/size_8dp"
+                    android:lineSpacingExtra="@dimen/text_6sp"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/upload_doc"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    />
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/upload_doc1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_24dp"
-                    bind:layout_constraintTop_toBottomOf="@+id/upload_doc">
+                    bind:layout_constraintTop_toBottomOf="@+id/payment_error">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/doc_proof1"
                         android:layout_width="match_parent"
