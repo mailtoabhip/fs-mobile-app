@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.paymentdetails.VendorPolicyActivity">
 
     <data>
@@ -13,70 +13,1152 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            app:navigationIcon="@drawable/ic_close_black"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            />
+            app:navigationIcon="@drawable/ic_close_black" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            android:layout_above="@+id/vendor_policy_text"
-            >
+            android:layout_below="@+id/toolbar">
 
-        <!-- Place Web-view on the Screen -->
-        <WebView
-            android:id="@+id/webView"
-            android:isScrollContainer="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/vendor_policy_text"
+                android:padding="@dimen/size_16dp">
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_review_image"
+                    android:layout_width="@dimen/size_48dp"
+                    android:layout_height="@dimen/size_48dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_call" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/vendor_policy_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/vendor_policy_link"
-        android:autoLink="web"
-        android:layout_marginTop="@dimen/size_16dp"
-        android:text="@string/sub_label_vendor_policy"
-        android:textAlignment="center"
-        android:textColor="@color/sub_heading_black"
-        android:linksClickable="true"
-        />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/vendor_policy_link"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/button_i_agree"
-            android:autoLink="web"
-            android:visibility="visible"
-             android:layout_marginBottom="@dimen/size_16dp"
-            android:text="@string/sub_label_vendor_link"
-            android:textAlignment="center"
-            android:textColor="@color/link"
-            android:linksClickable="true"
-            />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_review_agree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Review &amp; Agree\nDelhivery’s partner policy"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_review_image" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_i_agree"
-        android:layout_width="match_parent"
-        style="@style/ActionButton"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/size_16dp"
-        android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginBottom="@dimen/size_16dp"
-        android:layout_height="wrap_content"
-        android:text="@string/label_i_agree"
-        />
+                <View
+                    android:id="@+id/seprator_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_review_agree" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_incentive"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_1"
+                    app:srcCompat="@drawable/ic_vector_upload_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_incentive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Early POD Incentive"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_incentive"
+                    app:layout_constraintLeft_toRightOf="@id/iv_incentive"
+                    app:layout_constraintTop_toTopOf="@+id/iv_incentive" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_incentive_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="If POD is given before POD expected date and the overall PODSL% (including POD collected via runners) is >90%, then the Supply Partner will get an incentive of  ₹100/transaction"
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_incentive"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_incentive" />
+
+                <View
+                    android:id="@+id/seprator_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_incentive_detail" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_cancellation"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_2"
+                    app:srcCompat="@drawable/ic_vector_upload_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_cancellation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Cancellation Fee"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_cancellation"
+                    app:layout_constraintLeft_toRightOf="@id/iv_cancellation"
+                    app:layout_constraintTop_toTopOf="@+id/iv_cancellation" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_cancellation_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="A fee will be paid to the Supply Partners when a vehicle is cancelled post confirmation / arrival at the loading dock. If the vehicle is detained, Cancellation charges along with Detention charges may be paid. "
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_cancellation"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_cancellation" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_closed_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Closed Body "
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/iv_cancellation"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_cancellation_detail" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_closed_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_closed_body">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="20-24 ft SXL"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_cb_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="20-24 ft SXL"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_cb_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_cb_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="20-24 ft SXL"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_cb_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_cb"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_cb_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹600"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_cb_5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_cb" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹800"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_cb_6"
+                        app:layout_constraintStart_toEndOf="@+id/tv_cb_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_cb_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_cb_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1000"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_cb_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_cb_4" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_open_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Open Body "
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/cl_closed_body"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_closed_body" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_open_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_open_body">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="6 tyre"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_ob_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="10-12 tyre"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_ob_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_ob_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="14 tyre+"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_ob_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_ob"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_ob_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹600"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_ob_5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_ob" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹800"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_ob_6"
+                        app:layout_constraintStart_toEndOf="@+id/tv_ob_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_ob_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_ob_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1000"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_ob_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_ob_4" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/seprator_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_open_body" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_munsiyana"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_3"
+                    app:srcCompat="@drawable/ic_vector_upload_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_munsiyana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Munsiyana Charges"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_munsiyana"
+                    app:layout_constraintLeft_toRightOf="@id/iv_munsiyana"
+                    app:layout_constraintTop_toTopOf="@+id/iv_munsiyana" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_munsiyana_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="A flat fee will be deducted from the balance of the Supply Partner based on the value of the trip as below:"
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_munsiyana"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_munsiyana" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_munsiyana"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_munsiyana_detail">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Freight Value"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Agriculture"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Regular"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_mu_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_mu_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="Less than ₹19,999"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_mu_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹100/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_6"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹100/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_4" />
+
+                    <View
+                        android:id="@+id/seprator_mu_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_mu_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹20,000 - ₹29,999"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_8"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_mu_2" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_8"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹200/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_9"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_7"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_9"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹100/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_8"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_7" />
+
+                    <View
+                        android:id="@+id/seprator_mu_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_mu_7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_10"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹30,000 - ₹49,999"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_11"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_mu_3" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_11"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹200/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_12"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_10"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_10" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_12"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹300/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_11"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_10" />
+
+                    <View
+                        android:id="@+id/seprator_mu_4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_mu_10" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_13"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹50,000 &amp; Above"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_14"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_mu_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_14"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹300/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_mu_15"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_13"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_13" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_mu_15"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹500/trip"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_mu_14"
+                        app:layout_constraintTop_toTopOf="@+id/tv_mu_13" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/seprator_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_munsiyana" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_damage"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_4"
+                    app:srcCompat="@drawable/ic_vector_upload_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_damage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Damage Deductions"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_damage"
+                    app:layout_constraintLeft_toRightOf="@id/iv_damage"
+                    app:layout_constraintTop_toTopOf="@+id/iv_damage" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_damage_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="In case of damages, recovery will be as follows:"
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_damage"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_damage" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_damage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_damage_detail">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Debit on POD"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dm_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Debit to Vendor"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dm_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_dm"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dm_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="< ₹5,000"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dm_4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dm" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Complete amount debited to partner"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dm_3"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dm_3" />
+
+                    <View
+                        android:id="@+id/seprator_dm_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dm_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="₹5,000 -₹15,999"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dm_6"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dm_2" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dm_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Upto ₹5,000 will be debited from the Partner, remaining split between Delhivery &amp; partner equally"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dm_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dm_5" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/seprator_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_damage" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_dd"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_5"
+                    app:srcCompat="@drawable/ic_vector_upload_error" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_dd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Detention and Delay Penalty"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_dd"
+                    app:layout_constraintLeft_toRightOf="@id/iv_dd"
+                    app:layout_constraintTop_toTopOf="@+id/iv_dd" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_dd_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Detention will be paid to the Supply Partner if mentioned on the POD. Similarly, delay penalty will also be applicable if the vehicle is delayed more than the TAT for lane. A buffer of 24 hours is provided for both detention and delay cases."
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_dd"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_dd" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_dd_closed_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Closed Body "
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/iv_dd"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dd_detail" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_dd_closed_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dd_closed_body">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Duration"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="10 tyre "
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="12 tyre "
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_dd_cb"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_cb_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="Till 3 days\n(excluding day 1)"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dd_cb" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹800/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_6"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1000/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_4" />
+
+                    <View
+                        android:id="@+id/seprator_dd_cb_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_cb_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="> 3 days"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_8"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dd_cb_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_8"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹800/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_9"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_7"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_cb_9"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1500/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_8"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_7" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_dd_open_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Open Body "
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/cl_dd_closed_body"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_dd_closed_body" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_dd_open_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:padding="@dimen/size_16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_dd_open_body">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Duration"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="32ft SXL"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="32ft MXL "
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/seprator_dd_ob"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_ob_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="Till 3 days\n(excluding day 1)"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dd_ob" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1,000/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_6"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1,000/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_4" />
+
+                    <View
+                        android:id="@+id/seprator_dd_ob_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_ob_4" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="> 3 days"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_8"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dd_ob_1" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_8"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1,500/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_9"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_7"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_ob_9"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₹1,500/day"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_8"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_7" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/seprator_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_dd_open_body" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/vendor_policy_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/vendor_policy_link"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:text="@string/sub_label_vendor_policy"
+                    android:textAlignment="center"
+                    android:textColor="@color/sub_heading_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_bottom" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/vendor_policy_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/button_i_agree"
+                    android:layout_marginBottom="@dimen/size_16dp"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:text="@string/sub_label_vendor_link"
+                    android:textAlignment="center"
+                    android:textColor="@color/link"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/vendor_policy_text" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_i_agree"
+                    style="@style/ActionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="@dimen/size_16dp"
+                    android:text="@string/label_i_agree"
+                    android:textAllCaps="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/vendor_policy_link" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 
 </layout>
