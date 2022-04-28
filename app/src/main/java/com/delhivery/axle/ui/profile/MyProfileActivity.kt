@@ -305,7 +305,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 binding.kycpendingLayout.visibility = View.VISIBLE
                 binding.ratingsLayout.visibility = View.VISIBLE
                 binding.kycfailedLayout.visibility = View.GONE
-                binding.kycLayout.visibility = View.GONE
             } else if (userPrefs.verificationStatus.equals("success")) {
                 binding.verifyBadge.visibility = View.VISIBLE
                 binding.kycpendingLayout.visibility = View.GONE
@@ -339,6 +338,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     override fun onPostResume() {
         super.onPostResume()
+        viewModel.getKYCDetails("noredirect")
         setVerficationStatus()
     }
 

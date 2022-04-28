@@ -47,7 +47,9 @@ class KYCDocumentsViewModel @Inject constructor(
                                 for(obj in _res.kycData) {
                                     if(!obj.documentUrls.isNullOrEmpty()) {
                                         for (url in obj.documentUrls) {
+                                          if(!(url.contains("account_proof",true)||url.contains("194C") )){
                                             add(Pair(DocDataItem(DocDetailData(url, null, obj.verificationStatus,obj.verificationOverallType, obj.verificationType, obj.verificationStatusReasonCode, obj.verificationStatusReasonMessage)), DataRVAdapterOperationType.Add))
+                                          }
                                         }
                                     }
                                 }

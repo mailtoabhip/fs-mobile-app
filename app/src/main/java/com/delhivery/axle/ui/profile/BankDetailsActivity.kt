@@ -79,15 +79,19 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title =  "Bank Details"
+        title =  "Payment Details"
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
             binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
             binding.btnRetry.visibility=View.VISIBLE
             binding.btnRetry.isEnabled=true
+            binding.uploadDoc1.visibility=View.GONE
             binding.btnSubmit.visibility=View.GONE
             if(userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
                 binding.paymentError.text=userPrefs.paymentRejectReason
+                binding.btnRetry.visibility=View.GONE
+                binding.btnSubmit.visibility=View.VISIBLE
+                binding.uploadDoc1.visibility=View.VISIBLE
             }else {
                 binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
             }
@@ -95,6 +99,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             binding.paymentError.visibility=View.GONE
             binding.btnRetry.visibility=View.GONE
             binding.btnSubmit.visibility=View.VISIBLE
+            binding.uploadDoc1.visibility=View.VISIBLE
         }
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
@@ -143,7 +148,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
         binding.btnRetry.setOnClickListener {
             userPrefs.retryVerification=true
-            navigationUtils.navigate(PaymentDetailsActivity::class.java)
+            navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
         }
 
         binding.docRemove.setOnClickListener {
