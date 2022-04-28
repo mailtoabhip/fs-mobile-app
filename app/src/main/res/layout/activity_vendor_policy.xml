@@ -467,6 +467,7 @@
                         android:text="₹100/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_4"
                         app:layout_constraintEnd_toStartOf="@+id/tv_mu_6"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_4"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_4" />
@@ -478,6 +479,7 @@
                         android:text="₹100/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_4"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_5"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_4" />
@@ -511,6 +513,7 @@
                         android:text="₹200/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_7"
                         app:layout_constraintEnd_toStartOf="@+id/tv_mu_9"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_7"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_7" />
@@ -522,6 +525,7 @@
                         android:text="₹100/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_7"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_8"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_7" />
@@ -555,6 +559,7 @@
                         android:text="₹200/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_10"
                         app:layout_constraintEnd_toStartOf="@+id/tv_mu_12"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_10"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_10" />
@@ -566,6 +571,7 @@
                         android:text="₹300/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_10"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_11"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_10" />
@@ -599,6 +605,7 @@
                         android:text="₹300/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_13"
                         app:layout_constraintEnd_toStartOf="@+id/tv_mu_15"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_13"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_13" />
@@ -610,6 +617,7 @@
                         android:text="₹500/trip"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_mu_13"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_mu_14"
                         app:layout_constraintTop_toTopOf="@+id/tv_mu_13" />
@@ -891,6 +899,7 @@
                         android:text="₹800/day"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_cb_4"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_cb_6"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_4"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_4" />
@@ -902,6 +911,7 @@
                         android:text="₹1000/day"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_cb_4"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_cb_5"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_cb_4" />
@@ -1042,7 +1052,8 @@
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_ob_6"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_4"
-                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_4" />
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_4"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_ob_4"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_dd_ob_6"
@@ -1053,6 +1064,7 @@
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_ob_5"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_ob_4"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_ob_4" />
 
                     <View
