@@ -170,9 +170,9 @@ class HomeLoadsViewModel @Inject constructor(
               val loads = _tRes.first
               val bids = _tRes.second
 
-              if (total == 0 && !infoSearch) {
+              if (total == 0 && !infoSearch && (filterVehicleType == false) && (isInternal==false)) {
                   add(Pair(HomeLoadsWarningItem_NoLoads, Add))
-              } else {
+                } else {
                   add(Pair(HomeLoadsSearchItem(), AddUpdate))
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                   if(!paginate) {
