@@ -119,6 +119,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         binding.editAadhaar.apply {
             lengthAction(14){
                 enableSubmit()
+                uiUtils.toggleKeyboard(true)
             }
             lengthAction(13){
                enableSubmit()

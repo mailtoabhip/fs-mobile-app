@@ -89,11 +89,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         }
         if(userPrefs.paymentAccountName.isNotNullOrEmpty()){
             viewModel.accountHolderText.value=userPrefs.paymentAccountName
-        }else{
-            binding.accountHolderEdittext.focusClick()
         }
         if(userPrefs.paymentAccountNumber.isNotNullOrEmpty() && !userPrefs.paymentAccountNumber.equals("Not available",true)){
             viewModel.accountText.value=userPrefs.paymentAccountNumber
+        }else{
+            binding.accountNumEdittext.focusClick()
         }
         if(userPrefs.ifscCode.isNotNullOrEmpty()){
             viewModel.ifscText.value=userPrefs.ifscCode
