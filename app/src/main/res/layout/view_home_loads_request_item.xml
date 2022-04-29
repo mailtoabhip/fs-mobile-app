@@ -283,8 +283,8 @@
             android:paddingEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_6dp"
             app:layout_constraintStart_toEndOf="@+id/text_gps"
-            android:text="@{request.expressText(false)}"
-            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            android:text="Delhivery Load"
+            android:visibility="@{request.delLoadVisibility() }"
             app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
             tools:text="Delhivery Load"
             />

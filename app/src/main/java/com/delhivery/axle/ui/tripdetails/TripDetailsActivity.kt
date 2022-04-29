@@ -249,8 +249,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
 
     viewModel.indentLiveData.observe(this, Observer {
-      runOnUiThread {
-        if(it.isNotNullOrEmpty()){
+      if(it.isNotNullOrEmpty()){
+          runOnUiThread {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.textViaDestination.visibility = View.VISIBLE
           binding.textViaDestination.text = it
         }
       }
@@ -309,6 +311,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }else{
            val stopBuilder = StringBuilder()
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.textViaDestination.visibility = View.VISIBLE
            stopBuilder.append(StringUtils.capitalize(binding.transaction?.stop1City))
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {

@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
 import android.os.CountDownTimer
-import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextUtils
@@ -10,7 +9,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_DeleteItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
@@ -18,7 +16,6 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.timer
 
 
 /**
@@ -89,33 +86,34 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     if(item.data.isDMTIndent()){
       binding.timerLayout.visibility = View.GONE
     }else{
-      if(item.data.bidEndingTime.isNotNullOrEmpty()){
-        binding.timerLayout.visibility = View.VISIBLE
+      if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(item.data.bidEndingTime)
-        val mills: Long = date1.getTime() - date2.getTime()
-           if (date1.compareTo(date2) > 0) {
+        if (date2.compareTo(date1) > 0) {
+          binding.timerLayout.visibility = View.VISIBLE
 
-             countDownTimer?.cancel()
+          val mills: Long = date2.getTime() - date1.getTime()
+          countDownTimer?.cancel()
+          countDownTimer = object : CountDownTimer(mills, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+              try {
+                val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+                val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+                val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+                binding.timerTime.setText(diff)
+              } catch (e: Exception) {
+                e.printStackTrace()
+              }
+            }
 
-             countDownTimer =  object : CountDownTimer(mills, 1000) {
-               override fun onTick(millisUntilFinished: Long) {
-                 try {
-                   val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
-                   val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
-                   val secs = ((millisUntilFinished/ 1000).toInt() % 60).toLong()
-                   val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
-                     binding.timerTime.setText(diff)
-                 } catch (e: Exception) {
-                   e.printStackTrace()
-                 }
-               }
-
-               override fun onFinish() {
-                 _interface.deleteItem(item, adapterPosition)
-               }
-             }.start()
+            override fun onFinish() {
+              _interface.deleteItem(item, adapterPosition)
+            }
+          }.start()
+        }else{
+            binding.timerLayout.visibility = View.GONE
           }
 
       }else{

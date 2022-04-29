@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.biddetails
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
 import com.delhivery.axle.api.request.WarehouseRequest
@@ -54,10 +55,11 @@ class BidDetailsViewModel @Inject constructor(
 
     var indentLiveData = MutableLiveData<HashMap<Int, String>>()
 
-companion object{
+   companion object{
     var truckNumTextViewAdded :Boolean=false
+    val indentMap = HashMap<Int, String>()
+   }
 
-}
     lateinit var transaction: HomeBidsRequestItemData
 
     /* user bids live data */
@@ -485,13 +487,11 @@ companion object{
     fun fetchIndentCenters(code:String, seq:Int) {
         compositeDisposable += warehouseRepository.getWarehouseDetails(WarehouseRequest("facility_code",code, "faas"))
                 .onBackground()
-                .progress()
                 .subscribe { _tRes, error ->
                     if (!error) {
-                        val hp = HashMap<Int, String>()
-                        hp.put(seq, _tRes.city)
-                        indentLiveData.postValue(hp)
-                    }  else {
+                        indentMap.put(seq, _tRes.city)
+                        indentLiveData.postValue(indentMap)
+                      }  else {
                         error.handle()
                     }
                 }

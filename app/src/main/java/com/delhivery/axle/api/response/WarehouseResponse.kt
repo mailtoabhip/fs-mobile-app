@@ -21,7 +21,5 @@ data class Warehouse(
 }
 
 data class WarehouseIndentResponse(
-        @SerializedName("city") val city: String,
-        @SerializedName("address") val address: String,
-        @SerializedName("center_code") val centerCode: String
+        @SerializedName("city") val city: String
 )

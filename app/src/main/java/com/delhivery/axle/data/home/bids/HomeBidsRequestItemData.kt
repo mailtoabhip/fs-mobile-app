@@ -101,6 +101,11 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun delLoadVisibility() = if (indentOrigin.equals("LH")) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
   /**
    * if trip is DMT
    */

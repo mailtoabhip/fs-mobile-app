@@ -152,6 +152,10 @@ class TripDetailsViewModel @Inject constructor(
   var omcID : String = ""
   var fuelCardNumber = ""
   var fuelCardAmt = ""
+
+  companion object{
+    var indentList:java.lang.StringBuilder = java.lang.StringBuilder()
+  }
   /**
    * Fetch trip details
    */
@@ -1044,20 +1048,18 @@ class TripDetailsViewModel @Inject constructor(
             .progress()
             .subscribe { _tRes, error ->
               if (!error) {
-                val stopBuilder = StringBuilder()
-                if(indentLiveData.value.isNotNullOrEmpty()){
+
+                if(indentList.isEmpty()){
                   if (!_tRes.city.isNotNullOrEmpty()) {
-                    stopBuilder.append(", ")
-                            .append(StringUtils.capitalize(_tRes.city))
+                    indentList.append(StringUtils.capitalize(_tRes.city))
                   }
                 }else{
-
                   if (!_tRes.city.isNotNullOrEmpty()) {
-                    stopBuilder.append(StringUtils.capitalize(_tRes.city))
+                    indentList.append(", ")
+                            .append(StringUtils.capitalize(_tRes.city))
                   }
                 }
-                indentLiveData.postValue(stopBuilder.toString())
-
+                indentLiveData.postValue(indentList.toString())
               }  else
               {
                 error.handle()
