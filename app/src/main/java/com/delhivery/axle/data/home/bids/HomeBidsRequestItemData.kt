@@ -41,6 +41,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop1_state") val stop1State: String,
   @SerializedName("intermediary_stop2") val stop2City: String,
   @SerializedName("intermediary_stop2_state") val stop2State: String,
+  @SerializedName("intermediary_pickup_stop1") val pickup1City: String,
+  @SerializedName("intermediary_pickup_stop2") val pickup2City: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",

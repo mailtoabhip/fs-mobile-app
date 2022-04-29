@@ -310,14 +310,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           }
         }else{
            val stopBuilder = StringBuilder()
+
+          if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.textViaDestination.visibility = View.VISIBLE
+            stopBuilder.append(StringUtils.capitalize(binding.transaction?.pickup1City))
+          }
+          if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.textViaDestination.visibility = View.VISIBLE
+            stopBuilder.append(", ").append(StringUtils.capitalize(binding.transaction?.pickup2City))
+          }
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
             binding.textViaLabel.visibility = View.VISIBLE
             binding.textViaDestination.visibility = View.VISIBLE
-           stopBuilder.append(StringUtils.capitalize(binding.transaction?.stop1City))
+            stopBuilder.append(", ").append(StringUtils.capitalize(binding.transaction?.stop1City))
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.textViaDestination.visibility = View.VISIBLE
             stopBuilder.append(", ").append(StringUtils.capitalize(binding.transaction?.stop2City))
           }
+
           binding.textViaDestination.text = stopBuilder.toString()
         }
 

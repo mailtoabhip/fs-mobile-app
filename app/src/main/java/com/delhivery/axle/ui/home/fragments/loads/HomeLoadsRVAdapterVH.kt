@@ -130,10 +130,18 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     }else{
       var total = 0
       if (!TextUtils.isEmpty(item.data.stop1City)) {
-       total = 1
+        total = total+1
       }
       if (!TextUtils.isEmpty(item.data.stop2City)) {
-        total = 2
+        total = total+1
+      }
+
+      if (!TextUtils.isEmpty(item.data.pickup1City)) {
+        total = total+1
+      }
+
+      if (!TextUtils.isEmpty(item.data.pickup2City)) {
+        total = total+1
       }
 
       if(total>0){

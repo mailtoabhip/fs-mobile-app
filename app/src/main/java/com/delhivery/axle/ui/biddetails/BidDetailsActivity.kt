@@ -282,19 +282,32 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
         }else{
           var total = 0
-          if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
-            total = 1
-            binding.textViaLabel.visibility = View.VISIBLE
+
+          if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
+            total = total+1
             binding.textViaDestination.card1.visibility = View.VISIBLE
-            binding.textViaDestination.city1.text = binding.transaction?.stop1City
+            binding.textViaDestination.city1.text = binding.transaction?.pickup1City
+          }
+
+          if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
+            total = total+1
+            binding.textViaDestination.card2.visibility = View.VISIBLE
+            binding.textViaDestination.city2.text = binding.transaction?.pickup2City
+          }
+
+          if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+            total = total+1
+            binding.textViaDestination.card3.visibility = View.VISIBLE
+            binding.textViaDestination.city3.text = binding.transaction?.stop1City
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
-            total = 2
-            binding.textViaDestination.card2.visibility = View.VISIBLE
-            binding.textViaDestination.city2.text = binding.transaction?.stop2City
+            total = total+1
+            binding.textViaDestination.card4.visibility = View.VISIBLE
+            binding.textViaDestination.city4.text = binding.transaction?.stop2City
           }
 
           if(total>0){
+            binding.textViaLabel.visibility = View.VISIBLE
             binding.stopNo.text = "$total Stops"
           }else{
             binding.stopNo.text = "No Stops"
