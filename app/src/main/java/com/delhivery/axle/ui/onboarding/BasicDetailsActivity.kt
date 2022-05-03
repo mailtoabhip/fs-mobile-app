@@ -122,7 +122,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
             if (it) {
                 val bundle = Bundle()
                 bundle.putInt(StepKey,0)
-                navigationUtils.navigateKyc(this,false,bundle)
+                navigationUtils.navigateKyc(this,true,bundle)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }

@@ -82,7 +82,8 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
         userPrefs.hasLoggedIn = false
         binding.privacyText.movementMethod = LinkMovementMethod.getInstance()
-
+        binding.checkWhatsapp.isChecked=true
+        viewModel.whatsapp.value = true
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
 
