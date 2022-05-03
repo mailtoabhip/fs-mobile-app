@@ -90,7 +90,7 @@ class AuthenticationViewModel @Inject constructor(
     val _otp = otp.joinToString("")
     compositeDisposable += Single.zip(
         authenticationRepository.verifyOTP(phoneNo, _otp),
-        Single.timer(1000, MILLISECONDS), //add delay for animation
+        Single.timer(500, MILLISECONDS), //add delay for animation
         BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
         .flatMap { _Res ->
           userRepository.getUser(false)

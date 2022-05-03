@@ -8,6 +8,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
@@ -90,12 +91,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     /* start splash animation */
     animate()
     checkForDynamicLinks()
+    binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
       if(ifUpdateFalse) {
         postAnimate(isAuthenticated)
       }
     }
-
   }
 
   private fun checkForDynamicLinks() {
@@ -153,7 +154,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             )
           }
           false -> {
-           ifUpdateFalse=true
+            ifUpdateFalse=true
+            if(ifUpdateFalse && userPrefs.hasLoggedIn){
+              binding.btnGetStarted.visibility = View.GONE
+              postAnimate(isAuthenticated)
+            }else{
+              binding.btnGetStarted.visibility = View.VISIBLE
+            }
           }
         }
       }
