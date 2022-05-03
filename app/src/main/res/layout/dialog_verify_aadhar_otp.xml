@@ -53,7 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/size_32dp"
             android:textSize="@dimen/text_14sp"
-            android:text="@string/label_otp_gst"
+            android:text="@string/label_otp_aadhaar"
             android:textColor="@color/sub_heading_black"
             />
         <androidx.appcompat.widget.AppCompatTextView

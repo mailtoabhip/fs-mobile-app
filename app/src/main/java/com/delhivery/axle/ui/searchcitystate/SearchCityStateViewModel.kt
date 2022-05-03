@@ -179,19 +179,15 @@ class SearchCityStateViewModel @Inject constructor(
                         mutableListOf<Pair<BaseCityStateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                             /* remove progress item */
                             add(Pair(SearchProgressItem(), DataRVAdapterOperationType.Remove))
-                            for (item in _res) {
-                                val popularCity =
-                                    CityModel(item.city, item.cityCode, "", "", "city")
-                                add(
-                                    Pair(
-                                        SearchDataItem(popularCity),
-                                        DataRVAdapterOperationType.Add
-                                    )
-                                )
+                            // to be replace with popular cities api
+                            for(state in states ){
+                                add(Pair(SearchDataItem(state), DataRVAdapterOperationType.Add))
                             }
+
+
                         }.let {
-                                popularCitiesLiveData.postValue(it)
-                            }
+                            popularCitiesLiveData.postValue(it)
+                        }
                     } else {
                         error.handle()
                     }

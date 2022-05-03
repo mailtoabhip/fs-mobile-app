@@ -43,14 +43,16 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_get_started"
-        style="@style/ActionButton"
-        android:enabled="true"
-        android:layout_margin="@dimen/size_16dp"
-        android:textAllCaps="false"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/size_32dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:enabled="true"
         android:text="@string/action_get_started"
+        android:textAllCaps="false"
+        style="@style/ActionButton"
         />
 
   </RelativeLayout>
