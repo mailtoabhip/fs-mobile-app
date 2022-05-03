@@ -80,6 +80,14 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Payment Details"
+        if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
+            if (userPrefs.ownedTruck.toInt() <= 10) {
+                binding.uploadDoc1.visibility = View.VISIBLE
+            } else {
+                binding.uploadDoc1.visibility = View.GONE
+            }
+        }
+
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
             binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
@@ -100,13 +108,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             binding.btnRetry.visibility=View.GONE
             binding.btnSubmit.visibility=View.VISIBLE
             binding.uploadDoc1.visibility=View.VISIBLE
-        }
-        if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
-            if (userPrefs.ownedTruck.toInt() <= 10) {
-                binding.uploadDoc1.visibility = View.VISIBLE
-            } else {
-                binding.uploadDoc1.visibility = View.GONE
-            }
         }
 
         viewModel.delegationLiveData.observe(this, Observer {

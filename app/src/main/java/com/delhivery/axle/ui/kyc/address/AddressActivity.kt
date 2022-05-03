@@ -186,7 +186,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             if (it) {
                 uiUtils.showSnackbar("Address updated")
                 if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= ""
+                    userPrefs.addressRejectReason= "Document under verification"
                 }
                  addDataToPreference()
                 userPrefs.businessAddress = selectedAddressData.address!!

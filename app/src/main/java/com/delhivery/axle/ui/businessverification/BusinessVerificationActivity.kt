@@ -231,7 +231,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
                 if(userPrefs.retryVerification){
-                    userPrefs.rcRejectReason= ""
+                    userPrefs.rcRejectReason= "Document under verification"
                     if(!userPrefs.isBankDetailsRejected) {
                         userPrefs.verificationStatus = "pending"
                     }

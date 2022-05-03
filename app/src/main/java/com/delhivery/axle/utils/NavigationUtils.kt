@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 /**
@@ -229,7 +230,7 @@ class NavigationUtils @Inject constructor(
               } else {
                   retryDone=true
                   userPrefs.verificationStatus="pending"
-                  uiUtils.showSnackbar("KYC Completed, Verification Pending")
+                 navigate(MyProfileActivity::class.java,true)
               }
           }
       }
@@ -270,6 +271,7 @@ class NavigationUtils @Inject constructor(
       }else {
           if(!retryDone){
               activity.startActivity(intent)
+              activity.finish()
           }
       }
 

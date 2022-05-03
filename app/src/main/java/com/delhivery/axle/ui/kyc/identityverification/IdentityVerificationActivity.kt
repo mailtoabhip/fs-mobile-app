@@ -170,7 +170,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                     }
                 }
                 if(userPrefs.retryVerification){
-                    userPrefs.identityRejectReason= ""
+                    userPrefs.identityRejectReason= "Document under verification"
                 }
 
             navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(

@@ -89,6 +89,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   }
 
+  override fun onBackPressed() {
+    super.onBackPressed()
+  }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)

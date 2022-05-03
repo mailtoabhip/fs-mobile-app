@@ -192,7 +192,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
                 if(userPrefs.retryVerification){
-                    userPrefs.identityRejectReason= ""
+                    userPrefs.identityRejectReason= "Document under verification"
                 }
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)

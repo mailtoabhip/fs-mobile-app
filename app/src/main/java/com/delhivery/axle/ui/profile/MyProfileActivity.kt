@@ -350,20 +350,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        viewModel.getKYCDetails("noredirect")
-        setVerficationStatus()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        viewModel.getKYCDetails("noredirect")
-        setVerficationStatus()
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
-        viewModel.getKYCDetails("noredirect")
-        setVerficationStatus()
     }
 
     /**

@@ -253,7 +253,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             if (it) {
                 uiUtils.showSnackbar("Address updated")
                 if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= ""
+                    userPrefs.addressRejectReason= "Document under verification"
                 }
                 var address = viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 addDataToPreference(address)
