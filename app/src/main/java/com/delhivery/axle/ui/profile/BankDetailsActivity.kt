@@ -115,6 +115,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             uiUtils.showSnackbar(it)
+            binding.btnSubmit.isEnabled=false
         })
 
         viewModel.delegationDownloadLiveData.observe(this, Observer {

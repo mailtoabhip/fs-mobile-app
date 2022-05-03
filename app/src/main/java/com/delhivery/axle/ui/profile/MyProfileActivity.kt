@@ -59,44 +59,26 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
+
         if(userPrefs.companyName.isNotNullOrEmpty()) {
             binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
         }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         setVerficationStatus()
-
         binding.logoutLayout.setOnClickListener {
             confirmLogout()
         }
 
-        if(userPrefs.verificationStatus.equals("failed")){
-            if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
-                if(userPrefs.isBankDetailsRejected && !userPrefs.noOfVerificationIssues.equals("0"))
-                {
-                binding.issues.text = (userPrefs.noOfVerificationIssues.toInt()-1).toString()+" Issues"
-                }else{
-                    binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
-                }
-                    binding.issues.visibility = View.VISIBLE
-            }else{
-                binding.issues.visibility = View.GONE
+
+
+        viewModel.getUserLiveData.observe(this, Observer {
+            if(it){
+                setVerficationStatus()
+                setIssueCount()
             }
-            if(binding.issues.text.trim().equals("1 Issues")){
-                binding.issues.text="1 Issue"
-            }
-            if(binding.issues.text.trim().equals("0 Issues")){
-                binding.issues.visibility = View.GONE
-            }
-        }else{
-            binding.issues.visibility = View.GONE
-        }
-        if(userPrefs.isBankDetailsRejected){
-                binding.issuesPayment.text = "1 Issue"
-                binding.issuesPayment.visibility=View.VISIBLE
-        }else{
-            binding.issuesPayment.visibility=View.GONE
-        }
+        })
+
 
         binding.startKyc.setOnClickListener {
             if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
@@ -165,6 +147,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.identityRejectReason = "Document under verification"
+                        }else{
+                            userPrefs.identityRejectReason = ""
                         }
                     }else if(k.verificationOverallType.equals("pan")){
                       if(k.verificationStatus.equals("failed")){
@@ -175,7 +159,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                           }
                       }else if(k.verificationStatus.equals("pending")){
                           userPrefs.panRejectReason = "Document under verification"
+                      }else{
+                          userPrefs.panRejectReason = ""
                       }
+
                     }else if(k.verificationOverallType.equals("trucking_business")){
                         userPrefs.businessType = k.verificationType.toString()
                         if(k.verificationStatus.equals("failed")){
@@ -186,7 +173,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.rcRejectReason = "Document under verification"
+                        }else{
+                            userPrefs.rcRejectReason = ""
                         }
+
                     }else if(k.verificationOverallType.equals("address")){
                         if(k.verificationStatus.equals("failed")){
                             if(k.verificationStatusReasonCode.equals("others")) {
@@ -196,6 +186,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.addressRejectReason = "Document under verification"
+                        }else{
+                            userPrefs.addressRejectReason = ""
                         }
                     }else if(k.verificationOverallType.equals("bank_details")){
                         if(k.verificationStatus.equals("failed")){
@@ -206,13 +198,18 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             }
                         }else if(k.verificationStatus.equals("pending")){
                             userPrefs.paymentRejectReason = "Document under verification"
+                        }else{
+                            userPrefs.paymentRejectReason = ""
                         }
 
                     }
                 }
                 if(it.second.equals("detail")) {
                     navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
-                }else{
+                }else if(it.second.equals("bank")){
+                    navigationUtils.navigate(BankDetailsActivity::class.java)
+                }
+                else{
                     if(!it.second.equals("noredirect")) {
                         userPrefs.retryVerification = true
                         userPrefs.retryVerificationOnBack = false
@@ -262,7 +259,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         binding.bankLayout.setOnClickListener {
-            navigationUtils.navigate(BankDetailsActivity::class.java)
+            viewModel.getKYCDetails("bank")
+            uiUtils.showProgress()
         }
 
         binding.helpLayout.setOnClickListener {
@@ -288,6 +286,35 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     }
 
+    private fun setIssueCount(){
+        if(userPrefs.verificationStatus.equals("failed")){
+            if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
+                if(userPrefs.isBankDetailsRejected && !userPrefs.noOfVerificationIssues.equals("0"))
+                {
+                    binding.issues.text = (userPrefs.noOfVerificationIssues.toInt()-1).toString()+" Issues"
+                }else{
+                    binding.issues.text = userPrefs.noOfVerificationIssues+" Issues"
+                }
+                binding.issues.visibility = View.VISIBLE
+            }else{
+                binding.issues.visibility = View.GONE
+            }
+            if(binding.issues.text.trim().equals("1 Issues")){
+                binding.issues.text="1 Issue"
+            }
+            if(binding.issues.text.trim().equals("0 Issues")){
+                binding.issues.visibility = View.GONE
+            }
+        }else{
+            binding.issues.visibility = View.GONE
+        }
+        if(userPrefs.isBankDetailsRejected){
+            binding.issuesPayment.text = "1 Issue"
+            binding.issuesPayment.visibility=View.VISIBLE
+        }else{
+            binding.issuesPayment.visibility=View.GONE
+        }
+    }
     private fun setVerficationStatus() {
         if((userPrefs.isLoadBoardClient == false || userPrefs.isLoadBoardSupplier == false)) {
             binding.verifyBadge.visibility = View.VISIBLE
@@ -395,6 +422,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     override fun onResume() {
         super.onResume()
+        viewModel.getUser()
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
             downloadLogo()
         }

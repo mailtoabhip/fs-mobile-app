@@ -255,7 +255,7 @@
             />
 
         <activity android:name=".ui.searchcitystate.SearchCityStateActivity"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.searchcitystate.SearchOriginCityActivity"
             android:screenOrientation="portrait"/>
@@ -265,7 +265,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />
-
         <activity android:name=".ui.userroutes.ManageRouteActivity"
             android:screenOrientation="portrait"/>
 

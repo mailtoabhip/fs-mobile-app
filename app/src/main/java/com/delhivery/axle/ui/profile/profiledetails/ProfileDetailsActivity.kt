@@ -180,7 +180,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun onBackPressed() {
-        navigationUtils.navigate(MyProfileActivity::class.java, true)
         super.onBackPressed()
     }
 

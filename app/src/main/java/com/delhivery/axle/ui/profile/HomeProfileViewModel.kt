@@ -28,6 +28,7 @@ class HomeProfileViewModel @Inject constructor(
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
 
   var userRoleLiveData = MutableLiveData<Boolean>()
+  var getUserLiveData = MutableLiveData<Boolean>()
 
   var verificationStatus = MutableLiveData<String>()
 
@@ -148,6 +149,17 @@ class HomeProfileViewModel @Inject constructor(
               } else
                 error.handle()
             }
+  }
+  fun getUser() {
+    compositeDisposable += userRepository.getUser(false)
+        .onBackground()
+        .subscribe { _user, error ->
+          if (!error) {
+            getUserLiveData.postValue(true)
+          } else {
+            error.handle()
+          }
+        }
   }
 
 }
