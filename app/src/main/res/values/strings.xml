@@ -582,7 +582,7 @@
   <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
   <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion-dev.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion-dev.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
-  <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
+  <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

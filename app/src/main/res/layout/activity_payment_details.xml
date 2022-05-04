@@ -79,6 +79,25 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_num_edittext"
+                    android:textColor="@color/destructive_red"
+                    android:visibility="gone"
+                    android:id="@+id/error_attached_truck"
+                    />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_wrong_attached"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/edit_text_height"
+                    bind:srcCompat="@drawable/ic_wrong"
+                    bind:layout_constraintTop_toTopOf="@id/account_num_edittext"
+                    bind:layout_constraintEnd_toEndOf="@id/account_num_edittext"
+                    bind:layout_constraintBottom_toBottomOf="@id/account_num_edittext"
+                    android:visibility="visible"
+                    android:paddingStart="@dimen/size_12dp"
+                    android:paddingEnd="@dimen/size_12dp" />
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/IFSC_textView"
                     android:layout_width="wrap_content"

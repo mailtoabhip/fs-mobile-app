@@ -237,7 +237,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     }
                     navigationUtils.navigate(MyProfileActivity::class.java,true)
                 }else{
-                    navigationUtils.navigate(PaymentDetailsActivity::class.java,false)
+                    navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
                 }
             }
         })

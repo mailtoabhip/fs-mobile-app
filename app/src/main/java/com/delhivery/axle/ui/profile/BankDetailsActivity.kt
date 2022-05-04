@@ -174,6 +174,11 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 
 }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navigationUtils.navigate(MyProfileActivity::class.java,true)
+    }
     override fun onAWSSuccess(
         path: String
     ) {

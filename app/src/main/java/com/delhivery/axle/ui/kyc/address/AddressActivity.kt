@@ -34,7 +34,6 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_verify_pan.*
-import kotlinx.android.synthetic.main.dialog_add_alternate_address.*
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import java.io.FileInputStream
@@ -173,7 +172,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         })
         viewModel.captureAddressProof.observe(this, Observer {
             if(it){
-                val imageName = "Add_" + System.currentTimeMillis()+".jpg"
+                val imageName = "Address_" + System.currentTimeMillis()+".jpg"
                 captureImage(imageName, imageName)
                 viewModel.captureAddressProof.postValue(false)
             }
@@ -379,8 +378,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        this.localImageName =  "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{

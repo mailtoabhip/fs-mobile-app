@@ -161,12 +161,18 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                 when {
                     binding.editCin.length()>0 -> {
                         userPrefs.cinNumber = viewModel.cinNumber
+                        userPrefs.udyogNumber = ""
+                        userPrefs.shopNumber =""
                     }
                     binding.editUdyog.length()>0 -> {
                         userPrefs.udyogNumber = viewModel.udyogNumber
+                        userPrefs.cinNumber = ""
+                        userPrefs.shopNumber =""
                     }
                     binding.editShop.length()>0 -> {
                         userPrefs.shopNumber = viewModel.shopNumber
+                        userPrefs.cinNumber = ""
+                        userPrefs.udyogNumber =""
                     }
                 }
                 if(userPrefs.retryVerification){

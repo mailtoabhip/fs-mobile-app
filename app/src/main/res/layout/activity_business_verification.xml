@@ -127,6 +127,25 @@
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:layout_constraintTop_toBottomOf="@+id/owned_trucks_edittext"
+                android:textColor="@color/destructive_red"
+                android:visibility="gone"
+                android:id="@+id/error_owned_truck"
+                />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_wrong_owned"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/edit_text_height"
+                bind:srcCompat="@drawable/ic_wrong"
+                bind:layout_constraintTop_toTopOf="@id/owned_trucks_edittext"
+                bind:layout_constraintEnd_toEndOf="@id/owned_trucks_edittext"
+                bind:layout_constraintBottom_toBottomOf="@id/owned_trucks_edittext"
+                android:visibility="visible"
+                android:paddingStart="@dimen/size_12dp"
+                android:paddingEnd="@dimen/size_12dp" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/attached_trucks_textView"
@@ -136,7 +155,7 @@
                 android:layout_marginTop="@dimen/size_16dp"
                 android:lineSpacingExtra="@dimen/text_6sp"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/owned_trucks_edittext"
+                bind:layout_constraintTop_toBottomOf="@+id/error_owned_truck"
                 android:text="@string/sub_label_no_of_attached_trucks"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
@@ -158,6 +177,25 @@
                 android:textSize="@dimen/text_16sp"
 
                 />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:layout_constraintTop_toBottomOf="@+id/attached_trucks_edittext"
+                android:textColor="@color/destructive_red"
+                android:visibility="gone"
+                android:id="@+id/error_attached_truck"
+                />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_wrong_attached"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/edit_text_height"
+                bind:srcCompat="@drawable/ic_wrong"
+                bind:layout_constraintTop_toTopOf="@id/attached_trucks_edittext"
+                bind:layout_constraintEnd_toEndOf="@id/attached_trucks_edittext"
+                bind:layout_constraintBottom_toBottomOf="@id/attached_trucks_edittext"
+                android:visibility="visible"
+                android:paddingStart="@dimen/size_12dp"
+                android:paddingEnd="@dimen/size_12dp" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/verification_method_textView"
                 android:layout_width="wrap_content"

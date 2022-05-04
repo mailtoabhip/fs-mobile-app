@@ -228,9 +228,9 @@ class NavigationUtils @Inject constructor(
               } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && !(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")) &&kycSteps.size > 3) {
                   extras.putInt(StepKey, 3)
               } else {
-                  retryDone=true
-                  userPrefs.verificationStatus="pending"
-                 navigate(MyProfileActivity::class.java,true)
+                retryDone=true
+                userPrefs.verificationStatus="pending"
+                navigate(MyProfileActivity::class.java,true)
               }
           }
       }

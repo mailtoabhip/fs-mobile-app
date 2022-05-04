@@ -205,9 +205,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }
                 }
                 if(it.second.equals("detail")) {
-                    navigationUtils.navigate(ProfileKYCDetailsActivity::class.java)
+                    navigationUtils.navigate(ProfileKYCDetailsActivity::class.java,true)
                 }else if(it.second.equals("bank")){
-                    navigationUtils.navigate(BankDetailsActivity::class.java)
+                    navigationUtils.navigate(BankDetailsActivity::class.java,true)
                 }
                 else{
                     if(!it.second.equals("noredirect")) {
@@ -304,6 +304,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }
             if(binding.issues.text.trim().equals("0 Issues")){
                 binding.issues.visibility = View.GONE
+                binding.btnRetry.visibility=View.GONE
             }
         }else{
             binding.issues.visibility = View.GONE

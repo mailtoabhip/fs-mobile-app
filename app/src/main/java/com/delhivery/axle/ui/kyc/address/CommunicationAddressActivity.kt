@@ -198,7 +198,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             enableSubmitButton()
         }
         binding.uploadDocLay.setOnClickListener {
-            val imageName = "Add_" + System.currentTimeMillis()+".jpg"
+            val imageName = "Address_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
         }
        binding.docRemove.setOnClickListener {
@@ -541,8 +541,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        this.localImageName =  "Add_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else{
