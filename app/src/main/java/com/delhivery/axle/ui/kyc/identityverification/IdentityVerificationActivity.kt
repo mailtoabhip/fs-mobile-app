@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -84,6 +85,8 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
             )
             if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.identityError.visibility = View.VISIBLE
+                Log.d("identityTypeid",userPrefs.identityType)
+                Log.d("identityTypeid",userPrefs.identityRejectReason)
                 if(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
                     viewModel.errorText = userPrefs.identityRejectReason
                 }else {
@@ -91,17 +94,21 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                         if (userPrefs.cinNumber.isNotNullOrEmpty()) {
                             binding.identityError.text =
                                 ("CIN verification failed due to " + userPrefs.identityRejectReason)
+                            viewModel.errorText =
+                                ("CIN verification failed due to " + userPrefs.identityRejectReason)
                         }
                     } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
                         if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
-
                             binding.identityError.text =
+                                ("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
+                            viewModel.errorText =
                                 ("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
                         }
                     } else if (userPrefs.identityType.equals("shop_establishment")) {
                         if (userPrefs.shopNumber.isNotNullOrEmpty()) {
-
                             binding.identityError.text =
+                                ("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
+                            viewModel.errorText =
                                 ("Shop Establishment verification failed due to " + userPrefs.identityRejectReason)
                         }
                     }

@@ -71,6 +71,7 @@
                     android:text="@={ viewModel.accountText }"
                     android:layout_marginTop="@dimen/size_8dp"
                     android:inputType="number"
+                    android:maxLength="18"
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintTop_toBottomOf="@+id/account_num_textView"
                     android:paddingStart="@dimen/size_12dp"
@@ -85,17 +86,17 @@
                     bind:layout_constraintTop_toBottomOf="@+id/account_num_edittext"
                     android:textColor="@color/destructive_red"
                     android:visibility="gone"
-                    android:id="@+id/error_attached_truck"
+                    android:id="@+id/error_account_num"
                     />
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_wrong_attached"
+                    android:id="@+id/img_wrong_account"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/edit_text_height"
                     bind:srcCompat="@drawable/ic_wrong"
                     bind:layout_constraintTop_toTopOf="@id/account_num_edittext"
                     bind:layout_constraintEnd_toEndOf="@id/account_num_edittext"
                     bind:layout_constraintBottom_toBottomOf="@id/account_num_edittext"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp" />
                 <androidx.appcompat.widget.AppCompatTextView
@@ -106,7 +107,7 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/account_num_edittext"
+                    bind:layout_constraintTop_toBottomOf="@+id/error_account_num"
                     android:text="@string/sub_label_ifsc"
                     android:textColor="@color/sub_heading_black"
                     android:textSize="@dimen/text_16sp"

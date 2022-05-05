@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
@@ -177,6 +178,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 viewModel.captureAddressProof.postValue(false)
             }
         })
+
         binding.iconEdit.setOnClickListener {
             showAddAlternateAddressDialog(true,alternateAddressData)
         }
@@ -418,22 +420,40 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
 
         bindingDialog.btnSubmitDetails.setOnClickListener {
-            viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
-            viewModel.flatAddress =  bindingDialog.editFlat.text.toString()
-            viewModel.areaAddress =  bindingDialog.editArea.text.toString()
-            viewModel.cityAddress =  bindingDialog.autoCompleteCity.text.toString()
-            viewModel.pincodeAddress =  bindingDialog.editPincode.text.toString()
-            viewModel.addNewAddress(false)
-            dialog.dismiss()
+            if(bindingDialog.editArea.text!!.length<3){
+                bindingDialog.errorArea.visibility=View.VISIBLE
+                bindingDialog.imgWrongArea.visibility=View.VISIBLE
+                ViewCompat.setElevation(bindingDialog.imgWrongArea, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                bindingDialog.errorArea.setText("Minimum 3 characters required")
+                areaFilled = false
+                enableAddAddressDialogButton(bindingDialog)
+            }else {
+                viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
+                viewModel.flatAddress = bindingDialog.editFlat.text.toString()
+                viewModel.areaAddress.value = bindingDialog.editArea.text.toString()
+                viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
+                viewModel.pincodeAddress = bindingDialog.editPincode.text.toString()
+                viewModel.addNewAddress(false)
+                dialog.dismiss()
+            }
         }
         bindingDialog.btnSaveChanges.setOnClickListener {
-            viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
-            viewModel.flatAddress =  bindingDialog.editFlat.text.toString()
-            viewModel.areaAddress =  bindingDialog.editArea.text.toString()
-            viewModel.cityAddress =  bindingDialog.autoCompleteCity.text.toString()
-            viewModel.pincodeAddress =  bindingDialog.editPincode.text.toString()
-            viewModel.addNewAddress(false)
-            dialog.dismiss()
+            if(bindingDialog.editArea.text!!.length<3){
+                bindingDialog.errorArea.visibility=View.VISIBLE
+                bindingDialog.imgWrongArea.visibility=View.VISIBLE
+                ViewCompat.setElevation(bindingDialog.imgWrongArea, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                bindingDialog.errorArea.setText("Minimum 3 characters required")
+                areaFilled = false
+                enableAddAddressDialogButton(bindingDialog)
+            }else {
+                viewModel.documentProofType = bindingDialog.spinnerProof.selectedItem.toString()
+                viewModel.flatAddress = bindingDialog.editFlat.text.toString()
+                viewModel.areaAddress.value = bindingDialog.editArea.text.toString()
+                viewModel.cityAddress = bindingDialog.autoCompleteCity.text.toString()
+                viewModel.pincodeAddress = bindingDialog.editPincode.text.toString()
+                viewModel.addNewAddress(false)
+                dialog.dismiss()
+            }
         }
         var onlyDelete = false
         var cityLength = 0
@@ -467,11 +487,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }
         })
 
-        bindingDialog.editArea.lengthAction(3){
+        bindingDialog.editArea.lengthAction(1){
             areaFilled = true
             enableAddAddressDialogButton(bindingDialog)
         }
-        bindingDialog.editArea.lengthAction(2){
+        bindingDialog.editArea.lengthAction(0){
             areaFilled = false
             enableAddAddressDialogButton(bindingDialog)
         }
@@ -493,7 +513,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
-                viewModel.alternateAddress= viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                viewModel.alternateAddress= viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 viewModel.addressType = "alternate"
                 binding.alternateAddressLayout.visibility = View.VISIBLE
                 binding.btnAddAlternateAddress.visibility = View.GONE
@@ -532,6 +552,24 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }
         })
 
+        viewModel.areaAddress.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                bindingDialog.errorArea.visibility=View.GONE
+                bindingDialog.imgWrongArea.visibility=View.GONE
+                areaFilled = true
+                enableAddAddressDialogButton(bindingDialog)
+            }else{
+                areaFilled = false
+                enableAddAddressDialogButton(bindingDialog)
+            }
+        })
+        bindingDialog.editArea.lengthAction(3){
+            bindingDialog.errorArea.visibility=View.GONE
+            bindingDialog.imgWrongArea.visibility=View.GONE
+            areaFilled = true
+            enableAddAddressDialogButton(bindingDialog)
+        }
+
         bindingDialog.docRemove.setOnClickListener {
             resetUploadData()
             docUploadProof=false
@@ -544,7 +582,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
            viewModel.captureAddressProof.postValue(true)
        }
         bindingDialog.btnConfirmDelete.setOnClickListener {
-            confirmDelete(viewModel.documentProofType!!,viewModel.flatAddress,viewModel.areaAddress,viewModel.cityAddress,viewModel.pincodeAddress,dialog)
+            confirmDelete(viewModel.documentProofType!!,viewModel.flatAddress,viewModel.areaAddress.value!!,viewModel.cityAddress,viewModel.pincodeAddress,dialog)
         }
 
         if(isEdit&& addressData!=null){
@@ -604,7 +642,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         flatFilled=true
         var areaRec = addressRec?.split(",")?.get(1)
         bindingDialog.editArea.setText(areaRec)
-        viewModel.areaAddress = areaRec!!
+        viewModel.areaAddress.value = areaRec!!
         areaFilled=true
         var citynPinRec = addressRec?.split(",")?.get(2)
         var cityRec =citynPinRec?.split("-")?.get(0)
@@ -670,7 +708,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             editDialog.dismiss()
             viewModel.documentProofType =  proofType
             viewModel.flatAddress = flatAddress
-            viewModel.areaAddress = areaAddress
+            viewModel.areaAddress.value = areaAddress
             viewModel.cityAddress = cityAddress
             viewModel.pincodeAddress = pinCode
             viewModel.addNewAddress(true)

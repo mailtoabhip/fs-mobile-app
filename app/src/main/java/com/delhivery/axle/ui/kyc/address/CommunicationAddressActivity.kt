@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
@@ -119,12 +120,34 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         /* Address Proof */
 
         binding.btnSubmitDetails.setOnClickListener {
-            if(pincodeFilled){
-              viewModel.documentProofType =  binding.spinnerProof.selectedItem.toString()
+
+            if(viewModel.areaAddress.value!!.length<3){
+                binding.errorArea.visibility=View.VISIBLE
+                binding.imgWrongArea.visibility=View.VISIBLE
+                ViewCompat.setElevation(binding.imgWrongArea, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                binding.errorArea.setText("Minimum 3 characters required")
+                areaFilled = false
+                enableSubmitButton()
+            }else {
+                if (pincodeFilled) {
+                    viewModel.documentProofType = binding.spinnerProof.selectedItem.toString()
+                }
+                viewModel.addNewAddress(false)
             }
-            viewModel.addNewAddress(false)
 
         }
+        viewModel.areaAddress.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                binding.errorArea.visibility=View.GONE
+                binding.imgWrongArea.visibility=View.GONE
+                areaFilled = true
+                enableSubmitButton()
+            }else{
+                areaFilled = false
+                enableSubmitButton()
+            }
+        })
+
         var isEdited = false
         if(userPrefs.businessAddress.isNotNullOrEmpty()){
             if(!userPrefs.getAddressList().isNullOrEmpty()){
@@ -173,11 +196,11 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 }
             }
         })
-        binding.editArea.lengthAction(3){
+        binding.editArea.lengthAction(1){
             areaFilled = true
             enableSubmitButton()
         }
-        binding.editArea.lengthAction(2){
+        binding.editArea.lengthAction(0){
             areaFilled = false
             enableSubmitButton()
         }
@@ -235,7 +258,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         viewModel.addAddressLiveData.observe(this, Observer {
             if (it) {
                 var address =
-                    viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                    viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 viewModel.updateCommunicationAddress(address, false)
                 /* userPrefs.isCommunicationAddressVerified=true
                 if(userPrefs.retryVerification){
@@ -255,7 +278,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 if(userPrefs.retryVerification){
                     userPrefs.addressRejectReason= "Document under verification"
                 }
-                var address = viewModel.flatAddress + "," + viewModel.areaAddress + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
+                var address = viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 addDataToPreference(address)
                 userPrefs.businessAddress = address
 
@@ -328,7 +351,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         flatFilled=true
         var areaRec = addressRec?.split(",")?.get(1)
       //  binding.editArea.setText(areaRec)
-        viewModel.areaAddress = areaRec!!
+        viewModel.areaAddress.value = areaRec!!
         areaFilled=true
         var citynPinRec = addressRec?.split(",")?.get(2)
         var cityRec =citynPinRec?.split("-")?.get(0)

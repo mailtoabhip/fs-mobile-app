@@ -24,7 +24,7 @@ class CommunicationAddressViewModel@Inject constructor(
 BaseViewModel() {
 
     var flatAddress=""
-    var areaAddress=""
+    var areaAddress=MutableLiveData<String>()
     var pincodeAddress=""
     var cityAddress=""
     var phoneNum =userPrefs.phoneNumber!!
@@ -54,7 +54,7 @@ BaseViewModel() {
     fun addNewAddress(isDeleted:Boolean) {
         if (!isConnected) return
 
-        var address = flatAddress + "," + areaAddress + "," + cityAddress + "-" + pincodeAddress
+        var address = flatAddress + "," + areaAddress.value + "," + cityAddress + "-" + pincodeAddress
 
         documentProofType= when{
                     documentProofType.equals("Visiting Card")->"visiting_card"

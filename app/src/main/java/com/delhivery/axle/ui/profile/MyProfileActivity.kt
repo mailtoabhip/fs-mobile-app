@@ -65,7 +65,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
-        setVerficationStatus()
         binding.logoutLayout.setOnClickListener {
             confirmLogout()
         }

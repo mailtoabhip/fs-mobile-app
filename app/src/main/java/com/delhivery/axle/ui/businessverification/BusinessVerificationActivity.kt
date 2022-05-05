@@ -90,22 +90,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
         }
-        if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
-            binding.businessError.visibility=View.VISIBLE
-            if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
-                viewModel.errorText = userPrefs.rcRejectReason
-            }else {
-                if (userPrefs.rcNumber.isNotNullOrEmpty()) {
-                    viewModel.errorText =
-                        "Truck RC verification failed due to " + userPrefs.rcRejectReason
-                    } else {
-                        viewModel.errorText =
-                            "LR-LN verification failed due to " + userPrefs.rcRejectReason
-                    }
-                }
-            }else{
-                binding.businessError.visibility=View.GONE
-            }
 
         if(userPrefs.ownedTruck.isNotNullOrEmpty()){
             viewModel.ownedTruck.value=userPrefs.ownedTruck
@@ -148,6 +132,22 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
               truckNum=true
                setSubmitButtonEnable()
             }
+        }
+        if(userPrefs.rcRejectReason.isNotNullOrEmpty()) {
+            binding.businessError.visibility=View.VISIBLE
+            if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
+                viewModel.errorText = userPrefs.rcRejectReason
+            }else {
+                if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
+                    viewModel.errorText =
+                        "Truck RC verification failed due to " + userPrefs.rcRejectReason
+                } else {
+                    viewModel.errorText =
+                        "LR-LN verification failed due to " + userPrefs.rcRejectReason
+                }
+            }
+        }else{
+            binding.businessError.visibility=View.GONE
         }
         showUploadedDoc()
     }

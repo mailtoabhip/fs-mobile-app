@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
 import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -123,6 +124,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 }
             }
         })
+
         viewModel.verificationDocUploadFailed.observe(this, Observer {
             showUploadedDoc()
             userPrefs.ninteen4CDocUrl=""
@@ -144,7 +146,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
-                userPrefs.accNumber = viewModel.accountText.value.toString()
+                userPrefs.paymentAccountNumber = viewModel.accountText.value.toString()
                 userPrefs.ifscCode = viewModel.ifscText.value.toString()
                 userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
                 if(userPrefs.retryVerification){
@@ -167,12 +169,23 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         }
 
+
+
         binding.btnSubmit.setOnClickListener {
-          sendDocForVerification(uploadArray)
-            if(binding.nameDeclaration.isChecked){
-                viewModel.nameDeclaration=true
-            }else{
-                viewModel.nameDeclaration=false
+            if(viewModel.accountText.value!!.length <9){
+                binding.imgWrongAccount.visibility=View.VISIBLE
+                binding.errorAccountNum.visibility=View.VISIBLE
+                binding.errorAccountNum.text="Account number cannot be less than 9 digits"
+                ViewCompat.setElevation(binding.imgWrongAccount, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                accountNum=false
+                enableSubmitButton()
+            }else {
+                sendDocForVerification(uploadArray)
+                if (binding.nameDeclaration.isChecked) {
+                    viewModel.nameDeclaration = true
+                } else {
+                    viewModel.nameDeclaration = false
+                }
             }
         }
         binding.uploadDocLay.setOnClickListener {
@@ -195,21 +208,25 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         }
         viewModel.accountText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
+                binding.imgWrongAccount.visibility=View.GONE
+                binding.errorAccountNum.visibility=View.GONE
                 accountNum=true
                 enableSubmitButton()
             }else{
                 accountNum=false
                 enableSubmitButton()
             }
+
         })
         binding.accountNumEdittext.lengthAction(1){
             accountNum=true
             enableSubmitButton()
         }
-        binding.accountNumEdittext.lengthAction(1){
+        binding.accountNumEdittext.lengthAction(0){
             accountNum=false
             enableSubmitButton()
         }
+
         viewModel.accountHolderText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 accountName=true
@@ -259,6 +276,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         }
 
+
     }
 
     override fun onBackPressed() {
@@ -275,7 +293,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     fun enableSubmitButton(){
         if(accountName&&accountNum&&ifsc&&docUpload&&nameDec) {
-            Log.d("enable",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString())
             binding.btnSubmit.isEnabled = true
         }else{
             binding.btnSubmit.isEnabled = false

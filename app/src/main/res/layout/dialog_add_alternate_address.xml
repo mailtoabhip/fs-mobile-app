@@ -86,23 +86,50 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             />
-        <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-            android:id="@+id/edit_area"
-            android:layout_marginTop="@dimen/size_24dp"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/edit_text_height"
-            android:digits="@string/allowed_char_address"
-            android:background="@drawable/bg_login_edit"
-            bind:layout_constraintStart_toStartOf="parent"
-            bind:layout_constraintTop_toBottomOf="parent"
-            android:inputType="text"
-            android:singleLine="true"
-            android:paddingStart="@dimen/size_12dp"
-            android:paddingEnd="@dimen/size_12dp"
-            android:hint="@string/area_hint"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            android:layout_height="wrap_content">
+            <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                android:id="@+id/edit_area"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_text_height"
+                android:background="@drawable/bg_login_edit"
+                android:inputType="text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:digits="@string/allowed_char_address"
+                android:singleLine="true"
+                android:paddingStart="@dimen/size_12dp"
+                android:paddingEnd="@dimen/size_12dp"
+                android:hint="@string/area_hint"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/edit_area"
+            android:textColor="@color/destructive_red"
+            android:visibility="gone"
+            android:id="@+id/error_area"
             />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_wrong_area"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/edit_text_height"
+            app:srcCompat="@drawable/ic_wrong"
+            app:layout_constraintTop_toTopOf="@id/edit_area"
+            app:layout_constraintEnd_toEndOf="@id/edit_area"
+            app:layout_constraintBottom_toBottomOf="@id/edit_area"
+            android:visibility="gone"
+            android:paddingStart="@dimen/size_12dp"
+            android:paddingEnd="@dimen/size_12dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
             android:id="@+id/auto_complete_city"
             android:layout_width="match_parent"
