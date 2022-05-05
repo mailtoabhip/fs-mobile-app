@@ -118,6 +118,7 @@
                 android:imeOptions="actionDone"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:inputType="number"
+                android:maxLength="4"
                 android:text="@{viewModel.ownedTruck}"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/owned_trucks_textView"
@@ -143,7 +144,7 @@
                 bind:layout_constraintTop_toTopOf="@id/owned_trucks_edittext"
                 bind:layout_constraintEnd_toEndOf="@id/owned_trucks_edittext"
                 bind:layout_constraintBottom_toBottomOf="@id/owned_trucks_edittext"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:paddingStart="@dimen/size_12dp"
                 android:paddingEnd="@dimen/size_12dp" />
 
@@ -165,6 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_height"
                 android:inputType="number"
+                android:maxLength="4"
                 android:imeOptions="actionDone"
                 android:text="@{viewModel.attachedTruck}"
                 android:layout_marginTop="@dimen/size_8dp"
@@ -193,7 +195,7 @@
                 bind:layout_constraintTop_toTopOf="@id/attached_trucks_edittext"
                 bind:layout_constraintEnd_toEndOf="@id/attached_trucks_edittext"
                 bind:layout_constraintBottom_toBottomOf="@id/attached_trucks_edittext"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:paddingStart="@dimen/size_12dp"
                 android:paddingEnd="@dimen/size_12dp" />
             <androidx.appcompat.widget.AppCompatTextView
@@ -204,7 +206,7 @@
                 android:layout_marginTop="@dimen/size_16dp"
                 android:lineSpacingExtra="@dimen/text_6sp"
                 bind:layout_constraintStart_toStartOf="parent"
-                bind:layout_constraintTop_toBottomOf="@+id/attached_trucks_edittext"
+                bind:layout_constraintTop_toBottomOf="@+id/error_attached_truck"
                 android:text="@string/sub_label_verification_method"
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"

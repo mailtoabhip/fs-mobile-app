@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.businessverification
 
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
+import com.delhivery.axle.utils.extensions.clearAndFocus
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
@@ -51,7 +53,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding,BusinessVerificationViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding, BusinessVerificationViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
     UploadedItemRVAdapterInterface {
 
     private var isCamera: Boolean = false
@@ -166,12 +168,19 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             binding.layoutTruckrd.isSelected=true
             binding.layoutUploadLR.isSelected=false
             binding.textLR.isChecked=false
+            userPrefs.rcManualverificationreq=false
             resetUploadData()
           if(viewModel.truckNumber.value.isNotNullOrEmpty()) {
               if (viewModel.truckNumber.value?.length!!>=8) {
                   truckNum = true
                   setSubmitButtonEnable()
+              }else{
+                  truckNum = false
+                  setSubmitButtonEnable()
               }
+          }else{
+              truckNum = false
+              setSubmitButtonEnable()
           }
             uploadArray.clear()
             binding.docUploadedLay.visibility=View.GONE
@@ -203,6 +212,49 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             attachedTruck=false
             setSubmitButtonEnable()
         }
+        binding.ownedTrucksEdittext.lengthAction(4){
+                    if (binding.ownedTrucksEdittext.text.toString().toInt() > 1000) {
+                        binding.errorOwnedTruck.visibility = View.VISIBLE
+                        binding.errorOwnedTruck.text = "This value can not be more than 1000"
+                        binding.imgWrongOwned.visibility = View.VISIBLE
+                        ViewCompat.setElevation(binding.imgWrongOwned, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                        ownedTruck = false
+                        setSubmitButtonEnable()
+                    }else{
+                        binding.errorOwnedTruck.visibility = View.GONE
+                        binding.imgWrongOwned.visibility = View.GONE
+                        ownedTruck = true
+                        setSubmitButtonEnable()
+                    }
+        }
+        binding.ownedTrucksEdittext.lengthAction(3){
+            binding.errorOwnedTruck.visibility = View.GONE
+            binding.imgWrongOwned.visibility = View.GONE
+            ownedTruck = true
+            setSubmitButtonEnable()
+        }
+        binding.attachedTrucksEdittext.lengthAction(3){
+            binding.errorAttachedTruck.visibility = View.GONE
+            binding.imgWrongAttached.visibility = View.GONE
+            attachedTruck = true
+            setSubmitButtonEnable()
+        }
+         binding.attachedTrucksEdittext.lengthAction(4){
+             if (binding.attachedTrucksEdittext.text.toString().toInt() > 1000) {
+                 binding.errorAttachedTruck.visibility = View.VISIBLE
+                 binding.errorAttachedTruck.text = "This value can not be more than 1000"
+                 binding.imgWrongAttached.visibility = View.VISIBLE
+                 ViewCompat.setElevation(binding.imgWrongAttached, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
+                 ownedTruck = false
+                 setSubmitButtonEnable()
+             }else{
+                 binding.errorAttachedTruck.visibility = View.GONE
+                 binding.imgWrongAttached.visibility = View.GONE
+                 attachedTruck = true
+                 setSubmitButtonEnable()
+             }
+        }
+
 
         viewModel.truckNumber.observe(this, Observer {
             if(it.length>=8){
