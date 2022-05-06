@@ -156,36 +156,13 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                                 "This usually takes few seconds to load. please be patient."
                         )
                     }
-                    /* Login success, No user routes found - select route activity */
-                   /* AuthenticationUIState.SelectRoute -> {
-                        userPrefs.firstRoute = true
-                        uiUtils.showProgress()
-                        val bundle = Bundle()
-                        bundle.putBoolean(SelectRouteWelcomeIntentExtra, true)
 
-                       val intent = Intent(this@AccountDetailsActivity, SelectRouteActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        navigationUtils.navigateForActivityResult(
-                            intent,
-                                requestCode = REQCODE_ADD_ROUTES, extras = bundle, finishAfter = true
-                        )
-                    }*/
-                    /* Login success, user routes found - navigate to load requests */
                     AuthenticationUIState.LoadRequest -> {
                         uiUtils.showProgress()
                         val intent = Intent(this@AccountDetailsActivity, HomeActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                     }
-                    /* otp verified, account set up needed */
-                   /* AuthenticationUIState.AccountRole -> {
-                        uiUtils.showProgress("Loading...")
-                        navigationUtils.navigate(AccountRoleActivity::class.java, false)
-                    }
-                    AuthenticationUIState.AccountAction -> {
-                        uiUtils.showProgress("Loading...")
-                        navigationUtils.navigate(AccountActionActivity::class.java, false)
-                    }*/
                     AuthenticationUIState.AccountDetails -> {
                         uiUtils.showProgress("Loading...")
                         navigationUtils.navigate(AccountDetailsActivity::class.java, false)
