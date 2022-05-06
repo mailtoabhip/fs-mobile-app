@@ -267,7 +267,7 @@ class NavigationUtils @Inject constructor(
 
       if(backToHome){
           backToHome=false
-          activity.finish()
+          navigate(MyProfileActivity::class.java,true)
       }else {
           if(!retryDone){
               activity.startActivity(intent)
