@@ -230,6 +230,7 @@
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:id="@+id/radio_lay"
+                android:layout_marginBottom="@dimen/size_8dp"
                 bind:layout_constraintTop_toBottomOf="@+id/verification_desc"
                 android:layout_height="wrap_content">
                 <RadioButton
@@ -238,11 +239,12 @@
                     android:layout_height="@dimen/edit_text_height"
                     android:clickable="true"
                     bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintEnd_toStartOf="@+id/text_LR"
                     bind:layout_constraintTop_toTopOf="parent"
                     android:maxLength="20"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp"
-                    android:text="@string/truck_hint"
+                    android:text="@string/label_truck"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
@@ -251,7 +253,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"
                     bind:layout_constraintStart_toEndOf="@id/text_truck"
-                    android:maxLength="20"
+                    bind:layout_constraintEnd_toEndOf="parent"
+                    bind:layout_constraintTop_toTopOf="parent"
                     android:clickable="true"
                     android:text="@string/lr_hint"
                     android:paddingStart="@dimen/size_12dp"
