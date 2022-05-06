@@ -11,6 +11,7 @@ import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
 import com.delhivery.axle.ui.kyc.gst.GstDataItem
 import com.delhivery.axle.ui.kyc.gst.GstItem_TimeOut
 import com.delhivery.axle.ui.kyc.gst.GstProgressItem
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -33,8 +34,10 @@ class PanVerificationViewModel@Inject constructor(
 
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
+    var duplicatePanErrorLiveData = MutableLiveData<String?>()
 
-    var panCardNumber=""
+
+  var panCardNumber=""
     var isValidPan = false
 
     /* steps */
@@ -67,11 +70,26 @@ class PanVerificationViewModel@Inject constructor(
                     isValidPan = true
                     validatePanLiveData.postValue(_res)
                 } else{
+                  Log.d("error",error.toString())
+                  val errorBody = error.errorResponseBody()
+                      ?.errorBody
+                  if (errorBody != null) {
+                    when (errorBody.errorCode()) {
+                      400-> {
+                        duplicatePanErrorLiveData.postValue(errorBody.data.toString())
+                        Log.d("duplicatepan",duplicatePanErrorLiveData.value.toString())
+                      }
+                      else -> {
+                        Throwable(errorBody.errorMessage).handle()
+                      }
+                    }
+                  } else {
                     error.handle()
-                   errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
+                    errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number")
+                    )
+                  }
                 }
             }
-
     }
 
     /**

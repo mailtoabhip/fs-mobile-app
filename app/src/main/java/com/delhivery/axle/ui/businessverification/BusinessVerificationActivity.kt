@@ -162,6 +162,32 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         if(userPrefs.retryVerification){
             binding.btnVerifyBusiness.setText(R.string.action_retry_verification)
         }
+        viewModel.ownedTruck.observe(this, Observer {
+            if(it.toInt()==0&&!binding.textLR.isChecked){
+                binding.textLR.callOnClick()
+            }
+        })
+         binding.ownedTrucksEdittext.lengthAction(1){
+             if(binding.ownedTrucksEdittext.text.toString().toInt()==0 &&!binding.textLR.isChecked){
+                 binding.textLR.callOnClick()
+             }
+        }
+         binding.ownedTrucksEdittext.lengthAction(2){
+             if(binding.ownedTrucksEdittext.text.toString().toInt()==0 &&!binding.textLR.isChecked){
+                 binding.textLR.callOnClick()
+             }
+        }
+         binding.ownedTrucksEdittext.lengthAction(3){
+             if(binding.ownedTrucksEdittext.text.toString().toInt()==0 &&!binding.textLR.isChecked){
+                 binding.textLR.callOnClick()
+             }
+        }
+         binding.ownedTrucksEdittext.lengthAction(4){
+             if(binding.ownedTrucksEdittext.text.toString().toInt()==0 &&!binding.textLR.isChecked){
+                 binding.textLR.callOnClick()
+             }
+        }
+
 
         binding.textTruck.setOnClickListener{
             binding.editTruck.visibility=View.VISIBLE
@@ -377,7 +403,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     private fun showUploadedDoc(){
         if(!userPrefs.businessDocUrl.isNullOrEmpty()){
             resetUploadData()
-            uploadArray.add(Pair(userPrefs.businessDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            uploadArray.add(Pair(userPrefs.businessDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), "32"))
             showFileSelected()
         }
     }

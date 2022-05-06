@@ -142,13 +142,29 @@
                     android:textSize="@dimen/text_16sp"
                     android:visibility="visible"
                     />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_pan_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_6sp"
+                    android:drawablePadding="@dimen/size_8dp"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/text_pan_name"
+                    android:text="@string/error_duplicate_pan"
+                    android:textColor="@color/colorDelhiveryRed"
+                    android:textSize="@dimen/text_16sp"
+                    android:visibility="gone"
+                    />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_verify_pan"
                     style="@style/ActionButton"
                     android:enabled="false"
                     android:textAllCaps="false"
                     bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toBottomOf="@+id/text_pan_name"
+                    bind:layout_constraintTop_toBottomOf="@+id/text_pan_error"
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_marginTop="@dimen/size_32dp"

@@ -481,6 +481,7 @@
   <string name="error_upload">Oops! Something went wrong</string>
   <string name="error_upload_document">Try uploading the document once again</string>
   <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
 
 
   <string name="not_available">Not available</string>

@@ -3,14 +3,13 @@ package com.delhivery.axle.ui.kyc.pan
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
-
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
@@ -20,7 +19,6 @@ import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
-
 
 class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerificationViewModel>() {
     init {
@@ -87,6 +85,14 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         }else{
           binding.editPan.focusClick()
         }
+      viewModel.duplicatePanErrorLiveData.observe(this, Observer {
+          binding.textPanError.visibility=View.VISIBLE
+      })
+      binding.textPanError.setOnClickListener{
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:01246719699")
+        startActivity(intent)
+      }
 
            viewModel.validatePanLiveData.observe(
                this, Observer {
