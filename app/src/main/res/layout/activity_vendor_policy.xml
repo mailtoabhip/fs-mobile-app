@@ -1191,6 +1191,26 @@
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_3"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_1"
                         app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_2_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="ePOD"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_12dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_2_2"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_1"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_lp_2"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_2_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="hPOD"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_12dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_3"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_2_1"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_lp_2"  />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_dd_lp_3"
@@ -1200,7 +1220,7 @@
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="tv_dd_lp_11"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_11"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_2"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -1232,7 +1252,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="Till 3 days\n(excluding day 1)"
+                        android:text="Regular"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_5"
@@ -1243,11 +1263,33 @@
                         android:id="@+id/tv_dd_lp_5"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,000/day"
+                        android:text="yes"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_12"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_4"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_4"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_4"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_12"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_13"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_4"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_4"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_13"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="2000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_6"
-                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_4"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_12"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_4"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_4"/>
 
@@ -1255,11 +1297,11 @@
                         android:id="@+id/tv_dd_lp_6"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,000/day"
+                        android:text="yes"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_5"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_13"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_4"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_4" />
 
@@ -1278,7 +1320,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="&gt; 3 days"
+                        android:text="Regular"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_8"
@@ -1289,23 +1331,118 @@
                         android:id="@+id/tv_dd_lp_8"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="No"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_9"
                         app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_7"
-                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_7" />
-
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_7"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_7"/>
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_dd_lp_9"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="No"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_10"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_8"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_7"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_7"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_10"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="3000"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_14"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_9"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_7"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_7"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_14"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_8"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_10"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_7"
                         app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_7" />
+
+
+                    <View
+                        android:id="@+id/seprator_dd_lp_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:background="@color/grey_bg"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_dd_lp_7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_15"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="Agri &amp;\n Commodity	"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_8"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/seprator_dd_lp_2" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_16"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_9"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_15"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_15"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_15"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_17"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_10"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_16"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_15"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_15"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_18"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No\n Balance"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_dd_lp_19"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_17"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_15"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_15"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_dd_lp_19"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_dd_lp_18"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_dd_lp_15"
+                        app:layout_constraintTop_toTopOf="@+id/tv_dd_lp_15" />
+
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
