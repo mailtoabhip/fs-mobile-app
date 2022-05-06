@@ -519,7 +519,7 @@
 
   <string name="address_proof_attachment">Address proof attachment</string>
   <string name="upload_document">Upload document</string>
-  <string name="truck_hint">Truck RC</string>
+  <string name="truck_hint">Enter Truck Number</string>
   <string name="lr_hint">LR Copy/Loading Note</string>
   <string name="sub_label_step3_4">Step 3 of 4</string>
   <string name="sub_label_address_details">Choose or add an address to use for communication</string>
