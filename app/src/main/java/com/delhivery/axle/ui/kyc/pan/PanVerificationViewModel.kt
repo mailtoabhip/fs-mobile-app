@@ -76,8 +76,15 @@ class PanVerificationViewModel@Inject constructor(
                   if (errorBody != null) {
                     when (errorBody.errorCode()) {
                       400-> {
-                        duplicatePanErrorLiveData.postValue(errorBody.data.toString())
-                        Log.d("duplicatepan",duplicatePanErrorLiveData.value.toString())
+                        if(errorBody.data!=null){
+                          if(errorBody.data.isDuplicatePan!!){
+                            duplicatePanErrorLiveData.postValue(errorBody.data.toString())
+                          }else{
+                            error.handle()
+                          }
+                        }else{
+                          error.handle()
+                        }
                       }
                       else -> {
                         Throwable(errorBody.errorMessage).handle()

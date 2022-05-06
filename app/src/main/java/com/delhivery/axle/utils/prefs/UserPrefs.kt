@@ -871,7 +871,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   fun saveUser(user: UserModel) {
     userName = user.userName?:""
     onboardingStatus = user.supplierDetails?.onboardingStatus ?: "na"
-    supplierEnabled = user.supplierDetails?.supplierEnabled==false
+    supplierEnabled = user.supplierDetails?.supplierEnabled?:false
     isTestUser = user.supplierDetails?.testUser == true
     tdsRate = user.getTDSSubtractor()
     updatedTdsRate =

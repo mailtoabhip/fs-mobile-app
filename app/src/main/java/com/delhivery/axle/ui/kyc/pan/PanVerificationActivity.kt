@@ -69,6 +69,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 binding.textPanName.visibility = View.VISIBLE
                 binding.imgCorrect.visibility = View.GONE
                 binding.editPan.error= false
+              binding.textPanError.visibility=View.GONE
+
             }
 
             lengthAction(10) {
@@ -80,6 +82,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
             }
 
+
         if(userPrefs.pancard.isNotNullOrEmpty()){
             viewModel.panCardNumber = userPrefs.pancard
         }else{
@@ -87,6 +90,11 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         }
       viewModel.duplicatePanErrorLiveData.observe(this, Observer {
           binding.textPanError.visibility=View.VISIBLE
+        binding.panVerifyProgress.visibility = View.GONE
+        binding.editPan.isEnabled=true
+        binding.btnVerifyPan.isEnabled =false
+        binding.textPanName.text =  getString(R.string.hint_for_quick_processing)
+        binding.editPan.error= true
       })
       binding.textPanError.setOnClickListener{
         val intent = Intent(Intent.ACTION_DIAL)

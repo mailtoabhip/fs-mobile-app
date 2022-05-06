@@ -85,8 +85,6 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
             )
             if (userPrefs.identityRejectReason.isNotNullOrEmpty()) {
                 binding.identityError.visibility = View.VISIBLE
-                Log.d("identityTypeid",userPrefs.identityType)
-                Log.d("identityTypeid",userPrefs.identityRejectReason)
                 if(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification")){
                     viewModel.errorText = userPrefs.identityRejectReason
                 }else {
@@ -97,7 +95,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                             viewModel.errorText =
                                 ("CIN verification failed due to " + userPrefs.identityRejectReason)
                         }
-                    } else if (userPrefs.identityType.equals("udhyog_aadhaar")) {
+                    } else if (userPrefs.identityType.equals("udyog_aadhaar")) {
                         if (userPrefs.udyogNumber.isNotNullOrEmpty()) {
                             binding.identityError.text =
                                 ("Udyog Aadhaar verification failed due to " + userPrefs.identityRejectReason)
@@ -141,15 +139,15 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
 
         when {
-            userPrefs.cinNumber.isNotNullOrEmpty() -> {
+            userPrefs.cinNumber.isNotNullOrEmpty() && userPrefs.identityDocUrl.contains("cin")-> {
                 clickedCin(true)
                 viewModel.cinNumber = userPrefs.cinNumber
             }
-            userPrefs.udyogNumber.isNotNullOrEmpty() -> {
+            userPrefs.udyogNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.contains("udyog")-> {
                 clickedUdyog(true)
                 viewModel.udyogNumber = userPrefs.udyogNumber
             }
-            userPrefs.shopNumber.isNotNullOrEmpty() -> {
+            userPrefs.shopNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.contains("shop") -> {
                 clickedShopNumber(true)
                 viewModel.shopNumber = userPrefs.shopNumber
             }
