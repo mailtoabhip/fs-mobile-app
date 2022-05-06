@@ -147,6 +147,7 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                         }
                         val time: Date = calendar.getTime()
                         val outputFmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS")
+                        outputFmt.setTimeZone(TimeZone.getTimeZone("UTC"))
                         val dateAsString: String = outputFmt.format(time)
                         binding.item?.expectedArrivalTimePickup = dateAsString
                         binding.item?.expectedArrivalTimePickupRemark = option

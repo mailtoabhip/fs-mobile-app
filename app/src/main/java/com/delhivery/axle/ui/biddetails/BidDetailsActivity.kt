@@ -57,6 +57,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
   override fun requireConnection() = true
 
+  var bidEndingTime:String = ""
+
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,31 +83,38 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   }
 
   private fun setTimer(bidEndingTime: String) {
+    Log.d("xxmaspappaaa", "nksllsls")
 
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-    val date1: Date = format.parse(format.format(Date()))
-    val date2: Date = format.parse(bidEndingTime)
-    if (date2.compareTo(date1) > 0) {
-      binding.timerLayout.visibility = View.VISIBLE
-
-      val mills: Long = date2.getTime() - date1.getTime()
-      object : CountDownTimer(mills, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-          try {
-            val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
-            val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
-            val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-            val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
-            binding.timerTime.setText(diff)
-          } catch (e: Exception) {
-            e.printStackTrace()
+    if(!bidEndingTime.equals("null")) {
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(bidEndingTime)
+      if (date2.compareTo(date1) > 0) {
+        binding.timerLayout.visibility = View.VISIBLE
+        Log.d("maspappaaa", "nksllsls")
+        val mills: Long = date2.getTime() - date1.getTime()
+        object : CountDownTimer(mills, 1000) {
+          override fun onTick(millisUntilFinished: Long) {
+            try {
+              val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+              val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+              val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+              val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+              binding.timerTime.setText(diff)
+            } catch (e: Exception) {
+              e.printStackTrace()
+            }
           }
-        }
-        override fun onFinish() {
-          binding.timerLayout.visibility = View.GONE
-        }
-      }.start()
-  }else{
+
+          override fun onFinish() {
+            binding.timerLayout.visibility = View.GONE
+          }
+        }.start()
+      } else {
+        binding.timerLayout.visibility = View.GONE
+      }
+    }else{
       binding.timerLayout.visibility = View.GONE
     }
   }
@@ -314,15 +323,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
         }
 
-        if(binding.transaction!!.timerPlaceLayoutVisibility() == View.VISIBLE ){
-          if(binding.transaction!!.bidEndingTime.isNotNullOrEmpty()){
-            binding.transaction!!.bidEndingTime.let { it?.let { it1 -> setTimer(it1) } }
-          }else{
-            binding.timerLayout.visibility = View.GONE
-          }
-        }else{
-          binding.timerLayout.visibility = View.GONE
-        }
+        bidEndingTime = binding.transaction!!.bidEndingTime.toString()
 
       } else {
         binding.error = true
@@ -347,13 +348,20 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                 .apply {
+                  if(binding.textBulkLoad.visibility == View.GONE) {
+                    binding.timerLayout.visibility = View.VISIBLE
+                   setTimer(bidEndingTime)
+                  }
                   btnPlaceBid.setOnClickListener { bidDialog() }
-                  binding.timerLayout.visibility = View.VISIBLE
                 }
           }
           is BidDetailsUserBidState_PlaceBid -> {
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
               .apply {
+                if(binding.textBulkLoad.visibility == View.GONE) {
+                  binding.timerLayout.visibility = View.VISIBLE
+                 setTimer(bidEndingTime)
+                }
                 bidsRecieved = state.bidsCount
                 state.lowestAndUserBidPair.second?.let {
                   lowestBid = when (state.lowestAndUserBidPair) {
@@ -364,14 +372,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
                 }
                 btnPlaceBid.setOnClickListener { bidDialog() }
-                binding.timerLayout.visibility = View.VISIBLE
               }
           }
           is BidDetailsUserBidState_EditBid -> {
             ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
                 .apply {
                   binding.timerLayout.visibility = View.GONE
-
                   val data = viewModel.transaction as HomeBidsRequestItemData
                   data.numBids = state.bidsCount
                   data.transactionBid = state.lowestAndUserBidPair.first
@@ -448,13 +454,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                   .apply {
+                    binding.timerLayout.visibility = View.GONE
                     pickUpLocation =
                             StringUtils.capitalize(state.pickupLocation)
                                     ?: getString(string.not_available)
                     vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
                     driverPhone =
                             state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
-                    binding.timerLayout.visibility = View.GONE
                   }
           }
           is BidDetailsUserBidState_RejectedBid -> {
@@ -462,13 +468,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutInflater, binding.containerActions, false
             )
                   .apply {
+                    binding.timerLayout.visibility = View.GONE
                     val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
                       StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
                     } else {
                       StringUtils.formatAmount(state.userBid.bidAmount)
                     }
                     textUserHighestBid.text = bidText
-                    binding.timerLayout.visibility = View.GONE
                   }
           }
           is BidDetailsUserBidState_CancelledBid -> {
@@ -476,13 +482,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               layoutInflater, binding.containerActions, false
             )
               .apply {
+                binding.timerLayout.visibility = View.GONE
                 val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
                   StringUtils.formatAmount(state.userBid.bidAmount ?: 0.0) + "/MT"
                 } else {
                   StringUtils.formatAmount(state.userBid.bidAmount)
                 }
                 textUserHighestBid.text = bidText
-                binding.timerLayout.visibility = View.GONE
               }
           }
 
@@ -490,6 +496,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ViewBidDetailsBulkLoadEditBinding.inflate(
                     layoutInflater, binding.containerActions, false
             ).apply {
+              binding.timerLayout.visibility = View.GONE
               val data = viewModel.transaction as HomeBidsRequestItemData
               if(data.transactionStatus == "cancelled"){
                 btnReviseBidInsider.visibility = View.GONE
@@ -504,7 +511,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
 
               }
-              binding.timerLayout.visibility = View.GONE
               btnReviseBidInsider.setOnClickListener{ bidDialog()}
             }
           }
@@ -512,9 +518,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }?.let { _binding ->
           /* bidding ended */
           binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
-          binding.timerLayout.visibility = View.GONE
-          binding.containerActions.apply {
-            removeAllViews()
+         binding.containerActions.apply {
+          removeAllViews()
             addView(_binding.root)
           }
         }
