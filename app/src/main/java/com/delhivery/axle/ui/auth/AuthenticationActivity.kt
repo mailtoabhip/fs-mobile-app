@@ -174,13 +174,13 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
-    /*binding.loginUsingPassword.setOnClickListener{
+    binding.loginUsingPassword.setOnClickListener{
       viewModel.state = Password
-    }*/
+    }
 
-    /*binding.loginButton.setOnClickListener{
+    binding.loginButton.setOnClickListener{
       performLogin()
-    }*/
+    }
 
 
     if (notificationId.isNotEmpty()) {
@@ -216,35 +216,35 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     otpSubmitted(otp.toCharArray())
   }
 
-//  private fun performLogin() {
-//    var flag= true
-//    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
-//      binding.tilUserId.isErrorEnabled = true
-//      binding.tilUserId.error ="Field can't be empty"
-//      flag= false
-//    }
-//    else{
-//      binding.tilUserId.isErrorEnabled = false
-//      binding.tilUserId.error = null
-//    }
-//
-//    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
-//      binding.tilUserPassword.isErrorEnabled = true
-//      binding.tilUserPassword.error ="Field can't be empty"
-//      flag= false
-//    }
-//    else{
-//      binding.tilUserPassword.isErrorEnabled = false
-//      binding.tilUserPassword.error = null
-//    }
-//
-//    if(flag){
-//      val userId=  binding.tilUserId.editText?.text.toString()
-//      val userPassword = binding.tilUserPassword.editText?.text.toString()
-//     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
-//      viewModel.loginUsingPassword(userId,userPassword)
-//    }
-//  }
+  private fun performLogin() {
+    var flag= true
+    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
+      binding.tilUserId.isErrorEnabled = true
+      binding.tilUserId.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserId.isErrorEnabled = false
+      binding.tilUserId.error = null
+    }
+
+    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
+      binding.tilUserPassword.isErrorEnabled = true
+      binding.tilUserPassword.error ="Field can't be empty"
+      flag= false
+    }
+    else{
+      binding.tilUserPassword.isErrorEnabled = false
+      binding.tilUserPassword.error = null
+    }
+
+    if(flag){
+      val userId=  binding.tilUserId.editText?.text.toString()
+      val userPassword = binding.tilUserPassword.editText?.text.toString()
+     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
+      viewModel.loginUsingPassword(userId,userPassword)
+    }
+  }
 
   /**
    * [AuthenticationUIState] observer
@@ -322,21 +322,18 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         }
         /* handle each error state */
         when (error.first) {
-          InvalidPhoneNo -> {   //Invalid phone number functionality
-            /*dialogUtils.showBasicConfirmDialog(string.title_dialog_invalid_num,
-                string.msg_dialog_invalid_num,
-                getString(string.label_call_us), getString(string.label_mail_us),
-                { callHelpline() }, { sendMail(AxleOnboardingEmail) }
-            )*/
+          InvalidPhoneNo -> {
             binding.editPhoneNo.errorVibrate()
           }
           InvalidOTP -> {   //Invalid OTP
             binding.otpError.visibility = View.VISIBLE
             uiUtils.hideProgress()
           }
-          AuthenticationUIError.InvalidPassword -> {   //Invalid password clear fields
+          InvalidPassword -> {   //Invalid password clear fields
             navigationUtils.navigate(InvalidActivity::class.java, false)
-            //uiUtils.showSnackbar("Invalid username or password")
+            uiUtils.hideProgress()
+            uiUtils.hideDelhiveryProgress()
+
           }
           None -> {/* nothing */
             binding.otpError.visibility = View.GONE

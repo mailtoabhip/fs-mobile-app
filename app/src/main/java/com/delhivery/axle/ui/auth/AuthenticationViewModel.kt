@@ -174,10 +174,6 @@ class AuthenticationViewModel @Inject constructor(
             LoadRequest
           }
         } else {
-//          if (error is HttpException) {
-//            userPrefs.hasLoggedIn = false
-//            error.handle()
-//          }
           errorLiveData.postValue(Pair(InvalidPassword, ""))
           Password
         }

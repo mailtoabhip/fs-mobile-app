@@ -62,10 +62,14 @@ class BasicDetailsViewModel @Inject constructor(
         if (!error) {
           val listOfLanes = ArrayList<RouteMappingModel>()
           for(item in lanePreferenceList){
+            try{
             val origin = UserCity(item.origin!!.location!!,item.origin!!.locationId,item.origin!!.locationType!!)
             val destinations = StateModel(item.destination!!.location!!,item.destination!!.locationId!!,item.destination!!.locationId!!,item.destination!!.locationType!!)
             val routeMappingModel = RouteMappingModel(origin,destinations)
             listOfLanes.add(routeMappingModel)
+            }catch (e:Exception){
+
+            }
           }
           userPrefs.setLanesPreferences(listOfLanes)
           userPrefs.truckTypes = selectedTrucks.joinToString (separator = ", ")
