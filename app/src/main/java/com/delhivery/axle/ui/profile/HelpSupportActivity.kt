@@ -34,14 +34,12 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             }
         }
         binding.terms.setOnClickListener {
-            //TODO:-to be replaced at the time of release
-            when (contactUtils.openURL("https://orion-dev.delhivery.com/#/axle-app-conditions")) {
+            when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-conditions")) {
                 false -> uiUtils.showSnackbar("Could not open url")
             }
         }
         binding.privacy.setOnClickListener {
-            //TODO :- to be replaced at the time of release
-            when (contactUtils.openURL("https://orion-dev.delhivery.com/#/axle-app-privacy-policy")) {
+            when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-privacy-policy")) {
                 false -> uiUtils.showSnackbar("Could not open url")
             }
         }
