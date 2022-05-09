@@ -57,7 +57,7 @@ class ShowVerificationOtpDialog @Inject constructor(
         binding = DialogVerifyAadharOtpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.otpNum.text = phoneNumber
+//        binding.otpNum.text = phoneNumber
         binding.otpView.otpViewInterface = this
         timerToResend()
         binding.closeBtn.setOnClickListener {

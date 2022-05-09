@@ -164,7 +164,8 @@ data class SupplierModel(
         @SerializedName("udyog_aadhaar_number") var udyogAadhar: String?,
         @SerializedName("shop_establishment_number") var shopEstablishment: String?,
         @SerializedName("pan_holder_name") var panHolderName: String?,
-        @SerializedName("beneficiary_name") var accountHolderName: String?
+        @SerializedName("beneficiary_name") var accountHolderName: String?,
+        @SerializedName("identity_doc_url") var identity_doc_url: String?
 
 
 )

@@ -937,7 +937,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     isLoadBoardSupplier = user.supplierDetails?.isLoadBoardSupplier?: false
     isLoadBoardClient = user.clientDetails?.isLoadBoardClient?: false
     noOfVerificationIssues =if(user.noOfVerificationIssues.isNotNullOrEmpty() || user.noOfVerificationIssues?.equals("0.0")==false) {user.noOfVerificationIssues?.split(".")?.get(0) ?:""}else {""}
-    identityDocUrl = user.identity_doc_url?.get(0)?:""
+    identityDocUrl = user.supplierDetails?.identity_doc_url?:""
     setLanesPreferences(user.supplierDetails?.routes)
     vendorPolicyAccepted = user.supplierDetails?.vendorPolicyAccepted?:false
     aadhaarPolicyAccepted= user.supplierDetails?.aadhaarPolicyAccepted?:false

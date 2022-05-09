@@ -385,23 +385,24 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
                     android:id="@+id/imgKyc"
-                    bind:srcCompat="@drawable/ic_kyc_details"
-                    android:layout_height="wrap_content"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    bind:srcCompat="@drawable/ic_kyc_details" />
+
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="@string/label_kyc_details"
-                    android:layout_toStartOf="@+id/arrow1"
-                    android:layout_toEndOf="@+id/imgKyc"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/size_12dp"
-                    android:textColor="@color/heading_black"
                     android:layout_marginEnd="@dimen/size_12dp"
-                    android:textSize="@dimen/text_14sp"
-                    android:layout_height="wrap_content"/>
+                    android:layout_toStartOf="@+id/arrow1"
+                    android:layout_toEndOf="@+id/imgKyc"
+                    android:text="@string/label_kyc_details"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:id="@+id/issues"

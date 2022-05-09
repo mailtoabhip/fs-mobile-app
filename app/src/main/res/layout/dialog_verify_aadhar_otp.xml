@@ -52,6 +52,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/size_32dp"
+            android:textAlignment="center"
             android:textSize="@dimen/text_14sp"
             android:text="@string/label_otp_aadhaar"
             android:textColor="@color/sub_heading_black"

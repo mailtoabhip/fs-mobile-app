@@ -49,7 +49,7 @@ data class BaseMessageResponse(
 data class BaseErrorResponse(
   @SerializedName("message") val errorMessage: String,
   @SerializedName("code") private val _errorCode: Int,
-  @SerializedName("data") val data: ObjectErrorData?
+  @SerializedName("data") val data: List<ObjectErrorData>?= null
 ) {
   /**
    * Error code as [Integer]

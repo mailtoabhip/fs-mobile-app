@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.kyc.pan
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.PanVerificationResponse
@@ -42,6 +43,7 @@ class PanVerificationViewModel@Inject constructor(
 
     /* steps */
     var currentStep = ""
+    var errorMsg = ""
 
     /* pay type */
     var panType = "person"
@@ -77,8 +79,8 @@ class PanVerificationViewModel@Inject constructor(
                     when (errorBody.errorCode()) {
                       400-> {
                         if(errorBody.data!=null){
-                          if(errorBody.data.isDuplicatePan!!){
-                            duplicatePanErrorLiveData.postValue(errorBody.data.toString())
+                          if(errorBody.data.isNotEmpty() && errorBody.data[0].isDuplicatePan!!){
+                              duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
                           }else{
                             error.handle()
                           }
