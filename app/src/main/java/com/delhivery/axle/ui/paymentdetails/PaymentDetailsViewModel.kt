@@ -138,7 +138,7 @@ class PaymentDetailsViewModel@Inject constructor(
 
 
     fun verifyByDoc(docList:List<String>) {
-        if (selected194CUpload.value==true) {
+        if (selected194CUpload.value==true && docList.get(0).contains("194C",true)) {
             uploadDocForVerification(
                 VerificationDocUploadRequest(
                     proofDocumentType = "section_194C",
