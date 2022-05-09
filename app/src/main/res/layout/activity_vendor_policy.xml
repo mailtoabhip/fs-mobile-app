@@ -1172,7 +1172,7 @@
                         android:id="@+id/tv_lost_pod_1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Movement Type	"
+                        android:text="Movement\nType"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
@@ -1180,35 +1180,70 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_2"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="32ft SXL"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
-                        android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_3"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_1"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Received"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_16dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_8dp"
+                            android:text="ePOD"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_10dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_8dp"
+                            android:text="hPOD"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_10dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="32ft MXL "
+                        android:text="POD\nPenalty"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_10"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_2"
+                        app:layout_constraintStart_toEndOf="@+id/container_2"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_10"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="32ft MXL "
+                        android:text="Overhead Paid"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
@@ -1224,49 +1259,73 @@
                         android:background="@color/grey_bg"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_lost_pod_1" />
+                        app:layout_constraintTop_toBottomOf="@+id/container_2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_4"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="Till 3 days\n(excluding day 1)"
+                        android:text="Regular"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_5"
+                        app:layout_constraintEnd_toStartOf="@+id/container_3"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seprator_lost_pod" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_5"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,000/day"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_4"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_6"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_4"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_4" />
+                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_4">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Yes"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="No"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_6"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,000/day"
+                        android:text="2000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_4"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_11"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_5"
+                        app:layout_constraintStart_toEndOf="@+id/container_3"
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_4" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_11"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="32ft MXL "
+                        android:text="Yes"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_4"
@@ -1289,40 +1348,65 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="&gt; 3 days"
+                        android:text="Regular"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_8"
+                        app:layout_constraintEnd_toStartOf="@+id/container_4"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seprator_lost_pod_1" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_8"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_4"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_7"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_9"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_7"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_7" />
+                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_7">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="No"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="No"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_9"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="3000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_12"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_8"
+                        app:layout_constraintStart_toEndOf="@+id/container_4"
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_7" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_12"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="No"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -1344,45 +1428,72 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="&gt; 3 days"
+                        android:text="Agri &amp; Commodity	"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_14"
+                        app:layout_constraintEnd_toStartOf="@+id/container_5"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/seprator_lost_pod_2" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_14"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_5"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_15"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_13"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13" />
+                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="No"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_container_lp_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="No"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/size_12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_15"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="No Balance"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_16"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_14"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13" />
+                        app:layout_constraintStart_toEndOf="@+id/container_5"
+                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_lost_pod_16"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="₹1,500/day"
+                        android:text="No"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_15"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13" />
+                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
