@@ -1283,19 +1283,19 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_4">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_2"
+                            android:id="@+id/tv_container_lp_3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="Yes"
                             android:textAlignment="center"
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_4"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_3"
+                            android:id="@+id/tv_container_lp_4"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="No"
@@ -1303,8 +1303,7 @@
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_3"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -1365,19 +1364,19 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_7">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_2"
+                            android:id="@+id/tv_container_lp_5"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="No"
                             android:textAlignment="center"
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_6"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_3"
+                            android:id="@+id/tv_container_lp_6"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="No"
@@ -1385,8 +1384,7 @@
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_5"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -1445,19 +1443,19 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_2"
+                            android:id="@+id/tv_container_lp_7"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="No"
                             android:textAlignment="center"
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_8"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_3"
+                            android:id="@+id/tv_container_lp_8"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="No"
@@ -1465,8 +1463,7 @@
                             android:textSize="@dimen/size_12dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1"
+                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_7"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
