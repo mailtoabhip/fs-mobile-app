@@ -485,6 +485,7 @@ class BidDetailsViewModel @Inject constructor(
 
 
     fun fetchIndentCenters(code:String, seq:Int) {
+        indentMap.clear()
         compositeDisposable += warehouseRepository.getWarehouseDetails(WarehouseRequest("facility_code",code, "faas"))
                 .onBackground()
                 .subscribe { _tRes, error ->
