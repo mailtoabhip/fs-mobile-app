@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils
 
+import android.util.Log
 import com.amazonaws.auth.BasicSessionCredentials
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
@@ -70,6 +71,10 @@ class AWSUtils @Inject constructor(
         })
   }
 
+  fun awsBasePath(): String {
+    val s3Url =  "https://orion-service.s3."+AWSConfig.ServerRegion.value()+".amazonaws.com/"
+    return s3Url
+  }
   /**
    * Initiate AWS download
    */
@@ -116,9 +121,10 @@ class AWSUtils @Inject constructor(
         ex: java.lang.Exception?
       ) {
         listener.onAWSFailure()
-      }
+     }
 
     })
+
   }
 
   /**

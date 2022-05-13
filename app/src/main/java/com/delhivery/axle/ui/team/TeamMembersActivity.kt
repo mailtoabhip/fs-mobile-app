@@ -1,18 +1,28 @@
 package com.delhivery.axle.ui.team
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.DeleteTeamMemberAction_Delete
 import com.delhivery.axle.api.request.EditTeamMemberAction_Edit
+import com.delhivery.axle.api.request.TeamMemberAction_options
 import com.delhivery.axle.api.request.ViewAdminMember
 import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.teammembers.WarningAction_NoMembers
 import com.delhivery.axle.databinding.ActivityTeamMembersBinding
+import com.delhivery.axle.databinding.DialogTeamMemberBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.TeamMemberInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.io.Serializable
 
@@ -22,7 +32,7 @@ import java.io.Serializable
  */
 
 class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembersViewModel>(),
-  TeamMembersRVAdapterInterface {
+  TeamMembersRVAdapterInterface, TeamMemberInterface {
 
 
   init {
@@ -48,7 +58,7 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Your Team Members"
+    title = "My Team Members"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     binding.refreshLayout.setOnRefreshListener {
@@ -113,13 +123,21 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       uiUtils.showSnackbar(it)
     })
 
-    binding.fabAddMember.setOnClickListener {
+    binding.addTeamMemberButton.setOnClickListener{
       createTeamMember()
     }
 
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
     refreshData()
+
+    viewModel.emptyUserLiveData.observe(this, Observer {
+      if(it){
+        binding.addTeamMemberButton.visibility = View.GONE
+      }else{
+        binding.addTeamMemberButton.visibility = View.VISIBLE
+      }
+    })
   }
 
   override fun onBackPressed() {
@@ -148,13 +166,13 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       EditTeamMemberAction_Edit -> {
         val data = item.data as UserModel
         val uuid = data.userId
-        val name = data.name
-        val number = data.phoneNo
+        val name = data.userName
+        val number = data.phoneNumber
         val dieselPreference = data.getDieselPreferences()
-        val dieselCompany = data.dieselCompany?: mutableListOf()
-        if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
-          editTeamMember(uuid, name, number!!, dieselPreference, dieselCompany )
-        }
+        val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
+       if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
+          editTeamMember(uuid, name!!, number!!, dieselPreference, dieselCompany )
+       }
       }
 
       DeleteTeamMemberAction_Delete -> {
@@ -168,6 +186,10 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
       ViewAdminMember -> {
         AdminMemberDialog(this, item.data as UserModel , viewModel).show()
       }
+
+      WarningAction_NoMembers ->{
+        createTeamMember()
+      }
     }
   }
 
@@ -176,43 +198,76 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     item: BaseTeamMembersRVAdapterItem<*>,
     position: Int
   ) {
-    TODO("Not yet implemented")
+    when (actionId) {
+      TeamMemberAction_options -> {
+        showOptionsDialog(item.data as UserModel, position)
+      }
+     }
+  }
+
+  private fun showOptionsDialog(data: UserModel , position: Int){
+    val dialog = Dialog(this)
+    val bindingDialog= DialogTeamMemberBottomOptionsBinding.inflate(layoutInflater)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+    bindingDialog.closeBtn.setOnClickListener{
+      dialog.dismiss()
+    }
+    bindingDialog.editMemberLayout.setOnClickListener {
+      val uuid = data.userId
+      val name = data.userName
+      val number = data.phoneNumber
+      val dieselPreference = data.getDieselPreferences()
+      val dieselCompany = data.supplierDetails?.dieselCompany?: mutableListOf()
+      if (uuid.isNotNullOrEmpty() && number.isNotNullOrEmpty()) {
+        if (name != null) {
+          editTeamMember(uuid, name, number!!, dieselPreference, dieselCompany )
+        }
+        dialog.dismiss()
+      }
+    }
+    bindingDialog.deleteMemberLayout.setOnClickListener {
+      val uuid = data.userId
+      if (uuid.isNotNullOrEmpty()) {
+        confirmAndDelete(uuid)
+        dialog.dismiss()
+      }
+    }
+
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
   /**
    * Confirm and delete team member
    */
   fun confirmAndDelete(uuid: String) {
-    dialogUtils.showBasicConfirmDialog(
-        R.string.title_dialog_delete,
-        R.string.msg_dialog_delete,
-        positiveAction = "Confirm",
-        negativeAction = "Cancel",
-        positiveClickListener = {
-          it.dismiss()
-          deleteTeamMember(uuid)
-        }
-    )
+    dialogUtils.showTeamDeleteDialog(uuid,this)
   }
 
   /**
    * Create team member
    */
   fun createTeamMember() {
-    TeamMembersCreateDialog(this, viewModel).show()
+    TeamMembersCreateDialog(this, viewModel, viewModel.userPrefs).show()
   }
 
   /**
    * Edit team member
    */
   fun editTeamMember(uuid: String, name: String, number: String, dieselPreference: Boolean, dieselCompany :List<String>) {
-    TeamMembersEditDialog(this, uuid, name, number, dieselPreference, dieselCompany, viewModel).show()
+    TeamMembersEditDialog(this, uuid, name, number, dieselPreference, dieselCompany, viewModel, viewModel.userPrefs).show()
   }
 
   /**
    * Delete team member
    */
-  fun deleteTeamMember(uuid: String) {
+  override fun deleteTeamMember(uuid: String) {
     viewModel.deleteMember(uuid)
   }
 

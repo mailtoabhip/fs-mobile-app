@@ -1,10 +1,15 @@
 package com.delhivery.axle.ui.team
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.CompoundButton
@@ -13,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberEditBinding
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.spinner_item.view.*
 import javax.inject.Inject
 
@@ -31,8 +37,9 @@ class TeamMembersEditDialog @Inject constructor(
         private val userNumber: String,
         private val dieselCardPreference: Boolean,
         private val dieselCompany: List<String>,
-        private val dialogInterface: TeamMembersEditDialogInterface
-) : AlertDialog(context) {
+        private val dialogInterface: TeamMembersEditDialogInterface,
+        private val userPrefs: UserPrefs
+) : Dialog(context) {
 
     /* dialog binding */
     private lateinit var binding: DialogTeamMemberEditBinding
@@ -52,12 +59,30 @@ class TeamMembersEditDialog @Inject constructor(
         binding = DialogTeamMemberEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window!!.attributes.windowAnimations = R.style.DialogAnimation
+        window!!.setGravity(Gravity.BOTTOM)
+
+        if ((userPrefs.isLoadBoardClient == false || userPrefs.isLoadBoardSupplier == false)){
+            binding.switchLay.visibility = View.VISIBLE
+        }else{
+            if(userPrefs.userMode.equals("post_load")){
+                binding.switchLay.visibility = View.GONE
+            }else{
+                binding.switchLay.visibility = View.VISIBLE
+            }
+        }
+
+
         /* set binding params */
         binding.apply {
             editName.setText(nameVal)
             number = userNumber
-            binding.tilNameEdit.hint = "Name"
             editMemberDieselReferenceSwitch.isChecked = dieselCardPreference
+            if(editMemberDieselReferenceSwitch.isChecked){
+                binding.cardLayout.visibility = View.VISIBLE
+            }
             dieselReliance.isEnabled = false
             dieselIocl.isEnabled =false
             if(dieselCompany.isNotEmpty()){
@@ -78,32 +103,60 @@ class TeamMembersEditDialog @Inject constructor(
             binding.llNumber.visibility = View.GONE
         }
 
-        binding.tilNameEdit.editText?.addTextChangedListener(object : TextWatcher {
+        binding.editName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
             override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
             ) = Unit
 
             override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
             ) {
                 if (s != null) {
-                    binding.tilNameEdit.error = null
-                    binding.tilNameEdit.isErrorEnabled = false
                     try {
                         val input = s.trim().toString()
                         name = input
                     } catch (e: Exception) {
-                        binding.tilNameEdit.isErrorEnabled = true
-                        binding.tilNameEdit.error = e.message
                         name = ""
                     }
+                    binding.btnConfirm.isEnabled = s.length>0 && binding.textNumber.text?.length==13
+                }else{
+                    binding.btnConfirm.isEnabled = false
+                }
+            }
+        })
+
+        binding.textNumber.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+            ) = Unit
+
+            override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+            ) {
+                if (s != null) {
+                    try {
+                        val input = s.trim().toString()
+                        binding.btnConfirm.isEnabled = input.length == 10 && !(binding.editName.text?.length==0)
+                        number = input
+                    } catch (e: Exception) {
+                        number = ""
+                    }
+                }else{
+                    binding.btnConfirm.isEnabled = false
                 }
             }
         })
@@ -112,12 +165,14 @@ class TeamMembersEditDialog @Inject constructor(
             if(isChecked){
                 binding.dieselReliance.isEnabled = true
                 binding.dieselIocl.isEnabled= true
+                binding.cardLayout.visibility = View.VISIBLE
             }
             else{
                 binding.dieselReliance.isEnabled = false
                 binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
                 binding.dieselIocl.isChecked = false
+                binding.cardLayout.visibility = View.GONE
             }
         })
 
@@ -132,7 +187,7 @@ class TeamMembersEditDialog @Inject constructor(
     private fun submit() {
         try {
             if (name.isNotEmpty() || number.isNotEmpty()) {
-                require(number.length == 10) {
+                require(number.length == 13) {
                     "Please enter valid phone number"
                 }
                 if (userNumber.isNotNullOrEmpty()) {
@@ -156,10 +211,10 @@ class TeamMembersEditDialog @Inject constructor(
                 throw IllegalArgumentException("*Invalid text")
             }
         } catch (e: IllegalArgumentException) {
-            binding.tilNameEdit.isErrorEnabled = true
-            binding.tilNameEdit.error = e.message
+            //binding.tilNameEdit.isErrorEnabled = true
+           // binding.tilNameEdit.error = e.message
             val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
-            binding.tilNameEdit.startAnimation(shake)
+            //binding.tilNameEdit.startAnimation(shake)
         }
     }
 }

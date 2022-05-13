@@ -3,6 +3,16 @@ package com.delhivery.axle.utils.extensions
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+
+
+
 
 /**
  * Check if string is not null and not blank either
@@ -69,3 +79,22 @@ fun ContentResolver.getFileName(uri: Uri): String {
 
   return name
 }
+  fun androidx.appcompat.widget.SearchView.getQueryTextChangeObservable(): Observable<String> {
+    val subject = PublishSubject.create<String>()
+
+    setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+      override fun onQueryTextSubmit(query: String?): Boolean {
+        subject.onComplete()
+        return true
+      }
+
+      override fun onQueryTextChange(newText: String): Boolean {
+        subject.onNext(newText)
+        return true
+      }
+    })
+
+    return subject
+  }
+
+

@@ -58,15 +58,15 @@ class TruckViewModel @Inject constructor(
     var spSecondaryName:String?=null
 
     fun addNewTruck(sourcedAs: String){
-        if(truckCity!!.orion_db_city_code!=null && truckDestination!!.orion_db_city_code!=null ){
-            compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orion_db_city_code?:"", truckDestination!!.orion_db_city_code?:"")
+        if(truckCity!!.orionDbCityCode!=null && truckDestination!!.orionDbCityCode!=null ){
+            compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orionDbCityCode?:"", truckDestination!!.orionDbCityCode?:"")
                 .flatMap { t->
                     if(!userPrefs.isParent){
                      spSecondaryId = userPrefs.userId()
                      spSecondaryName = userPrefs.userName
                     }
                     val addVehicleRequest = AddVehicle(userPrefs.parentId, userPrefs.parentName, truckType, truckNumber, truckOwnership, truckSize, truckCapacity
-                        ,truckCity!!.city, truckCity!!.orion_db_city_code!!, truckDestination!!.city, truckDestination!!.orion_db_city_code!!,
+                        ,truckCity!!.city, truckCity!!.orionDbCityCode!!, truckDestination!!.city, truckDestination!!.orionDbCityCode!!,
                         t.first, t.second, sourcedAs, userPrefs.parentDemandType!!, truckPrice,spSecondaryId,spSecondaryName)
 
                     inventoryRepository.addInventory(addVehicleRequest.getRequest())

@@ -74,44 +74,6 @@ interface UserService {
   ): Single<BaseMessageResponse>
 
   /**
-   * Get team member's detail
-   */
-  @GET("/users/supplypartners")
-  fun getTeamMembers(
-    @Query("offset") offset: Int,
-    @Query("limit") limit: Int,
-    @Query("inc_all_users") includeAllUsers: Boolean,
-    @Query("sp_id") sp_id: String
-  ): Single<BaseResponse<UserDetailResponse>>
-
-  /**
-   * Create secondary user
-   */
-  @POST("/users/supplypartners/childuser/")
-  fun createSecondaryUser(
-    @Body payload: JsonObject
-  ): Single<BaseResponse<CreateUserResponse>>
-
-  /**
-   * Update secondary user
-   */
-  @PATCH("/users/supplypartners/childuser/{uuid}")
-  fun updateSecondaryUser(
-    @Path("uuid") uuid: String,
-    @Body payload: JsonObject
-  ): Single<BaseMessageResponse>
-
-  /**
-   * Update Admin user
-   */
-  @PATCH("/users/supplypartners/{uuid}")
-  fun updateAdminUser(
-    @Path("uuid") uuid: String,
-    @Body payload: JsonObject
-  ): Single<BaseMessageResponse>
-
-
-  /**
    * Delete Route
    */
   @PATCH("/users/supplypartners/{user_id}")

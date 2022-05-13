@@ -4,10 +4,14 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.injection.scope.ViewModelScope
+import com.delhivery.axle.ui.accountaction.AccountActionViewModel
+import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
+import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateViewModel
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsViewModel
@@ -21,13 +25,27 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
+import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
@@ -45,6 +63,7 @@ import com.delhivery.axle.ui.tripdetails.ImageViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import com.delhivery.axle.ui.trucks.TruckViewModel
+import com.delhivery.axle.ui.userroutes.ManageRouteViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import com.delhivery.axle.utils.ViewModelFactory
 import dagger.Binds
@@ -270,6 +289,96 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchCityViewModel::class)
   abstract fun bindSearchCityViewModel(searchCityViewModel: SearchCityViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileDetailsViewModel::class)
+  abstract fun bindProfileDetailsViewModel(profileDetailsViewModel: ProfileDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ProfileKYCDetailsViewModel::class)
+  abstract fun bindProfileKYCDetailsViewModel(profileKYCDetailsViewModel: ProfileKYCDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(KYCDocumentsViewModel::class)
+  abstract fun bindKYCDocumentsViewModel(kycDocumentsViewModel: KYCDocumentsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourKYCDetailsViewModel::class)
+  abstract fun bindYourKYCDetailsViewModel(yourKYCDetailsViewModel: YourKYCDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PanVerificationViewModel::class)
+  abstract fun bindPanVerificationViewModel(viewModel:PanVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(GstVerificationViewModel::class)
+  abstract fun bindGstVerificationViewModel(viewModel:GstVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AadhaarVerificationViewModel::class)
+  abstract fun bindAadhaarVerificationViewModel(viewModel:AadhaarVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(CommunicationAddressViewModel::class)
+  abstract fun bindCommunicationAddressViewModel(viewModel:CommunicationAddressViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BusinessVerificationViewModel::class)
+  abstract fun bindBusinessVerificationViewModel(viewModel:BusinessVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountActionViewModel::class)
+  abstract fun bindAccountActionViewModel(viewModel:AccountActionViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountRoleViewModel::class)
+  abstract fun bindAccountRoleViewModel(viewModel:AccountRoleViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AccountDetailsViewModel::class)
+  abstract fun bindAccountDetailsViewModel(viewModel:AccountDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(IdentityVerificationViewModel::class)
+  abstract fun bindIdentityVerificationViewModel(viewModel:IdentityVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PaymentDetailsViewModel::class)
+  abstract fun bindPaymentDetailsViewModel(viewModel: PaymentDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(BankDetailsViewModel::class)
+  abstract fun bindBankDetailsViewModel(viewModel: BankDetailsViewModel): ViewModel
+  @Binds
+  @IntoMap
+  @ViewModelScope(BasicDetailsViewModel::class)
+  abstract fun bindBasicDetailsViewModel(viewModel:BasicDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SearchCityStateViewModel::class)
+  abstract fun bindSearchCityStateViewModel(viewModel:SearchCityStateViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ManageRouteViewModel::class)
+  abstract fun bindManageRouteViewModel(viewModel:ManageRouteViewModel): ViewModel
+
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

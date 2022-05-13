@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/size_24dp"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bg_bottom_dialog">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close_btn"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_width="38dp"
+                android:layout_height="44dp"
+                app:srcCompat="@drawable/ic_vector_delete_doc"/>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/labelErrorMsg"
+            app:layout_constraintTop_toBottomOf="@+id/sepLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+           app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/size_14dp"
+            android:textSize="@dimen/text_18sp"
+            android:text="@string/label_delete_member"
+            android:textColor="@color/sub_heading_black"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/labelErrorDoc"
+            app:layout_constraintTop_toBottomOf="@+id/sepLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:textSize="@dimen/text_14sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:text="@string/msg_dialog_delete"
+            android:textColor="@color/info_bg"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_upload_again"
+            android:layout_width="match_parent"
+            style="@style/DeleteActionButton"
+            android:textAllCaps="false"
+            android:layout_marginTop="@dimen/size_20dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+           android:layout_height="wrap_content"
+            android:text="@string/action_delete"
+           />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_cancel"
+            android:textColor="@color/heading_black"
+            android:background="@drawable/bg_all_round_corner_grey_boundary"
+            android:textAllCaps="false"
+            android:textSize="@dimen/text_16sp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+             />
+
+
+    </LinearLayout>
+</layout>

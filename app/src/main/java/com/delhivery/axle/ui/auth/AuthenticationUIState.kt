@@ -7,9 +7,8 @@ enum class AuthenticationUIState {
   PhoneNo,
   OTP,
   LoginProgress,
-  SelectRoute,
   LoadRequest,
-  AddInventoryPathway,
   Disabled,
-  Password
+  Password,
+  AccountDetails
 }

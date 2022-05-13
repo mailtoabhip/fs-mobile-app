@@ -10,7 +10,7 @@ data class OTPSentResponse(@SerializedName("success") val successMsg: String)
 /**
  * Response for login with OTP
  */
-data class LoginResponse(@SerializedName("jwt") val jwtToken: String)
+data class LoginResponse(@SerializedName("jwt_token") val jwtToken: String)
 
 
 /**
@@ -53,3 +53,11 @@ data class Role(
   @SerializedName("app_id") val appId: String,
   @SerializedName("name") val name: String
 )
+
+/**
+ * KYC docs
+ */
+data class KycDocsResponse(
+        @SerializedName("kyc_documents") val kyc_documents: List<String>?
+)
+

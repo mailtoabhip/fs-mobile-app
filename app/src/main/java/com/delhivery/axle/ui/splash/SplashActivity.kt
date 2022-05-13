@@ -8,15 +8,32 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.*
+import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
+import com.delhivery.axle.ui.kyc.address.AddressActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
+import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
+import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -42,6 +59,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   var currentCode :Int =0
   var type :String = ""
   var tid :String  = ""
+  lateinit var isAuthenticated :SplashPostState
+  var ifUpdateFalse=false
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -72,6 +91,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     /* start splash animation */
     animate()
     checkForDynamicLinks()
+    binding.btnGetStarted.visibility = View.GONE
+    binding.btnGetStarted.setOnClickListener {
+      if(ifUpdateFalse) {
+        postAnimate(isAuthenticated)
+      }
+    }
   }
 
   private fun checkForDynamicLinks() {
@@ -98,16 +123,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
    * Splash animation chain
    */
   private fun animate() {
-    val isAuthenticated = viewModel.postState()
-    please(1500, OvershootInterpolator()) {
-      animate(binding.textDelhivery) toBe {
-        alpha(1f)
-      }
-      animate(binding.imgLogo) toBe {
-        alpha(1f)
-        scale(1.6f, 1.6f)
-      }
-    }.withEndAction {
+     isAuthenticated = viewModel.postState()
+
       checkForUpdatedVersion { it ->
         when (it) {
           true -> {
@@ -137,13 +154,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             )
           }
           false -> {
-            postAnimate(isAuthenticated)
+            ifUpdateFalse=true
+            if(ifUpdateFalse && userPrefs.hasLoggedIn){
+              binding.btnGetStarted.visibility = View.GONE
+              postAnimate(isAuthenticated)
+            }else{
+              binding.btnGetStarted.visibility = View.VISIBLE
+            }
           }
         }
       }
-    }
-        .setStartDelay(SplashAnimationDelay / 2)
-        .start()
+
   }
 
   private fun openPlayStore() {
@@ -194,6 +215,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             } catch (e: NumberFormatException) {
               //Do Nothing
             }
+              try{
+              viewModel.saveLoadPostKycConfig(
+                  remoteConfig.getString("post_load")
+              )
+                  viewModel.saveTruckPostKycConfig(
+                      remoteConfig.getString("post_truck")
+                  )
+          } catch (e: Exception) {
+            //Do Nothing
+        }
 
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
             currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
@@ -214,17 +245,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   private fun postAnimate(state: SplashPostState) {
     /**
-     * Check If it's from deep link*/
+     * Check If it's from deep link
+     * */
     if (state == Home && type != "") {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
       bundle.putString(ARGS_DEEPLINK_ID , tid)
-      navigationUtils.navigate(HomeActivity::class.java, true, bundle)
+     navigationUtils.navigate(HomeActivity::class.java, true, bundle)
     } else {
       when (state) {
-        Onboarding -> OnboardingActivity::class
         Auth -> AuthenticationActivity::class
         Home -> HomeActivity::class
+        AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {
@@ -235,7 +267,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           //For Inventory
           bundle.putString(ARGS_VEHICLE_NUMBER, vehicleNumber)
         }
-        navigationUtils.navigate(it.java, true, bundle)
+          navigationUtils.navigate(it.java, true, bundle)
       }
     }
   }

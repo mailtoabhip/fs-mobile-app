@@ -6,12 +6,13 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class CityModel(
-  @SerializedName("city") var city: String,
-  @SerializedName("orion_db_city_code") var orion_db_city_code: String? = "",
+  @SerializedName("city") val city: String,
+  @SerializedName("orion_db_city_code") val orionDbCityCode: String? = "",
   @SerializedName("district") val district: String? = "",
-  @SerializedName("state") val state: String? = ""
-) : BaseKeyTypeModel<String>(), Serializable {
-  override fun key() = orion_db_city_code ?: ""
+  @SerializedName("state") val state: String? = "",
+  val type:String = "city"
+) : BaseKeyTypeModel<String>(),Serializable {
+  override fun key() = orionDbCityCode ?: ""
 
   fun cityName() = StringUtils.capitalize(city) ?: ""
 
@@ -21,7 +22,7 @@ data class CityModel(
     val sb = StringBuilder().append(cityName())
     if (district.isNotNullOrEmpty())
       sb.append(", ").append(district)
-    val code = orion_db_city_code?.subSequence(0, 2)
+    val code = orionDbCityCode?.subSequence(0, 2)
         .toString()
     StateModelList.toMutableList()
         .forEach { stateModel ->
@@ -33,12 +34,12 @@ data class CityModel(
     return sb.toString()
   }
 
-  fun getUserCity() = UserCity(city, orion_db_city_code)
+  fun getUserCity() = UserCity(city, orionDbCityCode)
 
 }
 
 data class CitiesResponse(
-  @SerializedName("city_suggestion_data") val cities: List<CityModel>
+  @SerializedName("city_sugg") val cities: List<CityModel>
 )
 
 /**
@@ -71,6 +72,7 @@ data class SearchCityModel(
   fun cityName() = StringUtils.capitalize(city)
 
   fun stateName() = StringUtils.capitalize(state)
+
 }
 
 /**
@@ -78,6 +80,44 @@ data class SearchCityModel(
  */
 data class SearchCitiesResponse(
   @SerializedName("records") val cities: List<SearchCityModel>
+)
+val CityStateModelList = listOf(
+  CityModel("Andaman & Nicobar Islands", "AN", "","Andaman & Nicobar Islands","state"),
+  CityModel("Andhra pradesh", "AP", "","Andhra pradesh","state"),
+  CityModel("Arunachal pradesh", "AR", "","Arunachal pradesh","state"),
+  CityModel("Assam", "AS", "","Assam","state"),
+  CityModel("Bihar", "BR", "","Bihar","state"),
+  CityModel("Chandigarh", "CH", "","Chandigarh","state"),
+  CityModel("Chhattisgarh", "CG", "","Chhattisgarh","state"),
+  CityModel("Dadra & nagar haveli", "DH", "","Dadra & nagar haveli","state"),
+  CityModel("Daman & diu", "DD", "","Daman & diu","state"),
+  CityModel("Delhi", "DL", "","Delhi","state"),
+  CityModel("Goa", "GA", "","Goa","state"),
+  CityModel("Gujarat", "GJ", "","Gujarat","state"),
+  CityModel("Haryana", "HR", "","Haryana","state"),
+  CityModel("Himachal pradesh", "HP", "","Himachal pradesh","state"),
+  CityModel("Jammu & kashmir", "JK", "","Jammu & kashmir","state"),
+  CityModel("Jharkhand", "JH", "","Jharkhand","state"),
+  CityModel("Karnataka", "KA", "","Karnataka","state"),
+  CityModel("Kerala", "KL", "","Kerala","state"),
+  CityModel("Lakhswadeep", "LD", "","Lakhswadeep","state"),
+  CityModel("Madhya pradesh", "MP", "","Madhya pradesh","state"),
+  CityModel("Maharashtra", "MH", "","Maharashtra","state"),
+  CityModel("Manipur", "MN", "","Manipur","state"),
+  CityModel("Meghalaya", "ML", "","Meghalaya","state"),
+  CityModel("Mizoram", "MZ", "","Mizoram","state"),
+  CityModel("Nagaland", "NL", "","Nagaland","state"),
+  CityModel("Odisha", "OR", "","Odisha","state"),
+  CityModel("Puducherry", "PU", "","Puducherry","state"),
+  CityModel("Punjab", "PB", "","Punjab","state"),
+  CityModel("Rajasthan", "RJ", "","Rajasthan","state"),
+  CityModel("Sikkim", "SK", "","Sikkim","state"),
+  CityModel("Tamil nadu", "TN", "","Tamil nadu","state"),
+  CityModel("Telangana", "TL", "","Telangana","state"),
+  CityModel("Tripura", "TR", "","Tripura","state"),
+  CityModel("Uttar pradesh", "UP", "","Uttar pradesh","state"),
+  CityModel("Uttarakhand", "UK", "","Uttarakhand","state"),
+  CityModel("West bengal", "WB", "","West bengal","state")
 )
 
 /**

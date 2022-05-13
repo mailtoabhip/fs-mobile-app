@@ -5,7 +5,7 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileFragment
+import com.delhivery.axle.ui.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletFragment
@@ -34,5 +34,6 @@ abstract class HomeFragmentsBindingModule {
 
   @ContributesAndroidInjector
   internal abstract fun provideLoadsTruckFragment(): HomeLoadsTruckFragment
+
 
 }

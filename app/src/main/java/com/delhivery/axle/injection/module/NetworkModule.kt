@@ -15,7 +15,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit.MINUTES
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Singleton
 
@@ -298,5 +297,18 @@ class NetworkModule {
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.InventoryService).create(
     InventoryService::class.java
+  )
+
+  /**
+   * Provide [LoadboardService]
+   */
+
+  @Provides
+  @Singleton
+  fun provideLoadboardService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.LoadboardService).create(
+          LoadBoardService::class.java
   )
 }

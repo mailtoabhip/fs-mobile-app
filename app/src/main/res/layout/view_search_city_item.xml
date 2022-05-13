@@ -7,7 +7,7 @@
             name="request"
             type="com.delhivery.axle.data.CityModel" />
     </data>
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cityLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,30 +16,25 @@
         android:focusable="true"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/lc_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_location"/>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
+            app:srcCompat="@drawable/ic_location_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lc_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/text_city"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_11dp"
-            android:orientation="vertical">
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_city"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_16sp"
-                android:text="@{request.cityName()}"
-                tools:text= "Jaipur"/>
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_4dp"
-                android:text="@{request.stateName()}"
-                tools:text="Rajasthan"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_16sp"
+            android:text="@{request.cityName()}"
+            tools:text= "Jaipur"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

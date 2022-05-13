@@ -111,6 +111,11 @@ enum class UrlConfig(
       "https://mf9vem7911.execute-api.us-east-1.amazonaws.com/uat/"
 
   ),
+  LoadboardService(
+          "https://orion-user-loadboard.delhivery.com",
+          "https://orion-user-onboarding-api-dev.delhivery.com",
+          "https://orion-user-onboarding-api-uat.delhivery.com"
+  ),
   AppID(
   "83", "371", "371"
   );

@@ -1,14 +1,17 @@
 package com.delhivery.axle.api.repository
 
+import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.UpdateUserAccessRequest
 import com.delhivery.axle.api.request.UpdateUserFCMTokenRequest
 import com.delhivery.axle.api.request.UpdateUserRoutesRequest
+import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.api.service.UserService
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -29,7 +32,8 @@ class UserRepository @Inject constructor(
   private val appDB: AppDatabase,
   private val userPrefs: UserPrefs,
   private val userService: UserService,
-  private val umsService: UMSService
+  private val umsService: UMSService,
+  private val loadBoardService: LoadBoardService
 ) : BaseRepository() {
 
   /* JWT token */
@@ -54,9 +58,9 @@ class UserRepository @Inject constructor(
    * Get user
    */
   fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache || user == null) {
-    userService.userDetails(userId())
-        .convertResponse()
-        .onBackground()
+    loadBoardService.userDetails(userId()).convertResponse().map {
+      it.userModel[0]
+    }.onBackground()
         .doOnSuccess {
           if (it != null) {
             user = it
@@ -92,30 +96,6 @@ class UserRepository @Inject constructor(
   fun getDelegationToken(target: String) = umsService.getDelegationToken(target)
 
   /**
-   * Get team members
-   */
-  fun getUserTeamMembers(offset: Int, limit: Int, includeAllUsers: Boolean, sp_id: String) =
-    userService.getTeamMembers(offset, limit, includeAllUsers, sp_id).convertResponse()
-
-  /**
-   * Create secondary user
-   */
-  fun createSecondaryUser(jsonObject: JsonObject) =
-    userService.createSecondaryUser(jsonObject).convertResponse()
-
-  /**
-   * Update secondary user
-   */
-  fun updateSecondaryUser(uuid: String, jsonObject: JsonObject) =
-    userService.updateSecondaryUser(uuid, jsonObject).convertMessageResponse()
-
-
-  /**
-   * Update Admin user
-   */
-  fun updateAdminUser(uuid: String, jsonObject: JsonObject) =
-      userService.updateAdminUser(uuid, jsonObject).convertMessageResponse()
-  /**
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
@@ -129,4 +109,9 @@ class UserRepository @Inject constructor(
    * get omc details
    */
   fun getOMCs(offset: Int, limit: Int, payee: String) = userService.getOMCs(offset, limit, payee)
+
+  /**
+   * get kyc docs
+   */
+  fun getKycDocs() = loadBoardService.kycDocs(userId())
 }

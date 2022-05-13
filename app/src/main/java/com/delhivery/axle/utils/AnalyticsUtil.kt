@@ -201,6 +201,8 @@ const val PROPERTY_REASON = "reason_for_deactivating"
 
 
 
+
+
 const val VALUE_BID = "bid"
 const val VALUE_TRIP = "trip"
 const val VALUE_LOAD = "load"

@@ -135,7 +135,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       when (it) {
         false -> binding.rvLoads.apply {
           this@HomeLoadsFragment.visible = true
-          binding.routesBanner.visibility = View.VISIBLE
+          binding.routesBanner.visibility = View.GONE
           addOnScrollListener(BannerRVScrollListener())
         }
 
@@ -256,7 +256,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
-    viewModel.checkUserRoutes()
     if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
       viewModel.routeUpdated = false

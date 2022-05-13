@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+  <data>
+    <variable
+        name="request"
+        type="com.delhivery.axle.data.CityModel" />
+  </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_all_round_corner_light_blue"
+    android:backgroundTint="#ECF0FF"
+    android:layout_margin="@dimen/size_8dp"
+    android:paddingStart="@dimen/size_8dp"
+    android:paddingEnd="@dimen/size_8dp"
+    android:paddingTop="@dimen/size_2dp"
+    android:paddingBottom="@dimen/size_2dp">
+  <androidx.appcompat.widget.AppCompatTextView
+      android:id="@+id/text_city"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      android:textColor="@color/colorAccent"
+      android:textSize="@dimen/text_12sp"
+      android:text="@{request.cityName()}"
+      tools:text="Jaipur"/>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/deselect_city_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_cancel_city"
+        app:layout_constraintStart_toEndOf="@+id/text_city"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_marginStart="@dimen/size_6dp"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

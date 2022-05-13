@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+   <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:id="@+id/kycTabs"
+      android:paddingTop="@dimen/size_12dp"
+       android:paddingBottom="@dimen/size_12dp"
+       android:gravity="center_horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/custom_tab_textView_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/issues"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingStart="@dimen/size_12dp"
+            android:paddingEnd="@dimen/size_12dp"
+           android:background="@drawable/bg_all_round_corner_light_red"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:textColor="@color/error_red"
+             android:textSize="@dimen/text_16sp"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+</layout>
+
+
+

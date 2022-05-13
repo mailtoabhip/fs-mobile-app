@@ -49,13 +49,16 @@ data class BaseMessageResponse(
 data class BaseErrorResponse(
   @SerializedName("message") val errorMessage: String,
   @SerializedName("code") private val _errorCode: Int,
-  @SerializedName("data") val data: List<String>
+  @SerializedName("data") val data: List<ObjectErrorData>?= null
 ) {
   /**
    * Error code as [Integer]
    */
   fun errorCode() = _errorCode
 }
+data class ObjectErrorData(
+  @SerializedName("is_duplicate_pan") val isDuplicatePan: Boolean?
+)
 
 /**
  * Error response body

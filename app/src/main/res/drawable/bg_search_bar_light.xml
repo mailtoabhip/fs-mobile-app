@@ -7,12 +7,14 @@
       <padding
           android:bottom="@dimen/size_12dp"
           android:left="@dimen/size_20dp"
+          android:right="@dimen/size_20dp"
           android:top="@dimen/size_12dp"/>
     </shape>
   </item>
 
   <item
-      android:drawable="@drawable/ic_search_black"
+      android:drawable="@drawable/ic_search_city"
+      android:gravity="end"
       android:height="@dimen/size_24dp"
       android:width="@dimen/size_24dp"/>
 </layer-list>

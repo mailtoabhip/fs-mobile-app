@@ -215,13 +215,13 @@ class HomeTrucksViewModel @Inject constructor(
         price: Double,
         position: Int) {
 
-        if( currentCity.orion_db_city_code != null && destinationCity.orion_db_city_code != null) {
+        if( currentCity.orionDbCityCode != null && destinationCity.orionDbCityCode != null) {
             compositeDisposable += inventoryRepository.getOriginDestinationCluster(
-                currentCity.orion_db_city_code ?: "", destinationCity.orion_db_city_code ?: ""
+                currentCity.orionDbCityCode ?: "", destinationCity.orionDbCityCode ?: ""
             )
                 .flatMap { t ->
-                    val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orion_db_city_code!!,
-                        destinationCity.city, destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, "Free"
+                    val request = UpdateTruck(inventoryId, "activate_truck", currentCity.city, currentCity.orionDbCityCode!!,
+                        destinationCity.city, destinationCity.orionDbCityCode!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, "Free"
                     )
                     inventoryRepository.activateTruck(request.getRequest())
                 }
@@ -255,13 +255,13 @@ class HomeTrucksViewModel @Inject constructor(
         ownership:String,
         position: Int) {
 
-        if( currentCity.orion_db_city_code != null && destinationCity.orion_db_city_code != null) {
+        if( currentCity.orionDbCityCode != null && destinationCity.orionDbCityCode != null) {
             compositeDisposable += inventoryRepository.getOriginDestinationCluster(
-                currentCity.orion_db_city_code ?: "", destinationCity.orion_db_city_code ?: ""
+                currentCity.orionDbCityCode ?: "", destinationCity.orionDbCityCode ?: ""
             )
                 .flatMap { t ->
-                    val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orion_db_city_code!!, destinationCity.city,
-                        destinationCity.orion_db_city_code!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, ownership = ownership)
+                    val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orionDbCityCode!!, destinationCity.city,
+                        destinationCity.orionDbCityCode!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, ownership = ownership)
 
                     inventoryRepository.editTruck(request.getRequest())
                 }

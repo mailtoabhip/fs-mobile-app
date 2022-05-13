@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.home.routes.RouteModel
+import com.delhivery.axle.data.userroutes.UserRoutesWarningItem_NoMember
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -35,6 +36,7 @@ class UserRoutesViewModel @Inject constructor(
   var routes = mutableListOf<RouteModel>()
   var existingRoutes = mutableListOf<RouteModel>()
   var updatedLanes = MutableLiveData<Boolean>()
+    var emptyState = MutableLiveData<Boolean>()
 
   /**
    * Fetch user routes
@@ -51,15 +53,22 @@ class UserRoutesViewModel @Inject constructor(
             mutableListOf<Pair<BaseUserRouteRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               add(Pair(UserRouteProgressItem(), Remove))
 
-              for (route in _user.userRoutes()) {
-                add(Pair(UserRouteItem(route), Add))
-              }
+            if(_user.userRoutes().isNotEmpty()) {
+                for (route in _user.userRoutes()) {
+                    add(Pair(UserRouteItem(route), Add))
+                }
+                emptyState.value = false
+            }
+            else{
+                add(Pair(UserRoutesWarningItem_NoMember, Add))
+                emptyState.value = true
+            }
             }.let {
               allRoutesLiveData.postValue(it)
             }
             routes = _user.userRoutes() as MutableList<RouteModel>
             routesLiveData.postValue(
-                Pair(Pair(_user.baseCity, _user.baseCityCode), routes)
+                    Pair(Pair(_user.supplierDetails?.baseCity, _user.supplierDetails?.baseCityCode), routes) as Pair<Pair<String, String>, MutableList<RouteModel>>?
             )
           } else {
             mutableListOf<Pair<BaseUserRouteRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
