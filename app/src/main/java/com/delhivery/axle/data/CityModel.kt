@@ -10,7 +10,7 @@ data class CityModel(
   @SerializedName("orion_db_city_code") val orionDbCityCode: String? = "",
   @SerializedName("district") val district: String? = "",
   @SerializedName("state") val state: String? = "",
-  val type:String = "city"
+  val type:String? = "city"
 ) : BaseKeyTypeModel<String>(),Serializable {
   override fun key() = orionDbCityCode ?: ""
 
