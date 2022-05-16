@@ -15,14 +15,19 @@ import android.view.Window
 import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogAddTruckSuccessBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.prefs.APPROVED
+import com.delhivery.axle.utils.prefs.DISABLED
+import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.util.regex.Pattern
@@ -163,7 +168,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.btnAddTruck.setOnClickListener{
-            validateFieldsAndAddTruck()
+           validateFieldsAndAddTruck()
         }
 
         viewModel.fetchTruckType()

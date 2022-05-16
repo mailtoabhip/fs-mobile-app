@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
@@ -31,6 +32,9 @@ import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.APPROVED
+import com.delhivery.axle.utils.prefs.DISABLED
+import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -84,18 +88,56 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         binding.addTruck.setOnClickListener {
-            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-            ), VALUE_ADD_TRUCK_PAGE)
-          //  context?.let {  EditTruckDialog(context!!, viewModel, userPrefs, analyticsUtil, uiUtils,1).show()}
+            when (viewModel.userPrefs.canBid()) {
+                APPROVED -> {
+                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+                        TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                        TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                    ), VALUE_ADD_TRUCK_PAGE)
+                }
+                UNAPPROVED -> {
+                    dialogUtils.showBasicConfirmDialog(
+                        string.title_dialog_supplier_not_approved,
+                        string.msg_dialog_supplier_not_approved,
+                        getString(string.label_call_us), getString(string.label_mail_us),
+                        { callHelpline() }, { sendMail() }
+                    )
+                }
+                DISABLED -> {
+                    dialogUtils.showBasicConfirmDialog(
+                        string.title_dialog_supplier_disabled,
+                        string.msg_dialog_supplier_disabled,
+                        getString(string.label_call_us), getString(string.label_mail_us),
+                        { callHelpline() }, { sendMail() }
+                    )
+                }
+            }
         }
         binding.addTruckFloating.setOnClickListener {
-            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
-                TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-            ),VALUE_ADD_TRUCK_PAGE)
-
+            when (viewModel.userPrefs.canBid()) {
+                APPROVED -> {
+                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
+                        TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                        TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                    ),VALUE_ADD_TRUCK_PAGE)
+                }
+                UNAPPROVED -> {
+                    dialogUtils.showBasicConfirmDialog(
+                        string.title_dialog_supplier_not_approved,
+                        string.msg_dialog_supplier_not_approved,
+                        getString(string.label_call_us), getString(string.label_mail_us),
+                        { callHelpline() }, { sendMail() }
+                    )
+                }
+                DISABLED -> {
+                    dialogUtils.showBasicConfirmDialog(
+                        string.title_dialog_supplier_disabled,
+                        string.msg_dialog_supplier_disabled,
+                        getString(string.label_call_us), getString(string.label_mail_us),
+                        { callHelpline() }, { sendMail() }
+                    )
+                }
+            }
         }
 
         binding.editStickySearch.addTextChangedListener(object : TextWatcher{
@@ -335,10 +377,31 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                     mutableListOf(userPrefs.userId(), "trucks_screen")
                 )
-                showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-                    TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                    TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-                ), VALUE_ADD_TRUCK_TOP_BANNER)
+                when (viewModel.userPrefs.canBid()) {
+                    APPROVED -> {
+                        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
+                            TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
+                            TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                        ), VALUE_ADD_TRUCK_TOP_BANNER)
+                    }
+                    UNAPPROVED -> {
+                        dialogUtils.showBasicConfirmDialog(
+                            string.title_dialog_supplier_not_approved,
+                            string.msg_dialog_supplier_not_approved,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
+                        )
+                    }
+                    DISABLED -> {
+                        dialogUtils.showBasicConfirmDialog(
+                            string.title_dialog_supplier_disabled,
+                            string.msg_dialog_supplier_disabled,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
+                        )
+                    }
+                }
+
             }
         }
     }
