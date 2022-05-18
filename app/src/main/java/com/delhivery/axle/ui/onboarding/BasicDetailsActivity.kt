@@ -14,6 +14,11 @@ import com.delhivery.axle.ui.searchcitystate.SelectedData
 import com.delhivery.axle.ui.searchcitystate.searchCityIntent
 import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
 import com.delhivery.axle.ui.searchcitystate.selectedCityStates
+import com.delhivery.axle.utils.EVENT_SUBMITTED_ROUTES_TRUCKS
+import com.delhivery.axle.utils.EVENT_SUBMIT_GST
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.StepKey
@@ -27,6 +32,9 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
     @Inject
    lateinit var userPrefs:UserPrefs
+
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun getViewModelClass() = BasicDetailsViewModel::class.java
 
@@ -45,6 +53,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 1)
+        startTime = System.currentTimeMillis()
 
         binding.checkBoxOpenBody.setOnClickListener {
 
@@ -120,6 +129,14 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMITTED_ROUTES_TRUCKS,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
+                )
+
                 val bundle = Bundle()
                 bundle.putInt(StepKey,0)
                 navigationUtils.navigateKyc(this,true,bundle)

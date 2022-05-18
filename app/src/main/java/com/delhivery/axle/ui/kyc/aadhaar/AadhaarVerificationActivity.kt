@@ -88,7 +88,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
-
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,6 +116,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
+        startTime = System.currentTimeMillis()
 
         binding.editAadhaar.apply {
             lengthAction(14){
@@ -194,6 +196,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 if(userPrefs.retryVerification){
                     userPrefs.identityRejectReason= "Document under verification"
                 }
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_AADHAR,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
+                )
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
             } else {

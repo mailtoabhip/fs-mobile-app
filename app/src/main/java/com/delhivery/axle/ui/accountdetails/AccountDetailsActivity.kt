@@ -54,6 +54,7 @@ import android.widget.TextView.BufferType
 import com.delhivery.axle.R.string
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.utils.extensions.focusClick
+import java.util.Date
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
@@ -68,6 +69,9 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     @Inject lateinit var userPrefs:UserPrefs
 
+    var startTime: Long = 0
+    var endTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -77,6 +81,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        startTime = System.currentTimeMillis()
 
         onLocationButtonClicked()
 
@@ -117,8 +122,19 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
             binding.btnCreateAccount.setOnClickListener {
                 viewModel.progressLiveData.postValue(true)
-                viewModel.createAccount(UpdateUserRequest(businessName = viewModel.business_name.value?.trim(),
-                        userName = viewModel.username.value?.trim(),
+                val username = viewModel.username.value?.trim()
+                val businessName = viewModel.business_name.value?.trim()
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMITTED_ABOUT_YOURSELF,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_USERNAME,
+                        PROPERTY_BUSINESS_NAME, PROPERTY_TNC, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", username?:"dummy name",
+                        businessName?:"dummy business", viewModel.termsCheck.value.toString(), ttl.toString())
+                )
+                viewModel.createAccount(UpdateUserRequest(businessName = businessName,
+                        userName = username,
                         referralCode = viewModel.referral_code.value?.trim(),
                         receiveWhatsappNotifications = viewModel.whatsapp.value,
                 isLocationEnabled = viewModel.locationOption.value))

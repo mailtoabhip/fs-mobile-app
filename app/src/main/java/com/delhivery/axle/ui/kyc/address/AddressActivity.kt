@@ -85,6 +85,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var alternateAddressData= AddAddressModel()
     var gstAddressData= AddAddressModel()
     var dataSetFromPref =false
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
@@ -114,6 +116,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
+        startTime = System.currentTimeMillis()
+
         if(!userPrefs.getAddressList().isNullOrEmpty()){
             for(addressData in userPrefs.getAddressList()!!){
                 if(addressData?.addressType!!.startsWith("g",true)){
@@ -191,6 +195,14 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 }
                  addDataToPreference()
                 userPrefs.businessAddress = selectedAddressData.address!!
+
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_OFFICE_ADDRESS,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"dummy")
+                )
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
 
@@ -522,6 +534,12 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 binding.gstAddressLayout.isSelected = false
                 binding.alterateAddressText.setText(viewModel.alternateAddress)
                 selectedAddressData = alternateAddressData
+
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_POPUP_OFFICE_ADDRESS,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")
+                )
                 addDataToPreference()
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")

@@ -34,6 +34,9 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
   private var selectedData:RouteModel?=null
   var changedDestinationData = false
   var changedOriginData =false
+  var startTime: Long = 0
+  var endTime: Long = 0
+
   override fun getViewModelClass() = ManageRouteViewModel::class.java
 
   override fun layoutId() = R.layout.activity_manage_route
@@ -59,6 +62,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
 
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    startTime = System.currentTimeMillis()
 
     binding.editOrigin.setOnClickListener {
       val bundle = Bundle()

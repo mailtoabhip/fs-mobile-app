@@ -83,6 +83,9 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     var proofTypeFilled = false
     var docUploadProof = true
     var dataSetFromPref =false
+    var startTime: Long = 0
+    var endTime: Long = 0
+
 
     override fun getViewModelClass() = CommunicationAddressViewModel::class.java
 
@@ -116,7 +119,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
-
+        startTime = System.currentTimeMillis()
         /* Address Proof */
 
         binding.btnSubmitDetails.setOnClickListener {
@@ -281,6 +284,14 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 var address = viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 addDataToPreference(address)
                 userPrefs.businessAddress = address
+
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_OFFICE_ADDRESS,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), viewModel.documentProofType?:"alternate")
+                )
 
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
