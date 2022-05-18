@@ -290,7 +290,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 analyticsUtil.trackEvent(
                     EVENT_SUBMIT_OFFICE_ADDRESS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
-                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), "alternate")
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), viewModel.documentProofType?:"alternate")
                 )
 
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
