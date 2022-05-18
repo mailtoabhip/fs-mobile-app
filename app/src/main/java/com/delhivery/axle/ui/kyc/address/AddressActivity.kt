@@ -201,7 +201,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 analyticsUtil.trackEvent(
                     EVENT_SUBMIT_OFFICE_ADDRESS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
-                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.addressType?:"dummy")
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"dummy")
                 )
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
