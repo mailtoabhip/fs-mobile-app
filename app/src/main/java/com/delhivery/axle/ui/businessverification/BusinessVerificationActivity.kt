@@ -78,6 +78,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     var truckNum =false
     var ownedTruck =false
     var attachedTruck =false
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,6 +160,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
+        startTime = System.currentTimeMillis()
 
         if(userPrefs.retryVerification){
             binding.btnVerifyBusiness.setText(R.string.action_retry_verification)
@@ -308,6 +311,23 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                 userPrefs.ownedTruck=viewModel.ownedTruck.value.toString()
                 userPrefs.attachedTruck=viewModel.attachedTruck.value.toString()
                 userPrefs.rcNumber=viewModel.truckNumber.value.toString()
+
+                var identityType = ""
+                if(binding.textLR.isChecked){
+                    identityType = "LR"
+                }
+
+                if(binding.textTruck.isChecked){
+                    identityType = "RC"
+                }
+
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_BUSINESS_PROOF,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_BUSINESS_PROOF_TYPE),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), identityType)
+                )
                 if(userPrefs.retryVerification){
                     userPrefs.rcRejectReason= "Document under verification"
                     if(!userPrefs.isBankDetailsRejected) {

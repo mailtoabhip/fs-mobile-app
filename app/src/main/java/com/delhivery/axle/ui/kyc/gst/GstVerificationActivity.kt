@@ -67,6 +67,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     val awsPath = "loadboard/gst/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +94,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        startTime = System.currentTimeMillis()
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
 
 
@@ -170,6 +173,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 if(userPrefs.retryVerification){
                     userPrefs.identityRejectReason= "Document under verification"
                 }
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_GST,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
+                )
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                         TotalStepsKey)!!,null)
             } else {

@@ -7,6 +7,11 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.EVENT_ACCEPT_VENDOR_POLICY
+import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -14,12 +19,15 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
     @Inject
     lateinit var userPrefs: UserPrefs
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        startTime = System.currentTimeMillis()
 
 
         binding.vendorPolicyLink.setOnClickListener {
@@ -30,6 +38,13 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
         viewModel.vendorUserUpdateLiveData.observe(this, Observer {
             if (it) {
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_ACCEPT_VENDOR_POLICY,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
+                )
                 userPrefs.vendorPolicyAccepted = true
                 navigationUtils.showKycSubmittedDialog()
             }

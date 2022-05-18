@@ -28,8 +28,14 @@ import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
+import com.delhivery.axle.utils.EVENT_SUBMIT_BUSINESS_PROOF
+import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.PROPERTY_BUSINESS_PROOF_TYPE
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
@@ -74,6 +80,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     var ifsc = false
     var docUpload =false
     var nameDec =true
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +116,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
+        startTime = System.currentTimeMillis()
 
         viewModel.accountHolderText.observe(this, Observer {
             if(userPrefs.panName.equals(it,true)){
@@ -149,6 +158,15 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 userPrefs.paymentAccountNumber = viewModel.accountText.value.toString()
                 userPrefs.ifscCode = viewModel.ifscText.value.toString()
                 userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
+
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_PAYMENT_DETAILS,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
+                )
+
                 if(userPrefs.retryVerification){
                     userPrefs.paymentRejectReason="Document under verification"
                     userPrefs.isBankDetailsRejected=false

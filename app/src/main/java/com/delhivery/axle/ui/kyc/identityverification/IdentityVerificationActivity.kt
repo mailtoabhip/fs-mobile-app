@@ -63,10 +63,11 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     @Inject
     lateinit var userPrefs: UserPrefs
 
-
     val awsPath = "loadboard/iv/"
 
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,6 +126,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
+        startTime = System.currentTimeMillis()
 
         binding.textCin.setOnClickListener{
             clickedCin(false)
@@ -163,18 +165,22 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
+                var identityType = ""
                 when {
                     binding.editCin.length()>0 -> {
+                        identityType = "cin_number"
                         userPrefs.cinNumber = viewModel.cinNumber
                         userPrefs.udyogNumber = ""
                         userPrefs.shopNumber =""
                     }
                     binding.editUdyog.length()>0 -> {
+                        identityType = "udyog_aadhaar_number"
                         userPrefs.udyogNumber = viewModel.udyogNumber
                         userPrefs.cinNumber = ""
                         userPrefs.shopNumber =""
                     }
                     binding.editShop.length()>0 -> {
+                        identityType = "shop_establishment_number"
                         userPrefs.shopNumber = viewModel.shopNumber
                         userPrefs.cinNumber = ""
                         userPrefs.udyogNumber =""
@@ -184,6 +190,13 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                     userPrefs.identityRejectReason= "Document under verification"
                 }
 
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                analyticsUtil.trackEvent(
+                    EVENT_SUBMIT_IDENTITY,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_IDENTITY_SELECTED),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), identityType)
+                )
             navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                 TotalStepsKey)!!,null)
             }
