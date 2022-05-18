@@ -288,7 +288,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
                 analyticsUtil.trackEvent(
-                    EVENT_SUBMIT_GST,
+                    EVENT_SUBMIT_OFFICE_ADDRESS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), "alternate")
                 )
