@@ -12,12 +12,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.WindowManager
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
@@ -26,22 +24,41 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.data.address.AddressDetailData
-import com.delhivery.axle.databinding.*
+import com.delhivery.axle.databinding.ActivityAddressBinding
+import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
+import com.delhivery.axle.databinding.DialogConfirmAddressDialogBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.*
+import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.CurrentStepKey
+import com.delhivery.axle.utils.EVENT_GST_OFFICE_ADDRESS
+import com.delhivery.axle.utils.EVENT_SUBMIT_OFFICE_ADDRESS
+import com.delhivery.axle.utils.EVENT_SUBMIT_POPUP_OFFICE_ADDRESS
+import com.delhivery.axle.utils.FileCompressor
+import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.PROPERTY_ADD_PROOF_TYPE
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.REQCODE_CAMERA
+import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
+import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
+import com.delhivery.axle.utils.StepKey
+import com.delhivery.axle.utils.TotalStepsKey
+import com.delhivery.axle.utils.extensions.focusClick
+import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_verify_pan.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
-
 
 class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface{
 
@@ -198,10 +215,17 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
+
+                var event = if(selectedAddressData.addressType?:"dummy" == "gst"){
+                  EVENT_GST_OFFICE_ADDRESS
+                }else{
+                  EVENT_SUBMIT_OFFICE_ADDRESS
+                }
+
                 analyticsUtil.trackEvent(
-                    EVENT_SUBMIT_OFFICE_ADDRESS,
+                    event,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
-                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"dummy")
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"")
                 )
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,null)
