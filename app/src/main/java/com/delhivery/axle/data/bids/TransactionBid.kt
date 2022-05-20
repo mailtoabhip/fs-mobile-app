@@ -23,9 +23,8 @@ data class TransactionBid(
   @SerializedName("sp_secondary_phone") val secondaryVendorPhone: String,
   @SerializedName("vehicle_type") val vehicleType: String? =null,
   @SerializedName("vehicle_number") val vehicleNumber: String? = null,
-  @SerializedName("child_transaction_id") val childTransactionId: String?=null
-
-
+  @SerializedName("child_transaction_id") val childTransactionId: String?=null,
+  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null
   ) : BaseKeyTypeModel<String>() {
   override fun key() = id
 

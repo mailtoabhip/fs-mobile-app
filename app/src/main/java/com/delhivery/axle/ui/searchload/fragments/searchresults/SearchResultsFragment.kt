@@ -18,7 +18,9 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.*
@@ -235,6 +237,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         )
       }
     }
+  }
+
+  override fun deleteItem(item: BaseSearchLoadsRVAdapterItem<*>, position: Int) {
+    binding.rv.post(Runnable {
+      val bidData = item.data as  HomeBidsRequestItemData
+      _adapter.operation(listOf(Pair(SearchLoadsRequestItem(bidData), DataRVAdapterOperationType.Remove)))
+      _adapter.notifyDataSetChanged()
+    })
   }
 
   /**

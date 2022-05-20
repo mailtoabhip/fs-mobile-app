@@ -131,4 +131,9 @@ data class Clusters(
   @SerializedName("cluster_id") val clusterId: String
 )
 
+data class IndentHaltCenters(
+        @SerializedName("halt_center_name") val haltCenterName: String,
+        @SerializedName("halt_center_code") val haltCenterCode: String
+)
+
 const val CitySelected = "city_selected"

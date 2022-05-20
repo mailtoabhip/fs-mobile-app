@@ -171,6 +171,41 @@
                     android:visibility="@{item.visibility()}"
                     bind:drawableResId="@{item.background()}"
                     tools:text="1050" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_rp_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/size_32dp"
+                    android:layout_below="@id/editPmtAmount"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:gravity="center"
+                    android:visibility="@{item.visibility()}"
+                    android:paddingEnd="@dimen/size_4dp"
+                    android:text="@string/rep_time"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/edit_time"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_below="@+id/editPmtAmount"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/size_8dp"
+                    android:layout_toEndOf="@+id/label_rp_time"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:layout_marginBottom="@dimen/size_6dp"
+                    bind:drawableResId="@{item.background()}" android:drawSelectorOnTop="true"
+                    android:spinnerMode="dropdown"
+                    android:visibility="@{item.visibility()}"
+                    android:layout_marginEnd="@dimen/size_12dp"
+                    android:entries="@array/reportingTimeItems"
+                    android:imeOptions="actionDone"
+                    android:textSize="@dimen/text_14sp"
+                    />
+
             </RelativeLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>

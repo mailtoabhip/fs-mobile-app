@@ -5,6 +5,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -40,6 +41,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop1_state") val stop1State: String,
   @SerializedName("intermediary_stop2") val stop2City: String,
   @SerializedName("intermediary_stop2_state") val stop2State: String,
+  @SerializedName("intermediary_pickup_stop1") val pickup1City: String,
+  @SerializedName("intermediary_pickup_stop2") val pickup2City: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
@@ -64,6 +67,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
   @SerializedName("status") val transactionStatus: String?= "",
   @SerializedName("entity") val entity:String?= "",
+  @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
+  @SerializedName("indent_origin") val indentOrigin:String? =  null,
+  @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -97,6 +103,11 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun delLoadVisibility() = if (indentOrigin.equals("LH")) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
   /**
    * if trip is DMT
    */
@@ -122,6 +133,11 @@ data class HomeBidsRequestItemData(
     View.VISIBLE
   else
     View.INVISIBLE
+
+  fun timerPlaceLayoutVisibility()= if(!isDMTIndent() && (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null )
+    View.VISIBLE
+  else
+    View.GONE
 
 
   fun requestedCapacityVisibility() = if(isPMTIndent() && !isDMTIndent())
@@ -470,7 +486,7 @@ data class HomeBidsRequestItemData(
     val sb = StringBuilder()
     if(showNum)
       sb.append("1. ")
-    sb.append("Express")
+    sb.append("Delhivery Load")
     if (tatMinutes != null) {
       val tat = tatMinutes?.toDouble() ?: 0.0
       if (tat > 60) {
@@ -742,3 +758,4 @@ data class TruckSpecification(
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
+const val HomeBidsRequestAction_DeleteItem = "delete_item"

@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.OMCRequest
+import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
@@ -40,11 +41,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeInterface
 import com.delhivery.axle.ui.team.TeamMemberAdminUserItem
 import com.delhivery.axle.ui.team.TeamMemberSubUserItem
-import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
-import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.VALUE_FUTURE_ADJUSTMENT
-import com.delhivery.axle.utils.VALUE_RECOVERY_ADJUSTMENT
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -150,9 +148,15 @@ class TripDetailsViewModel @Inject constructor(
   var fuelPayoutLiveData = MutableLiveData<String>()
   var omcGetLiveData = MutableLiveData<Pair<String,String>>()
 
+  var indentLiveData = MutableLiveData<String>()
+
   var omcID : String = ""
   var fuelCardNumber = ""
   var fuelCardAmt = ""
+
+  companion object{
+    var indentList:java.lang.StringBuilder = java.lang.StringBuilder()
+  }
   /**
    * Fetch trip details
    */
@@ -1038,4 +1042,31 @@ class TripDetailsViewModel @Inject constructor(
 
         }
   }
+
+  fun fetchIndentCenters(code:String) {
+    compositeDisposable += warehouseRepository.getWarehouseDetails(WarehouseRequest("facility_code",code, "faas"))
+            .onBackground()
+            .progress()
+            .subscribe { _tRes, error ->
+              if (!error) {
+
+                if(indentList.isEmpty()){
+                  if (!_tRes.city.isNotNullOrEmpty()) {
+                    indentList.append(StringUtils.capitalize(_tRes.city))
+                  }
+                }else{
+                  if (!_tRes.city.isNotNullOrEmpty()) {
+                    indentList.append(", ")
+                            .append(StringUtils.capitalize(_tRes.city))
+                  }
+                }
+                indentLiveData.postValue(indentList.toString())
+              }  else
+              {
+                error.handle()
+              }
+            }
+  }
+
+
 }

@@ -19,3 +19,7 @@ data class Warehouse(
   fun completeAddress() = "${StringUtils.capitalize(address)}"
 
 }
+
+data class WarehouseIndentResponse(
+        @SerializedName("city") val city: String
+)

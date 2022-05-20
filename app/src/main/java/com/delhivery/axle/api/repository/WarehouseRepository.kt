@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.service.WarehouseService
 import com.delhivery.axle.utils.extensions.convertResponse
 import javax.inject.Inject
@@ -18,5 +19,9 @@ class WarehouseRepository @Inject constructor(
     warehouseName: String
   ) = warehouseService.fetchWarehouseDetails(clientId, warehouseName)
       .convertResponse()
+
+  fun getWarehouseDetails(
+         warehouseRequest: WarehouseRequest
+  ) = warehouseService.postWarehouseDetails(warehouseRequest).convertResponse()
 
 }

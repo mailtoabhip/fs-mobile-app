@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.BidsRepository
-import com.delhivery.axle.api.repository.TransactionsRepository
-import com.delhivery.axle.api.repository.TripsRepository
-import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.api.response.WarehouseIndentResponse
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -15,6 +15,8 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -31,6 +33,7 @@ class BidDetailsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val tripsRepository: TripsRepository,
   private val truckRepository: TruckRepository,
+  private val warehouseRepository: WarehouseRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface{
 
@@ -50,10 +53,13 @@ class BidDetailsViewModel @Inject constructor(
 
     var analyticsBucket :Boolean = false
 
-companion object{
-    var truckNumTextViewAdded :Boolean=false
+    var indentLiveData = MutableLiveData<HashMap<Int, String>>()
 
-}
+   companion object{
+    var truckNumTextViewAdded :Boolean=false
+    val indentMap = HashMap<Int, String>()
+   }
+
     lateinit var transaction: HomeBidsRequestItemData
 
     /* user bids live data */
@@ -201,15 +207,18 @@ companion object{
   }
 
   override fun createBid(
-    isPMT: Boolean,
-    transactionId: String,
-    bidAmount: Int,
-    pmtRate: Int,
-    commercialType: String,
-    position: Int
+          isPMT: Boolean,
+          transactionId: String,
+          bidAmount: Int,
+          pmtRate: Int,
+          commercialType: String,
+          position: Int,
+          expectedArrivalTimePickup:String,
+          expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.createBid(
-        isPMT, transactionId, bidAmount, pmtRate, commercialType
+        isPMT, transactionId, bidAmount, pmtRate, commercialType,
+            expectedArrivalTimePickup, expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
@@ -224,16 +233,19 @@ companion object{
   }
 
   override fun editBid(
-    isPMT: Boolean,
-    transactionId: String,
-    bidId: String,
-    bidAmount: Int,
-    pmtRate: Int,
-    commercialType: String,
-    position: Int
+          isPMT: Boolean,
+          transactionId: String,
+          bidId: String,
+          bidAmount: Int,
+          pmtRate: Int,
+          commercialType: String,
+          position: Int,
+          expectedArrivalTimePickup:String,
+          expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.editBid(
-        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate
+        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,
+            expectedArrivalTimePickup, expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
@@ -469,6 +481,21 @@ companion object{
         }
             userBidsData.postValue(bulkBidSummaryItemList)
 
+    }
+
+
+    fun fetchIndentCenters(code:String, seq:Int) {
+        indentMap.clear()
+        compositeDisposable += warehouseRepository.getWarehouseDetails(WarehouseRequest("facility_code",code, "faas"))
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error) {
+                        indentMap.put(seq, _tRes.city)
+                        indentLiveData.postValue(indentMap)
+                      }  else {
+                        error.handle()
+                    }
+                }
     }
 
 }

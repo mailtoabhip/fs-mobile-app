@@ -91,10 +91,11 @@ class SearchResultsViewModel @Inject constructor(
     bidAmount: Int,
     pmtRate: Int,
     commercialType: String,
-    position: Int
+    position: Int, expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.createBid(
-        isPMT, transactionId, bidAmount, pmtRate, commercialType
+        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
@@ -118,11 +119,14 @@ class SearchResultsViewModel @Inject constructor(
     bidAmount: Int,
     pmtRate: Int,
     commercialType: String,
-    position: Int
+    position: Int,
+    expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.editBid(
         isPMT, transactionId, bidId, bidAmount, commercialType,
-        pmtRate
+        pmtRate,  expectedArrivalTimePickup,
+            expectedArrivalTimePickupRemark
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {

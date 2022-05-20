@@ -23,13 +23,13 @@
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
-      app:cardElevation="@dimen/size_2dp"
-      >
+      app:cardElevation="@dimen/size_2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
+        android:id="@+id/main"
         android:focusable="false"
         >
 
@@ -116,16 +116,31 @@
             tools:text="Goa"
             />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_forward"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
+            android:id="@+id/img_forward"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_forward_black"
-            />
+            android:layout_height="wrap_content">
+          <TextView
+              android:layout_width="wrap_content"
+              android:id="@+id/stopNo"
+              android:paddingStart="@dimen/size_16dp"
+              android:paddingEnd="@dimen/size_16dp"
+             android:layout_height="wrap_content"/>
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="match_parent"
+              android:layout_height="5dp"
+              app:srcCompat="@drawable/seprator_dotted"
+              />
+
+        </LinearLayout>
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_date_time"
@@ -268,10 +283,10 @@
             android:paddingEnd="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_6dp"
             app:layout_constraintStart_toEndOf="@+id/text_gps"
-            android:text="@{request.expressText(false)}"
-            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            android:text="Delhivery Load"
+            android:visibility="@{request.delLoadVisibility() }"
             app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
-            tools:text="Express"
+            tools:text="Delhivery Load"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -288,6 +303,46 @@
             android:text="Multidrop"
             android:visibility="@{request.setMutidrop()}"
             app:layout_constraintTop_toBottomOf="@+id/text_detention"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+           android:paddingTop="@dimen/size_8dp"
+            android:paddingBottom="@dimen/size_8dp"
+            android:paddingStart="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_16dp"
+            tools:visibility="gone"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:id="@+id/timerLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_status_exp"
+            android:background="@drawable/bg_gradient_orange_16"
+            android:layout_height="wrap_content">
+          <androidx.appcompat.widget.AppCompatImageView
+              android:layout_width="wrap_content"
+              app:srcCompat="@drawable/ic_timer"
+              android:id="@+id/img"
+              android:layout_marginTop="@dimen/size_2dp"
+              android:layout_below="@+id/tvtimer"
+              android:layout_height="wrap_content"/>
+          <TextView
+              android:layout_width="wrap_content"
+              android:text="Time left to bid"
+              android:textColor="@color/white"
+              android:id="@+id/tvtimer"
+              android:layout_centerHorizontal="true"
+              android:textSize="@dimen/text_12sp"
+              android:layout_height="wrap_content"/>
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_below="@+id/tvtimer"
+              android:id="@+id/timerTime"
+              android:layout_marginTop="@dimen/size_2dp"
+              android:textSize="@dimen/size_16dp"
+              android:layout_toEndOf="@+id/img"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:textColor="@color/white"
+              android:layout_height="wrap_content"/>
+        </RelativeLayout>
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -416,9 +471,8 @@
             android:paddingTop="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_16dp"
             android:paddingBottom="@dimen/size_8dp"
-            android:visibility="@{ request.bidPlaceLayoutVisibility()}"
             tools:visibility="gone"
-            >
+            android:visibility="@{ request.bidPlaceLayoutVisibility()}">
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/btn_bid"

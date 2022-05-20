@@ -104,6 +104,9 @@
   <string name="hint_enter_origin">Enter origin city</string>
   <string name="hint_enter_destination">Enter destination city or state</string>
   <string name="hint_select_multi_cities">You can select multiple cities/states</string>
+  <string name="hint_rep_time">Enter Vehicle Reporting Time</string>
+  <string name="hint_select_time">Select Time</string>
+  <string name="rep_time">Vehicle Reporting Time</string>
 
   <!--Actions (action_)-->
   <string name="action_activate_truck">Request for Load</string>
@@ -491,11 +494,12 @@
   <string name="label_transaction_remarks">Transaction Remarks</string>
   <string name="label_supplier_details">Suppliers Details</string>
   <string name="label_via">Via</string>
+  <string name="label_intermediary">Intermediary Stops</string>
   <string name="label_multi_stop">Multi-Stop</string>
   <string name="label_pmt">PMT</string>
   <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
   <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
-  <string name="express">Express</string>
+  <string name="delhivery_load">Delhivery Load</string>
   <string name="loading_filter">Loaded after: </string>
   <string name="settled_filter">Only settled</string>
   <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>

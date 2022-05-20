@@ -145,11 +145,13 @@ class BidsRepository @Inject constructor(
     transactionId: String,
     amount: Int,
     pmtRate: Int,
-    commercialType: String
+    commercialType: String,
+    expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) = CreateTransactionBidRequest.getRequest(
       isPMT, transactionId, userRepository.userId(),
       "${userPrefs.userName} ${userPrefs.pancard}",
-      amount, pmtRate, commercialType, userPrefs.isTestUser
+      amount, pmtRate, commercialType, userPrefs.isTestUser, expectedArrivalTimePickup, expectedArrivalTimePickupRemark
   ).let { bidService.createTransactionBid(it) }
 
   /**
@@ -161,9 +163,11 @@ class BidsRepository @Inject constructor(
     bidId: String,
     amount: Int,
     commercialType: String,
-    pmtRate: Int
+    pmtRate: Int,
+    expectedArrivalTimePickup:String,
+    expectedArrivalTimePickupRemark:String
   ) = UpdateTransactionBidRequest.getRequest(
-      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType
+      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
   )
       .let { bidService.updateTransactionBid(it) }
 

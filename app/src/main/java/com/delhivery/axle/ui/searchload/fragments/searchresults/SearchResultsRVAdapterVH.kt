@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.os.CountDownTimer
+import android.text.TextUtils
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
@@ -7,6 +9,9 @@ import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Base Home bids RV adapter view holder
@@ -17,6 +22,8 @@ abstract class BaseSearchResultsRVAdapterViewHolder<out B : ViewDataBinding, IT 
     item: IT,
     _interface: SearchLoadsRVAdapterInterface
   )
+
+  var countDownTimer:CountDownTimer? = null
 
   /**
    * Add on click listener for action
@@ -70,6 +77,76 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+
+    if(item.data.isDMTIndent()){
+      binding.timerLayout.visibility = View.GONE
+    }else{
+      if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(item.data.bidEndingTime)
+        if (date2.compareTo(date1) > 0) {
+          binding.timerLayout.visibility = View.VISIBLE
+
+          val mills: Long = date2.getTime() - date1.getTime()
+          countDownTimer?.cancel()
+          countDownTimer = object : CountDownTimer(mills, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+              try {
+                val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+                val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+                val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+                binding.timerTime.setText(diff)
+              } catch (e: Exception) {
+                e.printStackTrace()
+              }
+            }
+
+            override fun onFinish() {
+              _interface.deleteItem(item, adapterPosition)
+            }
+          }.start()
+        }else{
+          binding.timerLayout.visibility = View.GONE
+        }
+
+      }else{
+        binding.timerLayout.visibility = View.GONE
+      }
+    }
+
+    if(item.data.indentOrigin.equals("LH")){
+      if(item.data.indentHaltCenters.isNullOrEmpty()){
+        binding.stopNo.text = "No Stops"
+      }else{
+        binding.stopNo.text = item.data.indentHaltCenters.size.toString()+" Stops"
+      }
+    }else{
+      var total = 0
+      if (!TextUtils.isEmpty(item.data.stop1City)) {
+        total = total+1
+      }
+      if (!TextUtils.isEmpty(item.data.stop2City)) {
+        total = total+1
+      }
+
+      if (!TextUtils.isEmpty(item.data.pickup1City)) {
+        total = total+1
+      }
+
+      if (!TextUtils.isEmpty(item.data.pickup2City)) {
+        total = total+1
+      }
+
+      if(total>0){
+        binding.stopNo.text = "$total Stops"
+      }else{
+        binding.stopNo.text = "No Stops"
+      }
+
+    }
+
     binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface

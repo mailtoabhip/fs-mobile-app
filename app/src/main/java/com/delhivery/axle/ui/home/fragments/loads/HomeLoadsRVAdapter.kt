@@ -28,6 +28,12 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
         _interface
     ) {
 
+  init {
+    setHasStableIds(true)
+  }
+
+  override fun getItemId(position: Int): Long = position.toLong()
+
   override fun getItemViewType(position: Int) = items[position].type.typeId
 
   override fun getBinding(
