@@ -40,13 +40,14 @@ class AnalyticsUtil @Inject constructor(
     properties: List<String> = mutableListOf(),
     values: List<String> = mutableListOf()
   ) {
+    Log.i(TAG, event)
     val analytics = getAnalyticsObject()
     if (analytics != null) {
       val bundle = Bundle()
       for ((index, property) in properties.withIndex()) {
+        Log.i(TAG, property + ":" + values[index])
         bundle.putString(property, values[index])
       }
-      Log.i(TAG, event)
       if (!TextUtils.isEmpty(userPrefs.phoneNumber)) {
         analytics.setUserProperty(CUSTOM_PHONE_NUMBER, userPrefs.phoneNumber)
       }
@@ -132,8 +133,17 @@ const val EVENT_ADD_TRUCK = "add_truck"
 const val EVENT_BANNER_CLICK_TOP = "click_add_truck_top_banner"
 const val EVENT_BANNER_CLICK_SCROLL = "click_add_truck_scroll_banner"
 const val EVENT_VIEW_MY_TRUCK = "view_my_truck"
-
-
+const val EVENT_SUBMITTED_ABOUT_YOURSELF = "submitted_about_yourself"
+const val EVENT_SUBMITTED_ROUTES_TRUCKS = "submitted_routes_trucks"
+const val EVENT_SUBMIT_GST = "submit_gst"
+const val EVENT_SUBMIT_AADHAR = "submit_aadhar"
+const val EVENT_SUBMIT_IDENTITY = "submit_identity"
+const val EVENT_SUBMIT_POPUP_OFFICE_ADDRESS = "submit_popup_office_address"
+const val EVENT_SUBMIT_OFFICE_ADDRESS = "submit_office_address"
+const val EVENT_GST_OFFICE_ADDRESS = "submit_gst_address"
+const val EVENT_SUBMIT_BUSINESS_PROOF = "submit_business_proof"
+const val EVENT_SUBMIT_PAYMENT_DETAILS = "submit_payment_details"
+const val EVENT_ACCEPT_VENDOR_POLICY = "accept_vendor_policy"
 
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
@@ -198,6 +208,16 @@ const val PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT = "change_payment_diesel_payout"
 const val PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER = "change_payment_diesel_card_number"
 const val PROPERTY_INVENTORY_ID = "inventory_id"
 const val PROPERTY_REASON = "reason_for_deactivating"
+const val PROPERTY_PHONE_NO = "phone_no"
+const val PROPERTY_USERNAME = "user_name"
+const val PROPERTY_BUSINESS_NAME = "business_name"
+const val PROPERTY_TTL = "time_taken_to_complete"
+const val PROPERTY_TNC = "terms_and_conditions"
+const val PROPERTY_IDENTITY_SELECTED = "identity_selected"
+const val PROPERTY_ADD_PROOF_TYPE = "address_proof_type"
+const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
+
+
 
 
 

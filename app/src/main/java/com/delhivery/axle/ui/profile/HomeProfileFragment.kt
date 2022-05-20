@@ -1,18 +1,15 @@
-package com.delhivery.axle.ui.home.fragments.profile
+package com.delhivery.axle.ui.profile
 
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.MonthlyEarning
 import com.delhivery.axle.config.UrlConfig.DashboardUrl
 import com.delhivery.axle.databinding.FragmentHomeProfileBinding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*

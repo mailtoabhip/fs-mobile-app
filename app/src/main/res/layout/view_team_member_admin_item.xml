@@ -16,8 +16,8 @@
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginStart="@dimen/size_2dp"
-      android:layout_marginEnd="@dimen/size_2dp"
+      android:layout_marginStart="@dimen/size_16dp"
+      android:layout_marginEnd="@dimen/size_16dp"
       android:layout_marginBottom="@dimen/size_12dp"
       android:clickable="true"
       android:focusable="true"
@@ -29,38 +29,50 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/admin_card_container"
         android:layout_width="match_parent"
+        android:background="@drawable/bg_all_round_corner_grey_boundary"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:focusable="false"
-        >
+        android:padding="@dimen/size_12dp"
+        android:focusable="false">
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:layout_width="40dp"
+          android:layout_height="40dp"
+          android:gravity="center"
+          android:textSize="@dimen/text_20sp"
+          android:textStyle="bold"
+          android:fontFamily="sans-serif"
+          android:textColor="@color/white"
+          android:id="@+id/logo_team_member"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          android:background="@drawable/dark_blue_circle" />
 
       <androidx.appcompat.widget.LinearLayoutCompat
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toStartOf="@+id/admin_text"
-          android:layout_width="match_parent"
+          app:layout_constraintStart_toEndOf="@id/logo_team_member"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/dieselLay"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_12dp"
           android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="@{user.name}"
-            android:layout_marginStart="@dimen/size_20dp"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:textSize="@dimen/size_16dp"
-            android:textStyle="bold"
-            tools:text="Supplier Name (You)"/>
+            android:textColor="@color/heading_black"
+            android:text="@{user.userName}"
+            android:textSize="@dimen/text_18sp"
+            tools:text="Supplier"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="@{user.phoneNo}"
-            android:layout_marginStart="@dimen/size_20dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:textSize="@dimen/size_16dp"
+            android:textColor="@color/faded_black"
+            android:text="@{user.phoneNumber}"
+             android:textSize="@dimen/text_16sp"
             tools:text="9876543210"/>
 
       </androidx.appcompat.widget.LinearLayoutCompat>
@@ -68,16 +80,18 @@
       <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:id="@+id/dieselLay"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@id/admin_text"
           android:gravity="center"
-          android:layout_marginEnd="@dimen/size_40dp"
+          android:layout_marginEnd="@dimen/size_24dp"
         android:orientation="vertical">
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_diesel_card"
+            android:textColor="@color/heading_black"
             android:layout_marginBottom="@dimen/size_4dp"
             android:layout_gravity="center"
             android:textSize="@dimen/text_16sp"/>
@@ -98,15 +112,14 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          android:layout_marginEnd="@dimen/size_20dp"
+          android:layout_marginEnd="@dimen/size_14dp"
           android:layout_marginTop="@dimen/size_20dp"
           android:layout_marginBottom="@dimen/size_20dp"
           android:layout_marginStart="@dimen/size_20dp"
           android:text="Admin"
           android:background="@drawable/bg_login_edit"
           android:padding="@dimen/size_8dp"
-          android:textColor="@color/black"
-          android:textStyle="bold"
+          android:textColor="@color/heading_black"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           tools:text="Admin"/>

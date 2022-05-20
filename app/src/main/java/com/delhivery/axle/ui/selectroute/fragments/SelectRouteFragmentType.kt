@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.selectroute.fragments
 
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.AddNewRoute
+import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.DeleteRoute
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.ui.selectroute.fragments.destination.SelectRouteDestinationFragment
 import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailFragment
@@ -29,6 +30,7 @@ enum class SelectRouteFragmentType(
     }
 
     EditRoute -> null
+    DeleteRoute -> null
   }
 
   companion object {
@@ -39,6 +41,7 @@ enum class SelectRouteFragmentType(
     fun initFragment(type: SelectRouteFlowType) = when (type) {
       AddNewRoute -> OriginCityFragment
       EditRoute -> RouteDetailFragment
+      DeleteRoute ->RouteDetailFragment
     }
   }
 }

@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -24,6 +26,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
 
         <service
             android:name=".fcm.DelhiveryFCMService"
@@ -78,10 +81,12 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -99,10 +104,11 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.auth.AuthenticationActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"
             android:screenOrientation="portrait" />
@@ -180,6 +186,88 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.trucks.AddTruckPathwayActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.profile.HelpSupportActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.profiledetails.ProfileDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.kycdetails.ProfileKYCDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.BankDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.kyc.pan.PanVerificationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".ui.kyc.gst.GstVerificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.kyc.aadhaar.AadhaarVerificationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".ui.kyc.address.CommunicationAddressActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
+            android:name=".ui.profile.MyProfileActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountrole.AccountRoleActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
+            android:name=".ui.accountaction.AccountActionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.kyc.address.AddressActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".ui.businessverification.BusinessVerificationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".ui.kyc.identityverification.IdentityVerificationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity android:name=".ui.onboarding.BasicDetailsActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".ui.searchcitystate.SearchCityStateActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.searchcitystate.SearchOriginCityActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.paymentdetails.VendorPolicyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.paymentdetails.PaymentDetailsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity android:name=".ui.userroutes.ManageRouteActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

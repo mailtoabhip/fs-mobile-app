@@ -4,6 +4,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.UserCity
+import java.io.Serializable
 
 /**
  * Route model
@@ -11,7 +12,7 @@ import com.delhivery.axle.data.UserCity
 data class RouteModel(
   var origin: UserCity,
   var destinations: MutableSet<StateModel> = mutableSetOf()
-) : BaseKeyTypeModel<String>() {
+) : BaseKeyTypeModel<String>(),Serializable {
 
   override fun key() = origin.city
 
@@ -20,7 +21,13 @@ data class RouteModel(
   fun stateNames() = if (destinations.size > 0) {
     val destinationString = java.lang.StringBuilder()
     var stateString = ""
+    var count =0
     for (destination in destinations) {
+      if(count<3){
+        count++
+      }else{
+        break
+      }
       destinationString.append(destination.state)
       destinationString.append(", ")
     }
@@ -28,7 +35,12 @@ data class RouteModel(
     if (stateString.endsWith(", ")) {
       stateString = stateString.substring(0, destinationString.length - 2)
     }
-    stateString
+    if(destinations.size>3) {
+      stateString + " +${destinations.size - 3}"
+    }else{
+      stateString
+    }
+
   } else {
     ""
   }
@@ -76,3 +88,4 @@ data class RouteModel(
 /* actions */
 const val RoutesAction_ViewDetails = "routes_detail"
 const val RoutesAction_DeleteRoute = "delete_route"
+const val RoutesAction_ViewOptions = "view_route_options"

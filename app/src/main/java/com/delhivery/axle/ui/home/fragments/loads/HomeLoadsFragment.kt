@@ -142,7 +142,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       when (it) {
         false -> binding.rvLoads.apply {
           this@HomeLoadsFragment.visible = true
-          binding.routesBanner.visibility = View.VISIBLE
+          binding.routesBanner.visibility = View.GONE
           addOnScrollListener(BannerRVScrollListener())
         }
 
@@ -261,7 +261,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
-    viewModel.checkUserRoutes()
     if (viewModel.routeUpdated || viewModel.fromNotification) {
       refreshData()
       viewModel.routeUpdated = false
@@ -415,11 +414,29 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                 mutableListOf(userPrefs.userId(), "loads_screen")
         )
-        showAddTruckDialog(mutableListOf(
+        when (viewModel.userPrefs.canBid()) {
+          APPROVED -> {showAddTruckDialog(mutableListOf(
                 TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
                 TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
                 TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
-        ), VALUE_ADD_TRUCK_TOP_BANNER)
+        ), VALUE_ADD_TRUCK_TOP_BANNER)}
+          UNAPPROVED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_not_approved,
+              string.msg_dialog_supplier_not_approved,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
+            )
+          }
+          DISABLED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_disabled,
+              string.msg_dialog_supplier_disabled,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
+            )
+          }
+        }
       }
 
       HomeLoadsBannerAction -> {
@@ -428,11 +445,29 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                 mutableListOf(userPrefs.userId(), "loads_screen")
         )
-
+        when (viewModel.userPrefs.canBid()) {
+          APPROVED -> {
         showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
                 TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
                 TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
-        ), VALUE_ADD_TRUCK_SCROLL_BANNER)
+        ), VALUE_ADD_TRUCK_SCROLL_BANNER)}
+          UNAPPROVED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_not_approved,
+              string.msg_dialog_supplier_not_approved,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
+            )
+          }
+          DISABLED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_disabled,
+              string.msg_dialog_supplier_disabled,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
+            )
+          }
+        }
       }
     }
   }

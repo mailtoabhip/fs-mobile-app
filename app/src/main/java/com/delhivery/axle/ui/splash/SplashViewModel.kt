@@ -1,10 +1,9 @@
 package com.delhivery.axle.ui.splash
 
+import android.view.View
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.ui.splash.SplashPostState.Auth
-import com.delhivery.axle.ui.splash.SplashPostState.Home
-import com.delhivery.axle.ui.splash.SplashPostState.Onboarding
+import com.delhivery.axle.ui.splash.SplashPostState.*
 import com.delhivery.axle.utils.prefs.GlobalPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -23,8 +22,8 @@ class SplashViewModel @Inject constructor(
    * Post splash state
    */
   fun postState() = when {
-    !globalPrefs.isOnboardingCompleted -> Onboarding
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
+    authenticationRepository.authStatus() && userPrefs.hasLoggedIn && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
     else -> Auth
   }
 
@@ -37,5 +36,16 @@ class SplashViewModel @Inject constructor(
   ) {
     userPrefs.maxPMTRate = maxRate
     userPrefs.maxCostPerKM = maxCostPerKM
+  }
+
+  fun saveLoadPostKycConfig(loadPostKyc:String){
+    userPrefs.loadPostKyc = loadPostKyc
+  }
+  fun saveTruckPostKycConfig(truckPostKyc:String){
+    userPrefs.truckPostKyc = truckPostKyc
+  }
+
+  fun getOldUser():Boolean{
+    return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)
   }
 }

@@ -1,9 +1,11 @@
 package com.delhivery.axle.injection.component
 
+import android.view.inputmethod.BaseInputConnection
 import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
+import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.home.activity.bank.BankTransferViewModel
 import com.delhivery.axle.ui.home.activity.home.HomeViewModel
 import com.delhivery.axle.ui.home.activity.transactiondetail.TransactionDetailViewModel
@@ -14,11 +16,23 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
-import com.delhivery.axle.ui.home.fragments.profile.HomeProfileViewModel
+import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
 import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
+import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
+import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
+import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.profile.BankDetailsViewModel
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
+import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -34,6 +48,7 @@ import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.TripDetailsViewModel
 import com.delhivery.axle.ui.tripdetails.UploadImageViewModel
 import com.delhivery.axle.ui.trucks.TruckViewModel
+import com.delhivery.axle.ui.userroutes.ManageRouteViewModel
 import com.delhivery.axle.ui.userroutes.UserRoutesViewModel
 import dagger.Component
 import javax.inject.Singleton
@@ -195,6 +210,67 @@ interface ViewModelInjector {
    * Injects [SearchOngoingTripViewModel]
    */
   fun inject(viewModel: SearchOngoingTripViewModel)
+
+  /**
+   * Injects [ProfileDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileDetailsViewModel)
+
+  /**
+   * Injects [ProfileKYCDetailsViewModel]
+   */
+  fun inject(viewModel: ProfileKYCDetailsViewModel)
+
+  /**
+   * Injects [KYCDocumentsViewModel]
+   */
+  fun inject(viewModel: KYCDocumentsViewModel)
+
+  /**
+   * Injects [YourKYCDetailsViewModel]
+   */
+  fun inject(viewModel: YourKYCDetailsViewModel)
+
+  /**
+   * Injects [PanVerificationViewModel]
+   */
+  fun inject(viewModel: PanVerificationViewModel)
+
+  /**
+   * Injects [BusinessVeificationViewModel]
+   */
+  fun inject(viewModel: BusinessVerificationViewModel)
+
+  /**
+   * Injects [AadhaarVerificationViewModel]
+   */
+  fun inject(viewModel: AadhaarVerificationViewModel)
+
+  /**
+   * Injects [CommunicationAddressViewModel]
+   */
+  fun inject(viewModel: CommunicationAddressViewModel)
+
+  /**
+   * Injects [IdentityVerificationViewModel]
+   */
+  fun inject(viewModel: IdentityVerificationViewModel)
+
+
+  fun inject(viewModel: PaymentDetailsViewModel)
+
+  fun inject(viewModel: BankDetailsViewModel)
+
+
+  /**
+   * Injects [BasicDetailsViewModel]
+   */
+  fun inject(viewModel: BasicDetailsViewModel)
+
+  /**
+   * Injects [ManageRouteViewModel]
+   */
+  fun inject(viewModel: ManageRouteViewModel)
 
   /**
    * Injects [HomeLoadsTruckViewModel]

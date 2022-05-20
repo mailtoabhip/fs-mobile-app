@@ -8,10 +8,10 @@
         type="com.delhivery.axle.ui.splash.SplashViewModel"
         />
   </data>
-  <FrameLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@drawable/bg_splash_gradient"
+      android:background="@color/white"
       >
 
     <View
@@ -27,8 +27,8 @@
         android:layout_width="@dimen/size_96dp"
         android:layout_height="@dimen/size_96dp"
         android:layout_gravity="center"
-        android:alpha="0"
-        app:srcCompat="@drawable/splash_logo"
+        android:layout_centerInParent="true"
+        app:srcCompat="@drawable/ic_splash_img"
         />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -41,29 +41,19 @@
         app:srcCompat="@drawable/ic_orion_text"
         />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_delhivery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="38dp"
-        android:alpha="0"
-        android:fontFamily="sans-serif"
-        android:letterSpacing="0.04"
-        android:text="@string/label_powered_by_delhivery"
-        android:textColor="#59ffffff"
-        android:textSize="@dimen/text_12sp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_get_started"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:enabled="true"
+        android:text="@string/action_get_started"
+        android:textAllCaps="false"
+        style="@style/ActionButton"
         />
 
-    <View
-        android:id="@+id/view_center_reveal"
-        android:layout_width="960dp"
-        android:layout_height="960dp"
-        android:layout_gravity="center"
-        android:background="@drawable/bg_circle_delhivery_red"
-        android:scaleX="0"
-        android:scaleY="0"
-        android:visibility="gone"
-        />
-  </FrameLayout>
+  </RelativeLayout>
 </layout>

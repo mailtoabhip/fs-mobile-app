@@ -82,7 +82,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       uiUtils.toggleKeyboard()
           .apply {
             when {
-              it != null -> {
+              it != null && it.first !=null  -> {
                 (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
                   it.second
                 _adapter.notifyItemChanged(it.first)

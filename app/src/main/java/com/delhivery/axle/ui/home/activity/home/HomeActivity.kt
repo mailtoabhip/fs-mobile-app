@@ -1,12 +1,10 @@
 package com.delhivery.axle.ui.home.activity.home
 
-import android.R.attr.action
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,10 +17,9 @@ import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
-import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -87,14 +84,33 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromLink = false
     fromNotification = false
     fromDeepLink = false
+
+    viewModel.getUserDetails()
+
+  }
+
+  override fun onBackPressed() {
+    super.onBackPressed()
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
+    viewModel.userUpdateLiveData.observe(this, Observer {
+      if(it){
+        navigationUtils.navigateOnboardingSteps(true)
+
+
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Home"
+    title = "Load Requests"
+
+    if(!userPrefs.userName.isEmpty()) {
+      binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+    }
+    supportActionBar?.setDisplayShowTitleEnabled(false)
+
+    binding.toolbarTitle.text = title
 
     /* setup view pager */
     binding.viewpager.apply {
@@ -111,6 +127,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
               observeFragmentLiveData(p)
             }
       }
+      binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
     }
 
@@ -130,9 +147,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
 
+    binding.profile.setOnClickListener {
+      navigationUtils.navigate(MyProfileActivity::class.java)
+    }
+
     /**
      * Process Deep Link */
     processDeepLink()
+      }
+    })
   }
 
   private fun processDeepLink() {
@@ -198,6 +221,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         MY_TRUCKS_REDIRECT -> {
           fromDeepLink = true
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
+        KYC_REJECTION ->{
+          navigationUtils.navigate(MyProfileActivity::class.java)
+        }
+        KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
         else -> {
@@ -342,8 +371,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     if (elevationLiveData == null) {
       /* default toolbar elevation */
       ViewCompat.setElevation(binding.toolbar, resources.getDimension(R.dimen.toolbar_elevation))
+      binding.toolbarTitle.text = title
     } else {
       elevationLiveData.observe(this, Observer {
+        binding.toolbarTitle.text = title
         ViewCompat.setElevation(
             binding.toolbar,
             it ?: resources.getDimension(R.dimen.toolbar_elevation)
@@ -361,6 +392,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       HomeFragmentActionType.Navigate -> {
         val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
         binding.viewpager.setCurrentItem(fragmentType.position, true)
+        binding.toolbarTitle.text = title
       }
     }
   }
@@ -374,6 +406,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                 ?.fragment?.title
             setCurrentItem(pos, true)
           }
+          binding.toolbarTitle.text = title
         }
         pos != -1
       }
@@ -391,6 +424,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     startActivity(userTripsIntent(this, "payment_view", 0))
 
   }
+
 }
 
 /**
@@ -398,6 +432,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
  */
 interface TitleProvider {
   val title: CharSequence
+
 }
 
 enum class FragmentName(
@@ -443,6 +478,9 @@ private const val LOAD_DETAIL_REDIRECT = "biddtl"
 private const val ADVANCE_PENDING_REDIRECT = "advpend"
 private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
+private const val KYC_REJECTION = "kycrejected"
+private const val KYC_VERIFIED = "kycverified"
+
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"

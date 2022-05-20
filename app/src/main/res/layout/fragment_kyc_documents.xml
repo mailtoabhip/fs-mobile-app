@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/attachmentList"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:paddingBottom="52dp"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_14dp"
+            style="@style/ActionButton"
+            android:layout_alignParentBottom="true"
+            android:text="Retry"
+            android:visibility="gone"
+            android:id="@+id/btnRetry"
+            android:layout_gravity="bottom"
+            android:textAllCaps="false"/>
+
+</RelativeLayout>
+</layout>

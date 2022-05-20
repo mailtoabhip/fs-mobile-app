@@ -43,7 +43,7 @@ class SearchCityViewModel @Inject constructor(
     fun searchCity(query: String) {
         val parentJsonObject = JsonObject()
         val jsonObject = JsonObject()
-        jsonObject.addProperty("name", "city_suggestion_data")
+        jsonObject.addProperty("name", "city_sugg")
         jsonObject.addProperty("prefix", query)
         jsonObject.addProperty("field", "city_display")
         jsonObject.addProperty("size", 25)

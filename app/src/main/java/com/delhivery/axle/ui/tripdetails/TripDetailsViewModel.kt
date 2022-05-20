@@ -69,6 +69,7 @@ class TripDetailsViewModel @Inject constructor(
   private val payableRepository: PayableRepository,
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
+  private val loadboardRepository: LoadboardRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -928,24 +929,24 @@ class TripDetailsViewModel @Inject constructor(
 
   fun fetchTeamMembers()
   {
-    compositeDisposable += userRepository.getUserTeamMembers(0, 100, true, userRepository.userId())
+    compositeDisposable += loadboardRepository.getUserTeamMembers(userRepository.userId())
         .onBackground()
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
             fuelUserSpinnerOptions.clear()
-            if (_res.total > 0) {
+            if (_res.count > 0) {
               for (user in _res.users) {
-                if (user.phoneNo != null) {
-                  if (user.phoneNo == userPrefs.phoneNumber)
+                if (user.phoneNumber != null) {
+                  if (user.phoneNumber == userPrefs.phoneNumber)
                   {
-                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Your No.)"))
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Your No.)"))
                   }
                   else if (user.isParent()) {
-                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Admin)"))
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Admin)"))
                     }
                   else {
-                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNo!!, "(Child)"))
+                      fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Child)"))
                     }
                 }
               }

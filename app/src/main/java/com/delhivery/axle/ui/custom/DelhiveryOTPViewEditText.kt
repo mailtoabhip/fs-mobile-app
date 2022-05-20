@@ -8,6 +8,11 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.delhivery.axle.R
 import com.delhivery.axle.utils.extensions.raisedFocus
 
+import android.text.style.UnderlineSpan
+
+
+
+
 /**
  * Custom implementation of [AppCompatEditText] for OTP enter
  */

@@ -4,7 +4,7 @@
         <shape android:shape="oval">
             <solid android:color="@color/white"/>
             <stroke android:width="@dimen/size_1dp"
-                android:color="@color/bid_placed_green"/>
+                android:color="@color/colorAccent"/>
             <size android:width="@dimen/size_24dp"
                 android:height="@dimen/size_24dp"/>
         </shape>
@@ -15,7 +15,7 @@
             <size android:width="@dimen/size_24dp"
                 android:height="@dimen/size_24dp"/>
             <stroke android:width="@dimen/size_1dp"
-                android:color="@color/bid_placed_green"/>
+                android:color="@color/bg_grey"/>
 
         </shape>
     </item>

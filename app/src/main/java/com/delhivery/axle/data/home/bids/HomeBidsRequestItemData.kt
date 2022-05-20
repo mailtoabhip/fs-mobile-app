@@ -66,7 +66,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("truck_uuid") val truckUUID: Any?,
   @SerializedName("is_dmt") val isDmt :Boolean? = false,
   @SerializedName("status") val transactionStatus: String?= "",
-  @SerializedName("entity") val entity:String = "",
+  @SerializedName("entity") val entity:String?= "",
   @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
   @SerializedName("indent_origin") val indentOrigin:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
