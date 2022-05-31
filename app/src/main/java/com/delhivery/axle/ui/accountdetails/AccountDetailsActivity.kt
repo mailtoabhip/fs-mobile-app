@@ -74,6 +74,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        trackEvent()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -155,6 +156,13 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
           if(flowState.equals(LocationFlowState.PermissionGranted)){
               viewModel.locationOption.value = true
           }
+    }
+    fun trackEvent(){
+        analyticsUtil.trackEvent(
+            EVENT_VIEW_ABOUT_YOURSELF,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")
+        )
     }
 
     inner class StateObserver : Observer<AuthenticationUIState> {
