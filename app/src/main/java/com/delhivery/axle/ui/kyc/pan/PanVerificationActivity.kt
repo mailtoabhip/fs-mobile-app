@@ -24,16 +24,18 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
+
     @Inject
     lateinit var userPrefs: UserPrefs
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun getViewModelClass() = PanVerificationViewModel::class.java
 
     override fun layoutId() = R.layout.activity_verify_pan
 
     override fun requireConnection() = false
-  var startTime: Long = 0
-  var endTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
             if(intent?.extras!=null){
@@ -52,13 +54,15 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         navigationUtils.navigate(BasicDetailsActivity::class.java, true)
       }
     }
-  fun trackEvent(ttl:String){
-    analyticsUtil.trackEvent(
-        EVENT_CONFIRM_PAN,
-        mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
-        mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",ttl)
-    )
-  }
+
+    fun trackEvent(ttl:String){
+      analyticsUtil.trackEvent(
+          EVENT_CONFIRM_PAN,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+          mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",ttl)
+      )
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)

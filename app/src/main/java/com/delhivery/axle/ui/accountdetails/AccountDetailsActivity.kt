@@ -74,7 +74,6 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        trackEvent()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -83,6 +82,8 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
+
+        trackEvent()
 
         onLocationButtonClicked()
 
@@ -157,6 +158,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
               viewModel.locationOption.value = true
           }
     }
+
     fun trackEvent(){
         analyticsUtil.trackEvent(
             EVENT_VIEW_ABOUT_YOURSELF,
