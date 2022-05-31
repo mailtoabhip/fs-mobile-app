@@ -130,9 +130,9 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
-              endTime = System.currentTimeMillis()
-              val ttl = endTime - startTime
-              trackEvent(ttl.toString())
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                trackEvent(ttl.toString())
                 val bundle = Bundle()
                 bundle.putString(panKey,viewModel.panType)
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
