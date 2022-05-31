@@ -24,8 +24,11 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
+
     @Inject
     lateinit var userPrefs: UserPrefs
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     override fun getViewModelClass() = PanVerificationViewModel::class.java
 
@@ -51,10 +54,20 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         navigationUtils.navigate(BasicDetailsActivity::class.java, true)
       }
     }
+
+    fun trackEvent(ttl:String){
+      analyticsUtil.trackEvent(
+          EVENT_CONFIRM_PAN,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
+          mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",ttl)
+      )
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        startTime = System.currentTimeMillis()
 
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
@@ -117,6 +130,9 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
+                endTime = System.currentTimeMillis()
+                val ttl = endTime - startTime
+                trackEvent(ttl.toString())
                 val bundle = Bundle()
                 bundle.putString(panKey,viewModel.panType)
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(

@@ -83,6 +83,8 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
 
+        trackEvent()
+
         onLocationButtonClicked()
 
         userPrefs.hasLoggedIn = false
@@ -155,6 +157,14 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
           if(flowState.equals(LocationFlowState.PermissionGranted)){
               viewModel.locationOption.value = true
           }
+    }
+
+    fun trackEvent(){
+        analyticsUtil.trackEvent(
+            EVENT_VIEW_ABOUT_YOURSELF,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")
+        )
     }
 
     inner class StateObserver : Observer<AuthenticationUIState> {
