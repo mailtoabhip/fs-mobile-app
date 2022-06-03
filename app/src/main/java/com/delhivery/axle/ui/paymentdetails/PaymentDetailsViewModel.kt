@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.request.BankValidationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
 import com.delhivery.axle.api.response.DelegationToken
@@ -132,7 +133,22 @@ class PaymentDetailsViewModel@Inject constructor(
         }
     }
 
+ fun getBankname(accountNum:String,ifsc:String){
+     compositeDisposable += loadboardRepository.getBankName(
+         BankValidationRequest(
+             accountNum,ifsc
+         )
+     )
+         .onBackground()
+         .progress()
+         .subscribe { _res, error ->
+             if (!error) {
 
+             } else {
+                 error.handle()
+             }
+         }
+ }
 
 
 

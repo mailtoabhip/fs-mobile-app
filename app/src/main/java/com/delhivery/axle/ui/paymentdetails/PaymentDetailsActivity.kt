@@ -198,7 +198,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 accountNum=false
                 enableSubmitButton()
             }else {
-                sendDocForVerification(uploadArray)
+//                sendDocForVerification(uploadArray)
+
                 if (binding.nameDeclaration.isChecked) {
                     viewModel.nameDeclaration = true
                 } else {
