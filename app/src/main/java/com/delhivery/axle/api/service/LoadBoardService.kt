@@ -196,4 +196,9 @@ interface LoadBoardService {
     @Query("user_id") userId: String
   ): Single<BaseResponse<List<PopularLocationsResponse>>>
 
+  @POST("/validate_bank")
+  fun getBankName(
+    @Body bankValidationRequest: BankValidationRequest
+  ): Single<BaseResponse<BankValidationResponse>>
+
 }
