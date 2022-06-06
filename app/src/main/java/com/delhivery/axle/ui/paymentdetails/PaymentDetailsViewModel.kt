@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.BankValidationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
+import com.delhivery.axle.api.response.BankValidationResponse
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -34,6 +35,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var vendorUserUpdateLiveData = MutableLiveData<Boolean>()
     var nameDeclaration =false
+    var bankValidaton=MutableLiveData<Pair<Boolean,BankValidationResponse>>()
 
 
 
@@ -133,7 +135,7 @@ class PaymentDetailsViewModel@Inject constructor(
         }
     }
 
- fun getBankname(accountNum:String,ifsc:String){
+ fun getBankName(accountNum:String,ifsc:String){
      compositeDisposable += loadboardRepository.getBankName(
          BankValidationRequest(
              accountNum,ifsc
@@ -143,8 +145,9 @@ class PaymentDetailsViewModel@Inject constructor(
          .progress()
          .subscribe { _res, error ->
              if (!error) {
-
+             bankValidaton.postValue(Pair(true,_res))
              } else {
+                 bankValidaton.postValue(Pair(false,_res))
                  error.handle()
              }
          }

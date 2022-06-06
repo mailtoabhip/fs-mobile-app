@@ -76,12 +76,14 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
     var accountNum=false
-    var accountName=false
+    var accountName=true
     var ifsc = false
     var docUpload =false
     var nameDec =true
     var startTime: Long = 0
     var endTime: Long = 0
+    var bankValidated = false
+    var bankValidationApiFailed=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +119,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
         startTime = System.currentTimeMillis()
-
+        accountName=true
         viewModel.accountHolderText.observe(this, Observer {
             if(userPrefs.panName.equals(it,true)){
                 binding.accountHolderWarning.visibility= View.GONE
@@ -198,7 +200,23 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 accountNum=false
                 enableSubmitButton()
             }else {
-//                sendDocForVerification(uploadArray)
+                if(bankValidationApiFailed){
+                    sendDocForVerification(uploadArray)
+                }else {
+                    if (bankValidated) {
+                        if (viewModel.selected194CUpload.value == true) {
+                            sendDocForVerification(uploadArray1)
+                            viewModel.selected194CUpload.value = false
+                        } else {
+                            viewModel.updateUserDetails()
+                        }
+                    } else {
+                        viewModel.getBankName(
+                            accountNum = viewModel.accountText.value!!,
+                            ifsc = viewModel.ifscText.value!!
+                        )
+                    }
+                }
 
                 if (binding.nameDeclaration.isChecked) {
                     viewModel.nameDeclaration = true
@@ -224,6 +242,46 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             viewModel.selected194CUpload.value=false
 
         }
+        viewModel.bankValidaton.observe(this, Observer {
+            if (it.first){
+                bankValidationApiFailed=false
+                if(it.second.validated!!){
+                    bankValidated=false
+                    viewModel.accountHolderText.value=it.second.accountHolderName
+                    binding.accountHolderEdittext.setText(it.second.accountHolderName)
+                    if(viewModel.selected194CUpload.value==true){
+                        sendDocForVerification(uploadArray1)
+                        viewModel.selected194CUpload.value=false
+                    }else{
+                        viewModel.updateUserDetails()
+                    }
+                }else{
+                    viewModel.accountHolderText.value=it.second.accountHolderName
+                    binding.accountHolderEdittext.setText(it.second.accountHolderName)
+                    if(userPrefs.panName.equals(it.second.accountHolderName,true)){
+                        binding.accountHolderWarning.visibility= View.GONE
+                        binding.nameDeclaration.visibility=View.GONE
+                        nameDec=true
+                        enableSubmitButton()
+                    }else{
+                        if(it.second.accountHolderName.isNotNullOrEmpty()) {
+                            nameDec=false
+                            enableSubmitButton()
+                            binding.accountHolderWarning.visibility = View.VISIBLE
+                            binding.nameDeclaration.visibility = View.VISIBLE
+                        }
+                    }
+                    bankValidated=true
+                }
+            }else{
+                bankValidationApiFailed=true
+                binding.uploadDoc.visibility=View.VISIBLE
+                binding.accountHolderEdittext.visibility=View.INVISIBLE
+                binding.accountHolderEdittext1.visibility=View.VISIBLE
+            }
+        })
+
+
         viewModel.accountText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 binding.imgWrongAccount.visibility=View.GONE
@@ -245,20 +303,20 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             enableSubmitButton()
         }
 
-        viewModel.accountHolderText.observe(this, Observer {
-            if(it.isNotNullOrEmpty()){
-                accountName=true
-                enableSubmitButton()
-            }else{
-                accountName=false
-                enableSubmitButton()
-            }
-        })
-        binding.accountHolderEdittext.lengthAction(1){
+//        viewModel.accountHolderText.observe(this, Observer {
+//            if(it.isNotNullOrEmpty()){
+//                accountName=true
+//                enableSubmitButton()
+//            }else{
+//                accountName=false
+//                enableSubmitButton()
+//            }
+//        })
+        binding.accountHolderEdittext1.lengthAction(1){
             accountName=true
             enableSubmitButton()
         }
-        binding.accountHolderEdittext.lengthAction(0){
+        binding.accountHolderEdittext1.lengthAction(0){
             accountName=false
             enableSubmitButton()
         }
