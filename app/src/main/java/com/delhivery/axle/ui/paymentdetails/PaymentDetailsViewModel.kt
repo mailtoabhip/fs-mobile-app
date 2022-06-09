@@ -36,7 +36,8 @@ class PaymentDetailsViewModel@Inject constructor(
     var vendorUserUpdateLiveData = MutableLiveData<Boolean>()
     var nameDeclaration =false
     var bankValidaton=MutableLiveData<Pair<Boolean,BankValidationResponse>>()
-
+    var bankValidated = false
+    var bankValidationApiFailed=false
 
 
     /**
