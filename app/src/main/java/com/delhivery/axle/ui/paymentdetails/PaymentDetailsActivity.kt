@@ -133,6 +133,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     binding.accountHolderWarning.visibility = View.VISIBLE
                     binding.nameDeclaration.visibility = View.VISIBLE
                     binding.nameDeclaration.isChecked=false
+                    viewModel.nameDeclaration=false
                 }
             }
         })
@@ -219,7 +220,9 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                             }else{
                                 viewModel.nameDeclaration=false
                             }
-                            viewModel.updateUserDetails()
+                            if(userPrefs.panName.equals(viewModel.accountHolderText.value)||viewModel.nameDeclaration==true) {
+                                viewModel.updateUserDetails()
+                            }
                         }
                     } else {
                         viewModel.getBankName(
@@ -263,7 +266,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         sendDocForVerification(uploadArray1)
                         viewModel.selected194CUpload.value=false
                     }else{
-                        viewModel.updateUserDetails()
+                        if(userPrefs.panName.equals(viewModel.accountHolderText.value)||viewModel.nameDeclaration==true) {
+                            viewModel.updateUserDetails()
+                        }else{
+                            viewModel.bankValidated=true
+                        }
                     }
                 }else{
                     viewModel.accountHolderText.value=it.second.accountHolderName
