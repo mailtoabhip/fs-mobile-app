@@ -152,6 +152,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     sendDocForVerification(uploadArray1)
                     viewModel.selected194CUpload.value=false
                 }else{
+                    if(binding.nameDeclaration.isChecked==true){
+                        viewModel.nameDeclaration=true
+                    }else{
+                        viewModel.nameDeclaration=false
+                    }
                    viewModel.updateUserDetails()
                 }
         })
@@ -209,6 +214,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                             sendDocForVerification(uploadArray1)
                             viewModel.selected194CUpload.value = false
                         } else {
+                            if(binding.nameDeclaration.isChecked==true){
+                                viewModel.nameDeclaration=true
+                            }else{
+                                viewModel.nameDeclaration=false
+                            }
                             viewModel.updateUserDetails()
                         }
                     } else {
