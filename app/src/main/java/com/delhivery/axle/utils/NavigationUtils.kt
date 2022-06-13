@@ -33,6 +33,7 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import java.lang.Exception
 
 /**
  * Navigation Utils, utility class helps for navigation among activity with other options
@@ -270,8 +271,11 @@ class NavigationUtils @Inject constructor(
           navigate(MyProfileActivity::class.java,true)
       }else {
           if(!retryDone){
+            try{
               activity.startActivity(intent)
               activity.finish()
+            }catch (e:Exception){}
+
           }
       }
 

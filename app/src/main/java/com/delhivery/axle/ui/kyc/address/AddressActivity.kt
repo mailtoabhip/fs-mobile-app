@@ -58,6 +58,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 import javax.inject.Inject
 
 class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface{
@@ -187,7 +188,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             if(selectedAddressData.addressType.equals("gst")){
                 isSameAsGST =true
             }
-            viewModel.updateCommunicationAddress(selectedAddressData.address!!,isSameAsGST)
+            try{
+                viewModel.updateCommunicationAddress(selectedAddressData.address!!,isSameAsGST)
+            }catch (e:Exception){}
         }
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)

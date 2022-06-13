@@ -249,8 +249,23 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       if (it != null) {
         val pageTitle = if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         if (it.second.truckUUID != null) {
-          BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
-                  pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
+          try {
+            BulkBidDetailsCreateEditDialog(
+              context!!,
+              it.second,
+              it.second.bulkTransactionBids,
+              it.first,
+              viewModel,
+              it.second.unAllocatedVolume!!,
+              pos,
+              analyticsUtil,
+              userPrefs,
+              "load_screen",
+              pageTitle
+            ).show()
+          }catch (e:Exception){
+
+          }
         } else {
           Toast.makeText(context, "No Vehicle Types Found", Toast.LENGTH_SHORT).show()
         }
