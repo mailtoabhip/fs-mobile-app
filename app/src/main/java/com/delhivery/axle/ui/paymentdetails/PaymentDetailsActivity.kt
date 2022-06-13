@@ -583,14 +583,14 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         IOUtils.copy(inputStream, outputStream)
                         if(viewModel.selected194CUpload.value != true) {
                             this.uploadImageName =
-                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension
                             this.localImageName =
-                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+imageScopedFile.extension
                         }else{
                             this.uploadImageName =
-                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension
                             this.localImageName =
-                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension
                         }
                         if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
