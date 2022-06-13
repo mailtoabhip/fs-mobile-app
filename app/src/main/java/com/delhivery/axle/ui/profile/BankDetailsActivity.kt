@@ -154,12 +154,18 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         }
 
         binding.docRemove.setOnClickListener {
-            downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
-            download=true
+            try{
+                downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
+                download=true
+            }catch (e:Exception){
+            }
+
         }
         binding.docDownload1.setOnClickListener {
+            try{
             downloadLogo(viewModel.nine4CkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
             download=true
+            }catch (e:Exception){}
         }
         binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
