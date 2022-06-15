@@ -37,6 +37,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var nameDeclaration =false
     var bankValidaton=MutableLiveData<Pair<Boolean,BankValidationResponse>>()
     var bankValidated = false
+    var panMatched  = true
     var bankValidationApiFailed=false
 
 
@@ -146,7 +147,8 @@ class PaymentDetailsViewModel@Inject constructor(
          .progress()
          .subscribe { _res, error ->
              if (!error) {
-             bankValidaton.postValue(Pair(true,_res))
+                 panMatched=_res.validated!!
+                 bankValidaton.postValue(Pair(true,_res))
              } else {
                  bankValidaton.postValue(Pair(false,_res))
                  error.handle()
