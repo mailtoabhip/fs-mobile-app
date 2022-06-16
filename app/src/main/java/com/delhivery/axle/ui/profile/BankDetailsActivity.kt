@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.databinding.library.BuildConfig
@@ -441,10 +442,14 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                         IOUtils.copy(inputStream, outputStream)
                         this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
-                        if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
+                        Log.i("extension",imageScopedFile.extension)
+                        if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
-                        }else{
+                        }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
+                        }else{
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
                         }
 
                         if (mPhotoFile == null) {

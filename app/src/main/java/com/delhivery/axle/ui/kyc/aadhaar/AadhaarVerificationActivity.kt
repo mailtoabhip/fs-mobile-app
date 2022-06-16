@@ -415,10 +415,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                         IOUtils.copy(inputStream, outputStream)
                             this.uploadImageName = "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                             this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
+                        if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
-                        }else{
+                        }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
+                        }else{
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
                         }
 
                         if (mPhotoFile == null) {
