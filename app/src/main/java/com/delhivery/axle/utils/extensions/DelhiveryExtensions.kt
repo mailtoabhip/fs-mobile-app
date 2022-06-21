@@ -3,6 +3,7 @@ package com.delhivery.axle.utils.extensions
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ErrorResponseBody
+import com.delhivery.axle.api.response.PaymentErrorResponseBody
 import com.google.gson.Gson
 import io.reactivex.Single
 import retrofit2.HttpException
@@ -41,6 +42,19 @@ fun Single<BaseMessageResponse>.convertMessageResponse(): Single<String> =
 fun Throwable.errorResponseBody() = if (this is HttpException) {
   val errorResponseBody = try {
     Gson().fromJson(response()?.errorBody()?.string(), ErrorResponseBody::class.java)
+  } catch (e: Exception) {
+    //parsing exception
+    e.printStackTrace()
+    null
+  }
+  errorResponseBody
+} else {
+  null
+}
+
+fun Throwable.errorPaymentResponseBody() = if (this is HttpException) {
+  val errorResponseBody = try {
+    Gson().fromJson(response()?.errorBody()?.string(), PaymentErrorResponseBody::class.java)
   } catch (e: Exception) {
     //parsing exception
     e.printStackTrace()

@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
 import com.delhivery.axle.utils.EVENT_SUBMIT_BUSINESS_PROOF
 import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
@@ -250,7 +251,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     } else {
                         viewModel.getBankName(
                             accountNum = viewModel.accountText.value!!,
-                            ifsc = viewModel.ifscText.value!!
+                            ifsc = viewModel.ifscText.value?.toUpperCase()!!
                         )
                     }
                 }
@@ -324,7 +325,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         })
 
-
+        viewModel.accountDoesNotExist.observe(this, Observer {
+          if(it.first){
+              dialogUtils.showErrorDialog(it.second)
+          }
+        })
         viewModel.accountText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 binding.imgWrongAccount.visibility=View.GONE

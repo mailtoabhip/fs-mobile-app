@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.paymentdetails
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.BankValidationRequest
@@ -11,6 +12,9 @@ import com.delhivery.axle.api.response.BankValidationResponse
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
+import com.delhivery.axle.utils.extensions.errorPaymentResponseBody
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -39,7 +43,7 @@ class PaymentDetailsViewModel@Inject constructor(
     var bankValidated = false
     var panMatched  = true
     var bankValidationApiFailed=false
-
+    var accountDoesNotExist = MutableLiveData<Pair<Boolean,String>>()
 
     /**
      * Get delegation token for AWS
@@ -150,8 +154,48 @@ class PaymentDetailsViewModel@Inject constructor(
                  panMatched=_res.validated!!
                  bankValidaton.postValue(Pair(true,_res))
              } else {
-                 bankValidaton.postValue(Pair(false,_res))
-                 error.handle()
+                 Log.d("error",error.toString())
+                 val errorBody = error.errorPaymentResponseBody()
+                     ?.errorBody
+                 if (errorBody != null) {
+                     when (errorBody.code()) {
+                         400-> {
+                             if(errorBody.data?.accountExists != null){
+                                 if(errorBody.data.accountExists==false){
+                                     accountDoesNotExist.postValue(Pair(true,errorBody.errorMessage))
+                                 }else{
+                                     bankValidaton.postValue(Pair(false,_res))
+                                     error.handle()
+                                 }
+                             }else{
+                                 bankValidaton.postValue(Pair(false,_res))
+                                 error.handle()
+                             }
+                         }
+                         else -> {
+                             when (errorBody.errorCode()){
+                                 400->{
+                                     if(errorBody.errorMessage.equals("Missing or invalid data provided for: account_number, ifsc_code")){
+                                         accountDoesNotExist.postValue(Pair(true,errorBody.errorMessage))
+                                     }else{
+                                         bankValidaton.postValue(Pair(false,_res))
+                                         error.handle()
+                                     }
+                                 }
+                                 else -> {
+                                     bankValidaton.postValue(Pair(false,_res))
+                                     error.handle()
+                                 }
+                             }
+                         }
+                     }
+
+                 } else {
+                     bankValidaton.postValue(Pair(false,_res))
+                     error.handle()
+
+                 }
+
              }
          }
  }
