@@ -346,6 +346,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 }
                 enableSubmitButton()
             }else{
+                binding.accountHolderEdittext.text =getString(R.string.hint_for_bank_validation)
                 accountNum=false
                 enableSubmitButton()
             }
@@ -398,6 +399,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 ifsc=true
                 enableSubmitButton()
             }else{
+                binding.accountHolderEdittext.text = getString(R.string.hint_for_bank_validation)
                 ifsc=false
                 enableSubmitButton()
             }
