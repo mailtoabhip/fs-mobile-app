@@ -2,8 +2,10 @@ package com.delhivery.axle.data.home.bids
 
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.databinding.BindingAdapter
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
@@ -744,6 +746,12 @@ data class HomeBidsRequestItemData(
 
 }
 
+@BindingAdapter("layoutMarginStart")
+fun setLayoutMarginBottom(view: View, dimen: Float) {
+  val layoutParams = view.layoutParams as MarginLayoutParams
+  layoutParams.marginStart = dimen.toInt()
+  view.layoutParams = layoutParams
+}
 
 /**
  * Truck specification detail

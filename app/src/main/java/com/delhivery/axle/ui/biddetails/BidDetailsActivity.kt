@@ -92,7 +92,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       val date2: Date = format.parse(bidEndingTime)
       if (date2.compareTo(date1) > 0) {
         binding.timerLayout.visibility = View.VISIBLE
-        Log.d("maspappaaa", "nksllsls")
         val mills: Long = date2.getTime() - date1.getTime()
         object : CountDownTimer(mills, 1000) {
           override fun onTick(millisUntilFinished: Long) {
@@ -100,7 +99,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
               val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
               val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-              val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+              val format = "%1$02d"
+              val hrs = String.format(format, hours)
+              val ms = String.format(format, mins)
+              val sec = String.format(format, secs)
+              val diff = "$hrs:$ms:$sec" + "s"
               binding.timerTime.setText(diff)
             } catch (e: Exception) {
               e.printStackTrace()
