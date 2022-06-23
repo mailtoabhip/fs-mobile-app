@@ -356,6 +356,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                    setTimer(bidEndingTime)
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
+                  binding.status.visibility = View.GONE
                 }
           }
           is BidDetailsUserBidState_PlaceBid -> {
@@ -375,6 +376,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
                 }
                 btnPlaceBid.setOnClickListener { bidDialog() }
+                binding.status.visibility = View.GONE
               }
           }
           is BidDetailsUserBidState_EditBid -> {
@@ -445,6 +447,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
                   textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
                   textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                  binding.status.visibility = View.VISIBLE
+                  binding.status.text = "Active"
+                  binding.status.setTextColor(resources.getColor(R.color.status_active))
                 }
           }
           is BidDetailsUserBidState_LoadingBids -> {
@@ -464,6 +469,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
                     driverPhone =
                             state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                    binding.status.visibility = View.VISIBLE
+
+                    val data = viewModel.transaction as HomeBidsRequestItemData
+                    if(data.supplierAllocation == true){
+                      if(data.spID.equals(userPrefs.userId())){
+                        binding.status.text = "Order Confirmed"
+                        binding.status.setTextColor(resources.getColor(R.color.status_confirmed))
+                      }else{
+                        binding.status.text = "Bid Won- Confirmation Pending"
+                        binding.status.setTextColor(resources.getColor(R.color.pending))
+                      }
+                    }else{
+                      binding.status.text = "Bid Won- Confirmation Pending"
+                      binding.status.setTextColor(resources.getColor(R.color.pending))
+                    }
+
                   }
           }
           is BidDetailsUserBidState_RejectedBid -> {
@@ -478,6 +499,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       StringUtils.formatAmount(state.userBid.bidAmount)
                     }
                     textUserHighestBid.text = bidText
+                    binding.status.visibility = View.VISIBLE
+                    binding.status.text = "Bid Lost"
+                    binding.status.setTextColor(resources.getColor(R.color.status_lost))
                   }
           }
           is BidDetailsUserBidState_CancelledBid -> {
@@ -492,6 +516,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   StringUtils.formatAmount(state.userBid.bidAmount)
                 }
                 textUserHighestBid.text = bidText
+                binding.status.visibility = View.VISIBLE
+                binding.status.text = "Cancelled"
+                binding.status.setTextColor(resources.getColor(R.color.status_lost))
               }
           }
 
@@ -512,7 +539,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
                 viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
-
+                binding.status.visibility = View.VISIBLE
+                binding.status.text = "Active"
+                binding.status.setTextColor(resources.getColor(R.color.status_active))
               }
               btnReviseBidInsider.setOnClickListener{ bidDialog()}
             }

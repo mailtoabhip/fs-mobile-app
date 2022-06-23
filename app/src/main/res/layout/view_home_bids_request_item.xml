@@ -208,12 +208,10 @@
           android:layout_height="wrap_content"
           android:fontFamily="sans-serif-medium"
           android:gravity="end"
-          android:text="@{request.bidStatus().status}"
           android:textSize="@dimen/text_16sp"
           app:layout_constraintBottom_toBottomOf="@+id/text_amount"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="@id/text_amount"
-          bind:textColor="@{ ContextCompat.getColor(context, request.requiredTextColor()) }"
           tools:text="STATUS"
           tools:textColor="@color/black"
           />
