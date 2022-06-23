@@ -372,6 +372,11 @@
   <string name="label_choose_from_below">Choose one from the below trucks</string>
   <string name="label_confirm_details">Confirm truck details</string>
   <string name="label_no_loads_found">Can\'t find relevant loads?</string>
+  <string name="label_active">Active</string>
+  <string name="label_lost">Bid Lost</string>
+  <string name="label_cancel">Bid Cancelled</string>
+  <string name="label_pending">Bid Won- Confirmation Pending</string>
+  <string name="label_confirm">Order Confirmed</string>
 
 
   <!--Label (label_)-->
