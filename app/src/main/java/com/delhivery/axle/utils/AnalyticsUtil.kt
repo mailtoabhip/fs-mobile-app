@@ -81,6 +81,7 @@ const val EVENT_REVISE_BID_INTENT  ="revise_bid_intent"
 const val EVENT_SKIP_TUTORIAL = "skip_app_tutorial"
 const val EVENT_VIEW_TUTORIAL = "view_app_tutorial"
 const val EVENT_AUTO_LOGOUT = "auto_logout"
+const val EVENT_TOKEN_EXPIRED = "token_expired"
 const val EVENT_USER_LOGOUT = "user_logout"
 const val EVENT_SHOW_ADDITIONAL_LOADS = "show_additional_loads"
 const val EVENT_VIEW_BIDS_SCREEN = "view_bids_screen"
@@ -218,6 +219,7 @@ const val PROPERTY_TNC = "terms_and_conditions"
 const val PROPERTY_IDENTITY_SELECTED = "identity_selected"
 const val PROPERTY_ADD_PROOF_TYPE = "address_proof_type"
 const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
+const val PROPERTY_ERROR_MESSAGE = "error_message"
 
 
 

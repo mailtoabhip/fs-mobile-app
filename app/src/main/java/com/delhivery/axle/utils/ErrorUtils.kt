@@ -7,6 +7,7 @@ import com.delhivery.axle.exception.HttpErrorCode
 import com.delhivery.axle.exception.HttpErrorCode.Forbidden
 import com.delhivery.axle.exception.HttpErrorCode.Unauthorized
 import com.delhivery.axle.injection.scope.ActivityScope
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.Gson
 import dagger.android.support.DaggerAppCompatActivity
 import retrofit2.HttpException
@@ -19,7 +20,9 @@ class ErrorUtils @Inject constructor(
   private val uiUtils: UiUtils,
   private val dialogUtils: DialogUtils,
   private val gson: Gson,
-  private val navigationUtils: NavigationUtils
+  private val navigationUtils: NavigationUtils,
+  private val analyticsUtil: AnalyticsUtil,
+  private val userPrefs: UserPrefs
 ) {
 
   /**
@@ -61,7 +64,17 @@ class ErrorUtils @Inject constructor(
     }
 
     when (errorCode) {
-      Unauthorized, Forbidden -> navigationUtils.logout(errorMessage)
+      Unauthorized ->{
+        navigationUtils.logout(errorMessage)
+      }
+      Forbidden -> {
+        analyticsUtil.trackEvent(
+          EVENT_TOKEN_EXPIRED,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,PROPERTY_ERROR_MESSAGE),
+          mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",errorMessage?:"")
+          )
+        navigationUtils.logout(errorMessage)
+      }
       else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
     }
   }
