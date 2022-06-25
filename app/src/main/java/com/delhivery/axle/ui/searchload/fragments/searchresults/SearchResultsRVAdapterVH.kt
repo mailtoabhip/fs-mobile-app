@@ -96,7 +96,11 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                 val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
                 val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
                 val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-                val diff = "$hours:$mins:$secs" + "s" // updated value every1 second
+                val format = "%1$02d"
+                val hrs = String.format(format, hours)
+                val ms = String.format(format, mins)
+                val sec = String.format(format, secs)
+                val diff = "$hrs:$ms:$sec" + "s" // updated value every1 second
                 binding.timerTime.setText(diff)
               } catch (e: Exception) {
                 e.printStackTrace()
