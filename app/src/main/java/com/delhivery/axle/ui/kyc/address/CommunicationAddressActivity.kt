@@ -577,10 +577,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         IOUtils.copy(inputStream, outputStream)
                         this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        if(imageScopedFile.extension==".jpg" ||imageScopedFile.extension==".png" || imageScopedFile.extension==".jpeg"){
+                        if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
-                        }else{
+                        }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
+                        }else{
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
                         }
 
                         if (mPhotoFile == null) {
