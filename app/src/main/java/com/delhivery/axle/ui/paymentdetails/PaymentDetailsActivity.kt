@@ -367,15 +367,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             enableSubmitButton()
         }
 
-//        viewModel.accountHolderText.observe(this, Observer {
-//            if(it.isNotNullOrEmpty()){
-//                accountName=true
-//                enableSubmitButton()
-//            }else{
-//                accountName=false
-//                enableSubmitButton()
-//            }
-//        })
         binding.accountHolderEdittext1.lengthAction(1){
             accountName=true
             enableSubmitButton()
