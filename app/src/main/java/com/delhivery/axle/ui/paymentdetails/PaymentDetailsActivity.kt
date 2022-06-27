@@ -286,7 +286,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 if(it.second.validated!!){
                     viewModel.bankValidated=false
                     viewModel.accountHolderText.value=it.second.accountHolderName
-                    binding.accountHolderEdittext.setText("Account Holder Name -"+it.second.accountHolderName)
+                    binding.accountHolderEdittext.setText("Account Holder Name - "+it.second.accountHolderName)
                     if(viewModel.selected194CUpload.value==true){
                         sendDocForVerification(uploadArray1)
                         viewModel.selected194CUpload.value=false
@@ -299,7 +299,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     }
                 }else{
                     viewModel.accountHolderText.value=it.second.accountHolderName
-                    binding.accountHolderEdittext.setText("Account Holder Name -"+it.second.accountHolderName)
+                    binding.accountHolderEdittext.setText("Account Holder Name - "+it.second.accountHolderName)
                     if(it.second.validated!!){
                         binding.accountHolderWarning.visibility= View.GONE
                         binding.nameDeclaration.visibility=View.GONE
