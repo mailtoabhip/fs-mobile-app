@@ -315,7 +315,7 @@
                         android:id="@+id/doc_proof1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="@dimen/text_14sp"
+                        android:textSize="@dimen/text_16sp"
                         android:textStyle="bold"
                         bind:layout_constraintTop_toTopOf="parent"
                         bind:layout_constraintStart_toStartOf="parent"
