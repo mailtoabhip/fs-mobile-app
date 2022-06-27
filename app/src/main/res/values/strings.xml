@@ -110,6 +110,7 @@
 
   <!--Actions (action_)-->
   <string name="action_activate_truck">Request for Load</string>
+  <string name="action_share_rate">+ Share Rate</string>
   <string name="action_deactivate_truck">Deactivate Truck</string>
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
@@ -377,6 +378,7 @@
   <string name="label_cancel">Bid Cancelled</string>
   <string name="label_pending">Bid Won- Confirmation Pending</string>
   <string name="label_confirm">Order Confirmed</string>
+  <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
 
 
   <!--Label (label_)-->

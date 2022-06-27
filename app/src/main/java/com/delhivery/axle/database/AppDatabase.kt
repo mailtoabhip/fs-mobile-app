@@ -15,7 +15,7 @@ import com.delhivery.axle.database.entity.User
  *
  */
 @Database(
-    entities = [User::class, SearchLoadHistoryEntity::class, SearchCityEntity::class], version = 6, exportSchema = false
+    entities = [User::class, SearchLoadHistoryEntity::class, SearchCityEntity::class], version = 7, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
   abstract fun userDao(): UserDao
