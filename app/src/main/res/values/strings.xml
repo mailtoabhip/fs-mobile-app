@@ -460,6 +460,8 @@
   <string name="label_routes">My Routes</string>
   <string name="label_earnings">My Earnings</string>
   <string name="label_team">My Team Members</string>
+  <string name="label_share_rate">Share rate &amp; earn reward</string>
+  <string name="label_how_it_works">How does this work?</string>
   <string name="label_pod">POD Address</string>
   <string name="label_help">Help &amp; Support</string>
   <string name="label_logout">Log Out</string>
@@ -596,7 +598,15 @@
   <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion-dev.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion-dev.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
   <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
-
+  <string name="earn_reward">Earn reward when proof is verified</string>
+  <string name="details_updated_based_on_proof">Details updated based on proof</string>
+  <string name="rewards_earned">Rewards Earned</string>
+  <string name="submitted_on">Submitted on</string>
+  <string name="payment_date">Payment Date</string>
+  <string name="full_details">Full Details</string>
+  <string name="utr">UTR#</string>
+  <string name="select_a_route">Select a route to share the rates</string>
+  <string name="share_proof">Share proof not older than 7 days</string>
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+  <data>
+    <variable
+        name="request"
+        type="com.delhivery.axle.data.sharerates.ShareRateRoutesItemData"
+        />
+
+    <import type="android.view.View" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:background="@color/white"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/size_24dp"
+      android:layout_marginBottom="@dimen/size_8dp"
+      android:layout_marginStart="@dimen/size_16dp"
+      android:layout_marginEnd="@dimen/size_16dp">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/route_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold"
+        android:textColor="@color/route_heading"
+        android:textSize="@dimen/text_12sp"
+        tools:text="Behal - Phek"
+        android:text="@{request.routes}"
+        />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/truck_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/route_text"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="@dimen/size_4dp"
+        android:textSize="@dimen/text_12sp"
+        android:textColor="@color/info_bg"
+        tools:text="40ft MXL (25-38MT)"
+        android:text="@{request.truckDisplayName}"/>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_4dp"
+        app:srcCompat="@drawable/ic_vector_arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

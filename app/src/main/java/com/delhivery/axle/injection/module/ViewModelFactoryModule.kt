@@ -44,6 +44,9 @@ import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFragmentViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
@@ -378,6 +381,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ManageRouteViewModel::class)
   abstract fun bindManageRouteViewModel(viewModel:ManageRouteViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateGetRewardsViewModel::class)
+  abstract fun bindShareRateGetRewardsViewModel(viewModel: ShareRateGetRewardsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateFragmentViewModel::class)
+  abstract fun bindShareRateFragmentViewModel(viewModel: ShareRateFragmentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourRewardsFragmentViewModel::class)
+  abstract fun bindYourRewardsFragmentViewModel(viewModel: YourRewardsFragmentViewModel): ViewModel
 
 
   @Binds

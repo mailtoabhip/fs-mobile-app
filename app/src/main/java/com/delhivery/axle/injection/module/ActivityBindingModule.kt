@@ -41,6 +41,8 @@ import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
+import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentBindingModule
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchcitystate.SearchOriginCityActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -321,6 +323,10 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsMangeRouteActivityModule::class])
   internal abstract fun bindManageRouteActivity(): ManageRouteActivity
 
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsShareRateGetRewardsActivityModule::class, ShareRateGetRewardsFragmentBindingModule::class])
+  internal abstract fun bindShareRateGetRewardsActivity(): ShareRateGetRewardsActivity
+
 }
 
 
@@ -482,6 +488,9 @@ internal abstract class AbsSearchOriginCityActivityModule : ActivityModule<Searc
 
 @Module
 internal abstract class AbsMangeRouteActivityModule : ActivityModule<ManageRouteActivity>()
+
+@Module
+internal abstract class AbsShareRateGetRewardsActivityModule : ActivityModule<ShareRateGetRewardsActivity>()
 
 /**
  * Activity Binds Module

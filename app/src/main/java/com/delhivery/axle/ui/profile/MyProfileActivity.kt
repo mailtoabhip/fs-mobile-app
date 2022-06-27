@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
@@ -242,7 +243,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.teamLayout.setOnClickListener {
                startActivity(teamMembersIntent(this))
         }
-
+        binding.shareLayout.setOnClickListener {
+            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+        }
         binding.podLayout.setOnClickListener {
             if(binding.podaddress.visibility == View.VISIBLE){
                binding.podaddress.visibility = View.GONE

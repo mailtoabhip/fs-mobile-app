@@ -1,0 +1,28 @@
+package com.delhivery.axle.ui.profile.raterewards.fragments.sharerate
+
+import com.delhivery.axle.data.sharerates.ShareRatesTimeOutAction
+import com.delhivery.axle.data.sharerates.ShareRatesWarningAction_NoRates
+import com.delhivery.axle.data.sharerates.ShareRatesWarningItemData
+
+/**
+ * No Rates warning item
+ */
+val ShareRatesWarningItem_NoRate = ShareRatesWarningItem(
+    ShareRatesWarningItemData(
+        "No Active Offers",
+        "",
+        "", ShareRatesWarningAction_NoRates
+    )
+)
+
+/**
+ * Rates timeout item
+ */
+val ShareRatesWarningItem_TimeOut = ShareRatesWarningItem(
+    ShareRatesWarningItemData(
+        "Session timed out!",
+        "Unfortunately, we couldn't fetch the data you are looking for. \n Kindly refresh.",
+        "REFRESH", ShareRatesTimeOutAction
+    )
+)
+
