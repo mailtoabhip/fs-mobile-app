@@ -116,6 +116,15 @@ object DrawableProviderUtils {
     R.drawable.ic_rounded_circle_black
   }
 
+  /**
+   * Resource for showing rewards details
+   */
+  @DrawableRes
+  fun rewardsFullDetailsRes(flag: Boolean) = if (flag) {
+    R.drawable.ic_vector_up_arrow
+  } else {
+    R.drawable.ic_vector_down_arrow
+  }
 
 
 }

@@ -536,15 +536,16 @@
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:layout_width="match_parent"
-                    android:text="@string/label_earnings"
-                    android:layout_toStartOf="@+id/arrow5"
-                    android:layout_toEndOf="@+id/imgearnings"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/size_12dp"
-                    android:textColor="@color/heading_black"
                     android:layout_marginEnd="@dimen/size_12dp"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_toEndOf="@+id/imgearnings"
+                    android:layout_toStartOf="@+id/arrow5"
+                    android:text="@string/label_earnings"
+                    android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
-                    android:layout_height="wrap_content"/>
+                    />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -555,12 +556,46 @@
                     android:layout_height="wrap_content"/>
 
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:id="@+id/share_layout"
+                android:padding="@dimen/size_16dp"
+                bind:layout_constraintTop_toBottomOf="@+id/earningsLayout"
+                android:layout_height="wrap_content">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/img_share"
+                    bind:srcCompat="@drawable/ic_share_rate"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="@string/label_share_rate"
+                    android:layout_toStartOf="@+id/arrow_share"
+                    android:layout_toEndOf="@+id/img_share"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:textColor="@color/heading_black"
+                    android:layout_marginEnd="@dimen/size_12dp"
+                    android:textSize="@dimen/text_14sp"
+                    android:layout_height="wrap_content"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/arrow_share"
+                    android:layout_marginEnd="@dimen/size_4dp"
+                    android:layout_centerVertical="true"
+                    bind:srcCompat="@drawable/ic_vector_arrow"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/teamLayout"
                 android:padding="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/earningsLayout"
+                bind:layout_constraintTop_toBottomOf="@+id/share_layout"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -608,17 +643,18 @@
                     bind:srcCompat="@drawable/ic_pod_address"
                     android:layout_height="wrap_content"/>
                 <TextView
-                    android:layout_width="match_parent"
-                    android:text="@string/label_pod"
-                    android:layout_toStartOf="@+id/arrow7"
-                    android:layout_toEndOf="@+id/imgpod"
-                   android:layout_marginStart="@dimen/size_12dp"
                     android:id="@+id/podtv"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:textColor="@color/heading_black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/size_12dp"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_toEndOf="@+id/imgpod"
+                    android:layout_toStartOf="@+id/arrow7"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:text="@string/label_pod"
+                    android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
-                    android:layout_height="wrap_content"/>
+                    />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_alignParentEnd="true"
