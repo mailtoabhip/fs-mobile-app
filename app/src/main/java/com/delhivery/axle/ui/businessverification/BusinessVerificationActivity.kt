@@ -685,6 +685,12 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
+                            analyticsUtil.trackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
+                                    PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"business_verification")
+                            )
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
                         }
