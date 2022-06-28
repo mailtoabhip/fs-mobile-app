@@ -83,12 +83,15 @@ class PanVerificationViewModel@Inject constructor(
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
                           }else{
                             error.handle()
+                            errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
                         }else{
                           error.handle()
+                          errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         }
                       }
                       else -> {
+                        errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         Throwable(errorBody.errorMessage).handle()
                       }
                     }
