@@ -458,7 +458,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                                     PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE
                                 ),
-                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"communication_address")
+                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"bank_validation")
                             )
 
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
