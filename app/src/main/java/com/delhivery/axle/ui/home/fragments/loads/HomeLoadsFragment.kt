@@ -47,6 +47,9 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import com.moe.pushlibrary.MoEHelper
+import com.moengage.core.Properties
+import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
 import javax.inject.Inject
 
 class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -117,6 +120,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       handleAction(
               HomeTripsSearchAction_Search, HomeLoadsSearchItem()
       )
+      analyticsUtil.moEngageTrackEvent( EVENT_HOME_SEARCH_INITIATE,
+        mutableListOf(PROPERTY_ORDER_COUNT),
+        mutableListOf(adapter.itemsList().size.toString()))
     }
 
     binding.routesBanner.setOnClickListener {
