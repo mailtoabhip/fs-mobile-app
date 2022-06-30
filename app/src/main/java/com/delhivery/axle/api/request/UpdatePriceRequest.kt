@@ -29,11 +29,6 @@ data class UpdatePriceRequest(
 )
 
 data class OfferRequest(
-        //@SerializedName("offset") var offset:Int = 0,
-        //@SerializedName("limit") var limit: Int = 0,
-       // @SerializedName("lists") var lists: keyLists = keyLists(),
-        //@SerializedName("range_filters") var range_filters: rangeFiltersData = rangeFiltersData(),
-       // @SerializedName("status") var status: String="active by default",
         @SerializedName("all_offers") var allOffers:Boolean = true,
         @SerializedName("source") var source:List<String> = arrayListOf("origin_city_code", "destination_city_code", "truck_display_name","start_date","end_date", "amount", "origin_city", "destination_city")
 )

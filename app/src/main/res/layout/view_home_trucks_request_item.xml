@@ -269,7 +269,7 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_16sp"
                         android:layout_marginTop="@dimen/size_4dp"
-                        android:text="Now Earn by adding trip details!!"
+                        android:text="@string/label_rate1"
                         android:layout_height="wrap_content"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -279,7 +279,7 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_12sp"
                         android:layout_marginTop="@dimen/size_4dp"
-                        android:text="Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards."
+                        android:text="@string/label_rate2"
                         android:layout_height="wrap_content"/>
 
                     <TextView
