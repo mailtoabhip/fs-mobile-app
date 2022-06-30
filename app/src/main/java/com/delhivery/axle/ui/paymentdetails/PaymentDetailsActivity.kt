@@ -439,7 +439,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             val bundle = Bundle()
             bundle.putInt(StepKey,3)
             navigationUtils.navigateKyc(this,true,bundle)
-            navigationUtils.navigate(BusinessVerificationActivity::class.java, true)
         }
     }
 

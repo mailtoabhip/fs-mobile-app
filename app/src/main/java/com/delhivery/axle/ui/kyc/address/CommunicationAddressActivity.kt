@@ -39,6 +39,7 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCitySelected
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
@@ -293,8 +294,9 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), viewModel.documentProofType?:"alternate")
                 )
 
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,null)
+                navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")

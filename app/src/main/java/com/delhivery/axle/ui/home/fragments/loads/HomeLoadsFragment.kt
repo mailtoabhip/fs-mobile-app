@@ -102,7 +102,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
-
+    val bundle = Bundle()
+    bundle.putInt(StepKey,0)
+    navigationUtils.navigateKyc(context!!,true,bundle)
     /* setup recycler view */
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)

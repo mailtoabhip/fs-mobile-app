@@ -29,6 +29,7 @@ import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
 import com.delhivery.axle.databinding.DialogConfirmAddressDialogBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BitmapUtils
@@ -233,8 +234,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"")
                 )
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,null)
+                navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")

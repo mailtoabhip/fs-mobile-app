@@ -237,7 +237,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,0)
+        bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,false,bundle)
     }
 
