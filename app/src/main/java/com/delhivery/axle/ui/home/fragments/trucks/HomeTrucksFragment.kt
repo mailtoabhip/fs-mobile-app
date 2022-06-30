@@ -47,6 +47,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun getViewModelClass() = HomeTrucksViewModel::class.java
     override fun layoutId() = R.layout.fragment_home_trucks
 
+    var bannerValue:Boolean? = false
+
     companion object {
         /* singleton instance */
         val _instance: HomeTrucksFragment by lazy { HomeTrucksFragment() }
@@ -94,14 +96,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 adapter.notifyDataSetChanged()
             }
         })
-
-        binding.fm.bringChildToFront(binding.rateMore)
-
-        binding.gotit.setOnClickListener { binding.rateMore.visibility = View.GONE }
-        binding.shareRate.setOnClickListener {
-            binding.rateMore.visibility = View.GONE
-            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
-        }
 
         /* setup recycler view */
         binding.rvTrucks.apply {
@@ -203,9 +197,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 _items -> adapter.operation(_items)
                 if(adapter.itemCount>0 && userPrefs.isFirstOpenRate){
                     userPrefs.isFirstOpenRate = false
-                    binding.rateMore.visibility = View.VISIBLE
+                    bannerValue = true
                 }else{
-                    binding.rateMore.visibility = View.GONE
+                   bannerValue = false
                 }
             }})
 
@@ -809,6 +803,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         return pres
+    }
+
+    override fun getBannerStatus(): Boolean? {
+        userPrefs.isFirstOpenRate = false
+       return bannerValue
+    }
+
+    override fun callRewards() {
+            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
     }
 
     override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?) {

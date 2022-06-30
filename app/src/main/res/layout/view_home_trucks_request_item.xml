@@ -22,12 +22,14 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         app:cardElevation="@dimen/size_2dp"
         app:cardCornerRadius="@dimen/size_6dp">
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:id="@+id/lay1"
             android:layout_height="wrap_content"
             android:padding="@dimen/size_14dp">
             <androidx.appcompat.widget.AppCompatImageView
@@ -112,12 +114,16 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="5dp"
+            android:layout_below="@+id/lay1"
             android:layout_marginTop="@dimen/size_8dp"
+            android:id="@+id/sep1"
             android:src="@drawable/seperator_line" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/sep1"
+            android:id="@+id/lay2"
             android:visibility="@{request.locationVisibility()}"
             android:padding="@dimen/size_14dp">
 
@@ -173,12 +179,14 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <TextView
             android:id="@+id/btn_activate_truck"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_36dp"
             android:layout_margin="@dimen/size_14dp"
+            android:layout_below="@+id/lay2"
             android:textAllCaps="false"
+            android:gravity="center"
             android:textColor="@color/black"
             android:visibility="@{request.statusVisibilty()}"
             android:background="@drawable/bg_all_round_corner_white_boundary"
@@ -189,7 +197,7 @@
             android:layout_width="match_parent"
             android:id="@+id/shareRateLay"
             android:paddingBottom="@dimen/size_12dp"
-            android:visibility="gone"
+            android:layout_below="@+id/btn_activate_truck"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -229,10 +237,89 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/rateMore"
+            android:visibility="gone"
+             android:layout_marginStart="@dimen/size_32dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_light"
+                android:clickable="true"
+                android:id="@+id/mainLay"
+                android:focusable="true">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/size_16dp"
+                    android:layout_height="wrap_content">
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="54dp"
+                        android:id="@+id/img"
+                        bind:srcCompat="@drawable/ic_frame_rate"
+                        android:layout_height="54dp"/>
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_below="@+id/img"
+                        android:id="@+id/lb1"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_16sp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="Now Earn by adding trip details!!"
+                        android:layout_height="wrap_content"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_below="@+id/lb1"
+                        android:id="@+id/lb2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_12sp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards."
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:padding="8dp"
+                        android:layout_marginStart="@dimen/size_12dp"
+                        android:text="@string/action_learn"
+                        android:id="@+id/shareRate"
+                        android:layout_below="@+id/lb2"
+                        android:textSize="@dimen/text_12sp"
+                        android:textColor="@color/colorAccent"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/bg_rounded_blue"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:padding="8dp"
+                        android:layout_toStartOf="@+id/shareRate"
+                        android:layout_marginStart="@dimen/size_12dp"
+                        android:text="@string/action_got"
+                        android:id="@+id/gotit"
+                        android:textSize="@dimen/text_12sp"
+                        android:textColor="@color/white"
+                        android:layout_below="@+id/lb2"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+            </RelativeLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_below="@id/mainLay"
+                android:layout_marginEnd="@dimen/size_48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-2dp"
+                bind:srcCompat="@drawable/ic_polygon"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
 </layout>

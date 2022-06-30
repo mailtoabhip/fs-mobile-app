@@ -390,7 +390,7 @@ class HomeTrucksViewModel @Inject constructor(
         val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-        val periodicSyncDataWork = PeriodicWorkRequest.Builder(MyWorker::class.java, 15, TimeUnit.MINUTES)
+        val periodicSyncDataWork = PeriodicWorkRequest.Builder(MyWorker::class.java, 24, TimeUnit.HOURS)
                 .addTag(TAG_SYNC_DATA)
                 .setConstraints(constraints) // setting a backoff on case the work needs to retry
                 .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)

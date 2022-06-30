@@ -16,6 +16,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterViewHolder
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 
 /**
  * Base Home trucks RV adapter view holder
@@ -26,6 +27,8 @@ abstract class BaseHomeTrucksRVAdapterViewHolder<out B : ViewDataBinding, IT : B
         item: IT,
         _interface: HomeTrucksRVAdapterInterface
     )
+
+    var bannerShown = false
 
     /**
      * Add on click listener for action
@@ -93,10 +96,22 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
 
         if(res!=null && res.first == true){
             binding.shareRateLay.visibility = item.data.statusVisibilty()
+            if(_interface.getBannerStatus() == true){
+                binding.rateMore.visibility = View.VISIBLE
+            }else{
+                binding.rateMore.visibility = View.GONE
+            }
         }else{
             binding.shareRateLay.visibility = View.GONE
+            binding.rateMore.visibility = View.GONE
         }
 
+        binding.gotit.setOnClickListener { binding.rateMore.visibility = View.GONE }
+
+        binding.shareRate.setOnClickListener {
+            binding.rateMore.visibility = View.GONE
+           _interface.callRewards()
+        }
     }
 }
 
