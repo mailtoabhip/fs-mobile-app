@@ -121,12 +121,6 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     }
 
     val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
-
-    Log.d("cmsljkajkaka", item.data.origin)
-    Log.d("cmsljkajkaka", item.data.destination)
-    Log.d("cmsljkajkaka", item.data.truckSpecification.toString())
-    Log.d("sfhjandakd", res.toString())
-    Log.d("sfhjandakdaaa", item.data.bidStatus().statusKey)
      if(res!=null && res.first == true){
       if(item.data.bidStatus().statusKey.equals("rejected")){
         binding.shareRateLay.visibility = View.VISIBLE
