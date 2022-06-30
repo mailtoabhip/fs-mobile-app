@@ -291,6 +291,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                     mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
             )
             uiUtils.hideDelhiveryProgress()
+            userPrefs.isFirstOpenRate=true
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           AccountDetails -> {

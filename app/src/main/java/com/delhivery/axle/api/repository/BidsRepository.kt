@@ -211,7 +211,7 @@ class BidsRepository @Inject constructor(
     statuses: String,
     pending:Boolean
   ) = bidService.bidsForStatuses(userRepository.userId(),
-      UserBidsLoadLimit, offset, statuses, confirmationPending = pending)
+      UserBidsLoadLimit, offset, statuses)
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
 

@@ -26,6 +26,9 @@ import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -71,11 +74,33 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchData()
+
         viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
             refreshData()
+        }
+
+        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                viewModel.getFrequentLanes(it)
+            }
+        })
+
+        viewModel.finalOffers.observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                adapter.notifyDataSetChanged()
+            }
+        })
+
+        binding.fm.bringChildToFront(binding.rateMore)
+
+        binding.gotit.setOnClickListener { binding.rateMore.visibility = View.GONE }
+        binding.shareRate.setOnClickListener {
+            binding.rateMore.visibility = View.GONE
+            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
         }
 
         /* setup recycler view */
@@ -174,7 +199,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         /** Observe live Data*/
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
-            it?.let { _items -> adapter.operation(_items) }})
+            it?.let {
+                _items -> adapter.operation(_items)
+                if(adapter.itemCount>0 && userPrefs.isFirstOpenRate){
+                    userPrefs.isFirstOpenRate = false
+                    binding.rateMore.visibility = View.VISIBLE
+                }else{
+                    binding.rateMore.visibility = View.GONE
+                }
+            }})
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
@@ -340,6 +373,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             viewModel.availabilityFilter = mutableListOf()
         }
         viewModel.getAllInventories()
+
+        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                viewModel.getFrequentLanes(it)
+            }
+        })
 
     }
 
@@ -755,6 +794,35 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
         }
+    }
+
+    override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Boolean?, String?, String?>? {
+        var pres:Triple<Boolean?, String?, String?>? = Triple(false, tid, null)
+        if(viewModel.finalOffers.value.isNullOrEmpty()){
+            pres = null
+        }else{
+            for(r in viewModel.finalOffers.value!!){
+                if(r.occ.equals(origin_id) == true && r.dcc?.equals(dest_id)== true){
+                    pres = pres?.copy(true, tid, r.tdn)
+                }
+            }
+        }
+
+        return pres
+    }
+
+    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?) {
+        val bundle = Bundle()
+        bundle.putString("originname", data?.currentCityName)
+        bundle.putString("destname", data?.unloadingDestination)
+        bundle.putString("occ", data?.currentCityCode)
+        bundle.putString("dcc", data?.unloadingDestinationCode)
+        bundle.putString("truckNumber", data?.vehicleNumber)
+        bundle.putString("truckType", data?.truckSize)
+        bundle.putString("truckCapacity", data?.truckCapacity())
+        bundle.putString("itemTD", itemTD)
+        bundle.putString("offerTD", offerTD)
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
     }
 
     /**

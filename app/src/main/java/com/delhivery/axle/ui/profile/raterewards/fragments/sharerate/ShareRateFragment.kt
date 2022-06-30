@@ -12,6 +12,7 @@ import com.delhivery.axle.data.sharerates.ShareRatesTimeOutAction
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.databinding.FragmentShareRateBinding
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.NavigationUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -59,12 +60,12 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
 
   override fun refreshData() {
     adapter.resetStaticData()
-   /* viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
+    viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
       if (!it.isNullOrEmpty()) {
         adapter.resetStaticData()
         viewModel.getFrequentLanes(it)
       }
-    })*/
+    })
   }
 
   override fun handleAction(actionId: String, item: BaseShareRateRVAdapterItem<*>) {
@@ -81,7 +82,7 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
         bundle.putString("truckCapacity",null)
         bundle.putString("itemTD",  data.truckDisplayName)
         bundle.putString("offerTD",  data.truckDisplayName)
-      //  navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       ShareRatesTimeOutAction -> {
         refreshData()

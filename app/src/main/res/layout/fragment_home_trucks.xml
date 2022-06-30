@@ -12,15 +12,14 @@
     </data>
     <FrameLayout
         android:layout_width="match_parent"
+        android:id="@+id/fm"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        >
+        android:background="@color/colorBackground">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -75,6 +74,90 @@
             android:visibility="gone"
             android:contentDescription="@string/action_add_truck"
             android:layout_marginEnd="@dimen/size_16dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/rateMore"
+                    android:visibility="gone"
+                    android:layout_below="@+id/edit_sticky_search"
+                    android:layout_marginStart="@dimen/size_32dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_blue_light"
+                        android:clickable="true"
+                        android:id="@+id/mainLay"
+                        android:focusable="true">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:padding="@dimen/size_16dp"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:id="@+id/img"
+                                bind:srcCompat="@drawable/ic_frame_rate"
+                                android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/img"
+                                android:id="@+id/lb1"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_16sp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:text="Now Earn by adding trip details!!"
+                                android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/lb1"
+                                android:id="@+id/lb2"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_12sp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:text="Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards."
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:padding="8dp"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:text="@string/action_learn"
+                                android:id="@+id/shareRate"
+                                android:layout_below="@+id/lb2"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/colorAccent"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:layout_alignParentEnd="true"
+                                android:background="@drawable/bg_rounded_blue"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:padding="8dp"
+                                android:layout_toStartOf="@+id/shareRate"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:text="@string/action_got"
+                                android:id="@+id/gotit"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/white"
+                                android:layout_below="@+id/lb2"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:layout_height="wrap_content"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_below="@id/mainLay"
+                        android:layout_marginEnd="@dimen/size_48dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="-2dp"
+                        bind:srcCompat="@drawable/ic_polygon"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
 
             </RelativeLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

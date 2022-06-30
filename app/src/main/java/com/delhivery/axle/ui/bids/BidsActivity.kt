@@ -181,6 +181,13 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     }
   }
 
+  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>? {
+    return null
+  }
+
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ: String?, dcc: String?) {
+  }
+
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
     //  binding.transaction?.let {
     /* set transaction id */

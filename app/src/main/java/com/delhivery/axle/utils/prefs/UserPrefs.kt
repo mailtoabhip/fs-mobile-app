@@ -693,6 +693,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.isBankDetailsRejected, value)
         .apply()
     get() = prefs.getBoolean(PrefKeys.isBankDetailsRejected, false)
+
+  var isFirstOpenRate: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isFirstOpenrate, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isFirstOpenrate, false)
+
   /**
    * Clear all preferences
    */
@@ -865,6 +871,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.isBankDetailsRejected)
         .apply()
+    editor.remove(PrefKeys.isFirstOpenrate)
+            .apply()
     editor.commit()
   }
 
@@ -1063,7 +1071,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
     const val isBankDetailsRejected= "is_bank_details_rejected"
-
+    const val isFirstOpenrate= "is_first_open_rate"
 
   }
 }

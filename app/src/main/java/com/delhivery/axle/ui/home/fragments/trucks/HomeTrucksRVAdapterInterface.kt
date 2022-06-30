@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
 
 interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<BaseHomeTrucksRVAdapterItem<*>> {
     override fun onItemClicked(item: BaseHomeTrucksRVAdapterItem<*>) {
@@ -26,4 +28,9 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
         item: BaseHomeTrucksRVAdapterItem<*>,
         position: Int
     )
+
+    fun callShareRate(data: HomeTrucksRequestItemData?, itemTD:String?, offerTD:String?)
+
+    fun getTotalOffers(origin_id:String?, dest_id:String?, tid:String?):Triple<Boolean?, String?, String?>?
+
 }

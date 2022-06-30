@@ -3,7 +3,10 @@ package com.delhivery.axle.injection.module
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.delhivery.axle.SyncOfferData.MyWorker
+import com.delhivery.axle.injection.module.DaggerWorkerFactory.ChildWorkerFactory
 import com.delhivery.axle.injection.scope.ViewModelScope
+import com.delhivery.axle.injection.scope.WorkerKey
 import com.delhivery.axle.ui.accountaction.AccountActionViewModel
 import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
@@ -60,6 +63,7 @@ import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailViewM
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel
+import com.delhivery.axle.ui.sharerate.ShareRateViewModel
 import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
@@ -397,7 +401,17 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(YourRewardsFragmentViewModel::class)
   abstract fun bindYourRewardsFragmentViewModel(viewModel: YourRewardsFragmentViewModel): ViewModel
 
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateViewModel::class)
+  abstract fun bindShareRateViewModel(viewModel: ShareRateViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+
+  @Binds
+  @IntoMap
+  @WorkerKey(MyWorker::class)
+  abstract fun bindTopArtistsUpdateWorker(factory: MyWorker.Factory):
+          ChildWorkerFactory
 }

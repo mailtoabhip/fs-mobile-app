@@ -19,6 +19,8 @@ class LoadCycleRepository @Inject constructor(
    */
   fun searchTrips(request: JsonObject) = loadsService.searchTrips(request).convertResponse()
 
+  fun getFrequentLanes(request: JsonObject) = loadsService.getFrequentLanes(request).convertResponse()
+
 }
 
 /* User trips pagination load limit */

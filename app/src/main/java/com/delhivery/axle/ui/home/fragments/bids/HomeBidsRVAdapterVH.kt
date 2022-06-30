@@ -119,6 +119,26 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
       binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
       binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
     }
+
+    val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
+
+    Log.d("cmsljkajkaka", item.data.origin)
+    Log.d("cmsljkajkaka", item.data.destination)
+    Log.d("cmsljkajkaka", item.data.truckSpecification.toString())
+    Log.d("sfhjandakd", res.toString())
+    Log.d("sfhjandakdaaa", item.data.bidStatus().statusKey)
+     if(res!=null && res.first == true){
+      if(item.data.bidStatus().statusKey.equals("rejected")){
+        binding.shareRateLay.visibility = View.VISIBLE
+      }else{
+        binding.shareRateLay.visibility = View.GONE
+      }
+    }else{
+      binding.shareRateLay.visibility = View.GONE
+    }
+
+    binding.btnShareRate.setOnClickListener { _interface.callShareRate(item.data, res?.second?.first, res?.second?.second, res?.third?.first, res?.third?.second) }
+
   }
 }
 

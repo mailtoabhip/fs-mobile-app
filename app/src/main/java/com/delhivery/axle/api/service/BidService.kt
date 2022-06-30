@@ -102,8 +102,7 @@ interface BidService {
     @Query("supplier_id") userId: String,
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
-    @Query("bid_statuses") status: String? = null,
-    @Query("confirmation_pending") confirmationPending: Boolean
+    @Query("bid_statuses") status: String? = null
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**

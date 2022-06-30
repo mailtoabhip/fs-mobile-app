@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.UserRepository
 //import com.delhivery.axle.api.response.FrequentTripsResponse
 import com.delhivery.axle.data.sharerates.ShareRateRoutesItemData
 import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.database.entity.OffersEntity
 //import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -36,7 +37,7 @@ class ShareRateFragmentViewModel  @Inject constructor(
   var total = 0
   var paginateCount = 0
 
-  /*fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+  fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
 
   fun getFrequentLanes(dbData: List<OffersEntity>) {
 
@@ -61,7 +62,7 @@ class ShareRateFragmentViewModel  @Inject constructor(
     arr.add("truck_display_name")
     jsonObject.addProperty("loaded_after", dateAsString)
     jsonObject.addProperty("vendor_id", userRepository.userId())
-    jsonObject.add("source", arr)
+    jsonObject.add("source_fields", arr)
     jsonObject.addProperty("offset", 0)
     jsonObject.addProperty("limit", 10000)
     compositeDisposable += loadCycleRepository.getFrequentLanes(jsonObject)
@@ -132,5 +133,5 @@ class ShareRateFragmentViewModel  @Inject constructor(
 
         dataLoadingLiveData.postValue(false)
       }
-  }*/
+  }
 }

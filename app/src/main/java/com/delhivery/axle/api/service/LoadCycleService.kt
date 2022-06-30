@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.FrequentTripsResponse
 import com.delhivery.axle.api.response.SearchTripsResponse
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -19,5 +20,13 @@ interface LoadCycleService {
   fun searchTrips(
     @Body request: JsonObject
   ): Single<BaseResponse<SearchTripsResponse>>
+
+  /**
+   * Get frequent operated lanes for vendor in last 60 days
+   */
+  @POST("/trips")
+  fun getFrequentLanes(
+          @Body request: JsonObject
+  ): Single<BaseResponse<FrequentTripsResponse>>
 
 }

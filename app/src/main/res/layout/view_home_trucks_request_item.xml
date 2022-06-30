@@ -188,8 +188,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:id="@+id/shareRateLay"
-            android:visibility="@{request.statusVisibilty()}"
             android:paddingBottom="@dimen/size_12dp"
+            android:visibility="gone"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView

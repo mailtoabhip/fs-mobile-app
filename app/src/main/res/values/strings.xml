@@ -107,6 +107,7 @@
   <string name="hint_rep_time">Enter Vehicle Reporting Time</string>
   <string name="hint_select_time">Select Time</string>
   <string name="rep_time">Vehicle Reporting Time</string>
+  <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
 
   <!--Actions (action_)-->
   <string name="action_activate_truck">Request for Load</string>
@@ -174,7 +175,8 @@
   <string name="action_add_member">Add Member</string>
   <string name="action_complete_verification">Complete Verification</string>
   <string name="action_retry_verification">Retry Verification</string>
-
+  <string name="action_got">Got it</string>
+  <string name="action_learn">Learn More</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -379,7 +381,12 @@
   <string name="label_pending">Bid Won- Confirmation Pending</string>
   <string name="label_confirm">Order Confirmed</string>
   <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
-
+  <string name="label_origin_destination">Origin &amp; Destination</string>
+  <string name="hint_offer">This is not applicable for current offer period.</string>
+  <string name="label_rate">Rate</string>
+  <string name="label_date">Date</string>
+  <string name="upload_proof">Upload Proof</string>
+  <string name="label_tc_details">\u2022 Payment will be made after the proof is verified\n\n\u2022 The details added should match the proof document for the payment to be processed\n\n\u2022 Rate is collected for selected routes &amp; trucks </string>
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
@@ -482,6 +489,8 @@
   <string name="label_open">Open Body</string>
   <string name="label_trailer">Trailer</string>
   <string name="label_closed">Container</string>
+  <string name="label_dialog_rate">Rate has been successfully submitted</string>
+  <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
