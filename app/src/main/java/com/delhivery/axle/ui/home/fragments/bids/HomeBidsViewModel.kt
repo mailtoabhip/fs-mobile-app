@@ -75,7 +75,6 @@ class HomeBidsViewModel @Inject constructor(
   var confirmedBids= ""
   var lostBids= ""
 
-  var getFrequentLanesData = MutableLiveData<FrequentTripsResponse>()
   var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
 
   /**

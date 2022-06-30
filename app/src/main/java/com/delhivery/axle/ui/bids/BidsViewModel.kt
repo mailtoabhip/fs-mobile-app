@@ -3,7 +3,9 @@ package com.delhivery.axle.ui.bids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
@@ -11,6 +13,8 @@ import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -28,16 +32,25 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.Function3
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * View model for [BidsActivity]
  */
 class BidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
-  private val transactionsRepository: TransactionsRepository
+  private val transactionsRepository: TransactionsRepository,
+  private val userRepository: UserRepository,
+  private val loadCycleRepository: LoadCycleRepository,
+  private val appDatabase: AppDatabase
 ) : BaseViewModel(), BulkBidDetailsDialog.BulkBidDetailsDialogInterface {
 
   /* Bids live data */
@@ -57,6 +70,8 @@ class BidsViewModel @Inject constructor(
   var total = 0
   var offset = 0
   var hasMoreData = true
+  var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
+
 
   /* transaction id */
   lateinit var transactionId: String
@@ -301,6 +316,56 @@ class BidsViewModel @Inject constructor(
     }
       return bulkBidSummaryItemList
   }
+
+  fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+
+  fun getFrequentLanes(dbData: List<OffersEntity>) {
+    val subfinalOffers = ArrayList<OffersEntity>()
+
+    val myDate = Date()
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.setTimeZone(TimeZone.getTimeZone("UTC"))
+    calendar.setTime(myDate)
+    calendar.add(Calendar.DAY_OF_YEAR, -60)
+    val time: Date = calendar.getTime()
+    val outputFmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    outputFmt.setTimeZone(TimeZone.getTimeZone("UTC"))
+    val dateAsString: String = outputFmt.format(time)
+
+    val jsonObject = JsonObject()
+    val arr = JsonArray()
+    arr.add("origin_city_id")
+    arr.add("destination_city_id")
+    arr.add("truck_display_name")
+    jsonObject.addProperty("loaded_after", dateAsString)
+    jsonObject.addProperty("vendor_id", userRepository.userId())
+    jsonObject.add("source_fields", arr)
+    jsonObject.addProperty("offset", 0)
+    jsonObject.addProperty("limit", 10000)
+    compositeDisposable += loadCycleRepository.getFrequentLanes(jsonObject)
+            .onBackground()
+            .subscribe { _res, error ->
+              if (!error) {
+                if (_res.trips.isNotEmpty()) {
+                  if (!dbData.isNullOrEmpty()) {
+                    for (rt in dbData) {
+                      for (vt in _res.trips) {
+                        if (rt.occ.equals(vt.originCityId) && rt.dcc.equals(vt.destinationCityId) && rt.tdn.equals(vt.truckDisplayName)) {
+                          subfinalOffers.add(rt)
+                        }
+                      }
+                    }
+                    finalOffers.postValue(subfinalOffers)
+                  }
+                }else {
+                  finalOffers.postValue(dbData as ArrayList<OffersEntity>?)
+                }
+              }else{
+                error.handle()
+              }
+            }
+  }
+
 
 
 }

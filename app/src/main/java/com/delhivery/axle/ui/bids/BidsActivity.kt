@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -80,6 +81,18 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
+
+    viewModel.fetchDatabaseOffers().observe(this, Observer {
+      if (!it.isNullOrEmpty()) {
+        viewModel.getFrequentLanes(it)
+      }
+    })
+
+    viewModel.finalOffers.observe(this, Observer {
+      if (!it.isNullOrEmpty()) {
+        adapter.notifyDataSetChanged()
+      }
+    })
 
     /* setup recycler view */
     binding.rvBids.apply {
@@ -182,10 +195,32 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   }
 
   override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>? {
-    return null
+    var pres:Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(false, Pair(tid, null), Pair(null, null))
+    if(viewModel.finalOffers.value.isNullOrEmpty()){
+      pres = null
+    }else{
+      for(r in viewModel.finalOffers.value!!){
+        if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
+          pres = pres?.copy(true, Pair(tid, r.tdn), Pair(r.occ, r.dcc))
+        }
+      }
+    }
+
+    return pres
   }
 
-  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ: String?, dcc: String?) {
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?) {
+    val bundle = Bundle()
+    bundle.putString("originname", data?.origin)
+    bundle.putString("destname", data?.destination)
+    bundle.putString("occ", occ)
+    bundle.putString("dcc", dcc)
+    bundle.putString("truckNumber", data?.transactionBid?.vehicleNumber)
+    bundle.putString("truckType", data?.truckSpecification?.truckDispName)
+    bundle.putString("truckCapacity", data?.truckTypeWithCapacity())
+    bundle.putString("itemTD", itemTD)
+    bundle.putString("offerTD", offerTD)
+    navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
   }
 
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
