@@ -198,6 +198,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }
         }
 
+        SUPPLIER_LOAD_REDIRECT -> {
+          if (dplink_tid != "") {
+            startActivity(bidDetailsIntent(dplink_tid, this))
+          } else {
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+        }
+
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
           analyticsUtil.trackEvent(
@@ -272,6 +280,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           mutableListOf(userPrefs.userId())
         )
         startActivity(tripDetailsIntent(preferredTransactionId, this))
+      }
+
+      REDIRECT_TO_LOAD_DETAIL -> {
+        analyticsUtil.trackEvent(
+                EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
+                mutableListOf(PROPERTY_USER_ID),
+                mutableListOf(userPrefs.userId())
+        )
+        startActivity(bidDetailsIntent(preferredTransactionId,this))
       }
 
       REDIRECT_TO_LOAD -> {
@@ -465,6 +482,7 @@ private const val REDIRECT_TO_LOAD ="redirect_to_load"
 private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
 private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
 private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
+private const val REDIRECT_TO_LOAD_DETAIL = "supplier_recommendation_notification"
 
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
@@ -480,6 +498,7 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
+private const val SUPPLIER_LOAD_REDIRECT = "sldtl"
 
 
 /* intent keys */
