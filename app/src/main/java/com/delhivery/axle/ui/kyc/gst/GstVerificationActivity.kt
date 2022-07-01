@@ -143,7 +143,12 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 this, Observer {
             if(it){
                 uiUtils.hideProgress()
-                viewModel.updateUserDetails()
+                if(userPrefs.gstNumber.equals(currSelectedGst, ignoreCase = true)){
+                    viewModel.updateUserDetails()
+                }else{
+                    viewModel.resetKycDetails(userPrefs.retryVerification)
+                }
+
             }else{
                 uiUtils.hideProgress()
                 viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
@@ -164,7 +169,11 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             if(viewModel.docVerificationFailedCount.value==2){
                 viewModel.docVerificationFailedCount.value=0
                 userPrefs.isGstNotBypassed=false
-                viewModel.updateUserDetails()
+                if(userPrefs.gstNumber==currSelectedGst){
+                    viewModel.updateUserDetails()
+                }else{
+                    viewModel.resetKycDetails(userPrefs.retryVerification)
+                }
             }
         })
 

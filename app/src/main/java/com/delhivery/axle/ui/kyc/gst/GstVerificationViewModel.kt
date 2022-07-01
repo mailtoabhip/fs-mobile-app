@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.AddAddressModel
+import com.delhivery.axle.api.request.ResetKycDataRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.DelegationToken
@@ -62,6 +63,7 @@ class GstVerificationViewModel@Inject constructor(
 
     var gstFetchList = HashSet<String>()
 
+    var resetKycLiveData = MutableLiveData<Boolean>()
    /**
      * Get delegation token for AWS
      */
@@ -193,6 +195,28 @@ class GstVerificationViewModel@Inject constructor(
         }
 
     }
+
+  fun resetKycDetails(ignoreClearDate:Boolean) {
+    if (!isConnected) return
+
+    if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && phoneNum!=null) {
+      compositeDisposable += loadboardRepository.resetKyc(ResetKycDataRequest(phoneNumber = userPrefs.phoneNumber!!, resetPoint = "identity", gstNumber = gstDetailData.value?.gstNumber, isAddressSameAsGST = false))
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error) {
+            if(!ignoreClearDate){
+              userPrefs.clearKycPreferenceDataBasedOnSteps("gst")
+            }
+            resetKycLiveData.postValue(true)
+          } else{
+            error.handle()
+            resetKycLiveData.postValue(false)
+          }
+        }
+    }
+
+  }
 
     fun fetchGstNumbers() {
         compositeDisposable += loadboardRepository.gstNumbers(userPrefs.pancard)

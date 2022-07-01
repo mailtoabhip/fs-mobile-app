@@ -71,8 +71,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
-                viewModel.updateUserDetails()
+                 if(viewModel.panCardNumber.equals(userPrefs.pancard, ignoreCase = true)){
+                    viewModel.updateUserDetails()
+                 }else{
+                   viewModel.resetKycDetails(userPrefs.retryVerification)
 
+                 }
         }
 
         binding.editPan.apply {
@@ -141,6 +145,14 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }
         })
+
+      viewModel.resetKycLiveData.observe(this, Observer {
+        if (it) {
+                viewModel.updateUserDetails()
+        } else {
+          uiUtils.showSnackbar("Update Failed, Please try again")
+        }
+      })
         viewModel.errorLiveData.observe(
             this, Observer {
                 it?.let { error ->
