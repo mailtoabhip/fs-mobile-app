@@ -149,6 +149,8 @@ const val EVENT_GST_OFFICE_ADDRESS = "submit_gst_address"
 const val EVENT_SUBMIT_BUSINESS_PROOF = "submit_business_proof"
 const val EVENT_SUBMIT_PAYMENT_DETAILS = "submit_payment_details"
 const val EVENT_ACCEPT_VENDOR_POLICY = "accept_vendor_policy"
+const val EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION = "recommendation_sms_open"
+const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
 
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
@@ -224,6 +226,8 @@ const val PROPERTY_IDENTITY_SELECTED = "identity_selected"
 const val PROPERTY_ADD_PROOF_TYPE = "address_proof_type"
 const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
 const val PROPERTY_ERROR_MESSAGE = "error_message"
+const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
+const val PROPERTY_ORDER_ID = "order_id"
 
 
 
