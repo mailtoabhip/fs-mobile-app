@@ -17,7 +17,7 @@ data class UpdatePriceRequest(
         @SerializedName("truck_display_name") var truckDisplayName: String?,
         @SerializedName("truck_capacity") var truckCapacity: Double?,
         @SerializedName("vehicle_number") var vehicleNumber: String?,
-        @SerializedName("rate") var rate: String?,
+        @SerializedName("rate") var rate: Double?,
         @SerializedName("trip_date") var tripDate: String?,
         @SerializedName("sp_id") var spId: String?,
         @SerializedName("sp_name") var spName: String?,

@@ -76,7 +76,7 @@ class ShareRateViewModel @Inject constructor(
                                 selected_truck_type,
                                 if(selected_truck_capacity.isNotNullOrEmpty())selected_truck_capacity?.trim()?.replace(" ", "")?.replace("MT", "")?.toDouble() else null,
                                 selected_vehicle_number,
-                                expectedPrice.toString(),
+                                expectedPrice,
                                 tripDate,
                                 userPrefs.parentId,
                                 userPrefs.parentName,
@@ -84,7 +84,7 @@ class ShareRateViewModel @Inject constructor(
                                 priceUnit,
                                 proofType?.toLowerCase()?.replace(" ", "_"),
                                 documentProofUrl,
-                                userPrefs.phoneNumber
+                                userPrefs.phoneNumber?.replace("+91", "")
                         )
 
                         priceRepository.shareRate(updatePriceRequest)
