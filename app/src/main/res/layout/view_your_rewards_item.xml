@@ -166,10 +166,33 @@
           android:text="@{request.paymentDate()}"/>
 
       <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/offer_text"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:textSize="@dimen/text_12sp"
+          app:layout_constraintTop_toBottomOf="@+id/utr_value"
+          app:layout_constraintStart_toStartOf="parent"
+          android:textColor="@color/color_hint"
+          android:text="@string/offer_hash"
+          />
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/sort_value"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toBottomOf="@+id/offer_text"
+          app:layout_constraintStart_toStartOf="parent"
+          android:textColor="@color/route_heading"
+          android:textSize="@dimen/text_12sp"
+          tools:text="12388399"
+          android:text="@{request.sortKey}"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/details_update"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          app:layout_constraintTop_toBottomOf="@+id/utr_value"
+          app:layout_constraintTop_toBottomOf="@+id/sort_value"
           app:layout_constraintStart_toStartOf="parent"
           android:drawableStart="@drawable/ic_vector_info_doc"
           android:drawablePadding="@dimen/size_4dp"

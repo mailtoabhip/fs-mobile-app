@@ -105,13 +105,8 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
       binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_active))
       binding.textBidStatus.text = context.resources.getString(R.string.label_active)
    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
-      if(item.data.transactionBid?.clientConfirmationPending == false){
-        binding.textBidStatus.setTextColor(context.resources.getColor(R.color.pending))
-        binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
-     }else{
         binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_confirmed))
         binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
-      }
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
       binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))

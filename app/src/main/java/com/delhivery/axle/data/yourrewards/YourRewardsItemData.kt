@@ -43,7 +43,7 @@ data class YourRewardsItemData(
   @SerializedName("amount_paid") val amountPaid: Int?=null,
   @SerializedName("utr_number") val utr: String?=null,
   @SerializedName("payment_date") val paymentDate: String?=null,
-
+  @SerializedName("sort_key") val sortKey: String?=null,
   var isFullDetailsEnabled:Boolean = false
 
 ): BaseKeyTypeModel<String>() {

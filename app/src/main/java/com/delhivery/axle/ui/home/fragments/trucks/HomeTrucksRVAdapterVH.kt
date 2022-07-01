@@ -97,7 +97,7 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         if(res!=null && res.first == true){
             binding.shareRateLay.visibility = item.data.statusVisibilty()
             if(_interface.getBannerStatus() == true){
-                binding.rateMore.visibility = View.VISIBLE
+                binding.rateMore.visibility = item.data.statusVisibilty()
             }else{
                 binding.rateMore.visibility = View.GONE
             }

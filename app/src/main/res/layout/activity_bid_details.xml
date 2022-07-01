@@ -197,7 +197,6 @@
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/status"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_truck_details"
                 tools:text="Load: Pharmaceuticals"
@@ -212,7 +211,6 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 android:gravity="start"
-                app:layout_constraintEnd_toStartOf="@+id/status"
                 android:layout_marginEnd="@dimen/size_8dp"
                 android:visibility="@{transaction.setDMTTypeForBid(viewModel.fromPage)}"
                 android:layout_marginTop="@dimen/size_6dp"
@@ -289,18 +287,6 @@
                   android:textColor="@color/white"
                   android:layout_height="wrap_content"/>
             </RelativeLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/timerLayout"
-                android:textSize="@dimen/text_16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/size_6dp"
-                tools:text="Confirmed"/>
-
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"

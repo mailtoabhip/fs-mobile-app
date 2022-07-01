@@ -379,7 +379,7 @@
   <string name="label_lost">Bid Lost</string>
   <string name="label_cancel">Bid Cancelled</string>
   <string name="label_pending">Bid Won- Confirmation Pending</string>
-  <string name="label_confirm">Order Confirmed</string>
+  <string name="label_confirm">Confirmed</string>
   <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
   <string name="label_origin_destination">Origin &amp; Destination</string>
   <string name="hint_offer">This is not applicable for current offer period.</string>
@@ -614,6 +614,7 @@
   <string name="rewards_earned">Rewards Earned</string>
   <string name="submitted_on">Submitted on</string>
   <string name="payment_date">Payment Date</string>
+  <string name="offer_hash">Offer#</string>
   <string name="full_details">Full Details</string>
   <string name="utr">UTR#</string>
   <string name="select_a_route">Select a route to share the rates</string>
