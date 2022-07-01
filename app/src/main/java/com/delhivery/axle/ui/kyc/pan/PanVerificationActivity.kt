@@ -71,7 +71,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
-                 if(viewModel.panCardNumber.equals(userPrefs.pancard, ignoreCase = true)){
+                 if(viewModel.panCardNumber.equals(userPrefs.pancard, ignoreCase = true)|| userPrefs.pancard.isEmpty()){
                     viewModel.updateUserDetails()
                  }else{
                    viewModel.resetKycDetails(userPrefs.retryVerification)

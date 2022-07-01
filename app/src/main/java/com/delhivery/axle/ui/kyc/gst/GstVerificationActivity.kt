@@ -132,6 +132,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             dialogUtils.showVerifcationOptionsDialog(getString(R.string.label_gst_dialog_option2),this)
         }
 
+        viewModel.resetKycLiveData.observe(this, Observer {
+            if (it) {
+                viewModel.updateUserDetails()
+            } else {
+                uiUtils.showSnackbar("Update Failed, Please try again")
+            }
+        })
+
         viewModel.otpRecieved.observe(
                 this, Observer {
             if(it){
@@ -143,7 +151,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 this, Observer {
             if(it){
                 uiUtils.hideProgress()
-                if(userPrefs.gstNumber.equals(currSelectedGst, ignoreCase = true)){
+                if(userPrefs.gstNumber.equals(currSelectedGst, ignoreCase = true) ||userPrefs.gstNumber.isEmpty()){
                     viewModel.updateUserDetails()
                 }else{
                     viewModel.resetKycDetails(userPrefs.retryVerification)
@@ -169,7 +177,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             if(viewModel.docVerificationFailedCount.value==2){
                 viewModel.docVerificationFailedCount.value=0
                 userPrefs.isGstNotBypassed=false
-                if(userPrefs.gstNumber==currSelectedGst){
+                if(userPrefs.gstNumber.equals(currSelectedGst, ignoreCase = true) || userPrefs.gstNumber.isEmpty()){
                     viewModel.updateUserDetails()
                 }else{
                     viewModel.resetKycDetails(userPrefs.retryVerification)
@@ -462,6 +470,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             }
         }
     }
+
 
     override fun onItemClicked(item: BaseGstRVAdapterItem<*>) {
         val data = item.data as? GstDetailData
