@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.splash
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -64,6 +65,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -83,6 +85,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
      //For Inventory only
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -234,6 +237,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
             currentCode = currentVersionCode
             latestCode = playStoreVersionCode
+
+            //get device and app level details
+            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_ID,Build.ID)
+            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_VERSION,pInfo.versionName+"("+currentCode.toString()+")")
+
             completedAction(playStoreVersionCode > currentVersionCode)
           } else {
             completedAction(false)

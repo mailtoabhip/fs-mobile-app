@@ -43,6 +43,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /**
    *  Base/Origin City Code
    */
+  var cityName: String?
+    set(value) = editor.putString(PrefKeys.CityName, value)
+      .apply()
+    get() = prefs.getString(PrefKeys.CityName, null)
+
+  /**
+   *  Base/Origin City Code
+   */
   var gnCityCode: String?
     set(value) = editor.putString(PrefKeys.GNCityCode, value)
             .apply()
@@ -689,10 +697,34 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.aadhaarPolicyAccepted, false)
 
+  var receiveWhatsappNotifications: Boolean
+    set(value) = editor.putBoolean(PrefKeys.receiveWhatsappNotifications, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.receiveWhatsappNotifications, false)
+
   var isBankDetailsRejected: Boolean
     set(value) = editor.putBoolean(PrefKeys.isBankDetailsRejected, value)
         .apply()
     get() = prefs.getBoolean(PrefKeys.isBankDetailsRejected, false)
+
+  var status: String
+    set(value) = editor.putString(PrefKeys.status,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.status, "") ?: ""
+  var subStatus: String
+    set(value) = editor.putString(PrefKeys.subStatus,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.subStatus, "") ?: ""
+  var creationDate: String
+    set(value) = editor.putString(PrefKeys.creationDate,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.creationDate, "") ?: ""
+  var isKycVeriifed: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isKycVerified, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.isKycVerified, false)
+
+
   /**
    * Clear all preferences
    */
@@ -731,6 +763,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.CityCode)
             .apply()
+    editor.remove(PrefKeys.CityName)
+      .apply()
     editor.remove(PrefKeys.GNCityCode)
             .apply()
     editor.remove(PrefKeys.MaxPMTRate)
@@ -861,10 +895,20 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.aadhaarPolicyAccepted)
       .apply()
+    editor.remove(PrefKeys.receiveWhatsappNotifications)
+      .apply()
     editor.remove(PrefKeys.panName)
         .apply()
     editor.remove(PrefKeys.isBankDetailsRejected)
         .apply()
+    editor.remove(PrefKeys.isKycVerified)
+      .apply()
+    editor.remove(PrefKeys.creationDate)
+      .apply()
+    editor.remove(PrefKeys.status)
+      .apply()
+    editor.remove(PrefKeys.subStatus)
+      .apply()
     editor.commit()
   }
 
@@ -887,6 +931,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     cinNumber=user.supplierDetails?.cInNumber?:""
     shopNumber=user.supplierDetails?.shopEstablishment?:""
     udyogNumber=user.supplierDetails?.udyogAadhar?:""
+    cityName = user.supplierDetails?.baseCity
     cityCode = user.supplierDetails?.baseCityCode
     isBankDetailsRejected=user.isBankDetailsRejected?:false
     isParent = user.isParent()
@@ -946,6 +991,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
     ownedTruck = user.supplierDetails?.numberOfOwnedTrucks?:""
     attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
+    receiveWhatsappNotifications = user.supplierDetails?.receiveWhatsappNotifications?:false
+    status = user.supplierDetails?.status?:""
+    subStatus = user.supplierDetails?.subStatus?:""
+    creationDate = user.supplierDetails?.creationDate?:""
+    isKycVeriifed = user.supplierDetails?.isKycVerified?:false
+
   }
 
 
@@ -970,6 +1021,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
     const val CityCode = "city_code"
+    const val CityName = "city_name"
     const val GNCityCode = "gn_city_code"
     const val RouteUpdate = "route_update"
     const val PhoneNumber = "phone_number"
@@ -1063,6 +1115,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
     const val isBankDetailsRejected= "is_bank_details_rejected"
+    const val receiveWhatsappNotifications= "receive_whatsapp_notifications"
+    const val creationDate= "creation_date"
+    const val status= "status"
+    const val subStatus= "sub_status"
+    const val isKycVerified= "is_kyc_verified"
 
 
   }
