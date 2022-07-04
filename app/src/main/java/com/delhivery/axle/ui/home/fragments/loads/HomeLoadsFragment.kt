@@ -50,7 +50,10 @@ import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpec
 import com.moe.pushlibrary.MoEHelper
 import com.moengage.core.Properties
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_UNIQUE_ID
+import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME
+import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
+import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_NAME
 import javax.inject.Inject
 
 class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -246,7 +249,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
     }
-    setUserAttributes()
+
     refreshData()
 
     viewModel.updateUserAppAccess()
@@ -280,50 +283,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
-  private fun setUserAttributes() {
-    userPrefs.phoneNumber?.let {
-      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
-    }
-    userPrefs.userId().let {
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
-    }
-    userPrefs.cityName?.let {
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_BASE_CITY,it)
-    }
-    if(userPrefs.demandType.isNotNullOrEmpty()){
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_DEMAND_TYPE,userPrefs.demandType!!)
-    }
-    userPrefs.companyName?.let {
-      if(userPrefs.companyName.isNotNullOrEmpty())
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_COMPANY_NAME,it)
-    }
-    userPrefs.ownTrucks?.let {
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_OWNS_TRUCKS,it.toString())
-    }
-    userPrefs.status?.let {
-      if(userPrefs.status.isNotNullOrEmpty())
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_STATUS,it)
-    }
-    userPrefs.subStatus?.let{
-    if(userPrefs.subStatus.isNotNullOrEmpty())
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_SUB_STATUS,it)
-    }
-    userPrefs.isKycVeriifed?.let {
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_IS_KYC_VERIFIED,it.toString())
-    }
-    userPrefs.receiveWhatsappNotifications?.let {
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_RECEIVE_WHATSAPP_NOTIFICATIONS,it.toString())
-    }
 
-    userPrefs.creationDate?.let {
-    if(userPrefs.creationDate.isNotNullOrEmpty())
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_CREATION_DATE,DateUtils.getUtcToIstFormatTime(it)!!)
-    }
-
-
-  }
 
   override fun onResume() {
     super.onResume()

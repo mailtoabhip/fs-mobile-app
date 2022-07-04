@@ -31,6 +31,7 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
+import com.moengage.core.internal.MoEConstants
 import java.util.*
 import javax.inject.Inject
 
@@ -98,6 +99,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it){
+        setUserAttributes()
         navigationUtils.navigateOnboardingSteps(true)
 
 
@@ -354,6 +356,59 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   }
 
+  private fun setUserAttributes() {
+    userPrefs.phoneNumber?.let {
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+    }
+    userPrefs.userId().let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+    }
+    userPrefs.cityName?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_BASE_CITY,it)
+    }
+    if(userPrefs.demandType.isNotNullOrEmpty()){
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_DEMAND_TYPE,userPrefs.demandType!!)
+    }
+    userPrefs.companyName?.let {
+      if(userPrefs.companyName.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_COMPANY_NAME,it)
+    }
+    userPrefs.ownTrucks?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_OWNS_TRUCKS,it.toString())
+    }
+    userPrefs.status?.let {
+      if(userPrefs.status.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_STATUS,it)
+    }
+    userPrefs.subStatus?.let{
+      if(userPrefs.subStatus.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_SUB_STATUS,it)
+    }
+    userPrefs.isKycVeriifed?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_IS_KYC_VERIFIED,it.toString())
+    }
+    userPrefs.receiveWhatsappNotifications?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_RECEIVE_WHATSAPP_NOTIFICATIONS,it.toString())
+    }
+
+    userPrefs.creationDate?.let {
+      if(userPrefs.creationDate.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_CREATION_DATE,DateUtils.getUtcToIstFormatTime(it)!!)
+    }
+
+    userPrefs.userName?.let {
+      if(userPrefs.userName.isNotNullOrEmpty()){
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME,it)
+        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME,it)
+        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,it.split(" ").get(0))
+        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,it.split(" ").get(1))
+      }
+    }
+
+
+  }
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(

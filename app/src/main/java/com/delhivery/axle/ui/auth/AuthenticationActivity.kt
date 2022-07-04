@@ -35,6 +35,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.moengage.core.internal.MoEConstants
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_authentication.*
@@ -294,10 +295,26 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           AccountDetails -> {
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+            }
+            userPrefs.userId().let {
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)
           }
           Disabled -> {
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+            }
+            userPrefs.userId().let {
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
             uiUtils.hideDelhiveryProgress()
             dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,
                     string.msg_dialog_supplier_disabled,

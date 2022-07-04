@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils
 
+import android.util.Log
 import androidx.annotation.IntRange
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.toCalendar
@@ -59,7 +60,7 @@ object DateUtils {
     var ISTDateString = ""
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    val pattern = "dd MMM hh:mm a"
+    val pattern = "dd MMM yyyy hh:mm a"
     val formatter: SimpleDateFormat
     formatter = SimpleDateFormat(pattern)
     try {

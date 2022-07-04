@@ -166,9 +166,8 @@ data class SupplierModel(
         @SerializedName("pan_holder_name") var panHolderName: String?,
         @SerializedName("beneficiary_name") var accountHolderName: String?,
         @SerializedName("identity_doc_url") var identity_doc_url: String?,
-        @SerializedName("onboard_status") var status: String?,
-        @SerializedName("onboard_status") var subStatus: String?,
+        @SerializedName("status") var status: String?,
+        @SerializedName("sub_status") var subStatus: String?,
         @SerializedName("is_kyc_verified") var isKycVerified: Boolean?,
-        @SerializedName("created_at") var creationDate: String?
-
+        @SerializedName("creation_date") var creationDate: String?
   )
