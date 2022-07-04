@@ -129,7 +129,7 @@ class GstVerificationViewModel@Inject constructor(
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
         if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null) {
-            compositeDisposable += loadboardRepository.verifyByDocUpload("gst", "06AAPCS957SE1Z4", docList)
+            compositeDisposable += loadboardRepository.verifyByDocUpload("gst", gstDetailData.value?.gstNumber!!, docList)
                     .onBackground()
                     .progress()
                     .subscribe { _res, error ->
