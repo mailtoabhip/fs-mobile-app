@@ -931,12 +931,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       editor.remove(PrefKeys.paymentDocUrl)
         .apply()
     }else if(step=="gst"){
+      if(isSameAsGst){
       editor.remove(PrefKeys.gstAddress)
         .apply()
       editor.remove(PrefKeys.businessAddress)
         .apply()
       editor.remove(PrefKeys.isSameAsGst)
         .apply()
+      }
     }
   }
 
@@ -1018,6 +1020,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
     ownedTruck = user.supplierDetails?.numberOfOwnedTrucks?:""
     attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
+    isSameAsGst= user.isAddressSameAsGST?:false
+
   }
 
 

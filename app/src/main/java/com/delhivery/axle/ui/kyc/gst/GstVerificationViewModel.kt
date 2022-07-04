@@ -200,7 +200,7 @@ class GstVerificationViewModel@Inject constructor(
     if (!isConnected) return
 
     if(gstDetailData.value!=null && gstDetailData.value?.gstNumber!=null && phoneNum!=null) {
-      compositeDisposable += loadboardRepository.resetKyc(ResetKycDataRequest(phoneNumber = userPrefs.phoneNumber!!, resetPoint = "identity", gstNumber = gstDetailData.value?.gstNumber, isAddressSameAsGST = false))
+      compositeDisposable += loadboardRepository.resetKyc(ResetKycDataRequest(phoneNumber = userPrefs.phoneNumber!!, resetPoint = "identity", gstNumber = gstDetailData.value?.gstNumber, isAddressSameAsGST = userPrefs.isSameAsGst))
         .onBackground()
         .progress()
         .subscribe { _res, error ->
