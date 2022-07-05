@@ -44,6 +44,7 @@ data class YourRewardsItemData(
   @SerializedName("utr_number") val utr: String?=null,
   @SerializedName("payment_date") val paymentDate: String?=null,
   @SerializedName("sort_key") val sortKey: String?=null,
+  @SerializedName("update_required") val updateRequired: Boolean?=false,
   var isFullDetailsEnabled:Boolean = false
 
 ): BaseKeyTypeModel<String>() {
@@ -98,6 +99,9 @@ data class YourRewardsItemData(
 
   fun isApproved(): Int = if(verificationState=="verified") View.VISIBLE else View.GONE
 
+  fun isApprovedAndUpdated(): Int = if(verificationState=="verified" && updateRequired == true) View.VISIBLE else View.GONE
+
+
   fun rewardText(): String = if(verificationState=="rejected") "Reason of Rejection" else "Reward Earned"
   fun rewardsValue(): String =if(verificationState=="pending"){
     "-------------"
@@ -105,7 +109,7 @@ data class YourRewardsItemData(
     if(amountPaid==null){
       "-------------"
     }else{
-      "₹ "+amountPaid?.toString()
+      "₹ "+ amountPaid.toString()
     }
   }else{
     StringUtils.capitalize(rejectionReason)?:"-------------"
