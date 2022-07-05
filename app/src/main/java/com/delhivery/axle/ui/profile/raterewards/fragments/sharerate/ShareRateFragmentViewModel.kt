@@ -92,6 +92,8 @@ class ShareRateFragmentViewModel  @Inject constructor(
                     )
                     count ++
                     add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
+                    if(count==10)
+                      break
                   }
                 }
               }
@@ -103,7 +105,9 @@ class ShareRateFragmentViewModel  @Inject constructor(
               if (dbData == null) {
                 add(Pair(ShareRatesWarningItem_NoRate, DataRVAdapterOperationType.AddUpdate))
               } else {
+                var itemCount =0
                   for (item in dbData!!) {
+                    itemCount++
                     var shareRateRoutes = ShareRateRoutesItemData(
                       item.occ,
                       item.oc,
@@ -115,6 +119,8 @@ class ShareRateFragmentViewModel  @Inject constructor(
                       item.status
                     )
                     add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
+                    if(itemCount==10)
+                      break
                   }
               }
 
