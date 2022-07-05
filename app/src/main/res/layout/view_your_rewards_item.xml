@@ -200,7 +200,7 @@
           android:layout_marginTop="@dimen/size_12dp"
           android:textColor="@color/route_heading"
           android:padding="@dimen/size_8dp"
-          android:visibility="@{request.isApproved()}"
+          android:visibility="@{request.isApprovedAndUpdated()}"
           android:background="@drawable/bg_all_round_corner_light_purple"
           android:text="@string/details_updated_based_on_proof"/>
 
