@@ -232,7 +232,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
            showUploadImage()
        }
 
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+        binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
             if(p>0){
                 proofTypeFilled = true
                 if(!dataSetFromPref){
@@ -246,12 +246,19 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 }else{
                     binding.textProof.visibility = View.VISIBLE
                     binding.docLayout.visibility = View.VISIBLE
-                    if(!dataSetFromPref) {
                         docUploadProof = false
-                    }else{
-                        dataSetFromPref=false
-                    }
                 }
+                if((userPrefs.businessDocType.equals("rc") && p==7) || (userPrefs.businessDocType.equals("lr")&& p==2)){
+                    binding.textProof.visibility = View.GONE
+                    binding.docLayout.visibility = View.GONE
+                    docUploadProof= true
+                }else{
+                    binding.textProof.visibility = View.VISIBLE
+                    binding.docLayout.visibility = View.VISIBLE
+                        dataSetFromPref=false
+
+                }
+
                 enableSubmitButton()
             }else{
                 proofTypeFilled =false
@@ -264,15 +271,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 var address =
                     viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 viewModel.updateCommunicationAddress(address, false)
-                /* userPrefs.isCommunicationAddressVerified=true
-                if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= ""
-                }
-                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-              TotalStepsKey)!!,null)
-            } else {
-                uiUtils.showSnackbar("Error encountered, Please try again.")
-            }*/
             }
         })
 
@@ -401,6 +399,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 addressData.proofDocumentType!!.startsWith("le", true) -> 3
                 addressData.proofDocumentType!!.startsWith("ud", true) -> 4
                 addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                addressData.proofDocumentType!!.startsWith("dr", true) -> 6
+                addressData.proofDocumentType!!.startsWith("rc", true) -> 7
                 else -> 0
             }
         }
@@ -410,7 +410,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         })
 
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+        binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
             if(p>0){
                 proofTypeFilled = true
             }
@@ -456,7 +456,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,1)
+        bundle.putInt(StepKey,2)
         navigationUtils.navigateKyc(this,true,bundle)
     }
 

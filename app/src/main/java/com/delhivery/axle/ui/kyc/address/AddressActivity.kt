@@ -251,7 +251,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,1)
+        bundle.putInt(StepKey,2)
         navigationUtils.navigateKyc(this,true,bundle)
     }
     private fun requestImageCapturePermissions(isCamera: Boolean) {

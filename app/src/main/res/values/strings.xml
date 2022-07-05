@@ -607,10 +607,21 @@
   <string-array name="array_address__proof_type">
     <item>Choose Proof Document</item>
     <item>Visiting Card</item>
-    <item>LR Copy</item>
+    <item>LR Copy/Loading Note</item>
     <item>Letter Head</item>
     <item>Udyog Aadhaar Certificate</item>
     <item>Shop &amp; Establishment Certificate</item>
+  </string-array>
+
+  <string-array name="array_address__proof_type_aadhar_flow">
+    <item>Choose Proof Document</item>
+    <item>Visiting Card</item>
+    <item>LR Copy/Loading Note</item>
+    <item>Letter Head</item>
+    <item>Udyog Aadhaar Certificate</item>
+    <item>Shop &amp; Establishment Certificate</item>
+    <item>Driving Licence</item>
+    <item>RC copy</item>
   </string-array>
 
   <string-array name="array_occupation_post_truck">

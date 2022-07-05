@@ -443,7 +443,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,0)
+        bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)
     }
     override fun onAWSSuccess(
