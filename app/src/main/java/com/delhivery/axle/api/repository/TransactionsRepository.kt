@@ -28,6 +28,17 @@ class TransactionsRepository @Inject constructor(
   ).convertResponse()
 
   /**
+   * Get user transactions
+   */
+  fun fetchSupplierTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+          transactionService.supplierTransactions(
+                  userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
+                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
+          ).convertResponse()
+
+
+
+  /**
    * Search [TransactionStatus.Requested] transactions
    */
   fun searchTransactions(

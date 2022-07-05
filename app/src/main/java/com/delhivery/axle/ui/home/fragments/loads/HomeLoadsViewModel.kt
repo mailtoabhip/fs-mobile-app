@@ -8,13 +8,16 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
+import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -143,23 +146,44 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
-        .flatMap { t ->
-          offset = t.offset
-          total = t.total
-          hasMoreData = t.offset != t.total
-          loadPricePercent = t.loadPricePercent
-          more_default_loads = t.more_loads
-          loadsCountLiveData.postValue(total)
+      compositeDisposable += transactionsRepository.fetchSupplierTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+              .flatMap { _res ->
+                  total = _res.total
+                   if (total>20) {
+                       offset = _res.offset
+                       total = _res.total
+                       hasMoreData = _res.offset != _res.total
+                       loadPricePercent = _res.loadPricePercent
+                       more_default_loads = _res.more_loads
+                       loadsCountLiveData.postValue(total)
 
-          Single.zip(
-              bidsRepository.bidsForLoads(t.transactions),
-              bidsRepository.bulkLowestBidsForLoads(t.transactions),
-              BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
-                  Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
-                Triple(t1.first, t1.second, t2.second)
-              })
-        }
+                       Single.zip(
+                               bidsRepository.bidsForLoads(_res.transactions),
+                               bidsRepository.bulkLowestBidsForLoads(_res.transactions),
+                               BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
+                                       Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
+                                   Triple(t1.first, t1.second, t2.second)
+                               })
+                  } else {
+                      transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+                              .flatMap { t ->
+                                  offset = t.offset
+                                  total = t.total
+                                  hasMoreData = t.offset != t.total
+                                  loadPricePercent = t.loadPricePercent
+                                  more_default_loads = t.more_loads
+                                  loadsCountLiveData.postValue(total)
+
+                                  Single.zip(
+                                          bidsRepository.bidsForLoads(t.transactions),
+                                          bidsRepository.bulkLowestBidsForLoads(t.transactions),
+                                          BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
+                                                  Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
+                                              Triple(t1.first, t1.second, t2.second)
+                                          })
+                              }
+                  }
+              }
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {
