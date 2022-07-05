@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
+import androidx.work.WorkManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -51,6 +52,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     @Inject lateinit var userPrefs:UserPrefs
 
+    val TAG_SYNC_DATA = "TAG_SYNC_DATA"
+
     @Inject
     lateinit var bitmapUtils: BitmapUtils
 
@@ -67,10 +70,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
+            WorkManager.getInstance().cancelAllWorkByTag(TAG_SYNC_DATA)
             confirmLogout()
         }
-
-
 
         viewModel.getUserLiveData.observe(this, Observer {
             if(it){

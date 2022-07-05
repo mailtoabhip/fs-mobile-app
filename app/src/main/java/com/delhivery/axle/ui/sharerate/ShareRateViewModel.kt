@@ -1,6 +1,7 @@
  package com.delhivery.axle.ui.sharerate
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.PriceRepository
 import com.delhivery.axle.api.repository.TruckRepository
@@ -11,10 +12,8 @@ import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
+import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
 import java.io.File
@@ -32,6 +31,7 @@ class ShareRateViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     var rateUpdatedLiveData = MutableLiveData<Boolean>()
+    var errorrateUpdatedLiveData = MutableLiveData<String?>()
 
     var truckGetLiveData = MutableLiveData<List<TruckResponseArray>>()
 
@@ -95,7 +95,16 @@ class ShareRateViewModel @Inject constructor(
                         if (!error && _res!=null) {
                             rateUpdatedLiveData.postValue(true)
                         } else {
-                            error.handle()
+                            val errorMessage = error.errorResponseBody()?.dataBody
+                            if (errorMessage != null) {
+                                if(errorMessage.errorBody.isNotNullOrEmpty()){
+                                    errorrateUpdatedLiveData.postValue(errorMessage.errorBody)
+                                }else{
+                                    error.handle()
+                                }
+                            } else {
+                                error.handle()
+                            }
                             rateUpdatedLiveData.postValue(false)
                         }
                     }

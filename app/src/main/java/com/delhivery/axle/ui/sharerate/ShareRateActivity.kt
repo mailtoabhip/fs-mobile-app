@@ -295,6 +295,13 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             }
         })
 
+        viewModel.errorrateUpdatedLiveData.observe(this, Observer {
+            if (it != null && it.isNotNullOrEmpty()) {
+                uiUtils.showToast(it)
+                viewModel.errorrateUpdatedLiveData.postValue(null)
+            }
+        })
+
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
