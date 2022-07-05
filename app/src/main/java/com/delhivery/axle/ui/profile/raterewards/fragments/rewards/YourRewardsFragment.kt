@@ -211,6 +211,6 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
   }
 
 }
-const val RewardStartDate = "01/06/2022"
+const val RewardStartDate = "01/07/2022"
 const val RewardStartDateCalender = 99999
 
