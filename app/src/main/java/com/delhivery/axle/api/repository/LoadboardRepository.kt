@@ -42,7 +42,7 @@ class LoadboardRepository @Inject constructor(
            loadboardService.updateUser(updateUserRequest).convertMessageResponse()
 
     /**
-     * update user
+     * reset kyc
      */
     fun resetKyc(resetKycDataRequest: ResetKycDataRequest) =
         loadboardService.resetKyc(resetKycDataRequest).convertMessageResponse()
