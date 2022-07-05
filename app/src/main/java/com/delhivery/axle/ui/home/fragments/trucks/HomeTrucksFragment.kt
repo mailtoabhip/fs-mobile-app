@@ -790,14 +790,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
     }
 
-    override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Boolean?, String?, String?>? {
-        var pres:Triple<Boolean?, String?, String?>? = Triple(false, tid, null)
+    override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?, String?>, String?, String?>? {
+        var pres:Triple<Pair<Boolean?, String?>, String?, String?>? = Triple(Pair(false,null), tid, null)
         if(viewModel.finalOffers.value.isNullOrEmpty()){
             pres = null
         }else{
             for(r in viewModel.finalOffers.value!!){
                 if(r.occ.equals(origin_id) == true && r.dcc?.equals(dest_id)== true){
-                    pres = pres?.copy(true, tid, r.tdn)
+                    pres = pres?.copy(Pair(true,r.offerId), tid, r.tdn)
                 }
             }
         }
@@ -814,7 +814,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
     }
 
-    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?) {
+    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?, offerid: String?) {
         val bundle = Bundle()
         bundle.putString("originname", data?.currentCityName)
         bundle.putString("destname", data?.unloadingDestination)
@@ -825,6 +825,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         bundle.putString("truckCapacity", data?.truckCapacity())
         bundle.putString("itemTD", itemTD)
         bundle.putString("offerTD", offerTD)
+        bundle.putString("offerid", offerid)
+
+        analyticsUtil.trackEvent(
+                EVENT_CLICKED_OFFER,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "inventory_screen", offerid?:"")
+        )
+
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
     }
 

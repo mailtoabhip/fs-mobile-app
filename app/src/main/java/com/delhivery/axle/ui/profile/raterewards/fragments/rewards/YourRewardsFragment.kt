@@ -18,10 +18,7 @@ import com.delhivery.axle.data.yourrewards.YourRewardsItemData
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_DownloadProof
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.data.yourrewards.YourRewardsTimeOutAction
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import java.io.File
@@ -60,6 +57,13 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    analyticsUtil.trackEvent(
+            EVENT_VIEW_PAYOUT,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")
+    )
+
     binding.rewardsRv.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@YourRewardsFragment.adapter

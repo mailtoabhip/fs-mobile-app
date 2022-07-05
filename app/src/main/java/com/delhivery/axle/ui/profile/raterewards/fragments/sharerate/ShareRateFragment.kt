@@ -13,7 +13,7 @@ import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.databinding.FragmentShareRateBinding
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.utils.NavigationUtils
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -82,6 +82,13 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
         bundle.putString("truckCapacity",null)
         bundle.putString("itemTD",  data.truckDisplayName)
         bundle.putString("offerTD",  data.truckDisplayName)
+          bundle.putString("offerid",  data.offerId)
+
+          analyticsUtil.trackEvent(
+                  EVENT_CLICKED_OFFER,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+                  mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "profile_screen",  data.offerId?:"")
+          )
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       ShareRatesTimeOutAction -> {

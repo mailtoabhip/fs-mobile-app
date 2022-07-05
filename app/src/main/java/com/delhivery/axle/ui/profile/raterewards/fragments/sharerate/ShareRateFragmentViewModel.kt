@@ -88,7 +88,8 @@ class ShareRateFragmentViewModel  @Inject constructor(
                       rt.tdn,
                       "32MT",
                       rt.offerType,
-                      rt.status
+                      rt.status,
+                            rt.offerId
                     )
                     count ++
                     add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))

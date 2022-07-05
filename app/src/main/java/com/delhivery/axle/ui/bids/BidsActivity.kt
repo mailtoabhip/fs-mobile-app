@@ -194,14 +194,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     }
   }
 
-  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>? {
-    var pres:Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(false, Pair(tid, null), Pair(null, null))
+  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? {
+    var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
     if(viewModel.finalOffers.value.isNullOrEmpty()){
       pres = null
     }else{
       for(r in viewModel.finalOffers.value!!){
         if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
-          pres = pres?.copy(true, Pair(tid, r.tdn), Pair(r.occ, r.dcc))
+          pres = pres?.copy(Pair(true, r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
         }
       }
     }
@@ -209,7 +209,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     return pres
   }
 
-  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?) {
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?) {
     val bundle = Bundle()
     bundle.putString("originname", data?.origin)
     bundle.putString("destname", data?.destination)
@@ -220,6 +220,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     bundle.putString("truckCapacity", data?.truckTypeWithCapacity())
     bundle.putString("itemTD", itemTD)
     bundle.putString("offerTD", offerTD)
+    bundle.putString("offerid", offerid)
+
+    analyticsUtil.trackEvent(
+            EVENT_CLICKED_OFFER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")
+    )
+
     navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
   }
 

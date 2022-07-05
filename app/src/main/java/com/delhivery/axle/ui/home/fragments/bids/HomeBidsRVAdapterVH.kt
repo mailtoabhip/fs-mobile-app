@@ -116,7 +116,7 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     }
 
     val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
-     if(res!=null && res.first == true){
+     if(res!=null && res.first?.first == true){
       if(item.data.bidStatus().statusKey.equals("rejected")){
         binding.shareRateLay.visibility = View.VISIBLE
       }else{
@@ -126,7 +126,7 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
       binding.shareRateLay.visibility = View.GONE
     }
 
-    binding.btnShareRate.setOnClickListener { _interface.callShareRate(item.data, res?.second?.first, res?.second?.second, res?.third?.first, res?.third?.second) }
+    binding.btnShareRate.setOnClickListener { _interface.callShareRate(item.data, res?.second?.first, res?.second?.second, res?.third?.first, res?.third?.second, res?.first?.second) }
 
   }
 }

@@ -43,7 +43,7 @@ class MyWorker(
                     if (_res!=null && !_res.offersList.isNullOrEmpty()) {
                         appDatabase.offersDao().deleteOffers()
                         for (i in _res.offersList) {
-                            appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offer_type))
+                            appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offerType, i.offerId))
                         }
                     }
                 } else {
@@ -60,7 +60,7 @@ class MyWorker(
                             if (_res!=null &&!_res.offersList.isNullOrEmpty()) {
                                 appDatabase.offersDao().deleteOffers()
                                 for (i in _res.offersList) {
-                                    appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offer_type))
+                                    appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offerType, i.offerId))
                                 }
                             }
                         } else {

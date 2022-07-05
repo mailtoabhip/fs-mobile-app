@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.sharerate
+ package com.delhivery.axle.ui.sharerate
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InventoryRepository

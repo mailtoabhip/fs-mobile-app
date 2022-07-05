@@ -55,7 +55,8 @@ data class OfferResponse(
         @SerializedName("start_date") var sd: String?,
         @SerializedName("end_date") var ed: String?,
         @SerializedName("amount") var amount:Double?,
-        @SerializedName("offer_type") var offer_type: String?
+        @SerializedName("offer_type") var offerType: String?,
+        @SerializedName("id") var offerId: String?
 )
 
 data class OfferState(

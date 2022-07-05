@@ -20,9 +20,9 @@ interface HomeBidsRVAdapterInterface : ItemClickListener<BaseHomeBidsRVAdapterIt
     item: BaseHomeBidsRVAdapterItem<*>
   )
 
-  fun getTotalOffers(origin_id:String?, dest_id:String?, tid:String?):Triple<Boolean?, Pair<String?, String?>?, Pair<String?, String?>?>?
+  fun getTotalOffers(origin_id:String?, dest_id:String?, tid:String?):Triple<Pair<Boolean?, String?>?, Pair<String?, String?>?, Pair<String?, String?>?>?
 
-  fun callShareRate(data: HomeBidsRequestItemData?, itemTD:String?, offerTD:String?, occ:String?, dcc:String?)
+  fun callShareRate(data: HomeBidsRequestItemData?, itemTD:String?, offerTD:String?, occ:String?, dcc:String?, offerid:String?)
 
 
 }

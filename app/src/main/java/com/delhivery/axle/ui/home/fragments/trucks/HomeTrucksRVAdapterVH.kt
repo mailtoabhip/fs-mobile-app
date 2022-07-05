@@ -91,10 +91,10 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
 
         val res = _interface.getTotalOffers(item.data.currentCityCode, item.data.unloadingDestinationCode, item.data.truckSize)
         binding.btnShareRate.setOnClickListener {
-            _interface.callShareRate(item.data, res?.second, res?.third)
+            _interface.callShareRate(item.data, res?.second, res?.third, res?.first?.second)
         }
 
-        if(res!=null && res.first == true){
+        if(res!=null && res.first.first == true){
             binding.shareRateLay.visibility = item.data.statusVisibilty()
             if(_interface.getBannerStatus() == true){
                 binding.rateMore.visibility = item.data.statusVisibilty()

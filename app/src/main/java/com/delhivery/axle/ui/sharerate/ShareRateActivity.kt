@@ -69,6 +69,9 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
     private var calendar: Calendar = Calendar.getInstance()
     var proofTypeFilled = false
     var docUploadProof = false
+    var offerId:String? = ""
+    var startTime: Long = 0
+    var endTime: Long = 0
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -102,6 +105,12 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         viewModel.destination = intent?.extras?.getString("destname")?.let { CityModel(it, intent?.extras?.getString("dcc")) }
         //viewModel.getCityData(viewModel.origin?.orionDbCityCode, "origin")
         //viewModel.getCityData(viewModel.destination?.orionDbCityCode, "dest")
+
+        startTime = System.currentTimeMillis()
+
+        if( intent?.extras?.getString("offerid")!=null) {
+            offerId = intent?.extras?.getString("offerid")
+        }
 
         if( intent?.extras?.getString("itemTD")!=null) {
             itemTD = intent?.extras?.getString("itemTD")
@@ -245,6 +254,15 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                 uiUtils.showToast("Invalid vehicle number entered")
             }else {
                 if(offerTD?.equals(viewModel.selected_truck_type) == true){
+
+                    endTime = System.currentTimeMillis()
+                    val ttl = endTime - startTime
+                    analyticsUtil.trackEvent(
+                            EVENT_SUBMIT_OFFER,
+                            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_OFFER_ID),
+                            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), offerId?:"")
+                    )
+
                     if(viewModel.selected_truck_capacity.isNotNullOrEmpty() && !viewModel.selected_truck_capacity.toString().equals("null")){
                         viewModel.sharerate()
                         binding.errorTruck.visibility = View.GONE
