@@ -32,6 +32,7 @@ import com.delhivery.axle.databinding.DialogRateUploadSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
+import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
@@ -72,6 +73,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
     var offerId:String? = ""
     var startTime: Long = 0
     var endTime: Long = 0
+    private val CityType = "city_type"
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -246,6 +248,14 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             if(isChecked){
                 viewModel.priceUnit= "FTL"
             }
+        }
+
+        binding.layOrigin.setOnClickListener {
+            startActivityForResult(searchCityIntent(this,"origin"), REQCODE_SELECT_CITY)
+
+        }
+        binding.layDest.setOnClickListener {
+            startActivityForResult(searchCityIntent(this,"destination"), REQCODE_SELECT_CITY)
         }
 
         binding.btnSubmitDetails.setOnClickListener {
@@ -642,7 +652,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         }
     }
 
-
     override fun onAWSSuccess(
             path: String
     ) {
@@ -691,6 +700,21 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                 }
             }
 
+            REQCODE_SELECT_CITY ->{
+                if(data != null) {
+                    val type = data.getStringExtra(CityType)
+                    val city = data.getSerializableExtra("City") as CityModel
+                    if(type =="origin") {
+                        viewModel.origin = city
+                        binding.editOrigin.setText(city.cityName().trim())
+                    }
+                    else if(type == "destination"){
+                        viewModel.destination = city
+                        binding.editDestination.setText(city.cityName().trim())
+                    }
+                }
+            }
+
             REQCODE_FILE_ATTACHMENTS -> {
                 if (resultCode == Activity.RESULT_OK) {
                     try {
@@ -731,3 +755,4 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         }
     }
 }
+

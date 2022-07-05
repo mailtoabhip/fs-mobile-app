@@ -18,6 +18,6 @@ data class OffersEntity(
     @ColumnInfo(name = "amount") var amt: Double?,
     @ColumnInfo(name = "status") var status: String?,
     @ColumnInfo(name = "offer_type") var offerType: String?,
-    @ColumnInfo(name = "id") var offerId: String?,
+    @ColumnInfo(name = "offer_id") var offerId: String?,
     @PrimaryKey(autoGenerate = true) var id: Long? = null
 )
