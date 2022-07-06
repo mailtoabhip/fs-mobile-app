@@ -146,7 +146,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-      compositeDisposable += transactionsRepository.fetchSupplierTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+      compositeDisposable += transactionsRepository.fetchRecommTransactions(offset)
               .flatMap { _res ->
                   total = _res.total
                    if (total>20) {
