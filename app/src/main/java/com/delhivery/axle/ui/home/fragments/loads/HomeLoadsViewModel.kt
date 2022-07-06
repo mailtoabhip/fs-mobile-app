@@ -96,6 +96,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   var paginateCount =0
 
+    var txnIds:ArrayList<String> = ArrayList()
+
 
   var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
   var editFlg= mutableListOf<Boolean>(false,false,false)
@@ -121,10 +123,132 @@ class HomeLoadsViewModel @Inject constructor(
       userPrefs.fromNotification = value
     }
 
-  /**
+    /**
+     * Fetch user [Requested] transactions
+     */
+    fun fetchUserTransactions(
+            paginate: Boolean = false, demandType: String,
+            isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
+        if (!paginate || infoSearch) {
+            offset = 0
+        } else if (paginate && !hasMoreData) {
+            return
+        }
+
+        if (!paginate) {
+            txnIds.clear()
+        }
+
+        if (paginate) {
+            paginateCount += 1
+            Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
+        }
+
+        passing_vehicle_type = vehicleStr
+        vehicleTypes = passing_vehicle_type
+        if (infoSearch) {
+            vehicleTypes = null
+        }
+
+        dataLoadingLiveData.postValue(true)
+
+        compositeDisposable += transactionsRepository.fetchRecommTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+                .flatMap  { _res ->
+                    total = _res.total
+                        offset = _res.offset
+                        total = _res.total
+                        hasMoreData = _res.offset != _res.total
+                        loadPricePercent = _res.loadPricePercent
+                        more_default_loads = _res.more_loads
+                        loadsCountLiveData.postValue(total)
+
+                        Single.zip(
+                                bidsRepository.bidsForLoads(_res.transactions),
+                                bidsRepository.bulkLowestBidsForLoads(_res.transactions),
+                                BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
+                                        Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
+                                    Triple(t1.first, t1.second, t2.second)
+                                })
+                }
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error && _tRes != null) {
+                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                            /* remove progress item */
+                            add(Pair(HomeLoadsProgressItem(), Remove))
+
+                            val loads = _tRes.first
+                            val bids = _tRes.second
+
+                            if (total == 0 && !infoSearch && (filterVehicleType == false) && (isInternal==false)) {
+                                add(Pair(HomeLoadsWarningItem_NoLoads, Add))
+                            } else {
+                                add(Pair(HomeLoadsSearchItem(), AddUpdate))
+                                add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
+                                if(!paginate) {
+                                    add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
+                                }
+                                add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
+                                for ((index, load) in loads.toMutableList().withIndex()) {
+                                    try {
+                                        load.transactionId?.let { txnIds.add(it) }
+
+                                        val lowestBid = _tRes.third.filter { b ->
+                                            b.transactionId.safeEquals(load.transactionId)
+                                        }[0]
+                                        load.lowestBid = lowestBid.minBid
+                                        load.numBids = lowestBid.numBids
+                                        load.loadPricePercent = loadPricePercent
+                                        load.transactionBid =
+                                                bids.filter { b ->
+                                                    b.transactionId.safeEquals(load.transactionId)
+                                                }[0]
+                                        if (load.isDMTIndent()) {
+                                            load.bulkTransactionBids =
+                                                    bids.filter { b ->
+                                                        b.transactionId.safeEquals(load.transactionId)
+                                                    }
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.d("No Bid found for: ", load.transactionId ?: "")
+                                    }
+                                    if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
+                                        add(Pair(HomeLoadsAddTruckItem(), Add))
+                                    }
+                                    add(Pair(HomeLoadsRequestItem(load), Add))
+                                }
+
+                                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                                    add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                                }
+                                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+                            }
+                        }
+                                .let { userLoadsData.postValue(it) }
+
+                        if(!hasMoreData){
+                            fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
+                        }
+
+                    } else {
+                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                            /* remove progress item */
+                            add(Pair(HomeLoadsProgressItem(), Remove))
+                            /* add api time out item */
+                            add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
+                        }
+                                .let { userLoadsData.postValue(it) }
+                    }
+
+                    dataLoadingLiveData.postValue(false)
+                }
+    }
+
+
+    /**
    * Fetch user [Requested] transactions
    */
-  fun fetchUserTransactions(
+  fun fetchSupplierTransactions(
     paginate: Boolean = false, demandType: String,
     isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
@@ -146,26 +270,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-      compositeDisposable += transactionsRepository.fetchRecommTransactions(offset)
-              .flatMap { _res ->
-                  total = _res.total
-                   if (total>20) {
-                       offset = _res.offset
-                       total = _res.total
-                       hasMoreData = _res.offset != _res.total
-                       loadPricePercent = _res.loadPricePercent
-                       more_default_loads = _res.more_loads
-                       loadsCountLiveData.postValue(total)
-
-                       Single.zip(
-                               bidsRepository.bidsForLoads(_res.transactions),
-                               bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-                               BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
-                                       Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
-                                   Triple(t1.first, t1.second, t2.second)
-                               })
-                  } else {
-                      transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+      compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, txnIds)
                               .flatMap { t ->
                                   offset = t.offset
                                   total = t.total
@@ -182,8 +287,6 @@ class HomeLoadsViewModel @Inject constructor(
                                               Triple(t1.first, t1.second, t2.second)
                                           })
                               }
-                  }
-              }
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {

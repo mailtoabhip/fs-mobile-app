@@ -23,21 +23,20 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, txnIds:List<String>? = null) =
     transactionService.loadBoardTransactions(
       userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
-      "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
+      "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn, txnIds
   ).convertResponse()
 
   /**
    * Get user transactions
    */
-  fun fetchRecommTransactions(offset: Int) =
-          recommendationService.supplierRecommendation(
-                  userRepository.userId(), offset, UserTripsLoadLimit
+  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+         recommendationService.recommendationTransactions(
+                  userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
+                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
           ).convertResponse()
-
-
 
   /**
    * Search [TransactionStatus.Requested] transactions
