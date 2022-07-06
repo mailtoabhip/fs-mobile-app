@@ -28,7 +28,9 @@ abstract class BaseHomeTrucksRVAdapterViewHolder<out B : ViewDataBinding, IT : B
         _interface: HomeTrucksRVAdapterInterface
     )
 
-    var bannerShown = false
+    companion object {
+        var bannerShown = false
+    }
 
     /**
      * Add on click listener for action
@@ -96,8 +98,13 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
 
         if(res!=null && res.first.first == true){
             binding.shareRateLay.visibility = item.data.statusVisibilty()
-            if(_interface.getBannerStatus() == true){
-                binding.rateMore.visibility = item.data.statusVisibilty()
+            if(_interface.getBannerStatus() == true && !bannerShown){
+                if(item.data.statusVisibilty() == View.VISIBLE) {
+                    bannerShown = true
+                    binding.rateMore.visibility = View.VISIBLE
+                }else{
+                    binding.rateMore.visibility = View.GONE
+                }
             }else{
                 binding.rateMore.visibility = View.GONE
             }

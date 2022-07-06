@@ -313,7 +313,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     bundle.putString("dcc", dcc)
     bundle.putString("truckNumber", data?.transactionBid?.vehicleNumber)
     bundle.putString("truckType", data?.truckSpecification?.truckDispName)
-    bundle.putString("truckCapacity", data?.truckTypeWithCapacity())
+    bundle.putString("truckCapacity", data?.truckCapacity())
     bundle.putString("itemTD", itemTD)
     bundle.putString("offerTD", offerTD)
     bundle.putString("offerid", offerid)

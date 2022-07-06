@@ -126,7 +126,6 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
       binding.shareRateLay.visibility = View.GONE
     }
 
-    Log.d("nsfsdfks", res.toString())
     binding.btnShareRate.setOnClickListener { _interface.callShareRate(item.data, res?.second?.first, res?.second?.second, res?.third?.first, res?.third?.second, res?.first?.second) }
 
   }
