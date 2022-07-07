@@ -185,6 +185,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                       uiUtils.showProgress()
                       viewModel.fetchLowestBid(data, it.first)
                     }
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_LOADFEED_BID_SUBMIT,
+                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                            PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                            PROPERTY_SOURCE),
+                        mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","load_fragment")
+                    )
                   }
                 }
               }
@@ -195,6 +202,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
         data?.bulkTransactionBids = it.second
         adapter.notifyItemChanged(it.first)
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_LOADFEED_BID_SUBMIT,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                PROPERTY_SOURCE),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","load_fragment")
+        )
       }
     })
 
@@ -341,7 +355,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ")
+            mutableListOf(data.transactionId?:" ",,adapter.itemCount.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,
@@ -620,6 +634,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           HomeBidsRequestAction_PlaceBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
+            var eventPos=pos+1
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_LOADFEED_BID_INITIATE,
+                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+                mutableListOf(data.transactionId?:"",eventPos.toString(),adapter.itemCount.toString())
+            )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
