@@ -355,7 +355,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ",,adapter.itemCount.toString())
+            mutableListOf(data.transactionId?:" ","",viewModel.total.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,
@@ -638,7 +638,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             analyticsUtil.moEngageTrackEvent(
                 EVENT_LOADFEED_BID_INITIATE,
                 mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                mutableListOf(data.transactionId?:"",eventPos.toString(),adapter.itemCount.toString())
+                mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
             )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
