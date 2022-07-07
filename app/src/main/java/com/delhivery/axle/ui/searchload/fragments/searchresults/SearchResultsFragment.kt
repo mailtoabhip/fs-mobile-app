@@ -273,7 +273,26 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         numResults = t.size
         _adapter.operation(t)
       }
-
+      if(numResults==0){
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
+            mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                PROPERTY_SEARCH_BODY_TYPE),
+            mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+                binding.destination?.cityName() ?: "Anywhere",
+                binding.spinnerTruckType.selectedItem.toString())
+        )
+      }else{
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
+            mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                PROPERTY_SEARCH_BODY_TYPE),
+            mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+                binding.destination?.cityName() ?: "Anywhere",
+                binding.spinnerTruckType.selectedItem.toString(),
+                numResults.toString())
+        )
+      }
       analyticsUtil.trackEvent(
           event,
           mutableListOf(
