@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
+import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.RouteMappingModel
@@ -724,7 +725,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.isKycVerified, false)
 
+  var userPreviousScreen: String
+    set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.userPreviousScreen, "") ?: ""
 
+  fun setPreviousScreen(previousScreen:String){
+    userPreviousScreen =previousScreen
+    Log.i("previousClassName",userPreviousScreen)
+  }
   /**
    * Clear all preferences
    */
@@ -1120,7 +1129,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val status= "status"
     const val subStatus= "sub_status"
     const val isKycVerified= "is_kyc_verified"
-
+    const val userPreviousScreen= "previous_screen"
 
   }
 }

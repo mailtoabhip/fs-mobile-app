@@ -79,9 +79,7 @@ class AnalyticsUtil @Inject constructor(
         Log.i(TAG, attribute + ":" + values[index])
         properties.addAttribute(attribute, values[index])
       }
-      if (!TextUtils.isEmpty(userPrefs.phoneNumber)) {
-        userPrefs.phoneNumber?.let { analytics.setUserAttribute(USER_ATTRIBUTE_USER_MOBILE, it) }
-      }
+      properties.addAttribute(PROPERTY_PREVIOUS_SOURCE,userPrefs.userPreviousScreen)
       analytics.trackEvent(event, properties)
     }
   }

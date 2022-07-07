@@ -158,6 +158,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
           _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null) {
+          userPrefs.setPreviousScreen( this.javaClass.name)
           startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
         }
         else{

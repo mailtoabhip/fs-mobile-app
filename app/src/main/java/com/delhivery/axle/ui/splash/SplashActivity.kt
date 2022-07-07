@@ -28,12 +28,15 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_SUBMIT
 import com.delhivery.axle.utils.EVENT_APP_OPEN
+import com.delhivery.axle.utils.EVENT_HOME_SEARCH_INITIATE
 import com.delhivery.axle.utils.EVENT_UPDATE_APP
 import com.delhivery.axle.utils.EVENT_UPDATE_CANCEL
 import com.delhivery.axle.utils.PROPERTY_CURRENT_VERSION
 import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
 import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
@@ -259,6 +262,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     /**
      * Check If it's from deep link
      * */
+    userPrefs.setPreviousScreen(this.javaClass.name)
     if (state == Home && type != "") {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)

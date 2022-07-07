@@ -164,6 +164,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
           startActivity(userRoutesIntent(this))
@@ -241,6 +242,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
+    userPrefs.setPreviousScreen(this.javaClass.name)
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -400,10 +402,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     userPrefs.userName?.let {
       if(userPrefs.userName.isNotNullOrEmpty()){
-        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME,it)
-        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME,it)
-        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,it.split(" ").get(0))
-        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,it.split(" ").get(1))
+        try {
+          analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME, it)
+          analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME, it)
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,
+            it.split(" ").get(0)
+          )
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,
+            it.split(" ").get(1)
+          )
+        }catch (e:Exception){}
       }
     }
 

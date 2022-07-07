@@ -6,8 +6,11 @@ import dagger.android.support.DaggerApplication
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.delhivery.axle.R.drawable
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
+import com.moengage.core.config.FcmConfig
+import com.moengage.core.config.NotificationConfig
 
 /**
  * Kotlin Application, with application injector
@@ -24,7 +27,9 @@ class KotlinApp : DaggerApplication() {
   }
 
   private fun setupMoEngage() {
-    val moEngage = MoEngage.Builder(this, "965N4GFJCV9UF6OBEPETGZR3").setDataCenter(DataCenter.DATA_CENTER_3).build()
+    val moEngage = MoEngage.Builder(this, "965N4GFJCV9UF6OBEPETGZR3").setDataCenter(DataCenter.DATA_CENTER_3)
+      .configureNotificationMetaData(NotificationConfig(R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.color.colorPrimary, null, true, isBuildingBackStackEnabled = false, isLargeIconDisplayEnabled = true))
+      .configureFcm(FcmConfig(false)) .build()
    MoEngage.initialise(moEngage)
   }
 

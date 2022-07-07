@@ -58,6 +58,7 @@ class NavigationUtils @Inject constructor(
           extras: Bundle? = null
   ) {
     Intent(activity, anotherActivity).let {
+      userPrefs.setPreviousScreen(activity.javaClass.name)
       if (extras != null) {
         it.putExtras(extras)
       }
@@ -82,9 +83,11 @@ class NavigationUtils @Inject constructor(
           extras: Bundle? = null
   ) {
     intent.let {
+      userPrefs.setPreviousScreen(activity.javaClass.name)
       if (extras != null) {
         it.putExtras(extras)
       }
+
       activity.startActivity(it)
     }
 
@@ -181,6 +184,7 @@ class NavigationUtils @Inject constructor(
           finishAfter: Boolean = false,
           extras: Bundle
   ) {
+    userPrefs.setPreviousScreen(context.javaClass.name)
     var intent= Intent()
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
@@ -312,6 +316,7 @@ class NavigationUtils @Inject constructor(
     else{
 
       if(!userPrefs.isUserVerfied){
+        userPrefs.setPreviousScreen(activity.javaClass.name)
         if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
           this.navigate(intent,true,null)

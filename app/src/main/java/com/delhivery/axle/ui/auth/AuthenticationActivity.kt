@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.auth
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -285,6 +286,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
+            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             // Capture event
             analyticsUtil.trackEvent(
                     EVENT_OTP_VERIFIED,
@@ -295,6 +297,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           AccountDetails -> {
+            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             userPrefs.phoneNumber?.let {
               analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)

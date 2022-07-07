@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
@@ -39,6 +40,7 @@ import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.toDate
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -70,7 +72,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var bitmapUtils: BitmapUtils
-
+  @Inject lateinit var userPrefs: UserPrefs
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -117,7 +119,9 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     binding.containerImage.setOnClickListener {
       val imageName = "docket_" + System.currentTimeMillis()
       if (viewModel.imageUrl.isNullOrEmpty()) captureImage(imageName, imageName)
-      else startActivity(imageViewIntent(this, viewModel.imageUrl, "Docket Image"))
+      else{
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        startActivity(imageViewIntent(this, viewModel.imageUrl, "Docket Image"))}
     }
 
     binding.deleteImage.setOnClickListener {
@@ -140,6 +144,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     }
 
     binding.btnView.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(
           imageViewIntent(this, viewModel.trip?.podDispatchDocketImage ?: "", "Docket Image")
       )

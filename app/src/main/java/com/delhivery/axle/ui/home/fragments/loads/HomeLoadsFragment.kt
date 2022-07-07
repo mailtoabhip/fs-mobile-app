@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -54,6 +55,7 @@ import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_NAME
+import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
 class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -131,6 +133,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     binding.routesBanner.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(userRoutesIntent(it))
       }
     }
@@ -245,6 +248,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     if (viewModel.isFCMTokenGenerated()) {
       fcmUtils.generateToken {
         if (it.isNotNullOrEmpty()) {
+          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
           viewModel.updateFCMToken(it)
         }
       }
@@ -341,11 +345,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+        context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
       }
 
       HomeLoadsSearchAction_Search -> {
         context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(
                   Intent(it, SearchLoadActivity::class.java)
           )
@@ -360,6 +367,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(VALUE_LOAD_INFO)
         )
         context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(userRoutesIntent(it))
         }
       }
@@ -372,6 +380,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(VALUE_NO_RESULTS)
         )
         context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(userRoutesIntent(it))
         }
       }
@@ -522,6 +531,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     }
 
     bindingDialog.addTruckLayout.setOnClickListener{
+      userPrefs.setPreviousScreen(this.javaClass.name)
       context?.let { startActivityForResult(truckIntent(context!!, source = source), REQCODE_ADD_TRUCK) }
       dialog.dismiss()
     }

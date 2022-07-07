@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -190,7 +191,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
+        context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
       }
     }
   }
@@ -212,6 +215,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             }
             else{
               item.data.let {
+                userPrefs.setPreviousScreen(this.javaClass.name)
                 BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()

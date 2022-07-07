@@ -146,6 +146,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.activeBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, ActiveBid), REQCODE_NO_ROUTES)
       }
 
@@ -156,6 +157,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
             mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQCODE_NO_ROUTES)
       }
 
@@ -166,6 +168,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.lostBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
       }
 
@@ -185,6 +188,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null)
         context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
         }
         else{

@@ -13,12 +13,15 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Search load screen
  */
 class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadViewModel>() {
 
+  @Inject lateinit var userPrefs: UserPrefs
   override fun getViewModelClass() = SearchLoadViewModel::class.java
 
   override fun layoutId() = R.layout.activity_search_load
@@ -81,6 +84,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
   }
 
   override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
     when (currentFragmentType) {
       ResultsFragment -> navigate(LoadFragment)
       else -> super.onBackPressed()

@@ -29,6 +29,8 @@ import dagger.android.DaggerActivity
 import javax.inject.Inject
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
+import com.moengage.firebase.MoEFireBaseHelper
+import com.moengage.pushbase.MoEPushHelper
 import java.util.concurrent.TimeUnit
 
 
@@ -65,13 +67,18 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
   override fun onNewToken(fcmToken: String) {
     super.onNewToken(fcmToken)
+    MoEFireBaseHelper.getInstance().passPushToken(applicationContext,fcmToken)
     userPrefs.fcmTokenGenerated = true
   }
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
     Log.d("prefs","started")
-    remoteMessage.let { sendNotification(it) }
+    if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)){
+      MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+      }else{
+      remoteMessage.let { sendNotification(it) }
+      }
   }
 
   private fun sendNotification(remoteMessage: RemoteMessage) {
