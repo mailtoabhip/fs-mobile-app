@@ -124,7 +124,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_ADD_TRUCK_INITIATE,
                         mutableListOf(PROPERTY_SOURCE),
-                        mutableListOf("My Trucks")
+                        mutableListOf(VALUE_MY_TRUCKS)
                     )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),

@@ -730,6 +730,17 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getString(PrefKeys.userPreviousScreen, "") ?: ""
 
+  var loadCount: String
+    set(value) = editor.putString(PrefKeys.totalLoadCount,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.totalLoadCount, "") ?: "0"
+
+  var inventoryCount: String
+    set(value) = editor.putString(PrefKeys.totalInventoryCount,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.totalInventoryCount, "") ?: "0"
+
+
   fun setPreviousScreen(previousScreen:String){
     userPreviousScreen =previousScreen
     Log.i("previousClassName",userPreviousScreen)
@@ -1130,6 +1141,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val subStatus= "sub_status"
     const val isKycVerified= "is_kyc_verified"
     const val userPreviousScreen= "previous_screen"
+    const val totalLoadCount= "load_count"
+    const val totalInventoryCount= "invnetory_count"
 
   }
 }

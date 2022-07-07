@@ -9,7 +9,15 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
+import com.delhivery.axle.utils.EVENT_HOME_LOADS_TAB_CLICK
+import com.delhivery.axle.utils.EVENT_HOME_MY_TRUCKS_TAB_CLICK
+import com.delhivery.axle.utils.PROPERTY_INVENTORY_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
+import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
+import kotlinx.android.synthetic.main.view_home_summary_item.loads_count
+import javax.inject.Inject
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider{
@@ -20,7 +28,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     var fromDeepLink = false
     override val title: CharSequence
         get() = _title
-
+    @Inject lateinit var userPrefs: UserPrefs
     override fun getViewModelClass() = HomeLoadsTruckViewModel::class.java
 
     override fun layoutId() = R.layout.fragment_home_loads_truck
@@ -63,6 +71,26 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                 vehicleNo = activity.vehicleNum
             fromNotification=true
         }
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if(tab?.position==0){
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_LOADS_TAB_CLICK, mutableListOf(
+                        PROPERTY_ORDER_COUNT),
+                        mutableListOf(userPrefs.loadCount))
+                }else if(tab?.position==1){
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
+                        PROPERTY_INVENTORY_COUNT),
+                        mutableListOf(userPrefs.inventoryCount))
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
     }
 
 

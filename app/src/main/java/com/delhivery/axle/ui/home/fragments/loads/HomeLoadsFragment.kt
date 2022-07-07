@@ -126,9 +126,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       handleAction(
               HomeTripsSearchAction_Search, HomeLoadsSearchItem()
       )
-      analyticsUtil.moEngageTrackEvent( EVENT_HOME_SEARCH_INITIATE,
-        mutableListOf(PROPERTY_ORDER_COUNT),
-        mutableListOf(adapter.itemsList().size.toString()))
     }
 
     binding.routesBanner.setOnClickListener {
@@ -145,6 +142,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
 
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+      userPrefs.loadCount = it.toString()
       _title = when (it) {
         0, null -> getString(string.label_load_request)
         else -> "${getString(string.label_load_request)}($it)"
@@ -357,6 +355,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsSearchAction_Search -> {
         context?.let {
+          analyticsUtil.moEngageTrackEvent( EVENT_HOME_SEARCH_INITIATE,
+            mutableListOf(PROPERTY_ORDER_COUNT),
+            mutableListOf(viewModel.total.toString()))
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(
                   Intent(it, SearchLoadActivity::class.java)

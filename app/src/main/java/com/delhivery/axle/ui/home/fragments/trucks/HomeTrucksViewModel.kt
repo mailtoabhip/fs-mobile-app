@@ -136,6 +136,7 @@ class HomeTrucksViewModel @Inject constructor(
                 if(!error && _res != null) {
                     offset += _res.trucks.size
                     total = _res.total
+                    userPrefs.inventoryCount =total.toString()
                     hasMoreData = _res.hasNext
 
                     val trucksList :List<HomeTrucksRequestItemData> = _res.trucks

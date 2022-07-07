@@ -35,7 +35,6 @@ import com.moengage.core.internal.MoEConstants
 import java.util.*
 import javax.inject.Inject
 
-
 /**
  * Home screen
  */
@@ -57,6 +56,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var fromNotification = false
   var fromDeepLink = false
   var vehicleNum =""
+  var count =0
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -149,6 +149,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       analyticsUtil.moEngageTrackEvent(
           EVENT_NAVIGATION_PODS
       )
+      userPrefs.setPreviousScreen(this.javaClass.name)
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
 
@@ -156,6 +157,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       analyticsUtil.moEngageTrackEvent(
           EVENT_NAVIGATION_MY_PROFILE
       )
+      userPrefs.setPreviousScreen(this.javaClass.name)
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
 
@@ -469,7 +471,33 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-      .let { pos ->
+      .let{ pos ->
+        count++
+        when(pos){
+          0->
+            if(count==1)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_HOME
+            )
+          1->
+            if(count==1)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_BIDS
+            )
+          2->
+            if(count==1)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_PODS
+            )
+          3->
+            if(count==1)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_TRIPS
+            )
+        }
+        if(count==2){
+          count=0
+        }
         binding.viewpager.apply {
           uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
@@ -479,26 +507,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }
           binding.toolbarTitle.text = title
         }
-        when(pos){
-          0->
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_NAVIGATION_HOME
-            )
-          1->
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_NAVIGATION_MY_BIDS
-            )
-          2->
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_NAVIGATION_PODS
-            )
-          3->
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_NAVIGATION_MY_TRIPS
-            )
-        }
-
-
         pos != -1
       }
 
@@ -512,6 +520,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       mutableListOf(PROPERTY_USER_ID),
       mutableListOf(userPrefs.userId())
     )
+    userPrefs.setPreviousScreen(this.javaClass.name)
     startActivity(userTripsIntent(this, "payment_view", 0))
 
   }
