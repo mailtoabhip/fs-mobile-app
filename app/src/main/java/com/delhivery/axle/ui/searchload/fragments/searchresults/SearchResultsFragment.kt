@@ -206,6 +206,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
             val data = item.data as HomeBidsRequestItemData
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_SEARCH_RESULT_BID_INITIATE,
+                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
+                mutableListOf(data.transactionId?:"")
+            )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
