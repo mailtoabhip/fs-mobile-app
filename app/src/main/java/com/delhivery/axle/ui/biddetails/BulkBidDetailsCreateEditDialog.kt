@@ -18,6 +18,12 @@ import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
 import com.delhivery.axle.ui.bids.DmtBidSummaryItem
 import com.delhivery.axle.ui.bids.DmtBidsRVAdapter
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_BID_REVISE_SUBMITTED
+import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -251,7 +257,14 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     for (i in dmtBidSummaryItemDataList) {
                         removedBids.addAll(i.bidIds)
                     }
-
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_BID_REVISE_SUBMITTED,
+                        mutableListOf(
+                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                            PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
+                        ),
+                        mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.bidAmount().toString(),"")
+                    )
                     dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
                 } else {
                     for (item in adapter.itemsList()) {

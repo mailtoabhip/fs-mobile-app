@@ -136,6 +136,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       uiUtils.hideProgress()
       if(it!= null ){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_BID_REVISE_INITIATED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+              mutableListOf(
+                  it.second.transactionId.toString(), it.second?.numBids.toString(),
+                  it.second?.lowestBid.toString()
+              )
+          )
+        }
         if(it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
             pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
@@ -237,6 +247,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             else{
               item.data.let {
                 userPrefs.setPreviousScreen(this.javaClass.name)
+                if(it.transactionBid!=null) {
+                  analyticsUtil.moEngageTrackEvent(
+                      EVENT_BID_REVISE_INITIATED,
+                      mutableListOf(
+                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE
+                      ),
+                      mutableListOf(
+                          data?.transactionId.toString(), data?.numBids.toString(),
+                          data?.lowestBid.toString()
+                      )
+                  )
+                }
                 BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()
