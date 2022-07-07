@@ -1,22 +1,15 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
+import android.view.View.OnTouchListener
 import com.delhivery.axle.R
-import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
-import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
-import com.delhivery.axle.utils.extensions.onPageSelected
-import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
-import javax.inject.Inject
-
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider{

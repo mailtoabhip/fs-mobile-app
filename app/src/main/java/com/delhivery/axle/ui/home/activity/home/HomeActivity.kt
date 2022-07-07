@@ -312,6 +312,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     return when (item.itemId) {
       R.id.nav_call -> {
         //Capture Event
+
         analyticsUtil.trackEvent(
                 EVENT_CALL_VENDOR_DESK,
                 mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
@@ -403,7 +404,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME,it)
         analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME,it)
         analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,it.split(" ").get(0))
-        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,it.split(" ").get(1))
+//        analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,it.split(" ").get(1))
       }
     }
 
@@ -463,6 +464,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }
           binding.toolbarTitle.text = title
         }
+        when(pos){
+          0->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_HOME
+            )
+          1->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_MY_BIDS
+            )
+          2->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_PODS
+            )
+          3->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_MY_TRIPS
+            )
+        }
+
+
         pos != -1
       }
 

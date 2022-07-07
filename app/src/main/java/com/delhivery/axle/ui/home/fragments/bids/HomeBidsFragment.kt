@@ -87,6 +87,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
      if(launch) {
+       analyticsUtil.moEngageTrackEvent(  EVENT_VIEW_BIDS_SCREEN,
+           mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
+           mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
+       )
        analyticsUtil.trackEvent(
                EVENT_VIEW_BIDS_SCREEN,
                mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
