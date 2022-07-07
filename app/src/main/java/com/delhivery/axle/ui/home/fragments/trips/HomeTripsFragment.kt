@@ -10,13 +10,11 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
@@ -81,6 +79,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
     viewModel.dataLoadingLiveData.observe(viewLifecycleOwner, Observer {
+      userPrefs.awaitingArrivalCount=viewModel.awaitingArrivalCount
       uiUtils.hideProgress()
       setText()
     })

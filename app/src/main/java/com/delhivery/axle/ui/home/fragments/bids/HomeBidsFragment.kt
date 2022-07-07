@@ -86,6 +86,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
+      userPrefs.activeBidCount=viewModel.activeBids
+      userPrefs.lostBidCount=viewModel.lostBids
+      userPrefs.confirmedBidCount=viewModel.confirmedBids
      if(launch) {
        analyticsUtil.trackEvent(
                EVENT_VIEW_BIDS_SCREEN,
@@ -98,6 +101,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     })
 
     viewModel.bidsCountLiveData.reobserve(this, Observer {
+      userPrefs.totalBidCount=it.toString()
       _title = when (it) {
         0, null -> getString(string.label_my_bids)
         else -> "${getString(string.label_my_bids)}($it)"

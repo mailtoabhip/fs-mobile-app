@@ -54,7 +54,7 @@ class BidDetailsViewModel @Inject constructor(
     var analyticsBucket :Boolean = false
 
     var indentLiveData = MutableLiveData<HashMap<Int, String>>()
-
+    var bidCount =0
    companion object{
     var truckNumTextViewAdded :Boolean=false
     val indentMap = HashMap<Int, String>()
@@ -81,6 +81,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error) {
             transaction = _tRes
             transactionLiveData.postValue(_tRes)
+            bidCount=transaction.numBids
             fetchTransactionBids()
           } else {
             transactionLiveData.postValue(null)

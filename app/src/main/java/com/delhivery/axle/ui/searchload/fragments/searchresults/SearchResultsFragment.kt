@@ -211,6 +211,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
+            mutableListOf( _item.transactionId ?: "","")
+        )
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
@@ -237,8 +242,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             var eventPos=position+1
             analyticsUtil.moEngageTrackEvent(
                 EVENT_SEARCH_RESULT_BID_INITIATE,
-                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-                mutableListOf(data.transactionId?:"",eventPos.toString())
+                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+                mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
             )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()

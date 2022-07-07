@@ -42,7 +42,7 @@ class SearchResultsViewModel @Inject constructor(
     var editFlg= mutableListOf<Boolean>(false,false,false)
     var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
     var loadPricePercent = 0
-
+    var total =0
   /**
    * Search load api
    */
@@ -64,7 +64,7 @@ class SearchResultsViewModel @Inject constructor(
           if (!error) {
             val loads = _tRes.first
             val bids = _tRes.second
-
+            total=loads.size
             for (load in loads.toMutableList()) {
               try {
                 load.loadPricePercent = loadPricePercent

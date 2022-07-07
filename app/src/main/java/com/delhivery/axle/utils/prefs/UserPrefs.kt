@@ -735,6 +735,27 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getString(PrefKeys.totalLoadCount, "") ?: "0"
 
+  var activeBidCount: String
+    set(value) = editor.putString(PrefKeys.activeBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.activeBidCount, "") ?: "0"
+  var confirmedBidCount: String
+    set(value) = editor.putString(PrefKeys.confirmedBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.confirmedBidCount, "") ?: "0"
+  var lostBidCount: String
+    set(value) = editor.putString(PrefKeys.lostBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.lostBidCount, "") ?: "0"
+  var totalBidCount: String
+    set(value) = editor.putString(PrefKeys.totalBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.totalBidCount, "") ?: "0"
+  var awaitingArrivalCount: String
+    set(value) = editor.putString(PrefKeys.expectingArrivalCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.expectingArrivalCount, "") ?: "0"
+
   var inventoryCount: String
     set(value) = editor.putString(PrefKeys.totalInventoryCount,value)
       .apply()
@@ -1142,6 +1163,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isKycVerified= "is_kyc_verified"
     const val userPreviousScreen= "previous_screen"
     const val totalLoadCount= "load_count"
+    const val activeBidCount= "active_bid_count"
+    const val confirmedBidCount= "confirmed_bid_count"
+    const val lostBidCount= "lost_bid_count"
+    const val totalBidCount= "total_bid_count"
+    const val expectingArrivalCount= "expecting_arrival_count"
     const val totalInventoryCount= "invnetory_count"
 
   }

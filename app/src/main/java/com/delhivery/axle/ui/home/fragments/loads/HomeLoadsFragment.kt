@@ -193,9 +193,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_LOADFEED_BID_SUBMIT,
                         mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                            PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                            PROPERTY_SOURCE),
-                        mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","load_fragment")
+                            PROPERTY_VEHICLE_REPORTING_DATE_TIME),
+                        mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.bidAmount()?:"",data?.expectedArrivalTimePickup?:"")
                     )
                   }
                 }
@@ -210,9 +209,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_LOADFEED_BID_SUBMIT,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                PROPERTY_SOURCE),
-            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","load_fragment")
+                PROPERTY_VEHICLE_REPORTING_DATE_TIME),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.bidAmount()?:"",data?.expectedArrivalTimePickup?:"")
         )
       }
     })

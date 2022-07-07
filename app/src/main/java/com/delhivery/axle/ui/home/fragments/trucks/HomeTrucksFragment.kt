@@ -93,7 +93,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_ADD_TRUCK_INITIATE,
                         mutableListOf(PROPERTY_SOURCE),
-                        mutableListOf("My Trucks")
+                        mutableListOf(VALUE_MY_TRUCKS)
                     )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
@@ -212,6 +212,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 if(it.first != -1 && it.first !=-2) {
                     uiUtils.showSnackbar("Truck Activated Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_REQUEST_FOR_LOAD_SUBMIT,
+                        mutableListOf(PROPERTY_INVENTORY_UUID),
+                        mutableListOf(data.inventoryId?:"")
+                    )
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
                     data.latestUUID = it.second.latestUUID
@@ -288,7 +293,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_EDIT_TRUCK_SUBMIT,
                         mutableListOf( PROPERTY_INVENTORY_UUID,
-                            PROPERTY_ATTRIBUTE_CHANGED),
+                            PROPERTY_FIELD_EDITED),
                         mutableListOf(data.inventoryId)
                     )
                 }
@@ -399,7 +404,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                         analyticsUtil.moEngageTrackEvent(
                             EVENT_ADD_TRUCK_INITIATE,
                             mutableListOf(PROPERTY_SOURCE),
-                            mutableListOf("Banner")
+                            mutableListOf(VALUE_BANNER)
                         )
                         showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                             TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),

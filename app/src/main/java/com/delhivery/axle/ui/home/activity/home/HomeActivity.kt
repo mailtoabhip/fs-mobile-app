@@ -203,7 +203,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
-            startActivity(bidDetailsIntent(dplink_tid, this))
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -260,14 +260,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
       }
       PREFERRED_SUPPLIER_NOTIFICATION -> {
-        startActivity(bidDetailsIntent(preferredTransactionId, this))
+        startActivity(bidDetailsIntent(preferredTransactionId, this,source = VALUE_PUSH_NOTIFICATION))
       }
       REJECT_POD_NOTIFICATION -> {
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       LOWEST_BID_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
-          startActivity(bidDetailsIntent(transactionIds[0], this))
+          startActivity(bidDetailsIntent(transactionIds[0], this,source = VALUE_PUSH_NOTIFICATION))
         }
         else
         {
@@ -287,7 +287,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       REDIRECT_TO_LOAD -> {
-        startActivity(bidDetailsIntent(preferredTransactionId,this))
+        startActivity(bidDetailsIntent(preferredTransactionId,this,source = VALUE_PUSH_NOTIFICATION))
       }
 
       ACTIVATE_TRUCK_NOTIFICATION ->{
@@ -477,12 +477,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           0->
             if(count==1)
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_HOME
+              EVENT_NAVIGATION_HOME,
+                mutableListOf(PROPERTY_ORDER_COUNT),
+                mutableListOf(userPrefs.loadCount)
             )
           1->
             if(count==1)
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_BIDS
+              EVENT_NAVIGATION_MY_BIDS,
+                mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                    PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
+                mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
             )
           2->
             if(count==1)
@@ -492,7 +497,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           3->
             if(count==1)
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_TRIPS
+              EVENT_NAVIGATION_MY_TRIPS,
+                mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+                mutableListOf(userPrefs.awaitingArrivalCount)
             )
         }
         if(count==2){

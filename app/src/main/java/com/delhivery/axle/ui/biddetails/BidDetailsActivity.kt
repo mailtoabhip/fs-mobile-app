@@ -58,6 +58,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   override fun requireConnection() = true
 
   var bidEndingTime:String = ""
+  var source:String= VALUE_APP_FLOW
 
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
@@ -78,6 +79,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
     viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
+     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
+
 
 
   }
@@ -153,16 +156,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           analyticsUtil.moEngageTrackEvent(
               EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-              mutableListOf(viewModel.transactionId, "App_Open")
+              mutableListOf(viewModel.transactionId,source )
           )
         } else {
-          if (adapter.itemCount <= 1) {
             analyticsUtil.moEngageTrackEvent(
                 EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
                 mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                mutableListOf(viewModel.transactionId, "App_Open")
+                mutableListOf(viewModel.transactionId, source)
             )
-          }
         }
       }
     })
@@ -405,7 +406,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
                         PROPERTY_VEHICLE_REPORTING_DATE_TIME,
                         PROPERTY_SOURCE),
-                    mutableListOf(state.lowestAndUserBidPair.second?.transactionId?:"",state.bidsCount.toString(),state.lowestAndUserBidPair.second?.bidAmount.toString(),state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),"bid_detail_page")
+                    mutableListOf(state.lowestAndUserBidPair.second?.transactionId?:"",state.bidsCount.toString(),state.lowestAndUserBidPair.second?.bidAmount.toString(),state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark?:"",source)
                 )
               }
           }
@@ -609,9 +610,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_RESULT_BID_INITIATE,
+            EVENT_ORDER_DETAILS_BID_INITIATE,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
-            mutableListOf(bid?.transactionId ?:"","bid_detail_page")
+            mutableListOf(bid?.transactionId ?:"",viewModel.bidCount.toString(),source)
         )
         binding.transaction?.let {
           if(viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
@@ -675,11 +676,13 @@ fun bidDetailsIntent(
   context: Context,
   requestType:String?=null,
   fromBidsPage:Boolean = false,
-  active:Boolean = false
+  active:Boolean = false,
+  source:String?= VALUE_APP_FLOW
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
   putExtra(RequestTypeIntentKey, requestType)
   putExtra(FromPage,fromBidsPage)
   putExtra(ActiveBid,active)
+  putExtra(PROPERTY_SOURCE,source)
 }
