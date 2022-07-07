@@ -253,6 +253,12 @@ class BidDetailsCreateEditDialog @Inject constructor(
                     mutableListOf(userPrefs.userId(), transaction.key(), userPrefs.demandType, userPrefs.userPerformance, fromPage)
             )
           }
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_BID_REVISE_SUBMITTED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                  PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+              mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transactionBid.bidAmount.toString()?:"",transaction.bidAmount().toString())
+          )
           dialogInterface.editBid(
                   transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
                   amount, pmtRate, transaction.biddingType ?: "FTL", position,

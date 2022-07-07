@@ -148,7 +148,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     viewModel.userBidsData.observe(this, Observer {
       if (it != null) {
-       adapter.operation(it)
+        adapter.operation(it)
+        if (adapter.itemCount <= 1) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+              mutableListOf(viewModel.transactionId, "App_Open")
+          )
+        } else {
+          if (adapter.itemCount <= 1) {
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+                mutableListOf(viewModel.transactionId, "App_Open")
+            )
+          }
+        }
       }
     })
 
@@ -156,6 +171,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       uiUtils.hideProgress()
       if(it!= null){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_BID_REVISE_INITIATED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+              mutableListOf(
+                  it.second.transactionId.toString(), it.second?.numBids.toString(),
+                  it.second?.lowestBid.toString()
+              )
+          )
+        }
         if(it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
             viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
