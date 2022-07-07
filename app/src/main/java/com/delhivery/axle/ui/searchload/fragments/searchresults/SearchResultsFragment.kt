@@ -84,9 +84,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           .apply {
             when {
               it != null && it.first !=null  -> {
+                val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
                 (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
                   it.second
                 _adapter.notifyItemChanged(it.first)
+                analyticsUtil.moEngageTrackEvent(
+                    EVENT_SEARCH_RESULT_BID_SUBMIT,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                        PROPERTY_SOURCE),
+                    mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","search_results_page")
+                )
               }
             }
           }
@@ -97,6 +105,13 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
         data?.bulkTransactionBids = it.second
         _adapter.notifyItemChanged(it.first)
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_SUBMIT,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                PROPERTY_SOURCE),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","search_results_page")
+        )
       }
     })
 
@@ -209,10 +224,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
             val data = item.data as HomeBidsRequestItemData
+            var eventPos=position+1
             analyticsUtil.moEngageTrackEvent(
                 EVENT_SEARCH_RESULT_BID_INITIATE,
                 mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-                mutableListOf(data.transactionId?:"")
+                mutableListOf(data.transactionId?:"",eventPos.toString())
             )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
