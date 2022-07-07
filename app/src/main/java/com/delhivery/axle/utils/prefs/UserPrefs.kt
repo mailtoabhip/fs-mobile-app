@@ -922,6 +922,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
       editor.remove(PrefKeys.paymentIFSCCode)
         .apply()
+      editor.remove(PrefKeys.IfscCode)
+        .apply()
       editor.remove(PrefKeys.businessDocUrl)
         .apply()
       editor.remove(PrefKeys.identityDocUrl)
