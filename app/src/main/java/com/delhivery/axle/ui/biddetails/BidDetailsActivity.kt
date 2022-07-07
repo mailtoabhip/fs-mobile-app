@@ -148,7 +148,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
     viewModel.userBidsData.observe(this, Observer {
       if (it != null) {
-       adapter.operation(it)
+        adapter.operation(it)
+        if (adapter.itemCount <= 1) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+              mutableListOf(viewModel.transactionId, "App_Open")
+          )
+        } else {
+          if (adapter.itemCount <= 1) {
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+                mutableListOf(viewModel.transactionId, "App_Open")
+            )
+          }
+        }
       }
     })
 
