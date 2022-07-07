@@ -97,11 +97,7 @@ class ShareRateViewModel @Inject constructor(
                         } else {
                             val errorMessage = error.errorResponseBody()?.dataBody
                             if (errorMessage != null) {
-                                if(errorMessage.errorBody.isNotNullOrEmpty() && errorMessage.errorBody.equals("The selection is not applicable for current offer period")){
-                                    errorrateUpdatedLiveData.postValue(errorMessage.errorBody)
-                                }else{
-                                    error.handle()
-                                }
+                                errorrateUpdatedLiveData.postValue(errorMessage.errorBody)
                             } else {
                                 error.handle()
                             }

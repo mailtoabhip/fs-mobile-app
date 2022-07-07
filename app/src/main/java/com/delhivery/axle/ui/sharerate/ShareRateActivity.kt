@@ -291,9 +291,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
         viewModel.errorrateUpdatedLiveData.observe(this, Observer {
             if (it != null && it.isNotNullOrEmpty()) {
+                if(it.equals("The selection is not applicable for current offer period")){
+                    binding.errorLane.text = it
+                    binding.errorLane.visibility = View.VISIBLE
+                }
                 uiUtils.showToast(it)
-                binding.errorLane.text = it
-                binding.errorLane.visibility = View.VISIBLE
                 viewModel.errorrateUpdatedLiveData.postValue(null)
             }
         })
