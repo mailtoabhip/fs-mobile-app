@@ -13,6 +13,11 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
+import com.delhivery.axle.utils.EVENT_NAVIGATION_PODS
+import com.delhivery.axle.utils.EVENT_SEARCH_DETAILS_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -72,6 +77,13 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
       }
       Search -> {
         (action as SearchLoadAction).apply {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_SEARCH_DETAILS_SUBMIT,
+              mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                  PROPERTY_SEARCH_BODY_TYPE),
+              mutableListOf( originCity.cityName() ?: "Anywhere",
+                  destinationCity?.cityName() ?: "Anywhere",truckType)
+          )
           /* navigate to search results fragment */
           navigate(ResultsFragment)
           /* search query */

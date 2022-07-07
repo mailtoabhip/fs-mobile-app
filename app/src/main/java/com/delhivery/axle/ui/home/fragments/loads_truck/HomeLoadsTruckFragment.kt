@@ -55,6 +55,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                vehicleNo = activity.vehicleNum
             fromDeepLink=true
         }
+
         if(activity.fromNotification){
             binding.tabLayout.getTabAt(1)?.select()
             activity.fromNotification = false
