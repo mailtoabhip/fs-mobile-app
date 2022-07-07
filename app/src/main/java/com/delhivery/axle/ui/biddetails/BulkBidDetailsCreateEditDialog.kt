@@ -238,6 +238,14 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
                                     if (diff != 0 || pmtFlag) {
                                         modifyPayload.add(ModifyVehicleData(bidData.pmtRate, bidData.vehicleCapacity, diff, bidData.vehicleType, "modify", bidData.bidIds, pmtFlag, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
+                                        analyticsUtil.moEngageTrackEvent(
+                                            EVENT_BID_REVISE_SUBMITTED,
+                                            mutableListOf(
+                                                PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                                                PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
+                                            ),
+                                            mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.bidAmount().toString(),bidData.pmtRate())
+                                        )
 
                                     }
                                     dmtBidSummaryItemDataList.remove(i)
@@ -257,14 +265,6 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     for (i in dmtBidSummaryItemDataList) {
                         removedBids.addAll(i.bidIds)
                     }
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_BID_REVISE_SUBMITTED,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                            PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
-                        ),
-                        mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.bidAmount().toString(),"")
-                    )
                     dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
                 } else {
                     for (item in adapter.itemsList()) {
