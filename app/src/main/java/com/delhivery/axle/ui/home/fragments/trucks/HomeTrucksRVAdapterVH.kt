@@ -119,6 +119,32 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
             binding.rateMore.visibility = View.GONE
            _interface.callRewards()
         }
+
+        val total = _interface.gettotal()
+
+        val pos = adapterPosition.minus(3)
+        if(total==0){
+            binding.rateBanner.visibility = View.GONE
+        }else{
+            if(total!=0 && total >7) {
+                if (pos != 0 && pos.rem(8) == 0) {
+                    binding.rateBanner.visibility = View.VISIBLE
+                } else {
+                    binding.rateBanner.visibility = View.GONE
+                }
+            }else{
+                if(total!=0) {
+                    if (pos == total) {
+                        binding.rateBanner.visibility = View.VISIBLE
+                     } else {
+                        binding.rateBanner.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        binding.rateBanner.setOnClickListener { _interface.callRewards() }
+
     }
 }
 
@@ -211,6 +237,7 @@ internal class HomeTrucksInfoItemVH(binding: ViewHomeTrucksInfoItemBinding) :
         _interface: HomeTrucksRVAdapterInterface
     ) {
         binding.trucksCount.text = "("+item.data.count.toString()+")"
+        _interface.settotal(item.data.count)
     }
 }
 

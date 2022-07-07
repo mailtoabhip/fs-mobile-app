@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
@@ -75,14 +76,11 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
+    viewModel.fetchDatabaseOffers()
+
     viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
       if (!it.isNullOrEmpty()) {
-        viewModel.getFrequentLanes(it)
-      }
-    })
-
-    viewModel.finalOffers.observe(viewLifecycleOwner, Observer {
-      if (!it.isNullOrEmpty()) {
+        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
         adapter.notifyDataSetChanged()
       }
     })
@@ -301,6 +299,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         }
       }
     }
+
+    Log.d("nallaa", viewModel.finalOffers.value.toString())
 
     return pres
   }

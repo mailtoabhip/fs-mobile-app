@@ -389,6 +389,8 @@
   <string name="label_tc_details">\u2022 Payment will be made after the proof is verified\n\n\u2022 The details added should match the proof document for the payment to be processed\n\n\u2022 Rate is collected for selected routes &amp; trucks </string>
   <string name="label_rate1">Now Earn by adding trip details!!</string>
   <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
+  <string name="label_rate_banner">Add trip rates and earn reward</string>
+  <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>

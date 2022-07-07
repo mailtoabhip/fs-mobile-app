@@ -55,12 +55,26 @@
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_24dp"
                         bind:layout_constraintTop_toTopOf="parent"
                         bind:layout_constraintStart_toStartOf="parent"
                         android:orientation="vertical">
 
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:id="@+id/error_lane"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hint_offer"
+                           android:visibility="gone"
+                            android:textColor="@color/destructive_red"
+                            android:drawableStart="@drawable/ic_vector_error_12"
+                            android:drawablePadding="@dimen/size_4dp"
+                            android:textStyle="normal"
+                            android:textSize="@dimen/text_12sp"/>
+
                        <RelativeLayout
                             android:layout_width="match_parent"
+                           android:layout_marginTop="@dimen/size_8dp"
                             android:layout_height="wrap_content">
 
                             <androidx.appcompat.widget.AppCompatImageView
@@ -73,13 +87,12 @@
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/size_24dp"
-                                android:text="@string/label_origin_destination"
+                                 android:text="@string/label_origin_destination"
                                 android:layout_toEndOf="@+id/imgframe"
                                 android:textColor="@color/heading_black"
                                 android:src="@color/destructive_red"
                                 android:textStyle="normal"
-                                android:layout_marginStart="-4dp"
+                                android:layout_marginStart="-6dp"
                                 android:id="@+id/label_origin"
                                 android:textSize="@dimen/text_14sp"/>
 

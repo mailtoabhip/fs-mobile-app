@@ -37,4 +37,7 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
 
     fun callRewards()
 
+    fun gettotal():Int
+
+     fun settotal(total:Int)
 }

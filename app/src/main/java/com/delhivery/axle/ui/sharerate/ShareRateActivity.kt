@@ -259,12 +259,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         }
 
         binding.btnSubmitDetails.setOnClickListener {
+            binding.errorLane.visibility = View.GONE
             if(!viewModel.selected_vehicle_number?.let { it1 -> validateTruckNumber(it1) }) {
                 binding.editTruckNumber.error = "Invalid vehicle number entered"
                 uiUtils.showToast("Invalid vehicle number entered")
             }else {
-                if(offerTD?.equals(viewModel.selected_truck_type) == true){
-
                     endTime = System.currentTimeMillis()
                     val ttl = endTime - startTime
                     analyticsUtil.trackEvent(
@@ -281,11 +280,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         binding.errorTruck.text = "Please choose both truck size and capacity"
                         binding.errorTruck.visibility = View.VISIBLE
                     }
-                }else{
-                    uiUtils.showToast(offerTD+" is valid truck size for this offer")
-                    binding.errorTruck.text = resources.getString(R.string.hint_offer)
-                    binding.errorTruck.visibility = View.VISIBLE
-                }
             }
         }
 
@@ -298,6 +292,8 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         viewModel.errorrateUpdatedLiveData.observe(this, Observer {
             if (it != null && it.isNotNullOrEmpty()) {
                 uiUtils.showToast(it)
+                binding.errorLane.text = it
+                binding.errorLane.visibility = View.VISIBLE
                 viewModel.errorrateUpdatedLiveData.postValue(null)
             }
         })
@@ -398,12 +394,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             sourcedAs = adapter.getItem(position).sourcedAs?: ""
             var min = adapter.getItem(position).minCapacity
             val max = adapter.getItem(position).maxCapacity
-            if(sourcedAs == "PMT"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
-            }
-            else if(sourcedAs == "FTL"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
-            }
             viewModel.selected_truck_capacity = ""
             viewModel.selected_truck_type = adapter.getItem(position).truckUuid.toString()
             capacityArr.clear()
@@ -433,12 +423,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             sourcedAs = adapter.getItem(pos).sourcedAs?: ""
             var min = adapter.getItem(pos).minCapacity
             val max = adapter.getItem(pos).maxCapacity
-            if(sourcedAs == "PMT"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
-            }
-            else if(sourcedAs == "FTL"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
-            }
             capacityArr.clear()
             if(min !=null &&  max!=null){
                 while (min <= max) {
@@ -461,12 +445,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             sourcedAs = itemData?.sourcedAs?: ""
             var min = itemData?.minCapacity
             val max = itemData?.maxCapacity
-            if(sourcedAs == "PMT"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
-            }
-            else if(sourcedAs == "FTL"){
-                binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
-            }
             viewModel.selected_truck_capacity = ""
             //viewModel.selected_truck_type = adapter.getItem(position).truckUuid.toString()
             capacityArr.clear()

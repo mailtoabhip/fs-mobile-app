@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
@@ -82,14 +83,11 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       refreshData()
     }
 
+    viewModel.fetchDatabaseOffers()
+
     viewModel.fetchDatabaseOffers().observe(this, Observer {
       if (!it.isNullOrEmpty()) {
-        viewModel.getFrequentLanes(it)
-      }
-    })
-
-    viewModel.finalOffers.observe(this, Observer {
-      if (!it.isNullOrEmpty()) {
+        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
         adapter.notifyDataSetChanged()
       }
     })

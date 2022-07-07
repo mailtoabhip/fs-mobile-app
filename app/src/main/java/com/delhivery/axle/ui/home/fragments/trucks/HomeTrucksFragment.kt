@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trucks.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
@@ -47,6 +48,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun getViewModelClass() = HomeTrucksViewModel::class.java
     override fun layoutId() = R.layout.fragment_home_trucks
 
+    var totalTruck: Int = 0
     var bannerValue:Boolean? = false
 
     companion object {
@@ -85,18 +87,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             refreshData()
         }
 
-        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                viewModel.getFrequentLanes(it)
-            }
-        })
-
-        viewModel.finalOffers.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                adapter.notifyDataSetChanged()
-            }
-        })
-
+        viewModel.fetchDatabaseOffers()
         /* setup recycler view */
         binding.rvTrucks.apply {
             layoutManager = LinearLayoutManager(context)
@@ -368,9 +359,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
         viewModel.getAllInventories()
 
+        viewModel.fetchDatabaseOffers()
+
         viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
-                viewModel.getFrequentLanes(it)
+                viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
+                adapter.notifyDataSetChanged()
             }
         })
 
@@ -812,6 +806,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     override fun callRewards() {
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+    }
+
+    override fun gettotal(): Int {
+       return totalTruck
+    }
+
+    override fun settotal(total: Int) {
+       totalTruck = total
     }
 
     override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?, offerid: String?) {
