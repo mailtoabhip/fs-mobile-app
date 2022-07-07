@@ -90,6 +90,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         binding.addTruck.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ADD_TRUCK_INITIATE,
+                        mutableListOf(PROPERTY_SOURCE),
+                        mutableListOf("My Trucks")
+                    )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                         TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -116,6 +121,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         binding.addTruckFloating.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ADD_TRUCK_INITIATE,
+                        mutableListOf(PROPERTY_SOURCE),
+                        mutableListOf("My Trucks")
+                    )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                         TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -259,6 +269,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     )
                 }
                 else {
+
                     uiUtils.showSnackbar("Truck Edited Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
                     data.ownership = it.second.ownership
@@ -274,6 +285,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     data.destinationClusterId = it.second.destinationClusterId
 
                     adapter.notifyItemChanged(it.first)
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_EDIT_TRUCK_SUBMIT,
+                        mutableListOf( PROPERTY_INVENTORY_UUID,
+                            PROPERTY_ATTRIBUTE_CHANGED),
+                        mutableListOf(data.inventoryId)
+                    )
                 }
             }
         })
@@ -379,6 +396,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 )
                 when (viewModel.userPrefs.canBid()) {
                     APPROVED -> {
+                        analyticsUtil.moEngageTrackEvent(
+                            EVENT_ADD_TRUCK_INITIATE,
+                            mutableListOf(PROPERTY_SOURCE),
+                            mutableListOf("Banner")
+                        )
                         showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                             TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                             TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -480,9 +502,13 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_EDIT_TRUCK_INITIATE,
+                mutableListOf( PROPERTY_INVENTORY_UUID),
+                mutableListOf(data.inventoryId)
+            )
             context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()}
             dialog.dismiss()
-
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
             showDeactivateDialog(position, data)
@@ -491,10 +517,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         bindingDialog.deleteTruckLayout.setOnClickListener{
             uiUtils.showProgress()
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_DELETE_TRUCK,
+                mutableListOf( PROPERTY_INVENTORY_UUID),
+                mutableListOf(data.inventoryId)
+            )
             analyticsUtil.trackEvent(
                 EVENT_DELETE_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                mutableListOf(userPrefs.userId(), data.inventoryId)
+                mutableListOf( PROPERTY_INVENTORY_ID),
+                mutableListOf( data.inventoryId)
             )
             viewModel.deleteTruck(data, position)
             dialog.dismiss()
@@ -750,6 +781,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         when(requestCode) {
             REQCODE_ADD_TRUCK -> {
                 if( data != null  && data.getStringExtra("Added") == "Truck Added"){
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ADD_TRUCK_SUBMIT,
+                        mutableListOf(PROPERTY_INVENTORY_UUID),
+                        mutableListOf(userPrefs.userId())
+                    )
                     refreshData()
                 }
             }

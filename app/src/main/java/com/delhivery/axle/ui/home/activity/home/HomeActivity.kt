@@ -146,10 +146,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
 
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+      analyticsUtil.moEngageTrackEvent(
+          EVENT_NAVIGATION_PODS
+      )
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
 
     binding.profile.setOnClickListener {
+      analyticsUtil.moEngageTrackEvent(
+          EVENT_NAVIGATION_MY_PROFILE
+      )
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
 
@@ -473,6 +479,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }
           binding.toolbarTitle.text = title
         }
+        when(pos){
+          0->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_HOME
+            )
+          1->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_MY_BIDS
+            )
+          2->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_PODS
+            )
+          3->
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_NAVIGATION_MY_TRIPS
+            )
+        }
+
+
         pos != -1
       }
 
