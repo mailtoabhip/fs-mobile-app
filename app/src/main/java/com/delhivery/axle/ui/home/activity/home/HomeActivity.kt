@@ -205,7 +205,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                     mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
                     mutableListOf(userPrefs.phoneNumber.toString(), dplink_tid)
             )
-            startActivity(bidDetailsIntent(dplink_tid, this))
+            startActivity(tripDetailsIntent(dplink_tid, this))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -289,11 +289,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
       REDIRECT_TO_SUPPLIER_RECOMMENDATION -> {
         analyticsUtil.trackEvent(
-                EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION,
+                EVENT_SUPPLIER_RECOMMENDATION,
                 mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
                 mutableListOf(userPrefs.phoneNumber.toString(), preferredTransactionId)
         )
-        startActivity(bidDetailsIntent(preferredTransactionId,this))
+        startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
 
       REDIRECT_TO_LOAD -> {
@@ -503,7 +503,7 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
-private const val SUPPLIER_LOAD_REDIRECT = "sldtl"
+private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
 
 
 /* intent keys */
