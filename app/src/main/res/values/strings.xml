@@ -602,6 +602,7 @@
   <string name="kyc_details">KYC Details</string>
   <string name="payment_details">Payment Details</string>
   <string name="hint_for_quick_processing">For quick processing use Business PAN</string>
+  <string name="hint_for_bank_validation">₹1 will be credited to the above bank account for verification.</string>
   <string name="add_route">Add Route</string>
   <string name="add_your_truck_and_receive_matching_load_offers">Tell us your truck\'s current location and preferred drop location and get first preference for matching loads</string>
   <string name="get_load_offers">Get first preference for Loads by \nadding your truck details</string>

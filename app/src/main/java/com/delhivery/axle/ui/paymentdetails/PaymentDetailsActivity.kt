@@ -27,14 +27,20 @@ import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
+import com.delhivery.axle.utils.EVENT_APP_OPEN
+import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.EVENT_SUBMIT_BUSINESS_PROOF
 import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
 import com.delhivery.axle.utils.PROPERTY_BUSINESS_PROOF_TYPE
+import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
@@ -76,15 +82,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
     var accountNum=false
-    var accountName=false
+    var accountName=true
     var ifsc = false
-    var docUpload =false
+    var docUpload =true
     var nameDec =true
     var startTime: Long = 0
     var endTime: Long = 0
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.accountHolderText.value= getString(R.string.hint_for_bank_validation)
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
             if(userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
@@ -117,19 +125,46 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
         startTime = System.currentTimeMillis()
-
+        accountName=true
         viewModel.accountHolderText.observe(this, Observer {
-            if(userPrefs.panName.equals(it,true)){
-                binding.accountHolderWarning.visibility= View.GONE
-                binding.nameDeclaration.visibility=View.GONE
-                nameDec=true
-                enableSubmitButton()
-            }else{
-                if(it.isNotNullOrEmpty()) {
-                    nameDec=false
+            if(viewModel.bankValidationApiFailed){
+                if (userPrefs.panName.equals(it,true) || it.equals(
+                        getString(R.string.hint_for_bank_validation)
+                    )
+                ) {
+                    binding.accountHolderWarning.visibility = View.GONE
+                    binding.nameDeclaration.visibility = View.GONE
+                    nameDec = true
                     enableSubmitButton()
-                    binding.accountHolderWarning.visibility = View.VISIBLE
-                    binding.nameDeclaration.visibility = View.VISIBLE
+                } else {
+                    if (it.isNotNullOrEmpty()) {
+                        nameDec = false
+                        enableSubmitButton()
+                        binding.accountHolderWarning.visibility = View.VISIBLE
+                        binding.nameDeclaration.visibility = View.VISIBLE
+                        binding.nameDeclaration.isChecked = false
+                        viewModel.nameDeclaration = false
+                    }
+                }
+
+            }else {
+                if (viewModel.panMatched || it.equals(
+                        getString(R.string.hint_for_bank_validation)
+                    )
+                ) {
+                    binding.accountHolderWarning.visibility = View.GONE
+                    binding.nameDeclaration.visibility = View.GONE
+                    nameDec = true
+                    enableSubmitButton()
+                } else {
+                    if (it.isNotNullOrEmpty()) {
+                        nameDec = false
+                        enableSubmitButton()
+                        binding.accountHolderWarning.visibility = View.VISIBLE
+                        binding.nameDeclaration.visibility = View.VISIBLE
+                        binding.nameDeclaration.isChecked = false
+                        viewModel.nameDeclaration = false
+                    }
                 }
             }
         })
@@ -149,6 +184,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     sendDocForVerification(uploadArray1)
                     viewModel.selected194CUpload.value=false
                 }else{
+                    if(binding.nameDeclaration.isChecked==true){
+                        viewModel.nameDeclaration=true
+                    }else{
+                        viewModel.nameDeclaration=false
+                    }
                    viewModel.updateUserDetails()
                 }
         })
@@ -198,7 +238,29 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 accountNum=false
                 enableSubmitButton()
             }else {
-                sendDocForVerification(uploadArray)
+                if(viewModel.bankValidationApiFailed){
+                    sendDocForVerification(uploadArray)
+                }else {
+                    if (viewModel.bankValidated) {
+                        if (viewModel.selected194CUpload.value == true) {
+                            sendDocForVerification(uploadArray1)
+                            viewModel.selected194CUpload.value = false
+                        } else {
+                            if(binding.nameDeclaration.isChecked==true){
+                                viewModel.nameDeclaration=true
+                            }else{
+                                viewModel.nameDeclaration=false
+                            }
+                                viewModel.updateUserDetails()
+                        }
+                    } else {
+                        viewModel.getBankName(
+                            accountNum = viewModel.accountText.value!!,
+                            ifsc = viewModel.ifscText.value?.toUpperCase()!!
+                        )
+                    }
+                }
+
                 if (binding.nameDeclaration.isChecked) {
                     viewModel.nameDeclaration = true
                 } else {
@@ -221,18 +283,84 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         binding.docRemove1.setOnClickListener {
             showUploadImage1()
             viewModel.selected194CUpload.value=false
-
         }
+        viewModel.bankValidaton.observe(this, Observer {
+            if (it.first){
+                viewModel.bankValidationApiFailed=false
+                viewModel.panMatched=it.second.validated!!
+                if(it.second.validated!!){
+                    viewModel.bankValidated=false
+                    viewModel.accountHolderText.value=it.second.accountHolderName
+                    binding.accountHolderEdittext.setText("Account Holder Name - "+it.second.accountHolderName)
+                    if(viewModel.selected194CUpload.value==true){
+                        sendDocForVerification(uploadArray1)
+                        viewModel.selected194CUpload.value=false
+                    }else{
+                        if(it.second.validated!!||viewModel.nameDeclaration==true) {
+                            viewModel.updateUserDetails()
+                        }else{
+                            viewModel.bankValidated=true
+                        }
+                    }
+                }else{
+                    viewModel.accountHolderText.value=it.second.accountHolderName
+                    binding.accountHolderEdittext.setText("Account Holder Name - "+it.second.accountHolderName)
+                    if(it.second.validated!!){
+                        binding.accountHolderWarning.visibility= View.GONE
+                        binding.nameDeclaration.visibility=View.GONE
+                        nameDec=true
+                        enableSubmitButton()
+                    }else{
+                        if(it.second.accountHolderName.isNotNullOrEmpty()) {
+                            nameDec=false
+                            enableSubmitButton()
+                            binding.accountHolderWarning.visibility = View.VISIBLE
+                            binding.nameDeclaration.visibility = View.VISIBLE
+                        }
+                    }
+                    viewModel.bankValidated=true
+                }
+            }else{
+                viewModel.bankValidationApiFailed=true
+                binding.uploadDoc.visibility=View.VISIBLE
+                binding.accountHolderEdittext.visibility=View.INVISIBLE
+                binding.accountHolderEdittext1.visibility=View.VISIBLE
+                viewModel.accountHolderText.value=""
+                binding.accountHolderEdittext1.setText("")
+            }
+        })
+
+        viewModel.accountDoesNotExist.observe(this, Observer {
+          if(it.first){
+              dialogUtils.showErrorDialog(it.second)
+          }
+        })
         viewModel.accountText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 binding.imgWrongAccount.visibility=View.GONE
                 binding.errorAccountNum.visibility=View.GONE
                 accountNum=true
+                if(viewModel.bankValidationApiFailed) {
+                    viewModel.bankValidationApiFailed = false
+                    binding.uploadDoc.visibility = View.GONE
+                    binding.accountHolderEdittext.visibility = View.VISIBLE
+                    binding.accountHolderEdittext1.visibility = View.INVISIBLE
+                    viewModel.accountHolderText.value = ""
+                    binding.accountHolderEdittext1.setText("")
+                    accountName=true
+                }
                 enableSubmitButton()
             }else{
+                binding.accountHolderEdittext.text =getString(R.string.hint_for_bank_validation)
                 accountNum=false
                 enableSubmitButton()
             }
+            binding.accountHolderWarning.visibility= View.GONE
+            binding.nameDeclaration.visibility=View.GONE
+            viewModel.accountHolderText.value=getString(R.string.hint_for_bank_validation)
+            nameDec=true
+            viewModel.bankValidated=false
+            enableSubmitButton()
 
         })
         binding.accountNumEdittext.lengthAction(1){
@@ -244,32 +372,39 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             enableSubmitButton()
         }
 
-        viewModel.accountHolderText.observe(this, Observer {
-            if(it.isNotNullOrEmpty()){
-                accountName=true
-                enableSubmitButton()
-            }else{
-                accountName=false
-                enableSubmitButton()
-            }
-        })
-        binding.accountHolderEdittext.lengthAction(1){
+        binding.accountHolderEdittext1.lengthAction(1){
             accountName=true
             enableSubmitButton()
         }
-        binding.accountHolderEdittext.lengthAction(0){
+        binding.accountHolderEdittext1.lengthAction(0){
             accountName=false
             enableSubmitButton()
         }
 
         viewModel.ifscText.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
+                if(viewModel.bankValidationApiFailed) {
+                    viewModel.bankValidationApiFailed = false
+                    binding.uploadDoc.visibility = View.GONE
+                    binding.accountHolderEdittext.visibility = View.VISIBLE
+                    binding.accountHolderEdittext1.visibility = View.INVISIBLE
+                    viewModel.accountHolderText.value = ""
+                    binding.accountHolderEdittext1.setText("")
+                    accountName=true
+                }
                 ifsc=true
                 enableSubmitButton()
             }else{
+                binding.accountHolderEdittext.text = getString(R.string.hint_for_bank_validation)
                 ifsc=false
                 enableSubmitButton()
             }
+            binding.accountHolderWarning.visibility= View.GONE
+            binding.nameDeclaration.visibility=View.GONE
+            viewModel.accountHolderText.value=getString(R.string.hint_for_bank_validation)
+            nameDec=true
+            viewModel.bankValidated=false
+            enableSubmitButton()
         })
 
         binding.ifscEdittext.lengthAction(1){
@@ -309,7 +444,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     }
 
     fun enableSubmitButton(){
-        if(accountName&&accountNum&&ifsc&&docUpload&&nameDec) {
+        Log.d("Enabke",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString()+nameDec.toString())
+        if(accountName&&accountNum&&ifsc&&nameDec) {
             binding.btnSubmit.isEnabled = true
         }else{
             binding.btnSubmit.isEnabled = false
@@ -597,6 +733,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
+                            analyticsUtil.trackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
+                                    PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"payment")
+                            )
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
                         }

@@ -147,4 +147,7 @@ class LoadboardRepository @Inject constructor(
      */
     fun getPopularLocations(uuid:String) = loadboardService.getPopularLocations(uuid).convertResponse()
 
+    fun getBankName(bankValidationRequest: BankValidationRequest) = loadboardService.getBankName(bankValidationRequest = bankValidationRequest).convertResponse()
+
+
 }
