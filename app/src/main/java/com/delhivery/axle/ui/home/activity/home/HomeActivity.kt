@@ -154,10 +154,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
 
     binding.profile.setOnClickListener {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_NAVIGATION_MY_PROFILE
-      )
       userPrefs.setPreviousScreen(this.javaClass.name)
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_MY_PROFILE
+      )
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
 
