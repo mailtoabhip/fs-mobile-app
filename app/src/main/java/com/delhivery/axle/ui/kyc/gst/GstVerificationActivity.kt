@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.gst.GstAction_ViewDetails
 import com.delhivery.axle.data.transactions.TransactionTimeOutAction
@@ -136,13 +137,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             if (it) {
                 viewModel.updateUserDetails()
             } else {
-                uiUtils.showSnackbar("Update Failed, Please try again")
+                uiUtils.showSnackbar(getString(string.error_update_failed))
             }
         })
 
         viewModel.otpRecieved.observe(
                 this, Observer {
             if(it){
+                if(userPrefs.phoneNumber!=null)
                 ShowGstVerificationOtpDialog(this,this,uiUtils,userPrefs.phoneNumber!!,dialogUtils,getString(R.string.label_gst_dialog_option2),viewModel,this@GstVerificationActivity,userPrefs,currSelectedGst?:"").show()
             }
         }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
@@ -142,7 +143,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,bundle)
             } else {
-                uiUtils.showSnackbar("Update Failed, Please try again")
+                uiUtils.showSnackbar(getString(string.error_update_failed))
             }
         })
 
@@ -150,7 +151,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         if (it) {
                 viewModel.updateUserDetails()
         } else {
-          uiUtils.showSnackbar("Update Failed, Please try again")
+          uiUtils.showSnackbar(getString(string.error_update_failed))
         }
       })
         viewModel.errorLiveData.observe(
