@@ -10,14 +10,12 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputFilter.AllCaps
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
-import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -109,6 +107,9 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         //viewModel.getCityData(viewModel.destination?.orionDbCityCode, "dest")
 
         startTime = System.currentTimeMillis()
+
+        binding.editTruckNumber.setFilters(arrayOf<InputFilter>(AllCaps()))
+
 
         if( intent?.extras?.getString("offerid")!=null) {
             offerId = intent?.extras?.getString("offerid")
@@ -251,11 +252,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         }
 
         binding.layOrigin.setOnClickListener {
-            startActivityForResult(searchCityIntent(this,"origin"), REQCODE_SELECT_CITY)
+            startActivityForResult(searchCityIntent(this, "origin"), REQCODE_SELECT_CITY)
 
         }
         binding.layDest.setOnClickListener {
-            startActivityForResult(searchCityIntent(this,"destination"), REQCODE_SELECT_CITY)
+            startActivityForResult(searchCityIntent(this, "destination"), REQCODE_SELECT_CITY)
         }
 
         binding.btnSubmitDetails.setOnClickListener {
@@ -269,7 +270,8 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                     analyticsUtil.trackEvent(
                             EVENT_SUBMIT_OFFER,
                             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_OFFER_ID),
-                            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), offerId?:"")
+                            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber
+                                    ?: "dummy", ttl.toString(), offerId ?: "")
                     )
 
                     if(viewModel.selected_truck_capacity.isNotNullOrEmpty() && !viewModel.selected_truck_capacity.toString().equals("null")){
@@ -291,7 +293,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
         viewModel.errorrateUpdatedLiveData.observe(this, Observer {
             if (it != null && it.isNotNullOrEmpty()) {
-                if(it.equals("The selection is not applicable for current offer period")){
+                if (it.equals("The selection is not applicable for current offer period")) {
                     binding.errorLane.text = it
                     binding.errorLane.visibility = View.VISIBLE
                 }
@@ -367,7 +369,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         && docUploadProof
     }
 
-    private fun showTruckSizeDialog(type1: String, typ:String?) {
+    private fun showTruckSizeDialog(type1: String, typ: String?) {
         val dialog = Dialog(this)
         val bindingDialog= DialogBottomTruckValueBinding.inflate(layoutInflater)
 
@@ -687,15 +689,14 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                 }
             }
 
-            REQCODE_SELECT_CITY ->{
-                if(data != null) {
+            REQCODE_SELECT_CITY -> {
+                if (data != null) {
                     val type = data.getStringExtra(CityType)
                     val city = data.getSerializableExtra("City") as CityModel
-                    if(type =="origin") {
+                    if (type == "origin") {
                         viewModel.origin = city
                         binding.editOrigin.setText(city.cityName().trim())
-                    }
-                    else if(type == "destination"){
+                    } else if (type == "destination") {
                         viewModel.destination = city
                         binding.editDestination.setText(city.cityName().trim())
                     }
