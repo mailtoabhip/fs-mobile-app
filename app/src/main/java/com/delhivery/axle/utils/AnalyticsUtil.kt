@@ -291,7 +291,7 @@ const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
 const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"
 
 //MoEngage Attributes and Events
-
+const val EVENT_LOGIN = "login"
 const val EVENT_HOME_ORDER_CARD_CLICK = "home_order_card_click"
 const val EVENT_HOME_LOADS_TAB_CLICK = "home_loads_tab_click"
 const val EVENT_HOME_MY_TRUCKS_TAB_CLICK = "home_my_trucks_tab_click"
