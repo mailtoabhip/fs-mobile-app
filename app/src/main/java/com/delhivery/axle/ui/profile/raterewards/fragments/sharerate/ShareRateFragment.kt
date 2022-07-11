@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBa
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Calendar
 import javax.inject.Inject
 
 class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBinding, ShareRateFragmentViewModel>(),ShareRateAdapterInterface {
@@ -33,6 +34,7 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
     ShareRateRVAdapter(this)
   }
 
+  var launch : Boolean =true
 
   @Inject
   lateinit var userPrefs: UserPrefs
@@ -49,7 +51,21 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
     }
     binding.refreshLayout.setOnRefreshListener { refreshData()}
     viewModel.userOfferRoutesData.reobserve(viewLifecycleOwner,
-      Observer { it?.let { _items -> adapter.operation(_items) }})
+      Observer { it?.let { _items -> adapter.operation(_items)
+      userPrefs.rateOfferCount=_items.size
+
+        if(launch) {
+          val c = Calendar.getInstance()
+          val date = c.get(Calendar.DATE).toString()
+          analyticsUtil.trackEvent(
+              EVENT_VIEW_SHARE_RATE_OFFERS,
+              mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                  PROPERTY_DATE),
+              mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.rateOfferCount.toString(),date)
+          )
+          launch=false
+        }
+      }})
 
     viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
       binding.refreshLayout.isRefreshing = false

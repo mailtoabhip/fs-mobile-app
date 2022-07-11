@@ -40,6 +40,7 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Calendar
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -50,6 +51,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     var totalTruck: Int = 0
     var bannerValue:Boolean? = false
+    var launch : Boolean =true
 
     companion object {
         /* singleton instance */
@@ -192,6 +194,18 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 }else{
                    bannerValue = false
                 }
+                if(launch) {
+                    val c = Calendar.getInstance()
+                    val date = c.get(Calendar.DATE).toString()
+                    analyticsUtil.trackEvent(
+                        EVENT_VIEW_MY_TRUCK_OFFERS,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                            PROPERTY_DATE),
+                        mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.bidOfferCount.toString(),date)
+                    )
+                    launch=false
+                }
+
             }})
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -788,7 +802,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         var pres:Triple<Pair<Boolean?, String?>, String?, String?>? = Triple(Pair(false,null), tid, null)
         if(viewModel.finalOffers.value.isNullOrEmpty()){
             pres = null
+            userPrefs.trucksOfferCount=0
         }else{
+            userPrefs.trucksOfferCount=viewModel.finalOffers.value!!.size
             for(r in viewModel.finalOffers.value!!){
                 if(r.occ.equals(origin_id) == true && r.dcc?.equals(dest_id)== true){
                     pres = pres?.copy(Pair(true,r.offerId), tid, r.tdn)

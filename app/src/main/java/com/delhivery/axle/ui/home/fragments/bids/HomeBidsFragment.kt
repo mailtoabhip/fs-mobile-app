@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -98,10 +99,18 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
      if(launch) {
+       val c = Calendar.getInstance()
+       val date = c.get(Calendar.DATE).toString()
        analyticsUtil.trackEvent(
                EVENT_VIEW_BIDS_SCREEN,
                mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
+       )
+       analyticsUtil.trackEvent(
+           EVENT_VIEW_BIDS_SCREEN_OFFERS,
+           mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+               PROPERTY_DATE),
+           mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.bidOfferCount.toString(),date)
        )
        launch=false
      }
@@ -292,12 +301,14 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
     if(viewModel.finalOffers.value.isNullOrEmpty()){
       pres = null
+      userPrefs.bidOfferCount=0
     }else{
       for(r in viewModel.finalOffers.value!!){
         if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
           pres = pres?.copy(Pair(true,r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
         }
       }
+      userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
     }
 
     Log.d("nallaa", viewModel.finalOffers.value.toString())

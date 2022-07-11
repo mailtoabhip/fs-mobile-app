@@ -399,7 +399,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
-        binding.viewpager.apply {
+          binding.viewpager.apply {
           uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
             this@HomeActivity.title = HomeFragmentType.pos(pos)
