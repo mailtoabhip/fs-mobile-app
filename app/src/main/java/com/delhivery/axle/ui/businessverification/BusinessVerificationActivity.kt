@@ -333,7 +333,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     if(!userPrefs.isBankDetailsRejected) {
                         userPrefs.verificationStatus = "pending"
                     }
-                    navigationUtils.navigate(MyProfileActivity::class.java,true)
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,1)
+                    navigationUtils.navigateKyc(this,true,bundle)
                 }else{
 //                    navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
                     navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(

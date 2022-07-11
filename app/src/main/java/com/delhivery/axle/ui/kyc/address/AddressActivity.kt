@@ -664,6 +664,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }else{
                 dataSetFromPref=false
             }
+            if((userPrefs.businessDocType.equals("lr")&& p==2)){
+                bindingDialog.uploadDocLay.visibility = View.GONE
+                bindingDialog.uploadDocLay.visibility = View.GONE
+                docUploadProof= true
+            }else{
+                bindingDialog.uploadDocLay.visibility = View.VISIBLE
+            }
             enableAddAddressDialogButton(bindingDialog)
         }
 

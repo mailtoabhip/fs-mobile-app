@@ -277,9 +277,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         viewModel.subAddressLiveData.observe(this, Observer {
             if (it) {
                 uiUtils.showSnackbar("Address updated")
-                if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= "Document under verification"
-                }
+
                 var address = viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 addDataToPreference(address)
                 userPrefs.businessAddress = address
@@ -294,7 +292,14 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
 //                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
 //                    TotalStepsKey)!!,null)
-                navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= "Document under verification"
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,1)
+                    navigationUtils.navigateKyc(this,true,bundle)
+                }else {
+                    navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                }
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
