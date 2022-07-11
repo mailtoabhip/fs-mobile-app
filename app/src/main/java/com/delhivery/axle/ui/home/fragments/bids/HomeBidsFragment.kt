@@ -303,9 +303,6 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
       userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
     }
-
-    Log.d("nallaa", viewModel.finalOffers.value.toString())
-
     return pres
   }
 
