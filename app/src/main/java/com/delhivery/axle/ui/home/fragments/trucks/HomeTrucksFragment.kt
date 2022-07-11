@@ -194,18 +194,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 }else{
                    bannerValue = false
                 }
-                if(launch) {
-                    val c = Calendar.getInstance()
-                    val date = c.get(Calendar.DATE).toString()
-                    analyticsUtil.trackEvent(
-                        EVENT_VIEW_MY_TRUCK_OFFERS,
-                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-                            PROPERTY_DATE),
-                        mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.bidOfferCount.toString(),date)
-                    )
-                    launch=false
-                }
-
             }})
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {

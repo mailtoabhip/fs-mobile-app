@@ -1086,6 +1086,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
     const val isBankDetailsRejected= "is_bank_details_rejected"
+    const val isFirstOpenrate= "is_first_open_rate"
     const val BidOfferCount= "bid_offer_count"
     const val TrucksOfferCount= "truck_offer_count"
     const val RateOfferCount= "rate_offer_count"

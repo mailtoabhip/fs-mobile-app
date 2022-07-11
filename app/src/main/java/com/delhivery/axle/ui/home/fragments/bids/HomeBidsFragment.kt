@@ -99,19 +99,12 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
      if(launch) {
-       val c = Calendar.getInstance()
-       val date = c.get(Calendar.DATE).toString()
        analyticsUtil.trackEvent(
                EVENT_VIEW_BIDS_SCREEN,
                mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
        )
-       analyticsUtil.trackEvent(
-           EVENT_VIEW_BIDS_SCREEN_OFFERS,
-           mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-               PROPERTY_DATE),
-           mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.bidOfferCount.toString(),date)
-       )
+
        launch=false
      }
       it?.let { _items -> adapter.operation(_items) }
