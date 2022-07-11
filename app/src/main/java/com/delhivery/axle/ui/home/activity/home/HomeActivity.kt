@@ -419,6 +419,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
               )
               count++
             }
+            if(count>=2){
+              count=0
+            }
           }
         }
 
