@@ -402,9 +402,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       .let { pos ->
         when(pos) {
           1 -> {
+            if (count == 1) {
               val c = Date()
               val date = c.toString()
-              Log.d("bidOfferCount",userPrefs.bidOfferCount.toString())
+              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
               analyticsUtil.trackEvent(
                   EVENT_VIEW_BIDS_SCREEN_OFFERS,
                   mutableListOf(
@@ -416,7 +417,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                       userPrefs.bidOfferCount.toString(), date
                   )
               )
-            count++
+              count++
+            }
           }
         }
 
