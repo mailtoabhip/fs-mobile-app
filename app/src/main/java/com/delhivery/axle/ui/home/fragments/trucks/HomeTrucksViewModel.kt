@@ -1,17 +1,21 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.InventoryRepository
-import com.delhivery.axle.api.repository.TruckRepository
-import com.delhivery.axle.api.repository.UserTrucksLoadLimit
+import androidx.work.*
+import com.delhivery.axle.SyncOfferData.MyWorker
+import com.delhivery.axle.api.repository.*
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
+import com.delhivery.axle.api.response.FrequentTripsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
@@ -22,9 +26,14 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import retrofit2.HttpException
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 /**
  * View model class for [HomeTrucksFragment]
@@ -33,6 +42,9 @@ import javax.inject.Inject
 class HomeTrucksViewModel @Inject constructor(
     private val inventoryRepository: InventoryRepository,
     private val truckRepository: TruckRepository,
+    private val userRepository: UserRepository,
+    private val appDatabase: AppDatabase,
+    private val loadCycleRepository: LoadCycleRepository,
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
@@ -64,6 +76,22 @@ class HomeTrucksViewModel @Inject constructor(
         MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
     var noCityCodeError =  MutableLiveData<Boolean>()
+
+    var getFrequentLanesData = MutableLiveData<FrequentTripsResponse>()
+
+    var mWorkManager: WorkManager? = null
+    // The name of the Sync Data work
+    val SYNC_DATA_WORK_NAME = "sync_data_work_name"
+    private var mSavedWorkInfo: LiveData<List<WorkInfo>>? = null
+    val TAG_SYNC_DATA = "TAG_SYNC_DATA"
+
+    init {
+        mWorkManager = WorkManager.getInstance()
+        mSavedWorkInfo = mWorkManager?.getWorkInfosByTagLiveData(TAG_SYNC_DATA);
+    }
+
+    /* pagination params */
+    var expectedArrivalTimePickup =MutableLiveData<Pair<String,Int>>()
 
     fun fetchTruckType() {
         compositeDisposable += truckRepository.getTruckType()
@@ -304,6 +332,26 @@ class HomeTrucksViewModel @Inject constructor(
                 }
             }
 
+    }
+
+    var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
+
+    fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+
+    fun fetchData() {
+        val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+        val periodicSyncDataWork = PeriodicWorkRequest.Builder(MyWorker::class.java, 24, TimeUnit.HOURS)
+                .addTag(TAG_SYNC_DATA)
+                .setConstraints(constraints) // setting a backoff on case the work needs to retry
+                .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                .build()
+        mWorkManager?.enqueueUniquePeriodicWork(
+                SYNC_DATA_WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,  //Existing Periodic Work policy
+                periodicSyncDataWork //work request
+        )
     }
 
 }

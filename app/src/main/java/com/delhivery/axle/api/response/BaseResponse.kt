@@ -67,7 +67,14 @@ data class ObjectErrorData(
  */
 data class ErrorResponseBody(
   @SerializedName("success") val isSuccess: Boolean,
-  @SerializedName("error") val errorBody: BaseErrorResponse
+  @SerializedName("error") val errorBody: BaseErrorResponse,
+  @SerializedName("data") val dataBody: ErrorDataBody
+)
+
+data class ErrorDataBody(
+        @SerializedName("success") val isSuccess: Boolean,
+        @SerializedName("error") val errorBody: String?,
+        @SerializedName("message") val messageBody: String?
 )
 
 data class PaymentErrorResponseBody(

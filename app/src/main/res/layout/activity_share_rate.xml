@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.sharerate.ShareRateViewModel"
+            />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/size_12dp"
+            android:background="@color/white">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:textAlignment="center"
+                android:layout_height="@dimen/height_toolbar"
+                bind:layout_constraintTop_toTopOf="parent"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:id="@+id/sep"
+                android:layout_marginBottom="@dimen/size_12dp"
+                bind:layout_constraintTop_toBottomOf="@+id/toolbar"
+                android:background="@color/browser_actions_divider_color"
+                android:layout_height="1dp"/>
+
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_32dp"
+               bind:layout_constraintBottom_toBottomOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/sep">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/size_12dp"
+                    android:paddingEnd="@dimen/size_12dp"
+                    android:paddingBottom="@dimen/size_24dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_24dp"
+                        bind:layout_constraintTop_toTopOf="parent"
+                        bind:layout_constraintStart_toStartOf="parent"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:id="@+id/error_lane"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hint_offer"
+                           android:visibility="gone"
+                            android:textColor="@color/destructive_red"
+                            android:drawableStart="@drawable/ic_vector_error_12"
+                            android:drawablePadding="@dimen/size_4dp"
+                            android:textStyle="normal"
+                            android:textSize="@dimen/text_12sp"/>
+
+                       <RelativeLayout
+                            android:layout_width="match_parent"
+                           android:layout_marginTop="@dimen/size_8dp"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/label_origin"
+                                bind:srcCompat="@drawable/ic_frame"
+                                android:layout_marginTop="@dimen/size_20dp"
+                                android:id="@+id/imgframe"
+                                android:layout_height="wrap_content"/>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                 android:text="@string/label_origin_destination"
+                                android:layout_toEndOf="@+id/imgframe"
+                                android:textColor="@color/heading_black"
+                                android:src="@color/destructive_red"
+                                android:textStyle="normal"
+                                android:layout_marginStart="-6dp"
+                                android:id="@+id/label_origin"
+                                android:textSize="@dimen/text_14sp"/>
+
+                          <androidx.appcompat.widget.LinearLayoutCompat
+                              android:id="@+id/lay_origin"
+                              android:layout_width="match_parent"
+                               android:layout_height="42dp"
+                              android:layout_below="@+id/label_origin"
+                              android:layout_toEndOf="@+id/imgframe"
+                              android:paddingStart="@dimen/size_12dp"
+                              android:paddingEnd="@dimen/size_12dp"
+                              android:layout_marginStart="@dimen/size_12dp"
+                              android:hint="@string/label_origin_city"
+                              bind:layout_constraintStart_toStartOf="parent"
+                              bind:layout_constraintTop_toBottomOf="parent"
+                              android:layout_marginTop="@dimen/size_6dp"
+                               android:padding="@dimen/size_8dp"
+                               android:textSize="@dimen/text_14sp"
+                               android:background="@drawable/background_rectangle_border_curved">
+                               <androidx.appcompat.widget.AppCompatTextView
+                                   android:id="@+id/edit_origin"
+                                   android:layout_width="wrap_content"
+                                   android:layout_gravity="center"
+                                   android:hint="@string/label_origin_city"
+                                   android:textColor="@color/black"
+                                   android:layout_height="wrap_content"/>
+                           </androidx.appcompat.widget.LinearLayoutCompat>
+
+                           <androidx.appcompat.widget.AppCompatTextView
+                               android:layout_width="wrap_content"
+                               android:layout_marginTop="@dimen/size_4dp"
+                               android:id="@+id/error_origin"
+                               android:visibility="gone"
+                               android:layout_toEndOf="@+id/imgframe"
+                               android:layout_marginStart="@dimen/size_16dp"
+                               android:layout_below="@+id/lay_origin"
+                               android:layout_height="wrap_content"
+                               android:text="@string/hint_offer"
+                               android:textColor="@color/destructive_red"
+                               android:drawableStart="@drawable/ic_vector_error_12"
+                               android:drawablePadding="@dimen/size_4dp"
+                               android:textStyle="normal"
+                               android:textSize="@dimen/text_12sp"/>
+
+                           <androidx.appcompat.widget.LinearLayoutCompat
+                               android:id="@+id/lay_dest"
+                               android:layout_width="match_parent"
+                               android:layout_height="42dp"
+                               android:layout_below="@+id/error_origin"
+                               android:layout_toEndOf="@+id/imgframe"
+                               android:paddingStart="@dimen/size_12dp"
+                               android:paddingEnd="@dimen/size_12dp"
+                               android:layout_marginStart="@dimen/size_12dp"
+                               android:hint="@string/label_destination_city"
+                               bind:layout_constraintStart_toStartOf="parent"
+                               bind:layout_constraintTop_toBottomOf="parent"
+                               android:layout_marginTop="@dimen/size_6dp"
+                               android:padding="@dimen/size_8dp"
+                               android:textSize="@dimen/text_14sp"
+                               android:background="@drawable/background_rectangle_border_curved">
+                               <androidx.appcompat.widget.AppCompatTextView
+                                   android:id="@+id/edit_destination"
+                                   android:layout_width="wrap_content"
+                                   android:layout_gravity="center"
+                                   android:hint="@string/label_destination_city"
+                                   android:textColor="@color/black"
+                                   android:layout_height="wrap_content"/>
+                           </androidx.appcompat.widget.LinearLayoutCompat>
+
+                           <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:id="@+id/error_dest"
+                                android:layout_toEndOf="@+id/imgframe"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_below="@+id/lay_dest"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hint_offer"
+                                android:visibility="gone"
+                                android:textColor="@color/destructive_red"
+                                android:drawableStart="@drawable/ic_vector_error_12"
+                                android:drawablePadding="@dimen/size_4dp"
+                                android:textStyle="normal"
+                                android:textSize="@dimen/text_12sp"/>
+
+                        </RelativeLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_18dp"
+                            android:textSize="@dimen/text_14sp"
+                            android:text="Truck Size &amp; Capacity"
+                            android:textColor="@color/black"/>
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/edit_truck_size"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_40dp"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:padding="@dimen/size_4dp"
+                            android:background="@drawable/bg_login_edit">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_truck_size"
+                                    android:layout_width="wrap_content"
+                                    android:hint="Choose truck size and capacity"
+                                    android:textSize="@dimen/text_14sp"
+                                    android:layout_centerVertical="true"
+                                    android:textColor="@color/black"
+                                    android:paddingStart="@dimen/size_12dp"
+                                    android:paddingEnd="@dimen/size_12dp"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/arrow_size"
+                                    android:layout_width="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginEnd="@dimen/size_4dp"
+                                    android:layout_centerVertical="true"
+                                    bind:srcCompat="@drawable/ic_vector_arrow"
+                                    android:layout_height="wrap_content"/>
+
+                            </RelativeLayout>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:id="@+id/error_truck"
+                            android:visibility="gone"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hint_offer"
+                            android:textColor="@color/destructive_red"
+                            android:drawableStart="@drawable/ic_vector_error_12"
+                            android:drawablePadding="@dimen/size_4dp"
+                            android:textStyle="normal"
+                            android:textSize="@dimen/text_12sp"/>
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_vehicle_number"
+                            android:textColor="@color/heading_black"
+                            android:layout_marginTop="@dimen/size_20dp"
+                            android:textStyle="normal"
+                            android:textSize="@dimen/text_14sp"/>
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edit_truck_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/size_40dp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:padding="@dimen/size_8dp"
+                                android:textSize="@dimen/text_14sp"
+                                android:inputType="text"
+                                android:layout_marginBottom="@dimen/size_12dp"
+                                android:textColor="@color/black"
+                                android:hint="@string/label_vehicle_number"
+                                android:background="@drawable/background_rectangle_border_curved">
+                            </androidx.appcompat.widget.AppCompatEditText>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_price_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_14dp"
+                            android:textSize="@dimen/text_12sp"
+                            android:text="@string/label_rate"
+                            android:textColor="@color/black"/>
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edit_price_add_truck"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/size_40dp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:padding="@dimen/size_8dp"
+                                android:textSize="@dimen/text_14sp"
+                                android:inputType="number"
+                                android:maxLength="9"
+                                android:layout_marginBottom="@dimen/size_12dp"
+                                android:textColor="@color/black"
+                                android:hint="₹"
+                                android:background="@drawable/background_rectangle_border_curved">
+                            </androidx.appcompat.widget.AppCompatEditText>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <RadioGroup
+                            android:id="@+id/ownership_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton
+                                android:id="@+id/btn_radio_per_ton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="Per Metric Ton"/>
+                            <RadioButton
+                                android:id="@+id/btn_radio_fixed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_24dp"
+                                android:text="Fixed Price"/>
+                        </RadioGroup>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_14dp"
+                            android:textSize="@dimen/text_12sp"
+                            android:text="Trip Date"
+                            android:textColor="@color/black"/>
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/edit_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_40dp"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:padding="@dimen/size_4dp"
+                            android:textSize="@dimen/text_14sp"
+                            android:background="@drawable/bg_login_edit">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/label_date"
+                                    android:paddingStart="@dimen/size_12dp"
+                                    android:id="@+id/textDate"
+                                    android:layout_centerVertical="true"
+                                    android:textColor="@color/black" />
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginEnd="@dimen/size_12dp"
+                                    android:layout_centerVertical="true"
+                                    bind:srcCompat="@drawable/ic_iconcontainer"
+                                    android:layout_height="wrap_content"/>
+                            </RelativeLayout>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_proof"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/size_24dp"
+                            android:textSize="@dimen/text_14sp"
+                            android:textStyle="bold"
+                            android:text="@string/upload_proof"
+                            />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:layout_height="@dimen/edit_text_height"
+                            android:background="@drawable/bg_login_edit">
+                            <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/spinner_proof"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/edit_text_height"
+                                android:background="@drawable/bg_spinner"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                android:spinnerMode="dropdown"
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_16sp"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:id="@+id/error_proof"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hint_proof"
+                            android:textColor="@color/colorAccent"
+                            android:drawableStart="@drawable/ic_vector_error_12_blue"
+                            android:drawablePadding="@dimen/size_4dp"
+                            android:textStyle="normal"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:textSize="@dimen/text_12sp"/>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/doc_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_16dp">
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:id="@+id/upload_doc_lay"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible"
+                            bind:layout_constraintTop_toTopOf="parent"
+                            bind:layout_constraintStart_toStartOf="parent">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/upload_icon"
+                                android:layout_width="@dimen/size_16dp"
+                                android:layout_height="@dimen/size_20dp"
+                                bind:srcCompat="@drawable/ic_upload"
+                                android:layout_marginStart="@dimen/size_2dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintLeft_toLeftOf="parent"/>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                android:textSize="@dimen/text_16sp"
+                                android:textColor="@color/colorAccent"
+                                android:textStyle="bold"
+                                bind:layout_constraintLeft_toRightOf="@+id/upload_icon"
+                                android:text="@string/upload_document"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/doc_uploaded_lay"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            bind:layout_constraintTop_toTopOf="parent"
+                            bind:layout_constraintStart_toStartOf="parent">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/doc_icon"
+                                android:layout_width="@dimen/size_48dp"
+                                android:layout_height="@dimen/size_48dp"
+                                bind:srcCompat="@drawable/ic_doc_business"
+                                android:layout_marginStart="@dimen/size_2dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintLeft_toLeftOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/doc_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_marginHorizontal="@dimen/size_16dp"
+                                bind:layout_constraintEnd_toStartOf="@+id/doc_remove"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                android:layout_marginEnd="@dimen/size_30dp"
+                                android:textSize="@dimen/text_14sp"
+                                bind:layout_constraintStart_toEndOf="@+id/doc_icon"
+                                android:text="IMG_344_988"/>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="0dp"
+                                android:id="@+id/doc_size"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:layout_marginEnd="@dimen/size_30dp"
+                                bind:layout_constraintTop_toBottomOf="@+id/doc_title"
+                                android:textSize="@dimen/size_12dp"
+                                android:textColor="@color/color_hint"
+                                bind:layout_constraintLeft_toRightOf="@+id/doc_icon"
+                                android:text="233kb"/>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/doc_remove"
+                                android:layout_width="@dimen/size_20dp"
+                                android:layout_height="@dimen/size_20dp"
+                                bind:srcCompat="@drawable/ic_remove"
+                                android:layout_marginStart="@dimen/size_2dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                bind:layout_constraintRight_toRightOf="parent"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_terms"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/size_36dp"
+                            android:textSize="@dimen/text_14sp"
+                            android:textStyle="bold"
+                            android:text="@string/label_tc"
+                            />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_termsconditions"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:textSize="@dimen/text_14sp"
+                            android:text="@string/label_tc_details"
+                            />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_submit_details"
+                            style="@style/ActionButton"
+                            android:enabled="false"
+                            android:textAllCaps="false"
+                            android:background="@drawable/bg_action_btn"
+                            android:layout_marginTop="@dimen/size_36dp"
+                            android:layout_marginBottom="@dimen/size_24dp"
+                            bind:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_width="match_parent"
+                            android:text="Share Rate"
+                            />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+</layout>

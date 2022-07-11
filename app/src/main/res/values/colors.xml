@@ -63,5 +63,13 @@
   <color name="custom_grey">#E5E5E5</color>
     <color name="custom_dark_grey">#991C1C1C</color>
 
+  <color name="route_heading">#3D445C</color>
 
+  <color name="dark_orange">#FB923C</color>
+  <color name="light_orange">#FFF7ED</color>
+  <color name="reward_confirmed">#116C55</color>
+
+  <color name="reward_status_active">#5B80F7</color>
+  <color name="reward_status_confirmed">#059669</color>
+  <color name="reward_status_lost">#DC2626</color>
 </resources>

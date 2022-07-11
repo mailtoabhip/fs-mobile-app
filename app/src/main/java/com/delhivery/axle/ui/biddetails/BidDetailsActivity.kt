@@ -356,7 +356,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                    setTimer(bidEndingTime)
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
-                }
+               }
           }
           is BidDetailsUserBidState_PlaceBid -> {
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
@@ -445,7 +445,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
                   textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
                   textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
-                }
+                 }
           }
           is BidDetailsUserBidState_LoadingBids -> {
             ViewBidDetailsLoadingBidsBinding.inflate(
@@ -464,6 +464,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
                     driverPhone =
                             state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+
                   }
           }
           is BidDetailsUserBidState_RejectedBid -> {
@@ -478,7 +479,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       StringUtils.formatAmount(state.userBid.bidAmount)
                     }
                     textUserHighestBid.text = bidText
-                  }
+                   }
           }
           is BidDetailsUserBidState_CancelledBid -> {
             ViewBidDetailsCancelledBidBinding.inflate(
@@ -492,7 +493,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   StringUtils.formatAmount(state.userBid.bidAmount)
                 }
                 textUserHighestBid.text = bidText
-              }
+                }
           }
 
           is BidDetailsUserBidState_BulkLoad_Edit -> {
@@ -512,8 +513,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
                 viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
-
-              }
+               }
               btnReviseBidInsider.setOnClickListener{ bidDialog()}
             }
           }

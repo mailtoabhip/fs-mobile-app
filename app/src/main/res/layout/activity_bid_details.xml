@@ -187,11 +187,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_load_details"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_6dp"
                 android:fontFamily="sans-serif"
-                android:gravity="end"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:gravity="start"
                 android:text="@{ transaction.loadDetails() }"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
@@ -203,12 +204,14 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_bulk_load"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_load_details"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
+                android:gravity="start"
+                android:layout_marginEnd="@dimen/size_8dp"
                 android:visibility="@{transaction.setDMTTypeForBid(viewModel.fromPage)}"
                 android:layout_marginTop="@dimen/size_6dp"
                 android:text="@{transaction.setDmtText()}"
@@ -284,7 +287,6 @@
                   android:textColor="@color/white"
                   android:layout_height="wrap_content"/>
             </RelativeLayout>
-
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"

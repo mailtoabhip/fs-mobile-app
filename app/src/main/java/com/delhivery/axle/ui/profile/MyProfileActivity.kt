@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
+import androidx.work.WorkManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -24,6 +25,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
@@ -50,6 +52,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     @Inject lateinit var userPrefs:UserPrefs
 
+    val TAG_SYNC_DATA = "TAG_SYNC_DATA"
+
     @Inject
     lateinit var bitmapUtils: BitmapUtils
 
@@ -66,10 +70,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
+            WorkManager.getInstance().cancelAllWorkByTag(TAG_SYNC_DATA)
             confirmLogout()
         }
-
-
 
         viewModel.getUserLiveData.observe(this, Observer {
             if(it){
@@ -242,7 +245,9 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.teamLayout.setOnClickListener {
                startActivity(teamMembersIntent(this))
         }
-
+        binding.shareLayout.setOnClickListener {
+            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+        }
         binding.podLayout.setOnClickListener {
             if(binding.podaddress.visibility == View.VISIBLE){
                binding.podaddress.visibility = View.GONE

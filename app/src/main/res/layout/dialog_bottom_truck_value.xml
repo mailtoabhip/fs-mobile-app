@@ -1,53 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/bg_bottom_dialog">
+        android:background="@drawable/bg_bottom_dialog"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:padding="@dimen/size_14dp"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="@dimen/size_14dp">
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/close_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_close_black"/>
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="@dimen/size_12dp"
+                app:srcCompat="@drawable/ic_close_black" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/select_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_marginStart="@dimen/size_8dp"
                 android:layout_gravity="center"
-                android:text="@string/label_select_truck_size"/>
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_toEndOf="@+id/close_btn"
+                android:text="@string/label_select_truck_size"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/select_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/select_text"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:layout_toEndOf="@id/close_btn"
+                android:textColor="@color/faded_black"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_4dp"
-            app:srcCompat="@drawable/seperator_line"/>
+            app:srcCompat="@drawable/seperator_line" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/list_truck_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size_14dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="@dimen/size_14dp">
 
-           <ListView
-               android:id="@+id/truck_list"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"/>
-
+            <ListView
+                android:id="@+id/truck_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

@@ -107,9 +107,11 @@
   <string name="hint_rep_time">Enter Vehicle Reporting Time</string>
   <string name="hint_select_time">Select Time</string>
   <string name="rep_time">Vehicle Reporting Time</string>
+  <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
 
   <!--Actions (action_)-->
   <string name="action_activate_truck">Request for Load</string>
+  <string name="action_share_rate">+ Share Rate</string>
   <string name="action_deactivate_truck">Deactivate Truck</string>
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
@@ -173,7 +175,8 @@
   <string name="action_add_member">Add Member</string>
   <string name="action_complete_verification">Complete Verification</string>
   <string name="action_retry_verification">Retry Verification</string>
-
+  <string name="action_got">Got it</string>
+  <string name="action_learn">Learn More</string>
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -372,7 +375,22 @@
   <string name="label_choose_from_below">Choose one from the below trucks</string>
   <string name="label_confirm_details">Confirm truck details</string>
   <string name="label_no_loads_found">Can\'t find relevant loads?</string>
-
+  <string name="label_active">Active</string>
+  <string name="label_lost">Bid Lost</string>
+  <string name="label_cancel">Bid Cancelled</string>
+  <string name="label_pending">Bid Won- Confirmation Pending</string>
+  <string name="label_confirm">Confirmed</string>
+  <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
+  <string name="label_origin_destination">Origin &amp; Destination</string>
+  <string name="hint_offer">This is not applicable for current offer period.</string>
+  <string name="label_rate">Rate</string>
+  <string name="label_date">Date</string>
+  <string name="upload_proof">Upload Proof</string>
+  <string name="label_tc_details">\u2022 Payment will be made after the proof is verified\n\n\u2022 The details added should match the proof\n\n\u0020\u0020document for the payment to be processed\n\n\u2022 Rate is collected for selected routes &amp; trucks </string>
+  <string name="label_rate1">Now Earn by adding trip details!!</string>
+  <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
+  <string name="label_rate_banner">Add trip rates and earn reward</string>
+  <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
@@ -453,6 +471,8 @@
   <string name="label_routes">My Routes</string>
   <string name="label_earnings">My Earnings</string>
   <string name="label_team">My Team Members</string>
+  <string name="label_share_rate">Share rate &amp; earn reward</string>
+  <string name="label_how_it_works">How does this work?</string>
   <string name="label_pod">POD Address</string>
   <string name="label_help">Help &amp; Support</string>
   <string name="label_logout">Log Out</string>
@@ -473,6 +493,8 @@
   <string name="label_open">Open Body</string>
   <string name="label_trailer">Trailer</string>
   <string name="label_closed">Container</string>
+  <string name="label_dialog_rate">Rate has been successfully submitted</string>
+  <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
   <!--Error (error_-->
   <string name="error_no_internet">No Internet connection</string>
@@ -590,7 +612,16 @@
   <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion-dev.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion-dev.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
   <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
-
+  <string name="earn_reward">Earn reward when proof is verified</string>
+  <string name="details_updated_based_on_proof">Details updated based on proof</string>
+  <string name="rewards_earned">Rewards Earned</string>
+  <string name="submitted_on">Submitted on</string>
+  <string name="payment_date">Payment Date</string>
+  <string name="offer_hash">Offer#</string>
+  <string name="full_details">Full Details</string>
+  <string name="utr">UTR#</string>
+  <string name="select_a_route">Select a route to share the rates</string>
+  <string name="share_proof">Share proof not older than 7 days</string>
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>

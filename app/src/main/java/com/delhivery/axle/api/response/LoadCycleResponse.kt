@@ -11,3 +11,14 @@ data class SearchTripsResponse(
   @SerializedName("has_next") val hasNext: Boolean,
   @SerializedName("results") val trips: List<HomeTripsItemData>
 )
+
+data class FrequentTripsResponse(
+        @SerializedName("count") val total: Int,
+        @SerializedName("has_next") val hasNext: Boolean,
+        @SerializedName("results") val trips: List<FreqTripsItemData>
+)
+
+data class FreqTripsItemData(
+        @SerializedName("origin_city_id") val originCityId: String?,
+        @SerializedName("destination_city_id") val destinationCityId: String?,
+        @SerializedName("truck_display_name") val truckDisplayName: String?)
