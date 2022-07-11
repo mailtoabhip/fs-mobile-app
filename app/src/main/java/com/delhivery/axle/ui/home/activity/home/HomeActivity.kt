@@ -400,6 +400,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
+        count++
         when(pos) {
           1 -> {
             if (count == 1) {
@@ -417,7 +418,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                       userPrefs.bidOfferCount.toString(), date
                   )
               )
-              count++
             }
             if(count>=2){
               count=0
