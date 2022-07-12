@@ -9,6 +9,8 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.utils.EVENT_HOME_LOADS_TAB_CLICK
 import com.delhivery.axle.utils.EVENT_HOME_MY_TRUCKS_TAB_CLICK
 import com.delhivery.axle.utils.PROPERTY_INVENTORY_COUNT
@@ -78,10 +80,12 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_LOADS_TAB_CLICK, mutableListOf(
                         PROPERTY_ORDER_COUNT),
                         mutableListOf(userPrefs.loadCount))
+                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
                 }else if(tab?.position==1){
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
                         PROPERTY_INVENTORY_COUNT),
                         mutableListOf(userPrefs.inventoryCount))
+                    userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
                 }
             }
 
