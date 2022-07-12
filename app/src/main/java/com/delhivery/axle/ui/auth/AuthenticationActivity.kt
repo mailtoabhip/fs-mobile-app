@@ -286,6 +286,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             // Capture event
             analyticsUtil.trackEvent(
@@ -297,6 +298,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           AccountDetails -> {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             userPrefs.phoneNumber?.let {
               analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
