@@ -277,6 +277,23 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
                     uiUtils.showSnackbar("Truck Edited Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    var fieldEdited=""
+                    if(data.ownership!=it.second.ownership){
+                        fieldEdited="ownership"
+                    }
+                    if(data.currentCityName!=it.second.currentCityName){
+                        fieldEdited=fieldEdited+"/originCity"
+                    }
+                    if(data.unloadingDestination!=it.second.unloadingDestination){
+                        fieldEdited=fieldEdited+"/unloadingDestination"
+                    }
+                    if(data.unloadingDestinationRate!=it.second.unloadingDestinationRate){
+                        fieldEdited=fieldEdited+"/destinationRate"
+                    }
+                    if(data.unloadingDestinationAmount!=it.second.unloadingDestinationAmount){
+                        fieldEdited=fieldEdited+"/destinationAmount"
+                    }
+
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
                     data.latestUUID = it.second.latestUUID
@@ -294,7 +311,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                         EVENT_EDIT_TRUCK_SUBMIT,
                         mutableListOf( PROPERTY_INVENTORY_UUID,
                             PROPERTY_FIELD_EDITED),
-                        mutableListOf(data.inventoryId)
+                        mutableListOf(data.inventoryId,fieldEdited)
                     )
                 }
             }
