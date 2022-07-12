@@ -214,7 +214,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-            mutableListOf( _item.transactionId ?: "","")
+            mutableListOf( _item.transactionId ?: "",userPrefs.orderRank.toString())
         )
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,

@@ -368,7 +368,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ","",viewModel.total.toString())
+            mutableListOf(data.transactionId?:" ",(userPrefs.orderRank-3).toString(),viewModel.total.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,

@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.base.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
@@ -12,6 +13,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.NoOp
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 abstract class BaseDataRVAdapter<
     D : BaseKeyTypeModel<out Any>,
@@ -20,6 +23,7 @@ abstract class BaseDataRVAdapter<
 
   /* List of items */
   protected val items: MutableList<D> = mutableListOf()
+  @Inject lateinit var userPrefs: UserPrefs
 
   /**
    * Clear data set and set items and notifyDataSetChanged()
@@ -48,7 +52,9 @@ abstract class BaseDataRVAdapter<
   ) {
     itemsList()[position].let { item ->
       bindVH(holder, item)
-      holder.binding.root.setOnClickListener { clickListener.onItemClicked(item) }
+      holder.binding.root.setOnClickListener { clickListener.onItemClicked(item)
+        userPrefs.orderRank=position
+      }
     }
   }
 

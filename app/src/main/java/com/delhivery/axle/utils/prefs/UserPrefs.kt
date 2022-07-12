@@ -225,6 +225,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MAX_VALUE)
 
+  var orderRank: Int
+    set(value) = editor.putInt(PrefKeys.orderRank, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.orderRank, Integer.MAX_VALUE)
+
   /**
    *  Max cost per km
    */
@@ -950,6 +955,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.subStatus)
       .apply()
+    editor.remove(PrefKeys.orderRank)
+        .apply()
     editor.commit()
   }
 
@@ -1169,6 +1176,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val totalBidCount= "total_bid_count"
     const val expectingArrivalCount= "expecting_arrival_count"
     const val totalInventoryCount= "invnetory_count"
+    const val orderRank = "order_rank"
+
 
   }
 }
