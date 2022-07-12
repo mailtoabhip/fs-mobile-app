@@ -16,6 +16,10 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
@@ -475,32 +479,39 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         count++
         when(pos){
           0->
-            if(count==1)
+            if(count==1){
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_HOME,
                 mutableListOf(PROPERTY_ORDER_COUNT),
-                mutableListOf(userPrefs.loadCount)
-            )
+                mutableListOf(userPrefs.loadCount))
+              userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+            }
           1->
-            if(count==1)
+            if(count==1){
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
                 mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
                     PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
                 mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
             )
+              userPrefs.setPreviousScreen(HomeBidsFragment::class.java.name)
+            }
           2->
-            if(count==1)
+            if(count==1){
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS
             )
+              userPrefs.setPreviousScreen(HomePodsFragment::class.java.name)
+            }
           3->
-            if(count==1)
+            if(count==1){
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_TRIPS,
                 mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
                 mutableListOf(userPrefs.awaitingArrivalCount)
             )
+              userPrefs.setPreviousScreen(HomeTripsFragment::class.java.name)
+            }
         }
         if(count==2){
           count=0
