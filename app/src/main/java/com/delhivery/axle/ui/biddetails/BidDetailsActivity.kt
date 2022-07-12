@@ -401,13 +401,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
                 }
                 btnPlaceBid.setOnClickListener { bidDialog() }
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_ORDER_DETAILS_BID_SUBMIT,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                        PROPERTY_SOURCE),
-                    mutableListOf(state.lowestAndUserBidPair.second?.transactionId?:"",state.bidsCount.toString(),state.lowestAndUserBidPair.second?.bidAmount.toString(),state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark?:"",source)
-                )
               }
           }
           is BidDetailsUserBidState_EditBid -> {

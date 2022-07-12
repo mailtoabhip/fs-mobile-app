@@ -84,6 +84,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               mutableListOf( originCity.cityName() ?: "Anywhere",
                   destinationCity?.cityName() ?: "Anywhere",truckType)
           )
+          userPrefs.setPreviousScreen(this.javaClass.name)
           /* navigate to search results fragment */
           navigate(ResultsFragment)
           /* search query */

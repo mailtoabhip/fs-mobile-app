@@ -80,6 +80,7 @@ class AnalyticsUtil @Inject constructor(
         properties.addAttribute(attribute, values[index])
       }
       properties.addAttribute(PROPERTY_PREVIOUS_SOURCE,userPrefs.userPreviousScreen)
+      Log.i(TAG, PROPERTY_PREVIOUS_SOURCE + ":" + userPrefs.userPreviousScreen)
       analytics.trackEvent(event, properties)
     }
   }
