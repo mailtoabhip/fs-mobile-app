@@ -279,19 +279,32 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
                     var fieldEdited=""
                     if(data.ownership!=it.second.ownership){
-                        fieldEdited="ownership"
+                        if(!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_OWNERSHIP
+                        }else{
+                            fieldEdited = VALUE_OWNERSHIP
+                        }
                     }
                     if(data.currentCityName!=it.second.currentCityName){
-                        fieldEdited=fieldEdited+"/originCity"
+                        if(!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_ORIGIN
+                        }else{
+                            fieldEdited =VALUE_ORIGIN
+                        }
                     }
-                    if(data.unloadingDestination!=it.second.unloadingDestination){
-                        fieldEdited=fieldEdited+"/unloadingDestination"
-                    }
-                    if(data.unloadingDestinationRate!=it.second.unloadingDestinationRate){
-                        fieldEdited=fieldEdited+"/destinationRate"
+                    if(data.unloadingDestination!=it.second.unloadingDestination) {
+                        if (!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_DESTINATION
+                        } else {
+                            fieldEdited = VALUE_DESTINATION
+                        }
                     }
                     if(data.unloadingDestinationAmount!=it.second.unloadingDestinationAmount){
-                        fieldEdited=fieldEdited+"/destinationAmount"
+                        if (!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited=fieldEdited+"/"+ VALUE_PRICE
+                        } else {
+                            fieldEdited = VALUE_PRICE
+                        }
                     }
 
                     data.ownership = it.second.ownership
@@ -803,11 +816,6 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         when(requestCode) {
             REQCODE_ADD_TRUCK -> {
                 if( data != null  && data.getStringExtra("Added") == "Truck Added"){
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_ADD_TRUCK_SUBMIT,
-                        mutableListOf(PROPERTY_INVENTORY_UUID),
-                        mutableListOf(userPrefs.userId())
-                    )
                     refreshData()
                 }
             }
