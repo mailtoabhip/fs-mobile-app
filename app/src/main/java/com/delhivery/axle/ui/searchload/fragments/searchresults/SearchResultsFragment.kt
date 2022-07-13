@@ -339,7 +339,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         analyticsUtil.moEngageTrackEvent(
             EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
-                PROPERTY_SEARCH_BODY_TYPE),
+                PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
                 binding.spinnerTruckType.selectedItem.toString(),

@@ -74,7 +74,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     } catch (e: Exception) {
       finish()
     }
-    viewModel.restrictEventTrigger=false
+    viewModel.restrictEventTrigger=true
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
