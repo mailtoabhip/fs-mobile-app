@@ -309,7 +309,7 @@ data class HomeBidsRequestItemData(
   }
   fun bidAmountValue() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
-      Accepted, Open, Rejected, Cancelled -> {StringUtils.formatAmount(transactionBid!!.bidAmount)}
+      Accepted, Open, Rejected, Cancelled ->transactionBid!!.bidAmount.toString()
       else -> ""
     }
   } else {

@@ -324,7 +324,6 @@ const val EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS = "page_load_search_results
 const val EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS = "page_load_search_results_no_orders"
 const val EVENT_ADD_TRUCK_INITIATE = "add_truck_initiate"
 const val EVENT_EDIT_TRUCK_INITIATE = "edit_truck_initiate"
-const val EVENT_N_DELETE_TRUCK = "delete_truck"
 const val EVENT_ADD_TRUCK_SUBMIT = "add_truck_submit"
 const val EVENT_EDIT_TRUCK_SUBMIT = "edit_truck_submit"
 const val EVENT_REQUEST_FOR_LOAD_SUBMIT = "request_for_load_submit"

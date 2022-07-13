@@ -136,8 +136,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-    }
 
+    }
     binding.viewpager.disableScroll(true)
 
     /* set navigation item selection listener */
@@ -481,46 +481,51 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         when(pos){
           0->
             if(count==1){
+              if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
+                userPrefs.previousNavigationTab= SplashActivity::class.java.name
+              }else{
+                userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              }
+              userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_HOME,
                 mutableListOf(PROPERTY_ORDER_COUNT),
                 mutableListOf(userPrefs.loadCount))
-              userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
             }
           1->
             if(count==1){
-              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
-                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
-              }
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
               analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
                 mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
                     PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
                 mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
             )
-              userPrefs.setPreviousScreen(HomeBidsFragment::class.java.name)
+
             }
           2->
             if(count==1){
-              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
-                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
-              }
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+
               analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS
             )
-              userPrefs.setPreviousScreen(HomePodsFragment::class.java.name)
             }
           3->
             if(count==1){
-              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
-                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
-              }
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
               analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_TRIPS,
                 mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
                 mutableListOf(userPrefs.awaitingArrivalCount)
             )
-              userPrefs.setPreviousScreen(HomeTripsFragment::class.java.name)
             }
         }
         if(count==2){

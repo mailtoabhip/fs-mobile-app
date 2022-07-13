@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
@@ -56,6 +57,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   @Inject lateinit var userPrefs: UserPrefs
   var pos = 0
+  var oldAmount:Double?=0.0
+  var reviseInitiated:Boolean=false
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -86,16 +89,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             when {
               it != null && it.first !=null  -> {
                 val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                oldAmount= data?.transactionBid?.bidAmount
                 (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
                   it.second
                 _adapter.notifyItemChanged(it.first)
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_SEARCH_RESULT_BID_SUBMIT,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                        PROPERTY_SOURCE),
-                    mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","search_results_page")
-                )
+                if (data != null) {
+                  uiUtils.showProgress()
+                  viewModel.fetchLowestBid(data, it.first)
+                }
+
               }
             }
           }
@@ -104,18 +106,60 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it != null){
         val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        oldAmount= data?.transactionBid?.bidAmount
         data?.bulkTransactionBids = it.second
         _adapter.notifyItemChanged(it.first)
-        analyticsUtil.moEngageTrackEvent(
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_RESULT_BID_SUBMIT,
-            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                PROPERTY_SOURCE),
-            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.pmtRate.toString(),data?.bidAmount()?:"","search_results_page")
-        )
+            mutableListOf(
+              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+            ),
+            mutableListOf(
+              data?.transactionId ?: "", data?.numBids.toString(), data?.bidAmountValue() ?: "",
+              data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+            )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_BID_REVISE_SUBMITTED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+          )
+          reviseInitiated=false
+        }
       }
     })
-
+    viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if (it != null) {
+        var data = it.second
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_SUBMIT,
+            mutableListOf(
+              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+            ),
+            mutableListOf(
+              data?.transactionId ?: "", data?.numBids.toString(),
+              data?.bidAmountValue() ?: "",
+              data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+            )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_BID_REVISE_SUBMITTED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+          )
+          reviseInitiated=false
+        }
+      }
+    })
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it.first == 10){
         Toast.makeText(context,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
@@ -146,6 +190,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   it.second?.lowestBid.toString()
               )
           )
+          reviseInitiated =true
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_INITIATE,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+            mutableListOf( it.second.transactionId?:"",pos.toString(),viewModel.total.toString())
+          )
+          reviseInitiated=false
         }
         if(it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
@@ -240,30 +292,29 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_PlaceBid -> {
             pos =position
             val data = item.data as HomeBidsRequestItemData
-            var eventPos=position+1
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_SEARCH_RESULT_BID_INITIATE,
-                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
-            )
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
             }
             else{
               item.data.let {
-                userPrefs.setPreviousScreen(this.javaClass.name)
-                if(it.transactionBid!=null) {
+                if(it.transactionBid==null){
                   analyticsUtil.moEngageTrackEvent(
-                      EVENT_BID_REVISE_INITIATED,
-                      mutableListOf(
-                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE
-                      ),
-                      mutableListOf(
-                          data?.transactionId.toString(), data?.numBids.toString(),
-                          data?.lowestBid.toString()
-                      )
+                    EVENT_SEARCH_RESULT_BID_INITIATE,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+                    mutableListOf(data.transactionId?:"",pos.toString(),viewModel.total.toString())
                   )
+                  reviseInitiated=false
+                }else{
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_BID_REVISE_INITIATED,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                    mutableListOf(
+                      data.transactionId.toString(), data?.numBids.toString(),
+                      data?.lowestBid.toString()
+                    )
+                  )
+                  reviseInitiated=true
                 }
                 BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
