@@ -307,6 +307,14 @@ data class HomeBidsRequestItemData(
   } else {
     ""
   }
+  fun bidAmountValue() = if (transactionBid != null) {
+    when (transactionBid!!.status()) {
+      Accepted, Open, Rejected, Cancelled -> {StringUtils.formatAmount(transactionBid!!.bidAmount)}
+      else -> ""
+    }
+  } else {
+    ""
+  }
 
   /**
    * @return bid label

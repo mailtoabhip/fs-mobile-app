@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -488,7 +489,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             }
           1->
             if(count==1){
-            analyticsUtil.moEngageTrackEvent(
+              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
+                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+              }
+              analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
                 mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
                     PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
@@ -498,14 +502,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             }
           2->
             if(count==1){
-            analyticsUtil.moEngageTrackEvent(
+              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
+                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+              }
+              analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS
             )
               userPrefs.setPreviousScreen(HomePodsFragment::class.java.name)
             }
           3->
             if(count==1){
-            analyticsUtil.moEngageTrackEvent(
+              if(userPrefs.userPreviousScreen.equals(SplashActivity::class.java.name)) {
+                userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+              }
+              analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_TRIPS,
                 mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
                 mutableListOf(userPrefs.awaitingArrivalCount)
@@ -598,7 +608,7 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
-
+var orderRank=0
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"

@@ -228,7 +228,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   var orderRank: Int
     set(value) = editor.putInt(PrefKeys.orderRank, value)
         .apply()
-    get() = prefs.getInt(PrefKeys.orderRank, Integer.MAX_VALUE)
+    get() = prefs.getInt(PrefKeys.orderRank, 0)
 
   /**
    *  Max cost per km

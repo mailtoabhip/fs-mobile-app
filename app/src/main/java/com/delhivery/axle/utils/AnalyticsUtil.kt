@@ -29,6 +29,8 @@ class AnalyticsUtil @Inject constructor(
 ) {
 
   val TAG = "Analytics events"
+  val MOENGAGE_TAG = "Moengage events"
+
 
   private fun getAnalyticsObject(): FirebaseAnalytics? {
     return try {
@@ -71,16 +73,16 @@ class AnalyticsUtil @Inject constructor(
     attributes: List<String> = mutableListOf(),
     values: List<String> = mutableListOf()
   ) {
-    Log.i(TAG, event)
+    Log.i(MOENGAGE_TAG, event)
     val analytics = getMoEngageObject()
     if (analytics != null) {
       val properties = Properties()
       for ((index, attribute) in attributes.withIndex()) {
-        Log.i(TAG, attribute + ":" + values[index])
+        Log.i(MOENGAGE_TAG, attribute + ":" + values[index])
         properties.addAttribute(attribute, values[index])
       }
       properties.addAttribute(PROPERTY_PREVIOUS_SOURCE,userPrefs.userPreviousScreen)
-      Log.i(TAG, PROPERTY_PREVIOUS_SOURCE + ":" + userPrefs.userPreviousScreen)
+      Log.i(MOENGAGE_TAG, PROPERTY_PREVIOUS_SOURCE + ":" + userPrefs.userPreviousScreen)
       analytics.trackEvent(event, properties)
     }
   }
@@ -89,7 +91,7 @@ class AnalyticsUtil @Inject constructor(
     userAttribute: String,
     value: String
   ) {
-    Log.i(TAG, userAttribute)
+    Log.i(MOENGAGE_TAG, userAttribute)
     val analytics = getMoEngageObject()
     if (analytics != null) {
       analytics.setUserAttribute(userAttribute, value)

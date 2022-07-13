@@ -36,6 +36,7 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -79,6 +80,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
   var currSize:Int? = null
   var itemDeleted:Boolean = false
+  var reviseInitiated:Boolean=false
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -172,6 +174,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
             mutableListOf(data?.transactionId.toString(),data?.numBids.toString(),data?.lowestBid.toString())
         )
+        reviseInitiated=true
         BidDetailsCreateEditDialog(
                 context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "load_screen"
         ).show()
@@ -184,18 +187,35 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 when {
                   it != null -> {
                     val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                    var oldAmount= data?.transactionBid?.bidAmount
                     data?.transactionBid = it.second
 
                     if (data != null) {
                       uiUtils.showProgress()
                       viewModel.fetchLowestBid(data, it.first)
                     }
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_SUBMIT,
-                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                            PROPERTY_VEHICLE_REPORTING_DATE_TIME),
-                        mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.bidAmount()?:"",data?.expectedArrivalTimePickup?:"")
-                    )
+                    if(!reviseInitiated) {
+                      analyticsUtil.moEngageTrackEvent(
+                          EVENT_LOADFEED_BID_SUBMIT,
+                          mutableListOf(
+                              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+                          ),
+                          mutableListOf(
+                              data?.transactionId ?: "", data?.numBids.toString(),
+                              data?.bidAmount() ?: "",
+                              data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+                          )
+                      )
+                    }else{
+                      analyticsUtil.moEngageTrackEvent(
+                          EVENT_BID_REVISE_SUBMITTED,
+                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+                          mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+                      )
+                      reviseInitiated=false
+                    }
                   }
                 }
               }
@@ -204,14 +224,30 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if (it != null) {
         val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        var oldAmount= data?.transactionBid?.bidAmount
         data?.bulkTransactionBids = it.second
         adapter.notifyItemChanged(it.first)
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_LOADFEED_BID_SUBMIT,
-            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                PROPERTY_VEHICLE_REPORTING_DATE_TIME),
-            mutableListOf(data?.transactionId?:"",data?.numBids.toString(),data?.bidAmount()?:"",data?.expectedArrivalTimePickup?:"")
-        )
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_LOADFEED_BID_SUBMIT,
+              mutableListOf(
+                  PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                  PROPERTY_VEHICLE_REPORTING_DATE_TIME
+              ),
+              mutableListOf(
+                  data?.transactionId ?: "", data?.numBids.toString(), data?.bidAmount() ?: "",
+                  data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+              )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_BID_REVISE_SUBMITTED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                  PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+              mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+          )
+          reviseInitiated=false
+        }
       }
     })
 
@@ -286,6 +322,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   it.second?.lowestBid.toString()
               )
           )
+          reviseInitiated=true
         }
         if (it.second.truckUUID != null) {
           try {
@@ -368,7 +405,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ",(userPrefs.orderRank-3).toString(),viewModel.total.toString())
+            mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST).toString(),viewModel.total.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,
@@ -647,17 +684,29 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           HomeBidsRequestAction_PlaceBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
-            var eventPos=pos+1
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_LOADFEED_BID_INITIATE,
-                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
-            )
+            var eventPos=pos- STATIC_ITEM_LIST
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
               viewModel.fetchTruckType(data)
             } else {
               item.data.let {
+                if(it.transactionBid==null){
+                  analyticsUtil.moEngageTrackEvent(
+                      EVENT_LOADFEED_BID_INITIATE,
+                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+                      mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
+                  )
+                }else{
+                  analyticsUtil.moEngageTrackEvent(
+                      EVENT_BID_REVISE_INITIATED,
+                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                      mutableListOf(
+                          data.transactionId.toString(), data?.numBids.toString(),
+                          data?.lowestBid.toString()
+                      )
+                  )
+                  reviseInitiated=true
+                }
                 BidDetailsCreateEditDialog(
                         context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
                 ).show()
@@ -854,3 +903,4 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
     ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
 }
+const val STATIC_ITEM_LIST = 3

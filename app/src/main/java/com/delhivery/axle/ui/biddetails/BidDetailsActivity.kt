@@ -59,6 +59,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
   var bidEndingTime:String = ""
   var source:String= VALUE_APP_FLOW
+  var reviseInitiated:Boolean=false
 
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
@@ -73,7 +74,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     } catch (e: Exception) {
       finish()
     }
-
+    viewModel.restrictEventTrigger=false
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
@@ -181,6 +182,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   it.second?.lowestBid.toString()
               )
           )
+          reviseInitiated=true
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_ORDER_DETAILS_BID_INITIATE,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+              mutableListOf(it.second.transactionId.toString(), it.second?.numBids.toString(),source)
+          )
         }
         if(it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
@@ -215,6 +223,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
 
     binding.refreshLayout.setOnRefreshListener {
+      viewModel.refreshCalled=true
       refreshData()
     }
 
@@ -409,6 +418,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   binding.timerLayout.visibility = View.GONE
                   val data = viewModel.transaction as HomeBidsRequestItemData
                   data.numBids = state.bidsCount
+                  var oldAmount= data?.transactionBid?.bidAmount
                   data.transactionBid = state.lowestAndUserBidPair.first
                   bidsRecieved = state.bidsCount
                   val userBid = state.lowestAndUserBidPair.first
@@ -426,28 +436,46 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         else -> it.bidAmount
                       }
                     }
-                    if(data.lowestBid.toString()==data.bidAmount()){
-                      analyticsUtil.moEngageTrackEvent(
-                          EVENT_LOWEST_BID_CTA,
-                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
-                          mutableListOf(data.transactionId.toString(),data.numBids.toString())
-                      )
-                    }else{
-                      analyticsUtil.moEngageTrackEvent(
-                          EVENT_NOT_LOWEST_BID_CTA,
-                          mutableListOf(PROPERTY_ORDER_ID),
-                          mutableListOf(data.transactionId.toString())
-                      )
-                    }
                   }
                   request = data
-                  analyticsUtil.moEngageTrackEvent(
-                      EVENT_ORDER_DETAILS_BID_SUBMIT,
-                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                          PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                          PROPERTY_SOURCE),
-                      mutableListOf(state.lowestAndUserBidPair.second?.transactionId?:"",state.bidsCount.toString(),state.lowestAndUserBidPair.second?.bidAmount.toString(),state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),"bid_detail_page")
-                  )
+                  if(!viewModel.restrictEventTrigger && !viewModel.refreshCalled) {
+                    if (!reviseInitiated) {
+                      analyticsUtil.moEngageTrackEvent(
+                          EVENT_ORDER_DETAILS_BID_SUBMIT,
+                          mutableListOf(
+                              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                              PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                              PROPERTY_SOURCE
+                          ),
+                          mutableListOf(
+                              state.lowestAndUserBidPair.second?.transactionId ?: "",
+                              state.bidsCount.toString(),
+                              state.lowestAndUserBidPair.second?.bidAmount.toString(),
+                              state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),
+                              source
+                          )
+                      )
+                    } else {
+                      analyticsUtil.moEngageTrackEvent(
+                          EVENT_BID_REVISE_SUBMITTED,
+                          mutableListOf(
+                              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,
+                              PROPERTY_ORDER_LOWEST_BID_VALUE,
+                              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
+                          ),
+                          mutableListOf(
+                              state.lowestAndUserBidPair.second?.transactionId ?: "",
+                              state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
+                              oldAmount.toString() ?: "", data?.bidAmountValue()
+                              .toString() ?: ""
+                          )
+                      )
+                      reviseInitiated = false
+                    }
+                  }else{
+                    viewModel.refreshCalled=false
+                  }
+                  viewModel.restrictEventTrigger=false
                   if(viewModel.analyticsBucket) {
                     if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
                       analyticsUtil.trackEvent(
@@ -487,9 +515,30 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     mHandler.post(mRunnable)
                   }
 
-                  btnEditBidInsider.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
-                  textEditBid.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
-                  textEditBid2.setOnClickListener(View.OnClickListener { bidDialog(userBid) })
+                  btnEditBidInsider.setOnClickListener(View.OnClickListener {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_NOT_LOWEST_BID_CTA,
+                        mutableListOf(PROPERTY_ORDER_ID),
+                        mutableListOf(state.lowestAndUserBidPair.second?.transactionId ?: "")
+                    )
+                    bidDialog(userBid) })
+                  textEditBid.setOnClickListener(View.OnClickListener {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_LOWEST_BID_CTA,
+                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
+                        mutableListOf(state.lowestAndUserBidPair.second?.transactionId ?: "",
+                            state.bidsCount.toString())
+                    )
+                    bidDialog(userBid)
+                  })
+                  textEditBid2.setOnClickListener(View.OnClickListener {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_LOWEST_BID_CTA,
+                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
+                        mutableListOf(state.lowestAndUserBidPair.second?.transactionId ?: "",
+                            state.bidsCount.toString())
+                    )
+                    bidDialog(userBid) })
                 }
           }
           is BidDetailsUserBidState_LoadingBids -> {
@@ -546,7 +595,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ).apply {
               binding.timerLayout.visibility = View.GONE
               val data = viewModel.transaction as HomeBidsRequestItemData
-              if(data.transactionStatus == "cancelled"){
+              var oldAmount = data?.transactionBid?.bidAmount
+              if (data.transactionStatus == "cancelled") {
                 btnReviseBidInsider.visibility = View.GONE
                 reduceText.visibility = View.GONE
               }
@@ -556,31 +606,56 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
-                viewModel.getUserBulkBids(state.bids , state.lowestAndUserBidPair.second.let { it!!.bidAmount } )
+                viewModel.getUserBulkBids(
+                    state.bids, state.lowestAndUserBidPair.second.let { it!!.bidAmount })
 
               }
-              if(data.lowestBid.toString()==data.bidAmount()){
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_LOWEST_BID_CTA,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
-                    mutableListOf(data.transactionId.toString(),data.numBids.toString())
-                )
-              }else{
+
+              btnReviseBidInsider.setOnClickListener {
                 analyticsUtil.moEngageTrackEvent(
                     EVENT_NOT_LOWEST_BID_CTA,
                     mutableListOf(PROPERTY_ORDER_ID),
                     mutableListOf(data.transactionId.toString())
                 )
+                bidDialog()
               }
-
-              btnReviseBidInsider.setOnClickListener{ bidDialog()}
-              analyticsUtil.moEngageTrackEvent(
-                  EVENT_ORDER_DETAILS_BID_SUBMIT,
-                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                      PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                      PROPERTY_SOURCE),
-                  mutableListOf(state.lowestAndUserBidPair.second?.transactionId?:"",state.bidsCount.toString(),state.lowestAndUserBidPair.second?.pmtRate.toString(),state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),"bid_detail_page")
-              )
+              if (!viewModel.restrictEventTrigger && !viewModel.refreshCalled) {
+                if (!reviseInitiated) {
+                  analyticsUtil.moEngageTrackEvent(
+                      EVENT_ORDER_DETAILS_BID_SUBMIT,
+                      mutableListOf(
+                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                          PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                          PROPERTY_SOURCE
+                      ),
+                      mutableListOf(
+                          state.lowestAndUserBidPair.second?.transactionId ?: "",
+                          state.bidsCount.toString(),
+                          state.lowestAndUserBidPair.second?.bidAmount.toString(),
+                          state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),
+                          source
+                      )
+                  )
+                } else {
+                  analyticsUtil.moEngageTrackEvent(
+                      EVENT_BID_REVISE_SUBMITTED,
+                      mutableListOf(
+                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                          PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
+                      ),
+                      mutableListOf(
+                          state.lowestAndUserBidPair.second?.transactionId ?: "",
+                          state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
+                          oldAmount.toString() ?: "", data?.bidAmountValue()
+                          .toString() ?: ""
+                      )
+                  )
+                  reviseInitiated = false
+                }
+              }else{
+                viewModel.refreshCalled=false
+              }
+              viewModel.restrictEventTrigger=false
             }
           }
           else -> null
@@ -602,17 +677,30 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   private fun bidDialog(bid: TransactionBid? = null) {
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_ORDER_DETAILS_BID_INITIATE,
-            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
-            mutableListOf(bid?.transactionId ?:"",viewModel.bidCount.toString(),source)
-        )
         binding.transaction?.let {
           if(viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
             uiUtils.showProgress()
             viewModel.fetchTruckType(it);
           }
           else{
+            if(it.transactionBid==null){
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_ORDER_DETAILS_BID_INITIATE,
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                  mutableListOf(bid?.transactionId ?:"",viewModel.bidCount.toString(),source)
+              )
+              reviseInitiated=false
+            }else{
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_BID_REVISE_INITIATED,
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                  mutableListOf(
+                      bid?.transactionId.toString(), it.numBids.toString(),
+                      it.lowestBid.toString()
+                  )
+              )
+             reviseInitiated=true
+            }
             BidDetailsCreateEditDialog(
                     this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
             ).show()

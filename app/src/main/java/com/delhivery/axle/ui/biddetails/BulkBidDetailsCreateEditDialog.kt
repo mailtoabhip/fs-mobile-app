@@ -28,6 +28,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_bid_create_edit_item.view.*
+import kotlinx.android.synthetic.main.view_transaction_item.amount
 import javax.inject.Inject
 
 class BulkBidDetailsCreateEditDialog @Inject constructor(
@@ -244,7 +245,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                                                 PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
                                                 PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
                                             ),
-                                            mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.bidAmount().toString(),bidData.pmtRate())
+                                            mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.lowestBid.toString(),transaction.bidAmount().toString(),amount.toString())
                                         )
 
                                     }

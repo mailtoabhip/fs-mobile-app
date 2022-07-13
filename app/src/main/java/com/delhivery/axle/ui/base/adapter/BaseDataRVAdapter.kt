@@ -12,6 +12,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.NoOp
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -23,7 +24,6 @@ abstract class BaseDataRVAdapter<
 
   /* List of items */
   protected val items: MutableList<D> = mutableListOf()
-  @Inject lateinit var userPrefs: UserPrefs
 
   /**
    * Clear data set and set items and notifyDataSetChanged()
@@ -52,8 +52,9 @@ abstract class BaseDataRVAdapter<
   ) {
     itemsList()[position].let { item ->
       bindVH(holder, item)
-      holder.binding.root.setOnClickListener { clickListener.onItemClicked(item)
-        userPrefs.orderRank=position
+      holder.binding.root.setOnClickListener {
+        orderRank=position
+        clickListener.onItemClicked(item)
       }
     }
   }

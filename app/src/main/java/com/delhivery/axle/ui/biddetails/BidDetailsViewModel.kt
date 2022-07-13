@@ -55,7 +55,11 @@ class BidDetailsViewModel @Inject constructor(
 
     var indentLiveData = MutableLiveData<HashMap<Int, String>>()
     var bidCount =0
-   companion object{
+    var lowestBid:Double?=0.0
+    var restrictEventTrigger :Boolean=true
+    var refreshCalled :Boolean=false
+
+    companion object{
     var truckNumTextViewAdded :Boolean=false
     val indentMap = HashMap<Int, String>()
    }
@@ -82,6 +86,7 @@ class BidDetailsViewModel @Inject constructor(
             transaction = _tRes
             transactionLiveData.postValue(_tRes)
             bidCount=transaction.numBids
+            lowestBid=transaction.lowestBid
             fetchTransactionBids()
           } else {
             transactionLiveData.postValue(null)

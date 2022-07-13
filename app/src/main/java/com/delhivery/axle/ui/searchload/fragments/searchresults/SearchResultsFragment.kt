@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
@@ -214,7 +215,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-            mutableListOf( _item.transactionId ?: "",userPrefs.orderRank.toString())
+            mutableListOf( _item.transactionId ?: "",orderRank.toString())
         )
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
@@ -325,7 +326,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         numResults = t.size
         _adapter.operation(t)
       }
-      if(numResults==0){
+      if(t==null){
         analyticsUtil.moEngageTrackEvent(
             EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
