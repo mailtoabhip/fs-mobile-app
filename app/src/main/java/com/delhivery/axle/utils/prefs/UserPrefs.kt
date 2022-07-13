@@ -888,7 +888,83 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.isFirstOpenrate)
             .apply()
+    editor.remove(PrefKeys.businessDocUrl)
+      .apply()
+    editor.remove(PrefKeys.identityDocUrl)
+      .apply()
+    editor.remove(PrefKeys.ninteen4CDocUrl)
+      .apply()
+    editor.remove(PrefKeys.paymentDocUrl)
+      .apply()
     editor.commit()
+  }
+
+  fun clearKycPreferenceDataBasedOnSteps(step:String){
+    if(step=="pan"){
+      editor.remove(PrefKeys.panName)
+        .apply()
+      editor.remove(PrefKeys.Pancard)
+        .apply()
+      editor.remove(PrefKeys.isGstsByPanNotRegistered)
+        .apply()
+      editor.remove(PrefKeys.gstNumber)
+        .apply()
+      editor.remove(PrefKeys.gstAddress)
+        .apply()
+      editor.remove(PrefKeys.aadhaarNumber)
+        .apply()
+      editor.remove(PrefKeys.aadhaarPolicyAccepted)
+        .apply()
+      editor.remove(PrefKeys.businessAddress)
+        .apply()
+      editor.remove(PrefKeys.cinNumber)
+        .apply()
+      editor.remove(PrefKeys.shopNumber)
+        .apply()
+      editor.remove(PrefKeys.udyogNumber)
+        .apply()
+      editor.remove(PrefKeys.identityDocUrl)
+        .apply()
+      editor.remove(PrefKeys.rcNumber)
+        .apply()
+      editor.remove(PrefKeys.attachedTruck)
+        .apply()
+      editor.remove(PrefKeys.ownedTruck)
+        .apply()
+      editor.remove(PrefKeys.rcManualVerificationReq)
+        .apply()
+      editor.remove(PrefKeys.isTruckingDocumentUploaded)
+        .apply()
+      editor.remove(PrefKeys.isSameAsGst)
+        .apply()
+      editor.remove(PrefKeys.isGstNotBypassed)
+        .apply()
+      editor.remove(PrefKeys.paymentAccountName)
+        .apply()
+      editor.remove(PrefKeys.paymentAccountNumber)
+        .apply()
+      editor.remove(PrefKeys.paymentIFSCCode)
+        .apply()
+      editor.remove(PrefKeys.IfscCode)
+        .apply()
+      editor.remove(PrefKeys.businessDocUrl)
+        .apply()
+      editor.remove(PrefKeys.identityDocUrl)
+        .apply()
+      editor.remove(PrefKeys.ninteen4CDocUrl)
+        .apply()
+      editor.remove(PrefKeys.paymentDocUrl)
+        .apply()
+    }else if(step=="gst"){
+      if(isSameAsGst){
+      editor.remove(PrefKeys.gstAddress)
+        .apply()
+      editor.remove(PrefKeys.businessAddress)
+        .apply()
+      editor.remove(PrefKeys.isSameAsGst)
+        .apply()
+      }
+    }
   }
 
   fun saveUser(user: UserModel) {
@@ -969,6 +1045,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
     ownedTruck = user.supplierDetails?.numberOfOwnedTrucks?:""
     attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
+    isSameAsGst= user.isAddressSameAsGST?:false
+
   }
 
 
