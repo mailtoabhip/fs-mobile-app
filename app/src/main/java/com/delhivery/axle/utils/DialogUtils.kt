@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.webkit.WebViewClient
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -22,14 +21,14 @@ import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.scope.ActivityScope
-import com.delhivery.axle.ui.accountrole.RoleUIState
-import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.dialogs.ErrorDialog
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDate
+import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDateCalender
 import dagger.android.support.DaggerAppCompatActivity
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 @ActivityScope
@@ -53,13 +52,25 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         calendar[Calendar.MONTH],
         calendar[Calendar.DAY_OF_MONTH]
     )
-    if (minDate != Int.MIN_VALUE) {
+    if(minDate==RewardStartDateCalender){
+      var dateStr = RewardStartDate
+      var curFormater = SimpleDateFormat("dd/MM/yyyy")
+      var dateObj = curFormater.parse(dateStr);
+      var cal = Calendar.getInstance()
+      cal .setTime(dateObj)
+      picker.datePicker.minDate = cal.timeInMillis
+    }else if (minDate != Int.MIN_VALUE) {
       val cal = Calendar.getInstance()
       cal.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
       cal.add(Calendar.DATE, minDate)
+      cal.set(Calendar.YEAR,calendar.get(Calendar.YEAR))
       picker.datePicker.minDate = cal.timeInMillis
     }
-    if (maxDate != Int.MAX_VALUE) {
+    if(maxDate==RewardStartDateCalender){
+      var cal = Calendar.getInstance()
+      cal .setTime( Date())
+      picker.datePicker.maxDate = cal.timeInMillis
+    }else if (maxDate != Int.MAX_VALUE) {
       val cal = Calendar.getInstance()
       cal.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
       cal.add(Calendar.DATE, maxDate)

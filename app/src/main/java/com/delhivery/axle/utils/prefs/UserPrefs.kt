@@ -224,6 +224,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
+  var bidOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.BidOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.BidOfferCount, Integer.MAX_VALUE)
+
+  var trucksOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.TrucksOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.TrucksOfferCount, Integer.MAX_VALUE)
+
+  var rateOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.RateOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.RateOfferCount, Integer.MAX_VALUE)
+
   /**
    * Is logged in user parent or not
    */
@@ -693,6 +708,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putBoolean(PrefKeys.isBankDetailsRejected, value)
         .apply()
     get() = prefs.getBoolean(PrefKeys.isBankDetailsRejected, false)
+
+  var isFirstOpenRate: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isFirstOpenrate, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isFirstOpenrate, false)
+
   /**
    * Clear all preferences
    */
@@ -865,6 +886,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.isBankDetailsRejected)
         .apply()
+    editor.remove(PrefKeys.isFirstOpenrate)
+            .apply()
     editor.remove(PrefKeys.businessDocUrl)
       .apply()
     editor.remove(PrefKeys.identityDocUrl)
@@ -1141,6 +1164,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
     const val isBankDetailsRejected= "is_bank_details_rejected"
+    const val isFirstOpenrate= "is_first_open_rate"
+    const val BidOfferCount= "bid_offer_count"
+    const val TrucksOfferCount= "truck_offer_count"
+    const val RateOfferCount= "rate_offer_count"
+
 
 
   }

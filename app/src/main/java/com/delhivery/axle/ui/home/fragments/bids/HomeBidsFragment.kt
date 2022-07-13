@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
@@ -27,8 +28,10 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationC
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -74,6 +77,15 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
+    viewModel.fetchDatabaseOffers()
+
+    viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
+      if (!it.isNullOrEmpty()) {
+        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
+        adapter.notifyDataSetChanged()
+      }
+    })
+
     /* setup recycler view */
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -92,6 +104,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
                mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
        )
+
        launch=false
      }
       it?.let { _items -> adapter.operation(_items) }
@@ -275,6 +288,43 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
       }
     }
+  }
+
+  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? {
+    var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
+    if(viewModel.finalOffers.value.isNullOrEmpty()){
+      pres = null
+      userPrefs.bidOfferCount=0
+    }else{
+      for(r in viewModel.finalOffers.value!!){
+        if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
+          pres = pres?.copy(Pair(true,r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
+        }
+      }
+      userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
+    }
+    return pres
+  }
+
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?) {
+    val bundle = Bundle()
+    bundle.putString("originname", data?.origin)
+    bundle.putString("destname", data?.destination)
+    bundle.putString("occ", occ)
+    bundle.putString("dcc", dcc)
+    bundle.putString("truckNumber", data?.transactionBid?.vehicleNumber)
+    bundle.putString("truckType", data?.truckSpecification?.truckDispName)
+    bundle.putString("truckCapacity", data?.truckCapacity())
+    bundle.putString("itemTD", itemTD)
+    bundle.putString("offerTD", offerTD)
+    bundle.putString("offerid", offerid)
+
+    analyticsUtil.trackEvent(
+            EVENT_CLICKED_OFFER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")
+    )
+    navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
   }
 
   /**

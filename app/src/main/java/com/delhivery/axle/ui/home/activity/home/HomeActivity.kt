@@ -56,6 +56,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var fromNotification = false
   var fromDeepLink = false
   var vehicleNum =""
+  var count =0
   @Inject lateinit var userPrefs : UserPrefs
 
   /* home fragments pager adapter */
@@ -399,7 +400,32 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
       .let { pos ->
-        binding.viewpager.apply {
+        count++
+        when(pos) {
+          1 -> {
+            if (count == 1) {
+              val c = Date()
+              val date = c.toString()
+              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
+              analyticsUtil.trackEvent(
+                  EVENT_VIEW_BIDS_SCREEN_OFFERS,
+                  mutableListOf(
+                      PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                      PROPERTY_DATE
+                  ),
+                  mutableListOf(
+                      userPrefs.userId(), userPrefs.phoneNumber!!,
+                      userPrefs.bidOfferCount.toString(), date
+                  )
+              )
+            }
+            if(count>=2){
+              count=0
+            }
+          }
+        }
+
+          binding.viewpager.apply {
           uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
             this@HomeActivity.title = HomeFragmentType.pos(pos)
