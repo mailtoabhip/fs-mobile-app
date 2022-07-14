@@ -33,6 +33,7 @@ import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.CurrentStepKey
+import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.EVENT_GST_OFFICE_ADDRESS
 import com.delhivery.axle.utils.EVENT_SUBMIT_OFFICE_ADDRESS
 import com.delhivery.axle.utils.EVENT_SUBMIT_POPUP_OFFICE_ADDRESS
@@ -40,7 +41,9 @@ import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
 import com.delhivery.axle.utils.PROPERTY_ADD_PROOF_TYPE
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TTL
+import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
@@ -426,6 +429,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
+                            analyticsUtil.trackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
+                                    PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE
+                                ),
+                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"gst_address")
+                            )
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
                         }

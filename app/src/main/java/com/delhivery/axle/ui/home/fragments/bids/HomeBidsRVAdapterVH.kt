@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.bids
 import android.util.Log
 import androidx.databinding.ViewDataBinding
 import android.view.View
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
@@ -99,6 +100,36 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
    // binding.moreBidsRecieved = 2
     binding.textMoreBids.underline = true
     binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
+
+    if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
+      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_active))
+      binding.textBidStatus.text = context.resources.getString(R.string.label_active)
+   }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
+        binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_confirmed))
+        binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
+    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
+      binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
+      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
+    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
+      binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
+      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
+    }
+
+    val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
+     if(res!=null && res.first?.first == true){
+      if(item.data.bidStatus().statusKey.equals("rejected")){
+        binding.shareRateLay.visibility = View.VISIBLE
+      }else{
+        binding.shareRateLay.visibility = View.GONE
+      }
+    }else{
+      binding.shareRateLay.visibility = View.GONE
+    }
+
+    Log.d("sdnfsdkfsdk", res.toString())
+
+    binding.btnShareRate.setOnClickListener { _interface.callShareRate(item.data, res?.second?.first, res?.second?.second, res?.third?.first, res?.third?.second, res?.first?.second) }
+
   }
 }
 

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
@@ -71,8 +72,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
-                viewModel.updateUserDetails()
+                 if(viewModel.panCardNumber.equals(userPrefs.pancard, ignoreCase = true)|| userPrefs.pancard.isEmpty()){
+                    viewModel.updateUserDetails()
+                 }else{
+                   viewModel.resetKycDetails(userPrefs.retryVerification)
 
+                 }
         }
 
         binding.editPan.apply {
@@ -138,9 +143,17 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
                     TotalStepsKey)!!,bundle)
             } else {
-                uiUtils.showSnackbar("Update Failed, Please try again")
+                uiUtils.showSnackbar(getString(string.error_update_failed))
             }
         })
+
+      viewModel.resetKycLiveData.observe(this, Observer {
+        if (it) {
+                viewModel.updateUserDetails()
+        } else {
+          uiUtils.showSnackbar(getString(string.error_update_failed))
+        }
+      })
         viewModel.errorLiveData.observe(
             this, Observer {
                 it?.let { error ->

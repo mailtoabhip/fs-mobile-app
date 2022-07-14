@@ -266,6 +266,106 @@ object DateUtils {
     }
     return ""
   }
+
+  fun presentDay():String{
+    val sdf =  SimpleDateFormat("dd MMM");
+    val resultdate =  Date();
+    return sdf.format(resultdate)
+  }
+
+  fun tomorrowDate():String{
+    var dt = Date()
+    val c = Calendar.getInstance()
+    c.time = dt
+    c.add(Calendar.DATE, 1)
+    dt = c.time
+    val sdf =  SimpleDateFormat("dd MMM");
+    return sdf.format(dt)
+  }
+
+  fun presentTime():String{
+    var dt = Date()
+    val c = Calendar.getInstance()
+    c.time = dt
+    dt = c.time
+    val sdf =  SimpleDateFormat("hh:mm a")
+    return sdf.format(dt)
+  }
+
+  fun presentTimeInSlashFormat():String{
+    var dt = Date()
+    val c = Calendar.getInstance()
+    c.time = dt
+    dt = c.time
+    val sdf =  SimpleDateFormat("dd/MM/yyyy")
+    return sdf.format(dt)
+  }
+
+
+
+  fun getUtcToIstFormatTime(utcTime: String?): String? {
+    var ISTDateString = ""
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    val pattern = "dd MMM hh:mm a"
+    val formatter: SimpleDateFormat
+    formatter = SimpleDateFormat(pattern)
+    try {
+      val ISTDate = sdf.parse(utcTime)
+      formatter.timeZone = TimeZone.getTimeZone("Asia/Kolkata")
+      ISTDateString = formatter.format(ISTDate)
+    } catch (e: java.lang.Exception) {
+      e.printStackTrace()
+    }
+    return ISTDateString
+  }
+
+  fun getUtcToIstFormatDateWithSuffix(utcTime: String?):String{
+    var istDateString = ""
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    val pattern = "dd MMM yyyy"
+    val formatter: SimpleDateFormat
+    formatter = SimpleDateFormat(pattern)
+    try {
+      val ISTDate = sdf.parse(utcTime)
+      formatter.timeZone = TimeZone.getTimeZone("Asia/Kolkata")
+      istDateString = formatter.format(ISTDate)
+      var dateString =  istDateString.split(" ").get(0)
+      var suffix = getDayOfMonthSuffix(dateString.toInt())
+      dateString += suffix
+      istDateString = dateString+" "+istDateString.split(" ").get(1)+ " "+istDateString.split(" ").get(2)
+
+    } catch (e: java.lang.Exception) {
+      e.printStackTrace()
+    }
+    return istDateString
+  }
+  fun getISToUtcFormatDate(istTime: String?):String{
+    var utctDateString = ""
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    val pattern = "yyyy-MM-dd"
+    val formatter: SimpleDateFormat
+    formatter = SimpleDateFormat(pattern)
+    try {
+      val ISTDate = sdf.parse(istTime)
+      utctDateString = formatter.format(ISTDate)
+    } catch (e: java.lang.Exception) {
+      e.printStackTrace()
+    }
+    return utctDateString
+  }
+
+  fun getDayOfMonthSuffix(n: Int): String? {
+    return if (n >= 11 && n <= 13) {
+      "th"
+    } else when (n % 10) {
+      1 -> "st"
+      2 -> "nd"
+      3 -> "rd"
+      else -> "th"
+    }
+  }
 }
 
 /**

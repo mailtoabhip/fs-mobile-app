@@ -6,9 +6,7 @@ import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.GstNumberData
 import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.api.response.*
-import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.UserRespone
-import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -71,7 +69,10 @@ interface LoadBoardService {
     @PATCH("/update_user")
     fun updateUser(@Body request: UpdateUserRequest): Single<BaseMessageResponse>
 
-    /**
+    @POST("/reset_kyc")
+    fun resetKyc(@Body request: ResetKycDataRequest): Single<BaseMessageResponse>
+
+  /**
      * add alternate address
      */
     @POST("/add_address")
@@ -195,5 +196,10 @@ interface LoadBoardService {
   fun getPopularLocations(
     @Query("user_id") userId: String
   ): Single<BaseResponse<List<PopularLocationsResponse>>>
+
+  @POST("/validate_bank")
+  fun getBankName(
+    @Body bankValidationRequest: BankValidationRequest
+  ): Single<BaseResponse<BankValidationResponse>>
 
 }

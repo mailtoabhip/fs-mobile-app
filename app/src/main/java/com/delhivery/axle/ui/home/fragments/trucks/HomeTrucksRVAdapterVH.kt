@@ -5,6 +5,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
@@ -15,6 +16,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterViewHolder
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 
 /**
  * Base Home trucks RV adapter view holder
@@ -25,6 +27,10 @@ abstract class BaseHomeTrucksRVAdapterViewHolder<out B : ViewDataBinding, IT : B
         item: IT,
         _interface: HomeTrucksRVAdapterInterface
     )
+
+    companion object {
+        var bannerShown = false
+    }
 
     /**
      * Add on click listener for action
@@ -84,6 +90,60 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         }
         binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
         binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
+
+        val res = _interface.getTotalOffers(item.data.currentCityCode, item.data.unloadingDestinationCode, item.data.truckSize)
+        binding.btnShareRate.setOnClickListener {
+            _interface.callShareRate(item.data, res?.second, res?.third, res?.first?.second)
+        }
+
+        if(res!=null && res.first.first == true){
+            binding.shareRateLay.visibility = item.data.statusVisibilty()
+            if(_interface.getBannerStatus() == true && !bannerShown){
+                if(item.data.statusVisibilty() == View.VISIBLE) {
+                    bannerShown = true
+                    binding.rateMore.visibility = View.VISIBLE
+                }else{
+                    binding.rateMore.visibility = View.GONE
+                }
+            }else{
+                binding.rateMore.visibility = View.GONE
+            }
+        }else{
+            binding.shareRateLay.visibility = View.GONE
+            binding.rateMore.visibility = View.GONE
+        }
+
+        binding.gotit.setOnClickListener { binding.rateMore.visibility = View.GONE }
+
+        binding.shareRate.setOnClickListener {
+            binding.rateMore.visibility = View.GONE
+           _interface.callRewards()
+        }
+
+        val total = _interface.gettotal()
+
+        val pos = adapterPosition.minus(3)
+        if(total==0){
+            binding.rateBanner.visibility = View.GONE
+        }else{
+            if(total!=0 && total >7) {
+                if (pos != 0 && pos.rem(8) == 0) {
+                    binding.rateBanner.visibility = View.VISIBLE
+                } else {
+                    binding.rateBanner.visibility = View.GONE
+                }
+            }else{
+                if(total!=0) {
+                    if (pos == total) {
+                        binding.rateBanner.visibility = View.VISIBLE
+                     } else {
+                        binding.rateBanner.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        binding.rateBanner.setOnClickListener { _interface.callRewards() }
 
     }
 }
@@ -177,6 +237,7 @@ internal class HomeTrucksInfoItemVH(binding: ViewHomeTrucksInfoItemBinding) :
         _interface: HomeTrucksRVAdapterInterface
     ) {
         binding.trucksCount.text = "("+item.data.count.toString()+")"
+        _interface.settotal(item.data.count)
     }
 }
 

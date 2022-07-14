@@ -134,6 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/size_16dp"
                     android:lineSpacingExtra="@dimen/text_6sp"
                     bind:layout_constraintStart_toStartOf="parent"
@@ -144,12 +145,13 @@
                     />
 
                 <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-                    android:id="@+id/account_holder_edittext"
+                    android:id="@+id/account_holder_edittext1"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"
                     android:imeOptions="actionDone"
                     android:text= "@={ viewModel.accountHolderText }"
                     android:layout_marginTop="@dimen/size_8dp"
+                    android:visibility="gone"
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintTop_toBottomOf="@+id/account_holder_textView"
                     android:paddingStart="@dimen/size_12dp"
@@ -157,8 +159,25 @@
                     android:hint="@string/sub_label_account_holder"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
-
                     />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/account_holder_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="@dimen/text_6sp"
+                    android:drawableStart="@drawable/ic_info_pan"
+                    android:drawablePadding="@dimen/size_8dp"
+                    android:text="@{viewModel.accountHolderText}"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    bind:layout_constraintTop_toBottomOf="@+id/account_holder_textView"
+                    tools:text="@string/hint_for_bank_validation"
+                    android:textColor="@color/info_bg"
+                    android:textSize="@dimen/text_14sp"
+                    android:visibility="visible"
+                    />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_warning"
@@ -179,6 +198,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/upload_doc"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_24dp"
                     bind:layout_constraintTop_toBottomOf="@+id/account_holder_warning">
@@ -295,7 +315,7 @@
                         android:id="@+id/doc_proof1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="@dimen/text_14sp"
+                        android:textSize="@dimen/text_16sp"
                         android:textStyle="bold"
                         bind:layout_constraintTop_toTopOf="parent"
                         bind:layout_constraintStart_toStartOf="parent"

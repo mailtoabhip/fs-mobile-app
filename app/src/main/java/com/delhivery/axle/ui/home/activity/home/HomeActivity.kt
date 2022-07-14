@@ -481,6 +481,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         when(pos){
           0->
             if(count==1){
+              val c = Date()
+              val date = c.toString()
+              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
+              analyticsUtil.trackEvent(
+                EVENT_VIEW_BIDS_SCREEN_OFFERS,
+                mutableListOf(
+                  PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                  PROPERTY_DATE
+                ),
+                mutableListOf(
+                  userPrefs.userId(), userPrefs.phoneNumber!!,
+                  userPrefs.bidOfferCount.toString(), date
+                )
+              )
               if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
                 userPrefs.previousNavigationTab= SplashActivity::class.java.name
               }else{

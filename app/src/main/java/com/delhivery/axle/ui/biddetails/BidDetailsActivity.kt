@@ -390,10 +390,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                    setTimer(bidEndingTime)
                   }
                   btnPlaceBid.setOnClickListener { bidDialog() }
-                }
+               }
           }
           is BidDetailsUserBidState_PlaceBid -> {
-
             ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
               .apply {
                 if(binding.textBulkLoad.visibility == View.GONE) {
@@ -572,7 +571,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       StringUtils.formatAmount(state.userBid.bidAmount)
                     }
                     textUserHighestBid.text = bidText
-                  }
+                   }
           }
           is BidDetailsUserBidState_CancelledBid -> {
             ViewBidDetailsCancelledBidBinding.inflate(
