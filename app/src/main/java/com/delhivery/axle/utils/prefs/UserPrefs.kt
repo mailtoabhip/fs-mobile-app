@@ -800,7 +800,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
   fun setPreviousScreen(previousScreen:String){
     userPreviousScreen =previousScreen
-   // Log.i("currentPrevious",userPreviousScreen)
   }
   /**
    * Clear all preferences

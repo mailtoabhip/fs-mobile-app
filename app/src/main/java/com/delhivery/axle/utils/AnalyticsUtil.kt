@@ -367,7 +367,6 @@ const val PROPERTY_USER_BID_VALUE_NEW = "user_bid_value_new"
 const val PROPERTY_SEARCH_ORIGIN_CITY = "search_origin_city"
 const val PROPERTY_SEARCH_DESTINATION_CITY = "search_destination_city"
 const val PROPERTY_SEARCH_BODY_TYPE = "search_body_type"
-const val PROPERTY_SOURCE = "source"
 const val PROPERTY_INVENTORY_UUID = "inventory_uuid"
 const val PROPERTY_VENDOR_ID = "vendor_id"
 const val PROPERTY_FIELD_EDITED = "field_edited"
@@ -383,9 +382,7 @@ const val VALUE_DEEPLINK = "deeplinking"
 const val VALUE_APP_FLOW = "app_flow"
 const val VALUE_PUSH_NOTIFICATION = "push_notification"
 
-const val PROPERTY_PHONE_NO = "phone_no"
-const val PROPERTY_DEMAND_TYPE = "demand_type"
-const val PROPERTY_STATUS = "status"
+
 
 
 const val USER_PROPERTY_ANDROID_ID = "android_id"
