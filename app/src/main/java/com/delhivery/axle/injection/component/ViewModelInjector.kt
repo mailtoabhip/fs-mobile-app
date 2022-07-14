@@ -33,6 +33,9 @@ import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFragmentViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
@@ -292,6 +295,20 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: SearchCityViewModel)
 
+  /**
+   * Injects [ShareRateGetRewardsViewModel]
+   */
+  fun inject(viewModel: ShareRateGetRewardsViewModel)
+
+  /**
+   * Injects [ShareRateFragmentViewModel]
+   */
+  fun inject(viewModel: ShareRateFragmentViewModel)
+
+  /**
+   * Injects [YourRewardsFragmentViewModel]
+   */
+  fun inject(viewModel: YourRewardsFragmentViewModel)
 
   @Component.Builder
   interface Builder {

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.request.ResetKycDataRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -32,13 +33,14 @@ class PanVerificationViewModel@Inject constructor(
     var validatePanLiveData = MutableLiveData<PanVerificationResponse>()
 
     var userUpdateLiveData = MutableLiveData<Boolean>()
+    var resetKycLiveData = MutableLiveData<Boolean>()
 
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
     var duplicatePanErrorLiveData = MutableLiveData<String?>()
 
 
-  var panCardNumber=""
+    var panCardNumber=""
     var isValidPan = false
 
     /* steps */
@@ -83,12 +85,15 @@ class PanVerificationViewModel@Inject constructor(
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
                           }else{
                             error.handle()
+                            errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
                         }else{
                           error.handle()
+                          errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         }
                       }
                       else -> {
+                        errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         Throwable(errorBody.errorMessage).handle()
                       }
                     }
@@ -135,6 +140,31 @@ class PanVerificationViewModel@Inject constructor(
         }
 
     }
+
+  /**
+   * update user pan number
+   */
+  fun resetKycDetails(ignoreClearData:Boolean) {
+    if (!isConnected) return
+
+    if (panCardNumber.length == 10 || isValidPan) {
+      compositeDisposable += loadboardRepository.resetKyc(ResetKycDataRequest(phoneNumber = userPrefs.phoneNumber!!, resetPoint = "pan",panNumber = panCardNumber))
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error) {
+            if(!ignoreClearData){
+              userPrefs.clearKycPreferenceDataBasedOnSteps("pan")
+            }
+            resetKycLiveData.postValue(true)
+          } else{
+            error.handle()
+            resetKycLiveData.postValue(true)
+          }
+        }
+    }
+
+  }
 
     //Validate Pan regex check
     fun parsePanToValidate(panCardNo:String):Boolean{

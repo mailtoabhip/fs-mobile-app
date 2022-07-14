@@ -8,3 +8,9 @@ data class InventoryResponse(
     @SerializedName("count") val total: Int,
     @SerializedName("results") val trucks: List<HomeTrucksRequestItemData>
 )
+
+data class PricingResponse(
+        @SerializedName("message") val message: String,
+        @SerializedName("success") val success: Boolean
+)
+

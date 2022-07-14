@@ -5,16 +5,11 @@ import com.delhivery.axle.api.request.GstDetailRequest
 import com.delhivery.axle.api.request.GstNumberRequest
 import com.delhivery.axle.api.request.PanVerificationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.RcVerificationResponse
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
-import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.google.gson.JsonObject
-import io.reactivex.Single
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class LoadboardRepository @Inject constructor(
     private val loadboardService: LoadBoardService
@@ -45,6 +40,12 @@ class LoadboardRepository @Inject constructor(
      */
     fun updateUser(updateUserRequest: UpdateUserRequest) =
            loadboardService.updateUser(updateUserRequest).convertMessageResponse()
+
+    /**
+     * reset kyc
+     */
+    fun resetKyc(resetKycDataRequest: ResetKycDataRequest) =
+        loadboardService.resetKyc(resetKycDataRequest).convertMessageResponse()
 
     /**
      * add route
@@ -146,5 +147,8 @@ class LoadboardRepository @Inject constructor(
      *get popular locations
      */
     fun getPopularLocations(uuid:String) = loadboardService.getPopularLocations(uuid).convertResponse()
+
+    fun getBankName(bankValidationRequest: BankValidationRequest) = loadboardService.getBankName(bankValidationRequest = bankValidationRequest).convertResponse()
+
 
 }

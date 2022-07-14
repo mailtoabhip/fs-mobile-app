@@ -16,9 +16,9 @@ enum class UrlConfig(
       "https://api-stage-ums.delhivery.com"
   ),
    TruckService(
-     "https://orion-contract-api.delhivery.com/v2/",
-     "https://orion-contract-api-dev.delhivery.com/v2/",
-     "https://orion-contract-api-uat.delhivery.com/v2/"
+     "https://orion-contract-api.delhivery.com/",
+     "https://orion-contract-api-dev.delhivery.com/",
+     "https://orion-contract-api-uat.delhivery.com/"
    ),
   BidService(
       "https://orion-bid-api.delhivery.com",
@@ -115,6 +115,11 @@ enum class UrlConfig(
           "https://orion-user-loadboard.delhivery.com",
           "https://orion-user-onboarding-api-dev.delhivery.com",
           "https://orion-user-onboarding-api-uat.delhivery.com"
+  ),
+  PriceService(
+          "https://orion-contract-api.delhivery.com/",
+          "https://orion-contract-api-dev.delhivery.com/",
+          "https://orion-contract-api-uat.delhivery.com/"
   ),
   AppID(
   "83", "371", "371"

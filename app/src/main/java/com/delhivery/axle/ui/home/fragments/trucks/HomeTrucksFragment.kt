@@ -22,10 +22,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trucks.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -36,6 +40,7 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Calendar
 import javax.inject.Inject
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
@@ -43,6 +48,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 {
     override fun getViewModelClass() = HomeTrucksViewModel::class.java
     override fun layoutId() = R.layout.fragment_home_trucks
+
+    var totalTruck: Int = 0
+    var bannerValue:Boolean? = false
+    var launch : Boolean =true
 
     companion object {
         /* singleton instance */
@@ -71,6 +80,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchData()
+
         viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
@@ -78,6 +89,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             refreshData()
         }
 
+        viewModel.fetchDatabaseOffers()
         /* setup recycler view */
         binding.rvTrucks.apply {
             layoutManager = LinearLayoutManager(context)
@@ -184,7 +196,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         /** Observe live Data*/
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
-            it?.let { _items -> adapter.operation(_items) }})
+            it?.let {
+                _items -> adapter.operation(_items)
+                if(adapter.itemCount>0 && userPrefs.isFirstOpenRate){
+                    userPrefs.isFirstOpenRate = false
+                    bannerValue = true
+                }else{
+                   bannerValue = false
+                }
+            }})
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
@@ -392,6 +412,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             viewModel.availabilityFilter = mutableListOf()
         }
         viewModel.getAllInventories()
+
+        viewModel.fetchDatabaseOffers()
+
+        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
+                adapter.notifyDataSetChanged()
+            }
+        })
 
     }
 
@@ -821,6 +850,62 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
         }
+    }
+
+    override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?, String?>, String?, String?>? {
+        var pres:Triple<Pair<Boolean?, String?>, String?, String?>? = Triple(Pair(false,null), tid, null)
+        if(viewModel.finalOffers.value.isNullOrEmpty()){
+            pres = null
+            userPrefs.trucksOfferCount=0
+        }else{
+            userPrefs.trucksOfferCount=viewModel.finalOffers.value!!.size
+            for(r in viewModel.finalOffers.value!!){
+                if(r.occ.equals(origin_id) == true && r.dcc?.equals(dest_id)== true){
+                    pres = pres?.copy(Pair(true,r.offerId), tid, r.tdn)
+                }
+            }
+        }
+
+        return pres
+    }
+
+    override fun getBannerStatus(): Boolean? {
+        userPrefs.isFirstOpenRate = false
+       return bannerValue
+    }
+
+    override fun callRewards() {
+            navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+    }
+
+    override fun gettotal(): Int {
+       return totalTruck
+    }
+
+    override fun settotal(total: Int) {
+       totalTruck = total
+    }
+
+    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?, offerid: String?) {
+        val bundle = Bundle()
+        bundle.putString("originname", data?.currentCityName)
+        bundle.putString("destname", data?.unloadingDestination)
+        bundle.putString("occ", data?.currentCityCode)
+        bundle.putString("dcc", data?.unloadingDestinationCode)
+        bundle.putString("truckNumber", data?.vehicleNumber)
+        bundle.putString("truckType", data?.truckSize)
+        bundle.putString("truckCapacity", data?.truckCapacity())
+        bundle.putString("itemTD", itemTD)
+        bundle.putString("offerTD", offerTD)
+        bundle.putString("offerid", offerid)
+
+        analyticsUtil.trackEvent(
+                EVENT_CLICKED_OFFER,
+                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "inventory_screen", offerid?:"")
+        )
+
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
     }
 
     /**

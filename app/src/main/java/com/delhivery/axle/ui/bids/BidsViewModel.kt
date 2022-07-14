@@ -3,7 +3,9 @@ package com.delhivery.axle.ui.bids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
@@ -11,6 +13,8 @@ import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -28,16 +32,25 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.Function3
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * View model for [BidsActivity]
  */
 class BidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
-  private val transactionsRepository: TransactionsRepository
+  private val transactionsRepository: TransactionsRepository,
+  private val userRepository: UserRepository,
+  private val loadCycleRepository: LoadCycleRepository,
+  private val appDatabase: AppDatabase
 ) : BaseViewModel(), BulkBidDetailsDialog.BulkBidDetailsDialogInterface {
 
   /* Bids live data */
@@ -57,6 +70,8 @@ class BidsViewModel @Inject constructor(
   var total = 0
   var offset = 0
   var hasMoreData = true
+  var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
+
 
   /* transaction id */
   lateinit var transactionId: String
@@ -81,12 +96,17 @@ class BidsViewModel @Inject constructor(
     dataLoadingLiveData.postValue(true)
 
     var statuses = bidType.status.statusKey
+    var pending = false
     if (bidType == BidType.LostBid) {
        statuses = mutableListOf<String>().apply {
         add(BidType.LostBid.status.statusKey)
         add(TransactionBidStatus.Cancelled.statusKey)
       }
         .joinToString(separator = ",") { it }
+    }
+
+    if (bidType == BidType.ConfirmedBid) {
+      pending= true
     }
 
     compositeDisposable += bidsRepository.userBids(offset, statuses)
@@ -297,5 +317,6 @@ class BidsViewModel @Inject constructor(
       return bulkBidSummaryItemList
   }
 
+  fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
 
 }

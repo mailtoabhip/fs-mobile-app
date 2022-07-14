@@ -50,6 +50,7 @@ data class BaseErrorResponse(
   @SerializedName("message") val errorMessage: String,
   @SerializedName("code") private val _errorCode: Int,
   @SerializedName("data") val data: List<ObjectErrorData>?= null
+
 ) {
   /**
    * Error code as [Integer]
@@ -57,7 +58,8 @@ data class BaseErrorResponse(
   fun errorCode() = _errorCode
 }
 data class ObjectErrorData(
-  @SerializedName("is_duplicate_pan") val isDuplicatePan: Boolean?
+  @SerializedName("is_duplicate_pan") val isDuplicatePan: Boolean?,
+  @SerializedName("account_exists") val accountExists: Boolean?
 )
 
 /**
@@ -65,5 +67,31 @@ data class ObjectErrorData(
  */
 data class ErrorResponseBody(
   @SerializedName("success") val isSuccess: Boolean,
-  @SerializedName("error") val errorBody: BaseErrorResponse
+  @SerializedName("error") val errorBody: BaseErrorResponse,
+  @SerializedName("data") val dataBody: ErrorDataBody
 )
+
+data class ErrorDataBody(
+        @SerializedName("success") val isSuccess: Boolean,
+        @SerializedName("error") val errorBody: String?,
+        @SerializedName("message") val messageBody: String?
+)
+
+data class PaymentErrorResponseBody(
+  @SerializedName("success") val isSuccess: Boolean,
+  @SerializedName("error") val errorBody: PaymentBaseErrorResponse
+)
+
+data class PaymentBaseErrorResponse(
+  @SerializedName("message") val errorMessage: String,
+  @SerializedName("code") private val _code: Int?,
+  @SerializedName("error_code") private val _errorCode: Int?,
+  @SerializedName("data") val data: ObjectErrorData?= null
+
+) {
+  /**
+   * Error code as [Integer]
+   */
+  fun errorCode() = _errorCode
+  fun code() = _code
+}

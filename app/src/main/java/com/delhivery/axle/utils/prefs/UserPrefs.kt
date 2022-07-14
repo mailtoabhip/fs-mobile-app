@@ -239,6 +239,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getInt(PrefKeys.MaxCostPerKM, Integer.MAX_VALUE)
 
+  var bidOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.BidOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.BidOfferCount, Integer.MAX_VALUE)
+
+  var trucksOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.TrucksOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.TrucksOfferCount, Integer.MAX_VALUE)
+
+  var rateOfferCount: Int
+    set(value) = editor.putInt(PrefKeys.RateOfferCount, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.RateOfferCount, Integer.MAX_VALUE)
+
   /**
    * Is logged in user parent or not
    */
@@ -714,6 +729,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getBoolean(PrefKeys.isBankDetailsRejected, false)
 
+  var isFirstOpenRate: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isFirstOpenrate, value)
+            .apply()
+    get() = prefs.getBoolean(PrefKeys.isFirstOpenrate, false)
+
+
   var status: String
     set(value) = editor.putString(PrefKeys.status,value)
       .apply()
@@ -779,7 +800,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 
   fun setPreviousScreen(previousScreen:String){
     userPreviousScreen =previousScreen
-   // Log.i("currentPrevious",userPreviousScreen)
   }
   /**
    * Clear all preferences
@@ -967,7 +987,85 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.orderRank)
         .apply()
+    editor.remove(PrefKeys.isFirstOpenrate)
+            .apply()
+    editor.remove(PrefKeys.businessDocUrl)
+      .apply()
+    editor.remove(PrefKeys.identityDocUrl)
+      .apply()
+    editor.remove(PrefKeys.ninteen4CDocUrl)
+      .apply()
+    editor.remove(PrefKeys.paymentDocUrl)
+      .apply()
     editor.commit()
+  }
+
+  fun clearKycPreferenceDataBasedOnSteps(step:String){
+    if(step=="pan"){
+      editor.remove(PrefKeys.panName)
+        .apply()
+      editor.remove(PrefKeys.Pancard)
+        .apply()
+      editor.remove(PrefKeys.isGstsByPanNotRegistered)
+        .apply()
+      editor.remove(PrefKeys.gstNumber)
+        .apply()
+      editor.remove(PrefKeys.gstAddress)
+        .apply()
+      editor.remove(PrefKeys.aadhaarNumber)
+        .apply()
+      editor.remove(PrefKeys.aadhaarPolicyAccepted)
+        .apply()
+      editor.remove(PrefKeys.businessAddress)
+        .apply()
+      editor.remove(PrefKeys.cinNumber)
+        .apply()
+      editor.remove(PrefKeys.shopNumber)
+        .apply()
+      editor.remove(PrefKeys.udyogNumber)
+        .apply()
+      editor.remove(PrefKeys.identityDocUrl)
+        .apply()
+      editor.remove(PrefKeys.rcNumber)
+        .apply()
+      editor.remove(PrefKeys.attachedTruck)
+        .apply()
+      editor.remove(PrefKeys.ownedTruck)
+        .apply()
+      editor.remove(PrefKeys.rcManualVerificationReq)
+        .apply()
+      editor.remove(PrefKeys.isTruckingDocumentUploaded)
+        .apply()
+      editor.remove(PrefKeys.isSameAsGst)
+        .apply()
+      editor.remove(PrefKeys.isGstNotBypassed)
+        .apply()
+      editor.remove(PrefKeys.paymentAccountName)
+        .apply()
+      editor.remove(PrefKeys.paymentAccountNumber)
+        .apply()
+      editor.remove(PrefKeys.paymentIFSCCode)
+        .apply()
+      editor.remove(PrefKeys.IfscCode)
+        .apply()
+      editor.remove(PrefKeys.businessDocUrl)
+        .apply()
+      editor.remove(PrefKeys.identityDocUrl)
+        .apply()
+      editor.remove(PrefKeys.ninteen4CDocUrl)
+        .apply()
+      editor.remove(PrefKeys.paymentDocUrl)
+        .apply()
+    }else if(step=="gst"){
+      if(isSameAsGst){
+      editor.remove(PrefKeys.gstAddress)
+        .apply()
+      editor.remove(PrefKeys.businessAddress)
+        .apply()
+      editor.remove(PrefKeys.isSameAsGst)
+        .apply()
+      }
+    }
   }
 
   fun saveUser(user: UserModel) {
@@ -1049,6 +1147,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     ninteen4CDocUrl=user.supplierDetails?.sec194DeclarationUrl?:""
     ownedTruck = user.supplierDetails?.numberOfOwnedTrucks?:""
     attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
+    isSameAsGst= user.isAddressSameAsGST?:false
+
     receiveWhatsappNotifications = user.supplierDetails?.receiveWhatsappNotifications?:false
     status = user.supplierDetails?.status?:""
     subStatus = user.supplierDetails?.subStatus?:""
@@ -1173,6 +1273,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val vendorPolicyAccepted= "agreedTermCondition"
     const val aadhaarPolicyAccepted= "aadhaarPolicyAccepted"
     const val isBankDetailsRejected= "is_bank_details_rejected"
+    const val isFirstOpenrate= "is_first_open_rate"
+    const val BidOfferCount= "bid_offer_count"
+    const val TrucksOfferCount= "truck_offer_count"
+    const val RateOfferCount= "rate_offer_count"
+
+
     const val receiveWhatsappNotifications= "receive_whatsapp_notifications"
     const val creationDate= "creation_date"
     const val status= "status"

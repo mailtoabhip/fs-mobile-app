@@ -337,6 +337,11 @@ data class HomeBidsRequestItemData(
   fun truckTypeWithCapacity() = "$truckType/${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
 
   /**
+   * @return truck_type with placed capacity
+   */
+  fun truckCapacity() = "${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
+
+  /**
    * Formatted required at
    */
   fun requiredAt() = DateUtils.daysDiffWithTimeStr(_requiredOn, DatePatterns.OrionDateFormat)
