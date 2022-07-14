@@ -202,8 +202,29 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if (it != null) {
         val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
-        oldAmount= data?.transactionBid?.bidAmount
+        var oldAmountbids=""
+        var bidAmount =""
+        var expectedArrivalPickup=""
+        for(transactionBid in data!!.bulkTransactionBids){
+          if(oldAmountbids.isNullOrEmpty()){
+            oldAmountbids= transactionBid.bidAmount.toString()
+          }else {
+            oldAmountbids = oldAmountbids + ","+transactionBid.bidAmount.toString()
+          }
+        }
         data?.bulkTransactionBids = it.second
+        for(transactionBid in data!!.bulkTransactionBids){
+          if(bidAmount.isNullOrEmpty()){
+            bidAmount=transactionBid.bidAmount.toString()
+          }else {
+            bidAmount = bidAmount +","+ transactionBid.bidAmount.toString()
+          }
+          if(expectedArrivalPickup.isNullOrEmpty()){
+            expectedArrivalPickup=transactionBid.expectedArrivalTimePickupRemark.toString()
+          }else {
+            expectedArrivalPickup = expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+          }
+        }
         adapter.notifyItemChanged(it.first)
         if(!reviseInitiated) {
           analyticsUtil.moEngageTrackEvent(
@@ -213,8 +234,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   PROPERTY_VEHICLE_REPORTING_DATE_TIME
               ),
               mutableListOf(
-                  data?.transactionId ?: "", data?.numBids.toString(), data?.bidAmountValue() ?: "",
-                  data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+                  data?.transactionId ?: "", data?.numBids.toString(), bidAmount ?: "",
+                  expectedArrivalPickup
               )
           )
         }else{
@@ -222,7 +243,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
               EVENT_BID_REVISE_SUBMITTED,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
                   PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
-              mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+              mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmountbids,bidAmount)
           )
           reviseInitiated=false
         }

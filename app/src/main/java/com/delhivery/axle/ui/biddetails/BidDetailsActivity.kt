@@ -153,7 +153,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.userBidsData.observe(this, Observer {
       if (it != null) {
         adapter.operation(it)
-        if (adapter.itemCount <= 1) {
+        if (adapter.itemCount < 1) {
           analyticsUtil.moEngageTrackEvent(
               EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
@@ -595,13 +595,45 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ).apply {
               binding.timerLayout.visibility = View.GONE
               val data = viewModel.transaction as HomeBidsRequestItemData
-              var oldAmount = data?.transactionBid?.bidAmount
+              var oldAmountbids=""
+              var bidAmount =""
+              var expectedArrivalPickup=""
+              data.let {
+                if(!it.bulkTransactionBids.isNullOrEmpty()) {
+                  for (transactionBid in it.bulkTransactionBids) {
+                    if (oldAmountbids.isNullOrEmpty()) {
+                      oldAmountbids = transactionBid.bidAmount.toString()
+                    } else {
+                      oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
+                    }
+                  }
+                }
+              }
+
               if (data.transactionStatus == "cancelled") {
                 btnReviseBidInsider.visibility = View.GONE
                 reduceText.visibility = View.GONE
               }
               data.bulkTransactionBids = state.bids
               bidsRecieved = state.bidsCount
+              data.let {
+                if(!it.bulkTransactionBids.isNullOrEmpty()) {
+                  for (transactionBid in it.bulkTransactionBids) {
+                    if (bidAmount.isNullOrEmpty()) {
+                      bidAmount = transactionBid.bidAmount.toString()
+                    } else {
+                      bidAmount = bidAmount + "," + transactionBid.bidAmount.toString()
+                    }
+                    if (expectedArrivalPickup.isNullOrEmpty()) {
+                      expectedArrivalPickup =
+                        transactionBid.expectedArrivalTimePickupRemark.toString()
+                    } else {
+                      expectedArrivalPickup =
+                        expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+                    }
+                  }
+                }
+              }
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BidDetailsActivity.adapter
@@ -631,8 +663,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       mutableListOf(
                           state.lowestAndUserBidPair.second?.transactionId ?: "",
                           state.bidsCount.toString(),
-                          state.lowestAndUserBidPair.second?.bidAmount.toString(),
-                          state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),
+                          bidAmount,
+                          expectedArrivalPickup,
                           source
                       )
                   )
@@ -646,8 +678,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       mutableListOf(
                           state.lowestAndUserBidPair.second?.transactionId ?: "",
                           state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
-                          oldAmount.toString() ?: "", data?.bidAmountValue()
-                          .toString() ?: ""
+                          oldAmountbids, bidAmount
                       )
                   )
                   reviseInitiated = false

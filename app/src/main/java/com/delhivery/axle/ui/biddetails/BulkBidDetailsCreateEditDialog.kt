@@ -18,7 +18,6 @@ import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
 import com.delhivery.axle.ui.bids.DmtBidSummaryItem
 import com.delhivery.axle.ui.bids.DmtBidsRVAdapter
 import com.delhivery.axle.utils.AnalyticsUtil
-import com.delhivery.axle.utils.EVENT_BID_REVISE_SUBMITTED
 import com.delhivery.axle.utils.PROPERTY_BID_COUNT
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
@@ -239,15 +238,6 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
                                     if (diff != 0 || pmtFlag) {
                                         modifyPayload.add(ModifyVehicleData(bidData.pmtRate, bidData.vehicleCapacity, diff, bidData.vehicleType, "modify", bidData.bidIds, pmtFlag, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
-                                        analyticsUtil.moEngageTrackEvent(
-                                            EVENT_BID_REVISE_SUBMITTED,
-                                            mutableListOf(
-                                                PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                                                PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
-                                            ),
-                                            mutableListOf(transaction.transactionId?:"",transaction.numBids.toString()?:"",transaction.lowestBid.toString(),transaction.bidAmount().toString(),amount.toString())
-                                        )
-
                                     }
                                     dmtBidSummaryItemDataList.remove(i)
                                     match = true
