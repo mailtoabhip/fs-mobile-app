@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -95,6 +96,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     super.onPostCreate(savedInstanceState)
 
     /* start splash animation */
+    userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
+    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
     animate()
     checkForDynamicLinks()
     binding.btnGetStarted.visibility = View.GONE

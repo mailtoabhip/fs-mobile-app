@@ -77,11 +77,13 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if(tab?.position==0){
+                    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
                     userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_LOADS_TAB_CLICK, mutableListOf(
                         PROPERTY_ORDER_COUNT),
                         mutableListOf(userPrefs.loadCount))
                 }else if(tab?.position==1){
+                    userPrefs.currentNavigationTab = HomeTrucksFragment::class.java.name
                     userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
                         PROPERTY_INVENTORY_COUNT),
