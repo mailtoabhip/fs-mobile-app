@@ -27,6 +27,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
@@ -421,6 +422,7 @@ class NavigationUtils @Inject constructor(
             bindingDialog.titleSubText.text = activity.resources.getString(R.string.notify_kyc_verification)
         }
         dialog.show()
+       userPrefs.setPreviousScreen(VendorPolicyActivity::class.java.name)
         Handler().postDelayed({
             dialog.dismiss()
             this.navigate(HomeActivity::class.java, true)
