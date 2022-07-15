@@ -246,7 +246,10 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
         }
 
   }
-
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
+  }
   private fun dispatchTakePictureIntent() {
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
     if (takePictureIntent.resolveActivity(packageManager) != null) {

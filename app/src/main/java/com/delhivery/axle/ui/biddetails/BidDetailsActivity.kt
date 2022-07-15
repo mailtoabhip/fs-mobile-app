@@ -701,6 +701,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
   }
 
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
+  }
+
   /**
    * Create/edit bid dialog
    */

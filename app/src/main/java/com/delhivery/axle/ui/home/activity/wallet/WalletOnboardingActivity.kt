@@ -7,11 +7,15 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityWalletOnboardingBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Handles wallet process onboarding
  */
 class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, WalletOnboardingViewModel>() {
+
+  @Inject lateinit var userPrefs : UserPrefs
 
   override fun getViewModelClass() = WalletOnboardingViewModel::class.java
 
@@ -38,6 +42,11 @@ class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, W
       setResult(Activity.RESULT_OK)
       finish()
     }
+  }
+
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
   }
 }
 

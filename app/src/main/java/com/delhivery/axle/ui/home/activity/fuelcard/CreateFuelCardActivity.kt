@@ -12,6 +12,8 @@ import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 import kotlin.math.min
 
 /**
@@ -19,6 +21,8 @@ import kotlin.math.min
  */
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
 
+  @Inject
+  private lateinit var userPrefs: UserPrefs
   override fun getViewModelClass() = CreateFuelCardViewModel::class.java
 
   override fun layoutId() = R.layout.activity_create_fuel_card
@@ -117,6 +121,11 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
     binding.fetching = true
     viewModel.fetchWalletData()
+  }
+
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
   }
 
   override fun finish() {

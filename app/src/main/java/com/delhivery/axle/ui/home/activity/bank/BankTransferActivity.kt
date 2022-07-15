@@ -14,11 +14,15 @@ import com.delhivery.axle.databinding.ActivityBankTrasnferBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Handles Bank Transfer actions
  */
 class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTransferViewModel>() {
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = BankTransferViewModel::class.java
 
@@ -71,6 +75,11 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
       setResult(Activity.RESULT_OK)
     }
     super.finish()
+  }
+
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
   }
 
   private fun openTransactions() {
