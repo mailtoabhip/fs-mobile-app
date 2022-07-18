@@ -1,5 +1,4 @@
 package com.delhivery.axle.utils
-
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -9,7 +8,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-
 /**
  * Created by saurabh
  * for Delhivery Private Limited
@@ -24,9 +22,7 @@ class AnalyticsUtil @Inject constructor(
   private val activity: DaggerAppCompatActivity,
   private val userPrefs: UserPrefs
 ) {
-
   val TAG = "Firebase events"
-
   private fun getAnalyticsObject(): FirebaseAnalytics? {
     return try {
       FirebaseAnalytics.getInstance(activity.applicationContext)
@@ -34,7 +30,7 @@ class AnalyticsUtil @Inject constructor(
       null
     }
   }
-  
+
   fun trackEvent(
     event: String,
     properties: List<String> = mutableListOf(),
@@ -55,7 +51,6 @@ class AnalyticsUtil @Inject constructor(
     }
   }
 }
-
 const val EVENT_PLACE_BID = "bid_place"
 const val EVENT_ACCEPT_BID = "bid_accept"
 const val EVENT_EDIT_BID = "bid_edit"
@@ -155,7 +150,7 @@ const val EVENT_CLICKED_OFFER = "clicked_offer"
 const val EVENT_VIEW_BIDS_SCREEN_OFFERS = "view_bids_screen_offers"
 const val EVENT_VIEW_SHARE_RATE_OFFERS = "view_share_rate_offers"
 const val EVENT_VIEW_MY_TRUCK_OFFERS = "view_my_truck_offers"
-
+const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
 const val PROPERTY_DESTINATION = "destination"
@@ -207,6 +202,7 @@ const val PROPERTY_NUMBER_OF_OFFERS = "number_of_offers"
 const val PROPERTY_LOAD_SCROLL = "load_scroll"
 const val PROPERTY_TIME_LAPSE = "time_lapse"
 const val PROPERTY_NOTIFICATION_TYPE = "notification_type"
+const val PROPERTY_NOTIFICATION_DETAIL = "notification_detail"
 const val PROPERTY_PAGE_NAME = "page_name"
 const val PROPERTY_OTP_SEND_COUNT = "otp_sent_count"
 const val PROPERTY_HOUR_OF_DAY = "hour_of_day"
@@ -233,8 +229,6 @@ const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
 const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
-
-
 const val VALUE_BID = "bid"
 const val VALUE_TRIP = "trip"
 const val VALUE_LOAD = "load"

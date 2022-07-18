@@ -1,5 +1,4 @@
 package com.delhivery.axle.ui.home.activity.home
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,6 +17,7 @@ import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -33,134 +33,101 @@ import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
 import java.util.*
 import javax.inject.Inject
-
-
 /**
  * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
-    OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
-
+  OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
   override fun getViewModelClass() = HomeViewModel::class.java
-
   override fun layoutId() = R.layout.activity_home
-
   override fun requireConnection() = true
-
   var fragmentType : String ?= ""
-
   var dplink_tid : String = ""
   var dplink_type : String = ""
-
   var fromLink = false
   var fromNotification = false
   var fromDeepLink = false
   var vehicleNum =""
   var count =0
   @Inject lateinit var userPrefs : UserPrefs
-
   /* home fragments pager adapter */
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
   }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
-          .map { it.trim() }
+        .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
-
     //For inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
-
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
-
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
-
     fromLink = false
     fromNotification = false
     fromDeepLink = false
-
     viewModel.getUserDetails()
-
   }
-
   override fun onBackPressed() {
     super.onBackPressed()
   }
-
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it){
         navigationUtils.navigateOnboardingSteps(true)
-
-
-    /* setup toolbar */
-    setSupportActionBar(binding.toolbar)
-    title = "Load Requests"
-
-    if(!userPrefs.userName.isEmpty()) {
-      binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
-    }
-    supportActionBar?.setDisplayShowTitleEnabled(false)
-
-    binding.toolbarTitle.text = title
-
-    /* setup view pager */
-    binding.viewpager.apply {
-      offscreenPageLimit = HomeFragmentType.count()
-      adapter = pagerAdapter
-      /* update ui on page changed */
-      onPageSelected { p ->
-        HomeFragmentType.pos(p)
-            ?.let {
-              uiUtils.toggleKeyboard()
-              this@HomeActivity.title = HomeFragmentType.pos(p)
+        /* setup toolbar */
+        setSupportActionBar(binding.toolbar)
+        title = "Load Requests"
+        if(!userPrefs.userName.isEmpty()) {
+          binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+        }
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.toolbarTitle.text = title
+        /* setup view pager */
+        binding.viewpager.apply {
+          offscreenPageLimit = HomeFragmentType.count()
+          adapter = pagerAdapter
+          /* update ui on page changed */
+          onPageSelected { p ->
+            HomeFragmentType.pos(p)
+              ?.let {
+                uiUtils.toggleKeyboard()
+                this@HomeActivity.title = HomeFragmentType.pos(p)
                   ?.fragment?.title
-              binding.bottomNav.selectedItemId = it.menuId
-              observeFragmentLiveData(p)
-            }
-      }
-      binding.toolbarTitle.text = title
-      FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-    }
-
-    binding.viewpager.disableScroll(true)
-
-    /* set navigation item selection listener */
-    binding.bottomNav.setOnNavigationItemSelectedListener(this)
-
-    /* by default observe first fragment */
-    observeFragmentLiveData()
-
-    if (notificationId.isNotEmpty()) {
-      processNotification()
-    }
-
-    if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
-      fragmentAction(NavigateHomeFragmentAction(PodFragment))
-    }
-
-    binding.profile.setOnClickListener {
-      navigationUtils.navigate(MyProfileActivity::class.java)
-    }
-
-    /**
-     * Process Deep Link */
-    processDeepLink()
+                binding.bottomNav.selectedItemId = it.menuId
+                observeFragmentLiveData(p)
+              }
+          }
+          binding.toolbarTitle.text = title
+          FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
+        }
+        binding.viewpager.disableScroll(true)
+        /* set navigation item selection listener */
+        binding.bottomNav.setOnNavigationItemSelectedListener(this)
+        /* by default observe first fragment */
+        observeFragmentLiveData()
+        if (notificationId.isNotEmpty()) {
+          processNotification()
+        }
+        if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+          fragmentAction(NavigateHomeFragmentAction(PodFragment))
+        }
+        binding.profile.setOnClickListener {
+          navigationUtils.navigate(MyProfileActivity::class.java)
+        }
+        /**
+         * Process Deep Link */
+        processDeepLink()
       }
     })
   }
-
   private fun processDeepLink() {
-
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
       when(dplink_type){
@@ -198,7 +165,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
-
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
           analyticsUtil.trackEvent(
@@ -208,7 +174,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           )
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
-
         ACTIVATE_TRUCK_REDIRECT ->{
           if(dplink_tid != "") {
             fromDeepLink = true
@@ -219,7 +184,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
-
         MY_TRUCKS_REDIRECT -> {
           fromDeepLink = true
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -236,7 +200,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   private fun processNotification() {
     Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
@@ -274,47 +237,59 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         )
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
-
       REDIRECT_TO_LOAD -> {
         startActivity(bidDetailsIntent(preferredTransactionId,this))
       }
-
       ACTIVATE_TRUCK_NOTIFICATION ->{
         fromNotification = true
         vehicleNum = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
-
       REDIRECT_TO_TRUCKS -> {
         fromNotification = true
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
-
       TRUCK_REACHED_NOTIFICATION -> {
         fromNotification = true
         vehicleNum = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
-
+      OFFER_LANE_UPLOADED -> {
+        fromNotification = true
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())
+        val bundle = Bundle()
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+      }
+      OFFER_APPROVED -> {
+        fromNotification = true
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
+      OFFER_REJECTED -> {
+        fromNotification = true
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
     }
   }
-
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_call, menu)
     return true
   }
-
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.nav_call -> {
         //Capture Event
         analyticsUtil.trackEvent(
-                EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
+          EVENT_CALL_VENDOR_DESK,
+          mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
         )
         callHelpline()
         true
@@ -324,48 +299,39 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
-
     //For Inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
-
     /**
      * Get Deep Link Parameters*/
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
-
     fromLink = false
     fromNotification=false
     fromDeepLink=false
     processDeepLink()
-
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
-          .map { it.trim() }
+        .map { it.trim() }
     viewModel.fromNotification = true
     if (notificationId.isNotEmpty()) {
       processNotification()
     }
-
   }
-
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(
-            EVENT_NOTIFICATION_OPEN,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-            mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
+      EVENT_NOTIFICATION_OPEN,
+      mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+      mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
     )
-
     viewModel.markNotificationRead(notificationId)
   }
-
   private fun observeFragmentLiveData(pos: Int = 0) {
     val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
     val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
@@ -377,13 +343,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       elevationLiveData.observe(this, Observer {
         binding.toolbarTitle.text = title
         ViewCompat.setElevation(
-            binding.toolbar,
-            it ?: resources.getDimension(R.dimen.toolbar_elevation)
+          binding.toolbar,
+          it ?: resources.getDimension(R.dimen.toolbar_elevation)
         )
       })
     }
   }
-
   /**
    * Fragment action observer
    */
@@ -397,46 +362,43 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-      .let { pos ->
-        count++
-        when(pos) {
-          1 -> {
-            if (count == 1) {
-              val c = Date()
-              val date = c.toString()
-              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
-              analyticsUtil.trackEvent(
-                  EVENT_VIEW_BIDS_SCREEN_OFFERS,
-                  mutableListOf(
-                      PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-                      PROPERTY_DATE
-                  ),
-                  mutableListOf(
-                      userPrefs.userId(), userPrefs.phoneNumber!!,
-                      userPrefs.bidOfferCount.toString(), date
-                  )
+    .let { pos ->
+      count++
+      when(pos) {
+        1 -> {
+          if (count == 1) {
+            val c = Date()
+            val date = c.toString()
+            Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
+            analyticsUtil.trackEvent(
+              EVENT_VIEW_BIDS_SCREEN_OFFERS,
+              mutableListOf(
+                PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                PROPERTY_DATE
+              ),
+              mutableListOf(
+                userPrefs.userId(), userPrefs.phoneNumber!!,
+                userPrefs.bidOfferCount.toString(), date
               )
-            }
-            if(count>=2){
-              count=0
-            }
+            )
+          }
+          if(count>=2){
+            count=0
           }
         }
-
-          binding.viewpager.apply {
-          uiUtils.toggleKeyboard()
-          if (pos != -1 && currentItem != pos) {
-            this@HomeActivity.title = HomeFragmentType.pos(pos)
-                ?.fragment?.title
-            setCurrentItem(pos, true)
-          }
-          binding.toolbarTitle.text = title
-        }
-        pos != -1
       }
-
+      binding.viewpager.apply {
+        uiUtils.toggleKeyboard()
+        if (pos != -1 && currentItem != pos) {
+          this@HomeActivity.title = HomeFragmentType.pos(pos)
+            ?.fragment?.title
+          setCurrentItem(pos, true)
+        }
+        binding.toolbarTitle.text = title
+      }
+      pos != -1
+    }
   override fun messageClicked(p0: InAppMessage, p1: Action) {
     val url: String? = p1.actionUrl
     val metadata: CampaignMetadata? = p0.campaignMetadata
@@ -448,22 +410,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       mutableListOf(userPrefs.userId())
     )
     startActivity(userTripsIntent(this, "payment_view", 0))
-
   }
-
 }
-
 /**
  * Provides title from all fragments to activity
  */
 interface TitleProvider {
   val title: CharSequence
-
 }
-
 enum class FragmentName(
-        val position: Int,
-        val frgName: String
+  val position: Int,
+  val frgName: String
 ) {
   HomeFragment(0, "home_screen"),
   BidsFragment(1, "bids_screen"),
@@ -471,16 +428,14 @@ enum class FragmentName(
   ProfileFragment(4, "profile_screen"),
   PODFragment(2, "pod_screen"),
   Unknown(-1, "unknown");
-
   companion object {
     /**
      * Get FragmentName
      */
     fun fragmentName(pos: Int) = values().firstOrNull { it.position == pos }
-            ?: Unknown
+      ?: Unknown
   }
 }
-
 private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
 private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
@@ -491,8 +446,9 @@ private const val REDIRECT_TO_LOAD ="redirect_to_load"
 private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
 private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
 private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
-
-
+private const val OFFER_LANE_UPLOADED = "offer_lane_uploaded"
+private const val OFFER_APPROVED = "offer_approved"
+private const val OFFER_REJECTED = "offer_rejected"
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
 private const val TEAM_MEMBERS_REDIRECT = "tmbrs"
 private const val PAYMENT_SUMMARY_REDIRECT = "pmtsmry"
@@ -506,11 +462,8 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
-
-
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"
-
 /**
  * Trip details intent
  */
