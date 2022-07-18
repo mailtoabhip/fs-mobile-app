@@ -22,7 +22,7 @@ import kotlin.math.min
 class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, CreateFuelCardViewModel>() {
 
   @Inject
-  private lateinit var userPrefs: UserPrefs
+  lateinit var userPrefs: UserPrefs
   override fun getViewModelClass() = CreateFuelCardViewModel::class.java
 
   override fun layoutId() = R.layout.activity_create_fuel_card
