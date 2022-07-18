@@ -37,4 +37,6 @@ interface HomeLoadsRVAdapterInterface : ItemClickListener<BaseHomeLoadsRVAdapter
   fun updateCurrSize(size:Int)
 
   fun itemDeleted(cp:Boolean)
+
+
 }

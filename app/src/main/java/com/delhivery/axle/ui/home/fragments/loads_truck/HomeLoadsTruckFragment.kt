@@ -12,9 +12,17 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
+import com.delhivery.axle.utils.EVENT_VIEW_MY_TRUCK_OFFERS
+import com.delhivery.axle.utils.PROPERTY_DATE
+import com.delhivery.axle.utils.PROPERTY_NUMBER_OF_OFFERS
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -27,6 +35,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     var fromDeepLink = false
     override val title: CharSequence
         get() = _title
+    @Inject lateinit var userPrefs: UserPrefs
+
 
     override fun getViewModelClass() = HomeLoadsTruckViewModel::class.java
 
@@ -51,6 +61,29 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             adapter = pagerAdapter
             }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+              if(tab?.position==1){
+                    val c = Date()
+                    val date = c.toString()
+                    analyticsUtil.trackEvent(
+                        EVENT_VIEW_MY_TRUCK_OFFERS,
+                        mutableListOf(
+                            PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                            PROPERTY_DATE
+                        ),
+                        mutableListOf(userPrefs.userId() , userPrefs.phoneNumber!!, userPrefs.bidOfferCount.toString(),date)
+                    )
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
+
 
         binding.tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_loads_home)
         binding.tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_my_truck)

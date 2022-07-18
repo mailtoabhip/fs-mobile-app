@@ -311,4 +311,17 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.LoadboardService).create(
           LoadBoardService::class.java
   )
+
+  /**
+   * Provide [PriceService]
+   */
+
+  @Provides
+  @Singleton
+  fun providePriceService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.PriceService).create(
+          PriceService::class.java
+  )
 }

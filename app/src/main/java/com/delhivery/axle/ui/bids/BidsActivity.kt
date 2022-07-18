@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
@@ -21,6 +22,7 @@ import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -80,6 +82,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
+
+    viewModel.fetchDatabaseOffers()
+
+    viewModel.fetchDatabaseOffers().observe(this, Observer {
+      if (!it.isNullOrEmpty()) {
+        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
+        adapter.notifyDataSetChanged()
+      }
+    })
 
     /* setup recycler view */
     binding.rvBids.apply {
@@ -179,6 +190,43 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       HomeBidsTimeOutAction ->
         refreshData()
     }
+  }
+
+  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? {
+    var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
+    if(viewModel.finalOffers.value.isNullOrEmpty()){
+      pres = null
+    }else{
+      for(r in viewModel.finalOffers.value!!){
+        if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
+          pres = pres?.copy(Pair(true, r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
+        }
+      }
+    }
+
+    return pres
+  }
+
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?) {
+    val bundle = Bundle()
+    bundle.putString("originname", data?.origin)
+    bundle.putString("destname", data?.destination)
+    bundle.putString("occ", occ)
+    bundle.putString("dcc", dcc)
+    bundle.putString("truckNumber", data?.transactionBid?.vehicleNumber)
+    bundle.putString("truckType", data?.truckSpecification?.truckDispName)
+    bundle.putString("truckCapacity", data?.truckCapacity())
+    bundle.putString("itemTD", itemTD)
+    bundle.putString("offerTD", offerTD)
+    bundle.putString("offerid", offerid)
+
+    analyticsUtil.trackEvent(
+            EVENT_CLICKED_OFFER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")
+    )
+
+    navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
   }
 
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {

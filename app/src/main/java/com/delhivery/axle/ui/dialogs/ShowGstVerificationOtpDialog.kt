@@ -21,6 +21,7 @@ import com.delhivery.axle.utils.DialogUtilsInterface
 import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.safeDispose
+import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.text.DecimalFormat
@@ -36,7 +37,9 @@ class ShowGstVerificationOtpDialog @Inject constructor(
         private val dialogUtils: DialogUtils,
         private val uploadText: String,
         private val viewModel: GstVerificationViewModel,
-        private val gstVerificationActivity: GstVerificationActivity
+        private val gstVerificationActivity: GstVerificationActivity,
+        private val userPrefs: UserPrefs,
+        private val currSelectedGst:String
 
 ) : Dialog(context),DelhiveryOTPViewInterface {
 
@@ -74,7 +77,11 @@ class ShowGstVerificationOtpDialog @Inject constructor(
                 uiUtils.hideProgress()
                 timeoutDisposable.safeDispose()
                 this.dismiss()
-                viewModel.updateUserDetails()
+                if(userPrefs.gstNumber.equals(currSelectedGst, ignoreCase = true) || userPrefs.gstNumber.isEmpty()){
+                    viewModel.updateUserDetails()
+                }else{
+                    viewModel.resetKycDetails(userPrefs.retryVerification)
+                }
             }else{
                 uiUtils.hideProgress()
                 binding.gstotpError.visibility =  View.VISIBLE

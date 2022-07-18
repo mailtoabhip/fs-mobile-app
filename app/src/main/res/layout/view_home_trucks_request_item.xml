@@ -11,180 +11,368 @@
             type="com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_2dp"
-        android:layout_marginEnd="@dimen/size_2dp"
-        android:layout_marginBottom="@dimen/size_12dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        app:cardElevation="@dimen/size_2dp"
-        app:cardCornerRadius="@dimen/size_6dp">
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:background="@color/colorBackground"
+        android:layout_height="wrap_content">
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size_14dp">
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/truck_image"
-                android:layout_width="wrap_content"
+            android:layout_marginStart="@dimen/size_10dp"
+            android:layout_marginEnd="@dimen/size_10dp"
+            android:layout_marginBottom="@dimen/size_12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:cardElevation="@dimen/size_2dp"
+            app:cardCornerRadius="@dimen/size_6dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:padding="@dimen/size_4dp"
-                android:background="@drawable/background_rectangle_border_curved"
-                app:srcCompat="@{request.truckImage()}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/truck_image"
-                android:layout_marginStart="@dimen/size_8dp"
                 android:orientation="vertical">
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/lay1"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/truck_Number_text"
+                    android:padding="@dimen/size_14dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/truck_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{request.truckNumber()}"
-                        tools:text="MHb 67 HJ 3422"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"/>
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/truck_availability_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:padding="@dimen/size_4dp"
+                        android:background="@drawable/background_rectangle_border_curved"
+                        app:srcCompat="@{request.truckImage()}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                    <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{request.statusText()}"
-                        tools:text="Available"
-                        bind:textColor="@{ ContextCompat.getColor(context, request.statusColor()) }"
-                        android:textStyle="bold"
-                        android:layout_marginStart="@dimen/size_6dp"/>
-                </androidx.appcompat.widget.LinearLayoutCompat>
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/truck_image"
+                        android:layout_marginStart="@dimen/size_8dp"
+                        android:orientation="vertical">
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/truck_Number_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{request.truckNumber()}"
+                                tools:text="MHb 67 HJ 3422"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"/>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/truck_availability_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{request.statusText()}"
+                                tools:text="Available"
+                                bind:textColor="@{ ContextCompat.getColor(context, request.statusColor()) }"
+                                android:textStyle="bold"
+                                android:layout_marginStart="@dimen/size_6dp"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/truck_ownership_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{request.ownership()}"
+                                tools:text="Market Truck"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/transparent_grey"
+                                />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/text_capacity_truck"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{request.truckSizeAndCap()}"
+                                tools:text="32FTMXL (18MT)"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/transparent_grey"
+                                android:layout_marginStart="@dimen/size_6dp"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/action_options"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_options"
+                        android:layout_marginEnd="@dimen/size_11dp"
+                        android:padding="@dimen/size_14dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:layout_below="@+id/lay1"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:id="@+id/sep1"
+                    android:src="@drawable/seperator_line" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:orientation="horizontal">
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/truck_ownership_text"
+                    android:layout_below="@+id/sep1"
+                    android:id="@+id/lay2"
+                    android:visibility="@{request.locationVisibility()}"
+                    android:padding="@dimen/size_14dp">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{request.ownership()}"
-                        tools:text="Market Truck"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_current_locations"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_current_locations"
+                            android:textColor="@color/transparent_grey" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_current_locations"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:text="@{request.originCity()}"
+                            tools:text="Chennai, TamilNadu" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginEnd="@dimen/size_14dp"
+                        android:orientation="vertical">
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/label_unloading_loc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_unloading_locations"
+                            android:textColor="@color/transparent_grey"/>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_unloading_loc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Delhi, Mumbai, +5 more"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:text="@{request.destinationCity()}"
+                            android:textColor="@color/black"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/btn_activate_truck"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_36dp"
+                    android:layout_margin="@dimen/size_14dp"
+                    android:layout_below="@+id/lay2"
+                    android:textAllCaps="false"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:visibility="@{request.statusVisibilty()}"
+                    android:background="@drawable/bg_all_round_corner_white_boundary"
+                    android:text="@string/action_activate_truck"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/shareRateLay"
+                    android:paddingBottom="@dimen/size_12dp"
+                    android:layout_below="@+id/btn_activate_truck"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:id="@+id/div1"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:src="@drawable/seperator_line" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/label1"
+                        android:layout_below="@+id/div1"
+                        tools:text="Already placed this truck?\nShare past trip rates and earn reward"
+                        android:layout_marginStart="@dimen/size_16dp"
+                        android:layout_marginTop="@dimen/size_12dp"
                         android:textSize="@dimen/text_12sp"
+                        android:text="@string/label_rate_share"
                         android:textColor="@color/transparent_grey"
                         />
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_capacity_truck"
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_share_rate"
                         android:layout_width="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_height="@dimen/size_36dp"
+                        android:textAllCaps="false"
+                        android:layout_marginEnd="@dimen/size_16dp"
+                        android:textColor="@color/heading_black"
+                        android:paddingEnd="@dimen/size_8dp"
+                        android:paddingStart="@dimen/size_8dp"
+                        android:layout_below="@+id/div1"
+                        android:layout_marginTop="@dimen/size_12dp"
+                        android:background="@drawable/bg_all_round_corner_white_boundary"
+                        android:text="@string/action_share_rate"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/rateMore"
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/size_36dp"
+                    android:layout_marginEnd="@dimen/size_18dp"
+                    android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{request.truckSizeAndCap()}"
-                        tools:text="32FTMXL (18MT)"
-                        android:textSize="@dimen/text_12sp"
-                        android:textColor="@color/transparent_grey"
-                        android:layout_marginStart="@dimen/size_6dp"/>
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                        android:background="@drawable/bg_blue_light"
+                        android:clickable="true"
+                        android:id="@+id/mainLay"
+                        android:focusable="true">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:padding="@dimen/size_16dp"
+                            android:layout_height="wrap_content">
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="54dp"
+                                android:id="@+id/img"
+                                bind:srcCompat="@drawable/ic_frame_rate"
+                                android:layout_height="54dp"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/action_options"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_options"
-                android:layout_marginEnd="@dimen/size_11dp"
-                android:padding="@dimen/size_14dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/img"
+                                android:id="@+id/lb1"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_16sp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:text="@string/label_rate1"
+                                android:layout_height="wrap_content"/>
 
-        <androidx.appcompat.widget.AppCompatImageView
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/lb1"
+                                android:id="@+id/lb2"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_12sp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:text="@string/label_rate2"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:padding="8dp"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:text="@string/action_learn"
+                                android:id="@+id/shareRate"
+                                android:layout_below="@+id/lb2"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/colorAccent"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:layout_alignParentEnd="true"
+                                android:background="@drawable/bg_rounded_blue"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:padding="8dp"
+                                android:layout_toStartOf="@+id/shareRate"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:text="@string/action_got"
+                                android:id="@+id/gotit"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/white"
+                                android:layout_below="@+id/lb2"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:layout_height="wrap_content"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_below="@id/mainLay"
+                        android:layout_marginEnd="@dimen/size_48dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="-2dp"
+                        bind:srcCompat="@drawable/ic_polygon"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:src="@drawable/seperator_line" />
+            android:id="@+id/rate_banner"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+              <RelativeLayout
+                android:layout_width="match_parent"
+                android:padding="@dimen/size_16dp"
+                android:background="#F0F9FF"
+                android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="@{request.locationVisibility()}"
-            android:padding="@dimen/size_14dp">
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_current_locations"
+                <TextView
+                    android:textSize="@dimen/text_16sp"
+                    android:id="@+id/tv1"
+                    android:textColor="@color/heading_black"
+                    android:text="@string/label_rate_banner"
+                    android:layout_toStartOf="@+id/ialert"
+                    android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_current_locations"
-                    android:textColor="@color/transparent_grey" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_current_locations"
+                    android:layout_height="wrap_content"/>
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
+                    android:layout_below="@+id/tv1"
+                    android:layout_toStartOf="@+id/ialert"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/faded_black"
+                    android:textSize="@dimen/text_12sp"
+                    android:id="@+id/tv2"
                     android:layout_marginTop="@dimen/size_4dp"
-                    android:text="@{request.originCity()}"
-                    tools:text="Chennai, TamilNadu" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="@dimen/size_14dp"
-                android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/label_unloading_loc"
+                    android:text="@string/label_rate_banner_details"
+                    android:layout_height="wrap_content"/>
+                <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_unloading_locations"
-                    android:textColor="@color/transparent_grey"/>
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_unloading_loc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="Delhi, Mumbai, +5 more"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:text="@{request.destinationCity()}"
-                    android:textColor="@color/black"/>
+                    app:srcCompat="@drawable/ic_ratebanner_icon"
+                    android:id="@+id/ialert"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content"/>
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_activate_truck"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_36dp"
-            android:layout_margin="@dimen/size_14dp"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:visibility="@{request.statusVisibilty()}"
-            android:background="@drawable/bg_all_round_corner_white_boundary"
-            android:text="@string/action_activate_truck"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
 
 </layout>

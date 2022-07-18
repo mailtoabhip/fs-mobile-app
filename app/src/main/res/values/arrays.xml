@@ -14,4 +14,11 @@
         <item>Between 4-12 hours</item>
         <item>Tomorrow</item>
     </string-array>
+
+    <string-array name="array_rate_proof">
+        <item>Select proof type</item>
+        <item>LR/Bilty</item>
+        <item>Loading Advice/Memo</item>
+        <item>POD</item>
+    </string-array>
 </resources>

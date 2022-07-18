@@ -3,7 +3,10 @@ package com.delhivery.axle.injection.module
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.delhivery.axle.SyncOfferData.MyWorker
+import com.delhivery.axle.injection.module.DaggerWorkerFactory.ChildWorkerFactory
 import com.delhivery.axle.injection.scope.ViewModelScope
+import com.delhivery.axle.injection.scope.WorkerKey
 import com.delhivery.axle.ui.accountaction.AccountActionViewModel
 import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
@@ -44,6 +47,9 @@ import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.KYCDocumentsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewModel
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFragmentViewModel
+import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
@@ -57,6 +63,7 @@ import com.delhivery.axle.ui.selectroute.fragments.detail.SelectRouteDetailViewM
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel
 import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListViewModel
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel
+import com.delhivery.axle.ui.sharerate.ShareRateViewModel
 import com.delhivery.axle.ui.splash.SplashViewModel
 import com.delhivery.axle.ui.team.TeamMembersViewModel
 import com.delhivery.axle.ui.tripdetails.ImageViewModel
@@ -379,7 +386,32 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(ManageRouteViewModel::class)
   abstract fun bindManageRouteViewModel(viewModel:ManageRouteViewModel): ViewModel
 
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateGetRewardsViewModel::class)
+  abstract fun bindShareRateGetRewardsViewModel(viewModel: ShareRateGetRewardsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateFragmentViewModel::class)
+  abstract fun bindShareRateFragmentViewModel(viewModel: ShareRateFragmentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(YourRewardsFragmentViewModel::class)
+  abstract fun bindYourRewardsFragmentViewModel(viewModel: YourRewardsFragmentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(ShareRateViewModel::class)
+  abstract fun bindShareRateViewModel(viewModel: ShareRateViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+
+  @Binds
+  @IntoMap
+  @WorkerKey(MyWorker::class)
+  abstract fun bindTopArtistsUpdateWorker(factory: MyWorker.Factory):
+          ChildWorkerFactory
 }

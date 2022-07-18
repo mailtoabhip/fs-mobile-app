@@ -6,6 +6,10 @@ import dagger.android.support.DaggerApplication
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.work.Configuration
+import androidx.work.WorkManager
+import com.delhivery.axle.injection.module.DaggerWorkerFactory
+import javax.inject.Inject
 
 /**
  * Kotlin Application, with application injector
@@ -14,10 +18,19 @@ class KotlinApp : DaggerApplication() {
   override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
     DaggerAppComponent.builder().create(this)
 
+  @Inject
+  lateinit var workerFactory: DaggerWorkerFactory
+
 
   override fun onCreate() {
     super.onCreate()
     createNotificationChannel()
+    WorkManager.initialize(
+            this,
+            Configuration.Builder()
+                    .setWorkerFactory(workerFactory)
+                    .build()
+    )
   }
 
   private fun createNotificationChannel() {
