@@ -157,7 +157,7 @@ class HomeLoadsViewModel @Inject constructor(
                     total = _res.total
                         offset = _res.offset
                         total = _res.total
-                        hasMoreData = _res.offset != _res.total
+                        hasMoreData = _res.offset< _res.total
                         loadPricePercent = _res.loadPricePercent
                         more_default_loads = _res.more_loads
                         loadsCountLiveData.postValue(total)
@@ -231,13 +231,16 @@ class HomeLoadsViewModel @Inject constructor(
                         }
 
                     } else {
-                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                            /* remove progress item */
-                            add(Pair(HomeLoadsProgressItem(), Remove))
-                            /* add api time out item */
-                            add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
-                        }
-                                .let { userLoadsData.postValue(it) }
+//                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+//                            /* remove progress item */
+//                            add(Pair(HomeLoadsProgressItem(), Remove))
+//                            /* add api time out item */
+//                            add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
+//                        }
+//                                .let { userLoadsData.postValue(it) }
+                        hasMoreData=false
+                        fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
+
                     }
 
                     dataLoadingLiveData.postValue(false)
@@ -253,7 +256,7 @@ class HomeLoadsViewModel @Inject constructor(
     isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
       offset = 0
-    } else if (paginate && !hasMoreData) {
+    } else if (paginate && hasMoreData) {
       return
     }
 
