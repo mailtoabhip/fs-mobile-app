@@ -85,8 +85,7 @@ class BidDetailsViewModel @Inject constructor(
           if (!error) {
             transaction = _tRes
             transactionLiveData.postValue(_tRes)
-            /*bidCount=transaction.numBids
-            lowestBid=transaction.lowestBid*/
+
             fetchTransactionBids()
           } else {
             transactionLiveData.postValue(null)
@@ -117,6 +116,8 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _bRes, error ->
           if (!error) {
+            bidCount=_bRes.third
+            lowestBid=_bRes.first.second?.bidAmount
             //determine bid state and post to live data
             when {
               _bRes.third == 0 -> {

@@ -206,16 +206,19 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         var oldAmountbids=""
         var bidAmount =""
         var expectedArrivalPickup=""
-        if(!data?.bulkTransactionBids==null){
-        for(transactionBid in data!!.bulkTransactionBids){
-          if(oldAmountbids.isNullOrEmpty()){
-            oldAmountbids= transactionBid.bidAmount.toString()
-          }else {
-            oldAmountbids = oldAmountbids + ","+transactionBid.bidAmount.toString()
+        if(data!=null) {
+          if(data.bulkTransactionBids.size>0) {
+            for (transactionBid in data!!.bulkTransactionBids) {
+              if (oldAmountbids.isNullOrEmpty()) {
+                oldAmountbids = transactionBid.bidAmount.toString()
+              } else {
+                oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
+              }
+            }
           }
         }
-        }
         data?.bulkTransactionBids = it.second
+
         for(transactionBid in data!!.bulkTransactionBids){
           if(bidAmount.isNullOrEmpty()){
             bidAmount=transactionBid.bidAmount.toString()
