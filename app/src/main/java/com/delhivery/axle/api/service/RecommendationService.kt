@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.FuelPayoutResponse
+import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TransactionsResponse
@@ -18,11 +19,12 @@ interface RecommendationService {
     /**
      * Recommendation transactions
      */
-    @GET("/get_sp_loads")
+    @POST("/get_sp_loads")
     fun recommendationTransactions(
-            @Query("sp_id") userId: String,
-            @Query("offset") offset: Int,
-            @Query("limit") limit: Int
+      @Body request: ReccomdationRequest
+//            @Query("sp_id") userId: String,
+//            @Query("offset") offset: Int,
+//            @Query("limit") limit: Int
 //            @Query("demand_types") vendorType: String ? = "orion",
 //            @Query("truck_types") vehicleType: String? = null,
 //            @Query("valid_loads_only") validLoads: String = "yes",

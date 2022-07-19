@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
@@ -152,12 +153,12 @@ class HomeLoadsViewModel @Inject constructor(
 
         dataLoadingLiveData.postValue(true)
 
-        compositeDisposable += transactionsRepository.fetchRecommTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+        compositeDisposable += transactionsRepository.fetchRecommTransactions(0, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
                 .flatMap  { _res ->
                     total = _res.total
                         offset = _res.offset
                         total = _res.total
-                        hasMoreData = _res.offset< _res.total
+                        hasMoreData = _res.offset<_res.total
                         loadPricePercent = _res.loadPricePercent
                         more_default_loads = _res.more_loads
                         loadsCountLiveData.postValue(total)
@@ -225,10 +226,11 @@ class HomeLoadsViewModel @Inject constructor(
                             }
                         }
                                 .let { userLoadsData.postValue(it) }
-
+                      Handler().postDelayed({
                         if(!hasMoreData){
-                            fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
-                        }
+                          fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
+                        } }, 500)
+
 
                     } else {
 //                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -238,7 +240,6 @@ class HomeLoadsViewModel @Inject constructor(
 //                            add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
 //                        }
 //                                .let { userLoadsData.postValue(it) }
-                        hasMoreData=false
                         fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
 
                     }
@@ -256,7 +257,7 @@ class HomeLoadsViewModel @Inject constructor(
     isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
       offset = 0
-    } else if (paginate && hasMoreData) {
+    } else if (paginate && !hasMoreData) {
       return
     }
 

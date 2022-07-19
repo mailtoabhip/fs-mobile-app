@@ -205,7 +205,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                     mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
                     mutableListOf(userPrefs.phoneNumber.toString(), dplink_tid)
             )
-            startActivity(tripDetailsIntent(dplink_tid, this))
+            startActivity(bidDetailsIntent(dplink_tid, this))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -293,7 +293,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                 mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
                 mutableListOf(userPrefs.phoneNumber.toString(), preferredTransactionId)
         )
-        startActivity(tripDetailsIntent(preferredTransactionId, this))
+        startActivity(bidDetailsIntent(preferredTransactionId, this))
       }
 
       REDIRECT_TO_LOAD -> {

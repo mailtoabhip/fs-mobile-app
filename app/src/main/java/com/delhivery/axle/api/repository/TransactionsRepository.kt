@@ -3,6 +3,7 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
@@ -34,7 +35,7 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
          recommendationService.recommendationTransactions(
-                  userRepository.userId(), offset, UserTripsLoadLimit
+                  ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset)
 //             demand_type, vehicle_type,
 //                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
           ).convertResponse()

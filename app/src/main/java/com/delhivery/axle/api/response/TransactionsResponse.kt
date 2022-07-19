@@ -37,3 +37,4 @@ data class MonthlyEarning(
 
   fun sum() = "₹ ${StringUtils.formatAmount(sum)}"
 }
+
