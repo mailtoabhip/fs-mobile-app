@@ -239,27 +239,45 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     showUploadImage()
                 }
                 Log.d("udyog",userPrefs.udyogNumber)
-                if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
-                    binding.textProof.visibility = View.GONE
-                    binding.docLayout.visibility = View.GONE
-                    docUploadProof= true
-                }else{
-                    binding.textProof.visibility = View.VISIBLE
-                    binding.docLayout.visibility = View.VISIBLE
-                        docUploadProof = false
-                }
-                if((userPrefs.businessDocType.equals("rc") && p==7) || (userPrefs.businessDocType.equals("lr")&& p==2)){
-                    binding.textProof.visibility = View.GONE
-                    binding.docLayout.visibility = View.GONE
-                    docUploadProof= true
-                }else{
-                    binding.textProof.visibility = View.VISIBLE
-                    binding.docLayout.visibility = View.VISIBLE
-                        dataSetFromPref=false
+                if(!dataSetFromPref) {
+                    if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+                        if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
+                            binding.textProof.visibility = View.GONE
+                            binding.docLayout.visibility = View.GONE
+                            docUploadProof = true
+                        } else {
+                            binding.textProof.visibility = View.VISIBLE
+                            binding.docLayout.visibility = View.VISIBLE
+                            docUploadProof = false
+                        }
+                    } else {
+                        if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
+                            binding.textProof.visibility = View.GONE
+                            binding.docLayout.visibility = View.GONE
+                            docUploadProof = true
+                        } else {
+                            binding.textProof.visibility = View.VISIBLE
+                            binding.docLayout.visibility = View.VISIBLE
+                            docUploadProof = false
+                        }
+                        if ((userPrefs.businessDocType.equals(
+                                "rc"
+                            ) && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+                        ) {
+                            binding.textProof.visibility = View.GONE
+                            binding.docLayout.visibility = View.GONE
+                            docUploadProof = true
+                        } else {
+                            binding.textProof.visibility = View.VISIBLE
+                            binding.docLayout.visibility = View.VISIBLE
+                            docUploadProof = false
 
+                        }
+                    }
+                    enableSubmitButton()
+                }else{
+                    dataSetFromPref=false
                 }
-
-                enableSubmitButton()
             }else{
                 proofTypeFilled =false
                 enableSubmitButton()
@@ -353,76 +371,106 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     }
 
-    private fun fillDataFromBusinessAddress(addressData: AddAddressModel){
-        var docArray:ArrayList<Pair<String, String>> = ArrayList()
-        var docPath =""
-        if(!addressData.documentUrls.isNullOrEmpty()){
-            docPath= addressData.documentUrls?.get(0)!!
+    private fun fillDataFromBusinessAddress(addressData: AddAddressModel) {
+        var docArray: ArrayList<Pair<String, String>> = ArrayList()
+        var docPath = ""
+        if (!addressData.documentUrls.isNullOrEmpty()) {
+            docPath = addressData.documentUrls?.get(0)!!
         }
-        var docproofRec=""
-        var addressRec =  addressData.address
-        var flatRec = addressRec?.split(",")?.get(0)
+        var docproofRec = ""
+        var addressRec = addressData.address
+        var flatRec = addressRec?.split(",")
+            ?.get(0)
         //binding.editFlat.setText(flatRec)
         viewModel.flatAddress = flatRec!!
-        flatFilled=true
-        var areaRec = addressRec?.split(",")?.get(1)
-      //  binding.editArea.setText(areaRec)
+        flatFilled = true
+        var areaRec = addressRec?.split(",")
+            ?.get(1)
+        //  binding.editArea.setText(areaRec)
         viewModel.areaAddress.value = areaRec!!
-        areaFilled=true
-        var citynPinRec = addressRec?.split(",")?.get(2)
-        var cityRec =citynPinRec?.split("-")?.get(0)
-      //  binding.autoCompleteCity.setText(cityRec)
+        areaFilled = true
+        var citynPinRec = addressRec?.split(",")
+            ?.get(2)
+        var cityRec = citynPinRec?.split("-")
+            ?.get(0)
+        //  binding.autoCompleteCity.setText(cityRec)
         viewModel.cityAddress = cityRec!!
-        cityFilled=true
-        var pincodeRec = citynPinRec?.split("-")?.get(1)
-        pincodeFilled=true
+        cityFilled = true
+        var pincodeRec = citynPinRec?.split("-")
+            ?.get(1)
+        pincodeFilled = true
         viewModel.pincodeAddress = pincodeRec!!
-        if(docPath.isNullOrEmpty()){
+        if (docPath.isNullOrEmpty()) {
             resetUploadData()
             showUploadImage()
-          //  binding.uploadDocLay.visibility= View.VISIBLE
-           // binding.uploadedDocLay.visibility= View.GONE
-            docUploadProof=false
+            //  binding.uploadDocLay.visibility= View.VISIBLE
+            // binding.uploadedDocLay.visibility= View.GONE
+            docUploadProof = false
 
-        }else{
-            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-            if(addressData.documentUrls!=null)
-            viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
-            binding.uploadDocLay.visibility= View.GONE
+        } else {
+            docArray.add(
+                Pair(
+                    docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                    ?.div(1024)).toString()
+                )
+            )
+            if (addressData.documentUrls != null)
+                viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
+            binding.uploadDocLay.visibility = View.GONE
             binding.docUploadedLay.visibility = View.VISIBLE
             binding.docTitle.setText(docArray.get(0).first)
-            docUploadProof=true
-            dataSetFromPref=true
+            docUploadProof = true
+            dataSetFromPref = true
+            enableSubmitButton()
         }
 
         proofTypeFilled = true
-        var spinnerIndex=0
-        if(addressData.proofDocumentType!=null) {
-            spinnerIndex = when {
-                addressData.proofDocumentType!!.startsWith("V", true) -> 1
-                addressData.proofDocumentType!!.startsWith("lr", true) -> 2
-                addressData.proofDocumentType!!.startsWith("le", true) -> 3
-                addressData.proofDocumentType!!.startsWith("ud", true) -> 4
-                addressData.proofDocumentType!!.startsWith("sh", true) -> 5
-                addressData.proofDocumentType!!.startsWith("dr", true) -> 6
-                addressData.proofDocumentType!!.startsWith("rc", true) -> 7
-                else -> 0
+        var spinnerIndex = 0
+        if (addressData.proofDocumentType != null) {
+            if(userPrefs.aadhaarNumber.isNullOrEmpty()) {
+                spinnerIndex = when {
+                    addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                    addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                    addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                    addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                    addressData.proofDocumentType!!.startsWith("dr", true) -> 5
+                    addressData.proofDocumentType!!.startsWith("rc", true) -> 6
+                    else -> 0
+                }
+            }else{
+                spinnerIndex = when {
+                    addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                    addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                    addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                    addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                    addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                    else -> 0
+                }
             }
+            proofTypeFilled=true
+            enableSubmitButton()
         }
 
-        binding.spinnerProof.post(Runnable { binding.spinnerProof.setSelection(spinnerIndex)
-            docproofRec=binding.spinnerProof.selectedItem.toString()
-
+        binding.spinnerProof.post(Runnable {
+            binding.spinnerProof.setSelection(spinnerIndex)
+            docproofRec = binding.spinnerProof.selectedItem.toString()
         })
-
-        binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
+        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+            binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+                if (p > 0) {
+                    proofTypeFilled = true
+                }
             }
+            enableSubmitButton()
+        } else {
+            binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
+                if (p > 0) {
+                    proofTypeFilled = true
+                }
+            }
+            enableSubmitButton()
         }
-        enableSubmitButton()
     }
-
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
