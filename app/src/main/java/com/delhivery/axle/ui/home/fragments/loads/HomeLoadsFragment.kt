@@ -44,6 +44,7 @@ import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -205,12 +206,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         var oldAmountbids=""
         var bidAmount =""
         var expectedArrivalPickup=""
+        if(!data?.bulkTransactionBids==null){
         for(transactionBid in data!!.bulkTransactionBids){
           if(oldAmountbids.isNullOrEmpty()){
             oldAmountbids= transactionBid.bidAmount.toString()
           }else {
             oldAmountbids = oldAmountbids + ","+transactionBid.bidAmount.toString()
           }
+        }
         }
         data?.bulkTransactionBids = it.second
         for(transactionBid in data!!.bulkTransactionBids){
@@ -347,7 +350,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           reviseInitiated=true
         }else{
           analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_RESULT_BID_INITIATE,
+            EVENT_LOADFEED_BID_INITIATE,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
             mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST).toString(),viewModel.total.toString())
           )

@@ -46,6 +46,7 @@ class SearchResultsViewModel @Inject constructor(
     var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
     var loadPricePercent = 0
     var total =0
+    var bidsCount =0
   /**
    * Search load api
    */
@@ -74,6 +75,7 @@ class SearchResultsViewModel @Inject constructor(
             val loads = _tRes.first
             val bids = _tRes.second
             total=loads.size
+            bidsCount = bids.size
             for (load in loads.toMutableList()) {
               try {
                 val lowestBid = _tRes.third.filter { b ->

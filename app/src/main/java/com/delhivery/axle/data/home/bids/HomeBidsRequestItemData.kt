@@ -35,7 +35,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_state") val originState: String,
   @SerializedName("required_on") val _requiredOn: String,
   @SerializedName("target_price") val targetPrice: Double,
-  @SerializedName("uuid") private val uuid: String?,
+  @SerializedName("uuid") val uuid: String?,
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
