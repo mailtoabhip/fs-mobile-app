@@ -17,6 +17,9 @@ import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
+import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
+import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
@@ -112,6 +115,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         binding.bottomNav.setOnNavigationItemSelectedListener(this)
         /* by default observe first fragment */
         observeFragmentLiveData()
+
         if (notificationId.isNotEmpty()) {
           processNotification()
         }
@@ -203,6 +207,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
+    notificationType = OFFER_APPROVED
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -256,22 +261,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       OFFER_LANE_UPLOADED -> {
         fromNotification = true
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())
+       /* analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())*/
         val bundle = Bundle()
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       OFFER_APPROVED -> {
         fromNotification = true
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
-        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        val bundle = Bundle()
+        bundle.putString("navigate", OFFER_APPROVED)
+      /*  analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))*/
+        navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
       }
       OFFER_REJECTED -> {
         fromNotification = true
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())
-        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        val bundle = Bundle()
+        bundle.putString("navigate", OFFER_REJECTED)
+     /*   analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())*/
+        navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
