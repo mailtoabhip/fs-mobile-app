@@ -85,7 +85,6 @@ class BidDetailsViewModel @Inject constructor(
           if (!error) {
             transaction = _tRes
             transactionLiveData.postValue(_tRes)
-
             fetchTransactionBids()
           } else {
             transactionLiveData.postValue(null)
