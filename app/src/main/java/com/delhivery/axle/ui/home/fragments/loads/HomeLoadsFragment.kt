@@ -207,7 +207,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         var bidAmount =""
         var expectedArrivalPickup=""
         if(data!=null) {
-          if(data.bulkTransactionBids.size>0) {
+          if(data.bulkTransactionBids.isNotEmpty()) {
             for (transactionBid in data!!.bulkTransactionBids) {
               if (oldAmountbids.isNullOrEmpty()) {
                 oldAmountbids = transactionBid.bidAmount.toString()
