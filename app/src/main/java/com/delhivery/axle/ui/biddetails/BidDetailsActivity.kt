@@ -683,7 +683,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 analyticsUtil.moEngageTrackEvent(
                     EVENT_NOT_LOWEST_BID_CTA,
                     mutableListOf(PROPERTY_ORDER_ID),
-                    mutableListOf(data.transactionId.toString())
+                    mutableListOf(data.uuid.toString())
                 )
                 bidDialog()
               }
