@@ -57,6 +57,8 @@ class HomeLoadsViewModel @Inject constructor(
   /* user bids live data */
   var userLoadsData =
     MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+  var userLoadsDataFetch =
+    MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
   /* route/lane preferene live data */
   var routesLiveData = MutableLiveData<Boolean>()
@@ -83,12 +85,16 @@ class HomeLoadsViewModel @Inject constructor(
 
   /* pagination params */
   var hasMoreData = true
+  var fecthToCalled = true
   var more_default_loads = false
   var vehicleTypes: String?= null
   var passing_vehicle_type: String?= null
   var filterVehicleType: Boolean?= null
   var offset = 0
+  var offsetFetch = 0
   var total = 0
+  var totalFetch = 0
+
   var hasOrionLoadOnce = false
 
   /* vehicle_type filter */
@@ -158,7 +164,8 @@ class HomeLoadsViewModel @Inject constructor(
                     total = _res.total
                         offset = _res.offset
                         total = _res.total
-                        hasMoreData = _res.offset<_res.total
+                        hasMoreData = _res.offset!=_res.total
+                        fecthToCalled =_res.offset<_res.total
                         loadPricePercent = _res.loadPricePercent
                         more_default_loads = _res.more_loads
                         loadsCountLiveData.postValue(total)
@@ -224,14 +231,14 @@ class HomeLoadsViewModel @Inject constructor(
                                 }
                                 add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
                             }
+                        }.let { userLoadsData.postValue(it) }
+
+                        if(!fecthToCalled) {
+                          hasMoreData=true
+                          fetchSupplierTransactions(
+                              true, demandType, isInternal, infoSearch, excludeTruckTypes
+                          )
                         }
-                                .let { userLoadsData.postValue(it) }
-                      Handler().postDelayed({
-                        if(!hasMoreData){
-                          fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
-                        } }, 500)
-
-
                     } else {
 //                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
 //                            /* remove progress item */
@@ -257,13 +264,13 @@ class HomeLoadsViewModel @Inject constructor(
     isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
       offset = 0
-    } else if (paginate && !hasMoreData) {
+    } else if (paginate && !hasMoreData ) {
       return
     }
 
     if (paginate) {
       paginateCount += 1
-      Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
+      Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsDataFetch.postValue(listOf(it)) }
     }
 
     passing_vehicle_type = vehicleStr
@@ -276,12 +283,12 @@ class HomeLoadsViewModel @Inject constructor(
 
       compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, txnIds)
                               .flatMap { t ->
-                                  offset = t.offset
-                                  total = t.total
+                                  offsetFetch = t.offset
+                                  totalFetch = t.total
                                   hasMoreData = t.offset != t.total
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
-                                  loadsCountLiveData.postValue(total)
+                                  loadsCountLiveData.postValue(total+totalFetch)
 
                                   Single.zip(
                                           bidsRepository.bidsForLoads(t.transactions),
@@ -343,7 +350,11 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
               }
             }
-                .let { userLoadsData.postValue(it) }
+                .let {
+                  if(!userLoadsData.value?.isNullOrEmpty()){
+                    it.addAll(userLoadsData.value!!)
+                  }
+                  userLoadsDataFetch.postValue(it) }
 
           } else {
             mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -352,7 +363,11 @@ class HomeLoadsViewModel @Inject constructor(
               /* add api time out item */
               add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
             }
-                .let { userLoadsData.postValue(it) }
+                .let {
+                  if(!userLoadsData.value?.isNullOrEmpty()){
+                    it.addAll(userLoadsData.value!!)
+                  }
+                  userLoadsDataFetch.postValue(it) }
           }
 
           dataLoadingLiveData.postValue(false)

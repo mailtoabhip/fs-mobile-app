@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
@@ -130,12 +131,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
-
+    viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
+      it?.let { _items -> adapter.operation(_items) }
+    })
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
-      _title = when (it) {
-        0, null -> getString(string.label_load_request)
-        else -> "${getString(string.label_load_request)}($it)"
-      }
+      runOnUiThread(Runnable {
+        _title = when (it) {
+          0, null -> getString(string.label_load_request)
+          else -> "${getString(string.label_load_request)}($it)"
+        }
+      })
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
