@@ -301,25 +301,25 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           AccountDetails -> {
             analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
-            userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
-              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
-            }
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
               analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)
           }
           Disabled -> {
-            userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
-              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
-            }
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
               analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.hideDelhiveryProgress()
             dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,

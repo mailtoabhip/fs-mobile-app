@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
@@ -372,13 +373,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
 
   private fun setUserAttributes() {
-    userPrefs.phoneNumber?.let {
-      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
-      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
-    }
+
     userPrefs.userId().let {
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
       analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+    }
+
+    userPrefs.phoneNumber?.let {
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
     }
     userPrefs.cityName?.let {
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_BASE_CITY,it)
@@ -483,7 +486,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             if(count==1){
               val c = Date()
               val date = c.toString()
-              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
               analyticsUtil.trackEvent(
                 EVENT_VIEW_BIDS_SCREEN_OFFERS,
                 mutableListOf(
@@ -497,6 +499,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
               )
               if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
                 userPrefs.previousNavigationTab= SplashActivity::class.java.name
+              } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
+                userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
               }else{
                 userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
               }

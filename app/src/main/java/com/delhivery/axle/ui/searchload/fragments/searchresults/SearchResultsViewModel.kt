@@ -323,6 +323,7 @@ class SearchResultsViewModel @Inject constructor(
       .subscribe { res, error ->
         if (!error && res != null) {
           transaction.lowestBid = res.second[0].minBid
+          transaction.numBids = res.second[0].numBids
           lowestBidLiveData.postValue(Pair(pos, transaction))
         } else {
           lowestBidLiveData.postValue(Pair(pos, transaction))

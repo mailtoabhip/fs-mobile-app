@@ -205,10 +205,20 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
         var oldAmountbids=""
         var bidAmount =""
+        var lowestBid =0.0
+        var numBids=0
+        var oldBidCount=0
+        var newBidCount =0
+        var oldUserLowestAmount =0.0
         var expectedArrivalPickup=""
         if(data!=null) {
           if(data.bulkTransactionBids.isNotEmpty()) {
+              oldBidCount=data.bulkTransactionBids.size
             for (transactionBid in data!!.bulkTransactionBids) {
+              oldUserLowestAmount= transactionBid.bidAmount
+              if(oldUserLowestAmount>transactionBid.bidAmount){
+                oldUserLowestAmount = transactionBid.bidAmount
+              }
               if (oldAmountbids.isNullOrEmpty()) {
                 oldAmountbids = transactionBid.bidAmount.toString()
               } else {
@@ -218,8 +228,23 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           }
         }
         data?.bulkTransactionBids = it.second
-
+        if(data!=null &&data?.bulkTransactionBids.isNotEmpty()) {
+          newBidCount = data?.bulkTransactionBids.size
         for(transactionBid in data!!.bulkTransactionBids){
+          if(data?.lowestBid!=null){
+           if(data?.lowestBid!!>transactionBid.bidAmount){
+             lowestBid = transactionBid.bidAmount
+            }else{
+              if(data?.lowestBid==oldUserLowestAmount){
+                lowestBid = transactionBid.bidAmount
+              }else{
+                lowestBid = data.lowestBid!!
+              }
+
+            }
+          }else{
+            lowestBid = transactionBid.bidAmount
+          }
           if(bidAmount.isNullOrEmpty()){
             bidAmount=transactionBid.bidAmount.toString()
           }else {
@@ -231,6 +256,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             expectedArrivalPickup = expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
           }
         }
+          if(data?.numBids==0){
+            numBids = newBidCount
+          }else{
+            numBids = data?.numBids-oldBidCount+newBidCount
+          }
+          data.numBids = numBids
+          data.lowestBid = lowestBid
+        }
         adapter.notifyItemChanged(it.first)
         if(!reviseInitiated) {
           analyticsUtil.moEngageTrackEvent(
@@ -240,7 +273,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   PROPERTY_VEHICLE_REPORTING_DATE_TIME
               ),
               mutableListOf(
-                  data?.transactionId ?: "", data?.numBids.toString(), bidAmount ?: "",
+                  data?.transactionId ?: "",numBids.toString(), bidAmount ?: "",
                   expectedArrivalPickup
               )
           )
@@ -249,7 +282,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
               EVENT_BID_REVISE_SUBMITTED,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
                   PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
-              mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmountbids,bidAmount)
+              mutableListOf(data?.transactionId?:"",numBids.toString()?:"",lowestBid.toString()?:" ",oldAmountbids,bidAmount)
           )
           reviseInitiated=false
         }
@@ -355,7 +388,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           analyticsUtil.moEngageTrackEvent(
             EVENT_LOADFEED_BID_INITIATE,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST).toString(),viewModel.total.toString())
+            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-(userPrefs.loadCount.toInt()/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
           )
           reviseInitiated=false
         }
@@ -440,7 +473,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST).toString(),viewModel.total.toString())
+            mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST-(userPrefs.loadCount.toInt().div(HomeLoadsAddTruckItemDataConfig))).toString(),viewModel.total.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,
@@ -735,7 +768,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   analyticsUtil.moEngageTrackEvent(
                       EVENT_LOADFEED_BID_INITIATE,
                       mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                      mutableListOf(data.transactionId?:"",eventPos.toString(),viewModel.total.toString())
+                      mutableListOf(data.transactionId?:"",(eventPos-(userPrefs.loadCount.toInt()/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
                   )
                   reviseInitiated=false
                 }else{

@@ -60,7 +60,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   var bidEndingTime:String = ""
   var source:String= VALUE_APP_FLOW
   var reviseInitiated:Boolean=false
-
+  var oldAmountbids =""
+  var isFirstBid = false
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -161,6 +162,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       if(it!= null){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+          for (transactionBid in it.second.bulkTransactionBids) {
+            if (oldAmountbids.isNullOrEmpty()) {
+              oldAmountbids = transactionBid.bidAmount.toString()
+            } else {
+              oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
+            }
+          }
           analyticsUtil.moEngageTrackEvent(
               EVENT_BID_REVISE_INITIATED,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
@@ -377,6 +385,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     binding.timerLayout.visibility = View.VISIBLE
                    setTimer(bidEndingTime)
                   }
+                  isFirstBid = true
                   analyticsUtil.moEngageTrackEvent(
                     EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
                     mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
@@ -392,6 +401,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   binding.timerLayout.visibility = View.VISIBLE
                  setTimer(bidEndingTime)
                 }
+                isFirstBid = true
                 bidsRecieved = state.bidsCount
                 state.lowestAndUserBidPair.second?.let {
                   lowestBid = when (state.lowestAndUserBidPair) {
@@ -440,7 +450,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
                   }
                   request = data
-                  if(!viewModel.restrictEventTrigger && !viewModel.refreshCalled) {
+                  if((!viewModel.restrictEventTrigger && !viewModel.refreshCalled)||isFirstBid) {
+                    isFirstBid = false
                     if (!reviseInitiated) {
                       analyticsUtil.moEngageTrackEvent(
                           EVENT_ORDER_DETAILS_BID_SUBMIT,
@@ -619,11 +630,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             ).apply {
               binding.timerLayout.visibility = View.GONE
               val data = viewModel.transaction as HomeBidsRequestItemData
-              var oldAmountbids=""
               var bidAmount =""
               var expectedArrivalPickup=""
-
-
               if (data.transactionStatus == "cancelled") {
                 btnReviseBidInsider.visibility = View.GONE
                 reduceText.visibility = View.GONE
@@ -637,13 +645,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
                     mutableListOf(viewModel.transactionId, source)
                   )
-                  for (transactionBid in it.bulkTransactionBids) {
-                    if (oldAmountbids.isNullOrEmpty()) {
-                      oldAmountbids = transactionBid.bidAmount.toString()
-                    } else {
-                      oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
-                    }
-                  }
+
                 }else{
                   analyticsUtil.moEngageTrackEvent(
                     EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
@@ -687,7 +689,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 )
                 bidDialog()
               }
-              if (!viewModel.restrictEventTrigger && !viewModel.refreshCalled) {
+              if ((!viewModel.restrictEventTrigger && !viewModel.refreshCalled)||isFirstBid) {
+                isFirstBid = false
                 if (!reviseInitiated) {
                   analyticsUtil.moEngageTrackEvent(
                       EVENT_ORDER_DETAILS_BID_SUBMIT,
@@ -713,7 +716,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       ),
                       mutableListOf(
                           state.lowestAndUserBidPair.second?.transactionId ?: "",
-                          state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
+                          state.bidsCount.toString() ?: "", state?.lowestAndUserBidPair.first?.bidAmount.toString() ?: " ",
                           oldAmountbids, bidAmount
                       )
                   )
