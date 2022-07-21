@@ -48,6 +48,8 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
@@ -135,12 +137,10 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       it?.let { _items -> adapter.operation(_items) }
     })
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
-      runOnUiThread(Runnable {
         _title = when (it) {
           0, null -> getString(string.label_load_request)
           else -> "${getString(string.label_load_request)}($it)"
         }
-      })
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {

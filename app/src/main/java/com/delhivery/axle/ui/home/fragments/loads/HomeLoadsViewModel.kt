@@ -284,11 +284,11 @@ class HomeLoadsViewModel @Inject constructor(
       compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, txnIds)
                               .flatMap { t ->
                                   offsetFetch = t.offset
-                                  totalFetch = t.total
+                                  total = total+t.total
                                   hasMoreData = t.offset != t.total
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
-                                  loadsCountLiveData.postValue(total+totalFetch)
+                                  loadsCountLiveData.postValue(total)
 
                                   Single.zip(
                                           bidsRepository.bidsForLoads(t.transactions),
