@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -94,6 +95,7 @@ class HomeLoadsViewModel @Inject constructor(
   var offsetFetch = 0
   var total = 0
   var totalFetch = 0
+  var transactionIds:String?=null
 
   var hasOrionLoadOnce = false
 
@@ -272,6 +274,14 @@ class HomeLoadsViewModel @Inject constructor(
       paginateCount += 1
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsDataFetch.postValue(listOf(it)) }
     }
+      val distinct = txnIds.toSet().toList();
+      for(txn in distinct){
+        if(transactionIds.isNotNullOrEmpty()){
+          transactionIds=transactionIds+","+txn
+        }else{
+          transactionIds=txn
+        }
+      }
 
     passing_vehicle_type = vehicleStr
     vehicleTypes = passing_vehicle_type
@@ -281,7 +291,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-      compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, txnIds)
+      compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
                               .flatMap { t ->
                                   offsetFetch = t.offset
                                   total = total+t.total
