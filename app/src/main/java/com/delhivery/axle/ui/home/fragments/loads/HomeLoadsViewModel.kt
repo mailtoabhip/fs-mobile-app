@@ -274,7 +274,7 @@ class HomeLoadsViewModel @Inject constructor(
       paginateCount += 1
       Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsDataFetch.postValue(listOf(it)) }
     }
-      val distinct = txnIds.toSet().toList();
+      val distinct = txnIds.distinct().toList()
       for(txn in distinct){
         if(transactionIds.isNotNullOrEmpty()){
           transactionIds=transactionIds+","+txn
@@ -295,6 +295,7 @@ class HomeLoadsViewModel @Inject constructor(
                               .flatMap { t ->
                                   offsetFetch = t.offset
                                   total = total+t.total
+                                  totalFetch=t.total
                                   hasMoreData = t.offset != t.total
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
@@ -361,7 +362,7 @@ class HomeLoadsViewModel @Inject constructor(
               }
             }
                 .let {
-                  if(!userLoadsData.value?.isNullOrEmpty()){
+                  if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
                     it.addAll(userLoadsData.value!!)
                   }
                   userLoadsDataFetch.postValue(it) }
@@ -374,7 +375,7 @@ class HomeLoadsViewModel @Inject constructor(
               add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
             }
                 .let {
-                  if(!userLoadsData.value?.isNullOrEmpty()){
+                  if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
                     it.addAll(userLoadsData.value!!)
                   }
                   userLoadsDataFetch.postValue(it) }
