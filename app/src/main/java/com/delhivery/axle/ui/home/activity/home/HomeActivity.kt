@@ -18,8 +18,6 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
-import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
@@ -68,6 +66,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
     //For inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+      //For pricing
+    pricingId = intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom = intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId = intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
+
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
@@ -123,6 +127,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           fragmentAction(NavigateHomeFragmentAction(PodFragment))
         }
         binding.profile.setOnClickListener {
+          analyticsUtil.trackEvent(
+            EVENT_VIEW_MY_PROFILE,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
+          )
           navigationUtils.navigate(MyProfileActivity::class.java)
         }
         /**
@@ -133,6 +142,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
+    //TODO:comment notification from here
+    processNotification()
     if (dplink_type != "") {
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
@@ -198,6 +209,36 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
+        OFFER_APPROVED -> {
+          fromDeepLink = true
+          if(dplink_tid != ""){
+            val pricingId = dplink_tid.split("_").get(0)
+            val sortKey = dplink_tid.split("_").get(1)
+          val bundle = Bundle()
+          bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
+            analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
+              OFFER_APPROVED,
+              VALUE_DEEP_LINKING))
+          navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
+          }
+        }
+        OFFER_REJECTED -> {
+          fromDeepLink = true
+          if(dplink_tid != "") {
+            val bundle = Bundle()
+            bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_REJECTED)
+            val pricingId = dplink_tid.split("_").get(0)
+            val sortKey = dplink_tid.split("_").get(1)
+            bundle.putString(ARGS_PRICING_ID,pricingId)
+            bundle.putString(ARGS_PRICING_ID,sortKey)
+               analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+                 PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
+                 OFFER_REJECTED,
+                 VALUE_DEEP_LINKING))
+            navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+          }
+        }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
@@ -207,7 +248,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     Log.d("noti", "$notificationType$notificationId $vehicleNumber")
     markNotificationRead()
-    notificationType = OFFER_APPROVED
+    notificationType = OFFER_LANE_UPLOADED
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -261,26 +302,36 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       OFFER_LANE_UPLOADED -> {
         fromNotification = true
-       /* analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())*/
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          notificationFrom,
+          VALUE_NOTIFICATION))
         val bundle = Bundle()
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_LANE_UPLOADED)
+        bundle.putString(ARGS_OFFER_ID,pricingOfferId)
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       OFFER_APPROVED -> {
         fromNotification = true
         val bundle = Bundle()
-        bundle.putString("navigate", OFFER_APPROVED)
-      /*  analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))*/
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          OFFER_APPROVED,
+          VALUE_NOTIFICATION))
         navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
       }
       OFFER_REJECTED -> {
         fromNotification = true
         val bundle = Bundle()
-        bundle.putString("navigate", OFFER_REJECTED)
-     /*   analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf())*/
-        navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_REJECTED)
+        bundle.putString(ARGS_PRICING_ID,pricingId)
+        bundle.putString(ARGS_PRICING_SORT_KEY,pricingSortKey)
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          OFFER_REJECTED,
+          VALUE_NOTIFICATION))
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -455,9 +506,9 @@ private const val REDIRECT_TO_LOAD ="redirect_to_load"
 private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
 private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
 private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
-private const val OFFER_LANE_UPLOADED = "offer_lane_uploaded"
-private const val OFFER_APPROVED = "offer_approved"
-private const val OFFER_REJECTED = "offer_rejected"
+const val OFFER_LANE_UPLOADED = "offer_lane_uploaded"
+const val OFFER_APPROVED = "offer_approved"
+const val OFFER_REJECTED = "offer_rejected"
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
 private const val TEAM_MEMBERS_REDIRECT = "tmbrs"
 private const val PAYMENT_SUMMARY_REDIRECT = "pmtsmry"

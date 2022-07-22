@@ -21,14 +21,25 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
+import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.GetSupplierRewardsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.yourrewards.YourRewardsItemData
+import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.ActivityShareRateBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.databinding.DialogRateUploadSuccessBinding
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_OFFER_ID
+import com.delhivery.axle.fcm.ARGS_PRICING_ID
+import com.delhivery.axle.fcm.ARGS_PRICING_SORT_KEY
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.home.activity.home.OFFER_LANE_UPLOADED
+import com.delhivery.axle.ui.home.activity.home.OFFER_REJECTED
 import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.ui.trucks.TruckSizeAdapter
@@ -94,6 +105,8 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
     var itemTD:String? = null
     var offerTD:String? = null
+    var priceId:String? = null
+    var priceSortKey:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +114,25 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        if( intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)!=null) {
+            if(intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)== OFFER_REJECTED) {
+                priceId = intent?.extras?.getString(ARGS_PRICING_ID)
+                priceSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY)
+
+                if (priceId != null && priceSortKey != null) {
+                    viewModel.getPricingData(PriceDetailRequest(priceId!!, priceSortKey!!))
+                }
+            }else if(intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)== OFFER_LANE_UPLOADED){
+               if(intent?.extras?.getString(ARGS_OFFER_ID)!=null)
+                viewModel.searchOffer(intent?.extras?.getString(ARGS_OFFER_ID)!!).observe(this, Observer {
+                    if (it!=null) {
+                        val yourRewardsItemData = YourRewardsItemData(pricingId=priceSortKey!!, originCity = it.oc, originCityCode = it.occ, destinationCity = it.dc, destinationCityCode = it.dcc, truckDisplayName = it.tdn)
+                        fillODVTData(yourRewardsItemData)
+                    }
+                })
+
+            }
+        }
         viewModel.origin = intent?.extras?.getString("originname")?.let { CityModel(it, intent?.extras?.getString("occ")) }
         viewModel.destination = intent?.extras?.getString("destname")?.let { CityModel(it, intent?.extras?.getString("dcc")) }
         //viewModel.getCityData(viewModel.origin?.orionDbCityCode, "origin")
@@ -149,15 +181,8 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         setSupportActionBar(binding.toolbar)
         title = "Share rate & earn reward"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        try {
-            binding.editOrigin.setText(viewModel.origin!!.cityName())
-            binding.editOrigin.isEnabled = false
-            binding.editDestination.setText(viewModel.destination!!.cityName())
-            binding.editDestination.isEnabled = false
-            viewModel.selected_vehicle_number = binding.editTruckNumber.text.toString()
-        }catch (e: Exception){
+        setOriginDestinationTruck()
 
-        }
         binding.editTruckSize.setOnClickListener {
             if(viewModel.selected_truck_type.isNotNullOrEmpty() && viewModel.selected_truck_capacity.isNullOrEmpty()) {
                 showTruckSizeDialog("", "fill")
@@ -189,6 +214,12 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         )
                     }
                 }
+            }
+        })
+
+        viewModel.pricingLiveData.observe(this, Observer {
+            if (it != null) {
+                fillODVTData(it.pricingData.get(0))
             }
         })
 
@@ -307,6 +338,56 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         })
     }
 
+   private fun setOriginDestinationTruck(){
+       try {
+           binding.editOrigin.setText(viewModel.origin!!.cityName())
+           binding.editOrigin.isEnabled = false
+           binding.editDestination.setText(viewModel.destination!!.cityName())
+           binding.editDestination.isEnabled = false
+           viewModel.selected_vehicle_number = binding.editTruckNumber.text.toString()
+       }catch (e: Exception){
+
+       }
+    }
+
+    private fun fillODVTData(it:YourRewardsItemData){
+        viewModel.origin = CityModel(it.originCity!!,it.originCityCode!!)
+        viewModel.destination= CityModel(it.destinationCity!!,it.destinationCityCode!!)
+        if(it.sortKey!=null) {
+            offerId = it.sortKey
+        }
+
+        if(it.truckDisplayName!=null) {
+            offerTD = it.truckDisplayName
+            itemTD = it.truckDisplayName
+        }
+
+        if(itemTD!=null){
+            if(itemTD.equals(offerTD)){
+                viewModel.selected_truck_type = itemTD as String
+                if(it.truckCapacity!=null && !it.truckCapacity.toString().equals("null")) {
+                    viewModel.selected_truck_capacity = it.truckCapacity
+                }
+            }
+        }
+
+        if(viewModel.selected_truck_capacity.isNotNullOrEmpty() &&  viewModel.selected_truck_type.isNotNullOrEmpty()) {
+            binding.textTruckSize.text = viewModel.selected_truck_type + " " + viewModel.selected_truck_capacity.toString()+" MT"
+        }else {
+            binding.textTruckSize.text = viewModel.selected_truck_type
+        }
+
+        if(it.vehicleNumber!=null) {
+            viewModel.selected_vehicle_number =it.vehicleNumber
+            binding.editTruckNumber.setText(viewModel.selected_vehicle_number)
+        }
+        if(it.rejectionReason!=null) {
+            var rejectedReason = getString(string.rejected_due)+" "+it.rejectionReason.replace("_"," ")
+            binding.errorLane.setText(rejectedReason)
+            binding.errorLane.visibility = View.VISIBLE
+        }
+        setOriginDestinationTruck()
+    }
     private fun showSuccessDialog() {
         runOnUiThread {
                 val dialog = Dialog(this)

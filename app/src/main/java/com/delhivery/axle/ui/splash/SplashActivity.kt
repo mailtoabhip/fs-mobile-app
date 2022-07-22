@@ -9,34 +9,16 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.*
-import com.delhivery.axle.ui.accountaction.AccountActionActivity
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.address.AddressActivity
-import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.ui.onboarding.OnboardingActivity
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.splash.SplashPostState.*
-import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -83,6 +65,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
      //For Inventory only
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
+    //For pricing
+    pricingId =  intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey =  intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom =  intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId =  intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
+
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {

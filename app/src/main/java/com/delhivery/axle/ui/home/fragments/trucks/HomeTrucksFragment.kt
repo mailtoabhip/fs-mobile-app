@@ -809,6 +809,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     }
 
     override fun callRewards() {
+         analyticsUtil.trackEvent(
+             EVENT_CLICKED_PRICE_BANNER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
+         )
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
     }
 

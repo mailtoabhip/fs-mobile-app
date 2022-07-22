@@ -33,6 +33,11 @@ data class OfferRequest(
         @SerializedName("source") var source:List<String> = arrayListOf("origin_city_code", "destination_city_code", "truck_display_name","start_date","end_date", "amount", "origin_city", "destination_city")
 )
 
+data class PriceDetailRequest(
+        @SerializedName("pricing_id") var pricingId:String,
+        @SerializedName("sort_key") var sortKey:String
+        )
+
 data class keyLists(
         @SerializedName("key") var key:ArrayList<String> = arrayListOf<String>()
 )
