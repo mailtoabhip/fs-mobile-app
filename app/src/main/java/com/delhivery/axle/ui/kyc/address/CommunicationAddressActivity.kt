@@ -235,11 +235,9 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
             if(p>0){
                 proofTypeFilled = true
-                if(!dataSetFromPref){
-                    showUploadImage()
-                }
                 Log.d("udyog",userPrefs.udyogNumber)
                 if(!dataSetFromPref) {
+                    showUploadImage()
                     if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
                             binding.textProof.visibility = View.GONE
@@ -408,6 +406,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             docUploadProof = false
 
         } else {
+            dataSetFromPref = true
             docArray.add(
                 Pair(
                     docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
@@ -420,14 +419,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             binding.docUploadedLay.visibility = View.VISIBLE
             binding.docTitle.setText(docArray.get(0).first)
             docUploadProof = true
-            dataSetFromPref = true
             enableSubmitButton()
         }
 
         proofTypeFilled = true
         var spinnerIndex = 0
         if (addressData.proofDocumentType != null) {
-            if(userPrefs.aadhaarNumber.isNullOrEmpty()) {
+            if(userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
                 spinnerIndex = when {
                     addressData.proofDocumentType!!.startsWith("V", true) -> 1
                     addressData.proofDocumentType!!.startsWith("lr", true) -> 2
