@@ -364,6 +364,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       if (!adapter.checkFiltering()) {
         val layoutManager =
           (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        try {
         val pos = layoutManager.findFirstVisibleItemPosition()
         val _toolbarElevation = if (pos == 0) {
           stickyView.translationY = 0f
@@ -402,6 +403,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           toolbarElevation = _toolbarElevation
           toolbarElevationLiveData!!.postValue(toolbarElevation)
         }
+      }catch (e:Exception){
+
+      }
+
       }
     }
   }

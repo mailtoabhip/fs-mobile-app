@@ -413,8 +413,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 analyticsUtil.moEngageTrackEvent(
                   EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                  mutableListOf(viewModel.transactionId, source)
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                  mutableListOf(viewModel.transactionId,state.bidsCount.toString(), source)
                 )
                 btnPlaceBid.setOnClickListener { bidDialog() }
               }
@@ -430,8 +430,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   bidsRecieved = state.bidsCount
                   analyticsUtil.moEngageTrackEvent(
                     EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                    mutableListOf(viewModel.transactionId, source)
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                    mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source)
                   )
                   val userBid = state.lowestAndUserBidPair.first
                   val lowestTBid = state.lowestAndUserBidPair.second
@@ -553,8 +553,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     )
                     analyticsUtil.moEngageTrackEvent(
                       EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                      mutableListOf(viewModel.transactionId, source)
+                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,PROPERTY_SOURCE),
+                      mutableListOf(viewModel.transactionId,state.bidsCount.toString(), source)
                     )
                     bidDialog(userBid) })
                 }
@@ -642,8 +642,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 if(!it.bulkTransactionBids.isNullOrEmpty()) {
                   analyticsUtil.moEngageTrackEvent(
                     EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                    mutableListOf(viewModel.transactionId, source)
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                    mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source)
                   )
 
                 }else{

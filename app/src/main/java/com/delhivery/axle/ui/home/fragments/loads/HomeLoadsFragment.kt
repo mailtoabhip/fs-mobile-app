@@ -393,7 +393,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           analyticsUtil.moEngageTrackEvent(
             EVENT_LOADFEED_BID_INITIATE,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-(userPrefs.loadCount.toInt()/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
+            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-(pos- STATIC_ITEM_LIST/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
           )
           reviseInitiated=false
         }
@@ -478,7 +478,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_ORDER_CARD_CLICK,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST-(userPrefs.loadCount.toInt().div(HomeLoadsAddTruckItemDataConfig))).toString(),viewModel.total.toString())
+            mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST-((orderRank- STATIC_ITEM_LIST).div(HomeLoadsAddTruckItemDataConfig))).toString(),viewModel.total.toString())
             )
         analyticsUtil.trackEvent(
                 EVENT_LIST_ITEM,
@@ -773,7 +773,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   analyticsUtil.moEngageTrackEvent(
                       EVENT_LOADFEED_BID_INITIATE,
                       mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                      mutableListOf(data.transactionId?:"",(eventPos-(userPrefs.loadCount.toInt()/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
+                      mutableListOf(data.transactionId?:"",(eventPos-(eventPos/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
                   )
                   reviseInitiated=false
                 }else{
