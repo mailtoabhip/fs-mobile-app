@@ -55,4 +55,9 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             }
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.setPreviousScreen(this.javaClass.name)
+    }
 }

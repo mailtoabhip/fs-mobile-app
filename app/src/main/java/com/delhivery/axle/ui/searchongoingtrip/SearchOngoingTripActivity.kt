@@ -136,6 +136,7 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
   ) {
     when (actionId) {
       HomeTripsRequestAction_ViewDetails -> {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         val data = item.data as HomeTripsItemData
         startActivity(tripDetailsIntent(data.key(), this, viewModel.tripType.typeText))
       }
@@ -148,6 +149,11 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
         refreshData()
       }
     }
+  }
+
+  override fun onBackPressed() {
+    super.onBackPressed()
+    userPrefs.setPreviousScreen(this.javaClass.name)
   }
 
 }

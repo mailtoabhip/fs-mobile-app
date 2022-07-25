@@ -1,17 +1,20 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
+import android.view.View.OnTouchListener
 import com.delhivery.axle.R
-import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
+import com.delhivery.axle.utils.EVENT_HOME_LOADS_TAB_CLICK
+import com.delhivery.axle.utils.EVENT_HOME_MY_TRUCKS_TAB_CLICK
+import com.delhivery.axle.utils.PROPERTY_INVENTORY_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
 import com.delhivery.axle.utils.EVENT_VIEW_MY_TRUCK_OFFERS
 import com.delhivery.axle.utils.PROPERTY_DATE
 import com.delhivery.axle.utils.PROPERTY_NUMBER_OF_OFFERS
@@ -23,8 +26,8 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
 import java.util.Calendar
 import java.util.Date
+import kotlinx.android.synthetic.main.view_home_summary_item.loads_count
 import javax.inject.Inject
-
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider{
@@ -95,6 +98,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                vehicleNo = activity.vehicleNum
             fromDeepLink=true
         }
+
         if(activity.fromNotification){
             binding.tabLayout.getTabAt(1)?.select()
             activity.fromNotification = false
@@ -102,6 +106,30 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                 vehicleNo = activity.vehicleNum
             fromNotification=true
         }
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if(tab?.position==0){
+                    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+                    userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_LOADS_TAB_CLICK, mutableListOf(
+                        PROPERTY_ORDER_COUNT),
+                        mutableListOf(userPrefs.loadCount))
+                }else if(tab?.position==1){
+                    userPrefs.currentNavigationTab = HomeTrucksFragment::class.java.name
+                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
+                        PROPERTY_INVENTORY_COUNT),
+                        mutableListOf(userPrefs.inventoryCount))
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
     }
 
 

@@ -15,10 +15,16 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
+import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -32,8 +38,10 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
+import com.moengage.core.internal.MoEConstants
 import java.util.*
 import javax.inject.Inject
+
 /**
  * Home screen
  */
@@ -87,6 +95,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     super.onPostCreate(savedInstanceState)
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it){
+        setUserAttributes()
         navigationUtils.navigateOnboardingSteps(true)
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
@@ -107,42 +116,56 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
                 uiUtils.toggleKeyboard()
                 this@HomeActivity.title = HomeFragmentType.pos(p)
                   ?.fragment?.title
-                binding.bottomNav.selectedItemId = it.menuId
-                observeFragmentLiveData(p)
-              }
-          }
-          binding.toolbarTitle.text = title
-          FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-        }
-        binding.viewpager.disableScroll(true)
-        /* set navigation item selection listener */
-        binding.bottomNav.setOnNavigationItemSelectedListener(this)
-        /* by default observe first fragment */
-        observeFragmentLiveData()
+              binding.bottomNav.selectedItemId = it.menuId
+              observeFragmentLiveData(p)
+            }
+      }
+      binding.toolbarTitle.text = title
+      FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
 
-        if (notificationId.isNotEmpty()) {
-          processNotification()
-        }
-        if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
-          fragmentAction(NavigateHomeFragmentAction(PodFragment))
-        }
-        binding.profile.setOnClickListener {
-          analyticsUtil.trackEvent(
-            EVENT_VIEW_MY_PROFILE,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
-          )
-          navigationUtils.navigate(MyProfileActivity::class.java)
-        }
-        /**
-         * Process Deep Link */
-        processDeepLink()
+    }
+    binding.viewpager.disableScroll(true)
+
+    /* set navigation item selection listener */
+    binding.bottomNav.setOnNavigationItemSelectedListener(this)
+
+    /* by default observe first fragment */
+    observeFragmentLiveData()
+
+    if (notificationId.isNotEmpty()) {
+      processNotification()
+    }
+
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+      analyticsUtil.moEngageTrackEvent(
+          EVENT_NAVIGATION_PODS
+      )
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      fragmentAction(NavigateHomeFragmentAction(PodFragment))
+    }
+
+    binding.profile.setOnClickListener {
+      analyticsUtil.trackEvent(
+        EVENT_VIEW_MY_PROFILE,
+        mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_MY_PROFILE
+      )
+      navigationUtils.navigate(MyProfileActivity::class.java)
+    }
+
+    /**
+     * Process Deep Link */
+    processDeepLink()
       }
     })
   }
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
           startActivity(userRoutesIntent(this))
@@ -173,7 +196,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
-            startActivity(bidDetailsIntent(dplink_tid, this))
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -246,6 +269,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private fun processNotification() {
     Log.d("noti", "$notificationType$notificationId $vehicleNumber$pricingId$pricingSortKey$pricingOfferId$notificationFrom")
     markNotificationRead()
+    userPrefs.setPreviousScreen(this.javaClass.name)
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -255,14 +279,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
       }
       PREFERRED_SUPPLIER_NOTIFICATION -> {
-        startActivity(bidDetailsIntent(preferredTransactionId, this))
+        startActivity(bidDetailsIntent(preferredTransactionId, this,source = VALUE_PUSH_NOTIFICATION))
       }
       REJECT_POD_NOTIFICATION -> {
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       LOWEST_BID_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
-          startActivity(bidDetailsIntent(transactionIds[0], this))
+          startActivity(bidDetailsIntent(transactionIds[0], this,source = VALUE_PUSH_NOTIFICATION))
         }
         else
         {
@@ -281,7 +305,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       REDIRECT_TO_LOAD -> {
-        startActivity(bidDetailsIntent(preferredTransactionId,this))
+        startActivity(bidDetailsIntent(preferredTransactionId,this,source = VALUE_PUSH_NOTIFICATION))
       }
       ACTIVATE_TRUCK_NOTIFICATION ->{
         fromNotification = true
@@ -385,6 +409,70 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       processNotification()
     }
   }
+
+  private fun setUserAttributes() {
+
+    userPrefs.userId().let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+    }
+
+    userPrefs.phoneNumber?.let {
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+    }
+    userPrefs.cityName?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_BASE_CITY,it)
+    }
+    if(userPrefs.demandType.isNotNullOrEmpty()){
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_DEMAND_TYPE,userPrefs.demandType!!)
+    }
+    userPrefs.companyName?.let {
+      if(userPrefs.companyName.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_COMPANY_NAME,it)
+    }
+    userPrefs.ownTrucks?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_OWNS_TRUCKS,it.toString())
+    }
+    userPrefs.status?.let {
+      if(userPrefs.status.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_STATUS,it)
+    }
+    userPrefs.subStatus?.let{
+      if(userPrefs.subStatus.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_SUB_STATUS,it)
+    }
+    userPrefs.isKycVeriifed?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_IS_KYC_VERIFIED,it.toString())
+    }
+    userPrefs.receiveWhatsappNotifications?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_RECEIVE_WHATSAPP_NOTIFICATIONS,it.toString())
+    }
+
+    userPrefs.creationDate?.let {
+      if(userPrefs.creationDate.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_CREATION_DATE,DateUtils.getUtcToIstFormatTime(it)!!)
+    }
+
+    userPrefs.userName?.let {
+      if(userPrefs.userName.isNotNullOrEmpty()){
+        try {
+          analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME, it)
+          analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME, it)
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,
+            it.split(" ").get(0)
+          )
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,
+            it.split(" ").get(1)
+          )
+        }catch (e:Exception){}
+      }
+    }
+
+
+  }
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(
@@ -425,42 +513,88 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-    .let { pos ->
-      count++
-      when(pos) {
-        1 -> {
-          if (count == 1) {
-            val c = Date()
-            val date = c.toString()
-            Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
-            analyticsUtil.trackEvent(
-              EVENT_VIEW_BIDS_SCREEN_OFFERS,
-              mutableListOf(
-                PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-                PROPERTY_DATE
-              ),
-              mutableListOf(
-                userPrefs.userId(), userPrefs.phoneNumber!!,
-                userPrefs.bidOfferCount.toString(), date
+      .let{ pos ->
+        count++
+        when(pos){
+          0->
+            if(count==1){
+              val c = Date()
+              val date = c.toString()
+              analyticsUtil.trackEvent(
+                EVENT_VIEW_BIDS_SCREEN_OFFERS,
+                mutableListOf(
+                  PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+                  PROPERTY_DATE
+                ),
+                mutableListOf(
+                  userPrefs.userId(), userPrefs.phoneNumber!!,
+                  userPrefs.bidOfferCount.toString(), date
+                )
               )
+              if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
+                userPrefs.previousNavigationTab= SplashActivity::class.java.name
+              } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
+                userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
+              }else{
+                userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              }
+              userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_HOME,
+                mutableListOf(PROPERTY_ORDER_COUNT),
+                mutableListOf(userPrefs.loadCount))
+            }
+          1->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_BIDS,
+                mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                    PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
+                mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
             )
-          }
-          if(count>=2){
-            count=0
-          }
+
+            }
+          2->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_PODS
+            )
+            }
+          3->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_TRIPS,
+                mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+                mutableListOf(userPrefs.awaitingArrivalCount)
+            )
+            }
         }
-      }
-      binding.viewpager.apply {
-        uiUtils.toggleKeyboard()
-        if (pos != -1 && currentItem != pos) {
-          this@HomeActivity.title = HomeFragmentType.pos(pos)
-            ?.fragment?.title
-          setCurrentItem(pos, true)
+        if(count==2){
+          count=0
         }
-        binding.toolbarTitle.text = title
+        binding.viewpager.apply {
+          uiUtils.toggleKeyboard()
+          if (pos != -1 && currentItem != pos) {
+            this@HomeActivity.title = HomeFragmentType.pos(pos)
+                ?.fragment?.title
+            setCurrentItem(pos, true)
+          }
+          binding.toolbarTitle.text = title
+        }
+        pos != -1
       }
-      pos != -1
-    }
+
   override fun messageClicked(p0: InAppMessage, p1: Action) {
     val url: String? = p1.actionUrl
     val metadata: CampaignMetadata? = p0.campaignMetadata
@@ -471,6 +605,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       mutableListOf(PROPERTY_USER_ID),
       mutableListOf(userPrefs.userId())
     )
+    userPrefs.setPreviousScreen(this.javaClass.name)
     startActivity(userTripsIntent(this, "payment_view", 0))
   }
 }
@@ -524,6 +659,8 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
+var orderRank=0
+
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"
 /**

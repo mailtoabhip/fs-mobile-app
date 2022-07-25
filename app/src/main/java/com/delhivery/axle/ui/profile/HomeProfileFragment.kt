@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -88,12 +89,14 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
     binding.containerYourRoutes.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(userRoutesIntent(it))
       }
     }
 
     binding.containerYourTeam.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(teamMembersIntent(it))
       }
     }
@@ -119,6 +122,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     //viewModel.verifyRole()
     binding.containerYourMoney.setOnClickListener{
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(consolidatedPageIntent(it))
       }
     }

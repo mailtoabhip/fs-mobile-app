@@ -28,6 +28,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.moengage.firebase.MoEFireBaseHelper
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit.SECONDS
@@ -349,6 +350,7 @@ class HomeLoadsViewModel @Inject constructor(
         .subscribe { res, error ->
           if (!error && res != null) {
             transaction.lowestBid = res.second[0].minBid
+            transaction.numBids = res.second[0].numBids
             lowestBidLiveData.postValue(Pair(pos, transaction))
           } else {
             lowestBidLiveData.postValue(Pair(pos, transaction))

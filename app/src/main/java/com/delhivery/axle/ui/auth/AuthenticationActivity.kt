@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.auth
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -35,6 +36,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.moengage.core.internal.MoEConstants
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_authentication.*
@@ -284,6 +286,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           /* Login success, user routes found - navigate to load requests */
           LoadRequest -> {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
+            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             // Capture event
             analyticsUtil.trackEvent(
                     EVENT_OTP_VERIFIED,
@@ -295,10 +299,28 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
           AccountDetails -> {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
+            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
+            userPrefs.userId().let {
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+            }
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)
           }
           Disabled -> {
+            userPrefs.userId().let {
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+            }
             uiUtils.hideDelhiveryProgress()
             dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,
                     string.msg_dialog_supplier_disabled,

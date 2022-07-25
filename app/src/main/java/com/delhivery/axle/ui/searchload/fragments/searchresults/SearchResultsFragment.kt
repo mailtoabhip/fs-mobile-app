@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -18,6 +19,8 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
@@ -54,6 +57,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   @Inject lateinit var userPrefs: UserPrefs
   var pos = 0
+  var oldAmount:Double?=0.0
+  var reviseInitiated:Boolean=false
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -83,9 +88,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           .apply {
             when {
               it != null && it.first !=null  -> {
+                val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                oldAmount= data?.transactionBid?.bidAmount
                 (_adapter.itemsList()[it.first].data as HomeBidsRequestItemData).transactionBid =
                   it.second
                 _adapter.notifyItemChanged(it.first)
+                if (data != null) {
+                  uiUtils.showProgress()
+                  viewModel.fetchLowestBid(data, it.first)
+                }
+
               }
             }
           }
@@ -94,11 +106,117 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it != null){
         val data = _adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        var oldAmountbids=""
+        var bidAmount =""
+        var lowestBid =0.0
+        var numBids=0
+        var oldBidCount=0
+        var newBidCount =0
+        var oldUserLowestAmount =0.0
+        var expectedArrivalPickup=""
+        if(data!=null&&data?.bulkTransactionBids.isNotEmpty()) {
+          oldBidCount=data.bulkTransactionBids.size
+        for(transactionBid in data!!.bulkTransactionBids){
+          oldUserLowestAmount= transactionBid.bidAmount
+          if(oldUserLowestAmount>transactionBid.bidAmount){
+            oldUserLowestAmount = transactionBid.bidAmount
+          }
+          if(oldAmountbids.isNullOrEmpty()){
+            oldAmountbids= transactionBid.bidAmount.toString()
+          }else {
+            oldAmountbids = oldAmountbids + ","+transactionBid.bidAmount.toString()
+          }
+        }
+        }
         data?.bulkTransactionBids = it.second
+        if(data!=null && data?.bulkTransactionBids.isNotEmpty()) {
+          newBidCount=data.bulkTransactionBids.size
+        for(transactionBid in data!!.bulkTransactionBids){
+          if(data?.lowestBid!=null){
+            if(data?.lowestBid!!>transactionBid.bidAmount){
+              lowestBid = transactionBid.bidAmount
+            }else{
+              if(data?.lowestBid==oldUserLowestAmount){
+                lowestBid = transactionBid.bidAmount
+              }else{
+                lowestBid = data.lowestBid!!
+              }
+
+            }
+          }else{
+            lowestBid = transactionBid.bidAmount
+          }
+          if(bidAmount.isNullOrEmpty()){
+            bidAmount=transactionBid.bidAmount.toString()
+          }else {
+            bidAmount = bidAmount +","+ transactionBid.bidAmount.toString()
+          }
+          if(expectedArrivalPickup.isNullOrEmpty()){
+            expectedArrivalPickup=transactionBid.expectedArrivalTimePickupRemark.toString()
+          }else {
+            expectedArrivalPickup = expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+          }
+        }
+          if(data?.numBids==0){
+            numBids = newBidCount
+          }else{
+            numBids = data?.numBids-oldBidCount+newBidCount
+          }
+          data.numBids = numBids
+          data.lowestBid = lowestBid
+        }
         _adapter.notifyItemChanged(it.first)
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_SUBMIT,
+            mutableListOf(
+              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+            ),
+            mutableListOf(
+              data?.transactionId ?: "", data?.numBids.toString(), bidAmount ?: "",
+              expectedArrivalPickup
+            )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_BID_REVISE_SUBMITTED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",lowestBid.toString()?:" ",oldAmountbids,bidAmount)
+          )
+          reviseInitiated=false
+        }
       }
     })
-
+    viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if (it != null) {
+        var data = it.second
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_SUBMIT,
+            mutableListOf(
+              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+            ),
+            mutableListOf(
+              data?.transactionId ?: "", data?.numBids.toString(),
+              data?.bidAmountValue() ?: "",
+              data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+            )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_BID_REVISE_SUBMITTED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+          )
+          reviseInitiated=false
+        }
+      }
+    })
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it.first == 10){
         Toast.makeText(context,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
@@ -120,6 +238,24 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       uiUtils.hideProgress()
       if(it!= null ){
         val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_BID_REVISE_INITIATED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+              mutableListOf(
+                  it.second.transactionId.toString(), it.second?.numBids.toString(),
+                  it.second?.lowestBid.toString()
+              )
+          )
+          reviseInitiated =true
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULT_BID_INITIATE,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+            mutableListOf( it.second.transactionId?:"",pos.toString(),viewModel.total.toString())
+          )
+          reviseInitiated=false
+        }
         if(it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
             pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
@@ -185,12 +321,19 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
+            mutableListOf( _item.transactionId ?: "",orderRank.toString())
+        )
         analyticsUtil.trackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        context?.let { startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
+        context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
       }
     }
   }
@@ -212,6 +355,24 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             }
             else{
               item.data.let {
+                if(it.transactionBid==null){
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_SEARCH_RESULT_BID_INITIATE,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+                    mutableListOf(data.transactionId?:"",pos.toString(),viewModel.total.toString())
+                  )
+                  reviseInitiated=false
+                }else{
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_BID_REVISE_INITIATED,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                    mutableListOf(
+                      data.transactionId.toString(), data?.numBids.toString(),
+                      data?.lowestBid.toString()
+                    )
+                  )
+                  reviseInitiated=true
+                }
                 BidDetailsCreateEditDialog(
                   context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()
@@ -273,7 +434,26 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         numResults = t.size
         _adapter.operation(t)
       }
-
+      if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add))){
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
+            mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                PROPERTY_SEARCH_BODY_TYPE),
+            mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+                binding.destination?.cityName() ?: "Anywhere",
+                binding.spinnerTruckType.selectedItem.toString())
+        )
+      }else{
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
+            mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
+            mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+                binding.destination?.cityName() ?: "Anywhere",
+                binding.spinnerTruckType.selectedItem.toString(),
+              numResults.toString())
+        )
+      }
       analyticsUtil.trackEvent(
           event,
           mutableListOf(
