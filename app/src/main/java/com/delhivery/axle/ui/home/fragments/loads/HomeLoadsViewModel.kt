@@ -95,6 +95,7 @@ class HomeLoadsViewModel @Inject constructor(
   var offsetFetch = 0
   var total = 0
   var totalFetch = 0
+  var totalFetchTitle = 0
   var transactionIds:String?=null
 
   var hasOrionLoadOnce = false
@@ -294,12 +295,12 @@ class HomeLoadsViewModel @Inject constructor(
       compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
                               .flatMap { t ->
                                   offsetFetch = t.offset
-                                  total = total+t.total
+                                  totalFetchTitle = total+t.total
                                   totalFetch=t.total
                                   hasMoreData = t.offset != t.total
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
-                                  loadsCountLiveData.postValue(total)
+                                  loadsCountLiveData.postValue(totalFetchTitle)
 
                                   Single.zip(
                                           bidsRepository.bidsForLoads(t.transactions),
@@ -327,7 +328,7 @@ class HomeLoadsViewModel @Inject constructor(
                   if(!paginate) {
                       add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
-                  add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
+                  add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
                   for ((index, load) in loads.toMutableList().withIndex()) {
                       try {
                           val lowestBid = _tRes.third.filter { b ->
