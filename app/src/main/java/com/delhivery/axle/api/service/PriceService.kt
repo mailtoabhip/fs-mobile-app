@@ -44,7 +44,7 @@ interface  PriceService {
    * get pricing data
    */
   @POST("/get_pricing_data")
-  fun getPricingData(@Body offerRequest: PriceDetailRequest): Single<BaseMessageResponse>
+  fun getPricingData(@Body offerRequest: PriceDetailRequest): Single<BaseResponse<GetPricingDataResponse>>
 
 
 }

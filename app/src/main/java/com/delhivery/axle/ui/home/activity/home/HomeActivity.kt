@@ -142,8 +142,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
-    //TODO:comment notification from here
-    processNotification()
     if (dplink_type != "") {
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
@@ -246,9 +244,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
   private fun processNotification() {
-    Log.d("noti", "$notificationType$notificationId $vehicleNumber")
+    Log.d("noti", "$notificationType$notificationId $vehicleNumber$pricingId$pricingSortKey$pricingOfferId$notificationFrom")
     markNotificationRead()
-    notificationType = OFFER_LANE_UPLOADED
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -303,7 +300,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       OFFER_LANE_UPLOADED -> {
         fromNotification = true
         analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
-          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingOfferId,
           notificationFrom,
           VALUE_NOTIFICATION))
         val bundle = Bundle()
@@ -367,6 +364,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
     //For Inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
+    pricingId = intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom = intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId = intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
     /**
      * Get Deep Link Parameters*/
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""

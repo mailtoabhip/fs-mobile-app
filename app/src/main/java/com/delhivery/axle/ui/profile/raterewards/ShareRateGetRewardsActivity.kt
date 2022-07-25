@@ -5,8 +5,10 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityShareRateGetRewardsBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.OFFER_APPROVED
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.profile.raterewards.fragments.BaseShareRateGetRewardsFragmentAction
@@ -49,9 +51,8 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
 
     binding.shareRateRewardsTabLayout.setupWithViewPager(binding.viewpager)
 
-    if((intent?.extras?.getString("navigate")
-        ?: "") == OFFER_APPROVED || (intent?.extras?.getString("navigate")
-        ?: "") == OFFER_REJECTED
+    if((intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)
+        ?: "") == OFFER_APPROVED
     ){
     fragmentAction((NavigateShareRateGetRewardsFragmentAction(RewardsFragment)))
     }
@@ -70,5 +71,3 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
     }
   }
 }
-private const val OFFER_APPROVED = "offer_approved"
-private const val OFFER_REJECTED = "offer_rejected"

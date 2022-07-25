@@ -256,6 +256,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
           //For Inventory
           bundle.putString(ARGS_VEHICLE_NUMBER, vehicleNumber)
+
+          //For pricing
+          bundle.putString(ARGS_PRICING_ID, pricingId)
+          bundle.putString(ARGS_PRICING_SORT_KEY, pricingSortKey)
+          bundle.putString(ARGS_OFFER_ID, pricingOfferId)
+          bundle.putString(ARGS_NOTIFICATION_FROM, notificationFrom)
+
         }
           navigationUtils.navigate(it.java, true, bundle)
       }

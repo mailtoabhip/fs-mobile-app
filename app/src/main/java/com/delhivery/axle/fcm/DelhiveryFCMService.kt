@@ -75,7 +75,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
   }
 
   private fun sendNotification(remoteMessage: RemoteMessage) {
-    Log.d("prefs","send notifi. started")
+    Log.d("prefs","send notifi. started $remoteMessage")
     val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       buildNotificationChannel()
       Builder(this, DEFAULT_NOTIFICATION_CHANNEL)

@@ -126,7 +126,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                if(intent?.extras?.getString(ARGS_OFFER_ID)!=null)
                 viewModel.searchOffer(intent?.extras?.getString(ARGS_OFFER_ID)!!).observe(this, Observer {
                     if (it!=null) {
-                        val yourRewardsItemData = YourRewardsItemData(pricingId=priceSortKey!!, originCity = it.oc, originCityCode = it.occ, destinationCity = it.dc, destinationCityCode = it.dcc, truckDisplayName = it.tdn)
+                        val yourRewardsItemData = YourRewardsItemData(pricingId=it.offerId!!, originCity = it.oc, originCityCode = it.occ, destinationCity = it.dc, destinationCityCode = it.dcc, truckDisplayName = it.tdn)
                         fillODVTData(yourRewardsItemData)
                     }
                 })
