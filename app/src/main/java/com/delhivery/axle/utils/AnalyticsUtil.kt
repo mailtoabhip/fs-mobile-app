@@ -281,7 +281,6 @@ const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
 const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
-const val PROPERTY_ORDER_ID = "order_id"
 
 
 
