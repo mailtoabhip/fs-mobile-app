@@ -3,6 +3,8 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
+import com.delhivery.axle.api.request.ReccomdationRequest
+import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.utils.extensions.convertMessageResponse
@@ -15,17 +17,28 @@ import javax.inject.Singleton
 class TransactionsRepository @Inject constructor(
   private val transactionService: TransactionService,
   private val userRepository: UserRepository,
-  private val userPrefs: UserPrefs
+  private val userPrefs: UserPrefs,
+  private val recommendationService: RecommendationService
 ) : BaseRepository() {
 
   /**
    * Get user transactions
    */
-  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, txnIds:String? = null) =
     transactionService.loadBoardTransactions(
       userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
-      "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
+      "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn, txnIds
   ).convertResponse()
+
+  /**
+   * Get user transactions
+   */
+  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+         recommendationService.recommendationTransactions(
+                  ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset)
+//             demand_type, vehicle_type,
+//                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
+          ).convertResponse()
 
   /**
    * Search [TransactionStatus.Requested] transactions

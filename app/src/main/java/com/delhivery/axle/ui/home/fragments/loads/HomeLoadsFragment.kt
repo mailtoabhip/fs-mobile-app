@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
@@ -50,6 +51,8 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.moe.pushlibrary.MoEHelper
 import com.moengage.core.Properties
 import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_UNIQUE_ID
@@ -143,7 +146,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
-
+    viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
+      it?.let { _items -> adapter.operation(_items) }
+    })
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       userPrefs.loadCount = it.toString()
       _title = when (it) {

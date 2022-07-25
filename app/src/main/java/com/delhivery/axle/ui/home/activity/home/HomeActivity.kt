@@ -201,6 +201,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
+
+        SUPPLIER_LOAD_REDIRECT -> {
+          if (dplink_tid != "") {
+            analyticsUtil.trackEvent(
+                    EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION,
+                    mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
+                    mutableListOf(userPrefs.phoneNumber.toString(), dplink_tid)
+            )
+            startActivity(bidDetailsIntent(dplink_tid, this))
+          } else {
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+        }
+
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
           analyticsUtil.trackEvent(
@@ -304,6 +318,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         )
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
+
+      REDIRECT_TO_SUPPLIER_RECOMMENDATION -> {
+        analyticsUtil.trackEvent(
+                EVENT_SUPPLIER_RECOMMENDATION,
+                mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
+                mutableListOf(userPrefs.phoneNumber.toString(), preferredTransactionId)
+        )
+        startActivity(bidDetailsIntent(preferredTransactionId, this))
+      }
+
       REDIRECT_TO_LOAD -> {
         startActivity(bidDetailsIntent(preferredTransactionId,this,source = VALUE_PUSH_NOTIFICATION))
       }
@@ -316,6 +340,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         fromNotification = true
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
+
       TRUCK_REACHED_NOTIFICATION -> {
         fromNotification = true
         vehicleNum = vehicleNumber
@@ -646,6 +671,9 @@ private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
 const val OFFER_LANE_UPLOADED = "offer_lane_uploaded"
 const val OFFER_APPROVED = "offer_approved"
 const val OFFER_REJECTED = "offer_rejected"
+private const val REDIRECT_TO_SUPPLIER_RECOMMENDATION = "supplier_recommendation_notification"
+
+
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
 private const val TEAM_MEMBERS_REDIRECT = "tmbrs"
 private const val PAYMENT_SUMMARY_REDIRECT = "pmtsmry"
@@ -659,6 +687,8 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
+private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
+
 var orderRank=0
 
 /* intent keys */

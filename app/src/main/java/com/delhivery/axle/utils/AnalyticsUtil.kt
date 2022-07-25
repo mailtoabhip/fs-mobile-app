@@ -198,6 +198,10 @@ const val EVENT_VIEW_MY_TRUCK_OFFERS = "view_my_truck_offers"
 const val EVENT_VIEW_MY_PROFILE = "view_my_profile"
 const val EVENT_CLICKED_PRICE_BANNER = "clicked_price_banner"
 const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
+const val EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION = "recommendation_sms_open"
+const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
+
+
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
 const val PROPERTY_DESTINATION = "destination"
@@ -276,6 +280,13 @@ const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
 const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
+const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
+const val PROPERTY_ORDER_ID = "order_id"
+
+
+
+
+
 const val VALUE_BID = "bid"
 const val VALUE_TRIP = "trip"
 const val VALUE_LOAD = "load"
