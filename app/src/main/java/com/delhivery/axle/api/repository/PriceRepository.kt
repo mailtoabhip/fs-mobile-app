@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.OfferRequest
+import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.request.UpdatePriceRequest
 import com.delhivery.axle.api.service.LoadCycleService
 import com.delhivery.axle.api.service.PriceService
@@ -24,4 +25,7 @@ class PriceRepository @Inject constructor(
   fun getUpdateFlag() = priceService.getOffersFlag().convertResponse()
 
   fun getOffers() = priceService.getOffers(OfferRequest()).convertResponse()
+
+  fun getPricingData(request: PriceDetailRequest) = priceService.getPricingData(request).convertResponse()
+
 }

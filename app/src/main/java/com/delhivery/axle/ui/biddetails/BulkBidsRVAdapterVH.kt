@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -20,7 +21,8 @@ import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.tripdetails.*
-
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 abstract class BaseBulkBidsRVAdapterVH<out B: ViewDataBinding,
     IT : BaseBulkBidSummaryRVAdapterItem<*>>(binding: B) : BaseViewHolder<B>(binding) {

@@ -102,6 +102,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         binding.addTruck.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ADD_TRUCK_INITIATE,
+                        mutableListOf(PROPERTY_SOURCE),
+                        mutableListOf(VALUE_MY_TRUCKS)
+                    )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                         TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -128,6 +133,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         binding.addTruckFloating.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ADD_TRUCK_INITIATE,
+                        mutableListOf(PROPERTY_SOURCE),
+                        mutableListOf(VALUE_MY_TRUCKS)
+                    )
                     showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
                         TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                         TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -222,6 +232,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 if(it.first != -1 && it.first !=-2) {
                     uiUtils.showSnackbar("Truck Activated Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_REQUEST_FOR_LOAD_SUBMIT,
+                        mutableListOf(PROPERTY_INVENTORY_UUID),
+                        mutableListOf(data.inventoryId?:"")
+                    )
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
                     data.latestUUID = it.second.latestUUID
@@ -279,8 +294,39 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     )
                 }
                 else {
+
                     uiUtils.showSnackbar("Truck Edited Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
+                    var fieldEdited=""
+                    if(data.ownership!=it.second.ownership){
+                        if(!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_OWNERSHIP
+                        }else{
+                            fieldEdited = VALUE_OWNERSHIP
+                        }
+                    }
+                    if(data.currentCityName!=it.second.currentCityName){
+                        if(!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_ORIGIN
+                        }else{
+                            fieldEdited =VALUE_ORIGIN
+                        }
+                    }
+                    if(data.unloadingDestination!=it.second.unloadingDestination) {
+                        if (!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited = fieldEdited + "/" + VALUE_DESTINATION
+                        } else {
+                            fieldEdited = VALUE_DESTINATION
+                        }
+                    }
+                    if(data.unloadingDestinationAmount!=it.second.unloadingDestinationAmount){
+                        if (!fieldEdited.isNullOrEmpty()) {
+                            fieldEdited=fieldEdited+"/"+ VALUE_PRICE
+                        } else {
+                            fieldEdited = VALUE_PRICE
+                        }
+                    }
+
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
                     data.latestUUID = it.second.latestUUID
@@ -294,6 +340,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     data.destinationClusterId = it.second.destinationClusterId
 
                     adapter.notifyItemChanged(it.first)
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_EDIT_TRUCK_SUBMIT,
+                        mutableListOf( PROPERTY_INVENTORY_UUID,
+                            PROPERTY_FIELD_EDITED),
+                        mutableListOf(data.inventoryId,fieldEdited)
+                    )
                 }
             }
         })
@@ -408,6 +460,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                 )
                 when (viewModel.userPrefs.canBid()) {
                     APPROVED -> {
+                        analyticsUtil.moEngageTrackEvent(
+                            EVENT_ADD_TRUCK_INITIATE,
+                            mutableListOf(PROPERTY_SOURCE),
+                            mutableListOf(VALUE_BANNER)
+                        )
                         showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
                             TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
                             TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
@@ -509,9 +566,13 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.editTruckLayout.setOnClickListener {
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_EDIT_TRUCK_INITIATE,
+                mutableListOf( PROPERTY_INVENTORY_UUID),
+                mutableListOf(data.inventoryId)
+            )
             context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()}
             dialog.dismiss()
-
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
             showDeactivateDialog(position, data)
@@ -520,10 +581,15 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         bindingDialog.deleteTruckLayout.setOnClickListener{
             uiUtils.showProgress()
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_DELETE_TRUCK,
+                mutableListOf( PROPERTY_INVENTORY_UUID),
+                mutableListOf(data.inventoryId)
+            )
             analyticsUtil.trackEvent(
                 EVENT_DELETE_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                mutableListOf(userPrefs.userId(), data.inventoryId)
+                mutableListOf( PROPERTY_INVENTORY_ID),
+                mutableListOf( data.inventoryId)
             )
             viewModel.deleteTruck(data, position)
             dialog.dismiss()
@@ -809,6 +875,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     }
 
     override fun callRewards() {
+         analyticsUtil.trackEvent(
+             EVENT_CLICKED_PRICE_BANNER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
+         )
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
     }
 

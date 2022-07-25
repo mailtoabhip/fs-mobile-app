@@ -108,7 +108,7 @@ enum class UrlConfig(
   InventoryService(
       "https://orion-inventory-api-v2.delhivery.com",
       "https://zxfddco9gg.execute-api.ap-southeast-1.amazonaws.com/dev/",
-      "https://mf9vem7911.execute-api.us-east-1.amazonaws.com/uat/"
+      "https://fz55n4je56.execute-api.us-east-1.amazonaws.com/uat/"
 
   ),
   LoadboardService(
@@ -120,6 +120,11 @@ enum class UrlConfig(
           "https://orion-contract-api.delhivery.com/",
           "https://orion-contract-api-dev.delhivery.com/",
           "https://orion-contract-api-uat.delhivery.com/"
+  ),
+  RecommendationService(
+          "https://orion-recommendation.delhivery.com",
+          "https://orion-recommendation-api-dev.delhivery.com",
+          "https://orion-recommendation-api-uat.delhivery.com"
   ),
   AppID(
   "83", "371", "371"

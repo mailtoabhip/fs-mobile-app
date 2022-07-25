@@ -324,4 +324,17 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.PriceService).create(
           PriceService::class.java
   )
+
+  /**
+   * Provide [Recommendation]
+   */
+
+  @Provides
+  @Singleton
+  fun provideRecommendationService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.RecommendationService).create(
+          RecommendationService::class.java
+  )
 }

@@ -12,12 +12,16 @@ import com.delhivery.axle.data.transactions.TransactionsItemData
 import com.delhivery.axle.databinding.ActivityTransactionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.transactionDetailIntent
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Displays wallet transactions
  */
 class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, TransactionsViewModel>(),
     TransactionsRVAdapterInterface {
+
+  @Inject lateinit var userPrefs : UserPrefs
 
   override fun getViewModelClass() = TransactionsViewModel::class.java
 
@@ -77,6 +81,10 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
     }
   }
 
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
+  }
 }
 
 /**

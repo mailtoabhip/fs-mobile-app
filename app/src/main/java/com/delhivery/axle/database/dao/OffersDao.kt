@@ -10,6 +10,9 @@ interface OffersDao {
   @Query("SELECT * FROM offers")
   fun getAllOffers(): LiveData<List<OffersEntity>>
 
+  @Query("SELECT * FROM offers WHERE offer_id =:offerId")
+  fun getOffers(offerId:String):LiveData<OffersEntity>
+
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun newOfferEntry(entry: OffersEntity): Long
 

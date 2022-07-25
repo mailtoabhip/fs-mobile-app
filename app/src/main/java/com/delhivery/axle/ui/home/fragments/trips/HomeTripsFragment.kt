@@ -15,7 +15,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.databinding.FragmentHomeTripsBinding
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.dialogs.DownloadLedgerDialog
@@ -80,6 +79,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
     viewModel.dataLoadingLiveData.observe(viewLifecycleOwner, Observer {
+      userPrefs.awaitingArrivalCount=viewModel.awaitingArrivalCount
       uiUtils.hideProgress()
       setText()
     })
@@ -108,21 +108,25 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.labelViewAllTrips.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(userTripsIntent(context!!, "all", 0))
       userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingArirval.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(userTripsIntent(context!!, "trips_view", 0))
       userPrefs.startTime = Date().time
     }
 
     binding.viewInTransit.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(userTripsIntent(context!!, "trips_view", 1))
       userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingPod.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       analyticsUtil.trackEvent(
               EVENT_VIEW_TRIPS_AWAITING_POD,
               mutableListOf(PROPERTY_USER_ID , PROPERTY_TRIPS_AWAITING_POD_COUNT),
@@ -132,11 +136,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.viewAwaitingLoading.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(userTripsIntent(context!!, "trips_view", 2))
       userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingUnloading.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(userTripsIntent(context!!, "trips_view", 3))
       userPrefs.startTime = Date().time
     }
@@ -148,12 +154,14 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
               mutableListOf(userPrefs.userId())
       )
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(consolidatedPageIntent(context!!))
       }
     }
 
     binding.advanceCard.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(userTripsIntent(context!!, "payment_view", 0))
         userPrefs.startTime = Date().time
       }
@@ -161,6 +169,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.balanceCard.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(userTripsIntent(context!!, "payment_view", 1))
         userPrefs.startTime = Date().time
       }
@@ -168,6 +177,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.recoveryCard.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(userTripsIntent(context!!, "payment_view", 2))
         userPrefs.startTime = Date().time
       }
@@ -175,6 +185,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.editStickySearch.setOnClickListener {
       context?.let {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(searchOngoingTripIntent(context!!))
       }
     }
