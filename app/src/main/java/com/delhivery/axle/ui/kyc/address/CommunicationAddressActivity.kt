@@ -232,7 +232,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
            showUploadImage()
        }
 
-        binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
+         binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
             if(p>0){
                 proofTypeFilled = true
                 Log.d("udyog",userPrefs.udyogNumber)
@@ -240,9 +240,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     showUploadImage()
                     if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
-                            binding.textProof.visibility = View.GONE
-                            binding.docLayout.visibility = View.GONE
-                            docUploadProof = true
+
+                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
+                            }else{
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            }
+
                         } else {
                             binding.textProof.visibility = View.VISIBLE
                             binding.docLayout.visibility = View.VISIBLE
@@ -250,9 +258,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         }
                     } else {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
-                            binding.textProof.visibility = View.GONE
-                            binding.docLayout.visibility = View.GONE
-                            docUploadProof = true
+                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
+                            }else{
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            }
                         } else {
                             binding.textProof.visibility = View.VISIBLE
                             binding.docLayout.visibility = View.VISIBLE
@@ -262,9 +276,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                                 "rc"
                             ) && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
                         ) {
-                            binding.textProof.visibility = View.GONE
-                            binding.docLayout.visibility = View.GONE
-                            docUploadProof = true
+                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
+                            }else{
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            }
                         } else {
                             binding.textProof.visibility = View.VISIBLE
                             binding.docLayout.visibility = View.VISIBLE
@@ -426,14 +446,25 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         var spinnerIndex = 0
         if (addressData.proofDocumentType != null) {
             if(userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
-                spinnerIndex = when {
-                    addressData.proofDocumentType!!.startsWith("V", true) -> 1
-                    addressData.proofDocumentType!!.startsWith("lr", true) -> 2
-                    addressData.proofDocumentType!!.startsWith("le", true) -> 3
-                    addressData.proofDocumentType!!.startsWith("ud", true) -> 4
-                    addressData.proofDocumentType!!.startsWith("dr", true) -> 5
-                    addressData.proofDocumentType!!.startsWith("rc", true) -> 6
-                    else -> 0
+                if(userPrefs.isGstsByPanNotRegistered){
+                    spinnerIndex = when {
+                        addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                        addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                        addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                        addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                        addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                        else -> 0
+                    }
+                }else {
+                    spinnerIndex = when {
+                        addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                        addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                        addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                        addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                        addressData.proofDocumentType!!.startsWith("dr", true) -> 5
+                        addressData.proofDocumentType!!.startsWith("rc", true) -> 6
+                        else -> 0
+                    }
                 }
             }else{
                 spinnerIndex = when {
@@ -461,9 +492,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             }
             enableSubmitButton()
         } else {
-            binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
-                if (p > 0) {
-                    proofTypeFilled = true
+            if(userPrefs.isGstsByPanNotRegistered){
+                binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+                    if (p > 0) {
+                        proofTypeFilled = true
+                    }
+                }
+            }else{
+                binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
+                    if (p > 0) {
+                        proofTypeFilled = true
+                    }
                 }
             }
             enableSubmitButton()

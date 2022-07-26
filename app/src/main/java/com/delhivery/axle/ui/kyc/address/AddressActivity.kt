@@ -654,7 +654,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             bindingDialog.saveDeleteLl.visibility = View.GONE
         }
 
-        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+        bindingDialog.spinnerProof.setup( R.array.array_address__proof_type) { p, v ->
             proofTypeFilled = p>0
             if(!dataSetFromPref){
                 resetUploadData()
@@ -664,10 +664,14 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }else{
                 dataSetFromPref=false
             }
-            if((userPrefs.businessDocType.equals("lr")&& p==2)){
-                bindingDialog.uploadDocLay.visibility = View.GONE
-                bindingDialog.uploadDocLay.visibility = View.GONE
-                docUploadProof= true
+            if((userPrefs.businessDocType.equals("lr")&& p==2 )){
+                if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                    bindingDialog.uploadDocLay.visibility = View.VISIBLE
+                    docUploadProof= false
+                }else{
+                    bindingDialog.uploadDocLay.visibility = View.GONE
+                    docUploadProof= true
+                }
             }else{
                 bindingDialog.uploadDocLay.visibility = View.VISIBLE
             }
