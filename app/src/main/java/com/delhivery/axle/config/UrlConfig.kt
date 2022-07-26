@@ -122,7 +122,7 @@ enum class UrlConfig(
           "https://orion-contract-api-uat.delhivery.com/"
   ),
   RecommendationService(
-          "https://orion-recommendation.delhivery.com",
+          "https://orion-recommendation-api.delhivery.com",
           "https://orion-recommendation-api-dev.delhivery.com",
           "https://orion-recommendation-api-uat.delhivery.com"
   ),

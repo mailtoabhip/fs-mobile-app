@@ -244,13 +244,7 @@ class HomeLoadsViewModel @Inject constructor(
                           )
                         }
                     } else {
-//                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-//                            /* remove progress item */
-//                            add(Pair(HomeLoadsProgressItem(), Remove))
-//                            /* add api time out item */
-//                            add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
-//                        }
-//                                .let { userLoadsData.postValue(it) }
+
                         fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
 
                     }
@@ -365,7 +359,10 @@ class HomeLoadsViewModel @Inject constructor(
             }
                 .let {
                   if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
-                    it.addAll(userLoadsData.value!!)
+                    if(userLoadsData.value!=null && userLoadsData.value!!.size>0){
+                      it.addAll(userLoadsData.value!!)}
+
+
                   }
                   userLoadsDataFetch.postValue(it) }
 
@@ -378,7 +375,8 @@ class HomeLoadsViewModel @Inject constructor(
             }
                 .let {
                   if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
-                    it.addAll(userLoadsData.value!!)
+                    if(userLoadsData.value!=null && userLoadsData.value!!.size>0){
+                    it.addAll(userLoadsData.value!!)}
                   }
                   userLoadsDataFetch.postValue(it) }
           }

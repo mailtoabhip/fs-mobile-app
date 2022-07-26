@@ -393,7 +393,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           analyticsUtil.moEngageTrackEvent(
             EVENT_LOADFEED_BID_INITIATE,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-(pos- STATIC_ITEM_LIST/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
+            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-((pos- STATIC_ITEM_LIST)/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
           )
           reviseInitiated=false
         }
