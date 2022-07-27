@@ -218,6 +218,24 @@
                 android:textColor="@color/bid_placed_red"
                 tools:text="Bulk Load: 200MT"/>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/size_16dp"
+                app:layout_constraintTop_toBottomOf="@+id/text_target_price"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:layout_width="wrap_content"
+                  android:text="@string/label_destination_city"
+                  android:layout_height="wrap_content"/>
+
+              <ImageView
+                  android:layout_width="wrap_content"
+                  app:srcCompat="@drawable/ic_frame_4866277"
+                  android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_truck_details"
                 android:layout_width="wrap_content"
@@ -298,7 +316,7 @@
                 android:textSize="@dimen/text_12sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_load_details"
+                app:layout_constraintTop_toBottomOf="@id/text_bulk_load"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView

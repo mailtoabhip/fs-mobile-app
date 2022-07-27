@@ -338,6 +338,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+            if(total==0){
+              binding.textViaDestination.img3.visibility = View.GONE
+            }
             total = total+1
             binding.textViaDestination.card3.visibility = View.VISIBLE
             binding.textViaDestination.city3.text = binding.transaction?.stop1City

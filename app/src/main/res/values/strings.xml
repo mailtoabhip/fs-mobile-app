@@ -391,6 +391,8 @@
   <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
   <string name="label_rate_banner">Add trip rates and earn reward</string>
   <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
+  <string name="label_additional_details">Additional Details</string>
+  <string name="label_add_address_details">See Address Details</string>
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
