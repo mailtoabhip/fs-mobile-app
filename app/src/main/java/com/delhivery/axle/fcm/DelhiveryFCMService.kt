@@ -67,7 +67,6 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
   override fun onNewToken(fcmToken: String) {
     super.onNewToken(fcmToken)
-    MoEFireBaseHelper.getInstance().passPushToken(applicationContext,fcmToken)
     userPrefs.fcmTokenGenerated = true
   }
 

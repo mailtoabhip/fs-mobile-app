@@ -363,6 +363,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
 
     if (viewModel.isFCMTokenGenerated()) {
+      userPrefs.moengageFcmTokenGenerated = true
+      fcmUtils.generateToken {
+        if (it.isNotNullOrEmpty()) {
+          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
+          viewModel.updateFCMToken(it)
+        }
+      }
+    }
+
+    if (!viewModel.isMoengageFCMTokenGenerated()) {
       fcmUtils.generateToken {
         if (it.isNotNullOrEmpty()) {
           activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
