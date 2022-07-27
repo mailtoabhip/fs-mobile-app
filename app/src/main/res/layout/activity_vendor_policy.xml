@@ -1192,11 +1192,10 @@
                         android:id="@+id/tv_lost_pod_1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Movement\nType"
+                        android:text="ePOD\nReveived\n(40 days)"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -1211,39 +1210,15 @@
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_container_lp_1"
                             android:layout_width="0dp"
+                            app:layout_constraintTop_toTopOf="parent"
                             android:layout_height="wrap_content"
-                            android:text="Received"
+                            android:text="hPOD\nStatus\n(40 days)"
                             android:textAlignment="center"
                             android:textSize="@dimen/size_16dp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_2"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_8dp"
-                            android:text="ePOD"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_10dp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_3"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_3"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_8dp"
-                            android:text="hPOD"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_10dp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_2"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_container_lp_1" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1251,7 +1226,7 @@
                         android:id="@+id/tv_lost_pod_3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="POD\nPenalty"
+                        android:text="RP/Agri"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
@@ -1263,7 +1238,7 @@
                         android:id="@+id/tv_lost_pod_10"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Overhead Paid"
+                        android:text="DFS"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
@@ -1286,7 +1261,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="Regular"
+                        android:text="Y"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/container_3"
@@ -1306,24 +1281,12 @@
                             android:id="@+id/tv_container_lp_9"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Yes"
+                            android:text="N"
                             android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
+                            android:textSize="@dimen/text_16sp"
+                            end app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_4"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_4"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="No"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_9"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -1344,7 +1307,7 @@
                         android:id="@+id/tv_lost_pod_11"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Yes"
+                        android:text="2000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_4"
@@ -1367,7 +1330,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:text="Regular"
+                        android:text="N"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/container_4"
@@ -1387,25 +1350,14 @@
                             android:id="@+id/tv_container_lp_5"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="No"
+                            android:text="N"
                             android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
+                            android:textSize="@dimen/text_16sp"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_6"
-                            app:layout_constraintStart_toStartOf="parent"
+                           app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_6"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="No"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_5"
-                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1413,7 +1365,7 @@
                         android:id="@+id/tv_lost_pod_9"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="3000"
+                        android:text="No Balance"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_12"
@@ -1424,95 +1376,67 @@
                         android:id="@+id/tv_lost_pod_12"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="No"
+                        android:text="3000"
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_9"
                         app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_7" />
 
-                    <View
-                        android:id="@+id/seprator_lost_pod_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="@dimen/size_8dp"
-                        android:background="@color/grey_bg"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_lost_pod_7" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_13"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_8dp"
-                        android:text="Agri &amp; Commodity	"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/container_5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/seprator_lost_pod_2" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/container_5"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_15"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_13"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_7"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="No"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/tv_container_lp_8"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_container_lp_8"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="No"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/size_12dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_container_lp_7"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_15"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="No Balance"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_16"
-                        app:layout_constraintStart_toEndOf="@+id/container_5"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_lost_pod_16"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="No"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/size_16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_lost_pod_15"
-                        app:layout_constraintTop_toTopOf="@+id/tv_lost_pod_13"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_lost_pod_13"/>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                 <View
+                    android:id="@+id/seprator_9"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@color/grey_bg"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_lost_pod" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_vdeb"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seprator_9"
+                    app:srcCompat="@drawable/ic_money_bill_black" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vdeb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_8dp"
+                    android:text="Vendor Debit"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/size_16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_vdeb"
+                    app:layout_constraintLeft_toRightOf="@id/iv_vdeb"
+                    app:layout_constraintTop_toTopOf="@+id/iv_vdeb" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vdeb_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Vendor will be debited under following controllable circumstances:"
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/iv_vdeb"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_vdeb" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vdeb_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="\u2022 Vehicle Delayed - Traffic\n\n\u2022 Vehicle Delayed- Driver Unwell\n\n\u2022 Vehicle Delayed- Breakdown\n\n\u2022 Vehicle Held by Driver\n\n\u2022 Vehicle Held- EMI issue\n\n\u2022 Vehicle met with accident\n\n\u2022 Appointment Delay\n\n\u2022 No entry issue\n\n\u2022 Driver stay at home"
+                    android:textSize="@dimen/size_16dp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_vdeb_detail"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_vdeb_detail" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
