@@ -87,7 +87,6 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             }
         })
 
-
         binding.tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_loads_home)
         binding.tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_my_truck)
 
@@ -130,6 +129,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
+
+
     }
 
 

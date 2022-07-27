@@ -128,6 +128,9 @@ class HomeLoadsViewModel @Inject constructor(
    */
   fun isFCMTokenGenerated() = userPrefs.fcmTokenGenerated
 
+  fun isMoengageFCMTokenGenerated() = userPrefs.moengageFcmTokenGenerated
+
+
   var fromNotification: Boolean
     get() = userPrefs.fromNotification
     set(value) {
@@ -488,6 +491,7 @@ class HomeLoadsViewModel @Inject constructor(
         .subscribe { _, error ->
           if (!error) {
             userPrefs.fcmTokenGenerated = false
+            userPrefs.moengageFcmTokenGenerated = true
           }
         }
   }

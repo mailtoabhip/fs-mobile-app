@@ -33,6 +33,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -109,6 +110,19 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
        )
 
+       val c = Date()
+       val date = c.toString()
+       analyticsUtil.trackEvent(
+         EVENT_VIEW_BIDS_SCREEN_OFFERS,
+         mutableListOf(
+           PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+           PROPERTY_DATE
+         ),
+         mutableListOf(
+           userPrefs.userId(), userPrefs.phoneNumber!!,
+           userPrefs.bidOfferCount.toString(), date
+         )
+       )
        launch=false
      }
       it?.let { _items -> adapter.operation(_items) }
