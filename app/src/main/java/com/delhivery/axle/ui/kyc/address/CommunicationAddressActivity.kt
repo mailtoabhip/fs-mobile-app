@@ -232,7 +232,15 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
            showUploadImage()
        }
 
-         binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
+        var ert:Int? = null
+
+        if(userPrefs.isGstsByPanNotRegistered){
+            ert = R.array.array_address__proof_type
+        }else{
+            ert = R.array.array_address__proof_type_aadhar_flow
+        }
+
+         binding.spinnerProof.setup(ert) { p, v ->
             if(p>0){
                 proofTypeFilled = true
                 Log.d("udyog",userPrefs.udyogNumber)
@@ -240,21 +248,25 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     showUploadImage()
                     if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
-
                             if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
                                 binding.textProof.visibility = View.VISIBLE
                                 binding.docLayout.visibility = View.VISIBLE
                                 docUploadProof = false
+                                Log.d("porsfjfsoos", "slfsllll")
                             }else{
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
+                                Log.d("swtyusfjfsoos", "slfsllll")
                             }
+
+                            Log.d("sfjfsoos", "slfsllll")
 
                         } else {
                             binding.textProof.visibility = View.VISIBLE
                             binding.docLayout.visibility = View.VISIBLE
                             docUploadProof = false
+                            Log.d("mposfjfsoos", "slfsllll")
                         }
                     } else {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
@@ -272,10 +284,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                             binding.docLayout.visibility = View.VISIBLE
                             docUploadProof = false
                         }
-                        if ((userPrefs.businessDocType.equals(
-                                "rc"
-                            ) && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
-                        ) {
+                        if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)) {
                             if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
                                 binding.textProof.visibility = View.VISIBLE
                                 binding.docLayout.visibility = View.VISIBLE

@@ -654,7 +654,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             bindingDialog.saveDeleteLl.visibility = View.GONE
         }
 
-        bindingDialog.spinnerProof.setup( R.array.array_address__proof_type) { p, v ->
+        bindingDialog.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
             proofTypeFilled = p>0
             if(!dataSetFromPref){
                 resetUploadData()
