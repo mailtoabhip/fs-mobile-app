@@ -252,22 +252,16 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                                 binding.textProof.visibility = View.VISIBLE
                                 binding.docLayout.visibility = View.VISIBLE
                                 docUploadProof = false
-                                Log.d("porsfjfsoos", "slfsllll")
                             }else{
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
-                                Log.d("swtyusfjfsoos", "slfsllll")
                             }
-
-                            Log.d("sfjfsoos", "slfsllll")
-
                         } else {
                             binding.textProof.visibility = View.VISIBLE
                             binding.docLayout.visibility = View.VISIBLE
                             docUploadProof = false
-                            Log.d("mposfjfsoos", "slfsllll")
-                        }
+                       }
                     } else {
                         if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
                             if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
