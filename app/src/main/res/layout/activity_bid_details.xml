@@ -226,12 +226,27 @@
 
               <androidx.appcompat.widget.AppCompatTextView
                   android:layout_width="wrap_content"
-                  android:text="@string/label_destination_city"
+                  android:id="@+id/haddress"
+                  android:textSize="@dimen/text_12sp"
+                  android:textColor="@color/heading_black"
+                  android:text="@string/label_additional_details"
                   android:layout_height="wrap_content"/>
 
-              <ImageView
+              <androidx.recyclerview.widget.RecyclerView
                   android:layout_width="wrap_content"
-                  app:srcCompat="@drawable/ic_frame_4866277"
+                  android:id="@+id/addresslist"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:layout_below="@+id/haddress"
+                  android:layout_height="wrap_content"/>
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:layout_width="wrap_content"
+                  android:id="@+id/seeMore"
+                  android:textSize="@dimen/text_12sp"
+                  android:textColor="@color/colorAccent"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:layout_below="@+id/addresslist"
+                  android:text="@string/label_add_address_details"
                   android:layout_height="wrap_content"/>
 
             </RelativeLayout>
