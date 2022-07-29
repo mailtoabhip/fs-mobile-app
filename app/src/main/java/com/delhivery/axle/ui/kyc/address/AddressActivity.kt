@@ -664,16 +664,18 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }else{
                 dataSetFromPref=false
             }
-            if((userPrefs.businessDocType.equals("lr")&& p==2 )){
-                if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+            if (!userPrefs.retryVerification) {
+                if ((userPrefs.businessDocType.equals("lr") && p == 2)) {
+                    if (userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()) {
+                        bindingDialog.uploadDocLay.visibility = View.VISIBLE
+                        docUploadProof = false
+                    } else {
+                        bindingDialog.uploadDocLay.visibility = View.GONE
+                        docUploadProof = true
+                    }
+                } else {
                     bindingDialog.uploadDocLay.visibility = View.VISIBLE
-                    docUploadProof= false
-                }else{
-                    bindingDialog.uploadDocLay.visibility = View.GONE
-                    docUploadProof= true
                 }
-            }else{
-                bindingDialog.uploadDocLay.visibility = View.VISIBLE
             }
             enableAddAddressDialogButton(bindingDialog)
         }

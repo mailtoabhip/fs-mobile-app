@@ -234,11 +234,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         var ert:Int? = null
 
-        if(userPrefs.isGstsByPanNotRegistered){
+        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
             ert = R.array.array_address__proof_type
-        }else{
+        } else {
             ert = R.array.array_address__proof_type_aadhar_flow
+
         }
+
 
          binding.spinnerProof.setup(ert) { p, v ->
             if(p>0){
@@ -246,53 +248,40 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 Log.d("udyog",userPrefs.udyogNumber)
                 if(!dataSetFromPref) {
                     showUploadImage()
-                    if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
-                        if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
-                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
-                                binding.textProof.visibility = View.VISIBLE
-                                binding.docLayout.visibility = View.VISIBLE
-                                docUploadProof = false
-                            }else{
+                    if (!userPrefs.retryVerification){
+                        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
-                            }
-                        } else {
-                            binding.textProof.visibility = View.VISIBLE
-                            binding.docLayout.visibility = View.VISIBLE
-                            docUploadProof = false
-                       }
-                    } else {
-                        if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
-                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                            } else {
                                 binding.textProof.visibility = View.VISIBLE
                                 binding.docLayout.visibility = View.VISIBLE
                                 docUploadProof = false
-                            }else{
+                            }
+                        } else {
+                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
-                            }
-                        } else {
-                            binding.textProof.visibility = View.VISIBLE
-                            binding.docLayout.visibility = View.VISIBLE
-                            docUploadProof = false
-                        }
-                        if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)) {
-                            if(userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()){
+                            } else {
                                 binding.textProof.visibility = View.VISIBLE
                                 binding.docLayout.visibility = View.VISIBLE
                                 docUploadProof = false
-                            }else{
+                            }
+                            if ((userPrefs.businessDocType.equals(
+                                    "rc"
+                                ) && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+                            ) {
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
-                            }
-                        } else {
-                            binding.textProof.visibility = View.VISIBLE
-                            binding.docLayout.visibility = View.VISIBLE
-                            docUploadProof = false
+                            } else {
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
 
+                            }
                         }
                     }
                     enableSubmitButton()
