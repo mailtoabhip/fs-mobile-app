@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/mLay"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+  <ImageView
+      android:layout_width="wrap_content"
+      app:srcCompat="@drawable/ic_ellipse_1"
+      android:layout_height="wrap_content"/>
+
+  <View
+      android:id="@+id/dotLine"
+      android:layout_width="1dp"
+      android:layout_height="match_parent"
+      android:layout_marginStart="-4dp"
+      android:layout_marginTop="@dimen/size_8dp"
+      android:background="@drawable/bg_ver_line" />
+
+
+  <LinearLayout
+      android:layout_width="0dp"
+      android:orientation="vertical"
+      android:layout_weight="1"
+      android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/head"
+        android:textSize="@dimen/text_12sp"
+        android:textColor="#9CA7AE"
+        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:id="@+id/subHead"
+        android:layout_marginTop="@dimen/size_6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_12sp"
+        android:layout_marginBottom="@dimen/size_8dp"
+        android:textColor="@color/faded_black"
+        android:layout_marginStart="8dp" />
+
+  </LinearLayout>
+</LinearLayout>

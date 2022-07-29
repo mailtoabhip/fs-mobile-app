@@ -11,6 +11,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.TruckResponseArray
@@ -24,6 +25,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
+import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -63,6 +65,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   var oldAmountbids =""
   var isFirstBid = false
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
+  var uploadArray:ArrayList<Pair<String, String?>> = ArrayList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -83,7 +86,24 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
      source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
 
+    val addressDetailAdapter : AddressDetailAdapter = AddressDetailAdapter(uploadArray)
+    binding.addresslist.apply {
+      layoutManager = LinearLayoutManager(applicationContext)
+      adapter = addressDetailAdapter
+    }
 
+
+    binding.seeMoreLay.setOnClickListener {
+      if(binding.addresslist.visibility == View.VISIBLE){
+        binding.addresslist.visibility = View.GONE
+        binding.firstItem.visibility = View.VISIBLE
+        binding.arr.rotation = 0F
+      }else if(binding.addresslist.visibility == View.GONE){
+        binding.addresslist.visibility = View.VISIBLE
+        binding.firstItem.visibility = View.GONE
+        binding.arr.rotation = 180F
+      }
+    }
 
   }
 
@@ -228,41 +248,83 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaLabel.visibility = View.VISIBLE
           if(it.containsKey(1)){
            binding.textViaDestination.card1.visibility = View.VISIBLE
-            binding.textViaDestination.city1.text = it.get(1)
+            binding.textViaDestination.city1.text = it.get(1)?.first
+            if(it.get(1)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(1)?.second + " " + it.get(1)?.third))
+            }
           }
           if(it.containsKey(2)){
             binding.textViaDestination.card2.visibility = View.VISIBLE
-            binding.textViaDestination.city2.text = it.get(2)
+            binding.textViaDestination.city2.text = it.get(2)?.first
+            if(it.get(2)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(2)?.second + " " + it.get(2)?.third))
+            }
           }
           if(it.containsKey(3)){
             binding.textViaDestination.card3.visibility = View.VISIBLE
-            binding.textViaDestination.city3.text = it.get(3)
+            binding.textViaDestination.city3.text = it.get(3)?.first
+            if(it.get(3)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(3)?.second + " " + it.get(3)?.third))
+            }
           }
           if(it.containsKey(4)){
             binding.textViaDestination.card4.visibility = View.VISIBLE
-            binding.textViaDestination.city4.text = it.get(4)
+            binding.textViaDestination.city4.text = it.get(4)?.first
+            if(it.get(4)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(4)?.second + " " + it.get(4)?.third))
+            }
           }
           if(it.containsKey(5)){
             binding.textViaDestination.card5.visibility = View.VISIBLE
-            binding.textViaDestination.city5.text = it.get(5)
+            binding.textViaDestination.city5.text = it.get(5)?.first
+            if(it.get(5)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(5)?.second + " " + it.get(5)?.third))
+            }
           }
           if(it.containsKey(6)){
             binding.textViaDestination.card6.visibility = View.VISIBLE
-            binding.textViaDestination.city6.text = it.get(6)
+            binding.textViaDestination.city6.text = it.get(6)?.first
+            if(it.get(6)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(6)?.second + " " + it.get(6)?.third))
+            }
           }
           if(it.containsKey(7)){
             binding.textViaDestination.card7.visibility = View.VISIBLE
-            binding.textViaDestination.city7.text = it.get(7)
+            binding.textViaDestination.city7.text = it.get(7)?.first
+            if(it.get(7)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(7)?.second + " " + it.get(7)?.third))
+            }
           }
           if(it.containsKey(8)){
             binding.textViaDestination.card8.visibility = View.VISIBLE
-            binding.textViaDestination.city8.text = it.get(8)
+            binding.textViaDestination.city8.text = it.get(8)?.first
+            if(it.get(8)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(8)?.second + " " + it.get(8)?.third))
+            }
           }
           if(it.containsKey(9)){
             binding.textViaDestination.card9.visibility = View.VISIBLE
-            binding.textViaDestination.city9.text = it.get(9)
+            binding.textViaDestination.city9.text = it.get(9)?.first
+            if(it.get(9)?.second.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(9)?.second + " " + it.get(9)?.third))
+            }
           }
-        }
+            if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
+            }
+
+            if(!uploadArray.isEmpty()) {
+              binding.addressLay.visibility = View.VISIBLE
+              val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+              binding.addresslist.apply {
+                layoutManager = LinearLayoutManager(applicationContext)
+                adapter = addressDetailAdapter
+              }
+            }else{
+              binding.addressLay.visibility = View.GONE
+            }
+
+          }
       }
     })
 
@@ -273,6 +335,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     binding.error = false
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
+    uploadArray.clear()
   }
 
   /**
@@ -313,6 +376,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           title = _transaction.tripDisplayName()
         }
 
+        if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+          uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+        }
+        binding.head.text = "Pickup Address"
+        binding.subHead.text = binding.transaction?.pickupLocationAddress
+
         if(binding.transaction?.indentOrigin.equals("LH")){
           if(binding.transaction?.indentHaltCenters.isNullOrEmpty()){
             binding.stopNo.text = "No Stops"
@@ -329,12 +398,18 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             total = total+1
             binding.textViaDestination.card1.visibility = View.VISIBLE
             binding.textViaDestination.city1.text = binding.transaction?.pickup1City
+            if(binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address + " " + binding.transaction?.pickup1AddressPin))
+            }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
             total = total+1
             binding.textViaDestination.card2.visibility = View.VISIBLE
             binding.textViaDestination.city2.text = binding.transaction?.pickup2City
+            if(binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address + " " + binding.transaction?.pickup2AddressPin))
+            }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
@@ -344,11 +419,17 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             total = total+1
             binding.textViaDestination.card3.visibility = View.VISIBLE
             binding.textViaDestination.city3.text = binding.transaction?.stop1City
+            if(binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop1Address + " " + binding.transaction?.intermediaryStop1AddressPin))
+            }
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
             total = total+1
             binding.textViaDestination.card4.visibility = View.VISIBLE
             binding.textViaDestination.city4.text = binding.transaction?.stop2City
+            if(binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop2Address + " " + binding.transaction?.intermediaryStop2AddressPin))
+            }
           }
 
           if(total>0){
@@ -357,8 +438,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }else{
             binding.stopNo.text = "No Stops"
           }
+
+          if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Drop Address",binding.transaction?.dropLocationAddress))
+          }
         }
 
+        if(!uploadArray.isEmpty()) {
+          binding.addressLay.visibility = View.VISIBLE
+          val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+          binding.addresslist.apply {
+            layoutManager = LinearLayoutManager(applicationContext)
+            adapter = addressDetailAdapter
+          }
+        }else{
+          binding.addressLay.visibility = View.GONE
+        }
         bidEndingTime = binding.transaction!!.bidEndingTime.toString()
 
       } else {
