@@ -434,7 +434,7 @@
   <string name="label_gst_dialog_option1">Verify via OTP</string>
   <string name="label_gst_dialog_option2">Upload GST document</string>
   <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
-  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhar mobile number</string>
+  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered Aadhar mobile number</string>
   <string name="label_attach_image">Attach Image From</string>
   <string name="label_camera">Camera</string>
   <string name="label_files">Files</string>

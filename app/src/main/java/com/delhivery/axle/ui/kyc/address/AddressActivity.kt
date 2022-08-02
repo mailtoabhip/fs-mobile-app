@@ -666,13 +666,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }
             if (!userPrefs.retryVerification) {
                 if ((userPrefs.businessDocType.equals("lr") && p == 2)) {
-                    if (userPrefs.addressRejectReason.isNotNullOrEmpty() && userPrefs.rcRejectReason.isNullOrEmpty()) {
-                        bindingDialog.uploadDocLay.visibility = View.VISIBLE
-                        docUploadProof = false
-                    } else {
                         bindingDialog.uploadDocLay.visibility = View.GONE
-                        docUploadProof = true
-                    }
+                    bindingDialog.addressProofText.visibility = View.GONE
+                    docUploadProof = true
                 } else {
                     bindingDialog.uploadDocLay.visibility = View.VISIBLE
                 }

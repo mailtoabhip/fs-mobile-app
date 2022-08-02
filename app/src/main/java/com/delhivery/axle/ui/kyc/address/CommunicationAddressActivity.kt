@@ -254,13 +254,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
-                            } else {
-                                binding.textProof.visibility = View.VISIBLE
-                                binding.docLayout.visibility = View.VISIBLE
-                                docUploadProof = false
-                            }
-                        } else {
-                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
+                            } else if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+                            ) {
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
                                 docUploadProof = true
@@ -269,9 +264,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                                 binding.docLayout.visibility = View.VISIBLE
                                 docUploadProof = false
                             }
-                            if ((userPrefs.businessDocType.equals(
-                                    "rc"
-                                ) && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+
+                        } else {
+                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            } else if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
                             ) {
                                 binding.textProof.visibility = View.GONE
                                 binding.docLayout.visibility = View.GONE
@@ -419,12 +418,19 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         } else {
             dataSetFromPref = true
+            if(docPath!!.contains(awsPath)){
             docArray.add(
                 Pair(
                     docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
                     ?.div(1024)).toString()
                 )
-            )
+            )}else{
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }
             if (addressData.documentUrls != null)
                 viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
             binding.uploadDocLay.visibility = View.GONE
