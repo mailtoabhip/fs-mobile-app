@@ -424,7 +424,7 @@
   <string name="sub_label_step3_3">Step 3 of 3</string>
   <string name="label_identity_verification">Identity Verification</string>
   <string name="label_pan_details">PAN details </string>
-  <string name="label_aadhaar">Aadhar details </string>
+  <string name="label_aadhaar">Aadhaar details </string>
   <string name="label_communication_address">Office address </string>
   <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
   <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
@@ -434,7 +434,7 @@
   <string name="label_gst_dialog_option1">Verify via OTP</string>
   <string name="label_gst_dialog_option2">Upload GST document</string>
   <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
-  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered Aadhar mobile number</string>
+  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhaar mobile number</string>
   <string name="label_attach_image">Attach Image From</string>
   <string name="label_camera">Camera</string>
   <string name="label_files">Files</string>

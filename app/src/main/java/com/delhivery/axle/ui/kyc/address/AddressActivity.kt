@@ -142,28 +142,44 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         if(!userPrefs.getAddressList().isNullOrEmpty()){
             for(addressData in userPrefs.getAddressList()!!){
-                if(addressData?.addressType!!.startsWith("g",true)){
-                    viewModel.gstAddress= addressData.address?:""
-                    binding.gstAddressLayout.visibility = View.VISIBLE
-                    gstAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
-                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
-                    }else if(userPrefs.getAddressList()!!.size<2){
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
-                    }
-                }else if(addressData?.addressType!!.startsWith("al",true)){
-                    viewModel.alternateAddress= addressData.address?:""
-                    binding.alternateAddressLayout.visibility = View.VISIBLE
-                    binding.btnAddAlternateAddress.visibility = View.GONE
-                    alternateAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
-                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
-                        binding.alternateAddressLayout.isSelected = true
-                        selectedAddressData = alternateAddressData
-                    }else{
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
+                if (addressData?.addressType.isNotNullOrEmpty()) {
+                    if (addressData?.addressType!!.startsWith("g", true)) {
+                        viewModel.gstAddress = addressData.address ?: ""
+                        binding.gstAddressLayout.visibility = View.VISIBLE
+                        gstAddressData = AddAddressModel(
+                            userPrefs.phoneNumber, addressData.address,
+                            addressData.proofDocumentType, addressData.documentUrls,
+                            addressData.addressType, false
+                        )
+                        if (userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(
+                                addressData.address
+                            )
+                        ) {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        } else if (userPrefs.getAddressList()!!.size < 2) {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        }
+                    } else if (addressData?.addressType!!.startsWith("al", true)) {
+                        viewModel.alternateAddress = addressData.address ?: ""
+                        binding.alternateAddressLayout.visibility = View.VISIBLE
+                        binding.btnAddAlternateAddress.visibility = View.GONE
+                        alternateAddressData = AddAddressModel(
+                            userPrefs.phoneNumber, addressData.address,
+                            addressData.proofDocumentType, addressData.documentUrls,
+                            addressData.addressType, false
+                        )
+                        if (userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(
+                                addressData.address
+                            )
+                        ) {
+                            binding.alternateAddressLayout.isSelected = true
+                            selectedAddressData = alternateAddressData
+                        } else {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        }
                     }
                 }
 

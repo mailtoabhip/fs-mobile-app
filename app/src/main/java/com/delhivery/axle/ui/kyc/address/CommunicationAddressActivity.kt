@@ -424,7 +424,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
                     ?.div(1024)).toString()
                 )
-            )}else{
+            )}else if (docPath!!.contains("loadboard/iv/")){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }else{
                 docArray.add(
                     Pair(
                         docPath!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
