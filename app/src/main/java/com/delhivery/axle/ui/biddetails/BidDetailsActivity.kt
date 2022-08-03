@@ -250,63 +250,63 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
            binding.textViaDestination.card1.visibility = View.VISIBLE
             binding.textViaDestination.city1.text = it.get(1)?.first
             if(it.get(1)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(1)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(1)?.second + " " + it.get(1)?.third))
             }
           }
           if(it.containsKey(2)){
             binding.textViaDestination.card2.visibility = View.VISIBLE
             binding.textViaDestination.city2.text = it.get(2)?.first
             if(it.get(2)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(2)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(2)?.second + " " + it.get(2)?.third))
             }
           }
           if(it.containsKey(3)){
             binding.textViaDestination.card3.visibility = View.VISIBLE
             binding.textViaDestination.city3.text = it.get(3)?.first
             if(it.get(3)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(3)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(3)?.second + " " + it.get(3)?.third))
             }
           }
           if(it.containsKey(4)){
             binding.textViaDestination.card4.visibility = View.VISIBLE
             binding.textViaDestination.city4.text = it.get(4)?.first
             if(it.get(4)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(4)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(4)?.second + " " + it.get(4)?.third))
             }
           }
           if(it.containsKey(5)){
             binding.textViaDestination.card5.visibility = View.VISIBLE
             binding.textViaDestination.city5.text = it.get(5)?.first
             if(it.get(5)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(5)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(5)?.second + " " + it.get(5)?.third))
             }
           }
           if(it.containsKey(6)){
             binding.textViaDestination.card6.visibility = View.VISIBLE
             binding.textViaDestination.city6.text = it.get(6)?.first
             if(it.get(6)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(6)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(6)?.second + " " + it.get(6)?.third))
             }
           }
           if(it.containsKey(7)){
             binding.textViaDestination.card7.visibility = View.VISIBLE
             binding.textViaDestination.city7.text = it.get(7)?.first
             if(it.get(7)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(7)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(7)?.second + " " + it.get(7)?.third))
             }
           }
           if(it.containsKey(8)){
             binding.textViaDestination.card8.visibility = View.VISIBLE
             binding.textViaDestination.city8.text = it.get(8)?.first
             if(it.get(8)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(8)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(8)?.second + " " + it.get(8)?.third))
             }
           }
           if(it.containsKey(9)){
             binding.textViaDestination.card9.visibility = View.VISIBLE
             binding.textViaDestination.city9.text = it.get(9)?.first
             if(it.get(9)?.second.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(9)?.second))
+              uploadArray.add(Pair("Pickup Intermediary Stop", it.get(9)?.second + " " + it.get(9)?.third))
             }
           }
             if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
