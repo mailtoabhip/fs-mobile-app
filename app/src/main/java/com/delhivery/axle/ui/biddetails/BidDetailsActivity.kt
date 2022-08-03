@@ -246,6 +246,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         if(!it.isEmpty()){
           runOnUiThread {
             binding.textViaLabel.visibility = View.VISIBLE
+
+            uploadArray.clear()
+
+            if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+            }
+
           if(it.containsKey(1)){
            binding.textViaDestination.card1.visibility = View.VISIBLE
             binding.textViaDestination.city1.text = it.get(1)?.first
@@ -376,9 +383,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           title = _transaction.tripDisplayName()
         }
 
-        if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-          uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
-        }
+
         binding.head.text = "Pickup Address"
         binding.subHead.text = binding.transaction?.pickupLocationAddress
 
@@ -393,6 +398,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
         }else{
           var total = 0
+
+          if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
             total = total+1
@@ -442,18 +451,20 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()){
             uploadArray.add(Pair("Drop Address",binding.transaction?.dropLocationAddress))
           }
+
+          if(!uploadArray.isEmpty()) {
+            binding.addressLay.visibility = View.VISIBLE
+            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.addresslist.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = addressDetailAdapter
+            }
+          }else{
+            binding.addressLay.visibility = View.GONE
+          }
         }
 
-        if(!uploadArray.isEmpty()) {
-          binding.addressLay.visibility = View.VISIBLE
-          val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-          binding.addresslist.apply {
-            layoutManager = LinearLayoutManager(applicationContext)
-            adapter = addressDetailAdapter
-          }
-        }else{
-          binding.addressLay.visibility = View.GONE
-        }
+
         bidEndingTime = binding.transaction!!.bidEndingTime.toString()
 
       } else {
