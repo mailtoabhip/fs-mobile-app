@@ -237,6 +237,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         KYC_REJECTION ->{
           navigationUtils.navigate(MyProfileActivity::class.java)
         }
+        SHARE_RATE -> {
+          navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+        }
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
@@ -671,6 +674,8 @@ private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
 private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
+private const val SHARE_RATE = "sharerate"
+
 
 var orderRank=0
 
