@@ -240,9 +240,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
-        SHARE_RATE ->{
-          navigationUtils.navigate(ShareRateActivity::class.java)
-        }
         OFFER_APPROVED -> {
           fromDeepLink = true
           if(dplink_tid != ""){
