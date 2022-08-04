@@ -188,6 +188,7 @@
                 android:fontFamily="sans-serif"
                 android:layout_marginEnd="@dimen/size_8dp"
                 android:gravity="start"
+                app:layout_constraintEnd_toStartOf="@+id/status"
                 android:text="@{ transaction.loadDetails() }"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
@@ -205,7 +206,8 @@
                 app:layout_constraintTop_toBottomOf="@id/text_load_details"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
-                android:gravity="start"
+                app:layout_constraintEnd_toStartOf="@+id/status"
+               android:gravity="start"
                 android:layout_marginEnd="@dimen/size_8dp"
                 android:visibility="@{transaction.setDMTTypeForBid(viewModel.fromPage)}"
                 android:layout_marginTop="@dimen/size_6dp"
@@ -388,6 +390,17 @@
                   android:textColor="@color/white"
                   android:layout_height="wrap_content"/>
             </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/timerLayout"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/size_6dp"
+                tools:text="Confirmed"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_target_price_label"
