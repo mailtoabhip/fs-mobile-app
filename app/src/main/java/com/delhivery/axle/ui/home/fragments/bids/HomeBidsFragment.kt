@@ -29,9 +29,11 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -98,6 +100,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
     /* observe and update adapter items */
     viewModel.userBidsData.reobserve(this, Observer {
+      userPrefs.activeBidCount=viewModel.activeBids
+      userPrefs.lostBidCount=viewModel.lostBids
+      userPrefs.confirmedBidCount=viewModel.confirmedBids
      if(launch) {
        analyticsUtil.trackEvent(
                EVENT_VIEW_BIDS_SCREEN,
@@ -105,12 +110,26 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
        )
 
+       val c = Date()
+       val date = c.toString()
+       analyticsUtil.trackEvent(
+         EVENT_VIEW_BIDS_SCREEN_OFFERS,
+         mutableListOf(
+           PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+           PROPERTY_DATE
+         ),
+         mutableListOf(
+           userPrefs.userId(), userPrefs.phoneNumber!!,
+           userPrefs.bidOfferCount.toString(), date
+         )
+       )
        launch=false
      }
       it?.let { _items -> adapter.operation(_items) }
     })
 
     viewModel.bidsCountLiveData.reobserve(this, Observer {
+      userPrefs.totalBidCount=it.toString()
       _title = when (it) {
         0, null -> getString(string.label_my_bids)
         else -> "${getString(string.label_my_bids)}($it)"
@@ -159,6 +178,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.activeBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, ActiveBid), REQCODE_NO_ROUTES)
       }
 
@@ -169,6 +189,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
             mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQCODE_NO_ROUTES)
       }
 
@@ -179,6 +200,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.lostBids)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
       }
 
@@ -198,6 +220,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           _item.transactionBid!!.childTransactionId else _item.key()
         if(id!=null)
         context?.let {
+          userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
         }
         else{
@@ -355,6 +378,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       if (!adapter.checkFiltering()) {
         val layoutManager =
           (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        try {
         val pos = layoutManager.findFirstVisibleItemPosition()
         val _toolbarElevation = if (pos == 0) {
           stickyView.translationY = 0f
@@ -393,6 +417,10 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           toolbarElevation = _toolbarElevation
           toolbarElevationLiveData!!.postValue(toolbarElevation)
         }
+      }catch (e:Exception){
+
+      }
+
       }
     }
   }

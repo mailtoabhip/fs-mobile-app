@@ -384,6 +384,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     }
 
     binding.viewAwaitingPod.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       startActivity(homeActivityIntent("pod", this))
     }
 
@@ -494,6 +495,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_TRIP, data.transactionId)
         )
+        userPrefs.setPreviousScreen(this.javaClass.name)
         startActivity(tripDetailsIntent(data.key(), this, viewModel.tripType.typeText))
       }
       HomeTripsTimeOutAction -> {

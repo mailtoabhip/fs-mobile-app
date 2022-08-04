@@ -2,8 +2,10 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -20,11 +22,12 @@ import javax.inject.Inject
  */
 class SearchLoadFragmentViewModel @Inject constructor(
   private val appDB: AppDatabase,
-  private val cityService: CityService
+  private val cityService: CityService,
+  private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
   var citiesLiveData = MutableLiveData<List<CityModel>>()
-
+  var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
   /**
    * Search load history live data
    */
@@ -97,4 +100,5 @@ class SearchLoadFragmentViewModel @Inject constructor(
           }
         }
   }
+
 }

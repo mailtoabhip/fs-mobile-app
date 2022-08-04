@@ -29,6 +29,8 @@ import dagger.android.DaggerActivity
 import javax.inject.Inject
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
+import com.moengage.firebase.MoEFireBaseHelper
+import com.moengage.pushbase.MoEPushHelper
 import java.util.concurrent.TimeUnit
 
 
@@ -65,17 +67,23 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
   override fun onNewToken(fcmToken: String) {
     super.onNewToken(fcmToken)
+    MoEFireBaseHelper.getInstance().passPushToken(applicationContext,fcmToken)
     userPrefs.fcmTokenGenerated = true
+    userPrefs.moengageFcmTokenGenerated =true
   }
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
     Log.d("prefs","started")
-    remoteMessage.let { sendNotification(it) }
+    if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)){
+      MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+      }else{
+      remoteMessage.let { sendNotification(it) }
+      }
   }
 
   private fun sendNotification(remoteMessage: RemoteMessage) {
-    Log.d("prefs","send notifi. started")
+    Log.d("prefs","send notifi. started $remoteMessage")
     val notificationBuilder: Builder = if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       buildNotificationChannel()
       Builder(this, DEFAULT_NOTIFICATION_CHANNEL)
@@ -89,6 +97,14 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
     //For inventory use
     val vehicleNumber = remoteMessage.data["vehicle_number"] ?: ""
+
+    //For pricing
+    val pricingId = remoteMessage.data["pricing_id"] ?: ""
+    val pricingSortKey = remoteMessage.data["pricing_sort_key"] ?: ""
+    val notificationFrom =  remoteMessage.data["notification_from"] ?: ""
+    val offerId =  remoteMessage.data["offer_id"] ?: ""
+
+
 
     val n= remoteMessage.notification
     if(n==null){
@@ -122,6 +138,12 @@ class DelhiveryFCMService : FirebaseMessagingService() {
         putExtra(ARGS_TRANSACTION_IDS, transactions)
         putExtra(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
         putExtra(ARGS_VEHICLE_NUMBER, vehicleNumber)
+        putExtra(ARGS_PRICING_ID, pricingId)
+        putExtra(ARGS_PRICING_SORT_KEY, pricingSortKey)
+        putExtra(ARGS_NOTIFICATION_FROM, notificationFrom)
+        putExtra(ARGS_OFFER_ID, offerId)
+
+
       }
       val pendingIntent = PendingIntent.getActivity(
           this, 0, intent, PendingIntent.FLAG_ONE_SHOT
@@ -179,3 +201,7 @@ const val ARGS_NOTIFICATION_KEY = "notification_service_notification_id"
 const val ARGS_DEEPLINK_TYPE = "deeplink_type"
 const val ARGS_DEEPLINK_ID = "deeplink_id"
 const val ARGS_VEHICLE_NUMBER = "vehicle_number"
+const val ARGS_PRICING_ID= "pricing_id"
+const val ARGS_PRICING_SORT_KEY= "pricing_sort_key"
+const val ARGS_NOTIFICATION_FROM= "notification_from"
+const val ARGS_OFFER_ID= "offer_id"

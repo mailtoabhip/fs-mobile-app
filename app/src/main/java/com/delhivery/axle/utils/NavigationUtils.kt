@@ -27,6 +27,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
@@ -58,6 +59,7 @@ class NavigationUtils @Inject constructor(
           extras: Bundle? = null
   ) {
     Intent(activity, anotherActivity).let {
+      userPrefs.setPreviousScreen(activity.javaClass.name)
       if (extras != null) {
         it.putExtras(extras)
       }
@@ -82,9 +84,11 @@ class NavigationUtils @Inject constructor(
           extras: Bundle? = null
   ) {
     intent.let {
+      userPrefs.setPreviousScreen(activity.javaClass.name)
       if (extras != null) {
         it.putExtras(extras)
       }
+
       activity.startActivity(it)
     }
 
@@ -181,6 +185,7 @@ class NavigationUtils @Inject constructor(
           finishAfter: Boolean = false,
           extras: Bundle
   ) {
+    userPrefs.setPreviousScreen(context.javaClass.name)
     var intent= Intent()
        //should be changed based on user_mode
         val userMode = userPrefs.userMode
@@ -312,6 +317,7 @@ class NavigationUtils @Inject constructor(
     else{
 
       if(!userPrefs.isUserVerfied){
+        userPrefs.setPreviousScreen(activity.javaClass.name)
         if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
           this.navigate(intent,true,null)
@@ -416,6 +422,7 @@ class NavigationUtils @Inject constructor(
             bindingDialog.titleSubText.text = activity.resources.getString(R.string.notify_kyc_verification)
         }
         dialog.show()
+       userPrefs.setPreviousScreen(VendorPolicyActivity::class.java.name)
         Handler().postDelayed({
             dialog.dismiss()
             this.navigate(HomeActivity::class.java, true)

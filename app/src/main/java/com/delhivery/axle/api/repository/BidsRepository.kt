@@ -116,6 +116,7 @@ class BidsRepository @Inject constructor(
     transactions: List<HomeBidsRequestItemData>
   ) = bidService.bidsForLoads(
       userRepository.userId(),
+      if (transactions.isNullOrEmpty()){""}else
       transactions.map { it.transactionId }.joinToString(",") { it.toString() }
   )
       .convertResponse()

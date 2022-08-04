@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -204,6 +205,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       }
 
       HomePodSearchAction_Search -> {
+        userPrefs.setPreviousScreen(this.javaClass.name)
         context?.let { startActivity(searchIntent(it)) }
       }
 

@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.activity_profile_details.*
 import java.io.File
 import java.io.FileInputStream
@@ -57,6 +58,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -181,6 +184,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
     override fun onBackPressed() {
         super.onBackPressed()
+        userPrefs.setPreviousScreen(this.javaClass.name)
     }
 
     private fun loadImage(

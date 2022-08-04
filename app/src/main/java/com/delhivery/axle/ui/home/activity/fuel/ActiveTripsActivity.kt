@@ -18,6 +18,8 @@ import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_CREATE_FUELCARD
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Displays active trips and their fuel card mapping
@@ -33,6 +35,7 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
 
   var isLoadingData = true
   var cardCreated = false
+  @Inject lateinit var userPrefs : UserPrefs
 
   private val adapter: ActiveTripsRVAdapter by lazy {
     ActiveTripsRVAdapter(this)
@@ -119,7 +122,10 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
       }
     }
   }
-
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
+  }
   override fun finish() {
     if (cardCreated) {
       setResult(Activity.RESULT_OK)

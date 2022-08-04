@@ -240,6 +240,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             uiUtils.hideProgress()
             if(it!=null && it == true){
                 showTruckAddedDialog()
+                analyticsUtil.moEngageTrackEvent(
+                    EVENT_ADD_TRUCK_SUBMIT,
+                    mutableListOf(PROPERTY_INVENTORY_UUID),
+                    mutableListOf(viewModel.addTruckLiveDataRes.value?.inventoryId?:"")
+                )
             }
             else if(it!=null && it== false){
                 dialogUtils.showErrorDialog(
