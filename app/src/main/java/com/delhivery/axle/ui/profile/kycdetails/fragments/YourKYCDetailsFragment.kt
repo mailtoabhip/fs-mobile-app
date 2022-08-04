@@ -41,9 +41,13 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
         }
        if(userPrefs.noOfVerificationIssues.equals("1")&&userPrefs.isBankDetailsRejected==true){
            binding.btnRetry.isEnabled=false
-       }else{
+       }else if(userPrefs.noOfVerificationIssues.equals("0")){
+           binding.btnRetry.isEnabled=false
+       }else
+       {
            binding.btnRetry.isEnabled=true
        }
+
         binding.btnRetry.setOnClickListener {
             userPrefs.retryVerification = true
             userPrefs.retryVerificationOnBack = false

@@ -384,6 +384,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         val s3url= awsUtils.awsBasePath()
         viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+
         showFileSelected()
         resetUploadData()
     }
@@ -622,6 +623,25 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 bindingDialog.uploadDocLay.visibility= View.GONE
                 bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 docUploadProof=true
+                if(uploadArray.get(0).first!!.contains(awsPath)){
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        )
+                    )}else if (uploadArray.get(0).first!!.contains("loadboard/iv/")){
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        ))
+                }else{
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        ))
+                }
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
                 enableAddAddressDialogButton(bindingDialog)
@@ -745,7 +765,26 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             docUploadProof=false
 
         }else{
-            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            if(docPath!!.contains(awsPath)){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )}else if (docPath!!.contains("loadboard/iv/")){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }else{
+                docArray.add(
+                    Pair(
+                        docPath.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }
+
             if(addressData.documentUrls!=null)
                 viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
             bindingDialog.uploadDocLay.visibility= View.GONE
