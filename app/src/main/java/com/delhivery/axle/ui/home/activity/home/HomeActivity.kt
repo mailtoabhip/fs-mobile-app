@@ -237,6 +237,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         KYC_REJECTION ->{
           navigationUtils.navigate(MyProfileActivity::class.java)
         }
+        SHARE_RATE -> {
+          navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
+        }
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
