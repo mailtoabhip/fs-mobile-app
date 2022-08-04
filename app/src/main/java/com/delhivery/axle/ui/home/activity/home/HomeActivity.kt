@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -229,6 +230,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
+        SHARE_RATE ->{
+          navigationUtils.navigate(ShareRateActivity::class.java)
         }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -506,6 +510,8 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
+private const val SHARE_RATE = "sharerate"
+
 
 
 /* intent keys */
