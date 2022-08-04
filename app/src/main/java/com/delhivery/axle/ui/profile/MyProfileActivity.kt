@@ -63,6 +63,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
+        analyticsUtil.trackEvent(
+            EVENT_VIEW_MY_PROFILE,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
             binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
@@ -207,12 +211,15 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     }
                 }
                 if(it.second.equals("detail")) {
+                    userPrefs.setPreviousScreen(this.javaClass.name)
                     navigationUtils.navigate(ProfileKYCDetailsActivity::class.java,true)
                 }else if(it.second.equals("bank")){
+                    userPrefs.setPreviousScreen(this.javaClass.name)
                     navigationUtils.navigate(BankDetailsActivity::class.java,true)
                 }
                 else{
                     if(!it.second.equals("noredirect")) {
+                        userPrefs.setPreviousScreen(this.javaClass.name)
                         userPrefs.retryVerification = true
                         userPrefs.retryVerificationOnBack = false
                         val bundle = Bundle()
@@ -225,10 +232,12 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         })
 
         binding.profileLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
 
         binding.teamLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
 
@@ -239,11 +248,13 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         binding.routeLayout.setOnClickListener {
-                startActivity(userRoutesIntent(this))
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(userRoutesIntent(this))
         }
 
         binding.teamLayout.setOnClickListener {
-               startActivity(teamMembersIntent(this))
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(teamMembersIntent(this))
         }
         binding.shareLayout.setOnClickListener {
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
@@ -259,24 +270,29 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
 
         binding.helpLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(HelpSupportActivity::class.java)
         }
 
         binding.bankLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             viewModel.getKYCDetails("bank")
             uiUtils.showProgress()
         }
 
         binding.helpLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(HelpSupportActivity::class.java)
         }
 
         binding.helpLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(HelpSupportActivity::class.java)
         }
 
         binding.earningsLayout.setOnClickListener {
-                startActivity(consolidatedPageIntent(this))
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(consolidatedPageIntent(this))
         }
 
         viewModel.delegationDownloadLiveData.observe(this, Observer {
@@ -373,6 +389,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
     }
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        userPrefs.setPreviousScreen(this.javaClass.name)
+    }
 
     /**
      * Confirm and logout

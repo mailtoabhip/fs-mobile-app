@@ -1,5 +1,4 @@
 package com.delhivery.axle.ui.home.activity.home
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,9 +15,16 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
+import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
+import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -32,98 +38,83 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
+import com.moengage.core.internal.MoEConstants
 import java.util.*
 import javax.inject.Inject
-
 
 /**
  * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
-    OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
-
+  OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
   override fun getViewModelClass() = HomeViewModel::class.java
-
   override fun layoutId() = R.layout.activity_home
-
   override fun requireConnection() = true
-
   var fragmentType : String ?= ""
-
   var dplink_tid : String = ""
   var dplink_type : String = ""
-
   var fromLink = false
   var fromNotification = false
   var fromDeepLink = false
   var vehicleNum =""
   var count =0
   @Inject lateinit var userPrefs : UserPrefs
-
   /* home fragments pager adapter */
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
   }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
-          .map { it.trim() }
+        .map { it.trim() }
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
-
     //For inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+      //For pricing
+    pricingId = intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom = intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId = intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
 
     fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
-
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
-
     fromLink = false
     fromNotification = false
     fromDeepLink = false
-
     viewModel.getUserDetails()
-
   }
-
   override fun onBackPressed() {
     super.onBackPressed()
   }
-
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it){
+        setUserAttributes()
         navigationUtils.navigateOnboardingSteps(true)
-
-
-    /* setup toolbar */
-    setSupportActionBar(binding.toolbar)
-    title = "Load Requests"
-
-    if(!userPrefs.userName.isEmpty()) {
-      binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
-    }
-    supportActionBar?.setDisplayShowTitleEnabled(false)
-
-    binding.toolbarTitle.text = title
-
-    /* setup view pager */
-    binding.viewpager.apply {
-      offscreenPageLimit = HomeFragmentType.count()
-      adapter = pagerAdapter
-      /* update ui on page changed */
-      onPageSelected { p ->
-        HomeFragmentType.pos(p)
-            ?.let {
-              uiUtils.toggleKeyboard()
-              this@HomeActivity.title = HomeFragmentType.pos(p)
+        /* setup toolbar */
+        setSupportActionBar(binding.toolbar)
+        title = "Load Requests"
+        if(!userPrefs.userName.isEmpty()) {
+          binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+        }
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.toolbarTitle.text = title
+        /* setup view pager */
+        binding.viewpager.apply {
+          offscreenPageLimit = HomeFragmentType.count()
+          adapter = pagerAdapter
+          /* update ui on page changed */
+          onPageSelected { p ->
+            HomeFragmentType.pos(p)
+              ?.let {
+                uiUtils.toggleKeyboard()
+                this@HomeActivity.title = HomeFragmentType.pos(p)
                   ?.fragment?.title
               binding.bottomNav.selectedItemId = it.menuId
               observeFragmentLiveData(p)
@@ -131,8 +122,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-    }
 
+    }
     binding.viewpager.disableScroll(true)
 
     /* set navigation item selection listener */
@@ -146,10 +137,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
 
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+      analyticsUtil.moEngageTrackEvent(
+          EVENT_NAVIGATION_PODS
+      )
+      userPrefs.setPreviousScreen(this.javaClass.name)
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
 
     binding.profile.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_MY_PROFILE
+      )
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
 
@@ -159,11 +158,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     })
   }
-
   private fun processDeepLink() {
-
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
+      userPrefs.setPreviousScreen(this.javaClass.name)
       when(dplink_type){
         ROUTE_PREFERENCES_REDIRECT -> {
           startActivity(userRoutesIntent(this))
@@ -194,6 +192,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK))
+          } else {
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+          }
+        }
+
+        SUPPLIER_LOAD_REDIRECT -> {
+          if (dplink_tid != "") {
+            analyticsUtil.trackEvent(
+                    EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION,
+                    mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
+                    mutableListOf(userPrefs.phoneNumber.toString(), dplink_tid)
+            )
             startActivity(bidDetailsIntent(dplink_tid, this))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -209,7 +220,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           )
           startActivity(userTripsIntent(this, "payment_view", 0))
         }
-
         ACTIVATE_TRUCK_REDIRECT ->{
           if(dplink_tid != "") {
             fromDeepLink = true
@@ -220,7 +230,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
         }
-
         MY_TRUCKS_REDIRECT -> {
           fromDeepLink = true
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -231,8 +240,35 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
-        SHARE_RATE ->{
-          navigationUtils.navigate(ShareRateActivity::class.java)
+        OFFER_APPROVED -> {
+          fromDeepLink = true
+          if(dplink_tid != ""){
+            val pricingId = dplink_tid.split("_").get(0)
+            val sortKey = dplink_tid.split("_").get(1)
+          val bundle = Bundle()
+          bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
+            analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
+              OFFER_APPROVED,
+              VALUE_DEEP_LINKING))
+          navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
+          }
+        }
+        OFFER_REJECTED -> {
+          fromDeepLink = true
+          if(dplink_tid != "") {
+            val bundle = Bundle()
+            bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_REJECTED)
+            val pricingId = dplink_tid.split("_").get(0)
+            val sortKey = dplink_tid.split("_").get(1)
+            bundle.putString(ARGS_PRICING_ID,pricingId)
+            bundle.putString(ARGS_PRICING_ID,sortKey)
+               analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+                 PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
+                 OFFER_REJECTED,
+                 VALUE_DEEP_LINKING))
+            navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+          }
         }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -240,10 +276,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   private fun processNotification() {
-    Log.d("noti", "$notificationType$notificationId $vehicleNumber")
+    Log.d("noti", "$notificationType$notificationId $vehicleNumber$pricingId$pricingSortKey$pricingOfferId$notificationFrom")
     markNotificationRead()
+    userPrefs.setPreviousScreen(this.javaClass.name)
     when (notificationType) {
       SUBMIT_POD_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
@@ -253,14 +289,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
       }
       PREFERRED_SUPPLIER_NOTIFICATION -> {
-        startActivity(bidDetailsIntent(preferredTransactionId, this))
+        startActivity(bidDetailsIntent(preferredTransactionId, this,source = VALUE_PUSH_NOTIFICATION))
       }
       REJECT_POD_NOTIFICATION -> {
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
       LOWEST_BID_NOTIFICATION -> {
         if (!transactionIds.isNullOrEmpty() && transactionIds.size == 1) {
-          startActivity(bidDetailsIntent(transactionIds[0], this))
+          startActivity(bidDetailsIntent(transactionIds[0], this,source = VALUE_PUSH_NOTIFICATION))
         }
         else
         {
@@ -279,16 +315,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(tripDetailsIntent(preferredTransactionId, this))
       }
 
-      REDIRECT_TO_LOAD -> {
-        startActivity(bidDetailsIntent(preferredTransactionId,this))
+      REDIRECT_TO_SUPPLIER_RECOMMENDATION -> {
+        analyticsUtil.trackEvent(
+                EVENT_SUPPLIER_RECOMMENDATION,
+                mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
+                mutableListOf(userPrefs.phoneNumber.toString(), preferredTransactionId)
+        )
+        startActivity(bidDetailsIntent(preferredTransactionId, this))
       }
 
+      REDIRECT_TO_LOAD -> {
+        startActivity(bidDetailsIntent(preferredTransactionId,this,source = VALUE_PUSH_NOTIFICATION))
+      }
       ACTIVATE_TRUCK_NOTIFICATION ->{
         fromNotification = true
         vehicleNum = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
-
       REDIRECT_TO_TRUCKS -> {
         fromNotification = true
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -299,26 +342,56 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         vehicleNum = vehicleNumber
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
-
+      OFFER_LANE_UPLOADED -> {
+        fromNotification = true
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingOfferId,
+          notificationFrom,
+          VALUE_NOTIFICATION))
+        val bundle = Bundle()
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_LANE_UPLOADED)
+        bundle.putString(ARGS_OFFER_ID,pricingOfferId)
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+      }
+      OFFER_APPROVED -> {
+        fromNotification = true
+        val bundle = Bundle()
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          OFFER_APPROVED,
+          VALUE_NOTIFICATION))
+        navigationUtils.navigate(ShareRateGetRewardsActivity::class.java, false, bundle)
+      }
+      OFFER_REJECTED -> {
+        fromNotification = true
+        val bundle = Bundle()
+        bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_REJECTED)
+        bundle.putString(ARGS_PRICING_ID,pricingId)
+        bundle.putString(ARGS_PRICING_SORT_KEY,pricingSortKey)
+        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+          PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
+          OFFER_REJECTED,
+          VALUE_NOTIFICATION))
+        navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+      }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
     }
   }
-
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_call, menu)
     return true
   }
-
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.nav_call -> {
         //Capture Event
         analyticsUtil.trackEvent(
-                EVENT_CALL_VENDOR_DESK,
-                mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
+          EVENT_CALL_VENDOR_DESK,
+          mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
+          mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
         )
         callHelpline()
         true
@@ -328,48 +401,108 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
     preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
-
     //For Inventory
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
 
+    pricingId = intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom = intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId = intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
     /**
      * Get Deep Link Parameters*/
     dplink_tid = intent?.extras?.getString(ARGS_DEEPLINK_ID) ?:""
     dplink_type = intent?.extras?.getString(ARGS_DEEPLINK_TYPE) ?:""
-
     fromLink = false
     fromNotification=false
     fromDeepLink=false
     processDeepLink()
-
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
-          .map { it.trim() }
+        .map { it.trim() }
     viewModel.fromNotification = true
     if (notificationId.isNotEmpty()) {
       processNotification()
     }
-
   }
 
+  private fun setUserAttributes() {
+
+    userPrefs.userId().let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+    }
+
+    userPrefs.phoneNumber?.let {
+      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+    }
+    userPrefs.cityName?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_BASE_CITY,it)
+    }
+    if(userPrefs.demandType.isNotNullOrEmpty()){
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_DEMAND_TYPE,userPrefs.demandType!!)
+    }
+    userPrefs.companyName?.let {
+      if(userPrefs.companyName.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_COMPANY_NAME,it)
+    }
+    userPrefs.ownTrucks?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_OWNS_TRUCKS,it.toString())
+    }
+    userPrefs.status?.let {
+      if(userPrefs.status.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_STATUS,it)
+    }
+    userPrefs.subStatus?.let{
+      if(userPrefs.subStatus.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_SUB_STATUS,it)
+    }
+    userPrefs.isKycVeriifed?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_IS_KYC_VERIFIED,it.toString())
+    }
+    userPrefs.receiveWhatsappNotifications?.let {
+      analyticsUtil.moEngageUserAttribute(USER_PROPERTY_RECEIVE_WHATSAPP_NOTIFICATIONS,it.toString())
+    }
+
+    userPrefs.creationDate?.let {
+      if(userPrefs.creationDate.isNotNullOrEmpty())
+        analyticsUtil.moEngageUserAttribute(USER_PROPERTY_CREATION_DATE,DateUtils.getUtcToIstFormatTime(it)!!)
+    }
+
+    userPrefs.userName?.let {
+      if(userPrefs.userName.isNotNullOrEmpty()){
+        try {
+          analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME, it)
+          analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME, it)
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,
+            it.split(" ").get(0)
+          )
+          analyticsUtil.moEngageUserAttribute(
+            MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,
+            it.split(" ").get(1)
+          )
+        }catch (e:Exception){}
+      }
+    }
+
+
+  }
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(
-            EVENT_NOTIFICATION_OPEN,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-            mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
+      EVENT_NOTIFICATION_OPEN,
+      mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
+      mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
     )
-
     viewModel.markNotificationRead(notificationId)
   }
-
   private fun observeFragmentLiveData(pos: Int = 0) {
     val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
     val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
@@ -381,13 +514,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       elevationLiveData.observe(this, Observer {
         binding.toolbarTitle.text = title
         ViewCompat.setElevation(
-            binding.toolbar,
-            it ?: resources.getDimension(R.dimen.toolbar_elevation)
+          binding.toolbar,
+          it ?: resources.getDimension(R.dimen.toolbar_elevation)
         )
       })
     }
   }
-
   /**
    * Fragment action observer
    */
@@ -401,35 +533,65 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
-
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-      .let { pos ->
+      .let{ pos ->
         count++
-        when(pos) {
-          1 -> {
-            if (count == 1) {
-              val c = Date()
-              val date = c.toString()
-              Log.d("bidOfferCount", userPrefs.bidOfferCount.toString())
-              analyticsUtil.trackEvent(
-                  EVENT_VIEW_BIDS_SCREEN_OFFERS,
-                  mutableListOf(
-                      PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-                      PROPERTY_DATE
-                  ),
-                  mutableListOf(
-                      userPrefs.userId(), userPrefs.phoneNumber!!,
-                      userPrefs.bidOfferCount.toString(), date
-                  )
-              )
+        when(pos){
+          0->
+            if(count==1){
+              if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
+                userPrefs.previousNavigationTab= SplashActivity::class.java.name
+              } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
+                userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
+              }else{
+                userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              }
+              userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_HOME,
+                mutableListOf(PROPERTY_ORDER_COUNT),
+                mutableListOf(userPrefs.loadCount))
             }
-            if(count>=2){
-              count=0
-            }
-          }
-        }
+          1->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_BIDS,
+                mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                    PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
+                mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
+            )
 
-          binding.viewpager.apply {
+            }
+          2->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_PODS
+            )
+            }
+          3->
+            if(count==1){
+              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
+              userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_TRIPS,
+                mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+                mutableListOf(userPrefs.awaitingArrivalCount)
+            )
+            }
+        }
+        if(count==2){
+          count=0
+        }
+        binding.viewpager.apply {
           uiUtils.toggleKeyboard()
           if (pos != -1 && currentItem != pos) {
             this@HomeActivity.title = HomeFragmentType.pos(pos)
@@ -451,23 +613,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       mutableListOf(PROPERTY_USER_ID),
       mutableListOf(userPrefs.userId())
     )
+    userPrefs.setPreviousScreen(this.javaClass.name)
     startActivity(userTripsIntent(this, "payment_view", 0))
-
   }
-
 }
-
 /**
  * Provides title from all fragments to activity
  */
 interface TitleProvider {
   val title: CharSequence
-
 }
-
 enum class FragmentName(
-        val position: Int,
-        val frgName: String
+  val position: Int,
+  val frgName: String
 ) {
   HomeFragment(0, "home_screen"),
   BidsFragment(1, "bids_screen"),
@@ -475,16 +633,14 @@ enum class FragmentName(
   ProfileFragment(4, "profile_screen"),
   PODFragment(2, "pod_screen"),
   Unknown(-1, "unknown");
-
   companion object {
     /**
      * Get FragmentName
      */
     fun fragmentName(pos: Int) = values().firstOrNull { it.position == pos }
-            ?: Unknown
+      ?: Unknown
   }
 }
-
 private const val SUBMIT_POD_NOTIFICATION = "submit_pod_notification"
 private const val PREFERRED_SUPPLIER_NOTIFICATION = "preferred_supplier_notification"
 private const val REJECT_POD_NOTIFICATION = "reject_pod_notification"
@@ -495,6 +651,10 @@ private const val REDIRECT_TO_LOAD ="redirect_to_load"
 private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
 private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
 private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
+const val OFFER_LANE_UPLOADED = "offer_lane_uploaded"
+const val OFFER_APPROVED = "offer_approved"
+const val OFFER_REJECTED = "offer_rejected"
+private const val REDIRECT_TO_SUPPLIER_RECOMMENDATION = "supplier_recommendation_notification"
 
 
 private const val ROUTE_PREFERENCES_REDIRECT = "rtprfs"
@@ -510,13 +670,12 @@ private const val MY_TRUCKS_REDIRECT = "mytrucks"
 private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
-private const val SHARE_RATE = "sharerate"
+private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
 
-
+var orderRank=0
 
 /* intent keys */
 private const val IntentExtraFragmentTypeKey = "fragment_type"
-
 /**
  * Trip details intent
  */

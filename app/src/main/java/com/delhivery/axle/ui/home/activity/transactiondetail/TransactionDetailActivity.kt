@@ -29,11 +29,15 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelD
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelRevertCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Handles transactions details for bank transactions
  */
 class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding, TransactionDetailViewModel>() {
+
+  @Inject lateinit var userPrefs: UserPrefs
 
   override fun getViewModelClass() = TransactionDetailViewModel::class.java
 
@@ -181,6 +185,11 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
         }
       }
     }
+  }
+
+  override fun onBackPressed() {
+    userPrefs.setPreviousScreen(this.javaClass.name)
+    super.onBackPressed()
   }
 
 }

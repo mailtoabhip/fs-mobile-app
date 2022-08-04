@@ -1,5 +1,4 @@
 package com.delhivery.axle.utils
-
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -7,9 +6,11 @@ import android.util.Property
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.moe.pushlibrary.MoEHelper
+import com.moengage.core.Properties
+import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-
 /**
  * Created by saurabh
  * for Delhivery Private Limited
@@ -25,7 +26,9 @@ class AnalyticsUtil @Inject constructor(
   private val userPrefs: UserPrefs
 ) {
 
-  val TAG = "Firebase events"
+  val TAG = "Analytics events"
+  val MOENGAGE_TAG = "Moengage events"
+
 
   private fun getAnalyticsObject(): FirebaseAnalytics? {
     return try {
@@ -34,7 +37,15 @@ class AnalyticsUtil @Inject constructor(
       null
     }
   }
-  
+
+  private fun getMoEngageObject(): MoEHelper? {
+    return try {
+      MoEHelper.getInstance(activity.applicationContext)
+    } catch (e: Exception) {
+      null
+    }
+  }
+
   fun trackEvent(
     event: String,
     properties: List<String> = mutableListOf(),
@@ -54,8 +65,37 @@ class AnalyticsUtil @Inject constructor(
       analytics.logEvent(event, bundle)
     }
   }
-}
 
+  fun moEngageTrackEvent(
+    event: String,
+    attributes: List<String> = mutableListOf(),
+    values: List<String> = mutableListOf()
+  ) {
+    Log.i(MOENGAGE_TAG, event)
+    val analytics = getMoEngageObject()
+    if (analytics != null) {
+      val properties = Properties()
+      for ((index, attribute) in attributes.withIndex()) {
+        Log.i(MOENGAGE_TAG, attribute + ":" + values[index])
+        properties.addAttribute(attribute, values[index])
+      }
+      properties.addAttribute(PROPERTY_PREVIOUS_SOURCE,userPrefs.userPreviousScreen)
+      Log.i(MOENGAGE_TAG, PROPERTY_PREVIOUS_SOURCE + ":" + userPrefs.userPreviousScreen)
+      analytics.trackEvent(event, properties)
+    }
+  }
+
+  fun moEngageUserAttribute(
+    userAttribute: String,
+    value: String
+  ) {
+    Log.i(MOENGAGE_TAG, userAttribute)
+    val analytics = getMoEngageObject()
+    if (analytics != null) {
+      analytics.setUserAttribute(userAttribute, value)
+    }
+  }
+}
 const val EVENT_PLACE_BID = "bid_place"
 const val EVENT_ACCEPT_BID = "bid_accept"
 const val EVENT_EDIT_BID = "bid_edit"
@@ -74,10 +114,10 @@ const val EVENT_OTP_VERIFIED = "otp_verify"
 const val EVENT_POD_VIEWED = "pod_view"
 const val EVENT_POD_UPLOAD = "pod_upload"
 const val EVENT_CALL_HELPLINE = "helpline"
-const val EVENT_CALL_VENDOR_DESK ="call_vendorDesk"
+const val EVENT_CALL_VENDOR_DESK = "call_vendorDesk"
 const val EVENT_BID_INLINE_PROMPT = "Bid_in_line_prompt"
 const val EVENT_BID_REVISE_PROMPT = "Bid_revise_prompt"
-const val EVENT_REVISE_BID_INTENT  ="revise_bid_intent"
+const val EVENT_REVISE_BID_INTENT = "revise_bid_intent"
 const val EVENT_SKIP_TUTORIAL = "skip_app_tutorial"
 const val EVENT_VIEW_TUTORIAL = "view_app_tutorial"
 const val EVENT_AUTO_LOGOUT = "auto_logout"
@@ -112,7 +152,7 @@ const val EVENT_FILTER_VEHICLE_TYPE = "filter_vehicle_type"
 const val EVENT_FILTER_EXPRESS_LOADS = "filter_express_loads"
 const val EVENT_UPDATE_APP = "update_app"
 const val EVENT_UPDATE_CANCEL = "update_cancel"
-const val EVENT_EDIT_PREFERENCES ="edit_preferences"
+const val EVENT_EDIT_PREFERENCES = "edit_preferences"
 const val EVENT_ENTER_FIRST_OC = "enter_first_oc"
 const val EVENT_CONFIRM_FIRST_ROUTE = "confirm_first_route"
 const val EVENT_LOAD_SCROLL = "load_scroll"
@@ -155,6 +195,12 @@ const val EVENT_CLICKED_OFFER = "clicked_offer"
 const val EVENT_VIEW_BIDS_SCREEN_OFFERS = "view_bids_screen_offers"
 const val EVENT_VIEW_SHARE_RATE_OFFERS = "view_share_rate_offers"
 const val EVENT_VIEW_MY_TRUCK_OFFERS = "view_my_truck_offers"
+const val EVENT_VIEW_MY_PROFILE = "view_my_profile"
+const val EVENT_CLICKED_PRICE_BANNER = "clicked_price_banner"
+const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
+const val EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION = "recommendation_sms_open"
+const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
+
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
@@ -180,8 +226,8 @@ const val PROPERTY_ADVANCE_PENDING_COUNT = "advance_pending_count"
 const val PROPERTY_BALANCE_PENDING_COUNT = "balance_pending_count"
 const val PROPERTY_RECOVERY_PENDING_COUNT = "recovery_pending_count"
 const val PROPERTY_LOADING_TIME = "loading_time"
-const val PROPERTY_FILTER_SELECTED= "filter_selected"
-const val PROPERTY_OPTION_SELECTED= "option_selected"
+const val PROPERTY_FILTER_SELECTED = "filter_selected"
+const val PROPERTY_OPTION_SELECTED = "option_selected"
 const val PROPERTY_DURATION_SELECTED = "duration_selected"
 const val PROPERTY_DOWNLOADED_EMAILED_SELECTED = "downloaded_emailed_selected"
 const val PROPERTY_EMAIL_ENTERED = "email_entered"
@@ -191,7 +237,7 @@ const val PROPERTY_TRIP_ID = "trip_id"
 const val PROPERTY_CHARGES_AMOUNT = "charges_amount"
 const val PROPERTY_DEDUCTIONS_AMOUNT = "deductions_amount"
 const val PROPERTY_PAYMENTS_AMOUNT = "payments_amount"
-const val PROPERTY_RECOVERIES_ADJUSTED_AMOUNT= "recoveries_adjusted_amount"
+const val PROPERTY_RECOVERIES_ADJUSTED_AMOUNT = "recoveries_adjusted_amount"
 const val PROPERTY_AMOUNT_TYPE = "pending_or_recovery_amount"
 const val PROPERTY_PAGE = "page_from_which_called"
 const val PROPERTY_LOADED_AFTER = "loaded_after_time"
@@ -207,6 +253,7 @@ const val PROPERTY_NUMBER_OF_OFFERS = "number_of_offers"
 const val PROPERTY_LOAD_SCROLL = "load_scroll"
 const val PROPERTY_TIME_LAPSE = "time_lapse"
 const val PROPERTY_NOTIFICATION_TYPE = "notification_type"
+const val PROPERTY_NOTIFICATION_DETAIL = "notification_detail"
 const val PROPERTY_PAGE_NAME = "page_name"
 const val PROPERTY_OTP_SEND_COUNT = "otp_sent_count"
 const val PROPERTY_HOUR_OF_DAY = "hour_of_day"
@@ -233,6 +280,10 @@ const val PROPERTY_BUSINESS_PROOF_TYPE = "business_proof_type"
 const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
+const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
+
+
+
 
 
 const val VALUE_BID = "bid"
@@ -264,6 +315,94 @@ const val VALUE_RECOVERY_ADJUSTMENT = "recovery_adjustment"
 const val VALUE_NOTIFICATION = "notification"
 const val VALUE_DEEP_LINKING = "deep_linking"
 const val VALUE_ADD_TRUCK_TOP_BANNER = "add_truck_top_banner"
-const val VALUE_ADD_TRUCK_SCROLL_BANNER= "add_truck_scroll_banner"
+const val VALUE_ADD_TRUCK_SCROLL_BANNER = "add_truck_scroll_banner"
 const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
 const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"
+
+//MoEngage Attributes and Events
+const val EVENT_LOGIN = "login"
+const val EVENT_HOME_ORDER_CARD_CLICK = "home_order_card_click"
+const val EVENT_HOME_LOADS_TAB_CLICK = "home_loads_tab_click"
+const val EVENT_HOME_MY_TRUCKS_TAB_CLICK = "home_my_trucks_tab_click"
+const val EVENT_HOME_SEARCH_INITIATE = "home_search_initiate"
+const val EVENT_NAVIGATION_MY_BIDS = "navigation_my_bids"
+const val EVENT_NAVIGATION_MY_TRIPS = "navigation_my_trips"
+const val EVENT_NAVIGATION_MY_PROFILE = "navigation_my_profile"
+const val EVENT_NAVIGATION_PODS = "navigation_pods"
+const val EVENT_NAVIGATION_HOME = "navigation_home"
+const val EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK = "search_results_order_card_click"
+const val EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID =
+  "page_load_order_details_without_existing_bid"
+const val EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID =
+  "page_load_order_details_with_existing_bid"
+const val EVENT_LOADFEED_BID_INITIATE = "loadfeed_bid_initiate"
+const val EVENT_SEARCH_RESULT_BID_INITIATE = "search_result_bid_initiate"
+const val EVENT_ORDER_DETAILS_BID_INITIATE = "order_details_bid_initiate"
+const val EVENT_LOADFEED_BID_SUBMIT = "loadfeed_bid_submit"
+const val EVENT_SEARCH_RESULT_BID_SUBMIT = "search_result_bid_submit"
+const val EVENT_ORDER_DETAILS_BID_SUBMIT = "order_details_bid_submit"
+const val EVENT_LOWEST_BID_CTA = "lowest_bid_CTA"
+const val EVENT_NOT_LOWEST_BID_CTA = "not_lowest_bid_CTA"
+const val EVENT_BID_REVISE_INITIATED = "bid_revise_initiated"
+const val EVENT_BID_REVISE_SUBMITTED = "bid_revise_submitted"
+const val EVENT_SEARCH_DETAILS_SUBMIT = "search_details_submit"
+const val EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS = "page_load_search_results_with_orders"
+const val EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS = "page_load_search_results_no_orders"
+const val EVENT_ADD_TRUCK_INITIATE = "add_truck_initiate"
+const val EVENT_EDIT_TRUCK_INITIATE = "edit_truck_initiate"
+const val EVENT_ADD_TRUCK_SUBMIT = "add_truck_submit"
+const val EVENT_EDIT_TRUCK_SUBMIT = "edit_truck_submit"
+const val EVENT_REQUEST_FOR_LOAD_SUBMIT = "request_for_load_submit"
+const val EVENT_COMMUNICATION_SENT = "communication_sent"
+const val EVENT_COMMUNICATION_CLICKED = "communication_clicked"
+
+const val PROPERTY_ORDER_ID = "order_id"
+const val PROPERTY_ORDER_RANK = "order_rank"
+const val PROPERTY_ORDER_COUNT = "order_count"
+const val PROPERTY_BID_COUNT = "bid_count"
+const val PROPERTY_INVENTORY_COUNT = "inventory_count"
+const val PROPERTY_TOTAL_BIDS_COUNT = "total_bids_count"
+const val PROPERTY_ACTIVE_BIDS_COUNT = "active_bids_count"
+const val PROPERTY_CONFIRMED_BIDS_COUNT = "confirmed_bids_count"
+const val PROPERTY_LOST_BIDS_COUNT = "lost_bids_count"
+const val PROPERTY_AWAITING_ARRIVAL_COUNT = "awaiting_arrival_count"
+const val PROPERTY_USER_BID_VALUE = "user_bid_value"
+const val PROPERTY_VEHICLE_REPORTING_DATE_TIME = "vehicle_reporting_date_time"
+const val PROPERTY_ORDER_LOWEST_BID_VALUE = "order_lowest_bid_value"
+const val PROPERTY_USER_BID_VALUE_OLD = "user_bid_value_old"
+const val PROPERTY_USER_BID_VALUE_NEW = "user_bid_value_new"
+const val PROPERTY_SEARCH_ORIGIN_CITY = "search_origin_city"
+const val PROPERTY_SEARCH_DESTINATION_CITY = "search_destination_city"
+const val PROPERTY_SEARCH_BODY_TYPE = "search_body_type"
+const val PROPERTY_INVENTORY_UUID = "inventory_uuid"
+const val PROPERTY_VENDOR_ID = "vendor_id"
+const val PROPERTY_FIELD_EDITED = "field_edited"
+const val PROPERTY_PREVIOUS_SOURCE = "previous_source"
+
+const val VALUE_BANNER = "banner"
+const val VALUE_MY_TRUCKS = "my_trucks"
+const val VALUE_ORIGIN = "origin"
+const val VALUE_DESTINATION = "destination"
+const val VALUE_PRICE = "price"
+const val VALUE_OWNERSHIP = "ownership"
+const val VALUE_DEEPLINK = "deeplinking"
+const val VALUE_APP_FLOW = "app_flow"
+const val VALUE_PUSH_NOTIFICATION = "push_notification"
+
+
+
+
+const val USER_PROPERTY_ANDROID_ID = "android_id"
+const val USER_PROPERTY_ANDROID_VERSION = "android_version"
+const val USER_PROPERTY_BASE_CITY = "base_city"
+const val USER_PROPERTY_CREATION_DATE = "creation_date"
+const val USER_PROPERTY_NAME = "name"
+const val USER_PROPERTY_UUID = "uuid"
+const val USER_PROPERTY_PHONE_NO = "phone_no"
+const val USER_PROPERTY_COMPANY_NAME = "company_name"
+const val USER_PROPERTY_DEMAND_TYPE = "demand_type"
+const val USER_PROPERTY_OWNS_TRUCKS = "owns_trucks"
+const val USER_PROPERTY_STATUS = "status"
+const val USER_PROPERTY_SUB_STATUS = "sub_status"
+const val USER_PROPERTY_IS_KYC_VERIFIED = "is_kyc_verified"
+const val USER_PROPERTY_RECEIVE_WHATSAPP_NOTIFICATIONS = "receive_whatsapp_notifications"

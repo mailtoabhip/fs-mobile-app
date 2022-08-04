@@ -26,4 +26,5 @@ class HomeLoadsTruckFragmentsAdapter(fragmentManager: FragmentManager) : Fragmen
 
     override fun getPageTitle(position: Int) = HomeLoadsTruckFragmentType.pos(position)!!.title
 
+
 }

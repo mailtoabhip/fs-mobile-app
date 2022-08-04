@@ -159,6 +159,7 @@ class ChangePaymentModeDialog @Inject constructor(
                     val item = parent.getItemAtPosition(position) as FuelUserSpinnerOptions
                     if(item.userName == "Different Number"){
                         if(userPrefs.isParent) {
+                            userPrefs.setPreviousScreen(this.javaClass.name)
                             context.startActivity(teamMembersIntent(context, true))
                            // dismiss()
 

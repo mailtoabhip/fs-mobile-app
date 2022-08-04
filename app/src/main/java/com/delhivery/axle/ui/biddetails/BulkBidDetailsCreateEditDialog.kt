@@ -18,10 +18,16 @@ import com.delhivery.axle.ui.bids.BaseDmtBidSummaryRVAdapterItem
 import com.delhivery.axle.ui.bids.DmtBidSummaryItem
 import com.delhivery.axle.ui.bids.DmtBidsRVAdapter
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_bid_create_edit_item.view.*
+import kotlinx.android.synthetic.main.view_transaction_item.amount
 import javax.inject.Inject
 
 class BulkBidDetailsCreateEditDialog @Inject constructor(
@@ -232,7 +238,6 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
 
                                     if (diff != 0 || pmtFlag) {
                                         modifyPayload.add(ModifyVehicleData(bidData.pmtRate, bidData.vehicleCapacity, diff, bidData.vehicleType, "modify", bidData.bidIds, pmtFlag, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
-
                                     }
                                     dmtBidSummaryItemDataList.remove(i)
                                     match = true
@@ -251,7 +256,6 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     for (i in dmtBidSummaryItemDataList) {
                         removedBids.addAll(i.bidIds)
                     }
-
                     dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
                 } else {
                     for (item in adapter.itemsList()) {

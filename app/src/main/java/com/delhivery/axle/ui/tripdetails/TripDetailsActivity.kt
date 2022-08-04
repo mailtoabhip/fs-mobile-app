@@ -12,6 +12,7 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -657,11 +658,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
                         mutableListOf(userPrefs.userId() , viewModel.transactionId, data.transactionId ?: "" , data.formattedAmount() )
                 )
             }
+            userPrefs.setPreviousScreen(this.javaClass.name)
             startActivity(tripDetailsIntent(data.transactionId!!, this))
           }
         }
       }
     }
+  }
+
+  override fun onBackPressed() {
+    super.onBackPressed()
+    userPrefs.setPreviousScreen(this.javaClass.name)
   }
 }
 

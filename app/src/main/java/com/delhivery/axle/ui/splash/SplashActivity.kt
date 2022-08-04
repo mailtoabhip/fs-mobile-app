@@ -3,44 +3,52 @@ package com.delhivery.axle.ui.splash
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.animation.OvershootInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
+import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
+import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
 import com.delhivery.axle.fcm.*
-import com.delhivery.axle.ui.accountaction.AccountActionActivity
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.address.AddressActivity
-import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.ui.onboarding.OnboardingActivity
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
+import com.delhivery.axle.ui.splash.SplashPostState.Auth
+import com.delhivery.axle.ui.splash.SplashPostState.Home
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_SUBMIT
+import com.delhivery.axle.utils.EVENT_APP_OPEN
+import com.delhivery.axle.utils.EVENT_HOME_SEARCH_INITIATE
+import com.delhivery.axle.utils.EVENT_UPDATE_APP
+import com.delhivery.axle.utils.EVENT_UPDATE_CANCEL
+import com.delhivery.axle.utils.PROPERTY_CURRENT_VERSION
+import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
+import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
+import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
 import com.delhivery.axle.ui.splash.SplashPostState.*
-import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.github.florent37.kotlin.pleaseanimate.please
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -64,6 +72,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -83,12 +92,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
      //For Inventory only
     vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
+
+    //For pricing
+    pricingId =  intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
+    pricingSortKey =  intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
+    notificationFrom =  intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
+    pricingOfferId =  intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
+
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
     /* start splash animation */
+    userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
+    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
     animate()
     checkForDynamicLinks()
     binding.btnGetStarted.visibility = View.GONE
@@ -234,6 +253,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
             currentCode = currentVersionCode
             latestCode = playStoreVersionCode
+
+            val androidId = Secure.getString(
+              this.contentResolver,
+              Secure.ANDROID_ID
+            )
+            //get device and app level details
+            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_ID,androidId)
+            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_VERSION,pInfo.versionName+"("+currentCode.toString()+")")
+
             completedAction(playStoreVersionCode > currentVersionCode)
           } else {
             completedAction(false)
@@ -247,6 +275,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     /**
      * Check If it's from deep link
      * */
+    userPrefs.setPreviousScreen(this.javaClass.name)
     if (state == Home && type != "") {
       val bundle = Bundle()
       bundle.putString(ARGS_DEEPLINK_TYPE , type)
@@ -266,6 +295,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
           bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
           //For Inventory
           bundle.putString(ARGS_VEHICLE_NUMBER, vehicleNumber)
+
+          //For pricing
+          bundle.putString(ARGS_PRICING_ID, pricingId)
+          bundle.putString(ARGS_PRICING_SORT_KEY, pricingSortKey)
+          bundle.putString(ARGS_OFFER_ID, pricingOfferId)
+          bundle.putString(ARGS_NOTIFICATION_FROM, notificationFrom)
+
         }
           navigationUtils.navigate(it.java, true, bundle)
       }

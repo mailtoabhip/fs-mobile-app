@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.bids.*
@@ -17,6 +18,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
@@ -35,14 +38,15 @@ class SearchResultsViewModel @Inject constructor(
 
   /* search results live data */
   var searchResults = MutableLiveData<List<HomeBidsRequestItemData>>()
-
+  var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
   var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
     var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
     var editFlg= mutableListOf<Boolean>(false,false,false)
     var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
     var loadPricePercent = 0
-
+    var total =0
+    var bidsCount =0
   /**
    * Search load api
    */
@@ -57,22 +61,39 @@ class SearchResultsViewModel @Inject constructor(
     )
         .flatMap { t ->
           this.loadPricePercent = t.loadPricePercent
-          bidsRepository.bidsForLoads(t.transactions)
+          Single.zip(
+            bidsRepository.bidsForLoads(t.transactions),
+            bidsRepository.bulkLowestBidsForLoads(t.transactions),
+            BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
+                Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
+              Triple(t1.first, t1.second, t2.second)
+            })
         }
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error) {
             val loads = _tRes.first
             val bids = _tRes.second
-
+            total=loads.size
+            bidsCount = bids.size
             for (load in loads.toMutableList()) {
               try {
+                val lowestBid = _tRes.third.filter { b ->
+                  b.transactionId.safeEquals(load.transactionId)
+                }[0]
+                load.lowestBid = lowestBid.minBid
+                load.numBids = lowestBid.numBids
                 load.loadPricePercent = loadPricePercent
                 load.transactionBid =
                   bids.filter { b ->
                     b.transactionId.safeEquals(load.transactionId)
-                  }
-                      .get(0)
+                  }[0]
+                if (load.isDMTIndent()) {
+                  load.bulkTransactionBids =
+                    bids.filter { b ->
+                      b.transactionId.safeEquals(load.transactionId)
+                    }
+                }
               } catch (e: Exception) {
                 load.transactionId?.let { Log.d("No Bid found for: ", it) }
               }
@@ -290,6 +311,25 @@ class SearchResultsViewModel @Inject constructor(
                 }
             }
     }
+
+
+  /**
+   * Fetch lowest bid of a particular transaction
+   */
+  fun fetchLowestBid(transaction: HomeBidsRequestItemData, pos: Int) {
+    compositeDisposable += bidsRepository.bulkLowestBidsForLoads(listOf(transaction))
+      .onBackground()
+      .progress()
+      .subscribe { res, error ->
+        if (!error && res != null) {
+          transaction.lowestBid = res.second[0].minBid
+          transaction.numBids = res.second[0].numBids
+          lowestBidLiveData.postValue(Pair(pos, transaction))
+        } else {
+          lowestBidLiveData.postValue(Pair(pos, transaction))
+        }
+      }
+  }
 }
 
 

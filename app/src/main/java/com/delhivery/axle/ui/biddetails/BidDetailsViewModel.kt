@@ -54,8 +54,12 @@ class BidDetailsViewModel @Inject constructor(
     var analyticsBucket :Boolean = false
 
     var indentLiveData = MutableLiveData<HashMap<Int, String>>()
+    var bidCount =0
+    var lowestBid:Double?=0.0
+    var restrictEventTrigger :Boolean=true
+    var refreshCalled :Boolean=false
 
-   companion object{
+    companion object{
     var truckNumTextViewAdded :Boolean=false
     val indentMap = HashMap<Int, String>()
    }
@@ -111,6 +115,8 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _bRes, error ->
           if (!error) {
+            bidCount=_bRes.third
+            lowestBid=_bRes.first.second?.bidAmount
             //determine bid state and post to live data
             when {
               _bRes.third == 0 -> {

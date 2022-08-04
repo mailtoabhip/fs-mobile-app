@@ -4,9 +4,12 @@ import com.delhivery.axle.api.request.OfferObjectResponse
 import com.delhivery.axle.api.request.OfferRequest
 import com.delhivery.axle.api.request.OfferResponse
 import com.delhivery.axle.api.request.OfferState
+import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.request.UpdatePriceRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.GetPricingDataResponse
+import com.delhivery.axle.api.response.GetSupplierRewardsResponse
 import com.delhivery.axle.api.response.PricingResponse
 import com.delhivery.axle.api.response.SearchTripsResponse
 import com.google.gson.JsonObject
@@ -36,5 +39,12 @@ interface  PriceService {
    */
   @GET("/get_odvt_offers_updated_flag")
   fun getOffersFlag(): Single<BaseResponse<OfferState>>
+
+  /**
+   * get pricing data
+   */
+  @POST("/get_pricing_data")
+  fun getPricingData(@Body offerRequest: PriceDetailRequest): Single<BaseResponse<GetPricingDataResponse>>
+
 
 }

@@ -35,7 +35,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_state") val originState: String,
   @SerializedName("required_on") val _requiredOn: String,
   @SerializedName("target_price") val targetPrice: Double,
-  @SerializedName("uuid") private val uuid: String?,
+  @SerializedName("uuid") val uuid: String?,
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
@@ -72,6 +72,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
   @SerializedName("indent_origin") val indentOrigin:String? =  null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
+  @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -302,6 +303,14 @@ data class HomeBidsRequestItemData(
   fun bidAmount() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
       Accepted, Open, Rejected, Cancelled -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+      else -> ""
+    }
+  } else {
+    ""
+  }
+  fun bidAmountValue() = if (transactionBid != null) {
+    when (transactionBid!!.status()) {
+      Accepted, Open, Rejected, Cancelled ->transactionBid!!.bidAmount.toString()
       else -> ""
     }
   } else {

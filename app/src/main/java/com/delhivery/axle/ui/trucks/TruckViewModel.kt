@@ -11,6 +11,9 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_INVENTORY_UUID
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -49,6 +52,8 @@ class TruckViewModel @Inject constructor(
 
     //Live Data variables
     var addTruckLiveData = MutableLiveData<Boolean>()
+    var addTruckLiveDataRes = MutableLiveData<HomeTrucksRequestItemData>()
+
 
     var noCityCodeError =  MutableLiveData<Boolean>()
 
@@ -75,6 +80,7 @@ class TruckViewModel @Inject constructor(
                 .onBackground()
                 .subscribe{ _res,error ->
                     if(!error && _res!= null){
+                        addTruckLiveDataRes.value=_res
                         addTruckLiveData.postValue(true)
                     }
                     else{

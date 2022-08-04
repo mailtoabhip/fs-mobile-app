@@ -1,11 +1,13 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
+import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -39,6 +41,14 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.CityCode, value)
             .apply()
     get() = prefs.getString(PrefKeys.CityCode, null)
+
+  /**
+   *  Base/Origin City Code
+   */
+  var cityName: String?
+    set(value) = editor.putString(PrefKeys.CityName, value)
+      .apply()
+    get() = prefs.getString(PrefKeys.CityName, null)
 
   /**
    *  Base/Origin City Code
@@ -192,6 +202,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
+
+  /**
+   *  Device FCM Token sent to moengage
+   */
+  var moengageFcmTokenGenerated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.MoengageFCMTokenGenerated, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.MoengageFCMTokenGenerated, false)
+
   /**
    *  Wallet opted in
    */
@@ -215,6 +234,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putInt(PrefKeys.MaxPMTRate, value)
             .apply()
     get() = prefs.getInt(PrefKeys.MaxPMTRate, Integer.MAX_VALUE)
+
+  var orderRank: Int
+    set(value) = editor.putInt(PrefKeys.orderRank, value)
+        .apply()
+    get() = prefs.getInt(PrefKeys.orderRank, 0)
 
   /**
    *  Max cost per km
@@ -704,6 +728,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.aadhaarPolicyAccepted, false)
 
+  var receiveWhatsappNotifications: Boolean
+    set(value) = editor.putBoolean(PrefKeys.receiveWhatsappNotifications, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.receiveWhatsappNotifications, false)
+
   var isBankDetailsRejected: Boolean
     set(value) = editor.putBoolean(PrefKeys.isBankDetailsRejected, value)
         .apply()
@@ -714,6 +743,73 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.isFirstOpenrate, false)
 
+
+  var status: String
+    set(value) = editor.putString(PrefKeys.status,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.status, "") ?: ""
+  var subStatus: String
+    set(value) = editor.putString(PrefKeys.subStatus,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.subStatus, "") ?: ""
+  var creationDate: String
+    set(value) = editor.putString(PrefKeys.creationDate,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.creationDate, "") ?: ""
+  var isKycVeriifed: Boolean
+    set(value) = editor.putBoolean(PrefKeys.isKycVerified, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.isKycVerified, false)
+
+  var userPreviousScreen: String
+    set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.userPreviousScreen, "") ?: ""
+
+  var loadCount: String
+    set(value) = editor.putString(PrefKeys.totalLoadCount,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.totalLoadCount, "") ?: "0"
+
+  var activeBidCount: String
+    set(value) = editor.putString(PrefKeys.activeBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.activeBidCount, "") ?: "0"
+  var confirmedBidCount: String
+    set(value) = editor.putString(PrefKeys.confirmedBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.confirmedBidCount, "") ?: "0"
+  var lostBidCount: String
+    set(value) = editor.putString(PrefKeys.lostBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.lostBidCount, "") ?: "0"
+  var totalBidCount: String
+    set(value) = editor.putString(PrefKeys.totalBidCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.totalBidCount, "") ?: "0"
+  var awaitingArrivalCount: String
+    set(value) = editor.putString(PrefKeys.expectingArrivalCount,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.expectingArrivalCount, "") ?: "0"
+
+  var inventoryCount: String
+    set(value) = editor.putString(PrefKeys.totalInventoryCount,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.totalInventoryCount, "") ?: "0"
+
+  var previousNavigationTab: String
+    set(value) = editor.putString(PrefKeys.previousNavigationTab,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.previousNavigationTab, HomeLoadsFragment::class.java.name) ?:""
+
+  var currentNavigationTab: String
+    set(value) = editor.putString(PrefKeys.currentNavigationTab,value)
+      .apply()
+    get() = prefs.getString(PrefKeys.currentNavigationTab, HomeLoadsFragment::class.java.name) ?:""
+
+  fun setPreviousScreen(previousScreen:String){
+    userPreviousScreen =previousScreen
+  }
   /**
    * Clear all preferences
    */
@@ -752,6 +848,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.CityCode)
             .apply()
+    editor.remove(PrefKeys.CityName)
+      .apply()
     editor.remove(PrefKeys.GNCityCode)
             .apply()
     editor.remove(PrefKeys.MaxPMTRate)
@@ -882,9 +980,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     editor.remove(PrefKeys.aadhaarPolicyAccepted)
       .apply()
+    editor.remove(PrefKeys.receiveWhatsappNotifications)
+      .apply()
     editor.remove(PrefKeys.panName)
         .apply()
     editor.remove(PrefKeys.isBankDetailsRejected)
+        .apply()
+    editor.remove(PrefKeys.isKycVerified)
+      .apply()
+    editor.remove(PrefKeys.creationDate)
+      .apply()
+    editor.remove(PrefKeys.status)
+      .apply()
+    editor.remove(PrefKeys.subStatus)
+      .apply()
+    editor.remove(PrefKeys.orderRank)
         .apply()
     editor.remove(PrefKeys.isFirstOpenrate)
             .apply()
@@ -895,6 +1005,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.ninteen4CDocUrl)
       .apply()
     editor.remove(PrefKeys.paymentDocUrl)
+      .apply()
+    editor.remove(PrefKeys.MoengageFCMTokenGenerated)
       .apply()
     editor.commit()
   }
@@ -986,6 +1098,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     cinNumber=user.supplierDetails?.cInNumber?:""
     shopNumber=user.supplierDetails?.shopEstablishment?:""
     udyogNumber=user.supplierDetails?.udyogAadhar?:""
+    cityName = user.supplierDetails?.baseCity
     cityCode = user.supplierDetails?.baseCityCode
     isBankDetailsRejected=user.isBankDetailsRejected?:false
     isParent = user.isParent()
@@ -1047,6 +1160,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     attachedTruck = user.supplierDetails?.numberOfAttachedTrucks?:""
     isSameAsGst= user.isAddressSameAsGST?:false
 
+    receiveWhatsappNotifications = user.supplierDetails?.receiveWhatsappNotifications?:false
+    status = user.supplierDetails?.status?:""
+    subStatus = user.supplierDetails?.subStatus?:""
+    creationDate = user.supplierDetails?.creationDate?:""
+    isKycVeriifed = user.supplierDetails?.isKycVerified?:false
+
   }
 
 
@@ -1071,6 +1190,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
     const val CityCode = "city_code"
+    const val CityName = "city_name"
     const val GNCityCode = "gn_city_code"
     const val RouteUpdate = "route_update"
     const val PhoneNumber = "phone_number"
@@ -1088,6 +1208,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
     const val FCMTokenGenerated = "fcm_token_generated"
+    const val MoengageFCMTokenGenerated = "fcm_token_shared_to_moengage"
     const val WalletActive = "wallet_active"
     const val FromNotification = "from_notification"
     const val MaxPMTRate = "max_pmt_rate"
@@ -1170,6 +1291,22 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val RateOfferCount= "rate_offer_count"
 
 
+    const val receiveWhatsappNotifications= "receive_whatsapp_notifications"
+    const val creationDate= "creation_date"
+    const val status= "status"
+    const val subStatus= "sub_status"
+    const val isKycVerified= "is_kyc_verified"
+    const val userPreviousScreen= "previous_screen"
+    const val totalLoadCount= "load_count"
+    const val activeBidCount= "active_bid_count"
+    const val confirmedBidCount= "confirmed_bid_count"
+    const val lostBidCount= "lost_bid_count"
+    const val totalBidCount= "total_bid_count"
+    const val expectingArrivalCount= "expecting_arrival_count"
+    const val totalInventoryCount= "invnetory_count"
+    const val orderRank = "order_rank"
+    const val previousNavigationTab = "previous_navigation_tab"
+    const val currentNavigationTab = "current_navigation_tab"
 
   }
 }
