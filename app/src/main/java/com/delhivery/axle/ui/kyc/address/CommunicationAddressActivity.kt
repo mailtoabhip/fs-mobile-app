@@ -456,7 +456,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         addressData.proofDocumentType!!.startsWith("lr", true) -> 2
                         addressData.proofDocumentType!!.startsWith("le", true) -> 3
                         addressData.proofDocumentType!!.startsWith("ud", true) -> 4
-                        addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                        addressData.proofDocumentType!!.startsWith("dr", true) -> 5
+                        addressData.proofDocumentType!!.startsWith("rc", true) -> 6
                         else -> 0
                     }
                 }else {
@@ -465,8 +466,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         addressData.proofDocumentType!!.startsWith("lr", true) -> 2
                         addressData.proofDocumentType!!.startsWith("le", true) -> 3
                         addressData.proofDocumentType!!.startsWith("ud", true) -> 4
-                        addressData.proofDocumentType!!.startsWith("dr", true) -> 5
-                        addressData.proofDocumentType!!.startsWith("rc", true) -> 6
+                        addressData.proofDocumentType!!.startsWith("sh", true) -> 5
                         else -> 0
                     }
                 }

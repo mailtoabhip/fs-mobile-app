@@ -342,6 +342,8 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                         TotalStepsKey)!!,null)
 
                 }
+            }else{
+                showUploadImage()
             }
         })
 
