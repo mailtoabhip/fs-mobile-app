@@ -18,6 +18,7 @@ import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
@@ -39,7 +40,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   @Inject
   lateinit var userPrefs: UserPrefs
 
-  var limit = 100
+  var limit = OFF_SET_LIMIT
 
   override fun getViewModelClass() = BidsViewModel::class.java
 

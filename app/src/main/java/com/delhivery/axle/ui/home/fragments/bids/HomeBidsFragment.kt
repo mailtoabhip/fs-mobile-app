@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
@@ -65,7 +66,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   /* RV adapter */
   private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
-  var limit = 100
+  var limit = OFF_SET_LIMIT
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -327,7 +328,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
     if(viewModel.finalOffers.value.isNullOrEmpty()){
       pres = null
-      userPrefs.bidOfferCount=0
+    //  userPrefs.bidOfferCount=0
     }else{
       for(r in viewModel.finalOffers.value!!){
         if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
