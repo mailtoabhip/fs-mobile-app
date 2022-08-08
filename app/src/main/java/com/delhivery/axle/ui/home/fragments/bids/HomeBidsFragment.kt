@@ -324,7 +324,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           pres = pres?.copy(Pair(true,r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
         }
       }
-      userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
+      //userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
     }
     return pres
   }

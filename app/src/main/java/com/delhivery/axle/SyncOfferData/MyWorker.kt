@@ -17,6 +17,7 @@ import com.delhivery.axle.tokenExpiryHandling.RefreshAuthTokenService
 import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.Request
 import com.squareup.okhttp.Response
@@ -29,7 +30,8 @@ class MyWorker(
         private val loadCycleRepository: LoadCycleRepository,
         private val appDatabase: AppDatabase,
         context: Context,
-        workerParams: WorkerParameters
+        workerParams: WorkerParameters,
+        val userPrefs: UserPrefs
 ) : Worker(context, workerParams) {
 
     private val TAG: String = MyWorker::class.java.getSimpleName()
@@ -41,6 +43,7 @@ class MyWorker(
                 if (!error) {
                    success = true
                     if (_res!=null && !_res.offersList.isNullOrEmpty()) {
+                        userPrefs.bidOfferCount = _res.total
                         appDatabase.offersDao().deleteOffers()
                         for (i in _res.offersList) {
                             appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offerType, i.offerId))
@@ -82,10 +85,11 @@ class MyWorker(
     class Factory @Inject constructor(
             private val priceRepository: PriceRepository,
             private val loadCycleRepository: LoadCycleRepository,
-            private val appDatabase: AppDatabase
+            private val appDatabase: AppDatabase,
+            val userPrefs: UserPrefs
     ) : DaggerWorkerFactory.ChildWorkerFactory {
 
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker =
-                MyWorker(priceRepository, loadCycleRepository,appDatabase, appContext, params)
+                MyWorker(priceRepository, loadCycleRepository,appDatabase, appContext, params,userPrefs)
     }
 }
