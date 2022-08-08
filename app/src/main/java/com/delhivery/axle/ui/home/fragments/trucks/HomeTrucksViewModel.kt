@@ -337,7 +337,9 @@ class HomeTrucksViewModel @Inject constructor(
 
     var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
 
-    fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+    var  offersLiveData = ArrayList<OffersEntity>()
+
+    fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
 
     fun fetchData() {
         val constraints = Constraints.Builder()

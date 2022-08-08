@@ -65,8 +65,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   /* RV adapter */
   private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
-
-
+  var limit = 100
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -79,14 +78,25 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
-    viewModel.fetchDatabaseOffers()
+    val total = userPrefs.bidOfferCount
 
-    viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-      if (!it.isNullOrEmpty()) {
-        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-        adapter.notifyDataSetChanged()
-      }
-    })
+    var loopCount = total/limit
+    if (total%limit >0){
+      loopCount++
+    }
+    var offset = 0
+    for(i in 1..loopCount){
+      viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+        if (!it.isNullOrEmpty()) {
+          viewModel.offersLiveData.addAll(it)
+          if(viewModel.offersLiveData.size==total){
+            viewModel.finalOffers.postValue(viewModel.offersLiveData)
+          }
+        }
+      })
+      offset  = limit + offset
+    }
+
 
     /* setup recycler view */
     binding.rvBids.apply {

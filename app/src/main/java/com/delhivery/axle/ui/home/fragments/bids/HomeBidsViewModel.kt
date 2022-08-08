@@ -305,6 +305,10 @@ class HomeBidsViewModel @Inject constructor(
     return bulkBidSummaryItemList
   }
 
-  fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+  var  offersLiveData = ArrayList<OffersEntity>()
+
+  fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
+
+
 
 }

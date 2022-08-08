@@ -52,6 +52,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     var totalTruck: Int = 0
     var bannerValue:Boolean? = false
     var launch : Boolean =true
+    val limit = 100
 
     companion object {
         /* singleton instance */
@@ -89,7 +90,26 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             refreshData()
         }
 
-        viewModel.fetchDatabaseOffers()
+
+        val total = userPrefs.bidOfferCount
+
+        var loopCount = total/limit
+        if (total%limit >0){
+            loopCount++
+        }
+        var offset = 0
+        for(i in 1..loopCount){
+            viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+                if (!it.isNullOrEmpty()) {
+                    viewModel.offersLiveData.addAll(it)
+                    if(viewModel.offersLiveData.size==total){
+                        viewModel.finalOffers.postValue(viewModel.offersLiveData)
+                    }
+                }
+            })
+            offset  = limit + offset
+        }
+
         /* setup recycler view */
         binding.rvTrucks.apply {
             layoutManager = LinearLayoutManager(context)
@@ -413,14 +433,25 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
         viewModel.getAllInventories()
 
-        viewModel.fetchDatabaseOffers()
-
-        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-                adapter.notifyDataSetChanged()
-            }
-        })
+        viewModel.offersLiveData.clear()
+        var limit = 100
+        var total = userPrefs.bidOfferCount
+        var loopCount = total/limit
+        if (total%limit >0){
+            loopCount++
+        }
+        var offset = 0
+        for(i in 1..loopCount){
+            viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+                if (!it.isNullOrEmpty()) {
+                    viewModel.offersLiveData.addAll(it)
+                    if(viewModel.offersLiveData.size==total){
+                        viewModel.finalOffers.postValue(viewModel.offersLiveData)
+                    }
+                }
+            })
+            offset  = limit + offset
+        }
 
     }
 

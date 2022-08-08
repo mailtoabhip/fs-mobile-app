@@ -39,6 +39,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   @Inject
   lateinit var userPrefs: UserPrefs
 
+  var limit = 100
+
   override fun getViewModelClass() = BidsViewModel::class.java
 
   override fun layoutId() = R.layout.activity_bids
@@ -83,14 +85,24 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       refreshData()
     }
 
-    viewModel.fetchDatabaseOffers()
+    var total = userPrefs.bidOfferCount
 
-    viewModel.fetchDatabaseOffers().observe(this, Observer {
-      if (!it.isNullOrEmpty()) {
-        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-        adapter.notifyDataSetChanged()
-      }
-    })
+    var loopCount = total/limit
+    if (total%limit >0){
+      loopCount++
+    }
+    var offset = 0
+    for(i in 1..loopCount){
+      viewModel.fetchDatabaseOffers(offset).observe(this, Observer {
+        if (!it.isNullOrEmpty()) {
+          viewModel.offersLiveData.addAll(it)
+          if(viewModel.offersLiveData.size==total){
+            viewModel.finalOffers.postValue(viewModel.offersLiveData)
+          }
+        }
+      })
+      offset  = limit + offset
+    }
 
     /* setup recycler view */
     binding.rvBids.apply {
