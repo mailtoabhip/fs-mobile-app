@@ -18,6 +18,7 @@ import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapter
@@ -38,6 +39,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   }
   @Inject
   lateinit var userPrefs: UserPrefs
+
+  var limit = OFF_SET_LIMIT
 
   override fun getViewModelClass() = BidsViewModel::class.java
 
@@ -83,14 +86,27 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       refreshData()
     }
 
-    viewModel.fetchDatabaseOffers()
+    val total = userPrefs.bidOfferCount
 
-    viewModel.fetchDatabaseOffers().observe(this, Observer {
-      if (!it.isNullOrEmpty()) {
-        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-        adapter.notifyDataSetChanged()
+    if(total!=null && total>0) {
+
+      var loopCount = total / limit
+      if (total % limit > 0) {
+        loopCount++
       }
-    })
+      var offset = 0
+      for (i in 1..loopCount) {
+        viewModel.fetchDatabaseOffers(offset).observe(this, Observer {
+          if (!it.isNullOrEmpty()) {
+            viewModel.offersLiveData.addAll(it)
+            if (viewModel.offersLiveData.size == total) {
+              viewModel.finalOffers.postValue(viewModel.offersLiveData)
+            }
+          }
+        })
+        offset = limit + offset
+      }
+    }
 
     /* setup recycler view */
     binding.rvBids.apply {

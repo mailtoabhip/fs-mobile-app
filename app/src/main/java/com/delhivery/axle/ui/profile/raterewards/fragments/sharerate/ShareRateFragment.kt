@@ -11,6 +11,7 @@ import com.delhivery.axle.data.sharerates.ShareRatesItemDataAction_ViewDetails
 import com.delhivery.axle.data.sharerates.ShareRatesTimeOutAction
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.databinding.FragmentShareRateBinding
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
@@ -76,12 +77,29 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
 
   override fun refreshData() {
     adapter.resetStaticData()
-    viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-      if (!it.isNullOrEmpty()) {
-        adapter.resetStaticData()
-        viewModel.getFrequentLanes(it)
+    viewModel.offersLiveData.clear()
+    var limit = OFF_SET_LIMIT
+    var total = userPrefs.bidOfferCount
+
+    if(total!=null && total>0) {
+      var loopCount = total / limit
+      if (total % limit > 0) {
+        loopCount++
       }
-    })
+      var offset = 0
+      for (i in 1..loopCount) {
+        viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+          if (!it.isNullOrEmpty()) {
+            viewModel.offersLiveData.addAll(it)
+            if (viewModel.offersLiveData.size == total) {
+              adapter.resetStaticData()
+              viewModel.getFrequentLanes(viewModel.offersLiveData)
+            }
+          }
+        })
+        offset = limit + offset
+      }
+    }
   }
 
   override fun handleAction(actionId: String, item: BaseShareRateRVAdapterItem<*>) {

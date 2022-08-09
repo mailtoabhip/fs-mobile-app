@@ -25,6 +25,7 @@ import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
@@ -65,8 +66,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
   /* RV adapter */
   private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
-
-
+  var limit = OFF_SET_LIMIT
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -79,15 +79,34 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
-    viewModel.fetchDatabaseOffers()
 
-    viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-      if (!it.isNullOrEmpty()) {
-        viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-        adapter.notifyDataSetChanged()
+
+    viewModel.finalOffersCount().observe(viewLifecycleOwner, Observer {
+
+      val total = userPrefs.bidOfferCount
+      if(total == it){
+      if(total!=null && total>0) {
+
+        var loopCount = total / limit
+        if (total % limit > 0) {
+          loopCount++
+        }
+        var offset = 0
+        for (i in 1..loopCount) {
+          viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+              viewModel.offersLiveData.addAll(it)
+              if (viewModel.offersLiveData.size == total) {
+                viewModel.finalOffers.postValue(viewModel.offersLiveData)
+                adapter.notifyDataSetChanged()
+              }
+            }
+          })
+          offset = limit + offset
+        }
+      }
       }
     })
-
     /* setup recycler view */
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -317,14 +336,14 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
     if(viewModel.finalOffers.value.isNullOrEmpty()){
       pres = null
-      userPrefs.bidOfferCount=0
+    //  userPrefs.bidOfferCount=0
     }else{
       for(r in viewModel.finalOffers.value!!){
         if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
           pres = pres?.copy(Pair(true,r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
         }
       }
-      userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
+      //userPrefs.bidOfferCount= viewModel.finalOffers.value!!.size
     }
     return pres
   }

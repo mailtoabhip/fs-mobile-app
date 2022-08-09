@@ -25,6 +25,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
@@ -52,6 +53,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     var totalTruck: Int = 0
     var bannerValue:Boolean? = false
     var launch : Boolean =true
+    val limit = OFF_SET_LIMIT
 
     companion object {
         /* singleton instance */
@@ -89,7 +91,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             refreshData()
         }
 
-        viewModel.fetchDatabaseOffers()
+
+        fetchOffers()
+
         /* setup recycler view */
         binding.rvTrucks.apply {
             layoutManager = LinearLayoutManager(context)
@@ -413,17 +417,39 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
         viewModel.getAllInventories()
 
-        viewModel.fetchDatabaseOffers()
+        viewModel.offersLiveData.clear()
 
-        viewModel.fetchDatabaseOffers().observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                viewModel.finalOffers.postValue(it as ArrayList<OffersEntity>?)
-                adapter.notifyDataSetChanged()
-            }
-        })
+        fetchOffers()
 
     }
+    fun fetchOffers(){
+        viewModel.finalOffersCount().observe(viewLifecycleOwner, Observer {
 
+            val total = userPrefs.bidOfferCount
+            if(total == it){
+                if(total!=null && total>0) {
+
+                    var loopCount = total / limit
+                    if (total % limit > 0) {
+                        loopCount++
+                    }
+                    var offset = 0
+                    for (i in 1..loopCount) {
+                        viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+                            if (!it.isNullOrEmpty()) {
+                                viewModel.offersLiveData.addAll(it)
+                                if (viewModel.offersLiveData.size == total) {
+                                    viewModel.finalOffers.postValue(viewModel.offersLiveData)
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        })
+                        offset = limit + offset
+                    }
+                }
+            }
+        })
+    }
     override fun handleAction(actionId: String, item: BaseHomeTrucksRVAdapterItem<*>) {
         when(actionId){
             HomeTrucksVehicleFilterAction -> {

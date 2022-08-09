@@ -2,16 +2,18 @@ package com.delhivery.axle.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.delhivery.axle.api.request.UpdatePriceRequest
 import com.delhivery.axle.database.entity.OffersEntity
 
 @Dao
 interface OffersDao {
-  @Query("SELECT * FROM offers")
-  fun getAllOffers(): LiveData<List<OffersEntity>>
+  @Query("SELECT * FROM offers ORDER BY ID LIMIT 1500 OFFSET :offset")
+  fun getAllOffers(offset:Int?=0): LiveData<List<OffersEntity>>
 
   @Query("SELECT * FROM offers WHERE offer_id =:offerId")
   fun getOffers(offerId:String):LiveData<OffersEntity>
+
+  @Query("SELECT COUNT(*) FROM offers")
+  fun getOffersCount():LiveData<Int>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun newOfferEntry(entry: OffersEntity): Long

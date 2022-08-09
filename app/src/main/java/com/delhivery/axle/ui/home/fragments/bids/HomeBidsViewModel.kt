@@ -77,6 +77,8 @@ class HomeBidsViewModel @Inject constructor(
 
   var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
 
+  fun finalOffersCount() = appDatabase.offersDao().getOffersCount()
+
   /**
    * Fetch bids summary
    */
@@ -305,6 +307,10 @@ class HomeBidsViewModel @Inject constructor(
     return bulkBidSummaryItemList
   }
 
-  fun fetchDatabaseOffers() = appDatabase.offersDao().getAllOffers()
+  var  offersLiveData = ArrayList<OffersEntity>()
+
+  fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
+
+
 
 }

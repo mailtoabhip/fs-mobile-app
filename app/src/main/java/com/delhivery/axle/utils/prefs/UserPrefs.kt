@@ -251,7 +251,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   var bidOfferCount: Int
     set(value) = editor.putInt(PrefKeys.BidOfferCount, value)
         .apply()
-    get() = prefs.getInt(PrefKeys.BidOfferCount, Integer.MAX_VALUE)
+    get() = prefs.getInt(PrefKeys.BidOfferCount, 0)
 
   var trucksOfferCount: Int
     set(value) = editor.putInt(PrefKeys.TrucksOfferCount, value)

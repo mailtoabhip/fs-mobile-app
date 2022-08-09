@@ -48,6 +48,7 @@ data class rangeFiltersData(
         @SerializedName("value") var value:String = "YYYY:MM:ddT00:00:00"
 )
 data class OfferObjectResponse(
+        @SerializedName("total") var total:Int,
   @SerializedName("offers") var offersList:List<OfferResponse>
 )
 data class OfferResponse(
