@@ -25,6 +25,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
@@ -52,7 +53,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     var totalTruck: Int = 0
     var bannerValue:Boolean? = false
     var launch : Boolean =true
-    val limit = 100
+    val limit = OFF_SET_LIMIT
 
     companion object {
         /* singleton instance */
@@ -434,7 +435,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.getAllInventories()
 
         viewModel.offersLiveData.clear()
-        var limit = 100
+        var limit = OFF_SET_LIMIT
         var total = userPrefs.bidOfferCount
 
         if(total!=null && total>0) {

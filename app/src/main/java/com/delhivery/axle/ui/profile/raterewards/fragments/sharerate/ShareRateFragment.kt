@@ -11,6 +11,7 @@ import com.delhivery.axle.data.sharerates.ShareRatesItemDataAction_ViewDetails
 import com.delhivery.axle.data.sharerates.ShareRatesTimeOutAction
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.databinding.FragmentShareRateBinding
+import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
@@ -77,7 +78,7 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
   override fun refreshData() {
     adapter.resetStaticData()
     viewModel.offersLiveData.clear()
-    var limit = 100
+    var limit = OFF_SET_LIMIT
     var total = userPrefs.bidOfferCount
 
     if(total!=null && total>0) {
