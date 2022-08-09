@@ -106,6 +106,8 @@ class HomeTrucksViewModel @Inject constructor(
             }
     }
 
+    fun finalOffersCount() = appDatabase.offersDao().getOffersCount()
+
     fun getAllInventories(paginate: Boolean = false, search : Boolean = false){
 
         if (!paginate) {

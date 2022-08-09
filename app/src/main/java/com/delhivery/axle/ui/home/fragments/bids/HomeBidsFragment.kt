@@ -79,29 +79,34 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
-    val total = userPrefs.bidOfferCount
 
-    if(total!=null && total>0) {
 
-      var loopCount = total / limit
-      if (total % limit > 0) {
-        loopCount++
-      }
-      var offset = 0
-      for (i in 1..loopCount) {
-        viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
-          if (!it.isNullOrEmpty()) {
-            viewModel.offersLiveData.addAll(it)
-            if (viewModel.offersLiveData.size == total) {
-              viewModel.finalOffers.postValue(viewModel.offersLiveData)
+    viewModel.finalOffersCount().observe(viewLifecycleOwner, Observer {
+
+      val total = userPrefs.bidOfferCount
+      if(total == it){
+      if(total!=null && total>0) {
+
+        var loopCount = total / limit
+        if (total % limit > 0) {
+          loopCount++
+        }
+        var offset = 0
+        for (i in 1..loopCount) {
+          viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+              viewModel.offersLiveData.addAll(it)
+              if (viewModel.offersLiveData.size == total) {
+                viewModel.finalOffers.postValue(viewModel.offersLiveData)
+                adapter.notifyDataSetChanged()
+              }
             }
-          }
-        })
-        offset = limit + offset
+          })
+          offset = limit + offset
+        }
       }
-    }
-
-
+      }
+    })
     /* setup recycler view */
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
