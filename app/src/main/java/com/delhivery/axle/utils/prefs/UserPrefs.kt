@@ -202,6 +202,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getBoolean(PrefKeys.FCMTokenGenerated, false)
 
+
+  /**
+   *  Device FCM Token sent to moengage
+   */
+  var moengageFcmTokenGenerated: Boolean
+    set(value) = editor.putBoolean(PrefKeys.MoengageFCMTokenGenerated, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.MoengageFCMTokenGenerated, false)
+
   /**
    *  Wallet opted in
    */
@@ -997,6 +1006,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.paymentDocUrl)
       .apply()
+    editor.remove(PrefKeys.MoengageFCMTokenGenerated)
+      .apply()
     editor.commit()
   }
 
@@ -1197,6 +1208,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val SupplierEnabled = "supplier_enabled"
     const val IsTestUser = "test_user"
     const val FCMTokenGenerated = "fcm_token_generated"
+    const val MoengageFCMTokenGenerated = "fcm_token_shared_to_moengage"
     const val WalletActive = "wallet_active"
     const val FromNotification = "from_notification"
     const val MaxPMTRate = "max_pmt_rate"

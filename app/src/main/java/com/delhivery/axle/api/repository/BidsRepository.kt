@@ -209,9 +209,10 @@ class BidsRepository @Inject constructor(
    */
   fun userBids(
     offset: Int,
-    statuses: String
+    statuses: String,
+    pending:Boolean
   ) = bidService.bidsForStatuses(userRepository.userId(),
-      UserBidsLoadLimit, offset, statuses)
+          UserBidsLoadLimit, offset, statuses, confirmationPending = pending)
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
 

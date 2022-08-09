@@ -363,6 +363,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
 
     if (viewModel.isFCMTokenGenerated()) {
+      userPrefs.moengageFcmTokenGenerated = true
+      fcmUtils.generateToken {
+        if (it.isNotNullOrEmpty()) {
+          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
+          viewModel.updateFCMToken(it)
+        }
+      }
+    }
+
+    if (!viewModel.isMoengageFCMTokenGenerated()) {
       fcmUtils.generateToken {
         if (it.isNotNullOrEmpty()) {
           activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
@@ -400,19 +410,19 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         if (it.second.truckUUID != null) {
           try {
             BulkBidDetailsCreateEditDialog(
-              context!!,
-              it.second,
-              it.second.bulkTransactionBids,
-              it.first,
-              viewModel,
-              it.second.unAllocatedVolume!!,
-              pos,
-              analyticsUtil,
-              userPrefs,
-              "load_screen",
-              pageTitle
+                    context!!,
+                    it.second,
+                    it.second.bulkTransactionBids,
+                    it.first,
+                    viewModel,
+                    it.second.unAllocatedVolume!!,
+                    pos,
+                    analyticsUtil,
+                    userPrefs,
+                    "load_screen",
+                    pageTitle
             ).show()
-          }catch (e:Exception){
+          } catch (e: Exception) {
 
           }
         } else {
@@ -607,18 +617,18 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         ), VALUE_ADD_TRUCK_TOP_BANNER)}
           UNAPPROVED -> {
             dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_not_approved,
-              string.msg_dialog_supplier_not_approved,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+                    string.title_dialog_supplier_not_approved,
+                    string.msg_dialog_supplier_not_approved,
+                    getString(string.label_call_us), getString(string.label_mail_us),
+                    { callHelpline() }, { sendMail() }
             )
           }
           DISABLED -> {
             dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_disabled,
-              string.msg_dialog_supplier_disabled,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+                    string.title_dialog_supplier_disabled,
+                    string.msg_dialog_supplier_disabled,
+                    getString(string.label_call_us), getString(string.label_mail_us),
+                    { callHelpline() }, { sendMail() }
             )
           }
         }
@@ -632,24 +642,25 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         )
         when (viewModel.userPrefs.canBid()) {
           APPROVED -> {
-        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
-                TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
-                TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
-        ), VALUE_ADD_TRUCK_SCROLL_BANNER)}
+            showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                    TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                    TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
+            ), VALUE_ADD_TRUCK_SCROLL_BANNER)
+          }
           UNAPPROVED -> {
             dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_not_approved,
-              string.msg_dialog_supplier_not_approved,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+                    string.title_dialog_supplier_not_approved,
+                    string.msg_dialog_supplier_not_approved,
+                    getString(string.label_call_us), getString(string.label_mail_us),
+                    { callHelpline() }, { sendMail() }
             )
           }
           DISABLED -> {
             dialogUtils.showBasicConfirmDialog(
-              string.title_dialog_supplier_disabled,
-              string.msg_dialog_supplier_disabled,
-              getString(string.label_call_us), getString(string.label_mail_us),
-              { callHelpline() }, { sendMail() }
+                    string.title_dialog_supplier_disabled,
+                    string.msg_dialog_supplier_disabled,
+                    getString(string.label_call_us), getString(string.label_mail_us),
+                    { callHelpline() }, { sendMail() }
             )
           }
         }
@@ -816,7 +827,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
   override fun deleteItem(item: BaseHomeLoadsRVAdapterItem<*>, position: Int) {
     binding.rvLoads.post(Runnable {
-      val bidData = item.data as  HomeBidsRequestItemData
+      val bidData = item.data as HomeBidsRequestItemData
       currSize = currSize?.minus(1)
       itemDeleted = true
       adapter.operation(listOf(Pair(HomeLoadsRequestItem(bidData), DataRVAdapterOperationType.Remove)))

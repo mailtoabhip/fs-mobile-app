@@ -69,6 +69,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     super.onNewToken(fcmToken)
     MoEFireBaseHelper.getInstance().passPushToken(applicationContext,fcmToken)
     userPrefs.fcmTokenGenerated = true
+    userPrefs.moengageFcmTokenGenerated =true
   }
 
   override fun onMessageReceived(remoteMessage: RemoteMessage) {

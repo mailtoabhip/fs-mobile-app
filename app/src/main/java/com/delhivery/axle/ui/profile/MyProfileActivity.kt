@@ -63,6 +63,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
 
+        analyticsUtil.trackEvent(
+            EVENT_VIEW_MY_PROFILE,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
             binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()

@@ -145,10 +145,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
 
     binding.profile.setOnClickListener {
-      analyticsUtil.trackEvent(
-        EVENT_VIEW_MY_PROFILE,
-        mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
-        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
       userPrefs.setPreviousScreen(this.javaClass.name)
       analyticsUtil.moEngageTrackEvent(
         EVENT_NAVIGATION_MY_PROFILE
@@ -240,6 +236,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         KYC_REJECTION ->{
           navigationUtils.navigate(MyProfileActivity::class.java)
+        }
+        SHARE_RATE -> {
+          navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
         }
         KYC_VERIFIED ->{
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
@@ -543,19 +542,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         when(pos){
           0->
             if(count==1){
-              val c = Date()
-              val date = c.toString()
-              analyticsUtil.trackEvent(
-                EVENT_VIEW_BIDS_SCREEN_OFFERS,
-                mutableListOf(
-                  PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
-                  PROPERTY_DATE
-                ),
-                mutableListOf(
-                  userPrefs.userId(), userPrefs.phoneNumber!!,
-                  userPrefs.bidOfferCount.toString(), date
-                )
-              )
               if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
                 userPrefs.previousNavigationTab= SplashActivity::class.java.name
               } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
@@ -688,6 +674,8 @@ private const val ACTIVATE_TRUCK_REDIRECT = "actvatrks"
 private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
 private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
+private const val SHARE_RATE = "sharerate"
+
 
 var orderRank=0
 
