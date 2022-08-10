@@ -46,6 +46,8 @@ import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -732,6 +734,32 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         showFileSelected()
         enableSaveAlertButton()
         resetUploadData()
+    }
+    private fun setBannerTExt() {
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(0)
+            .build()
+
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        remoteConfig.setConfigSettingsAsync(configSettings)
+
+        FirebaseRemoteConfig.getInstance()
+            .fetchAndActivate()
+            .addOnCompleteListener(
+                this
+            ) {
+                if (it.isSuccessful) {
+
+                    try{
+                        viewModel.saveLoadPostKycConfig(
+                            remoteConfig.getString("post_load")
+                        )
+                    } catch (e: Exception) {
+                        //Do Nothing
+                    }
+                }
+            }
+
     }
 
     override fun onAWSFailure() {

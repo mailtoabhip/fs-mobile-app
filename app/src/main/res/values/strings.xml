@@ -625,6 +625,7 @@
   <string name="select_a_route">Select a route to share the rates</string>
   <string name="share_proof">Share proof not older than 7 days</string>
   <string name="rejected_due">Rejected due to </string>
+  <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>
