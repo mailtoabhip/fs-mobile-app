@@ -217,10 +217,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
               try{
               viewModel.saveLoadPostKycConfig(
-                  remoteConfig.getString("post_load_test")
+                  remoteConfig.getString("onboarding_order")
               )
                   viewModel.saveTruckPostKycConfig(
-                      remoteConfig.getString("post_truck_test")
+                      remoteConfig.getString("onboarding_order")
                   )
           } catch (e: Exception) {
             //Do Nothing
