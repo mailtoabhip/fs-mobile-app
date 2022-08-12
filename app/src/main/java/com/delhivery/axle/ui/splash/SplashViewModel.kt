@@ -47,6 +47,15 @@ class SplashViewModel @Inject constructor(
   fun saveBannerTextConfig(bannerText:String){
     userPrefs.bannerText = bannerText
   }
+  fun saveShareBannerH1Config(bannerText:String){
+    userPrefs.shareRateBannerH1 = bannerText
+  }
+  fun saveShareBannerH2Config(bannerText:String){
+    userPrefs.shareRateBannerH2 = bannerText
+  }
+  fun saveShareBannerH3Config(bannerText:String){
+    userPrefs.shareRateBannerH3 = bannerText
+  }
 
   fun getOldUser():Boolean{
     return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)

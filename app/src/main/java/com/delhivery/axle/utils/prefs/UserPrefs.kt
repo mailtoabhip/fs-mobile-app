@@ -384,6 +384,19 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.BannerText , " ") ?: ""
 
+  var shareRateBannerH1: String
+    set(value) = editor.putString(PrefKeys.ShareRateBannerH1, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ShareRateBannerH1 , " ") ?: ""
+  var shareRateBannerH2: String
+    set(value) = editor.putString(PrefKeys.ShareRateBannerH2, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ShareRateBannerH2 , " ") ?: ""
+  var shareRateBannerH3: String
+    set(value) = editor.putString(PrefKeys.ShareRateBannerH3, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.ShareRateBannerH3 , " ") ?: ""
+
     /**
      * identity doc url
      */
@@ -1235,6 +1248,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val LoadPostKyc = "post_load"
     const val TruckPostKyc = "post_truck"
     const val BannerText = "banner_text"
+    const val ShareRateBannerH1 = "share_rate_banner_h1"
+    const val ShareRateBannerH2 = "share_rate_banner_h2"
+    const val ShareRateBannerH3 = "share_rate_banner_h3"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"

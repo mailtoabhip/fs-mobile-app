@@ -5,6 +5,23 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+  <data>
+    <variable
+        name="title"
+        type="String"
+        />
+
+    <variable
+        name="subTitle"
+        type="String"
+        />
+
+    <variable
+        name="actionLabel"
+        type="String"
+        />
+
+  </data>
   <androidx.cardview.widget.CardView
       android:id="@+id/share_rate_card"
       android:layout_width="match_parent"
@@ -50,13 +67,13 @@
           bind:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_truck_heading"
+            android:id="@+id/text_share_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_4dp"
             android:fontFamily="sans-serif-medium"
             android:lineSpacingExtra="6sp"
-            android:text="@string/earn_cash_reward"
+            android:text="@{title}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_16sp" />
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -68,7 +85,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif-medium"
-              android:text="₹500"
+              android:text="@{actionLabel}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_24sp" />
         <androidx.appcompat.widget.AppCompatTextView
@@ -81,12 +98,12 @@
             android:textSize="@dimen/text_16sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_truck_sub_heading"
+            android:id="@+id/text_share_sub_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:layout_marginBottom="@dimen/size_12dp"
-            android:text="@string/sharing_rate_text"
+            android:text="@{subTitle}"
             android:textColor="@color/white"
             android:textSize="@dimen/text_12sp" />
 

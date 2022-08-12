@@ -4,6 +4,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.*
+import com.delhivery.axle.utils.prefs.UserPrefs
 
 /**
  * RV item type for [HomeLoadsRVAdapter]
@@ -19,7 +20,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Filters(7),
   Count(8),
   Banners(9),
-  Priority(10);
+  Priority(10),
+  ShareRate(11);
 
   companion object {
     /**
@@ -53,10 +55,16 @@ class HomeLoadsAddTruckItem(data: HomeLoadsAddTruckItemData = HomeLoadsAddTruckI
 
 
 /**
- * Priority acccess banner item
+ * Priority access banner item
  */
 class HomeLoadsTruckPriorityAccessItem(data: HomeLoadsTruckPriorityAccessItemData = HomeLoadsTruckPriorityAccessItemData()) :
   BaseHomeLoadsRVAdapterItem<HomeLoadsTruckPriorityAccessItemData>(Priority, data)
+
+/**
+ * shareRate banner item
+ */
+class HomeLoadsShareRateItem(data: HomeLoadsShareRateItemData) :
+    BaseHomeLoadsRVAdapterItem<HomeLoadsShareRateItemData>(ShareRate, data)
 
 /**
  * Inline progress item
