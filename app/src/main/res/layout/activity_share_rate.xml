@@ -96,7 +96,6 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginStart="@dimen/size_16dp"
                             android:layout_toRightOf="@id/img_priority_access"
-                            android:orientation="vertical"
                             bind:layout_constraintBottom_toBottomOf="parent"
                             bind:layout_constraintStart_toEndOf="@id/img_priority_access"
                             bind:layout_constraintTop_toTopOf="parent"

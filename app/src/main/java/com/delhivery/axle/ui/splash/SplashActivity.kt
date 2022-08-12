@@ -241,6 +241,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                   viewModel.saveTruckPostKycConfig(
                       remoteConfig.getString("post_truck")
                   )
+                viewModel.saveBannerTextConfig(
+                    remoteConfig.getString("advert_share_rate_page_banner_text")
+                )
           } catch (e: Exception) {
             //Do Nothing
         }

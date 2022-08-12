@@ -735,32 +735,31 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         enableSaveAlertButton()
         resetUploadData()
     }
-    private fun setBannerTExt() {
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(0)
-            .build()
-
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-        remoteConfig.setConfigSettingsAsync(configSettings)
-
-        FirebaseRemoteConfig.getInstance()
-            .fetchAndActivate()
-            .addOnCompleteListener(
-                this
-            ) {
-                if (it.isSuccessful) {
-
-                    try{
-                        viewModel.saveLoadPostKycConfig(
-                            remoteConfig.getString("post_load")
-                        )
-                    } catch (e: Exception) {
-                        //Do Nothing
-                    }
-                }
-            }
-
-    }
+//    private fun setBannerTExt() {
+//        val configSettings = FirebaseRemoteConfigSettings.Builder()
+//            .setMinimumFetchIntervalInSeconds(0)
+//            .build()
+//
+//        val remoteConfig = FirebaseRemoteConfig.getInstance()
+//        remoteConfig.setConfigSettingsAsync(configSettings)
+//
+//        FirebaseRemoteConfig.getInstance()
+//            .fetchAndActivate()
+//            .addOnCompleteListener(
+//                this
+//            ) {
+//                if (it.isSuccessful) {
+//
+//                    try{
+//                       viewModel.bannerText= remoteConfig.getString("advert_share_rate_page_banner_text")
+//
+//                    } catch (e: Exception) {
+//                        //Do Nothing
+//                    }
+//                }
+//            }
+//
+//    }
 
     override fun onAWSFailure() {
         uiUtils.hideProgress()

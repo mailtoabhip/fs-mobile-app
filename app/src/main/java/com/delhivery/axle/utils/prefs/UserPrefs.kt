@@ -379,6 +379,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
             .apply()
     get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
+  var bannerText: String
+    set(value) = editor.putString(PrefKeys.BannerText, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.BannerText , " ") ?: ""
 
     /**
      * identity doc url
@@ -1230,6 +1234,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ParentDemandType = "parent_demand_type"
     const val LoadPostKyc = "post_load"
     const val TruckPostKyc = "post_truck"
+    const val BannerText = "banner_text"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"

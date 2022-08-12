@@ -44,6 +44,9 @@ class SplashViewModel @Inject constructor(
   fun saveTruckPostKycConfig(truckPostKyc:String){
     userPrefs.truckPostKyc = truckPostKyc
   }
+  fun saveBannerTextConfig(bannerText:String){
+    userPrefs.bannerText = bannerText
+  }
 
   fun getOldUser():Boolean{
     return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)
