@@ -676,7 +676,7 @@ private const val KYC_VERIFIED = "kycverified"
 private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
 private const val SHARE_RATE = "sharerate"
 
-public const val OFF_SET_LIMIT = 1500
+public const val OFF_SET_LIMIT = 500
 
 
 var orderRank=0

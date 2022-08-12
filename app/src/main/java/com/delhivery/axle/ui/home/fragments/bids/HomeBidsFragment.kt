@@ -81,6 +81,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
 
 
+    try{
     viewModel.finalOffersCount().observe(viewLifecycleOwner, Observer {
 
       val total = userPrefs.bidOfferCount
@@ -107,6 +108,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       }
       }
     })
+    }catch (e:Exception){
+      e.printStackTrace()
+    }
     /* setup recycler view */
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)

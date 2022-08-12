@@ -6,7 +6,7 @@ import com.delhivery.axle.database.entity.OffersEntity
 
 @Dao
 interface OffersDao {
-  @Query("SELECT * FROM offers ORDER BY ID LIMIT 1500 OFFSET :offset")
+  @Query("SELECT * FROM offers ORDER BY ID LIMIT 500 OFFSET :offset")
   fun getAllOffers(offset:Int?=0): LiveData<List<OffersEntity>>
 
   @Query("SELECT * FROM offers WHERE offer_id =:offerId")
