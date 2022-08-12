@@ -92,7 +92,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
 
-        fetchOffers()
+        try {
+            fetchOffers()
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
 
         /* setup recycler view */
         binding.rvTrucks.apply {
