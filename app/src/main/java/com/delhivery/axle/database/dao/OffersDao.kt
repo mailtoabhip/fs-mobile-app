@@ -3,6 +3,7 @@ package com.delhivery.axle.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.delhivery.axle.database.entity.OffersEntity
+import io.reactivex.Single
 
 @Dao
 interface OffersDao {
@@ -14,6 +15,12 @@ interface OffersDao {
 
   @Query("SELECT COUNT(*) FROM offers")
   fun getOffersCount():LiveData<Int>
+
+  @Query("SELECT * FROM offers WHERE origin_city_code =:originCityCode AND destination_city_code=:destinationCityCode AND truck_display_name =:truckDisplayName")
+  fun getSpecificOffers(originCityCode:String, destinationCityCode:String,truckDisplayName:String ): Single<OffersEntity>
+
+  @Query("SELECT * FROM offers LIMIT 10")
+  fun getTenOffers(): Single<List<OffersEntity>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun newOfferEntry(entry: OffersEntity): Long

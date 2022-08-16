@@ -36,17 +36,85 @@ class ShareRateFragmentViewModel  @Inject constructor(
     MutableLiveData<List<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
-  var  offersLiveData = ArrayList<OffersEntity>()
-
   var hasMoreData = true
   var offset = 0
   var total = 0
-  var paginateCount = 0
+  var count =0
 
-  fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
+  private fun fetchSpecificDatabaseOffers(occ:String,odc:String,tdn:String){
+    compositeDisposable +=  appDatabase.offersDao().getSpecificOffers(occ,odc,tdn)
+      .onBackground()
+      .subscribe { _res, error ->
+        if (!error) {
+            mutableListOf<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+              add(Pair(ShareRatesProgressItem(), Remove))
+              if(_res!=null){
+              var shareRateRoutes = ShareRateRoutesItemData(
+                _res.occ,
+                _res.oc,
+                _res.dcc,
+                _res.dc,
+                _res.tdn,
+                "32MT",
+                _res.offerType,
+                _res.status,
+                _res.offerId
+              )
+              count ++
+              if(count<=10)
+                add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
+            }else{
+            if(count==0){
+              add(Pair(ShareRatesWarningItem_NoRate, DataRVAdapterOperationType.AddUpdate))
+            }
+            }
+          }.let {
+              userOfferRoutesData.postValue(it)
+            }
+        }}
+
+  }
+
+  private fun fetchTenOffers(){
+    compositeDisposable +=  appDatabase.offersDao().getTenOffers()
+      .onBackground()
+      .subscribe { _res, error ->
+        if (!error) {
+          mutableListOf<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            add(Pair(ShareRatesProgressItem(), Remove))
+            if(_res!=null && _res.size>0){
+              var itemCount =0
+              for (item in _res) {
+                itemCount++
+                var shareRateRoutes = ShareRateRoutesItemData(
+                  item.occ,
+                  item.oc,
+                  item.dcc,
+                  item.dc,
+                  item.tdn,
+                  "32MT",
+                  item.offerType,
+                  item.status
+                )
+                add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
+                if(itemCount==10)
+                  break
+              }
+            }else{
+              if(count==0){
+                add(Pair(ShareRatesWarningItem_NoRate, DataRVAdapterOperationType.AddUpdate))
+              }
+            }
+          }.let {
+            userOfferRoutesData.postValue(it)
+          }
+        }}
+
+  }
 
 
-  fun getFrequentLanes(dbData: List<OffersEntity>) {
+
+  fun getFrequentLanes() {
 
     Pair(
       ShareRatesProgressItem(), AddUpdate
@@ -79,60 +147,11 @@ class ShareRateFragmentViewModel  @Inject constructor(
           mutableListOf<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
             add(Pair(ShareRatesProgressItem(), Remove))
 
-            if (_res.trips.isNotEmpty() && dbData != null && dbData!!.size > 0) {
-              var count =0
-              for (rt in dbData) {
-
+            if (_res.trips.isNotEmpty()) {
                 for (vt in _res.trips) {
-                  if (rt.occ.equals(vt.originCityId) && rt.dcc.equals(vt.destinationCityId) && rt.tdn.equals(
-                      vt.truckDisplayName
-                    )
-                  ) {
-                    var shareRateRoutes = ShareRateRoutesItemData(
-                      rt.occ,
-                      rt.oc,
-                      rt.dcc,
-                      rt.dc,
-                      rt.tdn,
-                      "32MT",
-                      rt.offerType,
-                      rt.status,
-                      rt.offerId
-                    )
-                    count ++
-                    add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
-                    if(count==10)
-                      break
-                  }
-                }
-              }
-              if(count==0){
-                add(Pair(ShareRatesWarningItem_NoRate, DataRVAdapterOperationType.AddUpdate))
-              }
-
+                  fetchSpecificDatabaseOffers(vt.originCityId?:"",vt.destinationCityId?:"",vt.truckDisplayName?:"") }
             } else {
-              if (dbData == null) {
-                add(Pair(ShareRatesWarningItem_NoRate, DataRVAdapterOperationType.AddUpdate))
-              } else {
-                var itemCount =0
-                for (item in dbData!!) {
-                  itemCount++
-                  var shareRateRoutes = ShareRateRoutesItemData(
-                    item.occ,
-                    item.oc,
-                    item.dcc,
-                    item.dc,
-                    item.tdn,
-                    "32MT",
-                    item.offerType,
-                    item.status
-                  )
-                  add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
-                  if(itemCount==10)
-                    break
-                }
-              }
-
+                  fetchTenOffers()
             }
           }
             .let {
