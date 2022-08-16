@@ -305,7 +305,7 @@ class HomeBidsViewModel @Inject constructor(
     return bulkBidSummaryItemList
   }
 
-  var offeLiveData = MutableLiveData<HomeBidsRequestItemData?>()
+  var offerLiveData = MutableLiveData<HomeBidsRequestItemData?>()
 
   fun fetchDatabaseOffers(data: HomeBidsRequestItemData?){
     val lrt = appDatabase.offersDao().getParticularsCityOffers(data?.origin, data?.destination)
@@ -314,7 +314,7 @@ class HomeBidsViewModel @Inject constructor(
     }else{
       data?.resOffer = Triple(Pair(false, null),Pair(null, null), Pair(null,null))
     }
-    offeLiveData.postValue(data)
+    offerLiveData.postValue(data)
   }
 
 }
