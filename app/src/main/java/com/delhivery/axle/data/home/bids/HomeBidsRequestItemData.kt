@@ -1,10 +1,12 @@
 package com.delhivery.axle.data.home.bids
 
+import android.R
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
@@ -353,6 +355,10 @@ data class HomeBidsRequestItemData(
   @DrawableRes
   fun requiredAtBg() =
     DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
+
+  @DrawableRes
+  fun requiredAtDraw() =
+    DrawableProviderUtils.daysDiffBgDrawableResDraw(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
    * Required at text color as per status

@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -300,6 +301,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
+
+      binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,resources.getDrawable(t!!.requiredAtDraw()),null)
       binding.refreshing = false
       if (t != null) {
         t.let { _transaction ->

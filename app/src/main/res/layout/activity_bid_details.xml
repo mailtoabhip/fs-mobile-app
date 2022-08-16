@@ -9,6 +9,10 @@
         name="viewModel"
         type="com.delhivery.axle.ui.biddetails.BidDetailsViewModel"
         />
+    <variable
+        name="activity"
+        type="com.delhivery.axle.ui.biddetails.BidDetailsActivity"
+        />
 
     <variable
         name="transaction"
@@ -142,9 +146,11 @@
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintTop_toBottomOf="@id/text_load_details"
                   bind:drawableResId="@{ transaction.requiredAtBg() }"
+                  android:drawablePadding="@dimen/size_2dp"
                   tools:background="@drawable/bg_date_today"
                   tools:text="TODAY"
                   />
+
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
