@@ -80,7 +80,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
-    viewModel.offeLiveData.observe(this, Observer {
+    viewModel.offerLiveData.observe(this, Observer {
       adapter.notifyDataSetChanged()
     })
 

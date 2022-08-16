@@ -87,7 +87,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       refreshData()
     }
 
-    viewModel.offeLiveData.observe(this, Observer {
+    viewModel.offerLiveData.observe(this, Observer {
       adapter.notifyDataSetChanged()
     })
 
