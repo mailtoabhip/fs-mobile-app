@@ -55,7 +55,6 @@ class ShareRateFragmentViewModel  @Inject constructor(
                 _res.dcc,
                 _res.dc,
                 _res.tdn,
-                "32MT",
                 _res.offerType,
                 _res.status,
                 _res.offerId
@@ -92,7 +91,6 @@ class ShareRateFragmentViewModel  @Inject constructor(
                   item.dcc,
                   item.dc,
                   item.tdn,
-                  "32MT",
                   item.offerType,
                   item.status
                 )
