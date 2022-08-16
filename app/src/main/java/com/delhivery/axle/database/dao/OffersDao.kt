@@ -7,14 +7,20 @@ import io.reactivex.Single
 
 @Dao
 interface OffersDao {
-  @Query("SELECT * FROM offers ORDER BY ID LIMIT 500 OFFSET :offset")
-  fun getAllOffers(offset:Int?=0): LiveData<List<OffersEntity>>
+  @Query("SELECT * FROM offers LIMIT 1")
+  fun getCountOffers(): LiveData<List<OffersEntity>>
 
   @Query("SELECT * FROM offers WHERE offer_id =:offerId")
   fun getOffers(offerId:String):LiveData<OffersEntity>
 
-  @Query("SELECT COUNT(*) FROM offers")
-  fun getOffersCount():LiveData<Int>
+  @Query("SELECT * FROM offers WHERE origin_city_code=:occ AND destination_city_code=:dcc AND truck_display_name=:tdn LIMIT 1")
+  fun getParticularTdnOffers(occ:String?,dcc:String?, tdn:String?): List<OffersEntity>
+
+  @Query("SELECT * FROM offers WHERE origin_city_code=:occ AND destination_city_code=:dcc LIMIT 1")
+  fun getParticularsOffers(occ:String?,dcc:String?): List<OffersEntity>
+
+  @Query("SELECT * FROM offers WHERE origin_city=:oc AND destination_city=:dc LIMIT 1")
+  fun getParticularsCityOffers(oc:String?,dc:String?): List<OffersEntity>
 
   @Query("SELECT * FROM offers WHERE origin_city_code =:originCityCode AND destination_city_code=:destinationCityCode AND truck_display_name =:truckDisplayName")
   fun getSpecificOffers(originCityCode:String, destinationCityCode:String,truckDisplayName:String ): Single<OffersEntity>

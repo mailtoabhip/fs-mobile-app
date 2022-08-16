@@ -26,6 +26,7 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 /**
@@ -86,27 +87,9 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       refreshData()
     }
 
-    val total = userPrefs.bidOfferCount
-
-    if(total!=null && total>0) {
-
-      var loopCount = total / limit
-      if (total % limit > 0) {
-        loopCount++
-      }
-      var offset = 0
-      for (i in 1..loopCount) {
-        viewModel.fetchDatabaseOffers(offset).observe(this, Observer {
-          if (!it.isNullOrEmpty()) {
-            viewModel.offersLiveData.addAll(it)
-            if (viewModel.offersLiveData.size == total) {
-              viewModel.finalOffers.postValue(viewModel.offersLiveData)
-            }
-          }
-        })
-        offset = limit + offset
-      }
-    }
+    viewModel.offeLiveData.observe(this, Observer {
+      adapter.notifyDataSetChanged()
+    })
 
     /* setup recycler view */
     binding.rvBids.apply {
@@ -209,20 +192,13 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     }
   }
 
-  override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? {
-    var pres:Triple<Pair<Boolean?,String?>, Pair<String?, String?>?, Pair<String?, String?>?>? = Triple(Pair(false, null), Pair(tid, null), Pair(null, null))
-    if(viewModel.finalOffers.value.isNullOrEmpty()){
-      pres = null
-    }else{
-      for(r in viewModel.finalOffers.value!!){
-        if(r.oc?.toLowerCase()?.equals(origin_id?.toLowerCase()) == true && r.dc?.toLowerCase().equals(dest_id?.toLowerCase())){
-          pres = pres?.copy(Pair(true, r.offerId), Pair(tid, r.tdn), Pair(r.occ, r.dcc))
-        }
-      }
-    }
+  override fun getTotalOffers(data: HomeBidsRequestItemData?) {
+    Executors.newSingleThreadExecutor().execute(Runnable {
+      viewModel.fetchDatabaseOffers(data)
+    })
 
-    return pres
   }
+
 
   override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?) {
     val bundle = Bundle()

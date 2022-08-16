@@ -32,7 +32,8 @@ data class HomeTrucksRequestItemData(
     @SerializedName("created_by") var createdBy: String,
     @SerializedName("origin_cluster_id") var originClusterId: String,
     @SerializedName("destination_cluster_id") var destinationClusterId: String,
-    @SerializedName("sourced_as") var sourcedAs: String? =null
+    @SerializedName("sourced_as") var sourcedAs: String? =null,
+    @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>, String?, String?>? = Triple(Pair(null, null), null, null)
 ) : BaseKeyTypeModel<String>(){
 
     override fun key()= inventoryId

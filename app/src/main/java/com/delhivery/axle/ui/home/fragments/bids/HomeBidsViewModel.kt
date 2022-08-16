@@ -13,6 +13,8 @@ import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.exception.NoBidsFoundException
@@ -74,10 +76,6 @@ class HomeBidsViewModel @Inject constructor(
   var activeBids = ""
   var confirmedBids= ""
   var lostBids= ""
-
-  var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
-
-  fun finalOffersCount() = appDatabase.offersDao().getOffersCount()
 
   /**
    * Fetch bids summary
@@ -307,10 +305,16 @@ class HomeBidsViewModel @Inject constructor(
     return bulkBidSummaryItemList
   }
 
-  var  offersLiveData = ArrayList<OffersEntity>()
+  var offeLiveData = MutableLiveData<HomeBidsRequestItemData?>()
 
-  fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
-
-
+  fun fetchDatabaseOffers(data: HomeBidsRequestItemData?){
+    val lrt = appDatabase.offersDao().getParticularsCityOffers(data?.origin, data?.destination)
+    if(!lrt.isNullOrEmpty() && lrt.size>0){
+      data?.resOffer = Triple(Pair(true, lrt[0].offerId), Pair(data?.truckSpecification?.truckDispName, lrt.get(0).tdn), Pair(lrt[0].occ, lrt.get(0).dcc))
+    }else{
+      data?.resOffer = Triple(Pair(false, null),Pair(null, null), Pair(null,null))
+    }
+    offeLiveData.postValue(data)
+  }
 
 }
