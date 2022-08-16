@@ -75,6 +75,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Pair<String?, String?>?>? =Triple(Pair(null, null), Pair(null, null), Pair(null, null)),
+  @SerializedName("origin_city_code") var originCityCode: String? =null,
+  @SerializedName("destination_city_code") var destinationCityCode: String? =null,
 var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,

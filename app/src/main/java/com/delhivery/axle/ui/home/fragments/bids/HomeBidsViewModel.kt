@@ -308,7 +308,7 @@ class HomeBidsViewModel @Inject constructor(
   var offerLiveData = MutableLiveData<HomeBidsRequestItemData?>()
 
   fun fetchDatabaseOffers(data: HomeBidsRequestItemData?){
-    val lrt = appDatabase.offersDao().getParticularsCityOffers(data?.origin, data?.destination)
+    val lrt = appDatabase.offersDao().getParticularsOffers(data?.originCityCode, data?.destinationCityCode)
     if(!lrt.isNullOrEmpty() && lrt.size>0){
       data?.resOffer = Triple(Pair(true, lrt[0].offerId), Pair(data?.truckSpecification?.truckDispName, lrt.get(0).tdn), Pair(lrt[0].occ, lrt.get(0).dcc))
     }else{

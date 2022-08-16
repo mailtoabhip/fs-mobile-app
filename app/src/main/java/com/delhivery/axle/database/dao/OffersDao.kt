@@ -19,9 +19,6 @@ interface OffersDao {
   @Query("SELECT * FROM offers WHERE origin_city_code=:occ AND destination_city_code=:dcc LIMIT 1")
   fun getParticularsOffers(occ:String?,dcc:String?): List<OffersEntity>
 
-  @Query("SELECT * FROM offers WHERE origin_city=:oc AND destination_city=:dc LIMIT 1")
-  fun getParticularsCityOffers(oc:String?,dc:String?): List<OffersEntity>
-
   @Query("SELECT * FROM offers WHERE origin_city_code =:originCityCode AND destination_city_code=:destinationCityCode AND truck_display_name =:truckDisplayName")
   fun getSpecificOffers(originCityCode:String, destinationCityCode:String,truckDisplayName:String ): Single<OffersEntity>
 
