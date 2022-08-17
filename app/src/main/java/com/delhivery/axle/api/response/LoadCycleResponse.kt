@@ -21,4 +21,5 @@ data class FrequentTripsResponse(
 data class FreqTripsItemData(
         @SerializedName("origin_city_id") val originCityId: String?,
         @SerializedName("destination_city_id") val destinationCityId: String?,
-        @SerializedName("truck_display_name") val truckDisplayName: String?)
+        @SerializedName("truck_display_name") val truckDisplayName: String?,
+        @SerializedName("vis_value") val visValue: Boolean? = null)

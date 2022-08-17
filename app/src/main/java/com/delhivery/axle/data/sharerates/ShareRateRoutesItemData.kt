@@ -10,7 +10,6 @@ data class ShareRateRoutesItemData(
   @SerializedName("destination_city_code") val destinationCityCode: String?=null,
   @SerializedName("destination_city") val destinationCity: String?=null,
   @SerializedName("truck_display_name") val truckDisplayName: String?=null,
-  @SerializedName("truck_capacity") val truckCapacity: String?=null,
   @SerializedName("offer_type") val offerType: String?=null,
   @SerializedName("status") val status: String?=null,
   @SerializedName("id") val offerId: String?=null

@@ -31,7 +31,7 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
 
     fun callShareRate(data: HomeTrucksRequestItemData?, itemTD:String?, offerTD:String?,offerid:String?)
 
-    fun getTotalOffers(origin_id:String?, dest_id:String?, tid:String?):Triple<Pair<Boolean?,String?>, String?, String?>?
+    fun getTotalOffers(data: HomeTrucksRequestItemData?)
 
     fun getBannerStatus():Boolean?
 

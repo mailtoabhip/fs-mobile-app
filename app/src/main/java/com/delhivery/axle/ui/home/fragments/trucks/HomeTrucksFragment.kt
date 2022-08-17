@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,6 +20,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trucks.*
@@ -28,7 +30,6 @@ import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
-import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
@@ -41,8 +42,9 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import java.util.Calendar
+import java.util.concurrent.Executors
 import javax.inject.Inject
+
 
 class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
         HomeTrucksRVAdapterInterface
@@ -91,12 +93,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             refreshData()
         }
 
+       viewModel.offeLiveData.observe(this, Observer {
+           adapter.notifyDataSetChanged()
+       })
 
-        try {
-            fetchOffers()
-        }catch (e:Exception){
-            e.printStackTrace()
-        }
 
         /* setup recycler view */
         binding.rvTrucks.apply {
@@ -111,29 +111,29 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
                     analyticsUtil.moEngageTrackEvent(
-                        EVENT_ADD_TRUCK_INITIATE,
-                        mutableListOf(PROPERTY_SOURCE),
-                        mutableListOf(VALUE_MY_TRUCKS)
+                            EVENT_ADD_TRUCK_INITIATE,
+                            mutableListOf(PROPERTY_SOURCE),
+                            mutableListOf(VALUE_MY_TRUCKS)
                     )
-                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-                        TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                        TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                            TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                            TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
                     ), VALUE_ADD_TRUCK_PAGE)
                 }
                 UNAPPROVED -> {
                     dialogUtils.showBasicConfirmDialog(
-                        string.title_dialog_supplier_not_approved,
-                        string.msg_dialog_supplier_not_approved,
-                        getString(string.label_call_us), getString(string.label_mail_us),
-                        { callHelpline() }, { sendMail() }
+                            string.title_dialog_supplier_not_approved,
+                            string.msg_dialog_supplier_not_approved,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
                     )
                 }
                 DISABLED -> {
                     dialogUtils.showBasicConfirmDialog(
-                        string.title_dialog_supplier_disabled,
-                        string.msg_dialog_supplier_disabled,
-                        getString(string.label_call_us), getString(string.label_mail_us),
-                        { callHelpline() }, { sendMail() }
+                            string.title_dialog_supplier_disabled,
+                            string.msg_dialog_supplier_disabled,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
                     )
                 }
             }
@@ -142,53 +142,53 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
                     analyticsUtil.moEngageTrackEvent(
-                        EVENT_ADD_TRUCK_INITIATE,
-                        mutableListOf(PROPERTY_SOURCE),
-                        mutableListOf(VALUE_MY_TRUCKS)
+                            EVENT_ADD_TRUCK_INITIATE,
+                            mutableListOf(PROPERTY_SOURCE),
+                            mutableListOf(VALUE_MY_TRUCKS)
                     )
-                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0,"FTL"),
-                        TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                        TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
-                    ),VALUE_ADD_TRUCK_PAGE)
+                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                            TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                            TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
+                    ), VALUE_ADD_TRUCK_PAGE)
                 }
                 UNAPPROVED -> {
                     dialogUtils.showBasicConfirmDialog(
-                        string.title_dialog_supplier_not_approved,
-                        string.msg_dialog_supplier_not_approved,
-                        getString(string.label_call_us), getString(string.label_mail_us),
-                        { callHelpline() }, { sendMail() }
+                            string.title_dialog_supplier_not_approved,
+                            string.msg_dialog_supplier_not_approved,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
                     )
                 }
                 DISABLED -> {
                     dialogUtils.showBasicConfirmDialog(
-                        string.title_dialog_supplier_disabled,
-                        string.msg_dialog_supplier_disabled,
-                        getString(string.label_call_us), getString(string.label_mail_us),
-                        { callHelpline() }, { sendMail() }
+                            string.title_dialog_supplier_disabled,
+                            string.msg_dialog_supplier_disabled,
+                            getString(string.label_call_us), getString(string.label_mail_us),
+                            { callHelpline() }, { sendMail() }
                     )
                 }
             }
         }
 
-        binding.editStickySearch.addTextChangedListener(object : TextWatcher{
+        binding.editStickySearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
 
             override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
             ) = Unit
 
             override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
             ) {
-                if(s!=null && s.toString()!=""){
+                if (s != null && s.toString() != "") {
                     viewModel.searchPrefix = s.trim().toString()
-                    if(viewModel.searchPrefix.length >= 2) {
+                    if (viewModel.searchPrefix.length >= 2) {
                         adapter.clearItems()
                         viewModel.userTrucksData.postValue(null)
                         viewModel.searchFlag = true
@@ -204,46 +204,47 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         /** Observe live Data*/
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
-            it?.let {
-                _items -> adapter.operation(_items)
-                if(adapter.itemCount>0 && userPrefs.isFirstOpenRate){
+            it?.let { _items ->
+                adapter.operation(_items)
+                if (adapter.itemCount > 0 && userPrefs.isFirstOpenRate) {
                     userPrefs.isFirstOpenRate = false
                     bannerValue = true
-                }else{
-                   bannerValue = false
+                } else {
+                    bannerValue = false
                 }
-            }})
+            }
+        })
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
-            if(!isLoadingData && (HomeLoadsTruckFragment._instance.fromDeepLink||HomeLoadsTruckFragment._instance.fromNotification) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty() ) {
-                if(adapter.itemsList().size==5)
-                this.handleAction(HomeTrucksRequestAction_ActivateTruck,adapter.itemsList().get(4),4)
+            if (!isLoadingData && (HomeLoadsTruckFragment._instance.fromDeepLink || HomeLoadsTruckFragment._instance.fromNotification) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()) {
+                if (adapter.itemsList().size == 5)
+                    this.handleAction(HomeTrucksRequestAction_ActivateTruck, adapter.itemsList().get(4), 4)
                 HomeLoadsTruckFragment._instance.fromNotification = false
                 HomeLoadsTruckFragment._instance.fromDeepLink = false
             }
         })
 
         viewModel.noCityCodeError.observe(this, Observer {
-            if(it){
+            if (it) {
                 uiUtils.hideProgress()
                 dialogUtils.showErrorDialog(
-                    "City Code is missing",
-                    3L
+                        "City Code is missing",
+                        3L
                 )
             }
         })
 
         viewModel.activateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
-            if(it!=null){
-                if(it.first != -1 && it.first !=-2) {
+            if (it != null) {
+                if (it.first != -1 && it.first != -2) {
                     uiUtils.showSnackbar("Truck Activated Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
                     analyticsUtil.moEngageTrackEvent(
-                        EVENT_REQUEST_FOR_LOAD_SUBMIT,
-                        mutableListOf(PROPERTY_INVENTORY_UUID),
-                        mutableListOf(data.inventoryId?:"")
+                            EVENT_REQUEST_FOR_LOAD_SUBMIT,
+                            mutableListOf(PROPERTY_INVENTORY_UUID),
+                            mutableListOf(data.inventoryId ?: "")
                     )
                     data.ownership = it.second.ownership
                     data.latestStatus = it.second.latestStatus
@@ -258,14 +259,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     data.destinationClusterId = it.second.destinationClusterId
 
                     adapter.notifyItemChanged(it.first)
-                }
-                else if(it.first == -2){
+                } else if (it.first == -2) {
                     dialogUtils.showErrorDialog(
-                        "City is not mapped to cluster",
-                        3L
+                            "City is not mapped to cluster",
+                            3L
                     )
-                }
-                else{
+                } else {
                     uiUtils.showSnackbar("Truck Activated Successfully")
                     refreshData()
                 }
@@ -274,7 +273,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         viewModel.deactivateTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
-            if(it!=null){
+            if (it != null) {
                 uiUtils.showSnackbar("Truck Deactivated Successfully")
                 val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
                 data.ownership = it.second.ownership
@@ -294,42 +293,41 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         viewModel.editTruckLiveData.observe(this, Observer {
             uiUtils.hideProgress()
-            if(it!=null){
-                if(it.first == -2){
+            if (it != null) {
+                if (it.first == -2) {
                     dialogUtils.showErrorDialog(
-                        "City is not mapped to cluster",
-                        3L
+                            "City is not mapped to cluster",
+                            3L
                     )
-                }
-                else {
+                } else {
 
                     uiUtils.showSnackbar("Truck Edited Successfully")
                     val data = adapter.itemsList()[it.first].data as HomeTrucksRequestItemData
-                    var fieldEdited=""
-                    if(data.ownership!=it.second.ownership){
-                        if(!fieldEdited.isNullOrEmpty()) {
+                    var fieldEdited = ""
+                    if (data.ownership != it.second.ownership) {
+                        if (!fieldEdited.isNullOrEmpty()) {
                             fieldEdited = fieldEdited + "/" + VALUE_OWNERSHIP
-                        }else{
+                        } else {
                             fieldEdited = VALUE_OWNERSHIP
                         }
                     }
-                    if(data.currentCityName!=it.second.currentCityName){
-                        if(!fieldEdited.isNullOrEmpty()) {
+                    if (data.currentCityName != it.second.currentCityName) {
+                        if (!fieldEdited.isNullOrEmpty()) {
                             fieldEdited = fieldEdited + "/" + VALUE_ORIGIN
-                        }else{
-                            fieldEdited =VALUE_ORIGIN
+                        } else {
+                            fieldEdited = VALUE_ORIGIN
                         }
                     }
-                    if(data.unloadingDestination!=it.second.unloadingDestination) {
+                    if (data.unloadingDestination != it.second.unloadingDestination) {
                         if (!fieldEdited.isNullOrEmpty()) {
                             fieldEdited = fieldEdited + "/" + VALUE_DESTINATION
                         } else {
                             fieldEdited = VALUE_DESTINATION
                         }
                     }
-                    if(data.unloadingDestinationAmount!=it.second.unloadingDestinationAmount){
+                    if (data.unloadingDestinationAmount != it.second.unloadingDestinationAmount) {
                         if (!fieldEdited.isNullOrEmpty()) {
-                            fieldEdited=fieldEdited+"/"+ VALUE_PRICE
+                            fieldEdited = fieldEdited + "/" + VALUE_PRICE
                         } else {
                             fieldEdited = VALUE_PRICE
                         }
@@ -349,10 +347,10 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
                     adapter.notifyItemChanged(it.first)
                     analyticsUtil.moEngageTrackEvent(
-                        EVENT_EDIT_TRUCK_SUBMIT,
-                        mutableListOf( PROPERTY_INVENTORY_UUID,
-                            PROPERTY_FIELD_EDITED),
-                        mutableListOf(data.inventoryId,fieldEdited)
+                            EVENT_EDIT_TRUCK_SUBMIT,
+                            mutableListOf(PROPERTY_INVENTORY_UUID,
+                                    PROPERTY_FIELD_EDITED),
+                            mutableListOf(data.inventoryId, fieldEdited)
                     )
                 }
             }
@@ -361,7 +359,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.deleteTruckLiveData.observe(this, Observer {
             uiUtils.showSnackbar("Truck Deleted Successfully")
             uiUtils.hideProgress()
-            if(it!=null){
+            if (it != null) {
                 adapter.itemsList().removeAt(it.first)
                 adapter.notifyItemRemoved(it.first)
                 adapter.notifyDataSetChanged()
@@ -370,9 +368,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
             analyticsUtil.trackEvent(
-                EVENT_VIEW_MY_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                mutableListOf(userPrefs.userId(), "trucks_screen")
+                    EVENT_VIEW_MY_TRUCK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), "trucks_screen")
             )
             viewModel.searchPrefix = HomeLoadsTruckFragment._instance.vehicleNo
             adapter.clearItems()
@@ -382,21 +380,21 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }else{
             if(HomeLoadsTruckFragment._instance.fromNotification){
                 analyticsUtil.trackEvent(
-                    EVENT_VIEW_MY_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
-                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_NOTIFICATION)
+                        EVENT_VIEW_MY_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
+                        mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_NOTIFICATION)
                 )
             }else if(HomeLoadsTruckFragment._instance.fromDeepLink){
                 analyticsUtil.trackEvent(
-                    EVENT_VIEW_MY_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME,PROPERTY_SOURCE),
-                    mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_DEEP_LINKING)
+                        EVENT_VIEW_MY_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
+                        mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_DEEP_LINKING)
                 )
             }else{
                 analyticsUtil.trackEvent(
-                    EVENT_VIEW_MY_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(userPrefs.userId(), "trucks_screen")
+                        EVENT_VIEW_MY_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                        mutableListOf(userPrefs.userId(), "trucks_screen")
                 )
             }
             HomeLoadsTruckFragment._instance.fromDeepLink = false
@@ -422,98 +420,67 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.getAllInventories()
 
         viewModel.offersLiveData.clear()
-
-        fetchOffers()
-
     }
-    fun fetchOffers(){
-        viewModel.finalOffersCount().observe(viewLifecycleOwner, Observer {
 
-            val total = userPrefs.bidOfferCount
-            if(total == it){
-                if(total!=null && total>0) {
-
-                    var loopCount = total / limit
-                    if (total % limit > 0) {
-                        loopCount++
-                    }
-                    var offset = 0
-                    for (i in 1..loopCount) {
-                        viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
-                            if (!it.isNullOrEmpty()) {
-                                viewModel.offersLiveData.addAll(it)
-                                if (viewModel.offersLiveData.size == total) {
-                                    viewModel.finalOffers.postValue(viewModel.offersLiveData)
-                                    adapter.notifyDataSetChanged()
-                                }
-                            }
-                        })
-                        offset = limit + offset
-                    }
-                }
-            }
-        })
-    }
     override fun handleAction(actionId: String, item: BaseHomeTrucksRVAdapterItem<*>) {
         when(actionId){
             HomeTrucksVehicleFilterAction -> {
                 showVehicleFilterDialog()
             }
 
-            HomeTrucksAvailabilityFilterAction->{
+            HomeTrucksAvailabilityFilterAction -> {
                 showAvailabilityFilterDialog()
             }
 
             HomeTrucksSizeFilterAction -> {
-                if(viewModel.bodyTypeFilter.isNotEmpty() && viewModel.truckSizeData.isNotEmpty()) {
+                if (viewModel.bodyTypeFilter.isNotEmpty() && viewModel.truckSizeData.isNotEmpty()) {
                     showSizeFilterDialog()
-                }
-                else{
+                } else {
                     uiUtils.showSnackbar("Select Vehicle Type Filter First")
                 }
             }
 
-            HomeTrucksWarningAction_NoTrucks ->{
-                context?.let { startActivityForResult(truckIntent(context!!,source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
+            HomeTrucksWarningAction_NoTrucks -> {
+                context?.let { startActivityForResult(truckIntent(context!!, source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
             }
 
-            HomeTrucksTimeOutAction ->{
+            HomeTrucksTimeOutAction -> {
                 binding.addTruck.visibility = View.GONE
                 refreshData()
             }
 
             HomeTrucksPriorityAction -> {
                 analyticsUtil.trackEvent(
-                    EVENT_BANNER_CLICK_TOP,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(userPrefs.userId(), "trucks_screen")
+                        EVENT_BANNER_CLICK_TOP,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                        mutableListOf(userPrefs.userId(), "trucks_screen")
                 )
                 when (viewModel.userPrefs.canBid()) {
                     APPROVED -> {
                         analyticsUtil.moEngageTrackEvent(
-                            EVENT_ADD_TRUCK_INITIATE,
-                            mutableListOf(PROPERTY_SOURCE),
-                            mutableListOf(VALUE_BANNER)
+                                EVENT_ADD_TRUCK_INITIATE,
+                                mutableListOf(PROPERTY_SOURCE),
+                                mutableListOf(VALUE_BANNER)
                         )
-                        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed","32FTMXL",14.0,14.0,18.0, "FTL"),
-                            TruckFrequentItem("open","10_TYRE",16.0,15.0,20.0,"PMT"),
-                            TruckFrequentItem("open","12_TYRE",21.0,20.0,25.0,"PMT")
+                        showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
+                                TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
+                                TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
                         ), VALUE_ADD_TRUCK_TOP_BANNER)
                     }
                     UNAPPROVED -> {
                         dialogUtils.showBasicConfirmDialog(
-                            string.title_dialog_supplier_not_approved,
-                            string.msg_dialog_supplier_not_approved,
-                            getString(string.label_call_us), getString(string.label_mail_us),
-                            { callHelpline() }, { sendMail() }
+                                string.title_dialog_supplier_not_approved,
+                                string.msg_dialog_supplier_not_approved,
+                                getString(string.label_call_us), getString(string.label_mail_us),
+                                { callHelpline() }, { sendMail() }
                         )
                     }
                     DISABLED -> {
                         dialogUtils.showBasicConfirmDialog(
-                            string.title_dialog_supplier_disabled,
-                            string.msg_dialog_supplier_disabled,
-                            getString(string.label_call_us), getString(string.label_mail_us),
-                            { callHelpline() }, { sendMail() }
+                                string.title_dialog_supplier_disabled,
+                                string.msg_dialog_supplier_disabled,
+                                getString(string.label_call_us), getString(string.label_mail_us),
+                                { callHelpline() }, { sendMail() }
                         )
                     }
                 }
@@ -524,26 +491,26 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
 
     override fun handleAction(
-        actionId: String,
-        item: BaseHomeTrucksRVAdapterItem<*>,
-        position: Int
+            actionId: String,
+            item: BaseHomeTrucksRVAdapterItem<*>,
+            position: Int
     ) {
         //handle action here
         when(actionId){
-            HomeTrucksRequestAction_EditTruck ->{
-                showOptionsDialog(item.data as HomeTrucksRequestItemData , position)
+            HomeTrucksRequestAction_EditTruck -> {
+                showOptionsDialog(item.data as HomeTrucksRequestItemData, position)
             }
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                        ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils,position,HomeLoadsTruckFragment._instance.fromDeepLink,HomeLoadsTruckFragment._instance.fromNotification).show()
+                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
             }
         }
     }
 
 
-    private fun showAddTruckDialog(items: List<TruckFrequentItem>,source:String) {
+    private fun showAddTruckDialog(items: List<TruckFrequentItem>, source: String) {
         val dialog = Dialog(context!!)
         val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
@@ -555,8 +522,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             val itemBinding = createTruckFrequentItem(bindingDialog)
             itemBinding.data = item
             itemBinding.root.setOnClickListener{
-                context?.let { startActivityForResult(truckIntent(context!!,item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap,item.sourcedAs,source = source)
-                    , REQCODE_ADD_TRUCK) }
+                context?.let { startActivityForResult(truckIntent(context!!, item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
                 dialog.dismiss()
             }
 
@@ -567,7 +533,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.addTruckLayout.setOnClickListener{
-            context?.let { startActivityForResult(truckIntent(context!!,source = source), REQCODE_ADD_TRUCK) }
+            context?.let { startActivityForResult(truckIntent(context!!, source = source), REQCODE_ADD_TRUCK) }
             dialog.dismiss()
         }
 
@@ -597,11 +563,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         bindingDialog.editTruckLayout.setOnClickListener {
             analyticsUtil.moEngageTrackEvent(
-                EVENT_EDIT_TRUCK_INITIATE,
-                mutableListOf( PROPERTY_INVENTORY_UUID),
-                mutableListOf(data.inventoryId)
+                    EVENT_EDIT_TRUCK_INITIATE,
+                    mutableListOf(PROPERTY_INVENTORY_UUID),
+                    mutableListOf(data.inventoryId)
             )
-            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils,position).show()}
+            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
             dialog.dismiss()
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
@@ -612,14 +578,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         bindingDialog.deleteTruckLayout.setOnClickListener{
             uiUtils.showProgress()
             analyticsUtil.moEngageTrackEvent(
-                EVENT_DELETE_TRUCK,
-                mutableListOf( PROPERTY_INVENTORY_UUID),
-                mutableListOf(data.inventoryId)
+                    EVENT_DELETE_TRUCK,
+                    mutableListOf(PROPERTY_INVENTORY_UUID),
+                    mutableListOf(data.inventoryId)
             )
             analyticsUtil.trackEvent(
-                EVENT_DELETE_TRUCK,
-                mutableListOf( PROPERTY_INVENTORY_ID),
-                mutableListOf( data.inventoryId)
+                    EVENT_DELETE_TRUCK,
+                    mutableListOf(PROPERTY_INVENTORY_ID),
+                    mutableListOf(data.inventoryId)
             )
             viewModel.deleteTruck(data, position)
             dialog.dismiss()
@@ -655,9 +621,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             if(reason != "") {
                 analyticsUtil.trackEvent(
-                    EVENT_DEACTIVATE_TRUCK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
-                    mutableListOf(userPrefs.userId(), data.inventoryId, reason)
+                        EVENT_DEACTIVATE_TRUCK,
+                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
+                        mutableListOf(userPrefs.userId(), data.inventoryId, reason)
                 )
                 uiUtils.showProgress()
                 viewModel.deactivateTruck(data, reason, position)
@@ -729,12 +695,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     filterSizeTypes  = filterSizeTypes + item.toString()
                 }
             }
-            viewModel.sizeFilter = filterSizeTypes.joinToString( separator = ",") {it}
+            viewModel.sizeFilter = filterSizeTypes.joinToString(separator = ",") {it}
             refreshData(true)
 
         }
 
-        builder.setNegativeButton("Cancel") {_, _ ->
+        builder.setNegativeButton("Cancel") { _, _ ->
             dialog.dismiss()
         }
 
@@ -746,11 +712,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arrayAvailable = arrayOf("Available","Not Available", "Active")
+        val arrayAvailable = arrayOf("Available", "Not Available", "Active")
 
-        val arrayChecked = booleanArrayOf(false,false,false)
+        val arrayChecked = booleanArrayOf(false, false, false)
 
-        val availableFilterList = mutableListOf<Pair<String,String>>()
+        val availableFilterList = mutableListOf<Pair<String, String>>()
 
         if (viewModel.availabilityFilter.isNotEmpty()) {
             availableFilterList.addAll(viewModel.availabilityFilter)
@@ -775,13 +741,19 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         builder.setPositiveButton("Filter") { _, _ ->
 
-            val filterAvailabilityTypes = mutableListOf<Pair<String,String>>()
+            val filterAvailabilityTypes = mutableListOf<Pair<String, String>>()
             for (item in arrayAvailable) {
                 if (arrayChecked[arrayAvailable.indexOf(item)]) {
                     when (item){
-                        "Available" -> { filterAvailabilityTypes.add(Pair(item, "Free")) }
-                        "Not Available" -> { filterAvailabilityTypes.add(Pair(item, "not_available")) }
-                        "Active" -> {filterAvailabilityTypes.add(Pair(item, "Active"))}
+                        "Available" -> {
+                            filterAvailabilityTypes.add(Pair(item, "Free"))
+                        }
+                        "Not Available" -> {
+                            filterAvailabilityTypes.add(Pair(item, "not_available"))
+                        }
+                        "Active" -> {
+                            filterAvailabilityTypes.add(Pair(item, "Active"))
+                        }
                     }
 
                 }
@@ -791,7 +763,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         }
 
-        builder.setNegativeButton("Cancel") {_, _ ->
+        builder.setNegativeButton("Cancel") { _, _ ->
             dialog.dismiss()
         }
 
@@ -803,11 +775,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arrayBody = arrayOf("Open","Closed","Trailer")
+        val arrayBody = arrayOf("Open", "Closed", "Trailer")
 
-        val arrayChecked = booleanArrayOf(false,false,false)
+        val arrayChecked = booleanArrayOf(false, false, false)
 
-        val currentVehicleFilterList = mutableListOf<Pair<String,String>>()
+        val currentVehicleFilterList = mutableListOf<Pair<String, String>>()
 
         if (viewModel.bodyTypeFilter.isNotEmpty()) {
             currentVehicleFilterList.addAll(viewModel.bodyTypeFilter)
@@ -832,13 +804,19 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         builder.setPositiveButton("Filter") { _, _ ->
 
-            val filterBodyTypes =  mutableListOf<Pair<String,String>>()
+            val filterBodyTypes =  mutableListOf<Pair<String, String>>()
             for (vehicle in arrayBody) {
                 if (arrayChecked[arrayBody.indexOf(vehicle)]) {
                     when (vehicle){
-                        "Open" -> { filterBodyTypes.add(Pair(vehicle, "open")) }
-                        "Closed" -> { filterBodyTypes.add(Pair(vehicle, "closed")) }
-                        "Trailer" -> {filterBodyTypes.add(Pair(vehicle, "trailer"))}
+                        "Open" -> {
+                            filterBodyTypes.add(Pair(vehicle, "open"))
+                        }
+                        "Closed" -> {
+                            filterBodyTypes.add(Pair(vehicle, "closed"))
+                        }
+                        "Trailer" -> {
+                            filterBodyTypes.add(Pair(vehicle, "trailer"))
+                        }
                     }
                 }
             }
@@ -849,7 +827,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
         }
 
-        builder.setNegativeButton("Cancel") {_, _ ->
+        builder.setNegativeButton("Cancel") { _, _ ->
             dialog.dismiss()
         }
 
@@ -874,29 +852,12 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
             REQCODE_ADD_TRUCK -> {
-                if( data != null  && data.getStringExtra("Added") == "Truck Added"){
+                if (data != null && data.getStringExtra("Added") == "Truck Added") {
                     refreshData()
                 }
             }
 
         }
-    }
-
-    override fun getTotalOffers(origin_id: String?, dest_id: String?, tid: String?): Triple<Pair<Boolean?, String?>, String?, String?>? {
-        var pres:Triple<Pair<Boolean?, String?>, String?, String?>? = Triple(Pair(false,null), tid, null)
-        if(viewModel.finalOffers.value.isNullOrEmpty()){
-            pres = null
-            userPrefs.trucksOfferCount=0
-        }else{
-            userPrefs.trucksOfferCount=viewModel.finalOffers.value!!.size
-            for(r in viewModel.finalOffers.value!!){
-                if(r.occ.equals(origin_id) == true && r.dcc?.equals(dest_id)== true){
-                    pres = pres?.copy(Pair(true,r.offerId), tid, r.tdn)
-                }
-            }
-        }
-
-        return pres
     }
 
     override fun getBannerStatus(): Boolean? {
@@ -906,9 +867,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     override fun callRewards() {
          analyticsUtil.trackEvent(
-             EVENT_CLICKED_PRICE_BANNER,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
+                 EVENT_CLICKED_PRICE_BANNER,
+                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+                 mutableListOf(userPrefs.userId(), userPrefs.phoneNumber ?: "")
          )
             navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
     }
@@ -937,26 +898,33 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         analyticsUtil.trackEvent(
                 EVENT_CLICKED_OFFER,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
-                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "inventory_screen", offerid?:"")
+                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber
+                        ?: "dummy", "inventory_screen", offerid ?: "")
         )
 
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+    }
+
+    override fun getTotalOffers(data: HomeTrucksRequestItemData?) {
+        Executors.newSingleThreadExecutor().execute(Runnable {
+            viewModel.fetchDatabaseOffers(data)
+        })
     }
 
     /**
      * Home trucks rv scroll listener for search bar animation related stuff
      */
     inner class HomeTrucksRVScrollListener(
-        private val stickyView: DelhiveryAnimatedSearchBar,
-        private val elevation: Float = 12f
+            private val stickyView: DelhiveryAnimatedSearchBar,
+            private val elevation: Float = 12f
     ) : RecyclerView.OnScrollListener() {
         /* Current toolbar elevation */
         private var toolbarElevation = -1f
 
         override fun onScrolled(
-            recyclerView: RecyclerView,
-            dx: Int,
-            dy: Int
+                recyclerView: RecyclerView,
+                dx: Int,
+                dy: Int
         ) {
             super.onScrolled(recyclerView, dx, dy)
 
@@ -997,9 +965,9 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     inner class ButtonRVScrollListener : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(
-            recyclerView: RecyclerView,
-            dx: Int,
-            dy: Int
+                recyclerView: RecyclerView,
+                dx: Int,
+                dy: Int
         ) {
             super.onScrolled(recyclerView, dx, dy)
 

@@ -90,8 +90,11 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         }
         binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
         binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
+        val res = item.data.resOffer
+        if(item.data.resOffer?.first?.first==null){
+           _interface.getTotalOffers(item.data)
+        }
 
-        val res = _interface.getTotalOffers(item.data.currentCityCode, item.data.unloadingDestinationCode, item.data.truckSize)
         binding.btnShareRate.setOnClickListener {
             _interface.callShareRate(item.data, res?.second, res?.third, res?.first?.second)
         }

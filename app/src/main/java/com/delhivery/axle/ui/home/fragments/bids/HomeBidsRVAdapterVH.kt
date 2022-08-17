@@ -120,7 +120,12 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
       binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
     }
 
-    val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
+    val res = item.data.resOffer
+    if(item.data.resOffer?.first?.first==null){
+      _interface.getTotalOffers(item.data)
+    }
+
+   // val res = _interface.getTotalOffers(item.data.origin, item.data.destination, item.data.truckSpecification?.truckDispName)
      if(res!=null && res.first?.first == true){
       if(item.data.bidStatus().statusKey.equals("rejected")){
         binding.shareRateLay.visibility = View.VISIBLE
