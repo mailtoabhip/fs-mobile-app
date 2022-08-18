@@ -75,9 +75,9 @@ object DrawableProviderUtils {
   ): Int {
     return if (DateUtils.daysDiff(DateUtils.parseDate(date, format)) <= 0) {
       var hours=DateUtils.parseDate(date,format).hours
-      if(hours>=1 && hours<=12){
+      if(hours>=1 && hours<12){
         R.drawable.ic_vector_morning
-      }else if(hours>=12 && hours<=16){
+      }else if(hours>=12 && hours<16){
         R.drawable.ic_vector_afternoon
       }else if(hours>=16 && hours<=21){
         R.drawable.ic_vector_eve
@@ -85,9 +85,9 @@ object DrawableProviderUtils {
         R.drawable.ic_vector_eve
       }    } else {
       var hours=DateUtils.parseDate(date,format).hours
-      if(hours>=1 && hours<=12){
+      if(hours>=1 && hours<12){
         R.drawable.ic_vector_morning
-      }else if(hours>=12 && hours<=16){
+      }else if(hours>=12 && hours<16){
         R.drawable.ic_vector_afternoon
       }else if(hours>=16 && hours<=21){
         R.drawable.ic_vector_eve
