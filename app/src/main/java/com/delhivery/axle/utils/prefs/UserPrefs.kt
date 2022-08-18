@@ -531,6 +531,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.rcNumber, "") ?: ""
 
+  var businessDocType: String
+    set(value) = editor.putString(PrefKeys.businessDocType,value)
+        .apply()
+    get() = prefs.getString(PrefKeys.businessDocType, "") ?: ""
+
   var panName: String
     set(value) = editor.putString(PrefKeys.panName,value)
         .apply()
@@ -1245,6 +1250,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isRcVerified = "is_rc_verified"
     const val isGstVerified = "is_gst_verified"
     const val rcNumber = "rc_number"
+    const val businessDocType = "businessDocType"
     const val panName = "pan_name"
     const val verificationStatus = "verification_status"
     const val profileImageUrl = "profile_image_url"

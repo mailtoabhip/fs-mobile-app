@@ -43,14 +43,17 @@ class KYCDocumentsViewModel @Inject constructor(
                             if (_res.kycData.isNullOrEmpty()) {
                                 add(Pair(DocItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
                             } else {
-                                val i =0;
+                                val arrdoc = ArrayList<String>()
                                 for(obj in _res.kycData) {
                                     if(!obj.documentUrls.isNullOrEmpty()) {
-                                        for (url in obj.documentUrls) {
-                                          if(!(url.contains("account_proof",true)||url.contains("194C") )){
-                                            add(Pair(DocDataItem(DocDetailData(url, null, obj.verificationStatus,obj.verificationOverallType, obj.verificationType, obj.verificationStatusReasonCode, obj.verificationStatusReasonMessage)), DataRVAdapterOperationType.Add))
-                                          }
-                                        }
+                                          for (url in obj.documentUrls) {
+                                               if(!(url.contains("account_proof",true)||url.contains("194C") )) {
+                                                   if(!arrdoc.contains(url)) {
+                                                       arrdoc.add(url)
+                                                       add(Pair(DocDataItem(DocDetailData(url, null, obj.verificationStatus, obj.verificationOverallType, obj.verificationType, obj.verificationStatusReasonCode, obj.verificationStatusReasonMessage)), DataRVAdapterOperationType.Add))
+                                                   }
+                                               }
+                                           }
                                     }
                                 }
                             }

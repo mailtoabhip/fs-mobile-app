@@ -58,10 +58,12 @@ BaseViewModel() {
 
         documentProofType= when{
                     documentProofType.equals("Visiting Card")->"visiting_card"
-                    documentProofType.equals("LR Copy")->"lr_copy"
+                    documentProofType.equals("LR Copy/Loading Note")->"lr_copy"
                     documentProofType.equals("Letter Head")->"letterhead"
                     documentProofType.equals("Udyog Aadhaar Certificate")->"udyog_aadhaar"
                     documentProofType.equals("Shop & Establishment Certificate")->"shop_establishment"
+                    documentProofType.equals("Driving Licence")->"driving_licence"
+                    documentProofType.equals("RC copy")->"rc_copy"
             else -> null
         }
         addressType= addressType.toLowerCase()

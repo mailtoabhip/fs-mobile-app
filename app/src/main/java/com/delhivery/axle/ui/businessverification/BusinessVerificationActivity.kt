@@ -333,10 +333,17 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     if(!userPrefs.isBankDetailsRejected) {
                         userPrefs.verificationStatus = "pending"
                     }
-                    navigationUtils.navigate(MyProfileActivity::class.java,true)
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,1)
+                    navigationUtils.navigateKyc(this,true,bundle)
                 }else{
-                    navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
+//                    navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
+                    navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+                        TotalStepsKey)!!,null)
+
                 }
+            }else{
+                showUploadImage()
             }
         })
 
@@ -440,7 +447,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,2)
+        bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)
     }
     override fun onAWSSuccess(

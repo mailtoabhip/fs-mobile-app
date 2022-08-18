@@ -29,6 +29,7 @@ import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
 import com.delhivery.axle.databinding.DialogConfirmAddressDialogBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BitmapUtils
@@ -141,28 +142,44 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
         if(!userPrefs.getAddressList().isNullOrEmpty()){
             for(addressData in userPrefs.getAddressList()!!){
-                if(addressData?.addressType!!.startsWith("g",true)){
-                    viewModel.gstAddress= addressData.address?:""
-                    binding.gstAddressLayout.visibility = View.VISIBLE
-                    gstAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
-                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
-                    }else if(userPrefs.getAddressList()!!.size<2){
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
-                    }
-                }else if(addressData?.addressType!!.startsWith("al",true)){
-                    viewModel.alternateAddress= addressData.address?:""
-                    binding.alternateAddressLayout.visibility = View.VISIBLE
-                    binding.btnAddAlternateAddress.visibility = View.GONE
-                    alternateAddressData =  AddAddressModel(userPrefs.phoneNumber,addressData.address,addressData.proofDocumentType,addressData.documentUrls,addressData.addressType,false)
-                    if(userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(addressData.address)){
-                        binding.alternateAddressLayout.isSelected = true
-                        selectedAddressData = alternateAddressData
-                    }else{
-                        binding.gstAddressLayout.isSelected = true
-                        selectedAddressData = gstAddressData
+                if (addressData?.addressType.isNotNullOrEmpty()) {
+                    if (addressData?.addressType!!.startsWith("g", true)) {
+                        viewModel.gstAddress = addressData.address ?: ""
+                        binding.gstAddressLayout.visibility = View.VISIBLE
+                        gstAddressData = AddAddressModel(
+                            userPrefs.phoneNumber, addressData.address,
+                            addressData.proofDocumentType, addressData.documentUrls,
+                            addressData.addressType, false
+                        )
+                        if (userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(
+                                addressData.address
+                            )
+                        ) {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        } else if (userPrefs.getAddressList()!!.size < 2) {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        }
+                    } else if (addressData?.addressType!!.startsWith("al", true)) {
+                        viewModel.alternateAddress = addressData.address ?: ""
+                        binding.alternateAddressLayout.visibility = View.VISIBLE
+                        binding.btnAddAlternateAddress.visibility = View.GONE
+                        alternateAddressData = AddAddressModel(
+                            userPrefs.phoneNumber, addressData.address,
+                            addressData.proofDocumentType, addressData.documentUrls,
+                            addressData.addressType, false
+                        )
+                        if (userPrefs.businessAddress.isNotNullOrEmpty() && userPrefs.businessAddress.equals(
+                                addressData.address
+                            )
+                        ) {
+                            binding.alternateAddressLayout.isSelected = true
+                            selectedAddressData = alternateAddressData
+                        } else {
+                            binding.gstAddressLayout.isSelected = true
+                            selectedAddressData = gstAddressData
+                        }
                     }
                 }
 
@@ -233,8 +250,16 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"")
                 )
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,null)
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= "Document under verification"
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,1)
+                    navigationUtils.navigateKyc(this,true,bundle)
+                }else {
+                    navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                }
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
@@ -249,7 +274,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,1)
+        bundle.putInt(StepKey,2)
         navigationUtils.navigateKyc(this,true,bundle)
     }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
@@ -366,6 +391,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         val s3url= awsUtils.awsBasePath()
         viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+
         showFileSelected()
         resetUploadData()
     }
@@ -604,6 +630,25 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 bindingDialog.uploadDocLay.visibility= View.GONE
                 bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 docUploadProof=true
+                if(uploadArray.get(0).first!!.contains(awsPath)){
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        )
+                    )}else if (uploadArray.get(0).first!!.contains("loadboard/iv/")){
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        ))
+                }else{
+                    uploadArray.add(
+                        Pair(
+                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                            ?.div(1024)).toString()
+                        ))
+                }
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
                 enableAddAddressDialogButton(bindingDialog)
@@ -662,6 +707,15 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             }else{
                 dataSetFromPref=false
             }
+            if (!userPrefs.retryVerification) {
+                if ((userPrefs.businessDocType.equals("lr") && p == 2)) {
+                        bindingDialog.uploadDocLay.visibility = View.GONE
+                    bindingDialog.addressProofText.visibility = View.GONE
+                    docUploadProof = true
+                } else {
+                    bindingDialog.uploadDocLay.visibility = View.VISIBLE
+                }
+            }
             enableAddAddressDialogButton(bindingDialog)
         }
 
@@ -718,7 +772,26 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             docUploadProof=false
 
         }else{
-            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            if(docPath!!.contains(awsPath)){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )}else if (docPath!!.contains("loadboard/iv/")){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }else{
+                docArray.add(
+                    Pair(
+                        docPath.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }
+
             if(addressData.documentUrls!=null)
                 viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
             bindingDialog.uploadDocLay.visibility= View.GONE
