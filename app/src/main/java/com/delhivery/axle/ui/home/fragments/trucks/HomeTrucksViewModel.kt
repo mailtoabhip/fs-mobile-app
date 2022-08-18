@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.*
@@ -11,6 +12,7 @@ import com.delhivery.axle.api.request.UpdateTruck
 import com.delhivery.axle.api.response.FrequentTripsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
@@ -77,8 +79,6 @@ class HomeTrucksViewModel @Inject constructor(
 
     var noCityCodeError =  MutableLiveData<Boolean>()
 
-    var getFrequentLanesData = MutableLiveData<FrequentTripsResponse>()
-
     var mWorkManager: WorkManager? = null
     // The name of the Sync Data work
     val SYNC_DATA_WORK_NAME = "sync_data_work_name"
@@ -105,8 +105,6 @@ class HomeTrucksViewModel @Inject constructor(
                 }
             }
     }
-
-    fun finalOffersCount() = appDatabase.offersDao().getOffersCount()
 
     fun getAllInventories(paginate: Boolean = false, search : Boolean = false){
 
@@ -337,11 +335,19 @@ class HomeTrucksViewModel @Inject constructor(
 
     }
 
-    var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
-
     var  offersLiveData = ArrayList<OffersEntity>()
 
-    fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
+    var offeLiveData = MutableLiveData<HomeTrucksRequestItemData?>()
+
+    fun fetchDatabaseOffers(data: HomeTrucksRequestItemData?){
+        val lrt = appDatabase.offersDao().getParticularsOffers(data?.currentCityCode, data?.unloadingDestinationCode)
+        if(!lrt.isNullOrEmpty() && lrt.size>0){
+            data?.resOffer = Triple(Pair(true, lrt.get(0).offerId),data?.truckSize, lrt[0].tdn)
+        }else{
+            data?.resOffer = Triple(Pair(false, null),null, null)
+        }
+        offeLiveData.postValue(data)
+    }
 
     fun fetchData() {
         val constraints = Constraints.Builder()

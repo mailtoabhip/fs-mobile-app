@@ -76,30 +76,9 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
   }
 
   override fun refreshData() {
+    viewModel.count =0
     adapter.resetStaticData()
-    viewModel.offersLiveData.clear()
-    var limit = OFF_SET_LIMIT
-    var total = userPrefs.bidOfferCount
-
-    if(total!=null && total>0) {
-      var loopCount = total / limit
-      if (total % limit > 0) {
-        loopCount++
-      }
-      var offset = 0
-      for (i in 1..loopCount) {
-        viewModel.fetchDatabaseOffers(offset).observe(viewLifecycleOwner, Observer {
-          if (!it.isNullOrEmpty()) {
-            viewModel.offersLiveData.addAll(it)
-            if (viewModel.offersLiveData.size == total) {
-              adapter.resetStaticData()
-              viewModel.getFrequentLanes(viewModel.offersLiveData)
-            }
-          }
-        })
-        offset = limit + offset
-      }
-    }
+    viewModel.getFrequentLanes()
   }
 
   override fun handleAction(actionId: String, item: BaseShareRateRVAdapterItem<*>) {

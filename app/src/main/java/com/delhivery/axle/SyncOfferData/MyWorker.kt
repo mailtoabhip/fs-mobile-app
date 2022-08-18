@@ -38,10 +38,10 @@ class MyWorker(
 
     override fun doWork(): Result {
         var success = false
-         if(appDatabase.offersDao().getAllOffers().value.isNullOrEmpty()){
+        if(appDatabase.offersDao().getCountOffers().value.isNullOrEmpty()){
             priceRepository.getOffers().subscribe { _res, error ->
                 if (!error) {
-                   success = true
+                    success = true
                     if (_res!=null && !_res.offersList.isNullOrEmpty()) {
                         userPrefs.bidOfferCount = _res.total
                         appDatabase.offersDao().deleteOffers()
@@ -50,33 +50,33 @@ class MyWorker(
                         }
                     }
                 } else {
-                   success = false
+                    success = false
                 }
             }
         }else{
-        priceRepository.getUpdateFlag().subscribe { t1, t2 ->
-            if (!t2) {
-                if (t1.updated == true) {
-                    priceRepository.getOffers().subscribe { _res, error ->
-                        if (!error) {
-                            success = true
-                            if (_res!=null &&!_res.offersList.isNullOrEmpty()) {
-                                appDatabase.offersDao().deleteOffers()
-                                for (i in _res.offersList) {
-                                    appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offerType, i.offerId))
+            priceRepository.getUpdateFlag().subscribe { t1, t2 ->
+                if (!t2) {
+                    if (t1.updated == true) {
+                        priceRepository.getOffers().subscribe { _res, error ->
+                            if (!error) {
+                                success = true
+                                if (_res!=null &&!_res.offersList.isNullOrEmpty()) {
+                                    appDatabase.offersDao().deleteOffers()
+                                    for (i in _res.offersList) {
+                                        appDatabase.offersDao().newOfferEntry(OffersEntity(i.occ, i.oc, i.dcc, i.dc, i.tdn, i.sd, i.ed, i.amount, i.status, i.offerType, i.offerId))
+                                    }
                                 }
+                            } else {
+                                success = false
                             }
-                        } else {
-                            success = false
                         }
+                    } else {
+                        success = true
                     }
                 } else {
-                    success = true
+                    success = false
                 }
-            } else {
-                success = false
             }
-          }
         }
 
         return if(success) Result.success() else Result.retry()

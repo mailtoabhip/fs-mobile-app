@@ -70,8 +70,6 @@ class BidsViewModel @Inject constructor(
   var total = 0
   var offset = 0
   var hasMoreData = true
-  var finalOffers = MutableLiveData<ArrayList<OffersEntity>>()
-
 
   /* transaction id */
   lateinit var transactionId: String
@@ -317,9 +315,15 @@ class BidsViewModel @Inject constructor(
       return bulkBidSummaryItemList
   }
 
-  var  offersLiveData = ArrayList<OffersEntity>()
+  var offerLiveData = MutableLiveData<HomeBidsRequestItemData?>()
 
-  fun fetchDatabaseOffers(offset:Int) =appDatabase.offersDao().getAllOffers(offset)
-
-
+  fun fetchDatabaseOffers(data: HomeBidsRequestItemData?){
+    val lrt = appDatabase.offersDao().getParticularsOffers(data?.originCityCode, data?.destinationCityCode)
+    if(!lrt.isNullOrEmpty() && lrt.size>0){
+      data?.resOffer = Triple(Pair(true, lrt[0].offerId), Pair(data?.truckSpecification?.truckDispName, lrt.get(0).tdn), Pair(lrt[0].occ, lrt.get(0).dcc))
+    }else{
+      data?.resOffer = Triple(Pair(false, null),Pair(null, null), Pair(null,null))
+    }
+    offerLiveData.postValue(data)
+  }
 }
