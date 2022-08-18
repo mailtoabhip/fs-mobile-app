@@ -54,7 +54,7 @@ class BidDetailsViewModel @Inject constructor(
 
     var analyticsBucket :Boolean = false
 
-    var indentLiveData = MutableLiveData<HashMap<Int, String>>()
+    var indentLiveData = MutableLiveData<ArrayList<Triple<Pair<Int,String?>,String?, String?>>>()
     var bidCount =0
     var lowestBid:Double?=0.0
     var restrictEventTrigger :Boolean=true
@@ -62,7 +62,7 @@ class BidDetailsViewModel @Inject constructor(
 
     companion object{
     var truckNumTextViewAdded :Boolean=false
-    val indentMap = HashMap<Int, String>()
+    val indentMap = ArrayList<Triple<Pair<Int,String?>, String?, String?>>()
    }
 
     lateinit var transaction: HomeBidsRequestItemData
@@ -497,7 +497,7 @@ class BidDetailsViewModel @Inject constructor(
                 .onBackground()
                 .subscribe { _tRes, error ->
                     if (!error) {
-                        indentMap.put(seq, _tRes.city)
+                        indentMap.add(Triple(Pair(seq,_tRes.city), _tRes.address,_tRes.pincode))
                         indentLiveData.postValue(indentMap)
                       }  else {
                         error.handle()

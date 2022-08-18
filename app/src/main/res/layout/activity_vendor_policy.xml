@@ -1196,7 +1196,6 @@
                         android:textAlignment="center"
                         android:textSize="@dimen/size_16dp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_lost_pod_2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
