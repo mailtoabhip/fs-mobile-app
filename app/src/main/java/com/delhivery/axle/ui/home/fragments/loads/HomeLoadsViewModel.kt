@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
+import com.delhivery.axle.data.home.loads.HomeLoadsShareRateItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -201,7 +202,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
                                 add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                                 if(!paginate) {
-                                    add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
+                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                                 }
                                 add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
                                 for ((index, load) in loads.toMutableList().withIndex()) {
@@ -324,7 +325,7 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsSearchItem(), AddUpdate))
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                   if(!paginate) {
-                      add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
+                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                   }
                   add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
                   for ((index, load) in loads.toMutableList().withIndex()) {

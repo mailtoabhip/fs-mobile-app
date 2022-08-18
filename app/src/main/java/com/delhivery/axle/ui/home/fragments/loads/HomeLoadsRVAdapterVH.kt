@@ -14,9 +14,10 @@ import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.SimpleDateFormat
 import java.util.*
-
+import javax.inject.Inject
 
 /**
  * Base Home bids RV adapter view holder
@@ -236,6 +237,22 @@ internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityI
           _interface: HomeLoadsRVAdapterInterface
   ) {
       binding.truckBanner.clickToAction(HomeLoadsPriorityAction, item, _interface)
+  }
+}
+
+
+internal class HomeLoadsShareRateItemVH(binding: ViewShareLayoutBannerBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewShareLayoutBannerBinding, HomeLoadsShareRateItem>(
+        binding
+    ) {
+  override fun bind(
+    item: HomeLoadsShareRateItem,
+    _interface: HomeLoadsRVAdapterInterface
+  ) {
+    binding.title= item.data.title
+    binding.actionLabel=item.data.rate
+    binding.subTitle=item.data.subTitle
+    binding.shareButton.clickToAction(HomeLoadsShareRateAction, item, _interface)
   }
 }
 
