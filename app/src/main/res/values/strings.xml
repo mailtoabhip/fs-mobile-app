@@ -378,7 +378,7 @@
   <string name="label_active">Active</string>
   <string name="label_lost">Bid Lost</string>
   <string name="label_cancel">Bid Cancelled</string>
-  <string name="label_pending">Bid Won- Confirmation Pending</string>
+  <string name="label_pending">Bid Won\nConfirmation Pending</string>
   <string name="label_confirm">Order Confirmed</string>
   <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
   <string name="label_origin_destination">Origin &amp; Destination</string>
