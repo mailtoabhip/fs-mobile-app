@@ -99,7 +99,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@{transaction.originDistrictCityState()}"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -114,9 +114,8 @@
                 android:layout_marginStart="@dimen/size_4dp"
                 android:layout_marginEnd="@dimen/size_4dp"
                 app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/text_source"
-                app:layout_constraintEnd_toStartOf="@+id/text_destination"
                 app:layout_constraintTop_toTopOf="@id/text_destination"
                 android:layout_height="wrap_content">
               <TextView
@@ -160,7 +159,7 @@
                 android:text="@{transaction.destinationDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textAlignment="textEnd"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Andheri east\nMumbai, Maharashtra"
