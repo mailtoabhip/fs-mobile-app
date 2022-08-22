@@ -1284,7 +1284,7 @@
                             android:text="N"
                             android:textAlignment="center"
                             android:textSize="@dimen/text_16sp"
-                            end app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
