@@ -100,6 +100,7 @@
                 android:text="@{transaction.originDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="North Goa\nPanjim, Goa"
@@ -112,8 +113,10 @@
                 android:orientation="vertical"
                 android:layout_marginStart="@dimen/size_4dp"
                 android:layout_marginEnd="@dimen/size_4dp"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/text_source"
+                app:layout_constraintEnd_toStartOf="@+id/text_destination"
                 app:layout_constraintTop_toTopOf="@id/text_destination"
                 android:layout_height="wrap_content">
               <TextView
@@ -141,7 +144,7 @@
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintTop_toBottomOf="@id/text_load_details"
                   bind:drawableResId="@{ transaction.requiredAtBg() }"
-                  android:drawablePadding="@dimen/size_2dp"
+                  android:drawablePadding="@dimen/size_4dp"
                   tools:background="@drawable/bg_date_today"
                   tools:text="TODAY"
                   />

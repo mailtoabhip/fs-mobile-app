@@ -227,7 +227,7 @@
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
+            app:layout_constraintTop_toBottomOf="@id/text_capacity"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -244,7 +244,7 @@
             app:layout_constraintStart_toEndOf="@+id/text_detention"
             android:textColor="@color/white"
             android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-            app:layout_constraintTop_toBottomOf="@id/text_unAllocatedLoad"
+            app:layout_constraintTop_toBottomOf="@id/text_capacity"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -316,7 +316,7 @@
             android:layout_marginTop="@dimen/size_6dp"
             app:layout_constraintStart_toStartOf="parent"
             android:visibility="@{ request.requestedCapacityVisibility() }"
-            app:layout_constraintTop_toBottomOf="@+id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@+id/text_unAllocatedLoad"
             tools:text="Guarantee:19 MT"
             />
         <androidx.appcompat.widget.AppCompatTextView

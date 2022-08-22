@@ -42,7 +42,6 @@
         android:background="@drawable/banner_bg"
         android:orientation="horizontal"
         android:paddingStart="@dimen/size_8dp"
-        android:paddingTop="@dimen/size_16dp"
         android:paddingBottom="@dimen/size_16dp"
         android:visibility="visible">
 
@@ -53,6 +52,7 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           android:layout_alignParentRight="true"
+          app:layout_constraintRight_toLeftOf="@+id/label_text"
           bind:srcCompat="@drawable/ic_ratebanner_icon" />
 
       <androidx.appcompat.widget.LinearLayoutCompat
@@ -61,6 +61,7 @@
           android:layout_height="wrap_content"
           android:layout_centerHorizontal="true"
           android:layout_marginStart="@dimen/size_16dp"
+          android:layout_marginTop="@dimen/size_16dp"
           android:orientation="vertical"
           app:layout_constraintStart_toStartOf="parent"
           bind:layout_constraintBottom_toBottomOf="parent"
@@ -110,9 +111,9 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/share_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="@dimen/size_20dp"
-            android:paddingLeft="@dimen/size_20dp"
+            android:layout_height="40dp"
+            android:paddingRight="@dimen/size_40dp"
+            android:paddingLeft="@dimen/size_40dp"
             android:background="@drawable/bg_all_round_corner_white"
             android:fontFamily="sans-serif-medium"
             android:text="@string/share_rate"
