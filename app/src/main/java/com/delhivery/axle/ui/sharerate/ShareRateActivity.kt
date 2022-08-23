@@ -132,16 +132,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         fillODVTData(yourRewardsItemData)
                     }
                 })
-
             }
-                viewModel.searchOffer(intent?.extras?.getString(ARGS_OFFER_ID)!!).observe(this, Observer {
-                    if (it!=null) {
-                        val yourRewardsItemData = YourRewardsItemData(pricingId=it.offerId!!, originCity = it.oc, originCityCode = it.occ, destinationCity = it.dc, destinationCityCode = it.dcc, truckDisplayName = it.tdn)
-                        viewModel.bannerText=it.amt.toString()
-                        fillODVTData(yourRewardsItemData)
-                    }
-                })
-
         }
         viewModel.origin = intent?.extras?.getString("originname")?.let { CityModel(it, intent?.extras?.getString("occ")) }
         viewModel.destination = intent?.extras?.getString("destname")?.let { CityModel(it, intent?.extras?.getString("dcc")) }
@@ -149,8 +140,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         if( intent?.extras?.getString("amt")!=null) {
             viewModel.bannerText = "Earn ₹"+intent?.extras?.getString("amt")+" on this lane offer"
         }
-        //viewModel.getCityData(viewModel.origin?.orionDbCityCode, "origin")
-        //viewModel.getCityData(viewModel.destination?.orionDbCityCode, "dest")
 
         startTime = System.currentTimeMillis()
 
