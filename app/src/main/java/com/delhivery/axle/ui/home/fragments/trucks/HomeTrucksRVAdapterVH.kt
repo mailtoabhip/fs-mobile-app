@@ -96,7 +96,7 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         }
 
         binding.btnShareRate.setOnClickListener {
-            _interface.callShareRate(item.data, res?.second, res?.third, res?.first?.second)
+            _interface.callShareRate(item.data, res?.second, res?.third?.first, res?.first?.second,res?.third?.second)
         }
 
         if(res!=null && res.first.first == true){
@@ -122,32 +122,6 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
             binding.rateMore.visibility = View.GONE
            _interface.callRewards()
         }
-
-        val total = _interface.gettotal()
-
-        val pos = adapterPosition.minus(3)
-        if(total==0){
-            binding.rateBanner.visibility = View.GONE
-        }else{
-            if(total!=0 && total >7) {
-                if (pos != 0 && pos.rem(8) == 0) {
-                    binding.rateBanner.visibility = View.VISIBLE
-                } else {
-                    binding.rateBanner.visibility = View.GONE
-                }
-            }else{
-                if(total!=0) {
-                    if (pos == total) {
-                        binding.rateBanner.visibility = View.VISIBLE
-                     } else {
-                        binding.rateBanner.visibility = View.GONE
-                    }
-                }
-            }
-        }
-
-        binding.rateBanner.setOnClickListener { _interface.callRewards() }
-
     }
 }
 

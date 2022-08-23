@@ -57,7 +57,7 @@
 
       <androidx.appcompat.widget.LinearLayoutCompat
           android:id="@+id/label_text"
-          android:layout_width="wrap_content"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_centerHorizontal="true"
           android:layout_marginStart="@dimen/size_16dp"
@@ -65,6 +65,7 @@
           android:orientation="vertical"
           app:layout_constraintStart_toStartOf="parent"
           bind:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/img_priority_access"
           bind:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView

@@ -132,13 +132,14 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         fillODVTData(yourRewardsItemData)
                     }
                 })
-
             }
         }
         viewModel.origin = intent?.extras?.getString("originname")?.let { CityModel(it, intent?.extras?.getString("occ")) }
         viewModel.destination = intent?.extras?.getString("destname")?.let { CityModel(it, intent?.extras?.getString("dcc")) }
-        //viewModel.getCityData(viewModel.origin?.orionDbCityCode, "origin")
-        //viewModel.getCityData(viewModel.destination?.orionDbCityCode, "dest")
+
+        if( intent?.extras?.getString("amt")!=null) {
+            viewModel.bannerText = "Earn ₹"+intent?.extras?.getString("amt")+" on this lane offer"
+        }
 
         startTime = System.currentTimeMillis()
 

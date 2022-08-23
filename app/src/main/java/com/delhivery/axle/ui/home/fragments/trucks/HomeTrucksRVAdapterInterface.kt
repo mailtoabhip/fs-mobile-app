@@ -29,7 +29,7 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
         position: Int
     )
 
-    fun callShareRate(data: HomeTrucksRequestItemData?, itemTD:String?, offerTD:String?,offerid:String?)
+    fun callShareRate(data: HomeTrucksRequestItemData?, itemTD:String?, offerTD:String?,offerid:String?,amt:String?)
 
     fun getTotalOffers(data: HomeTrucksRequestItemData?)
 

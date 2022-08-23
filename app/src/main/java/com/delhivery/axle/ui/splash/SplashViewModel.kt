@@ -44,9 +44,6 @@ class SplashViewModel @Inject constructor(
   fun saveTruckPostKycConfig(truckPostKyc:String){
     userPrefs.truckPostKyc = truckPostKyc
   }
-  fun saveBannerTextConfig(bannerText:String){
-    userPrefs.bannerText = bannerText
-  }
   fun saveShareBannerH1Config(bannerText:String){
     userPrefs.shareRateBannerH1 = bannerText
   }

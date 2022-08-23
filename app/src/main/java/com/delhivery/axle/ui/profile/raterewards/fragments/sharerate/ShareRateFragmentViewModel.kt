@@ -57,7 +57,8 @@ class ShareRateFragmentViewModel  @Inject constructor(
                 _res.tdn,
                 _res.offerType,
                 _res.status,
-                _res.offerId
+                _res.offerId,
+                  _res.amt.toString()
               )
               count ++
               if(count<=10)
@@ -92,7 +93,9 @@ class ShareRateFragmentViewModel  @Inject constructor(
                   item.dc,
                   item.tdn,
                   item.offerType,
-                  item.status
+                  item.status,
+                    item.offerId,
+                    item.amt.toString()
                 )
                 add(Pair(ShareRatesItem(shareRateRoutes), DataRVAdapterOperationType.AddUpdate))
                 if(itemCount==10)

@@ -17,6 +17,7 @@ import com.delhivery.axle.api.response.GetSupplierRewardsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
@@ -57,8 +58,9 @@ class ShareRateViewModel @Inject constructor(
     var destination: CityModel? = null
     var tripDate:String? = null
     var proofType:String? = null
-    var bannerText:String? = userPrefs.bannerText
+    var bannerText:String? = ""
   var documentProofUrl= mutableListOf<String>()
+  
 
     fun fetchTruckType() {
         compositeDisposable += truckRepository.getTruckType()
