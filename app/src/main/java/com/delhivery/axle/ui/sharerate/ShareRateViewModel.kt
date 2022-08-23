@@ -58,7 +58,7 @@ class ShareRateViewModel @Inject constructor(
     var destination: CityModel? = null
     var tripDate:String? = null
     var proofType:String? = null
-    var bannerText:String? = null
+    var bannerText:String? = ""
   var documentProofUrl= mutableListOf<String>()
   
 
