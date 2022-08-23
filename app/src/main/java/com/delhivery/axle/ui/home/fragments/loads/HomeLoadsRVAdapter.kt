@@ -116,7 +116,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter {
-        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters
+        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate
       }
           .map { Pair(it, Remove) }
           .let {

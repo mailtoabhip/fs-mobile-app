@@ -248,9 +248,7 @@ class HomeLoadsViewModel @Inject constructor(
                           )
                         }
                     } else {
-
                         fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
-
                     }
 
                     dataLoadingLiveData.postValue(false)
@@ -327,7 +325,7 @@ class HomeLoadsViewModel @Inject constructor(
                   if(!paginate) {
                     add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                   }
-                  add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
+                add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
                   for ((index, load) in loads.toMutableList().withIndex()) {
                       try {
                           val lowestBid = _tRes.third.filter { b ->
@@ -358,7 +356,8 @@ class HomeLoadsViewModel @Inject constructor(
                   if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
                       add(Pair(HomeLoadsInfoItem(), AddUpdate))
                   }
-                  add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+                add(Pair(HomeLoadsMoreInfoItem(), Remove))
+                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
               }
             }
                 .let {
