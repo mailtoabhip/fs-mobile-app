@@ -39,6 +39,7 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
 import kotlinx.android.synthetic.main.activity_verify_pan.*
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
+import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCitySelected
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
@@ -231,27 +232,61 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
            showUploadImage()
        }
 
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+        var ert:Int? = null
+
+        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+            ert = R.array.array_address__proof_type
+        } else {
+            ert = R.array.array_address__proof_type_aadhar_flow
+
+        }
+
+
+         binding.spinnerProof.setup(ert) { p, v ->
             if(p>0){
                 proofTypeFilled = true
-                if(!dataSetFromPref){
-                    showUploadImage()
-                }
                 Log.d("udyog",userPrefs.udyogNumber)
-                if((userPrefs.udyogNumber.isNotEmpty() && p==4) || (userPrefs.shopNumber.isNotEmpty()&& p==5)){
-                    binding.textProof.visibility = View.GONE
-                    binding.docLayout.visibility = View.GONE
-                    docUploadProof= true
-                }else{
-                    binding.textProof.visibility = View.VISIBLE
-                    binding.docLayout.visibility = View.VISIBLE
-                    if(!dataSetFromPref) {
-                        docUploadProof = false
-                    }else{
-                        dataSetFromPref=false
+                if(!dataSetFromPref) {
+                    showUploadImage()
+                    if (!userPrefs.retryVerification){
+                        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4) || (userPrefs.shopNumber.isNotEmpty() && p == 5)) {
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            } else if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+                            ) {
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            } else {
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
+                            }
+
+                        } else {
+                            if ((userPrefs.udyogNumber.isNotEmpty() && p == 4)) {
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            } else if ((userPrefs.businessDocType.equals("rc") && p == 6) || (userPrefs.businessDocType.equals("lr") && p == 2)
+                            ) {
+                                binding.textProof.visibility = View.GONE
+                                binding.docLayout.visibility = View.GONE
+                                docUploadProof = true
+                            } else {
+                                binding.textProof.visibility = View.VISIBLE
+                                binding.docLayout.visibility = View.VISIBLE
+                                docUploadProof = false
+
+                            }
+                        }
                     }
+                    enableSubmitButton()
+                }else{
+                    dataSetFromPref=false
                 }
-                enableSubmitButton()
             }else{
                 proofTypeFilled =false
                 enableSubmitButton()
@@ -263,24 +298,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 var address =
                     viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 viewModel.updateCommunicationAddress(address, false)
-                /* userPrefs.isCommunicationAddressVerified=true
-                if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= ""
-                }
-                 navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-              TotalStepsKey)!!,null)
-            } else {
-                uiUtils.showSnackbar("Error encountered, Please try again.")
-            }*/
             }
         })
 
         viewModel.subAddressLiveData.observe(this, Observer {
             if (it) {
                 uiUtils.showSnackbar("Address updated")
-                if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= "Document under verification"
-                }
+
                 var address = viewModel.flatAddress + "," + viewModel.areaAddress.value + "," + viewModel.cityAddress + "-" + viewModel.pincodeAddress
                 addDataToPreference(address)
                 userPrefs.businessAddress = address
@@ -293,8 +317,16 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), viewModel.documentProofType?:"alternate")
                 )
 
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,null)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,null)
+                if(userPrefs.retryVerification){
+                    userPrefs.addressRejectReason= "Document under verification"
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,1)
+                    navigationUtils.navigateKyc(this,true,bundle)
+                }else {
+                    navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                }
 
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
@@ -348,74 +380,138 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     }
 
-    private fun fillDataFromBusinessAddress(addressData: AddAddressModel){
-        var docArray:ArrayList<Pair<String, String>> = ArrayList()
-        var docPath =""
-        if(!addressData.documentUrls.isNullOrEmpty()){
-            docPath= addressData.documentUrls?.get(0)!!
+    private fun fillDataFromBusinessAddress(addressData: AddAddressModel) {
+        var docArray: ArrayList<Pair<String, String>> = ArrayList()
+        var docPath = ""
+        if (!addressData.documentUrls.isNullOrEmpty()) {
+            docPath = addressData.documentUrls?.get(0)!!
         }
-        var docproofRec=""
-        var addressRec =  addressData.address
-        var flatRec = addressRec?.split(",")?.get(0)
+        var docproofRec = ""
+        var addressRec = addressData.address
+        var flatRec = addressRec?.split(",")
+            ?.get(0)
         //binding.editFlat.setText(flatRec)
         viewModel.flatAddress = flatRec!!
-        flatFilled=true
-        var areaRec = addressRec?.split(",")?.get(1)
-      //  binding.editArea.setText(areaRec)
+        flatFilled = true
+        var areaRec = addressRec?.split(",")
+            ?.get(1)
+        //  binding.editArea.setText(areaRec)
         viewModel.areaAddress.value = areaRec!!
-        areaFilled=true
-        var citynPinRec = addressRec?.split(",")?.get(2)
-        var cityRec =citynPinRec?.split("-")?.get(0)
-      //  binding.autoCompleteCity.setText(cityRec)
+        areaFilled = true
+        var citynPinRec = addressRec?.split(",")
+            ?.get(2)
+        var cityRec = citynPinRec?.split("-")
+            ?.get(0)
+        //  binding.autoCompleteCity.setText(cityRec)
         viewModel.cityAddress = cityRec!!
-        cityFilled=true
-        var pincodeRec = citynPinRec?.split("-")?.get(1)
-        pincodeFilled=true
+        cityFilled = true
+        var pincodeRec = citynPinRec?.split("-")
+            ?.get(1)
+        pincodeFilled = true
         viewModel.pincodeAddress = pincodeRec!!
-        if(docPath.isNullOrEmpty()){
+        if (docPath.isNullOrEmpty()) {
             resetUploadData()
             showUploadImage()
-          //  binding.uploadDocLay.visibility= View.VISIBLE
-           // binding.uploadedDocLay.visibility= View.GONE
-            docUploadProof=false
+            //  binding.uploadDocLay.visibility= View.VISIBLE
+            // binding.uploadedDocLay.visibility= View.GONE
+            docUploadProof = false
 
-        }else{
-            docArray.add(Pair(docPath!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-            if(addressData.documentUrls!=null)
-            viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
-            binding.uploadDocLay.visibility= View.GONE
+        } else {
+            dataSetFromPref = true
+            if(docPath!!.contains(awsPath)){
+            docArray.add(
+                Pair(
+                    docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
+                    ?.div(1024)).toString()
+                )
+            )}else if (docPath!!.contains("loadboard/iv/")){
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }else{
+                docArray.add(
+                    Pair(
+                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    ))
+            }
+            if (addressData.documentUrls != null)
+                viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
+            binding.uploadDocLay.visibility = View.GONE
             binding.docUploadedLay.visibility = View.VISIBLE
             binding.docTitle.setText(docArray.get(0).first)
-            docUploadProof=true
-            dataSetFromPref=true
+            docUploadProof = true
+            enableSubmitButton()
         }
 
         proofTypeFilled = true
-        var spinnerIndex=0
-        if(addressData.proofDocumentType!=null) {
-            spinnerIndex = when {
-                addressData.proofDocumentType!!.startsWith("V", true) -> 1
-                addressData.proofDocumentType!!.startsWith("lr", true) -> 2
-                addressData.proofDocumentType!!.startsWith("le", true) -> 3
-                addressData.proofDocumentType!!.startsWith("ud", true) -> 4
-                addressData.proofDocumentType!!.startsWith("sh", true) -> 5
-                else -> 0
+        var spinnerIndex = 0
+        if (addressData.proofDocumentType != null) {
+            if(userPrefs.aadhaarNumber.isNotNullOrEmpty()) {
+                if(userPrefs.isGstsByPanNotRegistered){
+                    spinnerIndex = when {
+                        addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                        addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                        addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                        addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                        addressData.proofDocumentType!!.startsWith("dr", true) -> 5
+                        addressData.proofDocumentType!!.startsWith("rc", true) -> 6
+                        else -> 0
+                    }
+                }else {
+                    spinnerIndex = when {
+                        addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                        addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                        addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                        addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                        addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                        else -> 0
+                    }
+                }
+            }else{
+                spinnerIndex = when {
+                    addressData.proofDocumentType!!.startsWith("V", true) -> 1
+                    addressData.proofDocumentType!!.startsWith("lr", true) -> 2
+                    addressData.proofDocumentType!!.startsWith("le", true) -> 3
+                    addressData.proofDocumentType!!.startsWith("ud", true) -> 4
+                    addressData.proofDocumentType!!.startsWith("sh", true) -> 5
+                    else -> 0
+                }
             }
+            proofTypeFilled=true
+            enableSubmitButton()
         }
 
-        binding.spinnerProof.post(Runnable { binding.spinnerProof.setSelection(spinnerIndex)
-            docproofRec=binding.spinnerProof.selectedItem.toString()
-
+        binding.spinnerProof.post(Runnable {
+            binding.spinnerProof.setSelection(spinnerIndex)
+            docproofRec = binding.spinnerProof.selectedItem.toString()
         })
-
-        binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
-            if(p>0){
-                proofTypeFilled = true
+        if (userPrefs.aadhaarNumber.isNullOrEmpty()) {
+            binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+                if (p > 0) {
+                    proofTypeFilled = true
+                }
             }
+            enableSubmitButton()
+        } else {
+            if(userPrefs.isGstsByPanNotRegistered){
+                binding.spinnerProof.setup(R.array.array_address__proof_type) { p, v ->
+                    if (p > 0) {
+                        proofTypeFilled = true
+                    }
+                }
+            }else{
+                binding.spinnerProof.setup(R.array.array_address__proof_type_aadhar_flow) { p, v ->
+                    if (p > 0) {
+                        proofTypeFilled = true
+                    }
+                }
+            }
+            enableSubmitButton()
         }
-        enableSubmitButton()
     }
-
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -454,7 +550,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
-        bundle.putInt(StepKey,1)
+        bundle.putInt(StepKey,2)
         navigationUtils.navigateKyc(this,true,bundle)
     }
 
@@ -517,6 +613,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     ) {
         uiUtils.hideProgress()
             val s3url= awsUtils.awsBasePath()
+            viewModel.documentProofUrl.clear()
+            uploadArray.clear()
             viewModel.documentProofUrl.add(s3url+path)
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()

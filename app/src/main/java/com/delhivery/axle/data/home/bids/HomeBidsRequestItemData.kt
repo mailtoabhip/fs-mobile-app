@@ -1,10 +1,12 @@
 package com.delhivery.axle.data.home.bids
 
+import android.R
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
@@ -74,6 +76,16 @@ data class HomeBidsRequestItemData(
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
   @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
+  @SerializedName("pickup_location_address") val pickupLocationAddress: String?,
+  @SerializedName("drop_location_address") val dropLocationAddress: String?,
+  @SerializedName("intermediary_pickup_stop1_address") val pickup1Address: String?,
+  @SerializedName("intermediary_pickup_stop1_pincode") val pickup1AddressPin: String?,
+  @SerializedName("intermediary_pickup_stop2_address") val pickup2Address: String?,
+  @SerializedName("intermediary_pickup_stop2_pincode") val pickup2AddressPin: String?,
+  @SerializedName("intermediary_stop1_address") val intermediaryStop1Address: String?,
+  @SerializedName("intermediary_stop1_pincode") val intermediaryStop1AddressPin: String?,
+  @SerializedName("intermediary_stop2_address") val intermediaryStop2Address: String?,
+  @SerializedName("intermediary_stop2_pincode") val intermediaryStop2AddressPin: String?,
   @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Pair<String?, String?>?>? =Triple(Pair(null, null), Pair(null, null), Pair(null, null)),
   @SerializedName("origin_city_code") var originCityCode: String? =null,
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
@@ -356,6 +368,10 @@ var lowestBid: Double? = 0.0,
   @DrawableRes
   fun requiredAtBg() =
     DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
+
+  @DrawableRes
+  fun requiredAtDraw() =
+    DrawableProviderUtils.daysDiffBgDrawableResDraw(_requiredOn, DatePatterns.OrionDateFormat)
 
   /**
    * Required at text color as per status

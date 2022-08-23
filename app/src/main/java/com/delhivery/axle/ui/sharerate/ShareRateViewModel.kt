@@ -1,5 +1,8 @@
  package com.delhivery.axle.ui.sharerate
 
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
+import android.provider.Settings.Secure
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.InventoryRepository
@@ -17,8 +20,12 @@ import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
+import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
+import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.JsonObject
 import java.io.File
 import javax.inject.Inject
@@ -50,7 +57,8 @@ class ShareRateViewModel @Inject constructor(
     var destination: CityModel? = null
     var tripDate:String? = null
     var proofType:String? = null
-    var documentProofUrl= mutableListOf<String>()
+    var bannerText:String? = userPrefs.bannerText
+  var documentProofUrl= mutableListOf<String>()
 
     fun fetchTruckType() {
         compositeDisposable += truckRepository.getTruckType()
@@ -145,5 +153,6 @@ class ShareRateViewModel @Inject constructor(
     }
 
   fun searchOffer(offerId:String) = appDB.offersDao().getOffers(offerId)
+
 
 }

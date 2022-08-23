@@ -46,6 +46,8 @@ import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

@@ -39,6 +39,7 @@ import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -632,6 +633,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             )
           }
         }
+      }
+      HomeLoadsShareRateAction ->{
+        analyticsUtil.trackEvent(
+            EVENT_CLICKED_PRICE_BANNER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
+        )
+        navigationUtils.navigate(ShareRateGetRewardsActivity::class.java)
       }
 
       HomeLoadsBannerAction -> {

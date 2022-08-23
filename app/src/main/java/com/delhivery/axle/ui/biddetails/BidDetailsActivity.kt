@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.biddetails
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -11,9 +12,10 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
@@ -21,9 +23,6 @@ import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -37,7 +36,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 /**
@@ -63,6 +61,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   var oldAmountbids =""
   var isFirstBid = false
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
+  var uploadArray:ArrayList<Pair<String, String?>> = ArrayList()
+  var stopArray:ArrayList<String> = ArrayList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -83,7 +83,24 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
      source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
 
+    val addressDetailAdapter : AddressDetailAdapter = AddressDetailAdapter(uploadArray)
+    binding.addresslist.apply {
+      layoutManager = LinearLayoutManager(applicationContext)
+      adapter = addressDetailAdapter
+    }
 
+
+    binding.seeMoreLay.setOnClickListener {
+      if(binding.addresslist.visibility == View.VISIBLE){
+        binding.addresslist.visibility = View.GONE
+        binding.firstItem.visibility = View.VISIBLE
+        binding.arr.rotation = 0F
+      }else if(binding.addresslist.visibility == View.GONE){
+        binding.addresslist.visibility = View.VISIBLE
+        binding.firstItem.visibility = View.GONE
+        binding.arr.rotation = 180F
+      }
+    }
 
   }
 
@@ -157,10 +174,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       }
     })
 
-    viewModel.truckGetLiveData.observe(this, Observer{
+    viewModel.truckGetLiveData.observe(this, Observer {
       uiUtils.hideProgress()
-      if(it!= null){
-        val pageTitle = if(it.second.bulkTransactionBids!= null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+      if (it != null) {
+        val pageTitle = if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
           for (transactionBid in it.second.bulkTransactionBids) {
             if (oldAmountbids.isNullOrEmpty()) {
@@ -170,44 +187,43 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
           }
           analyticsUtil.moEngageTrackEvent(
-              EVENT_BID_REVISE_INITIATED,
-              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
-              mutableListOf(
-                  it.second.uuid.toString(),viewModel.bidCount.toString(),
-                 viewModel.lowestBid.toString()
-              )
+                  EVENT_BID_REVISE_INITIATED,
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                  mutableListOf(
+                          it.second.uuid.toString(), viewModel.bidCount.toString(),
+                          viewModel.lowestBid.toString()
+                  )
           )
-          reviseInitiated=true
-        }else{
+          reviseInitiated = true
+        } else {
           analyticsUtil.moEngageTrackEvent(
-              EVENT_ORDER_DETAILS_BID_INITIATE,
-              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
-              mutableListOf(it.second.uuid.toString(), viewModel.bidCount.toString(),source)
+                  EVENT_ORDER_DETAILS_BID_INITIATE,
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                  mutableListOf(it.second.uuid.toString(), viewModel.bidCount.toString(), source)
           )
         }
-        if(it.second.truckUUID != null) {
+        if (it.second.truckUUID != null) {
           BulkBidDetailsCreateEditDialog(this@BidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
-            viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
+                  viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
           ).show()
-        }
-        else{
-          Toast.makeText(this, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
+        } else {
+          Toast.makeText(this, "No Vehicle Types Found", Toast.LENGTH_SHORT).show()
 
         }
       }
     })
 
     viewModel.editBulkLiveData.observe(this, Observer {
-      if(it.first == 10){
-        Toast.makeText(this,"Bids Created Successfully", Toast.LENGTH_SHORT).show()
+      if (it.first == 10) {
+        Toast.makeText(this, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
       }
-      if(it.first == 20){
-        Toast.makeText(this,"Bids Updated Successfully", Toast.LENGTH_SHORT).show()
+      if (it.first == 20) {
+        Toast.makeText(this, "Bids Updated Successfully", Toast.LENGTH_SHORT).show()
       }
-      if(it.first == 30){
-        Toast.makeText(this,"Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
+      if (it.first == 30) {
+        Toast.makeText(this, "Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
       }
-      if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
+      if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
         viewModel.fetchTransactionBids()
         viewModel.editFlg = mutableListOf(false, false, false)
       }
@@ -223,48 +239,49 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
 
     viewModel.indentLiveData.observe(this, Observer {
-        if(!it.isEmpty()){
-          runOnUiThread {
-            binding.textViaLabel.visibility = View.VISIBLE
-          if(it.containsKey(1)){
-           binding.textViaDestination.card1.visibility = View.VISIBLE
-            binding.textViaDestination.city1.text = it.get(1)
+      if (!it.isEmpty()) {
+        runOnUiThread {
+          binding.textViaLabel.visibility = View.VISIBLE
+
+          uploadArray.clear()
+
+          if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
           }
-          if(it.containsKey(2)){
-            binding.textViaDestination.card2.visibility = View.VISIBLE
-            binding.textViaDestination.city2.text = it.get(2)
+
+           val sortedList = it.sortedWith(compareBy({ it.first.first }))
+
+          val stopAdapter = StopAdapter(sortedList)
+          binding.stopList.apply {
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+            adapter = stopAdapter
           }
-          if(it.containsKey(3)){
-            binding.textViaDestination.card3.visibility = View.VISIBLE
-            binding.textViaDestination.city3.text = it.get(3)
+
+          val j = 0
+          for (i in sortedList) {
+            j + 1
+            uploadArray.add(Pair("Pickup Intermediary Stop", i.second + " " + i.third))
           }
-          if(it.containsKey(4)){
-            binding.textViaDestination.card4.visibility = View.VISIBLE
-            binding.textViaDestination.city4.text = it.get(4)
+
+          if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
           }
-          if(it.containsKey(5)){
-            binding.textViaDestination.card5.visibility = View.VISIBLE
-            binding.textViaDestination.city5.text = it.get(5)
+
+          if (!uploadArray.isEmpty()) {
+            binding.addressLay.visibility = View.VISIBLE
+            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.addresslist.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = addressDetailAdapter
+            }
+          } else {
+            binding.addressLay.visibility = View.GONE
           }
-          if(it.containsKey(6)){
-            binding.textViaDestination.card6.visibility = View.VISIBLE
-            binding.textViaDestination.city6.text = it.get(6)
-          }
-          if(it.containsKey(7)){
-            binding.textViaDestination.card7.visibility = View.VISIBLE
-            binding.textViaDestination.city7.text = it.get(7)
-          }
-          if(it.containsKey(8)){
-            binding.textViaDestination.card8.visibility = View.VISIBLE
-            binding.textViaDestination.city8.text = it.get(8)
-          }
-          if(it.containsKey(9)){
-            binding.textViaDestination.card9.visibility = View.VISIBLE
-            binding.textViaDestination.city9.text = it.get(9)
-          }
+
         }
       }
     })
+
 
     refreshData()
   }
@@ -273,6 +290,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     binding.error = false
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
+    uploadArray.clear()
   }
 
   /**
@@ -300,6 +318,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
+
+      binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,resources.getDrawable(t!!.requiredAtDraw()),null)
       binding.refreshing = false
       if (t != null) {
         t.let { _transaction ->
@@ -307,11 +327,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           binding.transaction = _transaction
 
           if(_transaction.isDMTIndent()){
-              binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
-           }
+            binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
+          }
 
           title = _transaction.tripDisplayName()
         }
+
+
+        binding.head.text = "Pickup Address"
+        binding.subHead.text = binding.transaction?.pickupLocationAddress
 
         if(binding.transaction?.indentOrigin.equals("LH")){
           if(binding.transaction?.indentHaltCenters.isNullOrEmpty()){
@@ -325,27 +349,46 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }else{
           var total = 0
 
+          if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          }
+
           if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
             total = total+1
             binding.textViaDestination.card1.visibility = View.VISIBLE
             binding.textViaDestination.city1.text = binding.transaction?.pickup1City
+            if(binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address))
+            }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
             total = total+1
             binding.textViaDestination.card2.visibility = View.VISIBLE
             binding.textViaDestination.city2.text = binding.transaction?.pickup2City
+            if(binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address))
+            }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+            if(total==0){
+              binding.textViaDestination.img3.visibility = View.GONE
+            }
             total = total+1
             binding.textViaDestination.card3.visibility = View.VISIBLE
             binding.textViaDestination.city3.text = binding.transaction?.stop1City
+            if(binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop1Address))
+            }
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
             total = total+1
             binding.textViaDestination.card4.visibility = View.VISIBLE
             binding.textViaDestination.city4.text = binding.transaction?.stop2City
+            if(binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop2Address))
+            }
           }
 
           if(total>0){
@@ -354,7 +397,23 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }else{
             binding.stopNo.text = "No Stops"
           }
+
+          if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Drop Address",binding.transaction?.dropLocationAddress))
+          }
+
+          if(!uploadArray.isEmpty()) {
+            binding.addressLay.visibility = View.VISIBLE
+            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.addresslist.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = addressDetailAdapter
+            }
+          }else{
+            binding.addressLay.visibility = View.GONE
+          }
         }
+
 
         bidEndingTime = binding.transaction!!.bidEndingTime.toString()
 
@@ -362,7 +421,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.error = true
         binding.containerError.title = "Session Time Out"
         binding.containerError.subTitle =
-          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+                "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
         binding.containerError.actionLabel = "REFRESH"
       }
       binding.executePendingBindings()
@@ -378,7 +437,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         when (state) {
           is BidDetailsUserBidState_PlaceBidFirst -> {
             ViewBidDetailsPlaceBidFirstBinding.inflate(
-                layoutInflater, binding.containerActions, false
+                    layoutInflater, binding.containerActions, false
             )
                     .apply {
                       if(binding.textBulkLoad.visibility == View.GONE) {
@@ -662,16 +721,16 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               data.let {
                 if(!it.bulkTransactionBids.isNullOrEmpty()) {
                   analyticsUtil.moEngageTrackEvent(
-                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
-                    mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source)
+                          EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                          mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source)
                   )
 
                 }else{
                   analyticsUtil.moEngageTrackEvent(
-                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
-                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-                    mutableListOf(viewModel.transactionId, source)
+                          EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
+                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+                          mutableListOf(viewModel.transactionId, source)
                   )
                 }
               }
@@ -685,10 +744,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
                     if (expectedArrivalPickup.isNullOrEmpty()) {
                       expectedArrivalPickup =
-                        transactionBid.expectedArrivalTimePickupRemark.toString()
+                              transactionBid.expectedArrivalTimePickupRemark.toString()
                     } else {
                       expectedArrivalPickup =
-                        expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+                              expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
                     }
                   }
                 }
@@ -698,15 +757,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 adapter = this@BidDetailsActivity.adapter
                 (adapter as BulkBidsRVAdapter).clearItems()
                 viewModel.getUserBulkBids(
-                    state.bids, state.lowestAndUserBidPair.second.let { it!!.bidAmount })
+                        state.bids, state.lowestAndUserBidPair.second.let { it!!.bidAmount })
 
               }
 
               btnReviseBidInsider.setOnClickListener {
                 analyticsUtil.moEngageTrackEvent(
-                    EVENT_NOT_LOWEST_BID_CTA,
-                    mutableListOf(PROPERTY_ORDER_ID),
-                    mutableListOf(data.uuid.toString())
+                        EVENT_NOT_LOWEST_BID_CTA,
+                        mutableListOf(PROPERTY_ORDER_ID),
+                        mutableListOf(data.uuid.toString())
                 )
                 bidDialog()
               }
@@ -714,32 +773,32 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 isFirstBid = false
                 if (!reviseInitiated) {
                   analyticsUtil.moEngageTrackEvent(
-                      EVENT_ORDER_DETAILS_BID_SUBMIT,
-                      mutableListOf(
-                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                          PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-                          PROPERTY_SOURCE
-                      ),
-                      mutableListOf(
-                          state.lowestAndUserBidPair.second?.transactionId ?: "",
-                          state.bidsCount.toString(),
-                          bidAmount,
-                          expectedArrivalPickup,
-                          source
-                      )
+                          EVENT_ORDER_DETAILS_BID_SUBMIT,
+                          mutableListOf(
+                                  PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                                  PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                                  PROPERTY_SOURCE
+                          ),
+                          mutableListOf(
+                                  state.lowestAndUserBidPair.second?.transactionId ?: "",
+                                  state.bidsCount.toString(),
+                                  bidAmount,
+                                  expectedArrivalPickup,
+                                  source
+                          )
                   )
                 } else {
                   analyticsUtil.moEngageTrackEvent(
-                      EVENT_BID_REVISE_SUBMITTED,
-                      mutableListOf(
-                          PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                          PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
-                      ),
-                      mutableListOf(
-                          state.lowestAndUserBidPair.second?.transactionId ?: "",
-                          state.bidsCount.toString() ?: "", state?.lowestAndUserBidPair.first?.bidAmount.toString() ?: " ",
-                          oldAmountbids, bidAmount
-                      )
+                          EVENT_BID_REVISE_SUBMITTED,
+                          mutableListOf(
+                                  PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                                  PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
+                          ),
+                          mutableListOf(
+                                  state.lowestAndUserBidPair.second?.transactionId ?: "",
+                                  state.bidsCount.toString() ?: "", state?.lowestAndUserBidPair.first?.bidAmount.toString() ?: " ",
+                                  oldAmountbids, bidAmount
+                          )
                   )
                   reviseInitiated = false
                 }
@@ -753,15 +812,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         }?.let { _binding ->
           /* bidding ended */
           binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
-         binding.containerActions.apply {
-          removeAllViews()
+          binding.containerActions.apply {
+            removeAllViews()
             addView(_binding.root)
           }
         }
       }
     }
   }
-
   override fun onBackPressed() {
     userPrefs.setPreviousScreen(this.javaClass.name)
     super.onBackPressed()
@@ -774,49 +832,48 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     when (viewModel.userPrefs.canBid()) {
       APPROVED -> {
         binding.transaction?.let {
-          if(viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
+          if (viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
             uiUtils.showProgress()
             viewModel.fetchTruckType(it);
-          }
-          else{
-            if(it.transactionBid==null){
+          } else {
+            if (it.transactionBid == null) {
               analyticsUtil.moEngageTrackEvent(
-                  EVENT_ORDER_DETAILS_BID_INITIATE,
-                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
-                  mutableListOf(it?.uuid ?:"",viewModel.bidCount.toString(),source)
+                      EVENT_ORDER_DETAILS_BID_INITIATE,
+                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
+                      mutableListOf(it?.uuid ?: "", viewModel.bidCount.toString(), source)
               )
-              reviseInitiated=false
-            }else{
+              reviseInitiated = false
+            } else {
               analyticsUtil.moEngageTrackEvent(
-                  EVENT_BID_REVISE_INITIATED,
-                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
-                  mutableListOf(
-                      it?.uuid.toString(), viewModel.bidCount.toString(),
-                    viewModel.lowestBid.toString()
-                  )
+                      EVENT_BID_REVISE_INITIATED,
+                      mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+                      mutableListOf(
+                              it?.uuid.toString(), viewModel.bidCount.toString(),
+                              viewModel.lowestBid.toString()
+                      )
               )
-             reviseInitiated=true
+              reviseInitiated = true
             }
             BidDetailsCreateEditDialog(
-                    this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs , fromPage = "load_detail"
+                    this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs, fromPage = "load_detail"
             ).show()
           }
         }
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_not_approved,
+                string.msg_dialog_supplier_not_approved,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
-            { callHelpline() }, { sendMail() }
+                string.title_dialog_supplier_disabled,
+                string.msg_dialog_supplier_disabled,
+                getString(string.label_call_us), getString(string.label_mail_us),
+                { callHelpline() }, { sendMail() }
         )
       }
     }
@@ -827,7 +884,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       EXPAND_CARD -> {
         val bidData = item.data as BulkBidSummaryItemData
         bidData.expanded = !bidData.expanded
-        BidDetailsViewModel.truckNumTextViewAdded =!BidDetailsViewModel.truckNumTextViewAdded
+        BidDetailsViewModel.truckNumTextViewAdded = !BidDetailsViewModel.truckNumTextViewAdded
         adapter.notifyItemChanged(position)
       }
       OPEN_CONFIRMED_BID -> {
@@ -849,16 +906,16 @@ private const val ActiveBid= "active_bid"
  * Bid details intent
  */
 fun bidDetailsIntent(
-  transactionId: String,
-  context: Context,
-  requestType:String?=null,
-  fromBidsPage:Boolean = false,
-  active:Boolean = false,
-  source:String?= VALUE_APP_FLOW
+        transactionId: String,
+        context: Context,
+        requestType:String?=null,
+        fromBidsPage:Boolean = false,
+        active:Boolean = false,
+        source:String?= VALUE_APP_FLOW
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
-  putExtra(RequestTypeIntentKey, requestType)
+    putExtra(RequestTypeIntentKey, requestType)
   putExtra(FromPage,fromBidsPage)
   putExtra(ActiveBid,active)
   putExtra(PROPERTY_SOURCE,source)

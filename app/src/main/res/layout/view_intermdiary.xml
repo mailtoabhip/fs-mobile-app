@@ -30,6 +30,7 @@
                     />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:orientation="horizontal"
@@ -220,7 +221,6 @@
                     tools:text="Panjim"
                     />
             </LinearLayout>
-
 
             <LinearLayout
                 android:layout_width="wrap_content"

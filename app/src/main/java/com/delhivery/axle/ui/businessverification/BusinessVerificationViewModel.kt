@@ -124,7 +124,8 @@ class BusinessVerificationViewModel@Inject constructor(
                 .subscribe { _res, error ->
                     if (!error) {
                         userPrefs.ownedTruck= ownedTruck.value.toString()
-                        userUpdateLiveData.postValue(true)
+                      userPrefs.businessDocType=selected.value.toString()
+                      userUpdateLiveData.postValue(true)
                         userPrefs.isTruckingDocumentUploaded=true
                     } else{
                         error.handle()
@@ -142,6 +143,7 @@ class BusinessVerificationViewModel@Inject constructor(
             .subscribe { _res, error ->
                 if (!error) {
                     userPrefs.rcNumber=rc
+                    userPrefs.businessDocType=selected.value.toString()
                     userPrefs.attachedTruck=attachedTruck.value.toString()
                     userUpdateLiveData.postValue(true)
                 } else{
@@ -156,7 +158,8 @@ class BusinessVerificationViewModel@Inject constructor(
     fun verifyByDoc(docList:List<String>) {
         if (!isConnected) return
        if(selected.value.equals("rc")) {
-           uploadDocForVerification(
+         userPrefs.businessDocType=selected.value.toString()
+         uploadDocForVerification(
                VerificationDocUploadRequest(
                    verificationId = truckNumber.value,
                    proofDocumentType = selected.value,
@@ -164,7 +167,8 @@ class BusinessVerificationViewModel@Inject constructor(
                )
            )
        }else{
-           uploadDocForVerification(
+         userPrefs.businessDocType=selected.value.toString()
+         uploadDocForVerification(
                VerificationDocUploadRequest(
                    proofDocumentType = selected.value,
                    documentUrls = docList

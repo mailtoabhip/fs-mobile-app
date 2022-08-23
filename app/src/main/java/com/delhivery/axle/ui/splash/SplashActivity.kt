@@ -236,11 +236,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }
               try{
               viewModel.saveLoadPostKycConfig(
-                  remoteConfig.getString("post_load")
+                  remoteConfig.getString("onboarding_order")
               )
                   viewModel.saveTruckPostKycConfig(
-                      remoteConfig.getString("post_truck")
+                      remoteConfig.getString("onboarding_order")
                   )
+                viewModel.saveBannerTextConfig(
+                    remoteConfig.getString("advert_share_rate_page_banner_text")
+                )
+                viewModel.saveShareBannerH1Config(
+                    remoteConfig.getString("advert_share_rate_banner_h1")
+                )
+                viewModel.saveShareBannerH2Config(
+                    remoteConfig.getString("advert_share_rate_banner_h2")
+                )
+                viewModel.saveShareBannerH3Config(
+                    remoteConfig.getString("advert_share_rate_banner_h3")
+                )
           } catch (e: Exception) {
             //Do Nothing
         }

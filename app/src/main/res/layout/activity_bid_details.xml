@@ -9,6 +9,10 @@
         name="viewModel"
         type="com.delhivery.axle.ui.biddetails.BidDetailsViewModel"
         />
+    <variable
+        name="activity"
+        type="com.delhivery.axle.ui.biddetails.BidDetailsActivity"
+        />
 
     <variable
         name="transaction"
@@ -35,8 +39,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:animateLayoutChanges="true"
-      android:orientation="vertical"
-      >
+      android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -59,17 +62,13 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:visibility="@{!error ? View.VISIBLE : View.GONE }"
-        tools:visibility="visible"
-        >
-
+        tools:visibility="visible">
       <androidx.core.widget.NestedScrollView
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:fillViewport="true"
-          >
-
+          android:fillViewport="true">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container"
             android:layout_width="match_parent"
@@ -93,14 +92,15 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_source"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
                 android:text="@{transaction.originDistrictCityState()}"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="North Goa\nPanjim, Goa"
@@ -113,8 +113,9 @@
                 android:orientation="vertical"
                 android:layout_marginStart="@dimen/size_4dp"
                 android:layout_marginEnd="@dimen/size_4dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/text_destination"
                 android:layout_height="wrap_content">
               <TextView
@@ -142,21 +143,23 @@
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintTop_toBottomOf="@id/text_load_details"
                   bind:drawableResId="@{ transaction.requiredAtBg() }"
+                  android:drawablePadding="@dimen/size_4dp"
                   tools:background="@drawable/bg_date_today"
                   tools:text="TODAY"
                   />
+
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_destination"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_2dp"
                 android:fontFamily="sans-serif"
                 android:text="@{transaction.destinationDistrictCityState()}"
                 android:textColor="@color/heading_black"
                 android:textAlignment="textEnd"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Andheri east\nMumbai, Maharashtra"
@@ -176,14 +179,26 @@
                 app:layout_constraintTop_toBottomOf="@id/text_destination"
                 />
 
-            <include
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/text_via_destination"
+                android:id="@+id/stopLay"
                 android:layout_marginTop="@dimen/size_2dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_via_label"
-               android:layout_height="wrap_content"
-                layout="@layout/view_intermdiary" />
+                android:layout_height="wrap_content">
+
+              <androidx.recyclerview.widget.RecyclerView
+                  android:layout_width="wrap_content"
+                  android:id="@+id/stopList"
+                  android:layout_height="wrap_content"/>
+
+              <include
+                  android:layout_width="match_parent"
+                  android:id="@+id/text_via_destination"
+                 android:layout_height="wrap_content"
+                  layout="@layout/view_intermdiary" />
+            </LinearLayout>
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_load_details"
@@ -220,6 +235,112 @@
                 android:textColor="@color/bid_placed_red"
                 tools:text="Bulk Load: 200MT"/>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:id="@+id/addressLay"
+                app:layout_constraintTop_toBottomOf="@+id/text_target_price"
+                android:layout_height="wrap_content">
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:layout_width="wrap_content"
+                  android:id="@+id/haddress"
+                  android:textSize="@dimen/text_12sp"
+                  android:textStyle="bold"
+                  android:textColor="@color/heading_black"
+                  android:text="@string/label_additional_details"
+                  android:layout_height="wrap_content"/>
+
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:layout_below="@+id/haddress"
+                  android:id="@+id/listFlip"
+                  android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/firstItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" >
+
+                  <ImageView
+                      android:layout_width="wrap_content"
+                      app:srcCompat="@drawable/ic_ellipse_1"
+                      android:layout_height="wrap_content"/>
+
+                  <View
+                      android:id="@+id/color_bar"
+                      android:layout_width="1dp"
+                      android:layout_height="match_parent"
+                      android:layout_marginStart="-4dp"
+                      android:layout_marginTop="@dimen/size_8dp"
+                      android:background="@drawable/bg_ver_line" />
+
+
+                  <LinearLayout
+                      android:layout_width="0dp"
+                      android:orientation="vertical"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/head"
+                        android:textSize="@dimen/text_12sp"
+                        android:textColor="#9CA7AE"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+
+                    <TextView
+                        android:id="@+id/subHead"
+                        android:layout_marginTop="@dimen/size_6dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_12sp"
+                        android:layout_marginBottom="@dimen/size_8dp"
+                        android:textColor="@color/faded_black"
+                        android:layout_marginStart="8dp" />
+
+                  </LinearLayout>
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:id="@+id/addresslist"
+                    android:visibility="gone"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_height="wrap_content"/>
+
+              </LinearLayout>
+
+
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:gravity="center"
+                  android:id="@+id/seeMoreLay"
+                  android:layout_centerHorizontal="true"
+                  android:layout_below="@+id/listFlip"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/seeMore"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="@color/colorAccent"
+                   android:text="@string/label_add_address_details"
+                    android:layout_height="wrap_content"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/arr"
+                    android:layout_marginStart="@dimen/size_4dp"
+                    app:srcCompat="@drawable/ic_vector_down"
+                    android:layout_height="wrap_content"/>
+              </LinearLayout>
+
+
+            </RelativeLayout>
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_truck_details"
                 android:layout_width="wrap_content"
@@ -244,7 +365,7 @@
                 android:layout_marginEnd="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_16dp"
                 app:srcCompat="@{ transaction.truckTypeDrawableRes() }"
-                app:layout_constraintTop_toBottomOf="@id/text_via_destination"
+                app:layout_constraintTop_toBottomOf="@id/stopLay"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:srcCompat="@drawable/ic_closed_truck"
                 />
@@ -311,7 +432,7 @@
                 android:textSize="@dimen/text_12sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_load_details"
+                app:layout_constraintTop_toBottomOf="@id/text_bulk_load"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -356,10 +477,8 @@
               android:paddingTop="@dimen/size_4dp"
               />
         </androidx.appcompat.widget.LinearLayoutCompat>
-
       </androidx.core.widget.NestedScrollView>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   </androidx.appcompat.widget.LinearLayoutCompat>
-</layout>
+ </layout>

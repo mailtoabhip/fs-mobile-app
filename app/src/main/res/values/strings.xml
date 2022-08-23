@@ -378,7 +378,7 @@
   <string name="label_active">Active</string>
   <string name="label_lost">Bid Lost</string>
   <string name="label_cancel">Bid Cancelled</string>
-  <string name="label_pending">Bid Won- Confirmation Pending</string>
+  <string name="label_pending">Bid Won\nConfirmation Pending</string>
   <string name="label_confirm">Order Confirmed</string>
   <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
   <string name="label_origin_destination">Origin &amp; Destination</string>
@@ -391,6 +391,9 @@
   <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
   <string name="label_rate_banner">Add trip rates and earn reward</string>
   <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
+  <string name="label_additional_details">Additional Details</string>
+  <string name="label_add_address_details">See Address Details</string>
+  <string name="label_pod_address">Delhivery Ltd. Goa HQ Office, Plot no. 59/A-1, 59/A-2, Pilerne Industrial Estate, Pilerne, Bardez, Goa 403114</string>
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
@@ -424,7 +427,7 @@
   <string name="sub_label_step3_3">Step 3 of 3</string>
   <string name="label_identity_verification">Identity Verification</string>
   <string name="label_pan_details">PAN details </string>
-  <string name="label_aadhaar">Aadhar details </string>
+  <string name="label_aadhaar">Aadhaar details </string>
   <string name="label_communication_address">Office address </string>
   <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
   <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
@@ -434,7 +437,7 @@
   <string name="label_gst_dialog_option1">Verify via OTP</string>
   <string name="label_gst_dialog_option2">Upload GST document</string>
   <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
-  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhar mobile number</string>
+  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhaar mobile number</string>
   <string name="label_attach_image">Attach Image From</string>
   <string name="label_camera">Camera</string>
   <string name="label_files">Files</string>
@@ -608,7 +611,11 @@
   <string name="get_load_offers">Get first preference for Loads by \nadding your truck details</string>
   <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
   <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
+  <string name="sharing_rate_text">By sharing rates for trucks placed in the last 7 days</string>
+  <string name="sharing_rate">₹500</string>
+  <string name="sharing_rate_rupee">/rate </string>
   <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
+  <string name="earn_cash_reward">Earn cash rewards upto</string>
   <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion-dev.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion-dev.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
   <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
@@ -625,6 +632,8 @@
   <string name="select_a_route">Select a route to share the rates</string>
   <string name="share_proof">Share proof not older than 7 days</string>
   <string name="rejected_due">Rejected due to </string>
+  <string name="price_banner_text">Earn ₹500 on this lane offer</string>
+  <string name="share_rate">Share Rate</string>
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>
@@ -641,10 +650,20 @@
   <string-array name="array_address__proof_type">
     <item>Choose Proof Document</item>
     <item>Visiting Card</item>
-    <item>LR Copy</item>
+    <item>LR Copy/Loading Note</item>
     <item>Letter Head</item>
     <item>Udyog Aadhaar Certificate</item>
     <item>Shop &amp; Establishment Certificate</item>
+  </string-array>
+
+  <string-array name="array_address__proof_type_aadhar_flow">
+    <item>Choose Proof Document</item>
+    <item>Visiting Card</item>
+    <item>LR Copy/Loading Note</item>
+    <item>Letter Head</item>
+    <item>Udyog Aadhaar Certificate</item>
+    <item>Driving Licence</item>
+    <item>RC copy</item>
   </string-array>
 
   <string-array name="array_occupation_post_truck">

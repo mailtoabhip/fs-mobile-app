@@ -198,8 +198,20 @@ class NavigationUtils @Inject constructor(
        }
       if(userPrefs.retryVerification){
           if(userPrefs.retryVerificationOnBack){
-              if(extras.getInt(StepKey)==2){
-                  if(userPrefs.addressRejectReason.isNotNullOrEmpty()){
+            if(kycSteps.get(extras.getInt(StepKey))=="address"){
+              if(userPrefs.addressRejectReason.isNotNullOrEmpty()){
+                extras.putInt(StepKey,3)
+              } else if(userPrefs.rcRejectReason.isNotNullOrEmpty()){
+                extras.putInt(StepKey,2)
+              } else if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
+                extras.putInt(StepKey,1)
+              }else if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
+                extras.putInt(StepKey, 0)
+              }else{
+                backToHome=true
+              }
+            }else if(kycSteps.get(extras.getInt(StepKey))=="business"){
+                  if(userPrefs.rcRejectReason.isNotNullOrEmpty()){
                       extras.putInt(StepKey,2)
                   } else if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
                       extras.putInt(StepKey,1)
@@ -208,7 +220,7 @@ class NavigationUtils @Inject constructor(
                   }else{
                       backToHome=true
                   }
-              }else if(extras.getInt(StepKey)==1){
+              }else if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
                   if(userPrefs.identityRejectReason.isNotNullOrEmpty()){
                       extras.putInt(StepKey,1)
                   }else if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
@@ -216,7 +228,7 @@ class NavigationUtils @Inject constructor(
                   }else{
                        backToHome=true
                    }
-              }else if(extras.getInt(StepKey)==0){
+              }else if(kycSteps.get(extras.getInt(StepKey))=="pan"){
                   if(userPrefs.panRejectReason.isNotNullOrEmpty()) {
                       extras.putInt(StepKey, 0)
                   }else{
@@ -229,10 +241,10 @@ class NavigationUtils @Inject constructor(
                   extras.putInt(StepKey, 0)
               } else if (userPrefs.identityRejectReason.isNotNullOrEmpty() && !(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification"))) {
                   extras.putInt(StepKey, 1)
-              } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()&& !(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+              }  else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && !(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification"))) {
                   extras.putInt(StepKey, 2)
-              } else if (userPrefs.rcRejectReason.isNotNullOrEmpty() && !(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")) &&kycSteps.size > 3) {
-                  extras.putInt(StepKey, 3)
+              } else if (userPrefs.addressRejectReason.isNotNullOrEmpty()&& !(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification"))) {
+                extras.putInt(StepKey, 3)
               } else {
                 retryDone=true
                 userPrefs.verificationStatus="pending"

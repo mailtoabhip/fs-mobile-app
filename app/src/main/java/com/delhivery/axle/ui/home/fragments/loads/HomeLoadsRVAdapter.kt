@@ -51,6 +51,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Count -> ViewHomeSummaryItemBinding.inflate(inflater, parent, false)
     Banners -> ViewHomeLoadsTruckBannerItemBinding.inflate(inflater, parent, false)
    Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
+    ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -65,6 +66,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeSummaryItemBinding -> HomeLoadsMoreInfoItemVH.HomeLoadsSummaryItemVH(binding)
     is ViewHomeLoadsTruckBannerItemBinding->HomeLoadsAddTruckItemVH(binding)
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
+    is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -84,6 +86,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsMoreInfoItemVH.HomeLoadsSummaryItemVH -> holder.bind(item as HomeLoadsSummaryItem, _interface)
       is HomeLoadsAddTruckItemVH -> holder.bind(item as HomeLoadsAddTruckItem, _interface)
       is HomeLoadsTruckPriorityItemVH -> holder.bind(item as HomeLoadsTruckPriorityAccessItem, _interface)
+      is HomeLoadsShareRateItemVH -> holder.bind(item as HomeLoadsShareRateItem, _interface)
     }
   }
 
