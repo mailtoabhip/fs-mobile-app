@@ -536,7 +536,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                                           PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,
                                           PROPERTY_ORDER_LOWEST_BID_VALUE,
                                           PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
-                                    PROPERTY_SOURCE
+                                          PROPERTY_SOURCE
                                   ),
                                   mutableListOf(
                                           state.lowestAndUserBidPair.second?.transactionId ?: "",
@@ -794,7 +794,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                           mutableListOf(
                                   PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
                                   PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
-                            PROPERTY_SOURCE
+                                  PROPERTY_SOURCE
                           ),
                           mutableListOf(
                                   state.lowestAndUserBidPair.second?.transactionId ?: "",
