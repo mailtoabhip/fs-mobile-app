@@ -379,11 +379,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.TruckPostKyc, value)
             .apply()
     get() = prefs.getString(PrefKeys.TruckPostKyc , " ") ?: ""
-  var bannerText: String
-    set(value) = editor.putString(PrefKeys.BannerText, value)
-        .apply()
-    get() = prefs.getString(PrefKeys.BannerText , " ") ?: ""
-
   var shareRateBannerH1: String
     set(value) = editor.putString(PrefKeys.ShareRateBannerH1, value)
         .apply()
@@ -1252,7 +1247,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ParentDemandType = "parent_demand_type"
     const val LoadPostKyc = "post_load"
     const val TruckPostKyc = "post_truck"
-    const val BannerText = "banner_text"
     const val ShareRateBannerH1 = "share_rate_banner_h1"
     const val ShareRateBannerH2 = "share_rate_banner_h2"
     const val ShareRateBannerH3 = "share_rate_banner_h3"

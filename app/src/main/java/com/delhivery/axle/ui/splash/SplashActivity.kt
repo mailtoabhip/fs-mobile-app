@@ -241,9 +241,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                   viewModel.saveTruckPostKycConfig(
                       remoteConfig.getString("onboarding_order")
                   )
-                viewModel.saveBannerTextConfig(
-                    remoteConfig.getString("advert_share_rate_page_banner_text")
-                )
                 viewModel.saveShareBannerH1Config(
                     remoteConfig.getString("advert_share_rate_banner_h1")
                 )
