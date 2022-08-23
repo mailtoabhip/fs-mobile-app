@@ -86,7 +86,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop1_pincode") val intermediaryStop1AddressPin: String?,
   @SerializedName("intermediary_stop2_address") val intermediaryStop2Address: String?,
   @SerializedName("intermediary_stop2_pincode") val intermediaryStop2AddressPin: String?,
-  @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Pair<String?, String?>?>? =Triple(Pair(null, null), Pair(null, null), Pair(null, null)),
+  @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Triple<String?, String?,String?>?>? =Triple(Pair(null, null), Pair(null, null), Triple(null, null,null)),
   @SerializedName("origin_city_code") var originCityCode: String? =null,
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
 var lowestBid: Double? = 0.0,

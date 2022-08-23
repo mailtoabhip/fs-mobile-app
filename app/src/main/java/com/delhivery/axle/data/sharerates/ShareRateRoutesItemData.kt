@@ -12,7 +12,9 @@ data class ShareRateRoutesItemData(
   @SerializedName("truck_display_name") val truckDisplayName: String?=null,
   @SerializedName("offer_type") val offerType: String?=null,
   @SerializedName("status") val status: String?=null,
-  @SerializedName("id") val offerId: String?=null
+  @SerializedName("id") val offerId: String?=null,
+  @SerializedName("amount") val amount: String?=null
+
 
 ): BaseKeyTypeModel<String>() {
   override fun key() = originCityCode + ":" + destinationCityCode + ":" + truckDisplayName

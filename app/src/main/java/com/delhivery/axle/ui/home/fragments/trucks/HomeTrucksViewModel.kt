@@ -342,9 +342,9 @@ class HomeTrucksViewModel @Inject constructor(
     fun fetchDatabaseOffers(data: HomeTrucksRequestItemData?){
         val lrt = appDatabase.offersDao().getParticularsOffers(data?.currentCityCode, data?.unloadingDestinationCode)
         if(!lrt.isNullOrEmpty() && lrt.size>0){
-            data?.resOffer = Triple(Pair(true, lrt.get(0).offerId),data?.truckSize, lrt[0].tdn)
+            data?.resOffer = Triple(Pair(true, lrt.get(0).offerId),data?.truckSize, Pair(lrt[0].tdn,lrt[0].amt.toString()))
         }else{
-            data?.resOffer = Triple(Pair(false, null),null, null)
+            data?.resOffer = Triple(Pair(false, null),null, Pair(null,null))
         }
         offeLiveData.postValue(data)
     }

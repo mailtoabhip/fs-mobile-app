@@ -95,9 +95,11 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
         bundle.putString("truckCapacity",null)
         bundle.putString("itemTD",  data.truckDisplayName)
         bundle.putString("offerTD",  data.truckDisplayName)
-          bundle.putString("offerid",  data.offerId)
+        bundle.putString("offerid",  data.offerId)
+        bundle.putString("amt",  data.amount)
 
-          analyticsUtil.trackEvent(
+
+        analyticsUtil.trackEvent(
                   EVENT_CLICKED_OFFER,
                   mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
                   mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "profile_screen",  data.offerId?:"")

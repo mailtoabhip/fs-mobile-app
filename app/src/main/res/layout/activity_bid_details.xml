@@ -103,6 +103,7 @@
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_forward"
                 tools:text="North Goa\nPanjim, Goa"
                 />
 
@@ -162,6 +163,7 @@
                 android:textSize="@dimen/text_14sp"
                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_forward"
                 tools:text="Andheri east\nMumbai, Maharashtra"
                 />
 

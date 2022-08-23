@@ -200,7 +200,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   }
 
 
-  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?) {
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?,amount:String?) {
     val bundle = Bundle()
     bundle.putString("originname", data?.origin)
     bundle.putString("destname", data?.destination)
@@ -212,6 +212,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     bundle.putString("itemTD", itemTD)
     bundle.putString("offerTD", offerTD)
     bundle.putString("offerid", offerid)
+    bundle.putString("amt", amount)
 
     analyticsUtil.trackEvent(
             EVENT_CLICKED_OFFER,

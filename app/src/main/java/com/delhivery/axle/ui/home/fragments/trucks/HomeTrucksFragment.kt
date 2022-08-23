@@ -882,7 +882,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
        totalTruck = total
     }
 
-    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?, offerid: String?) {
+    override fun callShareRate(data: HomeTrucksRequestItemData?, itemTD: String?, offerTD: String?, offerid: String?,amt:String?) {
         val bundle = Bundle()
         bundle.putString("originname", data?.currentCityName)
         bundle.putString("destname", data?.unloadingDestination)
@@ -894,6 +894,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         bundle.putString("itemTD", itemTD)
         bundle.putString("offerTD", offerTD)
         bundle.putString("offerid", offerid)
+        bundle.putString("amt", amt)
 
         analyticsUtil.trackEvent(
                 EVENT_CLICKED_OFFER,

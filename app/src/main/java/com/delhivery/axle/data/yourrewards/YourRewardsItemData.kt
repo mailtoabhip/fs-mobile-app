@@ -44,6 +44,7 @@ data class YourRewardsItemData(
   @SerializedName("utr_number") val utr: String?=null,
   @SerializedName("payment_date") val paymentDate: String?=null,
   @SerializedName("sort_key") val sortKey: String?=null,
+  @SerializedName("advertised_rate_message") val advertisedRateMessage: String?=null,
   @SerializedName("update_required") val updateRequired: Boolean?=false,
   var isFullDetailsEnabled:Boolean = false
 
