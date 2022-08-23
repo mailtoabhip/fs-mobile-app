@@ -122,10 +122,6 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
             binding.rateMore.visibility = View.GONE
            _interface.callRewards()
         }
-
-        val total = _interface.gettotal()
-
-        val pos = adapterPosition.minus(3)
     }
 }
 
