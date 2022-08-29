@@ -392,7 +392,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         .apply()
     get() = prefs.getString(PrefKeys.ShareRateBannerH3 , " ") ?: ""
 
-    /**
+  var podAddress: String
+    set(value) = editor.putString(PrefKeys.PodAddress, value)
+        .apply()
+    get() = prefs.getString(PrefKeys.PodAddress , " ") ?: ""
+
+
+  /**
      * identity doc url
      */
     var identityDocUrl: String
@@ -1250,6 +1256,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ShareRateBannerH1 = "share_rate_banner_h1"
     const val ShareRateBannerH2 = "share_rate_banner_h2"
     const val ShareRateBannerH3 = "share_rate_banner_h3"
+    const val PodAddress = "pod_address"
     const val UserRole = "user_role"
     const val UserMode = "user_mode"
     const val IsUserVerfied = "is_user_verified"

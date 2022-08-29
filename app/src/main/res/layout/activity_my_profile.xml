@@ -670,7 +670,7 @@
                     android:layout_marginTop="@dimen/size_12dp"
                     android:id="@+id/podaddress"
                     android:visibility="gone"
-                    android:text="@string/label_pod_address"
+                    android:text="@{viewModel.podAddress}"
                     android:layout_below="@+id/podtv"
                     android:layout_marginEnd="@dimen/size_16dp"
                     android:textColor="@color/heading_black"

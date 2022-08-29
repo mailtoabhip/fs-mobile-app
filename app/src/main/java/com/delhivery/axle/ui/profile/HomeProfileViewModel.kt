@@ -33,6 +33,7 @@ class HomeProfileViewModel @Inject constructor(
   var verificationStatus = MutableLiveData<String>()
 
   var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
+  var podAddress:String=userPrefs.podAddress?:""
 
   /* states */
   var stateLiveData = MutableLiveData<ProfileUIState>()
