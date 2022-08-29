@@ -25,6 +25,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
+import kotlin.math.log
 
 /**
  * View model for [BidDetailsActivity]
@@ -50,15 +51,17 @@ class BidDetailsViewModel @Inject constructor(
 
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
-    var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
+  var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
-    var analyticsBucket :Boolean = false
+  var analyticsBucket :Boolean = false
 
-    var indentLiveData = MutableLiveData<ArrayList<Triple<Pair<Int,String?>,String?, String?>>>()
-    var bidCount =0
-    var lowestBid:Double?=0.0
-    var restrictEventTrigger :Boolean=true
-    var refreshCalled :Boolean=false
+  var indentLiveData = MutableLiveData<ArrayList<Triple<Pair<Int,String?>,String?, String?>>>()
+  var bidCount =0
+  var lowestBid:Double?=0.0
+  var restrictEventTrigger :Boolean=true
+  var refreshCalled :Boolean=false
+  var statusConfirmationPending =MutableLiveData<Boolean>()
+
 
     companion object{
     var truckNumTextViewAdded :Boolean=false
@@ -113,7 +116,6 @@ class BidDetailsViewModel @Inject constructor(
   fun fetchTransactionBids( action: Boolean = false) {
     compositeDisposable += bidsRepository.transactionBids(transactionId)
         .onBackground()
-        .bidsProgress()
         .subscribe { _bRes, error ->
           if (!error) {
             bidCount=_bRes.third
@@ -145,7 +147,16 @@ class BidDetailsViewModel @Inject constructor(
                   when (_bRes.first.first!!.status()) {
                       Accepted -> {
                           bidPriceLiveData.postValue(_bRes.first.first)
+                        if(_bRes?.first?.first?.clientConfirmationPending!=null){
+                          if(_bRes?.first?.first?.clientConfirmationPending==true){
+                            fetchTripDetails()
+                          }else{
+                           //state for order pending
+                            statusConfirmationPending.postValue(true)
+                          }
+                        }else{
                           fetchTripDetails()
+                        }
                       }
                       Rejected -> {
                           try {
@@ -156,7 +167,6 @@ class BidDetailsViewModel @Inject constructor(
                                       )
                               )
                           } catch (e: Exception) {
-
                           } finally {
                               bidPriceLiveData.postValue(null)
                           }

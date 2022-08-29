@@ -173,7 +173,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         adapter.operation(it)
       }
     })
-
+    viewModel.statusConfirmationPending.observe(this, Observer {
+      if (it){
+        binding.status.visibility=View.VISIBLE
+        binding.status.text =resources.getString(R.string.label_pending)
+        binding.status.setTextColor(resources.getColor(R.color.pending))
+      }
+    })
     viewModel.truckGetLiveData.observe(this, Observer {
       uiUtils.hideProgress()
       if (it != null) {
@@ -319,7 +325,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
 
-      binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,resources.getDrawable(t!!.requiredAtDraw()),null)
       binding.refreshing = false
       if (t != null) {
         t.let { _transaction ->
@@ -331,6 +336,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
 
           title = _transaction.tripDisplayName()
+          binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,resources.getDrawable(_transaction!!.requiredAtDraw()),null)
         }
 
 
@@ -626,9 +632,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     }
           }
           is BidDetailsUserBidState_LoadingBids -> {
-            ViewBidDetailsLoadingBidsBinding.inflate(
-                    layoutInflater, binding.containerActions, false
-            )
+              ViewBidDetailsLoadingBidsBinding.inflate(
+                  layoutInflater, binding.containerActions, false
+              )
           }
           is BidDetailsUserBidState_ConfirmedBid -> {
             ViewBidDetailsConfirmedBidBinding.inflate(
