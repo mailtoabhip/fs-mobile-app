@@ -250,6 +250,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                 viewModel.saveShareBannerH3Config(
                     remoteConfig.getString("advert_share_rate_banner_h3")
                 )
+                viewModel.savePodAddress(
+                    remoteConfig.getString("pod_address")
+                )
           } catch (e: Exception) {
             //Do Nothing
         }

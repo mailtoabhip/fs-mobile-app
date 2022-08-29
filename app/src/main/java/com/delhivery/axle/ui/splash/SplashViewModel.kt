@@ -53,6 +53,9 @@ class SplashViewModel @Inject constructor(
   fun saveShareBannerH3Config(bannerText:String){
     userPrefs.shareRateBannerH3 = bannerText
   }
+  fun savePodAddress(podAddress:String){
+    userPrefs.podAddress=podAddress
+  }
 
   fun getOldUser():Boolean{
     return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)
