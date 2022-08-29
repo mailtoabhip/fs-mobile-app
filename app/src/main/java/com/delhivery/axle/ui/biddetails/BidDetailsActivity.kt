@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -336,7 +337,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
 
           title = _transaction.tripDisplayName()
-          binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,resources.getDrawable(_transaction!!.requiredAtDraw()),null)
+          binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,ContextCompat.getDrawable(this@BidDetailsActivity,_transaction!!.requiredAtDraw()),null)
         }
 
 
