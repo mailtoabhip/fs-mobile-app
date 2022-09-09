@@ -160,11 +160,15 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.transaction?.transactionBid = it
         val visibility =
                 if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
+        binding.priceLay.visibility= visibility
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
+          binding.priceLay.visibility=View.VISIBLE
           binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+        }else{
+          binding.priceLay.visibility=View.GONE
         }
       }
     })

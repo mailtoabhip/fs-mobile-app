@@ -176,6 +176,8 @@ var lowestBid: Double? = 0.0,
   }
 
   fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
+  fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
+
 
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
