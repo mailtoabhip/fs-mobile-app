@@ -192,7 +192,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
-            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK))
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK, subSource = VALUE_VENDOR_SUBSOURCE))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
