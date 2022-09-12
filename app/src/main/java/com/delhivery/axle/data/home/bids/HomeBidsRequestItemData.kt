@@ -178,6 +178,8 @@ data class HomeBidsRequestItemData(
   }
 
   fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
+  fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
+
 
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
