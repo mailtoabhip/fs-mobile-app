@@ -736,6 +736,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
                       binding.status.visibility = View.VISIBLE
                       val data = viewModel.transaction as HomeBidsRequestItemData
+
                       if(data.clientConfirmationPending == false){
                         binding.status.text =resources.getString(R.string.label_pending)
                         binding.status.setTextColor(resources.getColor(R.color.pending))
@@ -748,11 +749,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         binding.numLay.visibility = View.GONE
                         binding.bottomLay.visibility = View.VISIBLE
                         binding.buttonConfirm.setOnClickListener {
-                          tripDetailsIntent(viewModel.transactionId, this@BidDetailsActivity)
+                          startActivity(tripDetailsIntent(viewModel.transaction.uuid.toString(), this@BidDetailsActivity))
                         }
 
                       }
-
                     }
           }
           is BidDetailsUserBidState_RejectedBid -> {
@@ -788,7 +788,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       binding.timerLayout.visibility = View.GONE
                       binding.bottomLay.visibility = View.GONE
                       binding.bidLay.visibility = View.GONE
-                      binding.buttonConfirm.text = "View Trip"
                       val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
                         StringUtils.formatAmount(state.userBid.bidAmount ?: 0.0) + "/MT"
                       } else {
@@ -812,9 +811,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     layoutInflater, binding.containerActions, false
             ).apply {
               binding.timerLayout.visibility = View.GONE
-              binding.bottomLay.visibility = View.GONE
-              binding.addressLay.visibility = View.GONE
-              binding.div2.visibility = View.GONE
 
               val data = viewModel.transaction as HomeBidsRequestItemData
               var bidAmount =""
@@ -859,6 +855,17 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   }
                 }
               }
+
+              binding.numLay.visibility = View.GONE
+              binding.bottomLay.visibility = View.VISIBLE
+              binding.bidLay.visibility = View.GONE
+
+              binding.buttonConfirm.text = "Edit Bid"
+              binding.buttonConfirm.setOnClickListener {
+                bidDialog()
+              }
+
+
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
                 adapter = this@BidDetailsActivity.adapter

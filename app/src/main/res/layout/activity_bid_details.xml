@@ -574,7 +574,6 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:text="2 Bid Received"
                 android:id="@+id/numBidsVal"
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/size_6dp"
@@ -590,7 +589,6 @@
             android:layout_height="wrap_content">
           <TextView
               android:layout_width="wrap_content"
-              android:text="2 Bids Received"
               android:id="@+id/numBids"
               android:textStyle="bold"
               android:layout_marginBottom="@dimen/size_16dp"
@@ -599,7 +597,6 @@
               android:layout_height="wrap_content"/>
           <TextView
               android:layout_width="wrap_content"
-              android:text="Lowest Bid: 200"
               android:id="@+id/lowBid"
               android:layout_alignParentEnd="true"
               android:textSize="@dimen/text_12sp"
