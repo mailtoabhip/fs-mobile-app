@@ -40,12 +40,13 @@ class KotlinApp : DaggerApplication() {
   }
 
   private fun setupMoEngage() {
+    val isSdkEnabled = !(BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat")
     val moEngage = MoEngage.Builder(this, "965N4GFJCV9UF6OBEPETGZR3").setDataCenter(DataCenter.DATA_CENTER_3)
-      .configureNotificationMetaData(NotificationConfig(R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.color.colorPrimary, null, true, isBuildingBackStackEnabled = false, isLargeIconDisplayEnabled = true))
-      .configureFcm(FcmConfig(false)) .build()
-   MoEngage.initialise(moEngage)
-  }
+        .configureNotificationMetaData(NotificationConfig(R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.color.colorPrimary, null, true, isBuildingBackStackEnabled = false, isLargeIconDisplayEnabled = true))
+        .configureFcm(FcmConfig(false)) .build()
+    MoEngage.initialise(moEngage,isSdkEnabled)
 
+  }
   private fun createNotificationChannel() {
     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
       val notificationChannel=NotificationChannel(CHANNEL_ID," TOKEN SERVICE CHANNEL",NotificationManager.IMPORTANCE_DEFAULT)
