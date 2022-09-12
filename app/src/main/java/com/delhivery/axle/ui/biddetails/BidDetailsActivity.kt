@@ -581,7 +581,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         }else{
                           binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
                           binding.imgCorr.visibility = View.GONE
-                          binding.tvCorr.text = binding.transaction?.lowestbidText()
+                          binding.tvCorr.text =  lowestTBid?.toString()
                           binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
                         }
                       }else{
