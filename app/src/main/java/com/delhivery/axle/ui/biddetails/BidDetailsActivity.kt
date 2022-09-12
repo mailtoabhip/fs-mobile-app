@@ -148,7 +148,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.transaction?.transactionBid = it
         val visibility =
                 if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
-        binding.priceLay.visibility= visibility
+//        binding.priceLay.visibility= visibility
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
@@ -156,7 +156,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }else{
-          binding.priceLay.visibility=View.GONE
+//          binding.priceLay.visibility=View.GONE
         }
       }
     })
@@ -170,6 +170,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       if (it){
         binding.status.visibility=View.VISIBLE
         binding.status.text =resources.getString(R.string.label_pending)
+        binding.status.setBackgroundColor(resources.getColor(R.color.pending_bg))
         binding.status.setTextColor(resources.getColor(R.color.pending))
       }
     })
@@ -708,6 +709,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         bidDialog(userBid) })
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_active)
+                      binding.status.setBackgroundColor(resources.getColor(R.color.status_active))
                       binding.status.setTextColor(resources.getColor(R.color.status_active))
                     }
           }
@@ -775,7 +777,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       )
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_lost)
-                      binding.status.text =resources.getString(R.string.label_lost)
+                      binding.priceLay.visibility=View.VISIBLE
+                      binding.status.setBackgroundColor(resources.getColor(R.color.status_lost_bg))
                       binding.status.setTextColor(resources.getColor(R.color.status_lost))
                       binding.bottomLay.visibility = View.GONE
                     }
@@ -802,6 +805,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       textUserHighestBid.text = bidText
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_cancel)
+                      binding.priceLay.visibility=View.VISIBLE
                       binding.status.setTextColor(resources.getColor(R.color.status_lost))
                       binding.bottomLay.visibility = View.GONE
                     }
