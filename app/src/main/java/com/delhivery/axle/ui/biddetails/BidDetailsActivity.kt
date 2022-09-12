@@ -466,7 +466,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE),
                               mutableListOf(viewModel.transactionId,source )
                       )
-                      btnPlaceBid.setOnClickListener { bidDialog() }
                       binding.status.visibility = View.GONE
 
                       binding.buttonConfirm.text = "Place Bid"
@@ -518,7 +517,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE),
                               mutableListOf(viewModel.transactionId,state.bidsCount.toString(), source)
                       )
-                      btnPlaceBid.setOnClickListener { bidDialog() }
                       binding.status.visibility = View.GONE
                     }
           }
