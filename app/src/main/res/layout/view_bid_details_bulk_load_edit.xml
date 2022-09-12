@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/size_30dp"
         android:padding="@dimen/size_6dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:text="@string/action_revise_bid"
         android:layout_margin="@dimen/size_11dp"
         android:background="@drawable/bg_revise_button"
@@ -39,13 +39,14 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_bid_details_bulk"
            android:padding="@dimen/size_8dp"
+            android:visibility="gone"
             android:orientation="vertical"
             bind:shadow="@{ @dimen/size_2dp }"
             >
@@ -87,6 +88,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/reduce_text"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
