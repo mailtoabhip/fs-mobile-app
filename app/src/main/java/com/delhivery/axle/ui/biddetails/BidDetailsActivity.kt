@@ -138,7 +138,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    title = "Order ID - "+viewModel.transactionId
     /* setup live data observers */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
@@ -148,7 +148,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.transaction?.transactionBid = it
         val visibility =
                 if (binding.transaction?.bidAmount().isNullOrEmpty()) View.GONE else View.VISIBLE
-//        binding.priceLay.visibility= visibility
+        binding.priceLay.visibility= visibility
         binding.textTargetPrice.visibility = visibility
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
@@ -156,7 +156,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           binding.textTargetPrice.text = binding.transaction?.bidAmount()
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }else{
-//          binding.priceLay.visibility=View.GONE
+          binding.priceLay.visibility=View.GONE
         }
       }
     })
@@ -329,7 +329,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
           }
 
-          title = _transaction.tripDisplayName()
+//          title = _transaction.orderIdToolbar()
           binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,ContextCompat.getDrawable(this@BidDetailsActivity,_transaction!!.requiredAtDraw()),null)
         }
 
