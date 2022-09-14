@@ -28,6 +28,7 @@
       android:paddingBottom="@dimen/size_24dp"
       android:paddingStart="@dimen/size_24dp"
       android:paddingTop="@dimen/size_24dp"
+      android:visibility="gone"
       bind:shadow="@{ @dimen/size_2dp }"
       >
 
