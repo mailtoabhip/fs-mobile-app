@@ -466,11 +466,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         setTimer(bidEndingTime)
                       }
                       isFirstBid = true
+                      if(viewModel.refreshCalled==false){
                       analyticsUtil.moEngageTrackEvent(
                               EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
                               mutableListOf(viewModel.transactionId,source,subSource)
                       )
+                      }
                       binding.status.visibility = View.GONE
 
                       binding.buttonConfirm.text = "Place Bid"
@@ -517,12 +519,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       binding.buttonConfirm.setOnClickListener {
                         bidDialog()
                       }
+                      if(viewModel.refreshCalled==false){
                       analyticsUtil.moEngageTrackEvent(
                               EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
                                 PROPERTY_SUB_SOURCE),
                               mutableListOf(viewModel.transactionId,state.bidsCount.toString(), source, subSource)
-                      )
+                      )}
                       binding.status.visibility = View.GONE
                     }
           }
@@ -536,12 +539,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       var oldAmount= data?.transactionBid?.bidAmount
                       data.transactionBid = state.lowestAndUserBidPair.first
                       bidsRecieved = state.bidsCount
-                      analyticsUtil.moEngageTrackEvent(
-                              EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
-                                PROPERTY_SUB_SOURCE),
-                              mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source,subSource)
-                      )
+
                       val userBid = state.lowestAndUserBidPair.first
                       val lowestTBid = state.lowestAndUserBidPair.second
                       lowestTBid?.let {
@@ -599,7 +597,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
                       binding.buttonConfirm.text = "Edit Bid"
                       binding.buttonConfirm.setOnClickListener {
-                        bidDialog()
+                        bidDialog(userBid)
                       }
 
                       request = data
@@ -642,6 +640,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                           reviseInitiated = false
                         }
                       }else{
+                        if(viewModel.refreshCalled==false){
+                        analyticsUtil.moEngageTrackEvent(
+                          EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
+                            PROPERTY_SUB_SOURCE),
+                          mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source,subSource)
+                        )}
                         viewModel.refreshCalled=false
                       }
                       viewModel.restrictEventTrigger=false
@@ -708,12 +713,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                                 mutableListOf(state.lowestAndUserBidPair.second?.transactionId ?: "",
                                         state.bidsCount.toString())
                         )
-                        analyticsUtil.moEngageTrackEvent(
-                                EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                                mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,PROPERTY_SOURCE,
-                                  PROPERTY_SUB_SOURCE),
-                                mutableListOf(viewModel.transactionId,state.bidsCount.toString(), source,subSource)
-                        )
                         bidDialog(userBid) })
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_active)
@@ -778,6 +777,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         StringUtils.formatAmount(state.userBid.bidAmount)
                       }
                       textUserHighestBid.text = bidText
+                      if(viewModel.refreshCalled==false)
                       analyticsUtil.moEngageTrackEvent(
                               EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE,PROPERTY_SUB_SOURCE),
@@ -804,6 +804,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       } else {
                         StringUtils.formatAmount(state.userBid.bidAmount)
                       }
+                      if(viewModel.refreshCalled==false)
                       analyticsUtil.moEngageTrackEvent(
                               EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE,PROPERTY_SUB_SOURCE),
