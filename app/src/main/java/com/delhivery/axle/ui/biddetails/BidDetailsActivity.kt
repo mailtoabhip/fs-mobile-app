@@ -328,8 +328,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(_transaction.isDMTIndent()){
             binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
           }
-
-//          title = _transaction.orderIdToolbar()
           binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(null,null,ContextCompat.getDrawable(this@BidDetailsActivity,_transaction!!.requiredAtDraw()),null)
         }
 
@@ -541,7 +539,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
                           lowestBid = when (it) {
                             null -> ""
-                            else -> "Lowest Bid - ₹ ${StringUtils.formatAmount(
+                            else -> "Lowest Bid: ₹ ${StringUtils.formatAmount(
                                     it.bidAmount
                             )}" + if (state.isPMTIndent) "/MT" else ""
                           }
@@ -580,7 +578,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         }else{
                           binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
                           binding.imgCorr.visibility = View.GONE
-                          binding.tvCorr.text =  lowestTBid?.toString()
+                          binding.tvCorr.text =  lowestBid
                           binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
                         }
                       }else{
@@ -592,7 +590,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
                       binding.buttonConfirm.text = "Edit Bid"
                       binding.buttonConfirm.setOnClickListener {
-                        bidDialog()
+                        bidDialog(userBid)
                       }
 
                       request = data
@@ -871,14 +869,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               }
 
               binding.numLay.visibility = View.GONE
-              binding.bottomLay.visibility = View.VISIBLE
+              binding.bottomLay.visibility = View.GONE
               binding.bidLay.visibility = View.GONE
-
-              binding.buttonConfirm.text = "Edit Bid"
-              binding.buttonConfirm.setOnClickListener {
-                bidDialog()
-              }
-
 
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
