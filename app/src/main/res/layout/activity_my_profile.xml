@@ -560,6 +560,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/share_layout"
                 android:padding="@dimen/size_16dp"
+                android:visibility="gone"
                 bind:layout_constraintTop_toBottomOf="@+id/earningsLayout"
                 android:layout_height="wrap_content">
 
