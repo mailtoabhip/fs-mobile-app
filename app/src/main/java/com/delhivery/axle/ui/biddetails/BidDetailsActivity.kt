@@ -355,7 +355,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()){
             binding.remarks.visibility = View.VISIBLE
             binding.tvRemark.visibility = View.VISIBLE
-            binding.remarks.text = binding.transaction?.additionalRemarks
+            binding.remarks.text = binding.transaction?.orderCreationRemarks
           }else{
             binding.remarks.visibility = View.GONE
             binding.tvRemark.visibility = View.GONE
