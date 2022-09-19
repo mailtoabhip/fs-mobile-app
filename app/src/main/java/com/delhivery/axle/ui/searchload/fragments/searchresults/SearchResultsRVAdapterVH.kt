@@ -83,6 +83,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     }else{
       if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        format.setTimeZone(TimeZone.getTimeZone("IST"))
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(item.data.bidEndingTime)
         if (date2.compareTo(date1) > 0) {
