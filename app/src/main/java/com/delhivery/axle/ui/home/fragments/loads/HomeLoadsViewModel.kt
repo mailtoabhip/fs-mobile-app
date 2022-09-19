@@ -202,7 +202,8 @@ class HomeLoadsViewModel @Inject constructor(
                                 add(Pair(HomeLoadsSearchItem(), AddUpdate))
                                 add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                                 if(!paginate) {
-                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
+//                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
+                                  add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
                                 add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
                                 for ((index, load) in loads.toMutableList().withIndex()) {
@@ -323,7 +324,8 @@ class HomeLoadsViewModel @Inject constructor(
                   add(Pair(HomeLoadsSearchItem(), AddUpdate))
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(isInternal)), AddUpdate))
                   if(!paginate) {
-                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
+//                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
+                    add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
                 add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
                   for ((index, load) in loads.toMutableList().withIndex()) {
