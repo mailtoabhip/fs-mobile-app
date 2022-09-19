@@ -775,6 +775,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       )
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_lost)
+                      binding.textTargetPrice.text= "₹" + if (state.isPMTIndent) {
+                        StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                      } else {
+                        StringUtils.formatAmount(state.userBid.bidAmount)
+                      }
+                      binding.textTargetPriceLabel.text="Your Bid"
                       binding.priceLay.visibility=View.VISIBLE
                       binding.status.setBackgroundColor(resources.getColor(R.color.status_lost_bg))
                       binding.status.setTextColor(resources.getColor(R.color.status_lost))
@@ -802,6 +808,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       textUserHighestBid.text = bidText
                       binding.status.visibility = View.VISIBLE
                       binding.status.text =resources.getString(R.string.label_cancel)
+                      binding.textTargetPrice.text= "₹" + if (state.isPMTIndent) {
+                        StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                      } else {
+                        StringUtils.formatAmount(state.userBid.bidAmount)
+                      }
+                      binding.textTargetPriceLabel.text="Your Bid"
                       binding.priceLay.visibility=View.VISIBLE
                       binding.status.setTextColor(resources.getColor(R.color.status_lost))
                       binding.bottomLay.visibility = View.GONE

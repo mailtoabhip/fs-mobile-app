@@ -162,11 +162,12 @@ class BidDetailsViewModel @Inject constructor(
                           try {
                               transactionBidLiveData.postValue(
                                       BidDetailsUserBidState_RejectedBid(
-                                              _bRes.second.acceptedBid()!!, _bRes.first.first!!,
+                                              _bRes.first.second!!, _bRes.first.first!!,
                                               transaction.isPMTIndent()
                                       )
                               )
                           } catch (e: Exception) {
+                            e.printStackTrace()
                           } finally {
                               bidPriceLiveData.postValue(null)
                           }
