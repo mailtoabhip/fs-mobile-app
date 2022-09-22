@@ -590,23 +590,37 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         binding.numBidsVal.visibility = View.GONE
                       }
 
-                      if(lowestTBid?.bidAmount!=null) {
-                        if(userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true){
+                      if(state.bidsCount!=null && state.bidsCount>1){
+                        if(lowestTBid?.bidAmount!=null) {
+                          if(userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true){
                             binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_green_12))
                             binding.imgCorr.visibility = View.VISIBLE
                             binding.tvCorr.text = "Your bid is the lowest"
                             binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_green))
+                          }else{
+                            binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
+                            binding.imgCorr.visibility = View.GONE
+                            binding.tvCorr.text =  binding.transaction?.lowestbidText()
+                            binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                          }
                         }else{
                           binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
                           binding.imgCorr.visibility = View.GONE
-                          binding.tvCorr.text =  lowestBid
+                          binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
                           binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
                         }
-                      }else{
-                        binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
-                        binding.imgCorr.visibility = View.GONE
-                        binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
-                        binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                      }else if(userBid?.bidAmount!=null && state.bidsCount!=null && state.bidsCount==1 && binding.transaction?.guidancePrice!=null){
+                          if(userBid.bidAmount.compareTo(binding.transaction?.guidancePrice!!)>0){
+                          binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
+                          binding.imgCorr.visibility = View.GONE
+                            binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
+                          binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                          }else{
+                            binding.tvCorr.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_green_12))
+                            binding.imgCorr.visibility = View.VISIBLE
+                            binding.tvCorr.text = "Your bid is the lowest"
+                            binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_green))
+                          }
                       }
 
                       binding.buttonConfirm.text = "Edit Bid"

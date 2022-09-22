@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.bids
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -58,6 +59,8 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
         _interface: DmtBidsAdapterInterface
     ) {
         binding.item = item.data
+
+
        val truckSpinnerAdapter: TruckSpinnerAdapter by lazy { TruckSpinnerAdapter() }
         binding.spVehicleType.apply {
             adapter = truckSpinnerAdapter
