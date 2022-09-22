@@ -89,29 +89,23 @@
               >
 
             <!-- details container -->
-            <FrameLayout
-                android:id="@+id/container_actions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/size_4dp"
-                />
 
             <!-- bidding completed text -->
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_bid_ended"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/size_4dp"
-                android:background="@color/colorPrimary"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/size_14dp"
-                android:text="@string/label_bidding_ended"
-                android:textColor="#59181818"
-                android:textSize="@dimen/text_16sp"
-                android:visibility="gone"
-                bind:shadow="@{ @dimen/size_2dp }"
-                />
+<!--            <androidx.appcompat.widget.AppCompatTextView-->
+<!--                android:id="@+id/text_bid_ended"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginBottom="@dimen/size_4dp"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                android:fontFamily="sans-serif-medium"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:padding="@dimen/size_14dp"-->
+<!--                android:text="@string/label_bidding_ended"-->
+<!--                android:textColor="#59181818"-->
+<!--                android:textSize="@dimen/text_16sp"-->
+<!--                android:visibility="gone"-->
+<!--                bind:shadow="@{ @dimen/size_2dp }"-->
+<!--                />-->
 
             <!-- actions container -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -233,13 +227,24 @@
 
               </RelativeLayout>
 
+              <FrameLayout
+                  android:id="@+id/container_actions"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  app:layout_constraintTop_toBottomOf="@+id/div3"
+                  android:paddingTop="@dimen/size_4dp"
+                  />
+
+
               <TextView
                   android:id="@+id/tvRemark"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginTop="@dimen/size_16dp"
                   android:text="@string/label_remark"
+                  android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_12sp"
+                  android:layout_marginBottom="@dimen/size_12dp"
                   android:visibility="gone"
                   app:layout_constraintTop_toBottomOf="@+id/div1"
                   />
@@ -259,7 +264,6 @@
                   android:layout_height="4dp"
                   android:layout_marginTop="@dimen/size_32dp"
                   android:background="@color/browser_actions_divider_color"
-                  android:visibility="gone"
                   app:layout_constraintTop_toBottomOf="@+id/price_lay"
                   />
               <View
@@ -269,6 +273,15 @@
                   android:layout_marginTop="@dimen/size_32dp"
                   android:background="@color/browser_actions_divider_color"
                   app:layout_constraintTop_toBottomOf="@+id/remarks"
+                  />
+              <View
+                  android:id="@+id/div3"
+                  android:layout_width="match_parent"
+                  android:layout_height="4dp"
+                  android:visibility="@{transaction.setDMTType()}"
+                  android:layout_marginTop="@dimen/size_32dp"
+                  android:background="@color/browser_actions_divider_color"
+                  app:layout_constraintTop_toBottomOf="@+id/addressLay"
                   />
 
               <androidx.appcompat.widget.AppCompatImageView

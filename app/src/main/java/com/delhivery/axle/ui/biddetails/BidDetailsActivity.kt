@@ -62,6 +62,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   var reviseInitiated:Boolean=false
   var oldAmountbids =""
   var isFirstBid = false
+  var buttonVisible =false
+  var bottomLayVisible =false
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
   var uploadArray:ArrayList<Pair<String, String?>> = ArrayList()
   var stopArray:ArrayList<String> = ArrayList()
@@ -171,7 +173,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.status.visibility=View.VISIBLE
         binding.status.text =resources.getString(R.string.label_pending)
         binding.status.setBackgroundColor(resources.getColor(R.color.pending_bg))
-        binding.status.setTextColor(resources.getColor(R.color.pending))
+        binding.status.setTextColor(resources.getColor(R.color.pending_status))
       }
     })
     viewModel.truckGetLiveData.observe(this, Observer {
@@ -290,6 +292,14 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     binding.error = false
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
+    if(binding.buttonConfirm.visibility==View.VISIBLE) {
+      binding.buttonConfirm.visibility = View.INVISIBLE
+      buttonVisible=true
+    }
+    if(binding.bottomLay.visibility==View.VISIBLE){
+      binding.bottomLay.visibility=View.INVISIBLE
+      bottomLayVisible=false
+    }
     uploadArray.clear()
   }
 
@@ -306,6 +316,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
           false -> {
             binding.refreshLayout.isRefreshing = false
+            if(buttonVisible) {
+              binding.buttonConfirm.visibility = View.VISIBLE
+            }
+            if(bottomLayVisible) {
+              binding.bottomLay.visibility = View.VISIBLE
+            }
           }
         }
       }
@@ -337,10 +353,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(binding.transaction?.additionalRemarks.isNotNullOrEmpty()){
             binding.remarks.visibility = View.VISIBLE
             binding.tvRemark.visibility = View.VISIBLE
+            binding.div2.visibility= View.VISIBLE
             binding.remarks.text = binding.transaction?.additionalRemarks
           }else{
             binding.remarks.visibility = View.GONE
             binding.tvRemark.visibility = View.GONE
+            binding.div2.visibility= View.GONE
           }
           if(binding.transaction?.indentHaltCenters.isNullOrEmpty()){
             binding.stopNo.text = "No Stops"
@@ -355,10 +373,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()){
             binding.remarks.visibility = View.VISIBLE
             binding.tvRemark.visibility = View.VISIBLE
+            binding.div2.visibility= View.VISIBLE
             binding.remarks.text = binding.transaction?.orderCreationRemarks
           }else{
             binding.remarks.visibility = View.GONE
             binding.tvRemark.visibility = View.GONE
+            binding.div2.visibility= View.GONE
+
           }
 
           var total = 0
@@ -741,8 +762,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                         binding.bottomLay.visibility = View.GONE
                       }else{
                         binding.status.text =resources.getString(R.string.label_confirm)
-                        binding.status.setTextColor(resources.getColor(R.color.status_confirmed))
                         binding.buttonConfirm.text = "View Trip"
+                        binding.status.setBackground(resources.getDrawable(R.drawable.bg_all_round_corner_light_green_12))
+                        binding.status.setTextColor(resources.getColor(R.color.bid_placed_green))
                         binding.bidLay.visibility = View.GONE
                         binding.numLay.visibility = View.GONE
                         binding.bottomLay.visibility = View.VISIBLE
@@ -868,9 +890,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
               }
 
-              binding.numLay.visibility = View.GONE
-              binding.bottomLay.visibility = View.GONE
+              binding.buttonConfirm.text = "Edit Bid"
               binding.bidLay.visibility = View.GONE
+              binding.bottomLay.visibility = View.VISIBLE
+              binding.buttonConfirm.setOnClickListener {
+                bidDialog()
+              }
 
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -932,7 +957,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           else -> null
         }?.let { _binding ->
           /* bidding ended */
-          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
+//          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
           binding.containerActions.apply {
             removeAllViews()
             addView(_binding.root)
