@@ -890,12 +890,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
               }
 
-              binding.buttonConfirm.text = "Edit Bid"
               binding.bidLay.visibility = View.GONE
-              binding.bottomLay.visibility = View.VISIBLE
-              binding.buttonConfirm.setOnClickListener {
-                bidDialog()
-              }
+              binding.bottomLay.visibility = View.GONE
 
               rvBidSummary.apply {
                 layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
