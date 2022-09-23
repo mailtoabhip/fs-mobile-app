@@ -20,6 +20,7 @@ import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.biddetails.DmtBidsAdapterInterface
 import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -115,6 +116,19 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.editTime.adapter = spinnerAdapter
+
+      if(item.data.expectedArrivalTimePickupRemark.isNotNullOrEmpty()){
+        val text = item.data.expectedArrivalTimePickupRemark
+        if(text.equals("Immediately")) {
+          binding.editTime.setSelection(1)
+        }else if(text.equals("Within 4 hours")) {
+          binding.editTime.setSelection(2)
+        }else if(text.equals("Between 4-12 hours")) {
+          binding.editTime.setSelection(3)
+        }else if(text.equals("Tomorrow")) {
+          binding.editTime.setSelection(4)
+        }
+      }
 
         binding.editTime.apply {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

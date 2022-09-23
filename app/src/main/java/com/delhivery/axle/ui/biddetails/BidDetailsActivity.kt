@@ -220,9 +220,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         Toast.makeText(this, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
       }
       if (it.first == 20) {
+        viewModel.refreshCalled=true
+        refreshData()
         Toast.makeText(this, "Bids Updated Successfully", Toast.LENGTH_SHORT).show()
       }
       if (it.first == 30) {
+        viewModel.refreshCalled=true
+        refreshData()
         Toast.makeText(this, "Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
       }
       if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
