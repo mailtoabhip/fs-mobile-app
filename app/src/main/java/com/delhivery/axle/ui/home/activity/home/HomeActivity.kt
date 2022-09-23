@@ -109,6 +109,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         /* setup view pager */
         binding.viewpager.apply {
           offscreenPageLimit = HomeFragmentType.count()
+          processDeepLink()
           adapter = pagerAdapter
           /* update ui on page changed */
           onPageSelected { p ->
@@ -152,10 +153,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       )
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
-
-    /**
-     * Process Deep Link */
-    processDeepLink()
       }
     })
   }

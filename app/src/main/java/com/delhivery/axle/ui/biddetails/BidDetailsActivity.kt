@@ -737,6 +737,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
                       driverPhone =
                               state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                      if(viewModel.refreshCalled==false)
                       analyticsUtil.moEngageTrackEvent(
                               EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
                               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE,PROPERTY_SUB_SOURCE),
@@ -836,13 +837,25 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               bidsRecieved = state.bidsCount
               data.let {
                 if(!it.bulkTransactionBids.isNullOrEmpty()) {
-                  analyticsUtil.moEngageTrackEvent(
-                          EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,PROPERTY_SUB_SOURCE),
-                          mutableListOf(viewModel.transactionId,bidsRecieved.toString(), source,subSource)
-                  )
-
+                  if (viewModel.restrictEventTrigger && viewModel.refreshCalled==false) {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID,
+                        PROPERTY_BID_COUNT,
+                        PROPERTY_SOURCE,
+                        PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        viewModel.transactionId,
+                        bidsRecieved.toString(),
+                        source,
+                        subSource
+                      )
+                    )
+                  }
                 }else{
+                  if (viewModel.restrictEventTrigger && viewModel.refreshCalled==false)
                   analyticsUtil.moEngageTrackEvent(
                           EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
                           mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
