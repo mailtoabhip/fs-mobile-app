@@ -293,11 +293,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
     if(binding.buttonConfirm.visibility==View.VISIBLE) {
-      binding.buttonConfirm.visibility = View.INVISIBLE
+      binding.buttonConfirm.visibility = View.GONE
       buttonVisible=true
     }
     if(binding.bottomLay.visibility==View.VISIBLE){
-      binding.bottomLay.visibility=View.INVISIBLE
+      binding.bottomLay.visibility=View.GONE
       bottomLayVisible=false
     }
     uploadArray.clear()
