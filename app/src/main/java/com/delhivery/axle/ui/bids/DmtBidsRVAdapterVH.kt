@@ -130,7 +130,9 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
         }
       }
 
-        binding.editTime.apply {
+      binding.editTime.isEnabled = item.data.isEnabled()
+
+      binding.editTime.apply {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>) = Unit
                 override fun onItemSelected(

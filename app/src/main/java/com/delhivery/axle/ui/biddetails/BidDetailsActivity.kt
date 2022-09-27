@@ -155,7 +155,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
         binding.textTargetPriceLabel.visibility = visibility
         if (visibility == View.VISIBLE) {
           binding.priceLay.visibility=View.VISIBLE
-          binding.textTargetPrice.text = binding.transaction?.bidAmount()
+          if (binding.transaction?.isPMTIndent() == true) {
+            binding.textTargetPrice.text = binding.transaction?.bidAmount()+"/MT"
+          } else {
+            binding.textTargetPrice.text = binding.transaction?.bidAmount()
+
+          }
           binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
         }else{
           binding.priceLay.visibility=View.GONE
@@ -297,11 +302,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
     if(binding.buttonConfirm.visibility==View.VISIBLE) {
-      binding.buttonConfirm.visibility = View.INVISIBLE
+      binding.buttonConfirm.visibility = View.GONE
       buttonVisible=true
     }
     if(binding.bottomLay.visibility==View.VISIBLE){
-      binding.bottomLay.visibility=View.INVISIBLE
+      binding.bottomLay.visibility=View.GONE
       bottomLayVisible=false
     }
     uploadArray.clear()
