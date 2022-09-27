@@ -185,13 +185,13 @@ class BidDetailsCreateEditDialog @Inject constructor(
     if(transactionBid?.expectedArrivalTimePickupRemark.isNotNullOrEmpty()){
       val text = transactionBid?.expectedArrivalTimePickupRemark
       if(text.equals("Immediately")) {
-        binding.editTime.setSelection(0)
+         binding.editTime.setSelection(1)
       }else if(text.equals("Within 4 hours")) {
-        binding.editTime.setSelection(1)
-      }else if(text.equals("Between 4-12 hours")) {
         binding.editTime.setSelection(2)
-      }else if(text.equals("Tomorrow")) {
+      }else if(text.equals("Between 4-12 hours")) {
         binding.editTime.setSelection(3)
+      }else if(text.equals("Tomorrow")) {
+        binding.editTime.setSelection(4)
       }
     }
 

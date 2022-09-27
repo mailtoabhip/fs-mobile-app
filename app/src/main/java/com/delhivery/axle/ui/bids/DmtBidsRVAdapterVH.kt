@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.bids
 import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -19,6 +20,7 @@ import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.biddetails.DmtBidsAdapterInterface
 import com.delhivery.axle.ui.biddetails.TruckSpinnerAdapter
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -58,6 +60,8 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
         _interface: DmtBidsAdapterInterface
     ) {
         binding.item = item.data
+
+
        val truckSpinnerAdapter: TruckSpinnerAdapter by lazy { TruckSpinnerAdapter() }
         binding.spVehicleType.apply {
             adapter = truckSpinnerAdapter
@@ -112,6 +116,19 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.editTime.adapter = spinnerAdapter
+
+      if(item.data.expectedArrivalTimePickupRemark.isNotNullOrEmpty()){
+        val text = item.data.expectedArrivalTimePickupRemark
+        if(text.equals("Immediately")) {
+          binding.editTime.setSelection(1)
+        }else if(text.equals("Within 4 hours")) {
+          binding.editTime.setSelection(2)
+        }else if(text.equals("Between 4-12 hours")) {
+          binding.editTime.setSelection(3)
+        }else if(text.equals("Tomorrow")) {
+          binding.editTime.setSelection(4)
+        }
+      }
 
         binding.editTime.apply {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

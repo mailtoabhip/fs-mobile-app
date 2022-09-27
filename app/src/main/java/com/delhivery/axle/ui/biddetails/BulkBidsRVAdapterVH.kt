@@ -87,8 +87,6 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
               }else{
                 textView.text = ""
               }
-
-
         }
     }
         binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)

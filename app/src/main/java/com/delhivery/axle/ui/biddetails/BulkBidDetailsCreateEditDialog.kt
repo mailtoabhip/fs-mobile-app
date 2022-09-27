@@ -128,7 +128,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     }
                     volumePlaced += (truckCount!! * vehicleCapacity)
                     val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, confirmedBidsMap[key]!![0].bidAmount,truckCount!!,"confirmed",
-                            false, truckTypesFiltered,added = true)
+                            false, truckTypesFiltered,added = true, expectedArrivalTimePickupRemark =  confirmedBidsMap[key]!![0].expectedArrivalTimePickupRemark?:"")
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem), DataRVAdapterOperationType.Add))
                 }
 
@@ -148,7 +148,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     }
                     volumePlaced += (truckCount!! * vehicleCapacity)
                     val dmtBidsItem = DmtBidSummaryItemData(key,vehicleCapacity, map[key]!![0].bidAmount,truckCount!!,"open",false,
-                            truckTypesFiltered,bidIdsList,true)
+                            truckTypesFiltered,bidIdsList,true,expectedArrivalTimePickupRemark =  map[key]!![0].expectedArrivalTimePickupRemark?:"")
                     dmtBidSummaryItemDataList.add(dmtBidsItem)
                     dmtBidSummaryItemOperationList.add(Pair(DmtBidSummaryItem(dmtBidsItem.copy()), DataRVAdapterOperationType.Add))
 
