@@ -627,9 +627,9 @@
               android:layout_width="wrap_content"
               android:id="@+id/numBids"
               android:textStyle="bold"
-              android:layout_marginBottom="@dimen/size_16dp"
+              android:layout_marginBottom="@dimen/size_12dp"
               android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_16sp"
+              android:textSize="@dimen/text_12sp"
               android:layout_height="wrap_content"/>
           <TextView
               android:layout_width="wrap_content"
@@ -638,6 +638,15 @@
               android:textSize="@dimen/text_12sp"
               android:textColor="@color/heading_black"
               android:layout_height="wrap_content"/>
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/seperator_line2"
+              android:layout_width="match_parent"
+              android:layout_height="5dp"
+              android:layout_marginBottom="@dimen/size_12dp"
+              android:layout_below="@+id/numBids"
+              app:srcCompat="@drawable/seprator_dotted"
+              />
         </RelativeLayout>
 
         <LinearLayout
