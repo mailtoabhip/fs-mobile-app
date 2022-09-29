@@ -67,6 +67,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   private val adapter: BulkBidsRVAdapter by lazy { BulkBidsRVAdapter(this) }
   var uploadArray:ArrayList<Pair<String, String?>> = ArrayList()
   var stopArray:ArrayList<String> = ArrayList()
+  var ellp = true
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -91,6 +92,22 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     binding.addresslist.apply {
       layoutManager = LinearLayoutManager(applicationContext)
       adapter = addressDetailAdapter
+    }
+
+    binding.layRem.setOnClickListener {
+      runOnUiThread {
+        if (ellp) {
+          binding.remarks.setSingleLine(false);
+          binding.remarks.setEllipsize(TextUtils.TruncateAt.END);
+          val n = 2;
+          binding.remarks.setLines(n);
+          ellp = false
+          binding.clickRemark.rotation = 180F
+        } else if (!ellp) {
+          binding.remarks.ellipsize = null
+          ellp = true
+        }
+      }
     }
 
   }
@@ -361,12 +378,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.additionalRemarks.isNotNullOrEmpty()){
             binding.remarks.visibility = View.VISIBLE
-            binding.tvRemark.visibility = View.VISIBLE
+            binding.layRem.visibility = View.VISIBLE
             binding.div2.visibility= View.VISIBLE
             binding.remarks.text = binding.transaction?.additionalRemarks
           }else{
             binding.remarks.visibility = View.GONE
-            binding.tvRemark.visibility = View.GONE
+            binding.layRem.visibility = View.GONE
             binding.div2.visibility= View.GONE
           }
           if(binding.transaction?.indentHaltCenters.isNullOrEmpty()){
@@ -381,12 +398,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()){
             binding.remarks.visibility = View.VISIBLE
-            binding.tvRemark.visibility = View.VISIBLE
+            binding.layRem.visibility = View.VISIBLE
             binding.div2.visibility= View.VISIBLE
             binding.remarks.text = binding.transaction?.orderCreationRemarks
+
           }else{
             binding.remarks.visibility = View.GONE
-            binding.tvRemark.visibility = View.GONE
+            binding.layRem.visibility = View.GONE
             binding.div2.visibility= View.GONE
 
           }
@@ -585,7 +603,11 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
                       if(userBid?.bidAmount!=null){
                         binding.bidLay.visibility = View.VISIBLE
-                        binding.bidVal.text = "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}"
+                        if (state.isPMTIndent) {
+                          binding.bidVal.text = "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}"+ "/MT"
+                        }else{
+                          binding.bidVal.text = "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}"
+                        }
                         binding.greenBidLay.visibility = View.VISIBLE
                       }else{
                         binding.bidLay.visibility = View.GONE
