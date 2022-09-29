@@ -240,6 +240,7 @@
                   app:layout_constraintStart_toStartOf="parent"
                   android:orientation="horizontal"
                   android:id="@+id/layRem"
+                  android:visibility="gone"
                   app:layout_constraintTop_toBottomOf="@+id/div1"
                   android:layout_height="wrap_content">
                 <TextView
@@ -255,7 +256,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:id="@+id/clickRemark"
-                    android:layout_marginTop="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_14dp"
                     app:layout_constraintStart_toEndOf="@+id/tvRemark"
                     app:layout_constraintTop_toBottomOf="@+id/div1"
                     app:srcCompat="@drawable/ic_arrow_drop_down_black"
