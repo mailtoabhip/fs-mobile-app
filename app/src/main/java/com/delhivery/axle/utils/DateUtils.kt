@@ -178,7 +178,7 @@ object DateUtils {
   ): String {
     val diff = daysDiff(requiredOn)
     return when {
-      diff <= 0 -> "Today"
+      diff <= 0 && diff>-1 -> "Today"
       diff == 1 -> "Tomorrow"
       else -> formatDate(requiredOn, "dd MMM")
     }

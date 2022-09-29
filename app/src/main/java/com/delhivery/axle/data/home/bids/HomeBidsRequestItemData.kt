@@ -75,7 +75,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("indent_origin") val indentOrigin:String? =  null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
-    @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
+  @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   @SerializedName("pickup_location_address") val pickupLocationAddress: String?,
   @SerializedName("drop_location_address") val dropLocationAddress: String?,
