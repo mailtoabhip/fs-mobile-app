@@ -291,6 +291,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
             uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          }else if(binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.loadingLocationPincode.toString()+"-"+binding.transaction?.pickupLocationCity))
           }
 
           val sortedList = it.sortedWith(compareBy({ it.first.first }))
@@ -310,7 +312,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           }
 
           if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
-            uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
+            uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress.toString()))
+          }else if(binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Drop Address", binding.transaction?.unloadingLocationPincode.toString()+"-"+binding.transaction?.dropLocationCity.toString()))
           }
 
           if (!uploadArray.isEmpty()) {
@@ -437,6 +441,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
             uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          }else if(binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.loadingLocationPincode.toString()+"-"+binding.transaction?.pickupLocationCity.toString()))
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
@@ -445,6 +451,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.city1.text = binding.transaction?.pickup1City
             if(binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address))
+            }else if(binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()){
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1AddressPin.toString()+ "-"+binding.transaction?.pickup1City.toString()))
             }
           }
 
@@ -454,6 +462,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.city2.text = binding.transaction?.pickup2City
             if(binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address))
+            }else if(binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()){
+              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2AddressPin.toString()+ "-"+binding.transaction?.pickup2City.toString()))
             }
           }
 
@@ -470,6 +480,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       "Drop Intermediary Stop", binding.transaction?.intermediaryStop1Address
                   )
               )
+            }else  if(binding.transaction?.intermediaryStop1AddressPin.isNotNullOrEmpty()) {
+              uploadArray.add(
+                  Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop1AddressPin.toString()+"-"+binding.transaction?.stop1City.toString())
+              )
             }
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
@@ -481,6 +495,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   Pair(
                       "Drop Intermediary Stop", binding.transaction?.intermediaryStop2Address
                   )
+              )
+            }else  if(binding.transaction?.intermediaryStop2AddressPin.isNotNullOrEmpty()) {
+              uploadArray.add(
+                  Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop2AddressPin.toString()+"-"+binding.transaction?.stop2City.toString())
               )
             }
           }
@@ -494,6 +512,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()){
             uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
+          }else if(binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()){
+            uploadArray.add(Pair("Drop Address", binding.transaction?.unloadingLocationPincode.toString()+"-"+binding.transaction?.dropLocationCity.toString()))
           }
 
           if(!uploadArray.isEmpty()) {
