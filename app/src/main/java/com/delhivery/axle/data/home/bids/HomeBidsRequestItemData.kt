@@ -41,12 +41,16 @@ data class HomeBidsRequestItemData(
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
-  @SerializedName("intermediary_stop1") val stop1City: String,
+  @SerializedName("intermediary_stop1_city") val stop1City: String,
   @SerializedName("intermediary_stop1_state") val stop1State: String,
-  @SerializedName("intermediary_stop2") val stop2City: String,
+  @SerializedName("intermediary_stop2_city") val stop2City: String,
   @SerializedName("intermediary_stop2_state") val stop2State: String,
-  @SerializedName("intermediary_pickup_stop1") val pickup1City: String,
-  @SerializedName("intermediary_pickup_stop2") val pickup2City: String,
+  @SerializedName("intermediary_pickup_stop1") val pickup1: String,
+  @SerializedName("intermediary_pickup_stop2") val pickup2: String,
+  @SerializedName("intermediary_stop1") val stop1: String,
+  @SerializedName("intermediary_stop2") val stop2: String,
+  @SerializedName("intermediary_pickup_stop1_city") val pickup1City: String,
+  @SerializedName("intermediary_pickup_stop2_city") val pickup2City: String,
   @SerializedName("destination_state") val destinationState: String,
   @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
@@ -74,10 +78,15 @@ data class HomeBidsRequestItemData(
   @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
   @SerializedName("indent_origin") val indentOrigin:String? =  null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
+  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
   @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
   @SerializedName("indent_halt_centers") val indentHaltCenters:List<IndentHaltCenters>? =  null,
   @SerializedName("pickup_location_address") val pickupLocationAddress: String?,
   @SerializedName("drop_location_address") val dropLocationAddress: String?,
+  @SerializedName("pickup_location_city") val pickupLocationCity: String?,
+  @SerializedName("drop_location_city") val dropLocationCity: String?,
+  @SerializedName("pickup_location_pincode ") val loadingLocationPincode: String?,
+  @SerializedName("drop_location_pincode") val unloadingLocationPincode: String?,
   @SerializedName("intermediary_pickup_stop1_address") val pickup1Address: String?,
   @SerializedName("intermediary_pickup_stop1_pincode") val pickup1AddressPin: String?,
   @SerializedName("intermediary_pickup_stop2_address") val pickup2Address: String?,
@@ -89,7 +98,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Triple<String?, String?,String?>?>? =Triple(Pair(null, null), Pair(null, null), Triple(null, null,null)),
   @SerializedName("origin_city_code") var originCityCode: String? =null,
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
-var lowestBid: Double? = 0.0,
+  @SerializedName("additional_remarks") var additionalRemarks: String? = null,
+  @SerializedName("order_creation_remarks") var orderCreationRemarks: String? =null,
+  var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
   var showing: Boolean = false,
@@ -176,6 +187,8 @@ var lowestBid: Double? = 0.0,
   }
 
   fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
+  fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
+
 
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
@@ -237,18 +250,18 @@ var lowestBid: Double? = 0.0,
    * @return formatted origin district, city, state
    */
   fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
-    originCityName() + "\n" + originDistrictName() + "\n" + originStateName()
+    originDistrictName() + "\n" + originStateName()
   } else {
-    originCityName() + "\n" + originStateName()
+    originStateName()
   }
 
   /**
    * @return formatted destination city, state
    */
   fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
-    destinationCityName() + "\n" + destinationDistrictName() + "\n" + destinationStateName()
+    destinationDistrictName() + "\n" + destinationStateName()
   } else {
-    destinationCityName() + "\n" + destinationStateName()
+    destinationStateName()
   }
 
   /**

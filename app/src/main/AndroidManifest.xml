@@ -129,6 +129,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.searchload.SearchLoadActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bids.TripsActivity"

@@ -82,7 +82,8 @@ class AddVehicle(
     var demandType: String,
     var price: Double= 0.0,
     var spSecondaryId:String?=null,
-    var spSecondaryName:String?=null
+    var spSecondaryName:String?=null,
+    var originator: String="axle-app"
 ){
     fun getRequest():JsonObject{
         val jsonObject = JsonObject()
@@ -100,6 +101,7 @@ class AddVehicle(
         jsonObject.addProperty("origin_cluster_id", originClusterId)
         jsonObject.addProperty("destination_cluster_id", destinationClusterId)
         jsonObject.addProperty("demand_type", demandType)
+        jsonObject.addProperty("originator", originator)
         if(spSecondaryId!=null)
         jsonObject.addProperty("sp_secondary_id", spSecondaryId)
         if(spSecondaryName!=null)

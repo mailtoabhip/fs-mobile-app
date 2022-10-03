@@ -135,6 +135,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     binding.accountHolderWarning.visibility = View.GONE
                     binding.nameDeclaration.visibility = View.GONE
                     nameDec = true
+                    docUpload = true
                     enableSubmitButton()
                 } else {
                     if (it.isNotNullOrEmpty()) {
@@ -155,6 +156,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     binding.accountHolderWarning.visibility = View.GONE
                     binding.nameDeclaration.visibility = View.GONE
                     nameDec = true
+                    docUpload = true
                     enableSubmitButton()
                 } else {
                     if (it.isNotNullOrEmpty()) {
@@ -215,6 +217,8 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 }else {
                     navigationUtils.navigate(VendorPolicyActivity::class.java, true, null)
                 }
+            }else{
+                viewModel.selected194CUpload.value = userPrefs.ninteen4CDocUrl.isNotNullOrEmpty()
             }
         })
 
@@ -271,14 +275,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         binding.uploadDocLay.setOnClickListener {
             val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
+            viewModel.accountUpload.value = true
         }
         binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
+            viewModel.accountUpload.value = false
             viewModel.selected194CUpload.value=true
         }
         binding.docRemove.setOnClickListener {
             showUploadImage()
+            viewModel.accountUpload.value = false
         }
         binding.docRemove1.setOnClickListener {
             showUploadImage1()
@@ -309,6 +316,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         binding.accountHolderWarning.visibility= View.GONE
                         binding.nameDeclaration.visibility=View.GONE
                         nameDec=true
+                        docUpload = true
                         enableSubmitButton()
                     }else{
                         if(it.second.accountHolderName.isNotNullOrEmpty()) {
@@ -359,6 +367,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             binding.nameDeclaration.visibility=View.GONE
             viewModel.accountHolderText.value=getString(R.string.hint_for_bank_validation)
             nameDec=true
+            docUpload = true
             viewModel.bankValidated=false
             enableSubmitButton()
 
@@ -444,7 +453,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     fun enableSubmitButton(){
         Log.d("Enabke",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString()+nameDec.toString())
-        if(accountName&&accountNum&&ifsc&&nameDec) {
+        if(accountName&&accountNum&&ifsc&&nameDec&&docUpload) {
             binding.btnSubmit.isEnabled = true
         }else{
             binding.btnSubmit.isEnabled = false
@@ -471,11 +480,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         path: String
     ) {
         uiUtils.hideProgress()
-        if(viewModel.selected194CUpload.value != true){
+        if(viewModel.accountUpload.value == true){
             uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected()
 
-        }else{
+        }else if(viewModel.selected194CUpload.value == true){
             uploadArray1.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected1()
         }
@@ -574,7 +583,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         uploadImageName: String,
         localImageName: String
     ) {
-        if(viewModel.selected194CUpload.value != true) {
+        if(viewModel.accountUpload.value == true) {
             this.uploadImageName =
                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
             this.localImageName =
@@ -716,12 +725,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        if(viewModel.selected194CUpload.value != true) {
+                        if(viewModel.accountUpload.value == true) {
                             this.uploadImageName =
                                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension
                             this.localImageName =
                                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+imageScopedFile.extension
-                        }else{
+                        }else if(viewModel.selected194CUpload.value == true) {
                             this.uploadImageName =
                                 "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension
                             this.localImageName =

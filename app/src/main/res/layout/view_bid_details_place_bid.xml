@@ -22,6 +22,7 @@
       android:layout_marginEnd="@dimen/size_8dp"
       android:layout_marginStart="@dimen/size_8dp"
       android:layout_marginTop="@dimen/size_4dp"
+      android:visibility="gone"
       android:background="@drawable/bg_bid_details_action"
       android:gravity="center_horizontal"
       android:orientation="vertical"

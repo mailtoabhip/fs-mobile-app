@@ -201,6 +201,7 @@
                     android:spinnerMode="dropdown"
                     android:visibility="@{item.visibility()}"
                     android:layout_marginEnd="@dimen/size_12dp"
+                    android:focusableInTouchMode="@{item.enabled}"
                     android:entries="@array/reportingTimeItems"
                     android:imeOptions="actionDone"
                     android:textSize="@dimen/text_14sp"

@@ -83,6 +83,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     }else{
       if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        format.setTimeZone(TimeZone.getTimeZone("IST"));
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(item.data.bidEndingTime)
         if (date2.compareTo(date1) > 0) {
@@ -100,7 +101,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                 val hrs = String.format(format, hours)
                 val ms = String.format(format, mins)
                 val sec = String.format(format, secs)
-                val diff = "$hrs:$ms:$sec" + "s" // updated value every1 second
+                val diff = "$hrs:$ms:$sec" + "s"
                 binding.timerTime.setText(diff)
               } catch (e: Exception) {
                 e.printStackTrace()
@@ -119,6 +120,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
         binding.timerLayout.visibility = View.GONE
       }
     }
+
 
     if(item.data.indentOrigin.equals("LH")){
       if(item.data.indentHaltCenters.isNullOrEmpty()){

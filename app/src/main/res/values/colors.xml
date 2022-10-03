@@ -13,8 +13,13 @@
   <!-- bid status colors-->
   <color name="status_active">#29A8E0</color>
   <color name="status_confirmed">#619F1B</color>
+  <color name="status_confirmed_bg">#ECFDF5</color>
   <color name="status_lost">#FF3131</color>
+  <color name="status_lost_bid">#DC2626</color>
+  <color name="status_lost_bg">#FEF2F2</color>
   <color name="pending">#d36a1b</color>
+  <color name="pending_status">#D97706</color>
+  <color name="pending_bg">#FFFBEB</color>
 
   <!-- text colors-->
   <color name="black">#000000</color>

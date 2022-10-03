@@ -54,7 +54,7 @@ import javax.inject.Inject
 
 
 class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding, BusinessVerificationViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
-    UploadedItemRVAdapterInterface {
+    UploadedItemRVAdapterInterface,ResetManualVerification {
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -358,7 +358,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             if(it&&userPrefs.rcManualverificationreq) {
                 viewModel.selected.value = "rc"
                 userPrefs.rcManualverificationreq=true
-                dialogUtils.showUploadRcDialog(getString(R.string.label_business),this)
+                dialogUtils.showUploadRcDialog(getString(R.string.label_business),this,this)
             }else{
                 //show successfully submitted page
                     if (viewModel.truckNumber.value.isNotNullOrEmpty()) {
@@ -455,6 +455,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     ) {
         uiUtils.hideProgress()
         uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        if(path.contains("RC")){
+            userPrefs.rcManualverificationreq = true
+        }
         showFileSelected()
         resetUploadData()
     }
@@ -728,7 +731,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun layoutId()=R.layout.activity_business_verification
 
     override fun requireConnection()= false
-
-
+    override fun resetManualData(boolean: Boolean) {
+        if(boolean)
+            userPrefs.rcManualverificationreq=false
+    }
 
 }
