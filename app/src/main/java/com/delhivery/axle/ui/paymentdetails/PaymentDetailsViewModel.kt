@@ -36,6 +36,8 @@ class PaymentDetailsViewModel@Inject constructor(
     var verificationDocUploadMsg = MutableLiveData<String>()
     var verificationDocUploadFailed = MutableLiveData<Boolean>()
     var selected194CUpload= MutableLiveData<Boolean>()
+    var accountUpload= MutableLiveData<Boolean>()
+    var isAccountProofDoc = false
     var userUpdateLiveData = MutableLiveData<Boolean>()
     var vendorUserUpdateLiveData = MutableLiveData<Boolean>()
     var nameDeclaration =false
@@ -67,7 +69,7 @@ class PaymentDetailsViewModel@Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res!=null) {
-                    if (selected194CUpload.value==true) {
+                    if (isAccountProofDoc==false) {
                         userPrefs.ninteen4CDocUrl =
                             verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                     }else{
@@ -77,7 +79,7 @@ class PaymentDetailsViewModel@Inject constructor(
                     }
                     verificationDocUploadMsg.postValue(_res)
                 } else {
-                    if (selected194CUpload.value == true) {
+                    if (isAccountProofDoc == false) {
                         userPrefs.ninteen4CDocUrl =
                             verificationDocUploadRequest.documentUrls?.get(0) ?: ""
                     } else {
@@ -211,6 +213,7 @@ class PaymentDetailsViewModel@Inject constructor(
                     documentUrls = docList
                 )
             )
+            isAccountProofDoc = false
         }else{
             uploadDocForVerification(
                 VerificationDocUploadRequest(
@@ -218,6 +221,7 @@ class PaymentDetailsViewModel@Inject constructor(
                     documentUrls = docList
                 )
             )
+            isAccountProofDoc = true
         }
 
     }
