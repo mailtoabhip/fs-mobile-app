@@ -49,7 +49,7 @@ class KotlinApp : DaggerApplication() {
   }
   private fun createNotificationChannel() {
     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-      val notificationChannel=NotificationChannel(CHANNEL_ID," TOKEN SERVICE CHANNEL",NotificationManager.IMPORTANCE_DEFAULT)
+      val notificationChannel=NotificationChannel(CHANNEL_ID,"TOKEN SERVICE CHANNEL",NotificationManager.IMPORTANCE_DEFAULT)
       val manager = getSystemService(NotificationManager::class.java)
       manager.createNotificationChannel(notificationChannel)
     }
