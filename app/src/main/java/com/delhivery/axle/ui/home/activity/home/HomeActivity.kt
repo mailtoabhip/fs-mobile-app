@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.splash.SplashActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
+import com.delhivery.axle.ui.trucks.TruckActivity
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -108,6 +109,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         /* setup view pager */
         binding.viewpager.apply {
           offscreenPageLimit = HomeFragmentType.count()
+          processDeepLink()
           adapter = pagerAdapter
           /* update ui on page changed */
           onPageSelected { p ->
@@ -151,10 +153,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       )
       navigationUtils.navigate(MyProfileActivity::class.java)
     }
-
-    /**
-     * Process Deep Link */
-    processDeepLink()
       }
     })
   }
@@ -192,7 +190,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         LOAD_DETAIL_REDIRECT -> {
           if (dplink_tid != "") {
-            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK))
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK, subSource = VALUE_VENDOR_SUBSOURCE))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -200,12 +198,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         SUPPLIER_LOAD_REDIRECT -> {
           if (dplink_tid != "") {
-            analyticsUtil.trackEvent(
-                    EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION,
-                    mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
-                    mutableListOf(userPrefs.phoneNumber.toString(), dplink_tid)
-            )
-            startActivity(bidDetailsIntent(dplink_tid, this))
+            startActivity(bidDetailsIntent(dplink_tid, this,source = VALUE_DEEPLINK, subSource = VALUE_INVENTORY_SUBSOURCE))
           } else {
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
@@ -233,6 +226,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         MY_TRUCKS_REDIRECT -> {
           fromDeepLink = true
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
+        ADD_TRUCK_REDIRECT -> {
+          fromDeepLink = true
+          navigationUtils.navigate(TruckActivity::class.java)
         }
         KYC_REJECTION ->{
           navigationUtils.navigate(MyProfileActivity::class.java)
@@ -675,6 +672,8 @@ private const val KYC_REJECTION = "kycrejected"
 private const val KYC_VERIFIED = "kycverified"
 private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
 private const val SHARE_RATE = "sharerate"
+private const val ADD_TRUCK_REDIRECT = "add_truck"
+
 
 public const val OFF_SET_LIMIT = 500
 

@@ -190,7 +190,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     }
 
     /*show upload fail dialog*/
-    fun showUploadRcDialog(uploadText: String,dialogUtilsInterface: DialogUtilsInterface) {
+    fun showUploadRcDialog(uploadText: String,dialogUtilsInterface: DialogUtilsInterface, resetManualVerification:ResetManualVerification) {
         val dialog = Dialog(activity)
         val bindingDialog= DialogUploadRcBinding.inflate(activity.layoutInflater)
 
@@ -207,7 +207,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialogUtilsInterface.captureImage(imageName, imageName)
             dialog.dismiss()
         }
-
+        dialog.setOnDismissListener {
+          resetManualVerification.resetManualData(true)
+        }
         dialog.show()
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -617,5 +619,9 @@ interface DialogUtilsInterface {
     fun captureImage(uploadImageName:String,localImageName:String)
 
     fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>)
+
 }
 
+interface ResetManualVerification{
+  fun resetManualData(boolean: Boolean)
+}

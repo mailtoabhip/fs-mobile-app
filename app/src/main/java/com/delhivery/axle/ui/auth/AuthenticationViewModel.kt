@@ -109,7 +109,7 @@ class AuthenticationViewModel @Inject constructor(
             if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                LoadRequest
+                Disabled
               } else{
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
@@ -118,7 +118,7 @@ class AuthenticationViewModel @Inject constructor(
             }else{
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                LoadRequest
+                Disabled
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                 userPrefs.hasLoggedIn = false
                 AccountDetails

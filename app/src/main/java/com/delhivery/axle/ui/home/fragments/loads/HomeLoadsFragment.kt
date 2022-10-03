@@ -177,7 +177,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       if (it.first) {
         val data = adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
         analyticsUtil.moEngageTrackEvent(
-            EVENT_BID_REVISE_INITIATED,
+          EVENT_LOADFEED_BID_REVISE_INITIATED,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
             mutableListOf(data?.transactionId.toString(),data?.numBids.toString(),data?.lowestBid.toString())
         )
@@ -285,7 +285,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           )
         }else{
           analyticsUtil.moEngageTrackEvent(
-              EVENT_BID_REVISE_SUBMITTED,
+              EVENT_LOADFEED_BID_REVISE_SUBMITTED,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
                   PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
               mutableListOf(data?.transactionId?:"",numBids.toString()?:"",lowestBid.toString()?:" ",oldAmountbids,bidAmount)
@@ -330,7 +330,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           )
         }else{
           analyticsUtil.moEngageTrackEvent(
-            EVENT_BID_REVISE_SUBMITTED,
+            EVENT_LOADFEED_BID_REVISE_SUBMITTED,
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
               PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
             mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
@@ -392,7 +392,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val pageTitle = if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
         if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
           analyticsUtil.moEngageTrackEvent(
-              EVENT_BID_REVISE_INITIATED,
+            EVENT_LOADFEED_BID_REVISE_INITIATED,
               mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
               mutableListOf(
                   it.second.transactionId.toString(), it.second?.numBids.toString(),
@@ -798,7 +798,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   reviseInitiated=false
                 }else{
                   analyticsUtil.moEngageTrackEvent(
-                      EVENT_BID_REVISE_INITIATED,
+                      EVENT_LOADFEED_BID_REVISE_INITIATED,
                       mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
                       mutableListOf(
                           data.transactionId.toString(), data?.numBids.toString(),
