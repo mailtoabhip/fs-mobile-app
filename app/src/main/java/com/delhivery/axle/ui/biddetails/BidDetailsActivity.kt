@@ -32,6 +32,7 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -444,30 +445,79 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
             uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
-          }else if(binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()){
-            uploadArray.add(Pair("Pickup Address", binding.transaction?.loadingLocationPincode.toString()+"-"+binding.transaction?.pickupLocationCity.toString()))
+          }else{
+            var uData = StringBuilder()
+            if(binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()){
+              uData.append(binding.transaction?.loadingLocationPincode+"-")
+            }
+
+            if(binding.transaction?.pickupLocationCity.isNotNullOrEmpty()){
+              uData.append(binding.transaction?.pickupLocationCity?.capitalize())
+            }
+
+            if(uData.toString().isNotNullOrEmpty()){
+              uploadArray.add(Pair("Pickup Address",uData.toString() ))
+            }
+
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup1)) {
             total = total+1
             binding.textViaDestination.card1.visibility = View.VISIBLE
-            binding.textViaDestination.city1.text = binding.transaction?.pickup1
+            var citNam:String? = null
+            if(binding.transaction?.isDmt == true){
+              citNam = binding.transaction?.pickup1?.capitalize()
+            }else{
+              citNam = binding.transaction?.pickup1City?.capitalize()
+            }
+            binding.textViaDestination.city1.text = citNam
+
             if(binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address))
-            }else if(binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()){
-              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1AddressPin.toString()+ "-"+binding.transaction?.pickup1City.toString()))
-            }
+            }else {
+              var uData = StringBuilder()
+              if(binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()){
+                uData.append(binding.transaction?.pickup1AddressPin+"-")
+              }
+              if(citNam.isNotNullOrEmpty()){
+                uData.append(citNam)
+              }
+
+              if(uData.toString().isNotNullOrEmpty()){
+                uploadArray.add(Pair("Pickup Intermediary Stop",uData.toString()))
+              }
+          }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup2)) {
             total = total+1
             binding.textViaDestination.card2.visibility = View.VISIBLE
-            binding.textViaDestination.city2.text = binding.transaction?.pickup2
+
+            var citNam:String? = null
+            if(binding.transaction?.isDmt == true){
+              citNam = binding.transaction?.pickup2?.capitalize()
+            }else{
+              citNam = binding.transaction?.pickup2City?.capitalize()
+            }
+            binding.textViaDestination.city2.text = citNam
+
             if(binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address))
-            }else if(binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()){
-              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2AddressPin.toString()+ "-"+binding.transaction?.pickup2City.toString()))
-            }
+            }else {
+
+              var uData = StringBuilder()
+              if(binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()){
+                uData.append(binding.transaction?.pickup2AddressPin+"-")
+              }
+              if(citNam.isNotNullOrEmpty()){
+                uData.append(citNam)
+              }
+
+              if(uData.toString().isNotNullOrEmpty()){
+                uploadArray.add(Pair("Pickup Intermediary Stop",uData.toString()))
+              }
+
+             }
           }
 
           if (!TextUtils.isEmpty(binding.transaction?.stop1)) {
@@ -476,33 +526,68 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
             total = total+1
             binding.textViaDestination.card3.visibility = View.VISIBLE
-            binding.textViaDestination.city3.text = binding.transaction?.stop1
+
+            var citNam:String? = null
+            if(binding.transaction?.isDmt == true){
+              citNam = binding.transaction?.stop1?.capitalize()
+            }else{
+              citNam = binding.transaction?.stop1City?.capitalize()
+            }
+            binding.textViaDestination.city3.text = citNam
+
             if(binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
               uploadArray.add(
                   Pair(
                       "Drop Intermediary Stop", binding.transaction?.intermediaryStop1Address
                   )
               )
-            }else  if(binding.transaction?.intermediaryStop1AddressPin.isNotNullOrEmpty()) {
-              uploadArray.add(
-                  Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop1AddressPin.toString()+"-"+binding.transaction?.stop1City.toString())
-              )
-            }
+            }else {
+              var uData = StringBuilder()
+              if(binding.transaction?.intermediaryStop1AddressPin.isNotNullOrEmpty()){
+                uData.append(binding.transaction?.intermediaryStop1AddressPin+"-")
+              }
+              if(citNam.isNotNullOrEmpty()){
+                uData.append(citNam)
+              }
+
+              if(uData.toString().isNotNullOrEmpty()){
+                uploadArray.add(Pair("Drop Intermediary Stop",uData.toString()))
+              }
+
+             }
+
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop2)) {
-            total = total+1
+            total = total + 1
             binding.textViaDestination.card4.visibility = View.VISIBLE
-            binding.textViaDestination.city4.text = binding.transaction?.stop2
-            if(binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
+
+            var citNam: String? = null
+            if (binding.transaction?.isDmt == true) {
+              citNam = binding.transaction?.stop2?.capitalize()
+            } else {
+              citNam = binding.transaction?.stop2City?.capitalize()
+            }
+            binding.textViaDestination.city4.text = citNam
+
+            if (binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
               uploadArray.add(
                   Pair(
                       "Drop Intermediary Stop", binding.transaction?.intermediaryStop2Address
                   )
               )
-            }else  if(binding.transaction?.intermediaryStop2AddressPin.isNotNullOrEmpty()) {
-              uploadArray.add(
-                  Pair("Drop Intermediary Stop", binding.transaction?.intermediaryStop2AddressPin.toString()+"-"+binding.transaction?.stop2City.toString())
-              )
+            } else {
+
+              var uData = StringBuilder()
+              if (binding.transaction?.intermediaryStop2AddressPin.isNotNullOrEmpty()) {
+                uData.append(binding.transaction?.intermediaryStop2AddressPin + "-")
+              }
+              if (citNam.isNotNullOrEmpty()) {
+                uData.append(citNam)
+              }
+
+              if (uData.toString().isNotNullOrEmpty()) {
+                uploadArray.add(Pair("Drop Intermediary Stop", uData.toString()))
+              }
             }
           }
 
@@ -515,8 +600,21 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
           if(binding.transaction?.dropLocationAddress.isNotNullOrEmpty()){
             uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
-          }else if(binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()){
-            uploadArray.add(Pair("Drop Address", binding.transaction?.unloadingLocationPincode.toString()+"-"+binding.transaction?.dropLocationCity.toString()))
+          }else{
+
+            var uData = StringBuilder()
+            if(binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()){
+              uData.append(binding.transaction?.unloadingLocationPincode+"-")
+            }
+
+            if(binding.transaction?.dropLocationCity.isNotNullOrEmpty()){
+              uData.append(binding.transaction?.dropLocationCity?.capitalize())
+            }
+
+            if(uData.toString().isNotNullOrEmpty()){
+              uploadArray.add(Pair("Drop Address",uData.toString() ))
+            }
+
           }
 
           if(!uploadArray.isEmpty()) {
