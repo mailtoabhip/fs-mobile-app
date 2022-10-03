@@ -448,10 +448,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             uploadArray.add(Pair("Pickup Address", binding.transaction?.loadingLocationPincode.toString()+"-"+binding.transaction?.pickupLocationCity.toString()))
           }
 
-          if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
+          if (!TextUtils.isEmpty(binding.transaction?.pickup1)) {
             total = total+1
             binding.textViaDestination.card1.visibility = View.VISIBLE
-            binding.textViaDestination.city1.text = binding.transaction?.pickup1City
+            binding.textViaDestination.city1.text = binding.transaction?.pickup1
             if(binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address))
             }else if(binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()){
@@ -459,10 +459,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
           }
 
-          if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
+          if (!TextUtils.isEmpty(binding.transaction?.pickup2)) {
             total = total+1
             binding.textViaDestination.card2.visibility = View.VISIBLE
-            binding.textViaDestination.city2.text = binding.transaction?.pickup2City
+            binding.textViaDestination.city2.text = binding.transaction?.pickup2
             if(binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
               uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address))
             }else if(binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()){
@@ -470,13 +470,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
           }
 
-          if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
+          if (!TextUtils.isEmpty(binding.transaction?.stop1)) {
             if(total==0){
               binding.textViaDestination.img3.visibility = View.GONE
             }
             total = total+1
             binding.textViaDestination.card3.visibility = View.VISIBLE
-            binding.textViaDestination.city3.text = binding.transaction?.stop1City
+            binding.textViaDestination.city3.text = binding.transaction?.stop1
             if(binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
               uploadArray.add(
                   Pair(
@@ -489,10 +489,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               )
             }
           }
-          if (!TextUtils.isEmpty(binding.transaction?.stop2City)) {
+          if (!TextUtils.isEmpty(binding.transaction?.stop2)) {
             total = total+1
             binding.textViaDestination.card4.visibility = View.VISIBLE
-            binding.textViaDestination.city4.text = binding.transaction?.stop2City
+            binding.textViaDestination.city4.text = binding.transaction?.stop2
             if(binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
               uploadArray.add(
                   Pair(
