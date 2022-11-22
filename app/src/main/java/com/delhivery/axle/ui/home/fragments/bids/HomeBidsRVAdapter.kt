@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.axle.databinding.ViewContractsBidItemBinding
+import com.delhivery.axle.databinding.ViewContractsBidResultsBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
@@ -16,6 +18,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
@@ -44,6 +47,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
+    Contracts -> ViewContractsBidItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -54,6 +58,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     is ViewWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeBidsTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
+    is ViewContractsBidItemBinding -> HomeContractsBidsRequestItemVH(binding)
     else -> HomeBidsRequestItemVH(binding as ViewHomeBidsRequestItemBinding)
   }
 
@@ -67,11 +72,12 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface)
       is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface)
       is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface)
+      is HomeContractsBidsRequestItemVH -> holder.bind(item as HomeContractsBidsRequestItem, _interface)
     }
   }
 
   override fun filterList(query: String) =
-    items.filter { it.type == Search || it.data.filter(query) }
+    items.filter { it.type == Search || it.data.filter(query)}
 
   /**
    * Reset all data, remove all errors/transactions
@@ -80,7 +86,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
-      items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search }
+      items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search || it.type==Contracts }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

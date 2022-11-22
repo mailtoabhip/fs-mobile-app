@@ -132,13 +132,14 @@
                            android:layout_marginTop="@dimen/size_8dp"
                             android:layout_height="wrap_content">
 
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="wrap_content"
-                                android:layout_below="@+id/label_origin"
-                                bind:srcCompat="@drawable/ic_frame"
-                                android:layout_marginTop="@dimen/size_8dp"
-                                android:id="@+id/imgframe"
-                                android:layout_height="wrap_content"/>
+                         <androidx.appcompat.widget.AppCompatImageView
+                             android:id="@+id/imgframe"
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:layout_below="@+id/label_origin"
+                             android:layout_marginTop="@dimen/size_8dp"
+                             bind:srcCompat="@drawable/ic_frame"
+                             />
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

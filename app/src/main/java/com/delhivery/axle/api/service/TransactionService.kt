@@ -77,4 +77,16 @@ interface TransactionService {
       @Path("transactionId") transactionId: String,
       @Body request: FuelPayoutRequest
   ): Single<BaseResponse<FuelPayoutResponse>>
+
+  /**
+   * Loadboard transactions
+   */
+  @GET("/transactions/loadboard/contracts")
+  fun contractsTransactions(
+    @Query("sp_id") userId: String,
+    @Query("offset") offset: Int,
+    @Query("limit") limit: Int,
+    @Query("demand_types") vendorType: String ?
+  ): Single<BaseResponse<TransactionsResponse>>
+
 }

@@ -13,7 +13,9 @@ enum class BidType(
   Unknown(-1, TransactionBidStatus.NA, "na"),
   ConfirmedBid(0, TransactionBidStatus.Accepted, "Confirmed bids"),
   ActiveBid(1, TransactionBidStatus.Open, "Active bids"),
-  LostBid(2, TransactionBidStatus.Rejected, "Lost bids");
+  LostBid(2, TransactionBidStatus.Rejected, "Lost bids"),
+  ContractBid(3, TransactionBidStatus.Contract, "Contract bids");
+
 
   /**
    * Get toolbar title with count of items

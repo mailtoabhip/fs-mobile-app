@@ -20,6 +20,7 @@ import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
 import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
+import com.delhivery.axle.ui.bids.BidType.ContractBid
 import com.delhivery.axle.ui.bids.BidType.LostBid
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.bids.userBidsIntent
@@ -200,6 +201,17 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
         startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
       }
 
+      HomeBidsHeaderAction_ContractBids -> {
+        // Capture event
+      /*  analyticsUtil.trackEvent(
+          EVENT_VIEW_LOST_BIDS,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
+          mutableListOf(userPrefs.userId(), viewModel.lostBids)
+        )*/
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        startActivityForResult(userBidsIntent(context!!, ContractBid), REQCODE_NO_ROUTES)
+      }
+
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
@@ -208,6 +220,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
+
         val dmtStatus = if(_item.isDMTIndent())
           "dmt"
         else ""

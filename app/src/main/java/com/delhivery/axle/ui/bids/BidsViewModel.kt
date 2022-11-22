@@ -22,12 +22,14 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.bids.BidType.ContractBid
 import com.delhivery.axle.ui.bids.BidType.Unknown
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_NoBids
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsWarningItem_TimeOut
+import com.delhivery.axle.ui.home.fragments.bids.HomeContractsBidsRequestItem
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -92,9 +94,9 @@ class BidsViewModel @Inject constructor(
     }
 
     dataLoadingLiveData.postValue(true)
-
-    var statuses = bidType.status.statusKey
-    var pending = false
+    var contract:Boolean? = null
+    var statuses:String? = bidType.status.statusKey
+    var pending:Boolean? = false
     if (bidType == BidType.LostBid) {
        statuses = mutableListOf<String>().apply {
         add(BidType.LostBid.status.statusKey)
@@ -106,8 +108,12 @@ class BidsViewModel @Inject constructor(
     if (bidType == BidType.ConfirmedBid) {
       pending= true
     }
-
-    compositeDisposable += bidsRepository.userBids(offset, statuses, pending)
+    if(bidType==BidType.ContractBid){
+      statuses = null
+      contract = true
+      pending = null
+    }
+    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract)
         .flatMap { _res ->
           total = _res.first
           bidsCountLiveData.postValue(total)
@@ -177,7 +183,12 @@ class BidsViewModel @Inject constructor(
                             transaction.bidStatus().status =="Cancelled") && transaction.transactionBid!!.childTransactionId ==null){
                     continue
                   }
-                  add(Pair(HomeBidsRequestItem(transaction), Add))
+                  if(bidType==ContractBid){
+                    add(Pair(HomeContractsBidsRequestItem(transaction), Add))
+                  }else{
+                    add(Pair(HomeBidsRequestItem(transaction), Add))
+                  }
+
                 }
               }
             }

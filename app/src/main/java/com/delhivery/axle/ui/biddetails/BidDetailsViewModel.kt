@@ -236,7 +236,7 @@ class BidDetailsViewModel @Inject constructor(
   ) {
     compositeDisposable += bidsRepository.createBid(
         isPMT, transactionId, bidAmount, pmtRate, commercialType,
-            expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+            expectedArrivalTimePickup, expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
@@ -263,7 +263,7 @@ class BidDetailsViewModel @Inject constructor(
   ) {
     compositeDisposable += bidsRepository.editBid(
         isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,
-            expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+            expectedArrivalTimePickup, expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()

@@ -396,11 +396,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           if(_transaction.isDMTIndent()){
             binding.unallocated= getString(string.unallocated_bulk_order)+(_transaction.unAllocatedVolume)?.toInt()+" MT"
           }
+          if(_transaction!!.requiredAtDraw()!=null){
           binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(
               null, null, ContextCompat.getDrawable(
-              this@BidDetailsActivity, _transaction!!.requiredAtDraw()
+              this@BidDetailsActivity, _transaction!!.requiredAtDraw()!!
           ), null
           )
+          }
         }
 
 

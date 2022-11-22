@@ -9,5 +9,9 @@
         android:id="@+id/nav_trucks"
         android:icon="@drawable/ic_nav_loads"
         android:title="@string/nav_label_trucks"/>
+    <item
+        android:id="@+id/nav_contracts"
+        android:icon="@drawable/ic_nav_loads"
+        android:title="@string/nav_label_trucks"/>
 
 </menu>

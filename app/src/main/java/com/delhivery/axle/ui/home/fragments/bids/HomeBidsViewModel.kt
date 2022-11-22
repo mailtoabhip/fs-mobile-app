@@ -76,7 +76,7 @@ class HomeBidsViewModel @Inject constructor(
   var activeBids = ""
   var confirmedBids= ""
   var lostBids= ""
-
+  var contractBids= ""
   /**
    * Fetch bids summary
    */
@@ -88,6 +88,7 @@ class HomeBidsViewModel @Inject constructor(
             activeBids=_res.myBids.toString()
             confirmedBids=_res.confirmedBids.toString()
             lostBids=_res.lostBids.toString()
+            contractBids = _res.contractBids.toString()
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(
@@ -96,7 +97,8 @@ class HomeBidsViewModel @Inject constructor(
                           HomeBidsHeaderItemData(
                               _res.myBids,
                               _res.confirmedBids,
-                              _res.lostBids
+                              _res.lostBids,
+                            _res.contractBids
                           )
                       ), Update
                   )
@@ -133,7 +135,7 @@ class HomeBidsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += bidsRepository.userBids(offset, statuses, true)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null)
       .flatMap { _res ->
         total = _res.first
         bidsCountLiveData.postValue(total)

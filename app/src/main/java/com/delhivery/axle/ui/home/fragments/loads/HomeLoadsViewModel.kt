@@ -429,7 +429,7 @@ class HomeLoadsViewModel @Inject constructor(
     expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.createBid(
-        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
@@ -458,7 +458,7 @@ class HomeLoadsViewModel @Inject constructor(
     expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.editBid(
-        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+        isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {

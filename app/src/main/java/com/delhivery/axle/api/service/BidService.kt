@@ -22,7 +22,7 @@ interface BidService {
    * List transaction bids
    */
   @GET("bids")
-  fun transactionBids(@Query("transaction_id") transactionId: String)
+  fun transactionBids(@Query("transaction_id") transactionId: String, @Query("contract_bids") contractBids:Boolean? )
       : Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -91,7 +91,8 @@ interface BidService {
   @GET("bids")
   fun bidsForLoads(
     @Query("supplier_id") userId: String,
-    @Query("transaction_ids") transactionIds: String? = null
+    @Query("transaction_ids") transactionIds: String? = null,
+    @Query("contract_bids") contractBids: Boolean?=null
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -102,8 +103,9 @@ interface BidService {
     @Query("supplier_id") userId: String,
     @Query("limit") limit: Int,
     @Query("offset") offset: Int,
+    @Query("contract_bids") contractBids: Boolean?,
     @Query("bid_statuses") status: String? = null,
-    @Query("confirmation_pending") confirmationPending: Boolean
+    @Query("confirmation_pending") confirmationPending: Boolean?
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**

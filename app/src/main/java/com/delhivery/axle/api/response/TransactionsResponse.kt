@@ -10,6 +10,7 @@ data class TransactionsResponse(
   @SerializedName("load_price_percent") val loadPricePercent: Int,
   @SerializedName("total") val total: Int,
   @SerializedName("offset") val offset: Int,
+  @SerializedName("active_count") val activeCount: Int?=0,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>
 )
 

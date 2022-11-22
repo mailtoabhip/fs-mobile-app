@@ -14,8 +14,10 @@ data class CreateTransactionBidRequest(
   @SerializedName("bid_price") val bidAmount: Int?,
   @SerializedName("freight_cost") val freightCost: Int?,
   @SerializedName("originator") val originator: String = "axle-app",
-  @SerializedName("expected_arrival_time_pickup") val  expectedArrivalTimePickup:String = "",
-  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String = ""
+  @SerializedName("expected_arrival_time_pickup") val  expectedArrivalTimePickup:String? = "",
+  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String? = "",
+  @SerializedName("tentative_trip_count") val tentativeTripCount:Int?
+
 ) {
 
   companion object {
@@ -31,21 +33,22 @@ data class CreateTransactionBidRequest(
       pmtRate: Int,
       commercialType: String? = "",
       testUser: Boolean,
-      expectedArrivalTimePickup:String,
-      expectedArrivalTimePickupRemark:String
+      expectedArrivalTimePickup:String?,
+      expectedArrivalTimePickupRemark:String?,
+      tentativeTripCount: Int?
     ) = if (isPMT)
       CreateTransactionBidRequest(
           transactionId = transactionId, supplierId = supplierId,
           supplierName = supplierName, freightCost = bidAmount, testUser = testUser,
           bidAmount = pmtRate, commercialType = commercialType, expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount
       )
     else
       CreateTransactionBidRequest(
           transactionId = transactionId, supplierId = supplierId, supplierName = supplierName,
           bidAmount = bidAmount, freightCost = bidAmount, testUser = testUser,
           commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark,tentativeTripCount = tentativeTripCount
       )
   }
 }
@@ -60,8 +63,10 @@ data class UpdateTransactionBidRequest(
   @SerializedName("bidding_type") val commercialType: String? = "",
   @SerializedName("bid_price") val bidAmount: Int,
   @SerializedName("freight_cost") val freightCost: Int?,
-  @SerializedName("action") val action: String = "bid_update", @SerializedName("expected_arrival_time_pickup") val  expectedArrivalTimePickup:String = "",
-  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String = ""
+  @SerializedName("action") val action: String = "bid_update", @SerializedName("expected_arrival_time_pickup") val  expectedArrivalTimePickup:String? = "",
+  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String? = "",
+  @SerializedName("tentative_trip_count") val tentativeTripCount:Int?
+
 ) {
 
   companion object {
@@ -76,22 +81,23 @@ data class UpdateTransactionBidRequest(
       supplierId: String,
       pmtRate: Int,
       commercialType: String,
-      expectedArrivalTimePickup:String,
-      expectedArrivalTimePickupRemark:String
+      expectedArrivalTimePickup:String?,
+      expectedArrivalTimePickupRemark:String?,
+      tentativeTripCount: Int?
     ) = if (isPMT)
       UpdateTransactionBidRequest(
           transactionId = transactionId, bidId = bidId,
           bidAmount = pmtRate, freightCost = amount,
           supplierId = supplierId, commercialType = commercialType,
               expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount
       )
     else
       UpdateTransactionBidRequest(
           transactionId = transactionId, bidId = bidId,
           bidAmount = amount, freightCost = amount, supplierId = supplierId,
           commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount
       )
   }
 }

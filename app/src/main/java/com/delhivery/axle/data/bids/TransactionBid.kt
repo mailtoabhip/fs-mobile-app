@@ -25,7 +25,9 @@ data class TransactionBid(
   @SerializedName("vehicle_number") val vehicleNumber: String? = null,
   @SerializedName("child_transaction_id") val childTransactionId: String?=null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
-   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null
+  @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
+  @SerializedName("tentative_trip_count") val tentativeTripCount: Int?=null
+
   ) : BaseKeyTypeModel<String>() {
   override fun key() = id
 
@@ -83,6 +85,7 @@ enum class TransactionBidStatus(
   Rejected("rejected", "Lost"),
   Cancelled("cancelled", "Cancelled"),
   Accepted("accepted", "Confirmed"),
+  Contract("rejected", "Contract"),
   NA("na", "NA");
 
   companion object {

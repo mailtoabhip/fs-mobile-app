@@ -157,5 +157,19 @@ object DrawableProviderUtils {
     R.drawable.ic_vector_down_arrow
   }
 
+  @DrawableRes
+  fun vehicleOpenCancelDrawableRes(containerType: String?) = when (containerType) {
+    "cancel" -> R.drawable.ic_icon_vehicle_grey
+    "open" -> R.drawable.ic_container_vehicle
+    else -> R.drawable.ic_container_vehicle
+  }
+
+  @DrawableRes
+  fun tripOpenCancelDrawableRes(containerType: String?) = when (containerType) {
+    "cancel" -> R.drawable.ic_icon_trip_grey
+    "open" -> R.drawable.ic_icon_trip
+    else -> R.drawable.ic_icon_trip
+  }
+
 
 }

@@ -139,7 +139,7 @@
 
           <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="match_parent"
-              android:layout_height="5dp"
+              android:layout_height="wrap_content"
               app:srcCompat="@drawable/seprator_dotted"
               />
           <androidx.appcompat.widget.AppCompatTextView

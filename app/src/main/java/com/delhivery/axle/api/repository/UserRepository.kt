@@ -47,11 +47,11 @@ class UserRepository @Inject constructor(
   /**
    * Current user id
    */
-  fun userId() =
+  fun userId() ="ums::user::f4f22734-bb65-11ea-a678-0240e5f873b9"
 //    when (BuildConfig.FLAVOR) {
 //      "development" -> "ums::user::fcb31360-7ae4-11e9-9d32-0223f692f646"
 //      else ->
-    userPrefs.jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
+ //   userPrefs.jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
 //    }
 
   /**

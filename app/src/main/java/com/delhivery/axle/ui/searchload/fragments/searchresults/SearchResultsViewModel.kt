@@ -116,7 +116,7 @@ class SearchResultsViewModel @Inject constructor(
     expectedArrivalTimePickupRemark:String
   ) {
     compositeDisposable += bidsRepository.createBid(
-        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+        isPMT, transactionId, bidAmount, pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {
@@ -147,7 +147,7 @@ class SearchResultsViewModel @Inject constructor(
     compositeDisposable += bidsRepository.editBid(
         isPMT, transactionId, bidId, bidAmount, commercialType,
         pmtRate,  expectedArrivalTimePickup,
-            expectedArrivalTimePickupRemark
+            expectedArrivalTimePickupRemark,null
     )
         .delay(BidsUpdateDelay, SECONDS)
         .flatMap {

@@ -26,7 +26,7 @@ class BidsRepository @Inject constructor(
    *
    * [Triple] with userBid, all bids, count
    */
-  fun transactionBids(transactionId: String) = bidService.transactionBids(transactionId)
+  fun transactionBids(transactionId: String,contractBids: Boolean?=null) = bidService.transactionBids(transactionId,contractBids)
       .convertResponse()
       .map {
         val userId = userRepository.userId()
@@ -72,7 +72,7 @@ class BidsRepository @Inject constructor(
   /**
    * Add/Update bid for loads
    */
-  fun transactionBid(transactionId: String) = bidService.transactionBids(transactionId)
+  fun transactionBid(transactionId: String,contractBids: Boolean?=null) = bidService.transactionBids(transactionId,contractBids)
       .convertResponse()
       .map {
         val userId = userRepository.userId()
@@ -88,7 +88,7 @@ class BidsRepository @Inject constructor(
   /**
   * Add/Update bid for bulkloads
   */
-  fun transactionBidForBulk(transactionId: String) = bidService.transactionBids(transactionId)
+  fun transactionBidForBulk(transactionId: String,contractBids: Boolean?=null) = bidService.transactionBids(transactionId,contractBids)
     .convertResponse()
     .map {
         val userId = userRepository.userId()
@@ -113,11 +113,13 @@ class BidsRepository @Inject constructor(
    * Bulk call to fetch bids
    */
   fun bidsForLoads(
-    transactions: List<HomeBidsRequestItemData>
+    transactions: List<HomeBidsRequestItemData>,
+    contractBids: Boolean?=null
   ) = bidService.bidsForLoads(
       userRepository.userId(),
       if (transactions.isNullOrEmpty()){""}else
-      transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+      transactions.map { it.transactionId }.joinToString(",") { it.toString() },
+    contractBids
   )
       .convertResponse()
       .map {
@@ -147,12 +149,13 @@ class BidsRepository @Inject constructor(
     amount: Int,
     pmtRate: Int,
     commercialType: String,
-    expectedArrivalTimePickup:String,
-    expectedArrivalTimePickupRemark:String
+    expectedArrivalTimePickup:String?,
+    expectedArrivalTimePickupRemark:String?,
+      tentativeTripsCount:Int?
   ) = CreateTransactionBidRequest.getRequest(
       isPMT, transactionId, userRepository.userId(),
       "${userPrefs.userName} ${userPrefs.pancard}",
-      amount, pmtRate, commercialType, userPrefs.isTestUser, expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+      amount, pmtRate, commercialType, userPrefs.isTestUser, expectedArrivalTimePickup, expectedArrivalTimePickupRemark,tentativeTripsCount
   ).let { bidService.createTransactionBid(it) }
 
   /**
@@ -165,10 +168,11 @@ class BidsRepository @Inject constructor(
     amount: Int,
     commercialType: String,
     pmtRate: Int,
-    expectedArrivalTimePickup:String,
-    expectedArrivalTimePickupRemark:String
+    expectedArrivalTimePickup:String?,
+    expectedArrivalTimePickupRemark:String?,
+    tentativeTripsCount:Int?
   ) = UpdateTransactionBidRequest.getRequest(
-      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
+      isPMT, transactionId, bidId, amount, userRepository.userId(), pmtRate, commercialType,  expectedArrivalTimePickup, expectedArrivalTimePickupRemark,tentativeTripsCount
   )
       .let { bidService.updateTransactionBid(it) }
 
@@ -209,10 +213,11 @@ class BidsRepository @Inject constructor(
    */
   fun userBids(
     offset: Int,
-    statuses: String,
-    pending:Boolean
+    statuses: String?,
+    pending:Boolean?,
+    contract:Boolean?
   ) = bidService.bidsForStatuses(userRepository.userId(),
-          UserBidsLoadLimit, offset, statuses, confirmationPending = pending)
+          UserBidsLoadLimit, offset,contract, statuses, confirmationPending = pending)
       .convertResponse()
       .map { Pair(it.totalBids, it.bids) }
 

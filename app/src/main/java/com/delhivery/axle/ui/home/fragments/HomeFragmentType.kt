@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
@@ -51,8 +52,8 @@ enum class HomeLoadsTruckFragmentType(
   val title: String
 ){
   LoadsFragment(R.id.nav_loads,0,HomeLoadsFragment._instance, "Loads"),
-  TruckFragment(R.id.nav_trucks,1, HomeTrucksFragment._instance,"My Trucks");
-
+  TruckFragment(R.id.nav_trucks,1, HomeTrucksFragment._instance,"My Trucks"),
+  ContractsFragment(R.id.nav_trucks,2, HomeContractsFragment._instance,"Contracts");
   companion object {
     /**
      * Get fragment position by [menuId]
