@@ -126,8 +126,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    demandType = userPrefs.demandType
-
+   demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else{ "Corporate" }
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()

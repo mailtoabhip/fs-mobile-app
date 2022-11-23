@@ -167,30 +167,46 @@ class HomeContractsViewModel@Inject constructor(
             val loads = _tRes.first
             val bids = _tRes.second
 
-            if (total == 0 && (isInternal==false)) {
+            if (_tRes.fourth.transactions.isEmpty() && _tRes.fifth.transactions.isEmpty()) {
               add(Pair(HomeContractsWarningItem_NoLoads, Add))
             } else {
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0
-              if(_tRes.fourth.activeCount!=null && _tRes.fifth.activeCount!=null){
-                totalActive = _tRes.fourth.activeCount+_tRes.fifth.activeCount
+              if(userPrefs.demandType.contains("Internal")&& userPrefs.demandType.contains("Others")){
+                if(_tRes.fourth.activeCount!=null && _tRes.fifth.activeCount!=null){
+                  totalActive = _tRes.fourth.activeCount+_tRes.fifth.activeCount
+                }
+              }else{
+                var contractType =""
+                if(userPrefs.demandType.contains("Internal")){
+                  contractType = "LH_FTL"
+                }else{
+                  contractType = "FRC"
+                }
+                if(_tRes.fourth.activeCount!=null && _tRes.fourth.transactions.isNotEmpty()&& _tRes.fourth.transactions.isNotEmpty() &&_tRes.fourth.transactions[0].contractType==contractType){
+                  totalActive = _tRes.fourth.activeCount
+                }
+                else if(_tRes.fifth.activeCount!=null && _tRes.fifth.transactions.isNotEmpty()&& _tRes.fifth.transactions.isNotEmpty() &&_tRes.fifth.transactions[0].contractType==contractType){
+                  totalActive = _tRes.fifth.activeCount
+                }
+
               }
-               if(_tRes.fourth.transactions.size>0){
-                 if(_tRes.fourth.transactions.get(0).isItLHContract()){
+               if(_tRes.fourth.transactions.isNotEmpty()){
+                 if(_tRes.fourth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
                    expressCount = _tRes.fourth.total
                  }else{
                    nonExpressCount = _tRes.fourth.total
                  }
                }
-              if(_tRes.fifth.transactions.size>0){
-                if(_tRes.fifth.transactions.get(0).isItLHContract()){
+              if(_tRes.fifth.transactions.isNotEmpty()){
+                if(_tRes.fifth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
                   expressCount = _tRes.fifth.total
                 }else{
                   nonExpressCount = _tRes.fifth.total
                 }
               }
-              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount)), AddUpdate))
+              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount,userPrefs.demandType)), AddUpdate))
 
               loadsCountLiveData.postValue(totalActive)
               for ((index, load) in loads.toMutableList().withIndex()) {
