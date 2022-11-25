@@ -926,7 +926,10 @@ data class HomeBidsRequestItemData(
     if (bidStatus() == Accepted) {
       return ""
     }
-    if (numBids > 1 && lowestBid != null && lowestBid!! > 0) {
+    if (bidStatus() == Open) {
+      return ""
+    }
+  if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)&&numBids > 1 && lowestBid != null && lowestBid!! > 0) {
       return "You lost the bid by "+contractLowestbidDifference()
     }
     return ""
@@ -984,6 +987,26 @@ data class HomeBidsRequestItemData(
 
       } else {
         "Bidding Closed"
+      }
+
+    }
+
+  fun contractEventStatusText(): String =
+    if(transactionStatus=="cancelled"){
+      "cancelled"
+    }
+    else if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+      "closed_order"
+    } else {
+      if (isContractBiddingOpen()) {
+        if (isUnderOneHour()) {
+          "active_bidding"
+        } else {
+          "active_order"
+        }
+
+      } else {
+        "closed_order"
       }
 
     }

@@ -659,7 +659,7 @@
   <string name="trip_type">Trip Type</string>
   <string name="connection_type">Connection Type</string>
   <string name="continous">Continous</string>
-  <string name="bidding_will_close_in">Bidding will close in</string>
+  <string name="bidding_will_close_in">Bidding will close in </string>
   <string name="custom_date">10 nov</string>
   <string name="you_have_not_bid_yet">You have not bid yet</string>
   <string name="your_pmt_bid">Your PMT bid</string>
@@ -699,7 +699,7 @@
   <string name="cancelled">Cancelled</string>
   <string name="revise_your_bid">Revise Your Bid</string>
   <string name="bid_received">Bids Received</string>
-  <string name="higher_than">\"Higher than other by \"</string>
+  <string name="higher_than">Higher than other by"</string>
   <string name="current_lowest">Current Lowest Bid</string>
   <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
   <string name="more_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by more than 5%</string>
@@ -707,7 +707,7 @@
   <string name="not_meeting_expectation">Thank you for participating! Your service levels do not meet the expectation.</string>
   <string name="won_contracts">Congratulations you have won the contract!</string>
   <string name="awaiting_results">Awaiting Result</string>
-  <string name="bidding_closed">Bidding CLosed</string>
+  <string name="bidding_closed">Bidding Closed</string>
   <string name="result_declared">Result Declared</string>
   <string name="live_bidding">Live Bidding</string>
   <string name="live_11_12">Live bidding at 11 to 12 AM</string>

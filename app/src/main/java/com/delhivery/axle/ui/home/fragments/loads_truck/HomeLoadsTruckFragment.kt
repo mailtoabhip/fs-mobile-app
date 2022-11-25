@@ -32,6 +32,8 @@ import androidx.fragment.app.Fragment
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_TAB_CLICK
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider, UpdateTabCountAndBadgeInterface{
@@ -40,6 +42,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     var vehicleNo = ""
     var fromNotification = false
     var fromDeepLink = false
+    var fromNotificationContract = false
+    var fromContractDeepLink = false
     override val title: CharSequence
         get() = _title
     @Inject lateinit var userPrefs: UserPrefs
@@ -107,6 +111,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                vehicleNo = activity.vehicleNum
             fromDeepLink=true
         }
+        if(activity!!.fromDeepLinkContract){
+            binding.tabLayout.getTabAt(2)?.select()
+            activity.fromDeepLinkContract = false
+            fromContractDeepLink=true
+        }
 
         if(activity.fromNotification){
             binding.tabLayout.getTabAt(1)?.select()
@@ -114,6 +123,12 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             if(activity.vehicleNum.isNotEmpty())
                 vehicleNo = activity.vehicleNum
             fromNotification=true
+        }
+
+        if(activity!!.fromNotificationContract){
+            binding.tabLayout.getTabAt(2)?.select()
+            activity.fromNotificationContract = false
+            fromNotificationContract=true
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -130,6 +145,13 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
                         PROPERTY_INVENTORY_COUNT),
                         mutableListOf(userPrefs.inventoryCount))
+                }else if(tab?.position==2){
+                    userPrefs.currentNavigationTab = HomeContractsFragment::class.java.name
+                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_CONTRACT_TAB_CLICK,mutableListOf(PROPERTY_USER_ID,
+                        PROPERTY_PHONE_NO,
+                        PROPERTY_CONTRACT_TYPE),
+                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains("Internal") )"LH_FTL" else "FRC"))
                 }
             }
 

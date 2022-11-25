@@ -453,12 +453,18 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
   ) {
      binding.nonExpressToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
      binding.expressToggle.text =   "Express Load (${item.data.expressCount})"
-      if(item.data.userDemandType.contains("Internal")){
+      if(item.data.userDemandType.contains("Internal")&&item.data.userDemandType.contains("Others") ){
         binding.expressToggle.visibility = View.VISIBLE
-        binding.nonExpressToggle.visibility = View.GONE
-      }else{
-        binding.expressToggle.visibility = View.GONE
         binding.nonExpressToggle.visibility = View.VISIBLE
+      }else{
+        if(item.data.userDemandType.contains("Internal")){
+          binding.expressToggle.visibility = View.VISIBLE
+          binding.nonExpressToggle.visibility = View.GONE
+        }else{
+          binding.expressToggle.visibility = View.GONE
+          binding.nonExpressToggle.visibility = View.VISIBLE
+        }
+
       }
     if (!item.data.actionLabel) {
       binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))

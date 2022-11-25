@@ -22,11 +22,19 @@ import com.delhivery.axle.databinding.DialogContractsCreateEditBidBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_EDIT_BID
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_TAB_CLICK
 import com.delhivery.axle.utils.EVENT_PLACE_BID
 import com.delhivery.axle.utils.EVENT_REVISE_BID_INTENT
+import com.delhivery.axle.utils.EVENT_REVISE_CONTRACT_BID
+import com.delhivery.axle.utils.EVENT_SUBMIT_CONTRACT_BID
+import com.delhivery.axle.utils.PROPERTY_BID_AMOUNT_DIFF
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_OVERALL_PERFORMANCE
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TIME_LAPSE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_USER_ID
@@ -245,12 +253,23 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private fun submit() {
     try {
         if (transactionBid == null) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO,
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key()))
           dialogInterface.createBid(
             transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
             transaction.biddingType
               ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString())
           )
         } else {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO,
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.transactionStatus?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString()))
+
           dialogInterface.editBid(
             transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
             amount, pmtRate, transaction.biddingType ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString())

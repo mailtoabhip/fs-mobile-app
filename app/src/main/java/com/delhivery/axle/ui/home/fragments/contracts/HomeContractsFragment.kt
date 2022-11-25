@@ -2,8 +2,6 @@ package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.app.Dialog
 import android.os.Bundle
-import android.os.Handler
-import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -21,62 +19,32 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
-import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.databinding.DialogContractsTypeInfoBinding
-import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.databinding.FragmentHomeContractsBinding
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
-import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
-import com.delhivery.axle.ui.home.fragments.loads_truck.UpdateTabCountAndBadgeInterface
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
 import com.delhivery.axle.utils.EVENT_FILTER_EXPRESS_LOADS
-import com.delhivery.axle.utils.EVENT_FILTER_VEHICLE_TYPE
-import com.delhivery.axle.utils.EVENT_HOME_ORDER_CARD_CLICK
-import com.delhivery.axle.utils.EVENT_HOME_SEARCH_INITIATE
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_LOADFEED_BID_INITIATE
-import com.delhivery.axle.utils.EVENT_LOADFEED_BID_REVISE_INITIATED
-import com.delhivery.axle.utils.EVENT_LOADFEED_BID_REVISE_SUBMITTED
-import com.delhivery.axle.utils.EVENT_LOADFEED_BID_SUBMIT
-import com.delhivery.axle.utils.EVENT_LOAD_SCROLL
-import com.delhivery.axle.utils.EVENT_SHOW_ADDITIONAL_LOADS
 import com.delhivery.axle.utils.FCMUtils
-import com.delhivery.axle.utils.PROPERTY_BID_COUNT
-import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
-import com.delhivery.axle.utils.PROPERTY_NO_OF_SCROLLS
-import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
-import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
-import com.delhivery.axle.utils.PROPERTY_ORDER_RANK
-import com.delhivery.axle.utils.PROPERTY_OVERALL_PERFORMANCE
-import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
 import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
-import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
-import com.delhivery.axle.utils.VALUE_ADD_TRUCK_SCROLL_BANNER
-import com.delhivery.axle.utils.VALUE_ADD_TRUCK_TOP_BANNER
-import com.delhivery.axle.utils.VALUE_BANNER
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_NO_RESULTS
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -125,7 +93,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    isInternal = userPrefs.demandType.contains("Internal")
    demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else{ "Corporate" }
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
@@ -173,13 +141,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   override fun onStop() {
     super.onStop()
-    if (viewModel.paginateCount > 0) {
-      analyticsUtil.trackEvent(
-        EVENT_LOAD_SCROLL,
-        mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE, PROPERTY_NO_OF_SCROLLS, PROPERTY_OVERALL_PERFORMANCE),
-        mutableListOf(userPrefs.userId(), userPrefs.demandType, viewModel.paginateCount.toString(), userPrefs.userPerformance)
-      )
-    }
     viewModel.paginateCount = 0
   }
 
@@ -205,20 +166,13 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         val data = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.moEngageTrackEvent(
-          EVENT_HOME_ORDER_CARD_CLICK,
-          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-          mutableListOf(
-            data.transactionId ?: " ",
-            (orderRank - STATIC_ITEM_LIST - ((orderRank - STATIC_ITEM_LIST).div(
-              HomeLoadsAddTruckItemDataConfig
-            ))).toString(),
-            viewModel.total.toString()
+          EVENT_HOME_CONTRACT_CARD_CLICK,
+          mutableListOf(PROPERTY_USER_ID,
+            PROPERTY_PHONE_NO,PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE),
+          mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
+            data.transactionId ?: " ",data.contractEventStatusText(),
+            data.contractType?:""
           )
-        )
-        analyticsUtil.trackEvent(
-          EVENT_LIST_ITEM,
-          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-          mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)

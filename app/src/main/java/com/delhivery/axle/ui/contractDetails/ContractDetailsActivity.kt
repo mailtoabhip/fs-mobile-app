@@ -366,7 +366,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }else{
                     binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                     binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                    binding.bidStatus.text = getString(string.higher_than)+data.contractLowestbidDifference()
+                    binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
                 }
               }else{
@@ -382,16 +382,31 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }else{
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                     binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                    binding.nonExpressBidStatus.text = getString(string.higher_than)+data.contractLowestbidDifference()
+                    binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
                 }
               }
             }else{
                   if(viewModel.transaction.targetPrice!=null && userBid?.bidAmount!=null&&userBid?.bidAmount?:0.0>viewModel.transaction.targetPrice?:0.0){
-                    binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
-                    binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                    binding.bidStatus.text = getString(string.higher_than) +"₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
+                    binding.clBidYet.visibility = View.GONE
+                    binding.clExpressBidStatus.visibility = data.isLHContract()
+                    binding.clNonExpressBidStatus.visibility = data.isFRCContract()
+                    if(data.isItLHContract()){
+                      binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                      binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                      binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                      binding.bidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
+                    }else{
+                      binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
+                      binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                      binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                      binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                      binding.nonExpressBidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
+                    }
+
                   }else{
+                    binding.clExpressBidStatus.visibility = View.GONE
+                    binding.clNonExpressBidStatus.visibility =View.GONE
                     binding.clBidYet.visibility = View.VISIBLE
                     binding.bidUserStatusOrAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                     binding.bidPmtFtl.visibility = View.VISIBLE

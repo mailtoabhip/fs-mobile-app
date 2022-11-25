@@ -18,6 +18,7 @@ import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.bids.BidType.ContractBid
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
@@ -70,6 +71,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     /* get bid type from intent */
     viewModel.bidType =
       BidType.byTypeId(intent.getIntExtra(IntentExtraBidTypeKey, BidType.Unknown.typeId))
+
+    if(viewModel.bidType==ContractBid){
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_VIEW_CONTRACT_STATUS,mutableListOf(
+          PROPERTY_USER_ID, PROPERTY_PHONE_NO
+        ),
+        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {

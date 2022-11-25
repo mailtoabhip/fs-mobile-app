@@ -502,6 +502,7 @@
           android:layout_height="wrap_content"
           android:text="@string/custom_date"
           android:textSize="@dimen/text_14sp"
+          android:paddingStart="@dimen/size_4dp"
           android:visibility="gone"
           app:layout_constraintTop_toTopOf="parent"
           android:textColor="@color/heading_black"
@@ -607,7 +608,7 @@
               app:layout_constraintTop_toBottomOf="@id/bidStatus"
               app:layout_constraintEnd_toEndOf="parent"
               android:textSize="@dimen/text_12sp"
-              android:text="@string/_2_bids_received"/>
+              tools:text="@string/_2_bids_received"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clNonExpressBidStatus"
