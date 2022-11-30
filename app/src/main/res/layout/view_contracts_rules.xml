@@ -17,8 +17,8 @@
         android:id="@+id/rulesLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rules"
-        android:textSize="@dimen/size_16dp"
+        android:text="@string/rules"
+        android:textSize="@dimen/text_12sp"
         android:textColor="@color/background_dark_grey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -135,7 +135,7 @@
         android:id="@+id/nonExpRulesLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rules"
+        android:text="@string/rules"
         android:textSize="@dimen/text_16sp"
         android:textColor="@color/background_dark_grey"
         app:layout_constraintStart_toStartOf="parent"
@@ -200,6 +200,25 @@
         android:textColor="@color/heading_black"
         android:paddingEnd="@dimen/size_10dp"
         android:text="@string/non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nonExpDot4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\u2022  "
+        android:textColor="@color/heading_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nonExpRule3"
+        />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nonExpRule4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/nonExpRule3"
+        app:layout_constraintStart_toEndOf="@id/nonExpDot4"
+        android:textSize="@dimen/text_14sp"
+        android:textColor="@color/heading_black"
+        android:paddingEnd="@dimen/size_10dp"
+        android:text="@string/frc_start_amp_end_date_will_be_informed_via_email"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>

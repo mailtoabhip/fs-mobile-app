@@ -658,7 +658,7 @@
   <string name="trip_details">Trip Details</string>
   <string name="trip_type">Trip Type</string>
   <string name="connection_type">Connection Type</string>
-  <string name="continous">Continous</string>
+  <string name="continuous">Continuous</string>
   <string name="bidding_will_close_in">Bidding will close in </string>
   <string name="custom_date">10 nov</string>
   <string name="you_have_not_bid_yet">You have not bid yet</string>
@@ -710,12 +710,14 @@
   <string name="bidding_closed">Bidding Closed</string>
   <string name="result_declared">Result Declared</string>
   <string name="live_bidding">Live Bidding</string>
-  <string name="live_11_12">Live bidding at 11 to 12 AM</string>
-  <string name="live_4_5">Live bidding at 4 to 5 PM</string>
+  <string name="live_11_12">Live bidding at 11 AM to 12 PM</string>
+  <string name="live_4_5">Live bidding at 4 PM to 5 PM</string>
   <string name="bid_revise_successfully">Bid Revised Successfully</string>
   <string name="view_details">View Details and Place Bid</string>
   <string name="you_have_not_bid">You have not bid yet</string>
   <string name="you_did_not_bid">You did not bid</string>
+  <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
+  <string name="rules">Rules</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

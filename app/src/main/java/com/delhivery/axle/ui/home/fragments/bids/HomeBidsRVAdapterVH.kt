@@ -164,8 +164,8 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_lost_red)
       binding.tvBidStatus.compoundDrawablePadding =4
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
-      binding.tvBidStatus.text = context.resources.getString(R.string.label_cancel)
-      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_cancel_icon, 0, 0, 0)
+      binding.tvBidStatus.text = context.resources.getString(R.string.cancelled)
+      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_cancel_bid, 0, 0, 0)
       binding.tvBidStatus.setTextColor(ContextCompat.getColor(context,R.color.heading_black))
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_light_grey)
       binding.tvBidStatus.compoundDrawablePadding =4

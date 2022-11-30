@@ -304,7 +304,6 @@ object DateUtils {
 
 
 
-
   fun getUtcToIstFormatTimeSlash(utcTime: String?): String? {
     var ISTDateString = ""
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")

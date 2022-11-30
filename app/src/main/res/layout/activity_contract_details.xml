@@ -418,7 +418,7 @@
           android:layout_height="wrap_content"
           app:layout_constraintTop_toBottomOf="@id/tripDetailsLabel"
           app:layout_constraintStart_toStartOf="@id/connectionTypeLabel"
-          android:text="@string/continous"
+          android:text="@string/continuous"
           android:visibility="@{transaction.isLHContinousContract()}"
           android:layout_marginTop="@dimen/size_8dp"
           android:textSize="@dimen/text_16sp"

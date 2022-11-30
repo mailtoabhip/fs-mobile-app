@@ -365,6 +365,18 @@ data class HomeBidsRequestItemData(
     ""
   }
 
+  /**
+   * @return formatted bid amount
+   */
+  fun bidContractAmount() = if (transactionBid != null) {
+    when (transactionBid!!.status()) {
+      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+      else -> ""
+    }
+  } else {
+    ""
+  }
+
   fun bidAmountValue() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
       Accepted, Open, Rejected, Cancelled -> transactionBid!!.bidAmount.toString()
@@ -891,8 +903,9 @@ data class HomeBidsRequestItemData(
 
   // Contract end bid time
   fun bidEndTime(): String {
-
-    if (contractBiddingEndTime != null) {
+    if(transactionStatus=="cancelled"){
+      return ""
+    }else if (contractBiddingEndTime != null) {
       val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
       format.setTimeZone(TimeZone.getTimeZone("IST"));
       val date1: Date = format.parse(format.format(Date()))

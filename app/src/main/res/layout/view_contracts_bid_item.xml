@@ -83,7 +83,7 @@
           android:layout_marginEnd="@dimen/size_16dp"
           android:textStyle="bold"
           tools:text="50000"
-          android:text="@{request.bidAmount()}"/>
+          android:text="@{request.bidContractAmount()}"/>
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/user_bid_info"
           android:layout_width="wrap_content"

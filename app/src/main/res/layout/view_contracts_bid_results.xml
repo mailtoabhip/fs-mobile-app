@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:paddingBottom="@dimen/size_12dp"
         android:layout_margin="@dimen/size_16dp"
         android:visibility="gone">
       <androidx.appcompat.widget.AppCompatTextView

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.utils.DateUtils
 
 class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,private val transaction:HomeBidsRequestItemData?,private val context: Context) : RecyclerView.Adapter<ContractsRouteDetailsAdapter.ViewHolder>() {
 
