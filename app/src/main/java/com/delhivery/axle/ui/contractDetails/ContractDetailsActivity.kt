@@ -355,7 +355,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.clExpressBidStatus.visibility = data.isLHContract()
               binding.clNonExpressBidStatus.visibility = data.isFRCContract()
               if(data.isItLHContract()){
-                binding.bidReceived.text = state.bidsCount.toString()+ getString(string.bid_received)
+                binding.bidReceived.text = state.bidsCount.toString()+" "+ getString(string.bid_received)
                 binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 if (lowestTBid?.bidAmount != null) {
                   if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
@@ -366,6 +366,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }else{
                     binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                     binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                    binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
                 }
@@ -382,15 +383,18 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }else{
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                     binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                    binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
                 }
               }
             }else{
-                  if(viewModel.transaction.targetPrice!=null && userBid?.bidAmount!=null&&userBid?.bidAmount?:0.0>viewModel.transaction.targetPrice?:0.0){
+                  if(viewModel.transaction.targetPrice!=null && userBid?.bidAmount!=null&&userBid?.bidAmount?:0.0>viewModel.transaction.targetPrice?:0.0 && data.isUnderOneHour()){
                     binding.clBidYet.visibility = View.GONE
                     binding.clExpressBidStatus.visibility = data.isLHContract()
                     binding.clNonExpressBidStatus.visibility = data.isFRCContract()
+                    binding.bidPmtFtlStatus.visibility = View.GONE
+                    binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
                     if(data.isItLHContract()){
                       binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                       binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
