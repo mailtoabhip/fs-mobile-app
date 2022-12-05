@@ -498,7 +498,7 @@ class HomeLoadsViewModel @Inject constructor(
         }
   }
 
-  override fun reviseBid(position: Int) {
+  override fun reviseBid(transactionBid: TransactionBid?,position: Int) {
     reviseBidLiveData.postValue(Pair(true, position))
   }
 

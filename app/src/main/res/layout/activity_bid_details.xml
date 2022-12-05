@@ -635,10 +635,11 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:padding="@dimen/size_4dp"
+                android:id="@+id/llBidStatus"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:gravity="center"
                 android:background="@drawable/bg_all_round_corner_light_green_12"
+                android:gravity="center"
                 android:layout_height="wrap_content">
               <ImageView
                   android:layout_width="wrap_content"

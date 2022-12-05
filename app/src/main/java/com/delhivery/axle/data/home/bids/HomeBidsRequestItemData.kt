@@ -35,7 +35,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("material_type") val materialType: String?,
   @SerializedName("pickup_location") val pickupLocation: String,
   @SerializedName("destination") val destination: String,
-  @SerializedName("origin_state") val originState: String="dddd",
+  @SerializedName("origin_state") val originState: String="",
   @SerializedName("required_on") val _requiredOn: String?,
   @SerializedName("target_price") val targetPrice: Double?=0.0,
   @SerializedName("uuid") val uuid: String?,
@@ -52,7 +52,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2") val stop2: String,
   @SerializedName("intermediary_pickup_stop1_city") val pickup1City: String,
   @SerializedName("intermediary_pickup_stop2_city") val pickup2City: String,
-  @SerializedName("destination_state") val destinationState: String="dddd",
+  @SerializedName("destination_state") val destinationState: String="",
   @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
@@ -136,7 +136,6 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
-
   /**
    * if trip is DMT
    */
@@ -151,7 +150,6 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
-
   /**
    * if trip is DMT
    */
@@ -167,33 +165,32 @@ data class HomeBidsRequestItemData(
     View.VISIBLE
   }
 
-  fun bidInfoLayoutVisibility() =
-    if (transactionBid != null || (bulkTransactionBids != null && bulkTransactionBids.isNotEmpty()))
-      View.VISIBLE
-    else
-      View.INVISIBLE
+  fun bidInfoLayoutVisibility()= if( transactionBid!=null || (bulkTransactionBids!= null &&bulkTransactionBids.isNotEmpty() ))
+    View.VISIBLE
+  else
+    View.INVISIBLE
 
-  fun bidPlaceLayoutVisibility() =
-    if ((bulkTransactionBids == null || bulkTransactionBids.isEmpty()) && transactionBid == null)
-      View.VISIBLE
-    else
-      View.INVISIBLE
+  fun bidPlaceLayoutVisibility()= if(  (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null)
+    View.VISIBLE
+  else
+    View.INVISIBLE
 
-  fun timerPlaceLayoutVisibility() =
-    if (!isDMTIndent() && (bulkTransactionBids == null || bulkTransactionBids.isEmpty()) && transactionBid == null)
-      View.VISIBLE
-    else
-      View.GONE
-
-  fun requestedCapacityVisibility() = if (isPMTIndent() && !isDMTIndent())
+  fun timerPlaceLayoutVisibility()= if(!isDMTIndent() && (bulkTransactionBids==null || bulkTransactionBids.isEmpty()) && transactionBid == null )
     View.VISIBLE
   else
     View.GONE
 
+
+  fun requestedCapacityVisibility() = if(isPMTIndent() && !isDMTIndent())
+    View.VISIBLE
+  else
+    View.GONE
+
+
   fun setMoreBidsVisibility() = if (isDMTIndent()) {
-    if (bulkTransactionBids != null && bulkTransactionBids.isNotEmpty() && bulkTransactionBids.size > 1) {
+    if(bulkTransactionBids!=null && bulkTransactionBids.isNotEmpty() && bulkTransactionBids.size> 1) {
       View.VISIBLE
-    } else {
+    }else{
       View.GONE
     }
   } else {
@@ -203,13 +200,14 @@ data class HomeBidsRequestItemData(
   fun setDmtText() = "Bulk Load: ${requestedCapacityMg.toInt()} MT"
   fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
 
+
   fun setTruckTypeText() = truckType!!.capitalize() ?: ""
 
-  fun setUnAllocatedText() =
-    if (unAllocatedVolume != null && unAllocatedVolume != 0.0) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
+  fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
-  fun setUnAllocatedVol() =
-    if (unAllocatedVolume != null && unAllocatedVolume != 0.0) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
+  fun setUnAllocatedVol() = if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
+
+
 
   /**
    * @return formatted origin city name
@@ -244,7 +242,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return origin district and state name
    */
-  fun originDistrictState() = if (originDistrictName().isNotNullOrEmpty()) {
+  fun originDistrictState() = if(originDistrictName().isNotNullOrEmpty()) {
     originDistrictName() + ", " + originStateName()
   } else {
     originStateName()
@@ -253,7 +251,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return destination district and state name
    */
-  fun destinationDistrictState() = if (destinationDistrictName().isNotNullOrEmpty()) {
+  fun destinationDistrictState() = if(destinationDistrictName().isNotNullOrEmpty()) {
     destinationDistrictName() + ", " + destinationStateName()
   } else {
     destinationStateName()
@@ -262,7 +260,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return formatted origin district, city, state
    */
-  fun originDistrictCityState() = if (originDistrictName().isNotNullOrEmpty()) {
+  fun originDistrictCityState() = if(originDistrictName().isNotNullOrEmpty()) {
     originDistrictName() + "\n" + originStateName()
   } else {
     originStateName()
@@ -271,7 +269,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return formatted destination city, state
    */
-  fun destinationDistrictCityState() = if (destinationDistrictName().isNotNullOrEmpty()) {
+  fun destinationDistrictCityState() = if(destinationDistrictName().isNotNullOrEmpty()) {
     destinationDistrictName() + "\n" + destinationStateName()
   } else {
     destinationStateName()
@@ -283,14 +281,14 @@ data class HomeBidsRequestItemData(
   fun tripRoute(): String {
     val stopBuilder = StringBuilder()
     stopBuilder.append(originCityName())
-      .append(" - ")
+        .append(" - ")
     if (!TextUtils.isEmpty(stop1City)) {
       stopBuilder.append(StringUtils.capitalize(stop1City))
-        .append(" - ")
+          .append(" - ")
     }
     if (!TextUtils.isEmpty(stop2City)) {
       stopBuilder.append(StringUtils.capitalize(stop2City))
-        .append(" - ")
+          .append(" - ")
     }
     stopBuilder.append(destinationCityName())
     return stopBuilder.toString()
@@ -340,16 +338,16 @@ data class HomeBidsRequestItemData(
     val stopBuilder = StringBuilder()
     if (!TextUtils.isEmpty(stop1City)) {
       stopBuilder.append(StringUtils.capitalize(stop1City))
-        .append("(")
-        .append(StringUtils.capitalize(stop1State))
-        .append(")")
+          .append("(")
+          .append(StringUtils.capitalize(stop1State))
+          .append(")")
     }
     if (!TextUtils.isEmpty(stop2City)) {
       stopBuilder.append(", ")
-        .append(StringUtils.capitalize(stop2City))
-        .append("(")
-        .append(StringUtils.capitalize(stop2State))
-        .append(")")
+          .append(StringUtils.capitalize(stop2City))
+          .append("(")
+          .append(StringUtils.capitalize(stop2State))
+          .append(")")
     }
     return stopBuilder.toString()
   }
@@ -428,29 +426,18 @@ data class HomeBidsRequestItemData(
   /**
    * Formatted required at
    */
-  fun requiredAt() =
-    _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
+  fun requiredAt() = _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at background as per designs
    */
   @DrawableRes
   fun requiredAtBg() =
-    _requiredOn?.let {
-      DrawableProviderUtils.daysDiffBgDrawableRes(
-        it,
-        DatePatterns.OrionDateFormat
-      )
-    }
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableRes(it, DatePatterns.OrionDateFormat) }
 
   @DrawableRes
   fun requiredAtDraw() =
-    _requiredOn?.let {
-      DrawableProviderUtils.daysDiffBgDrawableResDraw(
-        it,
-        DatePatterns.OrionDateFormat
-      )
-    }
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableResDraw(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at text color as per status
@@ -621,6 +608,7 @@ data class HomeBidsRequestItemData(
       View.GONE
     }
 
+
   /**
    * @return true if indent type(pmt/ftl)
    */
@@ -709,15 +697,15 @@ data class HomeBidsRequestItemData(
   /**
    * suggested price w.r.t benchmark price
    */
-  fun lowestSuggestedAmount(): String {
+  fun lowestSuggestedAmount() : String {
     lowestBid?.let {
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
         //diff = (diff/requestedCapacityMg).roundToInt()
-        diff = 25
+        diff=25
       }
-      val suggestedBidAmount: Double
+      val suggestedBidAmount : Double
       suggestedBidAmount = if ((bid - lowestBid!!) > diff) {
         lowestBid!!
       } else {
@@ -747,7 +735,7 @@ data class HomeBidsRequestItemData(
   /**
    * Condition-1 check
    */
-  fun layoutOneVisibility(): Boolean {
+  fun layoutOneVisibility() : Boolean {
     val bid: Double = transactionBid!!.bidAmount
     var condition1 = false
     var condition2 = true
@@ -831,23 +819,23 @@ data class HomeBidsRequestItemData(
   /**return time lapse between bid creation and indent creation
    *
    */
-  fun timeLapse(): String {
-    val sdf: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+  fun timeLapse() :String{
+    val sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     val creationTime = sdf.parse(creationTime)
     var time = Date().time - creationTime.time
     val secondsInMilli: Long = 1000
     val minutesInMilli = secondsInMilli * 60
     val hoursInMilli = minutesInMilli * 60
 
-    val elapsedHours: Long = time / hoursInMilli
-    time %= hoursInMilli
+    val elapsedHours : Long  = time / hoursInMilli
+    time%=hoursInMilli
 
-    val elapsedMinutes: Long = time / minutesInMilli
-    time %= minutesInMilli
+    val elapsedMinutes :Long = time /minutesInMilli
+    time%=minutesInMilli
 
-    return if (elapsedHours.toInt() != 0) {
+    return if (elapsedHours.toInt() !=0) {
       "$elapsedHours hours, $elapsedMinutes minutes"
-    } else {
+    } else{
       "$elapsedMinutes minutes"
     }
   }

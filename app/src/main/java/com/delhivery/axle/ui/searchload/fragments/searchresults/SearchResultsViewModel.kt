@@ -13,6 +13,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -31,7 +32,7 @@ class SearchResultsViewModel @Inject constructor(
     private val bidsRepository: BidsRepository,
     private val truckRepository: TruckRepository,
     val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface {
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface,BidConfirmReviseDialogInterface {
 
   /* bid action result live data */
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
@@ -47,6 +48,10 @@ class SearchResultsViewModel @Inject constructor(
     var loadPricePercent = 0
     var total =0
     var bidsCount =0
+
+  /* revise bid live data */
+  var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
+
   /**
    * Search load api
    */
@@ -329,6 +334,10 @@ class SearchResultsViewModel @Inject constructor(
           lowestBidLiveData.postValue(Pair(pos, transaction))
         }
       }
+  }
+
+  override fun reviseBid(transactionBid: TransactionBid?, position: Int) {
+    reviseBidLiveData.postValue(Pair(true, position))
   }
 }
 

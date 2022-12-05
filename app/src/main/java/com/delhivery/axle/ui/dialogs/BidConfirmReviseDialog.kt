@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogConfirmBidBinding
 import com.delhivery.axle.utils.*
@@ -44,21 +45,22 @@ class BidConfirmReviseDialog @Inject constructor(
       btnContinue2.setOnClickListener { dismiss() }
       btnContinue3.setOnClickListener { dismiss() }
       btnContinue4.setOnClickListener { dismiss() }
-      btnRevise3.setOnClickListener { reviseBidDialog() }
-      btnRevise4.setOnClickListener { reviseBidDialog() }
+      btnRevise3.setOnClickListener { reviseBidDialog(transaction.transactionBid) }
+      btnRevise4.setOnClickListener { reviseBidDialog(transaction.transactionBid) }
     }
   }
 
   /**
    * Revise bid dialog
    */
-  private fun reviseBidDialog() {
-    dialogInterface.reviseBid(position)
+  private fun reviseBidDialog(transactionBid: TransactionBid?) {
+    dialogInterface.reviseBid(transaction.transactionBid,position)
     dismiss()
   }
 }
 
 
 interface BidConfirmReviseDialogInterface {
-  fun reviseBid(position: Int)
+  fun reviseBid(transactionBid: TransactionBid?,position: Int)
 }
+
