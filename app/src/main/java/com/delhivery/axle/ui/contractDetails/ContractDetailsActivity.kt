@@ -246,7 +246,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.nonExpTvHubCity2.text = t.destinationCityName()
             binding.routeDetails.nonExpTvState2.text = t.destinationState
             binding.routeDetails.nonExpTimeInterval1.text  =
-              t.tentativeTripCount?.let { Integer.toString(it) } +" Trips for "+ t.contractValidity+" weeks"
+              t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
           }
           binding.contractRules.nonExpRules.visibility = t.isFRCContract()
           binding.contractRules.rules.visibility = t.isLHContract()
@@ -566,11 +566,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
      } else {
        binding.clBidStatus.visibility = View.VISIBLE
        binding.tvBidStatus.text = getString(string.collecting_bids)
-       if (data.bidCollectionSlot == "morning") {
-         binding.tvBidTime.text = getString(string.live_11_12)
-       } else {
-         binding.tvBidTime.text = getString(string.live_4_5)
-       }
+       binding.tvBidTime.text = data.bidEndDate()
 
        binding.tvBidTime.visibility = View.VISIBLE
        binding.tvBidStatus.setTextColor(

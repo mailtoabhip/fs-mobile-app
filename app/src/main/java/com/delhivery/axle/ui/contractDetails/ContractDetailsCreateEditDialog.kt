@@ -124,11 +124,14 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             val input = s.trim()
               .toString()
               .toInt()
-            var percentage = 0
+            var lowerPercentage = 0
+            var upperPercentage = 0
             if(transaction.isItLHContract()){
-              percentage  = 20
+              lowerPercentage  = 20
+              upperPercentage  = 20
             }else{
-              percentage = 10
+              lowerPercentage  = 20
+              upperPercentage  = 10
             }
             if (transaction.isPMTIndent()) {
               pmtRate = input
@@ -138,7 +141,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
                 binding.bidError.text = "Invalid Bid Amount, Out of range"
                 binding.bidError.visibility = View.VISIBLE
               }else{
-                  if(transaction.targetPrice!=null&&(amount>(transaction.targetPrice+transaction.targetPrice*percentage/100)|| amount<(transaction.targetPrice-transaction.targetPrice*percentage/100))){
+                  if(transaction.targetPrice!=null&&(amount>(transaction.targetPrice+transaction.targetPrice*upperPercentage/100)|| amount<(transaction.targetPrice-transaction.targetPrice*lowerPercentage/100))){
                     isValidBidAmount = false
                     binding.bidError.text = "Invalid Bid Amount, Out of range"
                     binding.bidError.visibility = View.VISIBLE
@@ -155,20 +158,32 @@ class ContractDetailsCreateEditDialog @Inject constructor(
                 binding.bidError.text =  "Invalid Bid Amount, Out of range"
                 binding.bidError.visibility = View.VISIBLE
               }else{
-                  if (transaction.targetPrice!=null&&(amount >= (transaction.targetPrice + transaction.targetPrice * percentage / 100) || amount <=(transaction.targetPrice - transaction.targetPrice * percentage / 100))) {
+                  if (transaction.targetPrice!=null&&(amount >= (transaction.targetPrice + transaction.targetPrice * upperPercentage / 100) || amount <=(transaction.targetPrice - transaction.targetPrice * lowerPercentage / 100))) {
                     isValidBidAmount = false
                     binding.bidError.text = "Invalid Bid Amount, Out of range"
                     binding.bidError.visibility = View.VISIBLE
                   } else {
                     if (transactionBid != null) {
-                      if (abs(amount-transactionBid.bidAmount.toInt())>=250 && abs(amount-transactionBid.bidAmount.toInt())%250==0) {
-                        isValidBidAmount = true
-                        binding.bidError.visibility = View.GONE
+                      if(amount<12000){
+                        if (abs(amount-transactionBid.bidAmount.toInt())>=50 && abs(amount-transactionBid.bidAmount.toInt())%50==0) {
+                          isValidBidAmount = true
+                          binding.bidError.visibility = View.GONE
+                        }else{
+                          isValidBidAmount = false
+                          binding.bidError.text = "Bid difference should be multiple of 50"
+                          binding.bidError.visibility = View.VISIBLE
+                        }
                       }else{
-                        isValidBidAmount = false
-                        binding.bidError.text = "Bid difference should be multiple of 250"
-                        binding.bidError.visibility = View.VISIBLE
+                        if (abs(amount-transactionBid.bidAmount.toInt())>=250 && abs(amount-transactionBid.bidAmount.toInt())%250==0) {
+                          isValidBidAmount = true
+                          binding.bidError.visibility = View.GONE
+                        }else{
+                          isValidBidAmount = false
+                          binding.bidError.text = "Bid difference should be multiple of 250"
+                          binding.bidError.visibility = View.VISIBLE
+                        }
                       }
+
                     }else{
                       isValidBidAmount = true
                       binding.bidError.visibility = View.GONE

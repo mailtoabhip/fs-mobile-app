@@ -43,7 +43,7 @@ class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,priva
         holder.timeTravel.visibility= View.VISIBLE
         holder.lineSep.visibility= View.VISIBLE
       }
-      holder.hubCity.text = dataList[position].name
+      holder.hubCity.text = dataList[position].name?.split("(")?.get(0) ?: dataList[position].name
       holder.hubState.text = dataList[position].state
       holder.arvTime.text = dataList[position].relEta
       holder.depTime.text = dataList[position].relEtd

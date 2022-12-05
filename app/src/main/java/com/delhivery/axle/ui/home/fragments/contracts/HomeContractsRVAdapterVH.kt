@@ -57,6 +57,9 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSummaryItem
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTimeoutItem
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTruckPriorityAccessItem
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem
+import com.delhivery.axle.utils.DatePatterns
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
@@ -237,11 +240,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     }else{
                       if(binding.tvBidStatus.text=="Collecting Bids"){
                         binding.tvBidTime.visibility = View.VISIBLE
-                         if (item.data.bidCollectionSlot == "morning") {
-                             binding.tvBidTime.setText(context.getString(R.string.live_11_12)) }
-                         else {
-                                binding.tvBidTime.setText(context.getString(R.string.live_4_5))
-                              }
+                        binding.tvBidTime.text = item.data.bidEndDate()
                       }else if(binding.tvBidStatus.text=="Bidding Closed"){
                         binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
                       }else{
@@ -315,11 +314,8 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             context,
             R.drawable.bg_all_rounded_pending
           )
-          if (item.data.bidCollectionSlot == "morning") {
-            binding.tvBidTime.setText(context.getString(R.string.live_11_12))
-          } else {
-            binding.tvBidTime.setText(context.getString(R.string.live_4_5))
-          }
+          binding.tvBidTime.text = item.data.bidEndDate()
+
         }
 
         if (item.data.transactionBid != null) {
@@ -453,18 +449,12 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
   ) {
      binding.nonExpressToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
      binding.expressToggle.text =   "Express Load (${item.data.expressCount})"
-      if(item.data.userDemandType.contains("Internal")&&item.data.userDemandType.contains("Others") ){
+      if(item.data.userDemandType.contains("Internal") ){
         binding.expressToggle.visibility = View.VISIBLE
         binding.nonExpressToggle.visibility = View.VISIBLE
       }else{
-        if(item.data.userDemandType.contains("Internal")){
-          binding.expressToggle.visibility = View.VISIBLE
-          binding.nonExpressToggle.visibility = View.GONE
-        }else{
           binding.expressToggle.visibility = View.GONE
           binding.nonExpressToggle.visibility = View.VISIBLE
-        }
-
       }
     if (!item.data.actionLabel) {
       binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))

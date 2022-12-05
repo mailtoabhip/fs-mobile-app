@@ -173,17 +173,12 @@ class HomeContractsViewModel@Inject constructor(
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0
-              if(userPrefs.demandType.contains("Internal")&& userPrefs.demandType.contains("Others")){
+              if(userPrefs.demandType.contains("Internal")){
                 if(_tRes.fourth.activeCount!=null && _tRes.fifth.activeCount!=null){
                   totalActive = _tRes.fourth.activeCount+_tRes.fifth.activeCount
                 }
               }else{
-                var contractType =""
-                if(userPrefs.demandType.contains("Internal")){
-                  contractType = "LH_FTL"
-                }else{
-                  contractType = "FRC"
-                }
+                val contractType = "FRC"
                 if(_tRes.fourth.activeCount!=null && _tRes.fourth.transactions.isNotEmpty()&& _tRes.fourth.transactions.isNotEmpty() &&_tRes.fourth.transactions[0].contractType==contractType){
                   totalActive = _tRes.fourth.activeCount
                 }

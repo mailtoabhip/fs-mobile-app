@@ -7,6 +7,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
+import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
@@ -932,6 +933,38 @@ data class HomeBidsRequestItemData(
 
   }
 
+  // Contract end bid time
+  fun bidEndDate(): String {
+    if(transactionStatus=="cancelled"){
+      return ""
+    }else if (contractBiddingEndTime != null) {
+      val format = SimpleDateFormat("yyyy-MM-dd")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(contractBiddingEndTime)
+      if (date2.compareTo(date1) ==0) {
+        return if (bidCollectionSlot == "morning") {
+          "Live bidding at 11 AM to 12 PM"
+        } else {
+          "Live bidding at 4 PM to 5 PM"
+        }
+      } else if(date2.compareTo(date1) >0){
+        return "Closes on " + formatDate(
+          DateUtils.parseDate(
+            contractBiddingEndTime!!,
+            DatePatterns.OrionDateFormat
+          ), "dd MMM"
+        )
+      }else{
+          ""
+      }
+
+    } else {
+      return ""
+    }
+    return ""
+  }
+
   fun bidDifferenceContract(): String {
     if (bidStatus() == Cancelled) {
       return ""
@@ -1119,8 +1152,8 @@ data class HomeBidsRequestItemData(
 
   fun haltStops():String=
     if(haltCenters!=null){
-      if(haltCenters!!.size>0){
-        haltCenters?.size.toString()+" stops"
+      if(haltCenters!!.size>=2){
+        (haltCenters?.size!!-2).toString()+" stops"
       }else{
         ""
       }

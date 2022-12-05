@@ -150,25 +150,25 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
       binding.tvBidStatus.text = context.resources.getString(R.string.label_under_review)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_under_review_icon, 0, 0, 0)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_under_review)
-      binding.tvBidStatus.compoundDrawablePadding =4
+      binding.tvBidStatus.compoundDrawablePadding =8
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
         binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.bid_placed_green))
         binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_won)
-      binding.tvBidStatus.compoundDrawablePadding =4
+      binding.tvBidStatus.compoundDrawablePadding =8
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up_green, 0, 0, 0)
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
       binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_lost)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
       binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.destructive_red))
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_lost_red)
-      binding.tvBidStatus.compoundDrawablePadding =4
+      binding.tvBidStatus.compoundDrawablePadding =8
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
       binding.tvBidStatus.text = context.resources.getString(R.string.cancelled)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_cancel_bid, 0, 0, 0)
       binding.tvBidStatus.setTextColor(ContextCompat.getColor(context,R.color.heading_black))
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_light_grey)
-      binding.tvBidStatus.compoundDrawablePadding =4
+      binding.tvBidStatus.compoundDrawablePadding =8
     }
 
     val res = item.data.resOffer
