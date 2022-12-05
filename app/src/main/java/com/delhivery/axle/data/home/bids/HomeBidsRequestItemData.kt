@@ -35,7 +35,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("pickup_location") val pickupLocation: String,
   @SerializedName("destination") val destination: String,
   @SerializedName("origin_state") val originState: String,
-  @SerializedName("required_on") val _requiredOn: String,
+  @SerializedName("required_on") val _requiredOn: String?,
   @SerializedName("target_price") val targetPrice: Double,
   @SerializedName("uuid") val uuid: String?,
   @SerializedName("transaction_id") val transactionId: String?,
@@ -373,18 +373,18 @@ data class HomeBidsRequestItemData(
   /**
    * Formatted required at
    */
-  fun requiredAt() = DateUtils.daysDiffWithTimeStr(_requiredOn, DatePatterns.OrionDateFormat)
+  fun requiredAt() = _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at background as per designs
    */
   @DrawableRes
   fun requiredAtBg() =
-    DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableRes(it, DatePatterns.OrionDateFormat) }
 
   @DrawableRes
   fun requiredAtDraw() =
-    DrawableProviderUtils.daysDiffBgDrawableResDraw(_requiredOn, DatePatterns.OrionDateFormat)
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableResDraw(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at text color as per status

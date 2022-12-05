@@ -19,6 +19,8 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
+import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.dialogs.ErrorDialog
@@ -599,10 +601,111 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
     }
 
 
+ /* fun confirmDialog(
+    homeBidsRequestItemData: HomeBidsRequestItemData,
+    state: BidDetailsUserBidState_EditBid,
+    context: Context,
+    bidDialogInterface:BidDialogInterface,
+    fromPage:String
+  ) {
+    val dialog = Dialog(context)
+    //Designed to be changed
+    val bindingDialog = DialogConfirmBulkBidBinding.inflate(activity.layoutInflater)
+    val userBid = state.lowestAndUserBidPair.first
+    val data = homeBidsRequestItemData
+    data.numBids = state.bidsCount
+    data.transactionBid = state.lowestAndUserBidPair.first
+    val lowestTBid = state.lowestAndUserBidPair.second
+    lowestTBid?.let {
+      if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+        bindingDialog.lowestBid.text = when (it) {
+          null -> ""
+          else -> "₹ ${
+            StringUtils.formatAmount(
+                it.bidAmount
+            )
+          }" + if (state.isPMTIndent) "/MT" else ""
+        }
+        data.lowestBid = when (it) {
+          null -> 0.0
+          else -> it.bidAmount
+        }
+      }
+    }
+    var yourBid = if (data.isPMTIndent()) {
+      "₹ ${StringUtils.formatAmount(data.transactionBid?.bidAmount?:0.0)}/MT"
+    } else {
+      "₹ ${StringUtils.formatAmount(data.transactionBid?.bidAmount?:0.0)}"
+    }
+    bindingDialog.yourBid.setText(yourBid)
+    var lowestAmount = if (data.isPMTIndent()) {
+      "₹ ${StringUtils.formatAmount(lowestTBid?.bidAmount?:0.0)}/MT"
+    } else {
+      "₹ ${StringUtils.formatAmount(lowestTBid?.bidAmount?:0.0)}"
+    }
+    bindingDialog.lowestBid.setText(lowestAmount)
+    bindingDialog.textBidInfo.setText(homeBidsRequestItemData.bidLowest())
+    bindingDialog.btnEdit.setOnClickListener{
+      dialog.dismiss()
+      if(fromPage.equals("Bid")) {
+        bidDialogInterface.bidDialog(userBid)
+      }else{
+        bidDialogInterface.bulkbidDialog(transaction =data )
+      }
+    }
+    bindingDialog.btnDone.setOnClickListener{
+      dialog.dismiss()
+    }
+    // request = data
+    if (lowestTBid == userBid) {
+      if (userBid?.bidAmount != null) {
+        if (data.guidancePrice!=null && data.guidancePrice.compareTo(userBid?.bidAmount) < 0 ) {
+          bindingDialog.textBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+              R.drawable.ic_higher_bid,
+              0,
+              0,
+              0
+          )
+          bindingDialog.textBidInfo.setTextColor(context.resources.getColor(R.color.custom_red))
+          var gPrice = if (data.isPMTIndent()) {
+            "₹ ${StringUtils.formatAmount(data.guidancePrice?:0.0)}/MT"
+          } else {
+            "₹ ${StringUtils.formatAmount(data.guidancePrice?:0.0)}"
+          }
+          bindingDialog.lowestBid.setText(gPrice)
+          bindingDialog.textLowestBid.setText("Suggested Price")
+        } else {
+          bindingDialog.textBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+              R.drawable.ic_green_thumb,
+              0,
+              0,
+              0
+          );
+          bindingDialog.textBidInfo.setTextColor(context.resources.getColor(R.color.bid_placed_green))
+        }
+      }
+    } else {
+      bindingDialog.textBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_higher_bid,
+          0,
+          0,
+          0
+      );
+      bindingDialog.textBidInfo.setTextColor(context.resources.getColor(R.color.custom_red))
+    }
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+    dialog.window!!.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
 
+    dialog.show()
 
+  }*/
 
 }
+
 
 interface TeamMemberInterface{
     fun deleteTeamMember(uuid: String)

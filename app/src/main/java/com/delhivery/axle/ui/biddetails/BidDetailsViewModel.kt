@@ -16,6 +16,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -37,7 +38,8 @@ class BidDetailsViewModel @Inject constructor(
   private val truckRepository: TruckRepository,
   private val warehouseRepository: WarehouseRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface{
+) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface,
+  BidConfirmReviseDialogInterface {
 
   /* transaction id */
   lateinit var transactionId: String
@@ -60,8 +62,11 @@ class BidDetailsViewModel @Inject constructor(
   var lowestBid:Double?=0.0
   var restrictEventTrigger :Boolean=true
   var refreshCalled :Boolean=false
+  var openConfirmBid :Boolean=false
   var statusConfirmationPending =MutableLiveData<Boolean>()
 
+  /* revise bid live data */
+  var reviseBidLiveData = MutableLiveData<Pair<Boolean, TransactionBid?>>()
 
     companion object{
     var truckNumTextViewAdded :Boolean=false
@@ -243,6 +248,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
+               openConfirmBid= true
               fetchTransactionBids(true)
           } else {
             error.handle()
@@ -270,6 +276,7 @@ class BidDetailsViewModel @Inject constructor(
         .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
+              openConfirmBid= true
               fetchTransactionBids(true)
 
           } else {
@@ -515,6 +522,10 @@ class BidDetailsViewModel @Inject constructor(
                     }
                 }
     }
+
+  override fun reviseBid(transactionBid: TransactionBid?, position: Int) {
+    reviseBidLiveData.postValue(Pair(true, transactionBid))
+  }
 
 }
 
