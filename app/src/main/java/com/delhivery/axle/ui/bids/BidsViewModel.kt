@@ -95,6 +95,7 @@ class BidsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
     var contract:Boolean? = null
+    var onlyFrcBids:Boolean?=null
     var statuses:String? = bidType.status.statusKey
     var pending:Boolean? = false
     if (bidType == BidType.LostBid) {
@@ -111,9 +112,10 @@ class BidsViewModel @Inject constructor(
     if(bidType==BidType.ContractBid){
       statuses = null
       contract = true
+      onlyFrcBids = true
       pending = null
     }
-    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract,onlyFrcBids)
         .flatMap { _res ->
           total = _res.first
           bidsCountLiveData.postValue(total)

@@ -105,7 +105,8 @@ interface BidService {
     @Query("offset") offset: Int,
     @Query("contract_bids") contractBids: Boolean?,
     @Query("bid_statuses") status: String? = null,
-    @Query("confirmation_pending") confirmationPending: Boolean?
+    @Query("confirmation_pending") confirmationPending: Boolean?,
+    @Query("only_frc_bids") onlyFRCBids: Boolean?=null
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**

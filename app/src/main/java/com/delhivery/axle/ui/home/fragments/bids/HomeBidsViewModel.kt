@@ -135,7 +135,7 @@ class HomeBidsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
       .flatMap { _res ->
         total = _res.first
         bidsCountLiveData.postValue(total)
