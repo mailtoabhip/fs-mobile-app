@@ -639,7 +639,7 @@
               app:layout_constraintStart_toStartOf="@id/nonExpressBidAmount"
               android:textSize="@dimen/text_12sp"
               android:textColor="@color/color_hint"
-              android:text="@string/your_bid_ftl_rate"/>
+              tools:text="@string/your_bid_ftl_rate"/>
           <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/nonExpressMoneyIcon"
               android:layout_width="wrap_content"
@@ -672,7 +672,7 @@
               app:layout_constraintStart_toStartOf="parent"
               android:textSize="@dimen/text_12sp"
               android:textColor="@color/color_hint"
-              android:text="@string/_2_bids_received"/>
+              tools:text="@string/_2_bids_received"/>
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/tripCommitted"
               android:layout_width="wrap_content"

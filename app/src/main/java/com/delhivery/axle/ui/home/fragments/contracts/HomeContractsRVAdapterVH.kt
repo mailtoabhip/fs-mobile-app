@@ -360,7 +360,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               binding.userBidInfo.background =
                 ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_lost_red)
               binding.userBidInfo.text =
-                "Higher than other by ₹" + item.data.contractLowestbidDifference()
+                "Higher than other by" + item.data.contractLowestbidDifference()
 
             }
           }

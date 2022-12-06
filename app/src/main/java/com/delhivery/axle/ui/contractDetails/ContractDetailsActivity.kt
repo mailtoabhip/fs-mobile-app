@@ -374,6 +374,12 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
                 binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
                 binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
+                if(data.biddingType?.toLowerCase()=="pmt"){
+                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
+                        }else{
+                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
+                        }
                 if (lowestTBid?.bidAmount != null) {
                   if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
@@ -395,6 +401,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     binding.clNonExpressBidStatus.visibility = data.isFRCContract()
                     binding.bidPmtFtlStatus.visibility = View.GONE
                     binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
+                     if(data.biddingType?.toLowerCase()=="pmt"){
+                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
+                        }else{
+                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
+                        }
                     if(data.isItLHContract()){
                       binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                       binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
