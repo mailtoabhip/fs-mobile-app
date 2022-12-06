@@ -417,11 +417,16 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     if(data.isUnderOneHour()){
                       binding.bidPmtFtl.text =getString(string.current_lowest)
                     }else{
-                      if(data.biddingType=="pmt"){
-                      binding.bidPmtFtl.text = getString(string.your_pmt_rate)
-                      }else{
+                      if(data.isItLHContract()){
                         binding.bidPmtFtl.visibility = View.GONE
+                      }else{
+                        if(data.biddingType?.toLowerCase()=="pmt"){
+                          binding.bidPmtFtl.text = getString(string.your_pmt_rate)
+                        }else{
+                          binding.bidPmtFtl.text = getString(string.your_ftl_rate)
+                        }
                       }
+
                     }
                   }
 

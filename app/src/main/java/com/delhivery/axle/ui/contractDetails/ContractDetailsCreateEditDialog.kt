@@ -158,7 +158,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
                 binding.bidError.text =  "Invalid Bid Amount, Out of range"
                 binding.bidError.visibility = View.VISIBLE
               }else{
-                  if (transaction.targetPrice!=null&&(amount >= (transaction.targetPrice + transaction.targetPrice * upperPercentage / 100) || amount <=(transaction.targetPrice - transaction.targetPrice * lowerPercentage / 100))) {
+                  if (transaction.targetPrice!=null&&(amount > (transaction.targetPrice + transaction.targetPrice * upperPercentage / 100) || amount <(transaction.targetPrice - transaction.targetPrice * lowerPercentage / 100))) {
                     isValidBidAmount = false
                     binding.bidError.text = "Invalid Bid Amount, Out of range"
                     binding.bidError.visibility = View.VISIBLE

@@ -702,6 +702,7 @@
   <string name="higher_than">Higher than other by"</string>
   <string name="current_lowest">Current Lowest Bid</string>
   <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
+  <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
   <string name="more_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by more than 5%</string>
   <string name="less_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by approx. 5%</string>
   <string name="not_meeting_expectation">Thank you for participating! Your service levels do not meet the expectation.</string>
